@@ -31,7 +31,7 @@ function stop() {
 case "$1" in
 	start)
 		echo -n "Start tntnet - "
-		if [ -f $PIDFILE ]
+		if [ -f $PIDFILE ] && ps `cat $PIDFILE`|grep -q tntnet
 		then
 			echo "tntnet already running"
 		else

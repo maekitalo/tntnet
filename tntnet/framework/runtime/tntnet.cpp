@@ -413,24 +413,16 @@ namespace tnt
 
   void tntnet::writePidfile(int pid)
   {
-    const char* pidfilename = 0;
-    std::string configPidFile;
+    pidFileName = arg_pidfile.isSet() ? arg_pidfile.getValue()
+                                      : config.getSingleValue("PidFile");
 
-    if (arg_pidfile)
-      pidfilename = arg_pidfile;
-    else
-    {
-      configPidFile = config.getSingleValue("PidFile");
-      if (!pidFileName.empty())
-        pidfilename = configPidFile.c_str();
-    }
+    log_debug("pidfile=" << pidFileName);
 
-    if (pidfilename)
+    if (!pidFileName.empty())
     {
-      std::ofstream pidfile(pidfilename);
+      std::ofstream pidfile(pidFileName.c_str());
       if (!pidfile)
-        throw std::runtime_error(
-          std::string("unable to open PidFile ") + pidfilename);
+        throw std::runtime_error("unable to open pid-file " + pidFileName);
       pidfile << pid;
     }
   }
@@ -469,7 +461,9 @@ namespace tnt
     {
       log_info("child exited with exitcode " << WEXITSTATUS(status));
     }
-    unlink(pidFileName.c_str());
+
+    if (unlink(pidFileName.c_str()) != 0)
+      log_warn("failed to remove pidfile \"" << pidFileName << "\" error " << errno);
   }
 
   void tntnet::workerProcess()
