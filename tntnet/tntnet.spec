@@ -1,10 +1,10 @@
 Summary: Server and framework for c++-webapplications
 Name: tntnet
-Version: 1.0.0
-Release: 3
+Version: 1.1.0
+Release: 5
 License: GPL
 Group: Productivity/Networking/Web/Servers
-Source: tntnet-1.0.0.tgz
+Source: tntnet-1.1.0.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 Requires: log4cplus cxxtools
 
