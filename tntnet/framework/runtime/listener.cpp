@@ -30,7 +30,7 @@ namespace tnt
     : server(ipaddr, port),
       queue(q)
   {
-    log_debug("Listen to " << ipaddr << " port " << port);
+    log_info("listen ip=" << ipaddr << " port=" << port);
   }
 
   void listener::Run()
@@ -60,7 +60,7 @@ namespace tnt
     : server(certificateFile, keyFile),
       queue(q)
   {
-    log_debug("Listen to " << ipaddr << " port " << port << " (ssl)");
+    log_info("listen ip=" << ipaddr << " port=" << port << " (ssl)");
     server.Listen(ipaddr.c_str(), port);
   }
 
