@@ -160,38 +160,71 @@ namespace tnt
     log_debug("read");
 
     int n;
-    n = ::SSL_read(ssl, buffer, bufsize);
-    log_debug("read returns " << n << " timeout=" << getTimeout());
 
-    if (n <= 0 && getTimeout() >= 0 && SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ)
+    if (getTimeout() < 0)
     {
-      if (getTimeout() == 0)
-        throw cxxtools::tcp::Timeout();
-
-      log_debug("poll");
-
-      struct pollfd fds;
-      fds.fd = getFd();
-      fds.events = POLLIN|POLLOUT;
-      int p = ::poll(&fds, 1, getTimeout());
-
-      log_debug("poll returns " << p);
-
-      if (p < 0)
+      // blocking
+      do
       {
-        int errnum = errno;
-        throw cxxtools::tcp::Exception(strerror(errnum));
-      }
-      else if (p == 0)
-        throw cxxtools::tcp::Timeout();
+        log_debug("read unbuffered");
+        n = ::SSL_read(ssl, buffer, bufsize);
+      } while (n <= 0 &&
+                (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ
+              || SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE));
+    }
+    else
+    {
+      // non-blocking/with timeout
 
-      log_debug("read (2)");
+      // try read
       n = ::SSL_read(ssl, buffer, bufsize);
-      log_debug("read (2) returns " << n);
+
+      log_debug("ssl-read => " << n);
+
+      if (n > 0)
+        return n;
+
+      if (SSL_get_error(ssl, n) != SSL_ERROR_WANT_READ
+       && SSL_get_error(ssl, n) != SSL_ERROR_WANT_WRITE)
+        checkSslError();
+
+      if (getTimeout() == 0)
+      {
+        log_warn("timeout");
+        throw cxxtools::tcp::Timeout();
+      }
+
+      // no read, timeout > 0 - poll
+      do
+      {
+        log_debug("poll");
+
+        struct pollfd fds;
+        fds.fd = getFd();
+        fds.events =
+          (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
+            ? POLLIN|POLLOUT
+            : POLLIN;
+        int p = ::poll(&fds, 1, /*getTimeout()*/2000);
+
+        log_debug("poll => " << p << " revents=" << fds.revents);
+
+        if (p <= 0)
+        {
+          // no data
+          log_warn("timeout");
+          throw cxxtools::tcp::Timeout();
+        }
+
+        n = ::SSL_read(ssl, buffer, bufsize);
+        log_debug("SSL_read returns " << n);
+
+      } while (n <= 0
+         && (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ
+          || SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE));
     }
 
     checkSslError();
-
     return n;
   }
 

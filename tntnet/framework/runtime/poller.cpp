@@ -57,9 +57,10 @@ namespace tnt
       {
         append(*it);
         int msec;
-        if (poll_timeout < 0
-          || (msec = (*it)->msecToTimeout()) < poll_timeout)
-            poll_timeout = msec;
+        if (poll_timeout < 0)
+          poll_timeout = (*it)->msecToTimeout();
+        else if ((msec = (*it)->msecToTimeout()) < poll_timeout)
+          poll_timeout = msec;
       }
 
       new_jobs.clear();
