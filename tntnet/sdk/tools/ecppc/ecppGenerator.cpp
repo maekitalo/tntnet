@@ -633,13 +633,15 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   if (externData)
   {
     code << "#define DATA(n) tnt::data_chunk(dataComponent->getDataPtr(n), dataComponent->getDataLen(n))\n"
-            "#define DATA_COUNT() dataComponent->getDataCount()\n\n";
+            "#define DATA_COUNT() dataComponent->getDataCount()\n"
+            "#define DATA_SIZE(n) dataComponent->getDataLen(n)\n\n";
      
   }
   else
   {
     code << "#define DATA(n) data[n]\n"
-            "#define DATA_COUNT() data.size()\n\n";
+            "#define DATA_COUNT() data.size()\n"
+            "#define DATA_SIZE(n) data.size(n)\n\n";
   }
 
   // creator
@@ -745,10 +747,15 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   if (!mimetype.empty())
     code << "  reply.setContentType(\"" << mimetype << "\");\n";
   if (c_time)
-    code << "  reply.setHeader(\"Last-Modified\", \""
-         << tnt::httpMessage::htdate(c_time) << "\");\n";
+    code << "  reply.setHeader(tnt::httpMessage::Last_Modified, \""
+         << tnt::httpMessage::htdate(c_time) << "\");\n\n";
   if (raw)
-    code << "  reply.setDirectMode();\n";
+    code << "  if (request.keepAlive())\n"
+            "  {\n"
+            "    reply.setHeader(tnt::httpMessage::Connection, tnt::httpMessage::Connection_Keep_Alive);\n"
+            "    reply.setContentLengthHeader(DATA_SIZE(0));\n"
+            "  }\n\n"
+            "  reply.setDirectMode();\n\n";
 
   code << maincomp.getBody(isDebug() ? classname : std::string())
        << "}\n\n";

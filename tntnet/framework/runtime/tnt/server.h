@@ -28,6 +28,7 @@ namespace tnt
       comploader mycomploader;
 
       unsigned threadNumber;
+      unsigned countKeepAlive;
 
     public:
       server(jobqueue& queue, const dispatcher& dispatcher,

@@ -8,6 +8,9 @@
 #include <tnt/log.h>
 #include <fstream>
 #include <cxxtools/thread.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sstream>
 
 namespace tnt
 {
@@ -97,14 +100,40 @@ unsigned staticcomp::operator() (tnt::httpRequest& request,
 
   log_debug_ns(tntcomp, "file: " << file);
 
+  struct stat st;
+  if (stat(file.c_str(), &st) != 0)
+  {
+    log_warn_ns(tntcomp, "error in stat for file \"" << file << "\"");
+    reply.throwNotFound(request.getPathInfo());
+  }
+
+  if (!S_ISREG(st.st_mode))
+  {
+    log_warn_ns(tntcomp, "no regular file \"" << file << "\"");
+    reply.throwNotFound(request.getPathInfo());
+  }
+
   std::ifstream in(file.c_str());
 
+  if (!in)
+  {
+    log_warn_ns(tntcomp, "file \"" << file << "\" not found");
+    reply.throwNotFound(request.getPathInfo());
+  }
+
+  // set Content-Type
   if (request.getArgs().size() > 0)
     reply.setContentType(request.getArg(0));
 
-  if (!in)
-    reply.throwNotFound(request.getPathInfo());
+  // set Content-Length
+  reply.setContentLengthHeader(st.st_size);
 
+  // set Keep-Alive
+  if (request.keepAlive())
+    reply.setHeader(tnt::httpMessage::Connection,
+                    tnt::httpMessage::Connection_Keep_Alive);
+
+  // send datea
   reply.setDirectMode();
   reply.out() << in.rdbuf();
 

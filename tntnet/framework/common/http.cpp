@@ -14,6 +14,14 @@
 
 namespace tnt
 {
+  const std::string httpMessage::Content_Type = "Content-Type:";
+  const std::string httpMessage::Content_Length = "Content-Length:";
+  const std::string httpMessage::Connection = "Connection:";
+  const std::string httpMessage::Connection_close = "close";
+  const std::string httpMessage::Connection_Keep_Alive = "Keep-Alive";
+  const std::string httpMessage::Last_Modified = "Last-Modified";
+  const std::string httpMessage::Server = "Server:";
+  const std::string httpMessage::ServerName = "tntnet 1.0";
 
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
@@ -54,6 +62,13 @@ void httpMessage::setHeader(const std::string& key, const std::string& value)
   header.insert(header_type::value_type(key, value));
 }
 
+void httpMessage::setContentLengthHeader(size_t size)
+{
+  std::ostringstream s;
+  s << size;
+  setHeader(Content_Length, s.str());
+}
+
 std::string httpMessage::dumpHeader() const
 {
   std::ostringstream h;
@@ -65,7 +80,23 @@ void httpMessage::dumpHeader(std::ostream& out) const
 {
   for (header_type::const_iterator it = header.begin();
        it != header.end(); ++it)
-    out << it->first << ": " << it->second << '\n';
+    out << it->first << ' ' << it->second << '\n';
+}
+
+bool httpMessage::keepAlive() const
+{
+  header_type::const_iterator it = header.find(Connection);
+  if (it == header.end())
+    return false;
+
+  if (getMajorVersion() == 1
+   && getMinorVersion() == 1)
+  {
+    // keep-Alive if value not "close"
+    return it->second != Connection_close;
+  }
+  else
+    return it->second == Connection_Keep_Alive;
 }
 
 std::string httpMessage::htdate(time_t t)
@@ -143,7 +174,7 @@ void httpMessage::parseStartline(std::istream& in)
         if (ch == '?')
           state = state_qparam;
         else if (std::isspace(ch))
-          state = state_end0;
+          state = state_version;
         else
           url += ch;
         break;
@@ -333,12 +364,12 @@ void httpRequest::parse(std::istream& in)
     qparam.parse_url(getQueryString());
     if (getMethod() == "POST")
     {
-      std::istringstream in(getHeader("Content-Type:"));
+      std::istringstream in(getHeader(Content_Type));
       in >> ct;
 
       if (in)
       {
-        log_debug("Content-Type: " << in.str());
+        log_debug(Content_Type << ' ' << in.str());
         if (ct.isMultipart())
         {
           log_debug("multipart-boundary=" << ct.getBoundary());
@@ -397,40 +428,33 @@ void httpReply::sendReply(unsigned ret)
 {
   if (!isDirectMode())
   {
-    log_debug("HTTP/1.1 " << ret << " OK");
-    socket << "HTTP/1.1 " << ret << " OK\r\n";
+    log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK");
+    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK";
 
-    if (header.find("Content-Type") == header.end())
-    {
-      log_debug("Content-Type: " << contentType);
-      socket << "Content-Type: " << contentType << "\r\n";
-    }
+    if (header.find(Content_Type) == header.end())
+      setHeader(Content_Type, contentType);
 
-    if (header.find("Content-Length") == header.end())
-    {
-      log_debug("Content-Length: " << outstream.str().size());
-      socket << "Content-Length: " << outstream.str().size() << "\r\n";
-    }
+    if (header.find(Content_Length) == header.end())
+      setContentLengthHeader(outstream.str().size());
 
-    if (header.find("Server") == header.end())
-    {
-      log_debug("Server: tntnet");
-      socket << "Server: tntnet\r\n";
-    }
+    if (header.find(Server) == header.end())
+      setHeader(Server, ServerName);
+
+    if (header.find(Connection) == header.end())
+      setHeader(Connection, Connection_Keep_Alive);
 
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
     {
-      log_debug(it->first << ": " << it->second);
-      socket << it->first << ": " << it->second << "\r\n";
+      log_debug(it->first << ' ' << it->second);
+      socket << it->first << ' ' << it->second << "\r\n";
     }
 
     socket << "\r\n"
-           << outstream.str()
-           << std::flush;
+           << outstream.str();
   }
-  else
-    socket.flush();
+
+  socket.flush();
 }
 
 void httpReply::throwError(unsigned errorCode, const std::string& errorMessage) const
@@ -452,17 +476,19 @@ void httpReply::setDirectMode()
 {
   if (!isDirectMode())
   {
-    log_debug("HTTP/1.1 200 OK\n"
+    log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+           << " 200 OK\n"
               "Content-Type: " << contentType);
 
-    socket << "HTTP/1.1 200 OK\r\n"
+    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+           << " 200 OK\n"
               "Content-Type: " << contentType << "\r\n";
 
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
     {
-      log_debug(it->first << ": " << it->second);
-      socket << it->first << ": " << it->second << "\r\n";
+      log_debug(it->first << ' ' << it->second);
+      socket << it->first << ' ' << it->second << "\r\n";
     }
 
     socket << "\r\n"

@@ -71,6 +71,15 @@ namespace tnt
     public:
       typedef messageheader header_type;
 
+      static const std::string Content_Type;
+      static const std::string Content_Length;
+      static const std::string Connection;
+      static const std::string Connection_close;
+      static const std::string Connection_Keep_Alive;
+      static const std::string Last_Modified;
+      static const std::string Server;
+      static const std::string ServerName;
+
     private:
       std::string method;
       std::string url;
@@ -79,7 +88,7 @@ namespace tnt
       unsigned short major_version;
       unsigned short minor_version;
 
-      unsigned content_size;
+      size_t content_size;
 
     protected:
       header_type header;
@@ -87,8 +96,7 @@ namespace tnt
     public:
       httpMessage()
         : major_version(0),
-          minor_version(0),
-          content_size(0)
+          minor_version(0)
         { }
       virtual ~httpMessage()
       { }
@@ -107,7 +115,10 @@ namespace tnt
         { return major_version; }
       unsigned short getMinorVersion() const
         { return minor_version; }
-      unsigned getContentSize() const
+      void setVersion(unsigned short major, unsigned short minor)
+        { major_version = major; minor_version = minor; }
+
+      size_t getContentSize() const
         { return content_size; }
 
       header_type::const_iterator header_begin() const
@@ -116,9 +127,12 @@ namespace tnt
         { return header.end(); }
 
       void setHeader(const std::string& key, const std::string& value);
+      void setContentLengthHeader(size_t size);
 
       std::string dumpHeader() const;
       void dumpHeader(std::ostream& out) const;
+
+      bool keepAlive() const;
 
       static std::string htdate(time_t t);
       static std::string htdate(struct tm* tm);

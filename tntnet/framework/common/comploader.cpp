@@ -137,7 +137,7 @@ component_library& comploader::fetchLib(const std::string& libname)
         }
         catch (const dl::dlopen_error&)
         {
-          log_debug("library in current dir not found - sarch lib-path");
+          log_debug("library in current dir not found - search lib-path");
           lib = component_library(libname);
         }
       }

@@ -51,20 +51,39 @@ namespace tnt
       {
         try
         {
-          httpRequest request;
-          socket >> request;
-
-          if (!socket)
-            log_error("stream error");
-          else
+          countKeepAlive = 0;
+          bool keepAlive;
+          do
           {
+            keepAlive = false;
+            httpRequest request;
+            socket >> request;
+
+            if (!socket)
+            {
+              if (!socket.eof())
+                log_error("stream error");
+              break;
+            }
+
             request.setPeerAddr(j->getPeeraddr_in());
             request.setServerAddr(j->getServeraddr_in());
             request.setSsl(j->isSsl());
+
             httpReply reply(socket);
+            reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
+
             try
             {
               Dispatch(request, reply);
+              keepAlive = socket
+                       && request.keepAlive()
+                       && reply.keepAlive();
+              if (keepAlive)
+              {
+                ++countKeepAlive;
+                log_info("keep alive");
+              }
             }
             catch (const dl::dlopen_error& e)
             {
@@ -84,7 +103,8 @@ namespace tnt
             {
               throw httpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
             }
-          }
+
+          } while (keepAlive);
         }
         catch (const httpError& e)
         {
