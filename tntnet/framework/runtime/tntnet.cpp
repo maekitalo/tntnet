@@ -517,7 +517,8 @@ namespace tnt
 
     // configure http
     httpMessage::setMaxRequestSize(config.getValue("MaxRequestSize", static_cast<unsigned>(0)));
-    job::setSocketTimeout(config.getValue("SocketTimeout", static_cast<unsigned>(200)));
+    job::setSocketReadTimeout(config.getValue("SocketReadTimeout", static_cast<unsigned>(200)));
+    job::setSocketWriteTimeout(config.getValue("SocketWriteTimeout", static_cast<unsigned>(10000)));
     job::setKeepAliveTimeout(config.getValue("KeepAliveTimeout", static_cast<unsigned>(15000)));
     job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(100)));
     job::setSocketBufferSize(config.getValue("BufferSize", static_cast<unsigned>(16384)));

@@ -103,11 +103,15 @@ namespace tnt
           {
             j->getRequest().doPostParse();
 
+            j->setWrite();
             keepAlive = processRequest(j->getRequest(), socket,
               j->decrementKeepAliveCounter());
 
             if (keepAlive)
+            {
+              j->setRead();
               j->clear();
+            }
           }
         } while (keepAlive);
       }

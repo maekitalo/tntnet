@@ -71,7 +71,8 @@ namespace tnt
       httpMessage::parser parser;
       time_t lastAccessTime;
 
-      static unsigned socket_timeout;
+      static unsigned socket_read_timeout;
+      static unsigned socket_write_timeout;
       static unsigned keepalive_max;
       static unsigned socket_buffer_size;
 
@@ -85,6 +86,8 @@ namespace tnt
 
       virtual std::iostream& getStream() = 0;
       virtual int getFd() const = 0;
+      virtual void setRead() = 0;
+      virtual void setWrite() = 0;
 
       httpRequest& getRequest()         { return request; }
       httpMessage::parser& getParser()  { return parser; }
@@ -95,12 +98,14 @@ namespace tnt
       void touch()     { time(&lastAccessTime); }
       int msecToTimeout() const;
 
-      static void setSocketTimeout(unsigned ms)     { socket_timeout = ms; }
+      static void setSocketReadTimeout(unsigned ms)     { socket_read_timeout = ms; }
+      static void setSocketWriteTimeout(unsigned ms)    { socket_write_timeout = ms; }
       static void setKeepAliveTimeout(unsigned ms);
       static void setKeepAliveMax(unsigned n)       { keepalive_max = n; }
       static void setSocketBufferSize(unsigned b)   { socket_buffer_size = b; }
 
-      static unsigned getSocketTimeout()      { return socket_timeout; }
+      static unsigned getSocketReadTimeout()        { return socket_read_timeout; }
+      static unsigned getSocketWriteTimeout()       { return socket_write_timeout; }
       static unsigned getKeepAliveTimeout();
       static unsigned getKeepAliveMax()       { return keepalive_max; }
       static unsigned getSocketBufferSize()   { return socket_buffer_size; }
@@ -112,13 +117,15 @@ namespace tnt
 
     public:
       tcpjob()
-        : socket(getSocketBufferSize(), getSocketTimeout())
+        : socket(getSocketBufferSize(), getSocketReadTimeout())
         { }
 
       void Accept(const cxxtools::tcp::Server& listener);
 
       std::iostream& getStream();
       int getFd() const;
+      void setRead();
+      void setWrite();
   };
 
 #ifdef USE_SSL
@@ -128,13 +135,15 @@ namespace tnt
 
     public:
       ssl_tcpjob()
-        : socket(getSocketBufferSize(), getSocketTimeout())
+        : socket(getSocketBufferSize(), getSocketReadTimeout())
         { }
 
       void Accept(const SslServer& listener);
 
       std::iostream& getStream();
       int getFd() const;
+      void setRead();
+      void setWrite();
   };
 #endif // USE_SSL
 

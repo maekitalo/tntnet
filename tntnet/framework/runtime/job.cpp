@@ -27,7 +27,8 @@ log_define("tntnet.job");
 
 namespace tnt
 {
-  unsigned job::socket_timeout = 200;
+  unsigned job::socket_read_timeout = 200;
+  unsigned job::socket_write_timeout = 10000;
   unsigned job::keepalive_max = 100;
   unsigned job::socket_buffer_size = 4096;
 
@@ -45,7 +46,7 @@ namespace tnt
   {
     return (lastAccessTime - time(0) + 1) * 1000
          + getKeepAliveTimeout()
-         - socket_timeout;
+         - getSocketReadTimeout();
   }
 
   void job::setKeepAliveTimeout(unsigned ms)
@@ -86,6 +87,16 @@ namespace tnt
     return socket.getFd();
   }
 
+  void tcpjob::setRead()
+  {
+    socket.setTimeout(getSocketReadTimeout());
+  }
+
+  void tcpjob::setWrite()
+  {
+    socket.setTimeout(getSocketWriteTimeout());
+  }
+
 #ifdef USE_SSL
   ////////////////////////////////////////////////////////////////////////
   // ssl_tcpjob
@@ -113,6 +124,16 @@ namespace tnt
   int ssl_tcpjob::getFd() const
   {
     return socket.getFd();
+  }
+
+  void ssl_tcpjob::setRead()
+  {
+    socket.setTimeout(getSocketReadTimeout());
+  }
+
+  void ssl_tcpjob::setWrite()
+  {
+    socket.setTimeout(getSocketWriteTimeout());
   }
 
 #endif // USE_SSL
