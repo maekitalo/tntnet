@@ -74,7 +74,7 @@ case "$1" in
 		if [ ! -f $PIDFILE ]
 		then
 			echo tntnet not running
-		elif ps `cat /var/run/tntnet.pid` >/dev/null
+		elif ps `cat $PIDFILE` >/dev/null
 		then
 			echo tntnet running
 		else
