@@ -14,6 +14,8 @@ Description: <insert up to 60 chars description>
 Package: tntnet
 Section: web
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, cxxtools
+Conflicts: httpd
+Provides: httpd
 Description: Web-Server in c++
  <insert long description, indented with spaces>
