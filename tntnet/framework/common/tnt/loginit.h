@@ -13,6 +13,7 @@
 #define log_init_warn()    log_init(log4cplus::WARN_LOG_LEVEL)
 #define log_init_info()    log_init(log4cplus::INFO_LOG_LEVEL)
 #define log_init_debug()   log_init(log4cplus::DEBUG_LOG_LEVEL)
+#define log_init_trace()   log_init(log4cplus::TRACE_LOG_LEVEL)
 
 inline void log_init(log4cplus::LogLevel level = log4cplus::ERROR_LOG_LEVEL)
 {
