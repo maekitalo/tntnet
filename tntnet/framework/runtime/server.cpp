@@ -181,9 +181,9 @@ namespace tnt
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())
-            log_info("request ready");
+            log_info("request ready, returncode " << http_return);
           else
-            log_info("request ready - ContentSize: " << reply.getContentSize());
+            log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
           reply.sendReply(http_return);
           return;
