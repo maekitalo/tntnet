@@ -56,6 +56,8 @@ namespace tnt
       static const std::string Content_MD5;
       static const std::string SetCookie;
       static const std::string Cookie;
+      static const std::string Pragma;
+      static const std::string Expires;
 
     private:
       std::string method;

@@ -143,8 +143,12 @@ namespace tnt
 
   const cookies& httpRequest::getCookies() const
   {
+    log_debug("httpRequest::getCookies()");
+
     if (!httpcookies.hasCookies())
     {
+      log_debug("cookies found");
+
       header_type::const_iterator it = header.find(Cookie);
       if (it != header.end())
       {
@@ -156,13 +160,4 @@ namespace tnt
     return httpcookies;
   }
 
-  void httpRequest::clear()
-  {
-    pathinfo.clear();
-    args.clear();
-    qparam.clear();
-    ct = contenttype();
-    mp = multipart();
-    lang_init = false;
-  }
 }

@@ -47,6 +47,8 @@ namespace tnt
   const std::string httpMessage::Content_MD5 = "Content-MD5:";
   const std::string httpMessage::SetCookie = "Set-Cookie:";
   const std::string httpMessage::Cookie = "Cookie:";
+  const std::string httpMessage::Pragma = "Pragma:";
+  const std::string httpMessage::Expires = "Expires:";
 
   size_t httpMessage::maxRequestSize = 0;
 
@@ -88,6 +90,7 @@ namespace tnt
 
   void httpMessage::setKeepAliveHeader(unsigned timeout, unsigned max)
   {
+    log_debug("setKeepAliveHeader(" << timeout << ", " << max << ')');
     if (timeout > 0)
     {
       std::ostringstream s;

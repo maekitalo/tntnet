@@ -50,21 +50,23 @@ namespace tnt
       virtual void throwNotFound(const std::string& errorMessage) const;
       unsigned redirect(const std::string& newLocation);
 
-      void sendReply(unsigned ret);
+      void sendReply(unsigned ret, unsigned keepAliveCount, unsigned keepAliveTimeout);
 
       std::ostream& out()   { return *current_outstream; }
 
-      virtual void setDirectMode(bool keepAlive = false);
+      virtual void setDirectMode(unsigned keepAliveTimeout = 0, unsigned keepAliveMax = 0);
       virtual void setDirectModeNoFlush();
       virtual bool isDirectMode() const
         { return current_outstream == &socket; }
       std::string::size_type getContentSize() const
         { return outstream.str().size(); }
 
-      void sendHeaders(bool keepAlive = false);
+      void sendHeaders(unsigned keepAliveTimeout = 0, unsigned keepAliveMax = 0);
       void setMd5Sum();
 
       void setCookie(const std::string& name, const cookie& value);
+      void setCookie(const std::string& name, const std::string& value, unsigned seconds)
+        { setCookie(name, cookie(value, seconds)); }
       void setCookies(const cookies& c)
         { httpcookies = c; }
       void clearCookie(const std::string& name)

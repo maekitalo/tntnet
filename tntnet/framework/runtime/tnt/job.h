@@ -62,11 +62,6 @@ void server::Run()
 
 namespace tnt
 {
-  static const unsigned socket_timeout = 200;
-  static const unsigned keepalive_timeout = 15000;
-  static const unsigned keepalive_count = 100;
-  static const unsigned socket_buffer_size = 2048;
-
   /** job - one per request */
   class job
   {
@@ -76,10 +71,15 @@ namespace tnt
       httpMessage::parser parser;
       time_t lastAccessTime;
 
+      static unsigned socket_timeout;
+      static unsigned keepalive_timeout;
+      static unsigned keepalive_max;
+      static unsigned socket_buffer_size;
+
     public:
       job()
         : parser(request),
-          keepAliveCounter(100),
+          keepAliveCounter(keepalive_max),
           lastAccessTime(0)
         { }
       virtual ~job();
@@ -90,11 +90,21 @@ namespace tnt
       httpRequest& getRequest()         { return request; }
       httpMessage::parser& getParser()  { return parser; }
 
-      bool decrementKeepAliveCounter()
-        { return keepAliveCounter > 0 && --keepAliveCounter > 0; }
+      unsigned decrementKeepAliveCounter()
+        { return keepAliveCounter > 0 ? --keepAliveCounter : 0; }
       void clear();
       void touch()     { time(&lastAccessTime); }
       int msecToTimeout() const;
+
+      static void setSocketTimeout(unsigned ms)     { socket_timeout = ms; }
+      static void setKeepAliveTimeout(unsigned ms)  { keepalive_timeout = ms; }
+      static void setKeepAliveMax(unsigned n)       { keepalive_max = n; }
+      static void setSocketBufferSize(unsigned b)   { socket_buffer_size = b; }
+
+      static unsigned getSocketTimeout()      { return socket_timeout; }
+      static unsigned getKeepAliveTimeout()   { return keepalive_timeout; }
+      static unsigned getKeepAliveMax()       { return keepalive_max; }
+      static unsigned getSocketBufferSize()   { return socket_buffer_size; }
   };
 
   class tcpjob : public job
@@ -103,7 +113,7 @@ namespace tnt
 
     public:
       tcpjob()
-        : socket(socket_buffer_size, socket_timeout)
+        : socket(getSocketBufferSize(), getSocketTimeout())
         { }
 
       void Accept(const cxxtools::tcp::Server& listener);
@@ -119,7 +129,7 @@ namespace tnt
 
     public:
       ssl_tcpjob()
-        : socket(socket_buffer_size, socket_timeout)
+        : socket(getSocketBufferSize(), getSocketTimeout())
         { }
 
       void Accept(const SslServer& listener);

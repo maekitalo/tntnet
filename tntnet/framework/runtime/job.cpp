@@ -26,19 +26,24 @@ log_define("tntnet.job");
 
 namespace tnt
 {
+  unsigned job::socket_timeout = 200;
+  unsigned job::keepalive_timeout = 15000;
+  unsigned job::keepalive_max = 100;
+  unsigned job::socket_buffer_size = 4096;
+
   job::~job()
   { }
 
   void job::clear()
   {
     parser.reset();
-    request.clear();
+    request = httpRequest();
     touch();
   }
 
   int job::msecToTimeout() const
   {
-    return (lastAccessTime - time(0) + 1) * 1000 + keepalive_timeout;
+    return (lastAccessTime - time(0) + 1) * 1000 + keepalive_timeout - socket_timeout;
   }
 
   ////////////////////////////////////////////////////////////////////////

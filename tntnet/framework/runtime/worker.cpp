@@ -102,11 +102,13 @@ namespace tnt
           else
           {
             j->getRequest().doPostParse();
-            keepAlive = processRequest(
+            unsigned keepAliveCount = processRequest(
               j->getRequest(), socket, j->decrementKeepAliveCounter());
-
-            if (keepAlive)
+            if (keepAliveCount > 0)
+            {
+              keepAlive = true;
               j->clear();
+            }
           }
         } while (keepAlive);
       }
@@ -120,8 +122,8 @@ namespace tnt
     log_info("end worker-thread " << threadNumber);
   }
 
-  bool worker::processRequest(httpRequest& request, std::iostream& socket,
-         bool keepAlive)
+  unsigned worker::processRequest(httpRequest& request, std::iostream& socket,
+         unsigned keepAliveCount)
   {
     // log message
     log_debug("process request: " << request.getMethod() << ' ' << request.getUrl());
@@ -130,19 +132,17 @@ namespace tnt
     httpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
     reply.setMethod(request.getMethod());
-    if (keepAlive && request.keepAlive())
-      reply.setHeader(httpMessage::Connection, httpMessage::Connection_Keep_Alive);
-    else
-      reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
+    reply.setKeepAliveHeader(job::getKeepAliveTimeout() / 1000, keepAliveCount);
 
     // process request
     try
     {
       try
       {
-        Dispatch(request, reply);
-        keepAlive = keepAlive && request.keepAlive() && reply.keepAlive();
-        if (keepAlive)
+        Dispatch(request, reply, keepAliveCount);
+        if (!request.keepAlive() || !reply.keepAlive())
+          keepAliveCount = 0;
+        if (keepAliveCount > 0)
           log_debug("keep alive");
         else
         {
@@ -184,10 +184,10 @@ namespace tnt
       return false;
     }
 
-    return keepAlive;
+    return keepAliveCount;
   }
 
-  void worker::Dispatch(httpRequest& request, httpReply& reply)
+  void worker::Dispatch(httpRequest& request, httpReply& reply, unsigned keepAliveCount)
   {
     const std::string& url = request.getUrl();
 
@@ -199,6 +199,7 @@ namespace tnt
     dispatcher::pos_type pos(ourdispatcher, request.getUrl());
     while (1)
     {
+      // pos.getNext() throws notFoundException at end
       dispatcher::compident_type ci = pos.getNext();
       try
       {
@@ -216,7 +217,8 @@ namespace tnt
           else
             log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
-          reply.sendReply(http_return);
+          reply.sendReply(http_return, keepAliveCount,
+            job::getKeepAliveTimeout() + 999 / 1000);
           return;
         }
         else

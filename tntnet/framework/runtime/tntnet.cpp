@@ -147,7 +147,7 @@ namespace tnt
 
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
-    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 1000);
+    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
     worker::setMinThreads(minthreads);
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
 
@@ -198,6 +198,21 @@ namespace tnt
         throw std::runtime_error(msg.str());
       }
     }
+  }
+
+  void tntnet::setDir() const
+  {
+    std::string dir = config.getValue("Dir", "/");
+    if (!dir.empty() && chdir(dir.c_str()) == -1)
+      throw std::runtime_error(
+        std::string("error in chdir(): ")
+          + strerror(errno));
+
+    std::string chrootdir = config.getValue("Chroot");
+    if (!chrootdir.empty() && chroot(chrootdir.c_str()) == -1)
+      throw std::runtime_error(
+        std::string("error in chroot(): ")
+          + strerror(errno));
   }
 
   void tntnet::setUser() const
@@ -303,10 +318,7 @@ namespace tnt
       {
         log_debug("start worker-process without monitor");
         writePidfile(getpid());
-        if (chdir("/") == -1)
-          throw std::runtime_error(
-            std::string("error in chdir(): ")
-              + strerror(errno));
+        setDir();
         workerProcess();
       }
       else
@@ -323,11 +335,7 @@ namespace tnt
           if (pid == 0)
           {
             // workerprocess
-            if (chdir("/") == -1)
-              throw std::runtime_error(
-                std::string("error in chdir(): ")
-                  + strerror(errno));
-
+            setDir();
             workerProcess();
             return -1;
           }
@@ -448,13 +456,10 @@ namespace tnt
 
 #ifdef USE_SSL
     // create ssl-listener-threads
-    std::string certificateFile = config.getValue("SslCertificate");
-    std::string certificateKey = config.getValue("SslKey", certificateFile);
+    std::string defaultCertificateFile = config.getValue("SslCertificate");
+    std::string defaultCertificateKey = config.getValue("SslKey");
     configListen.clear();
     config.getConfigValues("SslListen", configListen);
-
-    if (!configListen.empty() && certificateFile.empty())
-      throw std::runtime_error("SslCertificate not configured");
 
     for (tntconfig::config_entries_type::const_iterator it = configListen.begin();
          it != configListen.end(); ++it)
@@ -474,6 +479,16 @@ namespace tnt
           throw std::runtime_error(msg.str());
         }
       }
+
+      std::string certificateFile =
+        it->params.size() >= 3 ? it->params[2]
+                               : defaultCertificateFile;
+      std::string certificateKey =
+        it->params.size() >= 4 ? it->params[3]
+                               : defaultCertificateKey;
+
+      if (certificateFile.empty())
+        throw std::runtime_error("Ssl-certificate not configured");
 
       std::string ip(it->params[0]);
       log_debug("create ssl-listener ip=" << ip << " port=" << port);
@@ -499,8 +514,12 @@ namespace tnt
       }
     }
 
-    // configure http-message
+    // configure http
     httpMessage::setMaxRequestSize(config.getValue("MaxRequestSize", static_cast<unsigned>(0)));
+    job::setSocketTimeout(config.getValue("SocketTimeout", static_cast<unsigned>(200)));
+    job::setKeepAliveTimeout(config.getValue("KeepAliveTimeout", static_cast<unsigned>(15000)));
+    job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(100)));
+    job::setSocketBufferSize(config.getValue("BufferSize", static_cast<unsigned>(16384)));
 
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");
@@ -542,7 +561,8 @@ namespace tnt
       else
         log_warn("max worker-threadcount " << maxthreads << " reached");
 
-      usleep(threadstartdelay);
+      if (threadstartdelay > 0)
+        usleep(threadstartdelay);
     }
 
     // join-loop
@@ -573,6 +593,7 @@ namespace tnt
 
 int main(int argc, char* argv[])
 {
+  signal(SIGPIPE, SIG_IGN);
   std::ios::sync_with_stdio(false);
   //setlocale(LC_ALL, "");
 

@@ -1,5 +1,5 @@
 /* cookie.cpp
-   Copyright (C) 2003-2005 Tommi Maekitalo
+   Copyright (C) 2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -109,7 +109,6 @@ namespace tnt
 
   void cookies::set(const std::string& header)
   {
-    log_debug("parse cookies: " << header);
     cookie_parser parser(*this);
     parser.parse(header);
   }
@@ -174,7 +173,7 @@ namespace tnt
     for (std::string::const_iterator it = header.begin();
          it != header.end(); ++it)
     {
-      char ch = std::tolower(*it);
+      char ch = *it;
       switch(state)
       {
         case state_0:
@@ -187,7 +186,7 @@ namespace tnt
           else if (!std::isspace(ch))
           {
             attr = false;
-            name = ch;
+            name = std::tolower(ch);
             state = state_name;
           }
           break;
@@ -200,7 +199,7 @@ namespace tnt
           else if ((ch == ',' || ch == ';') && name == cookie::Secure)
             state = state_valuee;
           else
-            name += ch;
+            name += std::tolower(ch);
           break;
 
         case state_eq:

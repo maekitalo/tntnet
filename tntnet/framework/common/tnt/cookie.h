@@ -56,14 +56,20 @@ namespace tnt
         : secure(false)
       { }
 
-      cookie(const std::string& v)
+      cookie(const std::string& v, unsigned maxAge = 0)
         : value(v),
           secure(false)
-      { }
-      cookie(const char* v)
+      {
+        if (maxAge)
+          setMaxAge(maxAge);
+      }
+      cookie(const char* v, unsigned maxAge = 0)
         : value(v),
           secure(false)
-      { }
+      {
+        if (maxAge)
+          setMaxAge(maxAge);
+      }
 
       const std::string& getValue() const  { return value; }
 
@@ -86,7 +92,7 @@ namespace tnt
       std::string getExpires() const { return getAttr(Expires); }
       bool        isSecure() const   { return secure; }
 
-      void setMaxAge(unsigned value);
+      void setMaxAge(unsigned seconds);
       void setComment(const std::string& value)  { setAttr(Comment, value); }
       void setDomain(const std::string& value)   { setAttr(Domain, value); }
       void setPath(const std::string& value)     { setAttr(Path, value); }
@@ -102,6 +108,7 @@ namespace tnt
 
       typedef std::map<std::string, cookie> cookies_type;
       cookies_type data;
+
       static const cookie empty_cookie;
 
     public:

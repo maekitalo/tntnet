@@ -54,6 +54,7 @@ namespace tnt
       // helper methods
       void setUser() const;
       void setGroup() const;
+      void setDir() const;
       void mkDaemon() const;
       void closeStdHandles() const;
 

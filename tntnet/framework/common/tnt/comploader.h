@@ -85,9 +85,7 @@ namespace tnt
       static search_path_type search_path;
 
     public:
-      comploader(const tntconfig& config_)
-        : config(config_)
-        { }
+      comploader(const tntconfig& config_);
       virtual ~comploader();
 
       virtual component& fetchComp(const compident& compident,

@@ -37,14 +37,14 @@ namespace tnt
       current_outstream(&outstream)
   { }
 
-  void httpReply::sendReply(unsigned ret)
+  void httpReply::sendReply(unsigned ret, unsigned keepAliveCount, unsigned keepAliveTimeout)
   {
     if (!isDirectMode())
     {
       log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK");
       socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK" << "\r\n";
 
-      sendHeaders(keepAlive());
+      sendHeaders(keepAliveTimeout, keepAliveCount);
 
       socket << "\r\n";
       if (getMethod() == "HEAD")
@@ -59,7 +59,7 @@ namespace tnt
     socket.flush();
   }
 
-  void httpReply::sendHeaders(bool keepAlive)
+  void httpReply::sendHeaders(unsigned keepAliveTimeout, unsigned keepAliveMax)
   {
     if (!hasHeader(Date))
       setHeader(Date, htdate(time(0)));
@@ -67,10 +67,10 @@ namespace tnt
     if (!hasHeader(Server))
       setHeader(Server, ServerName);
 
-    if (keepAlive)
+    if (keepAliveTimeout > 0 && keepAliveMax > 0)
     {
       if (!hasHeader(Connection))
-        setKeepAliveHeader(15, 100);
+        setKeepAliveHeader(keepAliveTimeout, keepAliveMax);
 
       if (!hasHeader(Content_Length))
         setContentLengthHeader(outstream.str().size());
@@ -126,7 +126,7 @@ namespace tnt
     return HTTP_MOVED_TEMPORARILY;
   }
 
-  void httpReply::setDirectMode(bool keepAlive)
+  void httpReply::setDirectMode(unsigned keepAliveTimeout, unsigned keepAliveMax)
   {
     if (!isDirectMode())
     {
@@ -136,7 +136,7 @@ namespace tnt
       socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
              << " 200 OK\r\n";
 
-      sendHeaders(keepAlive);
+      sendHeaders(keepAliveTimeout, keepAliveMax);
 
       socket << "\r\n";
       if (getMethod() == "HEAD")

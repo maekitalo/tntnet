@@ -1,5 +1,5 @@
 /* comploader.cpp
-   Copyright (C) 2003 Tommi Maekitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/comploader.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 
 namespace tnt
@@ -34,7 +35,7 @@ component* component_library::create(
   const std::string& component_name, comploader& cl,
   const urlmapper& rootmapper)
 {
-  log_debug("create " << component_name);
+  log_debug("create \"" << component_name << '"');
 
   creator_type creator;
 
@@ -43,7 +44,7 @@ component* component_library::create(
   if (i == creatormap.end())
   {
     // creatorsymbol not known - load it
-    log_info("lookup symbol create_" << component_name);
+    log_info("lookup symbol \"create_" << component_name << '"');
 
     creator = (creator_type)sym(("create_" + component_name).c_str()).getSym();
     creatormap.insert(creatormap_type::value_type(component_name, creator));
@@ -53,13 +54,29 @@ component* component_library::create(
 
   // call the creator-function
   compident ci = compident(libname, component_name);
-  log_info("create " << ci);
+  log_info("create \"" << ci << '"');
+
   return creator(ci, rootmapper, cl);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // comploader
 //
+comploader::comploader(const tntconfig& config_)
+  : config(config_)
+{
+  tntconfig::config_entries_type configLoad;
+  config.getConfigValues("Load", configLoad);
+
+  for (tntconfig::config_entries_type::const_iterator it = configLoad.begin();
+       it != configLoad.end(); ++it)
+  {
+    if (it->params.empty())
+      throw std::runtime_error("missing libraryname in Load-command");
+    fetchLib(it->params[0]);
+  }
+}
+
 comploader::~comploader()
 {
   for (componentmap_type::iterator i = componentmap.begin();
@@ -74,7 +91,7 @@ comploader::search_path_type comploader::search_path;
 component& comploader::fetchComp(const compident& ci,
   const urlmapper& rootmapper)
 {
-  log_debug("fetchComp " << ci.toString());
+  log_debug("fetchComp \"" << ci << '"');
 
   cxxtools::RdLock lock(componentMonitor);
 
@@ -129,7 +146,7 @@ component_library& comploader::fetchLib(const std::string& libname)
     if (i == librarymap.end())
     {
       // load library
-      log_info("load library " << libname);
+      log_info("load library \"" << libname << '"');
       component_library lib;
 
       bool found = false;
@@ -138,7 +155,7 @@ component_library& comploader::fetchLib(const std::string& libname)
       {
         try
         {
-          log_debug("load library " << libname << " from " << *p << " dir");
+          log_debug("load library \"" << libname << "\" from " << *p << " dir");
           lib = component_library(*p, libname);
           found = true;
           break;
@@ -152,12 +169,12 @@ component_library& comploader::fetchLib(const std::string& libname)
       {
         try
         {
-          log_debug("load library " << libname << " from current dir");
+          log_debug("load library \"" << libname << "\" from current dir");
           lib = component_library(".", libname);
         }
-        catch (const cxxtools::dl::dlopen_error&)
+        catch (const cxxtools::dl::dlopen_error& e)
         {
-          log_debug("library in current dir not found - search lib-path");
+          log_debug("library \"" << e.getLibname() << "\" in current dir not found - search lib-path");
           lib = component_library(libname);
         }
       }
