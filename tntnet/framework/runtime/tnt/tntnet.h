@@ -9,6 +9,7 @@
 #include "tnt/tntconfig.h"
 #include "tnt/job.h"
 #include <set>
+#include "tnt/log.h"
 
 namespace tnt
 {
@@ -53,6 +54,8 @@ namespace tnt
 
       void monitorProcess(int workerPid);
       void workerProcess();
+
+      log_declare_class("tntnet.tntnet");
 
     public:
       tntnet(int argc, char* argv[]);
