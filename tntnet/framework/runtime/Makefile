@@ -4,7 +4,7 @@ all : tntnet
 
 BINDIR = $(DESTDIR)/bin
 CXXFLAGS=-Wall -O2 -I. -I../common $(LOCAL_CXXFLAGS)
-LDFLAGS=-rdynamic -Wl,-E -L../common -lpthread -ltntnet -lboost_regex-gcc -lssl $(LOCAL_LDFLAGS)
+LDFLAGS=-rdynamic -Wl,-E -L../common -lpthread -ltntnet -lboost_regex-gcc-mt -lssl $(LOCAL_LDFLAGS)
 SRCS = \
 	dispatcher.cpp \
 	job.cpp \
