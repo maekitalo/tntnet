@@ -1,0 +1,6 @@
+
+/* check for log4cplus loggertype=log4cplus LDFLAGS=-llog4cplus */
+#undef HAVE_LOG4CPLUS
+
+/* check for log4cxx */
+#undef HAVE_LOG4CXX
