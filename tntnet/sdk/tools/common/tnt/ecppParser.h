@@ -37,11 +37,16 @@ class ecppParser
     bool debug;
     bool splitBar;
 
+    char split_start;
+    char split_end;
+
   public:
     ecppParser()
       : inComp(false),
         debug(false),
-        splitBar(false)
+        splitBar(false),
+        split_start('{'),
+        split_end('}')
     { }
     virtual ~ecppParser()
     { }
@@ -53,6 +58,15 @@ class ecppParser
 
     void setSplitBar(bool sw = true)  { splitBar = sw; }
     bool isSplitBar() const           { return splitBar; }
+
+    void setSplitChars(char start, char end)
+    {
+      split_start = start;
+      split_end = end;
+    }
+
+    char getSplitStartChar() const  { return split_start; }
+    char getSplitEndChar() const    { return split_end; }
 
   protected:
     typedef std::multimap<std::string, std::string> comp_args_type;

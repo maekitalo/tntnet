@@ -22,11 +22,6 @@ Boston, MA  02111-1307  USA
 #include "tnt/ecppParser.h"
 #include <sstream>
 
-//static const char split_start = '«'
-//static const char split_end = '»'
-static const char split_start = '{';
-static const char split_end = '}';
-
 namespace tnt
 {
 

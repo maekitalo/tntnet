@@ -108,7 +108,18 @@ void ecppll::print(std::ostream& out, const std::string& compname)
 {
   for (data_type::const_iterator it = data.begin();
        it != data.end(); ++it)
-    out << '{' << *it << '}';
+  {
+    out << getSplitStartChar();
+    for (data_type::const_iterator::value_type::const_iterator n = it->begin();
+         n != it->end(); ++n)
+    {
+      if (*n == getSplitStartChar()
+       || *n == getSplitEndChar())
+        out << '\\';
+      out << *n;
+    }
+    out << getSplitEndChar();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -376,6 +387,7 @@ int main(int argc, char* argv[])
     arg<const char*> compname(argc, argv, 'n', "component");
     arg<bool> textformat(argc, argv, 't');
     arg<bool> fail_on_warn(argc, argv, 'F');
+    arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 3)
     {
@@ -383,18 +395,21 @@ int main(int argc, char* argv[])
                    " -t           Textformat\n"
                    " -o outfile   Ausagedatei\n"
                    " -n compname  Komponentenname\n"
-                   " -F           Warnungen als Fehler\n";
+                   " -F           Warnungen als Fehler\n"
+                   " --split-chars zz setze alternative Teilungszeichen\n";
       return 1;
     }
 
+    // open source
     std::ifstream ecpp(argv[1]);
     if (!ecpp)
     {
-      std::cerr << "Fehler beim öffnen der ecpp-Datei \"" << argv[1] << '"'
+      std::cerr << "Fehler beim öffnen der Quelldatei \"" << argv[1] << '"'
         << std::endl;
       return 2;
     }
 
+    // open translationfile
     std::ifstream txt(argv[2]);
     if (!ecpp)
     {
@@ -403,6 +418,7 @@ int main(int argc, char* argv[])
       return 3;
     }
 
+    // create and initialize applicationobject
     std::auto_ptr<ecppll> app;
 
     if (textformat)
@@ -413,8 +429,22 @@ int main(int argc, char* argv[])
     app->setFailOnWarn(fail_on_warn);
     app->readReplaceTokens(txt);
     app->setSplitBar();
+
+    if (splitChars.isSet())
+    {
+      if (splitChars.getValue()[0] == '\0'
+       || splitChars.getValue()[1] == '\0'
+       || splitChars.getValue()[2] != '\0')
+        throw std::runtime_error("--split-chars needs exactly 2 characters");
+
+      app->setSplitChars(splitChars.getValue()[0],
+                         splitChars.getValue()[1]);
+    }
+
+    // parse
     app->parse(ecpp);
 
+    // process
     if (ofile.isSet())
     {
       std::ofstream out(ofile);
@@ -428,5 +458,6 @@ int main(int argc, char* argv[])
   catch (const std::exception& e)
   {
     std::cerr << e.what() << std::endl;
+    return -1;
   }
 }

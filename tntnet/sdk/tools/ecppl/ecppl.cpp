@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
     arg<bool> nolang(argc, argv, 'n');
     arg<const char*> ofile(argc, argv, 'o');
     arg<bool> textformat(argc, argv, 't');
+    arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 2)
     {
@@ -46,7 +47,9 @@ int main(int argc, char* argv[])
            "  -t             Textformat\n"
            "  -o Dateiname   Ausgabedatei\n"
            "  -n             nolang\n"
-           "  -l             lang (default)\n";
+           "  -l             lang (default)\n"
+           "  --split-chars zz setze alternative Teilungszeichen\n"
+        << std::endl;
       return -1;
     }
 
@@ -55,6 +58,16 @@ int main(int argc, char* argv[])
     ecpplang generator;
     generator.setDebug(debug);
     generator.setSplitBar();
+    if (splitChars.isSet())
+    {
+      if (splitChars.getValue()[0] == '\0'
+       || splitChars.getValue()[1] == '\0'
+       || splitChars.getValue()[2] != '\0')
+        throw std::runtime_error("--split-chars needs exactly 2 characters");
+
+      generator.setSplitChars(splitChars.getValue()[0],
+                              splitChars.getValue()[1]);
+    }
     generator.setLang(lang || !nolang);
     generator.setNoLang(nolang);
     generator.setTextformat(textformat);
