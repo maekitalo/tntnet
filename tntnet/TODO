@@ -1,7 +1,7 @@
 - cgi.so
 - sauberes Beenden
 - entladen von shared libs
-- dynamische Threaderzeugung/-beendigung
+- dynamische Threadbeendigung
 - ranges
 
 doc:
