@@ -158,6 +158,8 @@ namespace tnt
       void setContentLengthHeader(size_t size);
       void setKeepAliveHeader(bool keepAlive = true)
         { setHeader(Connection, keepAlive ? Connection_Keep_Alive : Connection_close); }
+      void removeHeader(const std::string& key)
+        { header.erase(key); }
 
       std::string dumpHeader() const;
       void dumpHeader(std::ostream& out) const;
