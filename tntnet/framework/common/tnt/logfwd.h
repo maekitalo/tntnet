@@ -31,15 +31,10 @@ Boston, MA  02111-1307  USA
 
 #include <log4cxx/logger.h>
 
-#define log_declare_namespace(ns)  \
-  namespace ns { log4cxx::LoggerPtr getLogger(); }
-
+#define log_declare()  \
+  extern log4cxx::LoggerPtr getLogger()
 #define log_declare_class()  \
   static log4cxx::LoggerPtr getLogger()
-
-#define log_declare_class_ns(ns)   \
-  static log4cxx::LoggerPtr getLogger()
-   { return ns::getLogger(); }
 
 #endif
 
@@ -54,15 +49,10 @@ namespace log4cplus
   Logger getLogger();
 };
 
-#define log_declare_namespace(ns)   \
-  namespace ns { log4cplus::Logger getLogger(); }
-
+#define log_declare()   \
+  extern log4cplus::Logger getLogger()
 #define log_declare_class()   \
   static log4cplus::Logger getLogger()
-
-#define log_declare_class_ns(ns)   \
-  static log4cplus::Logger getLogger() \
-   { return ns::getLogger(); }
 
 #endif
 
@@ -72,16 +62,14 @@ namespace log4cplus
 //
 
 
-#define log_declare_namespace(ns)
 #define log_declare_class()
-#define log_declare_class_ns()
 
 #endif
 
-log_declare_namespace(tnt);
-log_declare_namespace(tntcomp);
-log_declare_namespace(ecpp_component);
-log_declare_namespace(compcall);
+namespace tnt            { log_declare(); }
+namespace tntcomp        { log_declare(); }
+namespace ecpp_component { log_declare(); }
+namespace compcall       { log_declare(); }
 
 #endif // TNT_LOGFWD_H
 

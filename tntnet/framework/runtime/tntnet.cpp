@@ -166,7 +166,7 @@ namespace tnt
   log_define_class(tntnet, "tntnet.tntnet");
 
   tntnet::tntnet(int argc, char* argv[])
-    : arg_numthreads(argc, argv, 't', 5),
+    : arg_numthreads(argc, argv, 't', 2),
       conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
@@ -623,8 +623,7 @@ namespace tnt
 // main
 //
 
-#define NO_NAMESPACE
-log_define_namespace(NO_NAMESPACE, "main")
+log_define_static("main")
 
 int main(int argc, char* argv[])
 {

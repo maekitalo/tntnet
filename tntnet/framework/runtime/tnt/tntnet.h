@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef TNTNET_H
-#define TNTNET_H
+#ifndef TNT_TNTNET_H
+#define TNT_TNTNET_H
 
 #include <cxxtools/arg.h>
 #include "tnt/tntconfig.h"
@@ -77,5 +77,5 @@ namespace tnt
 
 }
 
-#endif // TNTNET_H
+#endif // TNT_TNTNET_H
 

@@ -21,10 +21,10 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/log.h>
 
-log_define_namespace(tnt, "tntnet");
-log_define_namespace(tntcomp, "tntcomp");
-log_define_namespace(ecpp_component, "component");
-log_define_namespace(compcall, "compcall");
+namespace tnt            { log_define("tntnet"); }
+namespace tntcomp        { log_define("tntcomp"); }
+namespace ecpp_component { log_define("component"); }
+namespace compcall       { log_define("compcall"); }
 
 #ifdef TNTNET_USE_LOG4CXX
 

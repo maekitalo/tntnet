@@ -61,23 +61,16 @@ namespace tnt
 
 #define log_trace_ns(ns, event)  ::tnt::log4cxx_tracer log4cxx_trace_logger(ns::getLogger(), event)
 
-/// Makros zum definieren von Loggingkategorien pro Namespace
-
-#define log_define_namespace(ns, category) \
-  namespace ns \
-  { \
-    ::log4cxx::LoggerPtr getLogger()  \
-    {  \
-      static const ::std::string log_category = category;  \
-      return ::log4cxx::Logger::getLogger(log_category); \
-    } \
-  }
-#define log_declare_class_inline(category) \
+#define log_define(category) \
   static log4cxx::LoggerPtr getLogger()   \
   {  \
     static const std::string log_category = category;  \
     return ::log4cxx::Logger::getLogger(log_category); \
   }
+
+#define log_define_static(category) \
+  static log_define(category)
+
 #define log_define_class(classname, category) \
   log4cxx::LoggerPtr classname::getLogger()   \
   {  \
@@ -110,24 +103,16 @@ namespace tnt
 
 /// Makros zum definieren von Loggingkategorien pro Namespace
 
-#define log_define_namespace(ns, category)  \
-  namespace ns \
-  { \
-    log4cplus::Logger getLogger()  \
-    {  \
-      static const std::string log_category = category;  \
-      log4cplus::Logger tntlogger = log4cplus::Logger::getInstance(log_category);  \
-      return tntlogger;  \
-    } \
-  }
-
-#define log_declare_class_inline(category)   \
-  static log4cplus::Logger getLogger()   \
+#define log_define(category)   \
+  log4cplus::Logger getLogger()   \
   {  \
     static const std::string log_category = category;  \
     log4cplus::Logger tntlogger = log4cplus::Logger::getInstance(log_category);  \
     return tntlogger;  \
   }
+
+#define log_define_static(category) \
+  static log_define(category)
 
 #define log_define_class(classname, category)   \
   log4cplus::Logger classname::getLogger()   \
@@ -159,8 +144,8 @@ namespace tnt
 
 /// Makros zum definieren von Loggingkategorien pro Namespace
 
-#define log_define_namespace(ns, category)
-#define log_declare_class_inline(category)
+#define log_define(category)
+#define log_define_static(category)
 #define log_define_class(classname, category)
 
 #endif
