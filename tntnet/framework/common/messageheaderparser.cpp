@@ -24,6 +24,18 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  namespace
+  {
+    std::string chartoprint(char ch)
+    {
+      const static char hex[] = "0123456789abcdef";
+      if (std::isprint(ch))
+        return std::string(1, '\'') + ch + '\'';
+      else
+        return std::string("'\\x") + hex[ch >> 4] + hex[ch & 0xf] + '\'';
+    }
+  }
+
   log_define("tntnet.messageheader.parser");
 
   #define SET_STATE(new_state)  state = &parser::new_state
@@ -41,6 +53,7 @@ namespace tnt
       SET_STATE(state_cr);
     else if (!std::isspace(ch))
     {
+      log_warn("invalid character " << chartoprint(ch));
       failed_flag = true;
       return true;
     }
@@ -51,7 +64,10 @@ namespace tnt
   bool messageheader::parser::state_cr(char ch)
   {
     if (ch != '\n')
+    {
+      log_warn("invalid character " << chartoprint(ch) << " in state-cr");
       failed_flag = true;
+    }
     return failed();
   }
 
@@ -68,6 +84,7 @@ namespace tnt
       SET_STATE(state_fieldnamespace);
     else
     {
+      log_warn("invalid character " << chartoprint(ch) << " in fieldname");
       failed_flag = true;
       return true;
     }
@@ -85,6 +102,7 @@ namespace tnt
     }
     else if (!std::isspace(ch))
     {
+      log_warn("invalid character " << chartoprint(ch) << " in fieldname-space");
       failed_flag = true;
       return true;
     }
@@ -122,6 +140,7 @@ namespace tnt
       SET_STATE(state_fieldbody_crlf);
     else
     {
+      log_warn("invalid character " << chartoprint(ch) << " in fieldbody-cr");
       failed_flag = true;
       return true;
     }
@@ -141,6 +160,7 @@ namespace tnt
         case END:  return true;
                    break;
         case FAIL: failed_flag = true;
+                   log_warn("invalid character " << chartoprint(ch) << " in fieldbody");
                    break;
       }
       fieldname.clear();
@@ -159,6 +179,7 @@ namespace tnt
         case OK:   SET_STATE(state_fieldname);
                    break;
         case FAIL: failed_flag = true;
+                   log_warn("invalid character " << chartoprint(ch) << " in fieldbody");
                    break;
         case END:  return true;
                    break;
@@ -174,7 +195,10 @@ namespace tnt
     if (ch == '\n')
     {
       if (header.onField(fieldname, fieldbody) == FAIL)
+      {
+        log_warn("invalid header " << fieldname << ' ' << fieldbody);
         failed_flag = true;
+      }
 
       fieldname.clear();
       fieldbody.clear();
@@ -182,9 +206,16 @@ namespace tnt
     }
     else
     {
+      log_warn("invalid character " << chartoprint(ch) << " in end-cr");
       failed_flag = true;
       return true;
     }
     return false;
+  }
+
+  void messageheader::parser::reset()
+  {
+    failed_flag = false;
+    SET_STATE(state_0);
   }
 }

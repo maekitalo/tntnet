@@ -62,7 +62,7 @@ namespace tnt
           requestSize(0)
         { }
 
-      void clear();
+      void reset();
   };
 }
 

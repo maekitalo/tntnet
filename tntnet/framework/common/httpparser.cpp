@@ -28,15 +28,28 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  namespace
+  {
+    std::string chartoprint(char ch)
+    {
+      const static char hex[] = "0123456789abcdef";
+      if (std::isprint(ch))
+        return std::string(1, '\'') + ch + '\'';
+      else
+        return std::string("'\\x") + hex[ch >> 4] + hex[ch & 0xf] + '\'';
+    }
+  }
+
   log_define("tntnet.httpmessage.parser");
 
-  void httpMessage::parser::clear()
+  void httpMessage::parser::reset()
   {
     message.clear();
     SET_STATE(state_cmd0);
     httpCode = HTTP_OK;
     failed_flag = false;
     requestSize = 0;
+    headerParser.reset();
   }
 
   bool httpMessage::parser::state_cmd0(char ch)
@@ -72,6 +85,7 @@ namespace tnt
       }
       else
       {
+        log_warn("invalid character " << chartoprint(ch) << " in url");
         httpCode = HTTP_BAD_REQUEST;
         failed_flag = true;
       }
@@ -95,6 +109,7 @@ namespace tnt
       message.url += ch;
     else
     {
+      log_warn("invalid character " << chartoprint(ch) << " in url");
       httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
     }
@@ -119,6 +134,7 @@ namespace tnt
       SET_STATE(state_version_major);
     else if (ch == '\r')
     {
+      log_warn("invalid character " << chartoprint(ch) << " in version");
       httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
     }
@@ -133,6 +149,7 @@ namespace tnt
       message.major_version = message.major_version * 10 + (ch - '0');
     else
     {
+      log_warn("invalid character " << chartoprint(ch) << " in version-major");
       httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
     }
@@ -149,6 +166,7 @@ namespace tnt
       message.minor_version = message.minor_version * 10 + (ch - '0');
     else
     {
+      log_warn("invalid character " << chartoprint(ch) << " in version-minor");
       httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
     }
@@ -161,6 +179,7 @@ namespace tnt
       SET_STATE(state_header);
     else if (!std::isspace(ch))
     {
+      log_warn("invalid character " << chartoprint(ch) << " in end");
       httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
     }

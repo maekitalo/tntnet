@@ -1,5 +1,5 @@
 /* tnt/messageheaderparser.h
-   Copyright (C) 2003 Tommi MÃ¤kitalo
+   Copyright (C) 2003 Tommi Mae¤kitalo
 
 This file is part of tntnet.
 
@@ -48,6 +48,8 @@ namespace tnt
         : tnt::parser<parser>(&parser::state_0),
           header(header_)
           { }
+
+      void reset();
   };
 }
 

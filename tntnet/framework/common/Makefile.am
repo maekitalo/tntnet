@@ -30,6 +30,7 @@ nobase_include_HEADERS = \
 	tnt/data.h \
 	tnt/http.h \
 	tnt/httperror.h \
+	tnt/httpmessage.h \
 	tnt/httpparser.h \
 	tnt/httprequest.h \
 	tnt/httpreply.h \
