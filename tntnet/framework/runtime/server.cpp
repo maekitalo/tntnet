@@ -1,5 +1,5 @@
 /* server.cpp
-   Copyright (C) 2003 Tommi Maekitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -22,7 +22,10 @@ Boston, MA  02111-1307  USA
 #include "tnt/server.h"
 #include "tnt/dispatcher.h"
 #include "tnt/job.h"
+#include <tnt/httprequest.h>
+#include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <tnt/poller.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.server");
@@ -50,8 +53,9 @@ namespace tnt
   unsigned server::compLifetime = 60;
 
   server::server(jobqueue& q, const dispatcher& d,
-    comploader::load_library_listener* libconfigurator)
+    poller& p, comploader::load_library_listener* libconfigurator)
     : queue(q),
+      mypoller(p),
       ourdispatcher(d),
       threadNumber(++nextThreadNumber)
   {
@@ -67,106 +71,117 @@ namespace tnt
     log_debug("start thread " << threadNumber);
     while (1)
     {
+      log_debug("waiting for job");
       jobqueue::job_ptr j = queue.get();
+      log_debug("got job; fd=" << j->getFd());
+
       std::iostream& socket = j->getStream();
 
       try
       {
-        try
+        bool keepAlive;
+        do
         {
-          bool keepAlive;
-          unsigned keepAliveCount = 10;
-          do
+          keepAlive = false;
+          log_debug("call parser");
+          j->getParser().parse(socket);
+
+          if (socket.eof())
+            log_debug("eof");
+          else if (j->getParser().failed())
+            log_error("end parser");
+          else if (socket.fail())
+            log_error("socket failed");
+          else
           {
-            keepAlive = false;
-            httpRequest request;
-            socket >> request;
+            j->getRequest().doPostParse();
+            keepAlive = processRequest(
+              j->getRequest(), socket, j->decrementKeepAliveCounter());
 
-            if (!socket.good())
-            {
-              if (socket.fail())
-                log_warn("stream error");
-              else if (socket.eof())
-                log_debug("eof");
-              break;
-            }
-
-            log_debug("request: " << request.getMethod() << ' ' << request.getUrl());
-            for (httpMessage::header_type::const_iterator it = request.header_begin();
-                 it != request.header_end(); ++it)
-              log_debug(it->first << ' ' << it->second);
-
-            request.setPeerAddr(j->getPeeraddr_in());
-            request.setServerAddr(j->getServeraddr_in());
-            request.setSsl(j->isSsl());
-
-            httpReply reply(socket);
-            reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
-            reply.setMethod(request.getMethod());
-            if (request.keepAlive())
-              reply.setHeader(httpMessage::Connection, httpMessage::Connection_Keep_Alive);
-            else
-              reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
-
-            try
-            {
-              Dispatch(request, reply);
-              keepAlive = socket
-                       && --keepAliveCount > 0
-                       && request.keepAlive()
-                       && reply.keepAlive();
-              if (keepAlive)
-                log_debug("keep alive");
-              else
-              {
-                log_debug("no keep alive request/reply="
-                    << request.keepAlive() << '/' << reply.keepAlive());
-                reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
-              }
-            }
-            catch (const cxxtools::dl::dlopen_error& e)
-            {
-              log_warn("dl::dlopen_error catched");
-              throw notFoundException(e.getLibname());
-            }
-            catch (const cxxtools::dl::symbol_not_found& e)
-            {
-              log_warn("dl::symbol_not_found catched");
-              throw notFoundException(e.getSymbol());
-            }
-            catch (const httpError& e)
-            {
-              throw;
-            }
-            catch (const std::exception& e)
-            {
-              throw httpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
-            }
-
-          } while (keepAlive);
-        }
-        catch (const httpError& e)
-        {
-          log_warn("http-Error: " << e.what());
-          socket << "HTTP/1.0 " << e.what()
-                 << "\r\n\r\n"
-                 << "<html><body><h1>Error</h1><p>"
-                 << e.what() << "</p></body></html>" << std::endl;
-        }
+            if (keepAlive)
+              j->clear();
+          }
+        } while (keepAlive);
       }
       catch (const cxxtools::tcp::Timeout& e)
       {
-        log_debug("Timeout");
+        log_debug("timeout - put job in poller");
+        mypoller.addIdleJob(j);
+      }
+    }
+  }
+
+  bool server::processRequest(httpRequest& request, std::iostream& socket,
+         bool keepAlive)
+  {
+    // log message
+    log_debug("process request: " << request.getMethod() << ' ' << request.getUrl());
+
+    /*
+    for (httpMessage::header_type::const_iterator it = request.header_begin();
+         it != request.header_end(); ++it)
+      log_debug(it->first << ' ' << it->second);
+      */
+
+    // create reply-object
+    httpReply reply(socket);
+    reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
+    reply.setMethod(request.getMethod());
+    if (keepAlive && request.keepAlive())
+      reply.setHeader(httpMessage::Connection, httpMessage::Connection_Keep_Alive);
+    else
+      reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
+
+    // process request
+    try
+    {
+      try
+      {
+        Dispatch(request, reply);
+        keepAlive = keepAlive && request.keepAlive() && reply.keepAlive();
+        if (keepAlive)
+          log_debug("keep alive");
+        else
+        {
+          log_debug("no keep alive request/reply="
+              << request.keepAlive() << '/' << reply.keepAlive());
+        }
+      }
+      catch (const cxxtools::dl::dlopen_error& e)
+      {
+        log_warn("dl::dlopen_error catched");
+        throw notFoundException(e.getLibname());
+      }
+      catch (const cxxtools::dl::symbol_not_found& e)
+      {
+        log_warn("dl::symbol_not_found catched");
+        throw notFoundException(e.getSymbol());
+      }
+      catch (const httpError& e)
+      {
+        throw;
       }
       catch (const std::exception& e)
       {
-        log_error(e.what());
+        throw httpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
       }
     }
+    catch (const httpError& e)
+    {
+      log_warn("http-Error: " << e.what());
+      socket << "HTTP/1.0 " << e.what()
+             << "\r\n\r\n"
+             << "<html><body><h1>Error</h1><p>"
+             << e.what() << "</p></body></html>" << std::endl;
+      return false;
+    }
+    catch (const std::exception& e)
+    {
+      log_error(e.what());
+      return false;
+    }
 
-    log_debug("stop server thread");
-    cxxtools::MutexLock lock(mutex);
-    servers.erase(this);
+    return keepAlive;
   }
 
   void server::Dispatch(httpRequest& request, httpReply& reply)

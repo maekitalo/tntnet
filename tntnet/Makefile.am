@@ -8,6 +8,7 @@ SUBDIRS = \
     sdk/tools/ecppl \
     sdk/tools/ecppll \
     sdk/demos/calc \
+    sdk/demos/hello \
     etc
 
 EXTRA_DIST = ecpp.vim \

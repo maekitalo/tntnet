@@ -1,5 +1,5 @@
 /* tntnet.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -167,12 +167,13 @@ namespace tnt
   std::string tntnet::pidFileName;
 
   tntnet::tntnet(int argc, char* argv[])
-    : arg_numthreads(argc, argv, 't', 2),
+    : arg_numthreads(argc, argv, 't', 5),
       conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
       arg_lifetime(argc, argv, 'C', 60),
-      arg_pidfile(argc, argv, 'p')
+      arg_pidfile(argc, argv, 'p'),
+      pollerthread(queue)
   {
     if (argc != 1)
     {
@@ -599,9 +600,13 @@ namespace tnt
     for (unsigned i = 0; i < numthreads; ++i)
     {
       log_debug("create server " << i);
-      server* s = new server(queue, dispatcher, &myconfigurator);
+      server* s = new server(queue, dispatcher, pollerthread, &myconfigurator);
       s->Create();
     }
+
+    // create poller-thread
+    log_debug("start poller thread");
+    pollerthread.Create();
 
     log_debug("start cleaner thread");
     cxxtools::FunctionThread<void ()> cleaner_thread(server::CleanerThread);
@@ -615,7 +620,7 @@ namespace tnt
       }
 
       log_info("create server");
-      server* s = new server(queue, dispatcher, &myconfigurator);
+      server* s = new server(queue, dispatcher, pollerthread, &myconfigurator);
       s->Create();
     }
 

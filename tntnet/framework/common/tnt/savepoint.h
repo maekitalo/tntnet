@@ -22,7 +22,7 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_SAVEPOINT_H
 #define TNT_SAVEPOINT_H
 
-#include <tnt/http.h>
+#include <tnt/httpreply.h>
 
 namespace tnt
 {

@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/arg.h>
 #include "tnt/tntconfig.h"
 #include "tnt/job.h"
+#include "tnt/poller.h"
 #include <set>
 
 namespace tnt
@@ -47,6 +48,8 @@ namespace tnt
       static bool stop;
       typedef std::set<cxxtools::Thread*> listeners_type;
       listeners_type listeners;
+
+      poller pollerthread;
 
       static std::string pidFileName;
 

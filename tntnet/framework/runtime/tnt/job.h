@@ -1,5 +1,5 @@
 /* tnt/job.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -27,6 +27,9 @@ Boston, MA  02111-1307  USA
 #include <deque>
 #include <cxxtools/thread.h>
 #include <cxxtools/tcpstream.h>
+#include <tnt/httprequest.h>
+#include <tnt/httpparser.h>
+#include <time.h>
 
 #ifdef USE_SSL
 #  include "tnt/ssl.h"
@@ -59,52 +62,68 @@ void server::Run()
 
 namespace tnt
 {
+  static const unsigned socket_timeout = 200;
+  static const unsigned keepalive_timeout = 15000;
+
   /** job - one per request */
   class job
   {
+      unsigned keepAliveCounter;
+
+      httpRequest request;
+      httpMessage::parser parser;
+      time_t lastAccessTime;
+
     public:
-      virtual ~job() { }
+      job()
+        : parser(request),
+          keepAliveCounter(10),
+          lastAccessTime(0)
+        { }
+      virtual ~job();
+
       virtual std::iostream& getStream() = 0;
-      virtual const struct sockaddr_in& getPeeraddr_in() const = 0;
-      virtual const struct sockaddr_in& getServeraddr_in() const = 0;
-      virtual bool isSsl() const = 0;
+      virtual int getFd() const = 0;
+
+      httpRequest& getRequest()         { return request; }
+      httpMessage::parser& getParser()  { return parser; }
+
+      bool decrementKeepAliveCounter()
+        { return keepAliveCounter > 0 && --keepAliveCounter > 0; }
+      void clear();
+      void touch()     { time(&lastAccessTime); }
+      int msecToTimeout() const;
   };
 
   class tcpjob : public job
   {
       cxxtools::tcp::iostream socket;
-      struct sockaddr_in sockaddr_in;
 
     public:
       tcpjob()
-        : socket(1024, 15000)
+        : socket(1024, socket_timeout)
         { }
 
       void Accept(const cxxtools::tcp::Server& listener);
 
       std::iostream& getStream();
-      const struct sockaddr_in& getPeeraddr_in() const;
-      const struct sockaddr_in& getServeraddr_in() const;
-      bool isSsl() const     { return false; }
+      int getFd() const;
   };
 
 #ifdef USE_SSL
   class ssl_tcpjob : public job
   {
       ssl_iostream socket;
-      struct sockaddr_in sockaddr_in;
 
     public:
       ssl_tcpjob()
-        : socket(1024, 15000)
+        : socket(1024, socket_timeout)
         { }
 
       void Accept(const SslServer& listener);
 
       std::iostream& getStream();
-      const struct sockaddr_in& getPeeraddr_in() const;
-      const struct sockaddr_in& getServeraddr_in() const;
-      bool isSsl() const     { return true; }
+      int getFd() const;
   };
 #endif // USE_SSL
 

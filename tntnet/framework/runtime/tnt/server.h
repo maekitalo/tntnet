@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef TNT_SERVER_H
+#define TNT_SERVER_H
 
 #include <string>
 #include <cxxtools/tcpstream.h>
@@ -33,6 +33,7 @@ namespace tnt
   class httpReply;
   class dispatcher;
   class jobqueue;
+  class poller;
 
   class server : public cxxtools::Thread
   {
@@ -40,6 +41,7 @@ namespace tnt
       static unsigned nextThreadNumber;
 
       jobqueue& queue;
+      poller& mypoller;
 
       const dispatcher& ourdispatcher;
       comploader mycomploader;
@@ -51,9 +53,11 @@ namespace tnt
 
       static unsigned compLifetime;
 
+      bool processRequest(httpRequest& request, std::iostream& socket, bool keepAlive);
+
     public:
       server(jobqueue& queue, const dispatcher& dispatcher,
-        comploader::load_library_listener* libconfigurator);
+        poller& poller, comploader::load_library_listener* libconfigurator);
 
       virtual void Run();
 
@@ -72,5 +76,5 @@ namespace tnt
   };
 }
 
-#endif // SERVER_H
+#endif // TNT_SERVER_H
 

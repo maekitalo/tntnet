@@ -1,5 +1,5 @@
 /* ssl.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maeitalo
 
 This file is part of tntnet.
 
@@ -23,14 +23,14 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/thread.h>
 #include <openssl/err.h>
 #include <cxxtools/log.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/poll.h>
 
 log_define("tntnet.ssl");
 
 namespace tnt
 {
-  static bool initialized = false;
-  static cxxtools::Mutex mutex;
-
   static void checkSslError()
   {
     unsigned long code = ERR_get_error();
@@ -46,6 +46,9 @@ namespace tnt
 
   static void ssl_init()
   {
+    static bool initialized = false;
+    static cxxtools::Mutex mutex;
+
     if (!initialized)
     {
       cxxtools::MutexLock lock(mutex);
@@ -108,13 +111,18 @@ namespace tnt
   SslStream::SslStream()
     : ssl(0)
   {
+    ssl_init();
   }
 
   SslStream::SslStream(const SslServer& server)
-    : ssl( SSL_new( server.getSslContext() ) )
+    : ssl(0)
   {
+    ssl_init();
+
+    ssl = SSL_new( server.getSslContext() );
     checkSslError();
 
+    SSL_set_accept_state(ssl);
     SSL_set_fd(ssl, getFd());
 
     SSL_accept(ssl);
@@ -129,6 +137,7 @@ namespace tnt
 
   void SslStream::Accept(const SslServer& server)
   {
+    log_debug("accept");
     Stream::Accept(server);
 
     log_debug("tcp-connection established - build ssltunnel");
@@ -137,17 +146,53 @@ namespace tnt
 
     SSL_set_fd(ssl, getFd());
 
+    SSL_set_accept_state(ssl);
     SSL_accept(ssl);
     checkSslError();
+
+    setTimeout(getTimeout());
 
     log_debug("ssl-connection ready");
   }
 
-  int SslStream::SslRead(char* buffer, int bufsize, int timeout) const
+  int SslStream::SslRead(char* buffer, int bufsize) const
   {
-    int count = SSL_read(ssl, buffer, bufsize);
+    log_debug("read");
+
+    int n;
+    n = ::SSL_read(ssl, buffer, bufsize);
+    log_debug("read returns " << n << " timeout=" << getTimeout());
+
+    if (n <= 0 && getTimeout() >= 0 && SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ)
+    {
+      if (getTimeout() == 0)
+        throw cxxtools::tcp::Timeout();
+
+      log_debug("poll");
+
+      struct pollfd fds;
+      fds.fd = getFd();
+      fds.events = POLLIN|POLLOUT;
+      int p = ::poll(&fds, 1, getTimeout());
+
+      log_debug("poll returns " << p);
+
+      if (p < 0)
+      {
+        int errnum = errno;
+        throw cxxtools::tcp::Exception(strerror(errnum));
+      }
+      else if (p == 0)
+        throw cxxtools::tcp::Timeout();
+
+      log_debug("read (2)");
+      n = ::SSL_read(ssl, buffer, bufsize);
+      log_debug("read (2) returns " << n);
+    }
+
     checkSslError();
-    return count;
+
+    return n;
   }
 
   int SslStream::SslWrite(const char* buffer, int bufsize) const
@@ -163,9 +208,10 @@ namespace tnt
   ssl_streambuf::ssl_streambuf(SslStream& stream, unsigned bufsize, int timeout)
     : m_stream(stream),
       m_buffer(new char_type[bufsize]),
-      m_bufsize(bufsize),
-      m_timeout(timeout)
-  { }
+      m_bufsize(bufsize)
+  {
+    setTimeout(timeout);
+  }
 
   ssl_streambuf::int_type ssl_streambuf::overflow(ssl_streambuf::int_type c)
   {
@@ -188,7 +234,7 @@ namespace tnt
 
   ssl_streambuf::int_type ssl_streambuf::underflow()
   {
-    int n = m_stream.SslRead(m_buffer, m_bufsize, m_timeout);
+    int n = m_stream.SslRead(m_buffer, m_bufsize);
     if (n <= 0)
       return traits_type::eof();
 

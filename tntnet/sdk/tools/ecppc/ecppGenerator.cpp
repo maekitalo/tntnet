@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 #include <iterator>
 #include <zlib.h>
 #include <cxxtools/dynbuffer.h>
-#include <tnt/http.h>
+#include <tnt/httpmessage.h>
 
 ////////////////////////////////////////////////////////////////////////
 // htmlfilter
@@ -694,6 +694,8 @@ std::string ecppGenerator::getCpp(const std::string& basename,
           "// generated with ecppc\n"
           "// date: " << gentime <<
           "//\n\n"
+          "#include <tnt/httprequest.h>\n"
+          "#include <tnt/httpreply.h>\n"
           "#include <tnt/http.h>\n"
           "#include <tnt/data.h>\n";
 

@@ -20,9 +20,10 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/cookie.h>
-#include <tnt/http.h>
+#include <tnt/httperror.h>
 #include <cxxtools/log.h>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 namespace tnt

@@ -20,6 +20,8 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/component.h>
+#include <tnt/httprequest.h>
+#include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <tnt/tntconfig.h>
 #include <fstream>

@@ -1,5 +1,5 @@
 /* job.cpp
-   Copyright (C) 2003 Tommi Maekitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -26,6 +26,21 @@ log_define("tntnet.job");
 
 namespace tnt
 {
+  job::~job()
+  { }
+
+  void job::clear()
+  {
+    parser.clear();
+    request = httpRequest();
+    touch();
+  }
+
+  int job::msecToTimeout() const
+  {
+    return (lastAccessTime - time(0) + 1) * 1000 + keepalive_timeout;
+  }
+
   ////////////////////////////////////////////////////////////////////////
   // tcpjob
   //
@@ -36,22 +51,22 @@ namespace tnt
     log_debug("connection accepted");
 
     struct sockaddr s = socket.getSockAddr();
+    struct sockaddr_in sockaddr_in;
     memcpy(&sockaddr_in, &s, sizeof(sockaddr_in));
-  }
 
-  const struct sockaddr_in& tcpjob::getPeeraddr_in() const
-  {
-    return socket.getPeeraddr_in();
-  }
-
-  const struct sockaddr_in& tcpjob::getServeraddr_in() const
-  {
-    return sockaddr_in;
+    getRequest().setPeerAddr(socket.getPeeraddr_in());
+    getRequest().setServerAddr(sockaddr_in);
+    getRequest().setSsl(false);
   }
 
   std::iostream& tcpjob::getStream()
   {
     return socket;
+  }
+
+  int tcpjob::getFd() const
+  {
+    return socket.getFd();
   }
 
 #ifdef USE_SSL
@@ -65,23 +80,24 @@ namespace tnt
     log_debug("connection accepted (ssl)");
 
     struct sockaddr s = socket.getSockAddr();
+    struct sockaddr_in sockaddr_in;
     memcpy(&sockaddr_in, &s, sizeof(sockaddr_in));
-  }
 
-  const struct sockaddr_in& ssl_tcpjob::getPeeraddr_in() const
-  {
-    return socket.getPeeraddr_in();
-  }
-
-  const struct sockaddr_in& ssl_tcpjob::getServeraddr_in() const
-  {
-    return sockaddr_in;
+    getRequest().setPeerAddr(socket.getPeeraddr_in());
+    getRequest().setServerAddr(sockaddr_in);
+    getRequest().setSsl(true);
   }
 
   std::iostream& ssl_tcpjob::getStream()
   {
     return socket;
   }
+
+  int ssl_tcpjob::getFd() const
+  {
+    return socket.getFd();
+  }
+
 #endif // USE_SSL
 
   //////////////////////////////////////////////////////////////////////
@@ -90,6 +106,7 @@ namespace tnt
   void jobqueue::put(job_ptr j)
   {
     log_debug("jobqueue::put");
+    j->touch();
     cxxtools::MutexLock lock(notEmpty);
     jobs.push_back(j);
     notEmpty.Signal();

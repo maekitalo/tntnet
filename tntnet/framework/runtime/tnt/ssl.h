@@ -77,7 +77,7 @@ currently no client-support
         { Connect(ipaddr.c_str(), port); }
 #endif
 
-      int SslRead(char* buffer, int bufsize, int timeout = -1) const;
+      int SslRead(char* buffer, int bufsize) const;
       int SslWrite(const char* buffer, int bufsize) const;
   };
 
@@ -86,15 +86,14 @@ currently no client-support
       SslStream& m_stream;
       char_type* m_buffer;
       unsigned m_bufsize;
-      int m_timeout;
 
     public:
       explicit ssl_streambuf(SslStream& stream, unsigned bufsize = 256, int timeout = -1);
       ~ssl_streambuf()
       { delete[] m_buffer; }
 
-      void setTimeout(int t)   { m_timeout = t; }
-      int getTimeout() const   { return m_timeout; }
+      void setTimeout(int t)   { m_stream.setTimeout(t); }
+      int getTimeout() const   { return m_stream.getTimeout(); }
 
       /// überladen aus std::streambuf
       int_type overflow(int_type c);

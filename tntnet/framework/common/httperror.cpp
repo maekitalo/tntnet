@@ -1,5 +1,5 @@
-/* tnt/log.h
-   Copyright (C) 2003 Tommi Mäkitalo
+/* httperror.cpp
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -19,14 +19,33 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef TNT_LOG_H
-#define TNT_LOG_H
+#include <tnt/httperror.h>
 
-#include <cxxtools/log.h>
+namespace tnt
+{
+  ////////////////////////////////////////////////////////////////////////
+  // httpError
+  //
 
-namespace tnt            { log_declare(); }
-namespace tntcomp        { log_declare(); }
-namespace ecpp_component { log_declare(); }
-namespace compcall       { log_declare(); }
+  static std::string httpErrorFormat(unsigned errcode, const std::string& msg)
+  {
+    std::string ret;
+    ret.reserve(4 + msg.size());
+    char d[3];
+    d[2] = '0' + errcode % 10;
+    errcode /= 10;
+    d[1] = '0' + errcode % 10;
+    errcode /= 10;
+    d[0] = '0' + errcode % 10;
+    ret.assign(d, d+3);
+    ret += ' ';
+    ret += msg;
+    return ret;
+  }
 
-#endif // LOG_H
+  httpError::httpError(unsigned errcode, const std::string& msg)
+    : msg(httpErrorFormat(errcode, msg))
+  {
+  }
+
+}

@@ -20,7 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include "tnt/dispatcher.h"
-#include <tnt/http.h>
+#include <tnt/httperror.h>
 #include <functional>
 #include <iterator>
 

@@ -7,8 +7,14 @@ libtntnet_la_SOURCES = \
 	contenttype.cpp \
 	cookie.cpp \
 	http.cpp \
+	httperror.cpp \
+	httpmessage.cpp \
+	httpparser.cpp \
+	httprequest.cpp \
+	httpreply.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
+	messageheaderparser.cpp \
 	multipart.cpp \
 	savepoint.cpp \
 	sodata.cpp \
@@ -23,9 +29,15 @@ nobase_include_HEADERS = \
 	tnt/cookie.h \
 	tnt/data.h \
 	tnt/http.h \
+	tnt/httperror.h \
+	tnt/httpparser.h \
+	tnt/httprequest.h \
+	tnt/httpreply.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
+	tnt/messageheaderparser.h \
 	tnt/multipart.h \
+	tnt/parser.h \
 	tnt/savepoint.h \
 	tnt/sodata.h \
 	tnt/tntconfig.h \

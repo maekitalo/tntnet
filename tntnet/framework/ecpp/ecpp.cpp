@@ -1,5 +1,5 @@
 /* ecpp.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -22,7 +22,8 @@ Boston, MA  02111-1307  USA
 #include <tnt/ecpp.h>
 #include <tnt/urlmapper.h>
 #include <tnt/comploader.h>
-#include <tnt/http.h>
+#include <tnt/httperror.h>
+#include <tnt/httprequest.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.ecpp");

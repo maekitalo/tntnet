@@ -22,6 +22,8 @@ Boston, MA  02111-1307  USA
 #include "unzip.h"
 
 #include <tnt/component.h>
+#include <tnt/httprequest.h>
+#include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <fstream>
 #include <cxxtools/thread.h>

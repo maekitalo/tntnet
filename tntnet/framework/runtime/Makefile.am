@@ -5,12 +5,14 @@ AM_CPPFLAGS = -I../common
 tntnet_SOURCES = \
 	dispatcher.cpp \
 	job.cpp \
+	listener.cpp \
+	poller.cpp \
 	server.cpp \
 	tntnet.cpp \
-	listener.cpp \
 	tnt/dispatcher.h \
 	tnt/job.h \
 	tnt/listener.h \
+	tnt/poller.h \
 	tnt/server.h \
 	tnt/tntnet.h
 

@@ -1,5 +1,5 @@
-/* tnt/messageheader.h
-   Copyright (C) 2003 Tommi Mäkitalo
+/* tnt/httperror.h
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -19,40 +19,40 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef TNT_MESSAGEHEADER_H
-#define TNT_MESSAGEHEADER_H
+#ifndef TNT_HTTPERROR_H
+#define TNT_HTTPERROR_H
 
+#include <stdexcept>
 #include <string>
-#include <map>
 
 namespace tnt
 {
-  /// Standard-message-header like rfc822
-  class messageheader : public std::multimap<std::string, std::string>
+  /// HTTP-error-class
+  class httpError : public std::exception
   {
-    public:
-      class parser;
-      friend class parser;
-
-    protected:
-      enum return_type
-      {
-        OK,
-        FAIL,
-        END
-      };
-
-      virtual return_type onField(const std::string& name, const std::string& value);
+      std::string msg;
 
     public:
-      virtual ~messageheader()   { }
+      httpError(const std::string& m)
+        : msg(m)
+        { }
 
-      void parse(std::istream& in, size_t maxHeaderSize = 0);
+      httpError(unsigned errcode, const std::string& msg);
+      ~httpError() throw ()
+        { }
+
+      const char* what() const throw ()
+      { return msg.c_str(); }
   };
 
-  std::istream& operator>> (std::istream& in, messageheader& data);
-
+  /// HTTP-error 404
+  class notFoundException : public httpError
+  {
+    public:
+      notFoundException(const std::string& url)
+        : httpError("404 Not Found (" + url + ')')
+        { }
+  };
 }
 
-#endif // TNT_MESSAGEHEADER_H
-
+#endif // TNT_HTTPERROR_H
