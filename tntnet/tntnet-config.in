@@ -1,0 +1,181 @@
+#! /bin/sh
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+includedir=@includedir@
+libdir=@libdir@
+
+usage()
+{
+    cat <<EOF
+Usage: $0 [OPTION]
+
+Known values for OPTION are:
+
+  --libs            print library linking information
+  --cxxflags        print pre-processor and compiler flags
+  --config[=app]    print default configuration-file
+  --makefile[=app]  print simple makefile for a ecpp-project
+  --project=app     create a simple ecpp-project-directory
+  --help            display this help and exit
+  --version         output version information
+EOF
+
+    exit $1
+}
+
+template()
+{
+  if test -z "$1"
+  then
+    cat <<EOF
+# map /webapp/comp.* or /webapp/comp to comp@webapp
+MapUrl      /(.+)/([^.]+)(\..+)?  \$2@\$1
+# map /comp.* or /comp to comp@comp
+MapUrl      /([^.]+)(\..+)?       \$1@\$1
+EOF
+  else
+    cat <<EOF
+# map /comp.* or /comp to comp@$1
+MapUrl      /([^.]+)(\..+)?   \$1@$1
+EOF
+  fi
+
+  cat <<EOF
+
+# listen to a port
+Listen	        0.0.0.0 8000
+
+# to enable ssl, we need a Certificate and another listen-command
+#SslListen	    0.0.0.0 8443    tntnet.pem
+
+# this propertyfile defines, what and where to log
+PropertyFile    tntnet.properties
+
+# set limit to prevent DoS-attacks
+MaxRequestSize  65536
+
+#User           tntnet
+#Group          tntnet
+#Dir            /
+#Chroot         /var/safedir
+#PidFile        /var/run/tntnet.pid
+#Daemon         0
+#MinThreads     5
+#MaxThreads     10
+#ThreadStartDelay   0  # in ms
+#QueueSize      100
+#CompPath       path1   path2   path3
+#Load           webapp  # preload webapplication
+#BufferSize     16384
+#SocketTimeout  200
+#KeepAliveTimeout 15000
+#KeepAliveMax   100
+EOF
+}
+
+makefile()
+{
+  if test ! -z "$1"
+  then
+    cat <<EOF
+$1.so: $1.o
+	\$(CXX) -o \$@ \$(LDFLAGS) \$^
+
+EOF
+  fi
+
+  cat <<EOF
+SUFFIXES=.ecpp .gif .jpg
+ECPPC=@bindir@/ecppc
+CXXFLAGS+=`tntnet-config --cxxflags` -fPIC -O2
+LDFLAGS+=--shared `tntnet-config --libs`
+
+%.cpp %.h: %.ecpp
+	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_CPP) \$<
+%.cpp %.h: %.gif
+	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_GIF) -b -m image/gif \$<
+%.cpp %.h: %.jpg
+	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_JPG) -b -m image/jpg \$<
+EOF
+}
+
+if test $# -eq 0; then
+    usage
+fi
+
+while test $# -gt 0; do
+    case "$1" in
+    -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) optarg= ;;
+    esac
+
+    case "$1" in
+
+    --version)
+        echo @VERSION@
+        exit 0
+        ;;
+
+    --help)
+        usage
+        ;;
+
+    --cxxflags)
+        echo @CXXTOOLS_CXXFLAGS@
+        ;;
+
+    --libs)
+        echo @CXXTOOLS_LOG_LDFLAGS@ -lecpp
+        ;;
+
+    --makefile=*)
+        makefile $optarg
+        ;;
+
+    --makefile)
+        makefile
+        ;;
+
+    --config=*)
+        template $optarg
+        ;;
+
+    --config)
+        template
+        ;;
+
+    --project=*)
+		mkdir $optarg || exit 1
+		makefile $optarg >$optarg/Makefile
+		template $optarg >$optarg/tntnet.conf
+		cxxtools-config --properties tntnet >$optarg/tntnet.properties
+		cat >$optarg/$optarg.ecpp <<EOF
+<html>
+ <head>
+  <title>ecpp-application $optarg</title>
+ </head>
+ <body>
+  <h1>$optarg</h1>
+ </body>
+</html>
+EOF
+		cat <<EOF
+
+Sample ecpp-project "$optarg" created.
+To build change to the directory "$optarg" and run make.
+To run the application execute "tntnet -c tntnet.conf" there.
+To view the page navigate your browser to "http://localhost:8000/$optarg".
+
+EOF
+		;;
+
+    *)
+        usage
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+exit 0

@@ -163,18 +163,7 @@ namespace tnt
   bool httpRequest::keepAlive() const
   {
     header_type::const_iterator it = header.find(Connection);
-
-    if (getMajorVersion() == 1
-     && getMinorVersion() == 1)
-    {
-      // keep-Alive if value not "close"
-      return it == header.end() || it->second != Connection_close;
-    }
-    else
-    {
-      // keep-Alive if explicitely requested
-      return it != header.end() && it->second == Connection_Keep_Alive;
-    }
+    return it != header.end() && it->second == Connection_Keep_Alive;
   }
 
 }

@@ -181,11 +181,6 @@ namespace tnt
              << e.what() << "</p></body></html>" << std::endl;
       return false;
     }
-    catch (const std::exception& e)
-    {
-      log_error(e.what());
-      return false;
-    }
 
     return keepAliveCount > 0;
   }
@@ -225,6 +220,7 @@ namespace tnt
             log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
             reply.sendReply(http_return);
+            log_debug("reply sent");
           }
           return;
         }

@@ -27,6 +27,12 @@ cxxtools - my own collection of C++-utilities (http://www.tntnet.org)
 
 this version needs cxxtools version >=1.3.0.
 
+Quick start
+===========
+
+To create a simple application run "tntnet-config --project=hello".
+This creates a directory "hello" with a simple project and prints
+out a short message, how to run the application.
 
 Installation from CVS 
 =====================

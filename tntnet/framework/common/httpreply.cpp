@@ -49,8 +49,7 @@ namespace tnt
     if (keepAliveTimeout > 0 && keepAliveCounter > 0)
     {
       if (!hasHeader(Connection))
-        setKeepAliveHeader(getKeepAliveTimeout() + 999 / 1000,
-                           getKeepAliveCounter());
+        setKeepAliveHeader(getKeepAliveTimeout() + 999 / 1000);
 
       if (!hasHeader(Content_Length))
         setContentLengthHeader(outstream.str().size());
@@ -101,16 +100,6 @@ namespace tnt
     if (!isDirectMode())
     {
       send(ret);
-
-      if (getMethod() == "HEAD")
-        log_debug("HEAD-request - empty body");
-      else
-      {
-        log_debug("send " << outstream.str().size()
-               << " bytes body, method=" << getMethod());
-        socket << outstream.str();
-      }
-
       socket.flush();
     }
   }
@@ -143,6 +132,30 @@ namespace tnt
     return HTTP_MOVED_TEMPORARILY;
   }
 
+  void httpReply::setContentLengthHeader(size_t size)
+  {
+    std::ostringstream s;
+    s << size;
+    setHeader(Content_Length, s.str());
+  }
+
+  void httpReply::setKeepAliveHeader(unsigned timeout)
+  {
+    log_debug("setKeepAliveHeader(" << timeout << ')');
+    removeHeader(Connection);
+    removeHeader(KeepAlive);
+    if (timeout > 0 && getKeepAliveCounter() > 0)
+    {
+      std::ostringstream s;
+      s << "timeout=" << timeout << ", max=" << getKeepAliveCounter();
+      setHeader(KeepAlive, s.str());
+
+      setHeader(Connection, Connection_Keep_Alive);
+    }
+    else
+      setHeader(Connection, Connection_close);
+  }
+
   void httpReply::setDirectMode()
   {
     if (!isDirectMode())
@@ -170,17 +183,6 @@ namespace tnt
       return false;
 
     header_type::const_iterator it = header.find(Connection);
-
-    if (getMajorVersion() == 1
-     && getMinorVersion() == 1)
-    {
-      // keep-Alive if value not "close"
-      return it == header.end() || it->second != Connection_close;
-    }
-    else
-    {
-      // keep-Alive if explicitely requested
-      return it != header.end() && it->second == Connection_Keep_Alive;
-    }
+    return it != header.end() && it->second == Connection_Keep_Alive;
   }
 }

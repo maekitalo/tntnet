@@ -115,8 +115,6 @@ namespace tnt
         { return header.end(); }
 
       void setHeader(const std::string& key, const std::string& value);
-      void setContentLengthHeader(size_t size);
-      void setKeepAliveHeader(unsigned timeout = 15, unsigned max = 100);
       void removeHeader(const std::string& key)
         { header.erase(key); }
 

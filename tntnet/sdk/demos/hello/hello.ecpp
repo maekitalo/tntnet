@@ -21,6 +21,8 @@ name             // define query-parameter
    <input type="submit">
   </form>
 
+  <img src="img.gif">
+
  </body>
 </html>
 

@@ -200,9 +200,9 @@ namespace tnt
     }
   }
 
-  void tntnet::setDir() const
+  void tntnet::setDir(const char* def) const
   {
-    std::string dir = config.getValue("Dir", "/");
+    std::string dir = config.getValue("Dir", def);
     if (!dir.empty() && chdir(dir.c_str()) == -1)
       throw std::runtime_error(
         std::string("error in chdir(): ")
@@ -318,7 +318,7 @@ namespace tnt
       {
         log_debug("start worker-process without monitor");
         writePidfile(getpid());
-        setDir();
+        setDir("/");
         workerProcess();
       }
       else
@@ -335,7 +335,7 @@ namespace tnt
           if (pid == 0)
           {
             // workerprocess
-            setDir();
+            setDir("/");
             workerProcess();
             return -1;
           }
@@ -354,6 +354,7 @@ namespace tnt
     else
     {
       log_info("no daemon-mode");
+      setDir("");
       workerProcess();
     }
 

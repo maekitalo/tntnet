@@ -59,6 +59,9 @@ namespace tnt
 
       std::ostream& out()   { return *current_outstream; }
 
+      void setContentLengthHeader(size_t size);
+      void setKeepAliveHeader(unsigned timeout = 15);
+
       virtual void setDirectMode();
       virtual void setDirectModeNoFlush();
       virtual bool isDirectMode() const

@@ -81,30 +81,6 @@ namespace tnt
     header.insert(header_type::value_type(key, value));
   }
 
-  void httpMessage::setContentLengthHeader(size_t size)
-  {
-    std::ostringstream s;
-    s << size;
-    setHeader(Content_Length, s.str());
-  }
-
-  void httpMessage::setKeepAliveHeader(unsigned timeout, unsigned max)
-  {
-    log_debug("setKeepAliveHeader(" << timeout << ", " << max << ')');
-    removeHeader(Connection);
-    removeHeader(KeepAlive);
-    if (timeout > 0)
-    {
-      std::ostringstream s;
-      s << "timeout=" << timeout << ", max=" << max,
-      setHeader(KeepAlive, s.str());
-
-      setHeader(Connection, Connection_Keep_Alive);
-    }
-    else
-      setHeader(Connection, Connection_close);
-  }
-
   std::string httpMessage::dumpHeader() const
   {
     std::ostringstream h;
