@@ -21,6 +21,7 @@ DEPS = $(SRCS:.cpp=.deps)
 
 install: ecppl
 	cp -ra $^ $(BINDIR)
+	strip $(BINDIR)/$^
 
 clean:
 	rm -f ecppl $(OBJS) $(DEPS)
