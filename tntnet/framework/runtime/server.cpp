@@ -76,6 +76,10 @@ namespace tnt
               log_warn("dl::symbol_not_found catched");
               throw notFoundException(e.getSymbol());
             }
+            catch (const httpError& e)
+            {
+              throw;
+            }
             catch (const std::exception& e)
             {
               throw httpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
