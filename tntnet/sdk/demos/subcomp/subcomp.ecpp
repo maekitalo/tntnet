@@ -1,7 +1,9 @@
 <html>
 <head>
  <style type="text/css">
-   p.example { background-color: #fcc; }
+   p.example { background-color: #fcc;
+               font-family: monospace;
+               white-space: pre;; }
    p.result { background-color: #ccc; }
  </style>
 </head>
@@ -124,15 +126,22 @@ normal parameterlist just like in c++-functions after the defition
 </p>
 
 <h2> pass multiple values with the same name as parameter </h2>
+<p class="example">
+ &lt;&amp; localcomp param3="value1" param3="value2"
+              param4="17" param4=(28) &amp;&gt;
+</p>
  <& localcomp param3="value1" param3="value2"
               param4="17" param4=(28) &>
 
 <h2> call subcomponents in c++-blocks </h2>
+<p class="example">
+  callComp("extcomp@extlib", request, reply, qparam);
+</p>
+<p class="result">
 <{
-
-  callComp("extcomp@extcomp", request, reply, qparam);
-
+  callComp("extcomp@extlib", request, reply, qparam);
 }>
+</p>
 
 </body>
 </html>

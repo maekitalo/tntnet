@@ -26,4 +26,4 @@ SUFFIXES=.ecpp
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@
 tntnet.conf:
-	$(top_builddir)/tntnet-config --config=subcomp >$@
+	$(top_builddir)/tntnet-config --config=lib >$@
