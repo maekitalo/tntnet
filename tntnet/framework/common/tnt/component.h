@@ -74,7 +74,7 @@ class component
     void lock()                      { atime = std::numeric_limits<time_t>::max(); }
     void unlock()                    { touch(); }
 
-    virtual unsigned operator() (const httpRequest& request,
+    virtual unsigned operator() (httpRequest& request,
       httpReply& reply, query_params& qparam);
     virtual bool drop() = 0;
 

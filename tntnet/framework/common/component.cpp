@@ -7,7 +7,7 @@
 
 namespace tnt
 {
-  unsigned component::operator() (const httpRequest& request,
+  unsigned component::operator() (httpRequest& request,
     httpReply& reply, query_params& qparam)
   {
     return DECLINED;
