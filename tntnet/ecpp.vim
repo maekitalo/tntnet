@@ -73,12 +73,15 @@ syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contai
 " syn region ecppFilter matchgroup=Delimiter start="<%filter>" end="</%filter>" contains=@cppTop
 
 syn region ecppDoc matchgroup=Delimiter start="<%doc>" end="</%doc>"
-syn region ecppComment matchgroup=Delimiter start="<#" end="#>"
+syn region ecppComment matchgroup=Delimiter start="<#" end="#>" contains=@cCommentGroup
+syn region ecppTranslateTag matchgroup=Delimiter start="{" end="}"
+" contains=ecppTranslate
+" syn match ecppTranslate contained "[^}]\+"
 " syn region ecppText matchgroup=Delimiter start="<%text>" end="</%text>"
 
 " syn region ecppClass matchgroup=Delimiter start="<%class>" end="</%class>" contains=@cppTop
 
-syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppArgs,ecppAttr,ecppVar,ecppInit,ecppInit,ecppCleanup,ecppShared,ecppDef,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDefine,ecppComment
+syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppArgs,ecppAttr,ecppVar,ecppInit,ecppInit,ecppCleanup,ecppShared,ecppDef,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDefine,ecppComment,ecppTranslateTag,ecppTranslate
 
 " Set up default highlighting. Almost all of this is done in the included
 " syntax files.
@@ -93,6 +96,8 @@ if version >= 508 || !exists("did_ecpp_syn_inits")
 
 	HiLink ecppDoc Comment
 	HiLink ecppComment Comment
+	HiLink ecppTranslateTag Identifier
+	HiLink ecppTranslate Identifier
 
 	delc HiLink
 endif
