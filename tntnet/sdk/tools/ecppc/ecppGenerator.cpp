@@ -507,10 +507,10 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "    " << classname << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
             "    ~" << classname << "();\n\n"
             "  public:\n"
-            "    unsigned operator() (const httpRequest& request, httpReply& reply, query_params& qparam);\n";
+            "    unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam);\n";
   for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
   {
-    header << "    unsigned " << i->name << "(const httpRequest& request, httpReply& reply, query_params& qparam";
+    header << "    unsigned " << i->name << "(httpRequest& request, httpReply& reply, query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
          j != i->cppargs.end(); ++j)
     {
@@ -697,7 +697,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "  return &fetchComp(dataCompident);\n"
             "}\n\n";
 
-  code << "unsigned " << classname << "::operator() (const httpRequest& request, httpReply& reply, query_params& qparam)\n"
+  code << "unsigned " << classname << "::operator() (httpRequest& request, httpReply& reply, query_params& qparam)\n"
        << "{\n";
 
   if (isDebug())
@@ -719,7 +719,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 
   for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
   {
-    code << "unsigned " << classname << "::" << i->name << "(const httpRequest& request, httpReply& reply, query_params& qparam";
+    code << "unsigned " << classname << "::" << i->name << "(httpRequest& request, httpReply& reply, query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
          j != i->cppargs.end(); ++j)
       code << ", " << j->first;

@@ -26,7 +26,7 @@ class ecppComponent : public component
 
     component& fetchComp(const std::string& url) const;
     component& fetchComp(const compident& ci) const;
-    unsigned callComp(const std::string& url, const httpRequest& request,
+    unsigned callComp(const std::string& url, httpRequest& request,
       httpReply& reply, query_params& qparam)
     { return fetchComp(url)(request, reply, qparam); }
     const compident& getCompident() const  { return myident; }
