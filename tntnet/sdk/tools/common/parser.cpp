@@ -864,7 +864,7 @@ namespace tnt
             }
             else if (ch == '&' || ch == '/')
             {
-              processCall(comp, comp_args, arg, defarg);
+              processCall(comp, comp_args, pass_cgi, defarg);
               arg.clear();
               comp.clear();
               comp_args.clear();
