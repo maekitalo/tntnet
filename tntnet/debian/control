@@ -7,14 +7,21 @@ Standards-Version: 3.5.2
 Package: tntnet-dev
 Section: devel
 Architecture: any
-Depends: tntnet (= ${Source-Version})
+Depends: tntnet-base (= ${Source-Version})
+Description: Web-application-server
+ <insert long description, indented with spaces>
+
+Package: tntnet-base
+Section: web
+Architecture: any
+Depends: ${shlibs:Depends}, cxxtools
 Description: Web-application-server
  <insert long description, indented with spaces>
 
 Package: tntnet
 Section: web
 Architecture: any
-Depends: ${shlibs:Depends}, cxxtools
+Depends: ${shlibs:Depends}, tntnet-base
 Conflicts: httpd
 Provides: httpd
 Description: Web-application-server
