@@ -3,12 +3,13 @@ LIBDIR = $(DESTDIR)/lib
 INCDIR = $(DESTDIR)/include
 BINDIR = $(DESTDIR)/bin
 
-.PHONY: lib debian
+.PHONY: all lib debian install clean
 
 MODULES = \
 	framework/common \
 	framework/runtime \
 	framework/ecpp \
+	framework/defcomp \
 	sdk/tools/common \
 	sdk/tools/ecppc \
 	sdk/tools/ecppl \
