@@ -167,23 +167,16 @@ namespace tnt
   log_define_class(tntnet, "tntnet.tntnet");
 
   tntnet::tntnet(int argc, char* argv[])
-    : arg_ip(argc, argv, 'i', "0.0.0.0"),
-      arg_port(argc, argv, 'p', 8000),
-      arg_numthreads(argc, argv, 't', 5),
+    : arg_numthreads(argc, argv, 't', 5),
       conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
-      arg_lifetime(argc, argv, 'C', 60),
-      numthreads(5)
+      arg_lifetime(argc, argv, 'C', 60)
   {
     if (argc != 1)
     {
       std::ostringstream msg;
       msg << "Aufruf: " << argv[0] << " {Optionen}\n\n"
-             "  -i ip-adresse    IP-Adresse, auf der der Server hören soll\n"
-             "                   (default: 0.0.0.0)\n"
-             "  -p portnummer    Portnummer, auf der der Server hören soll\n"
-             "                   (default: 8000)\n"
              "  -t anzahl        Anzahl der zu startenden worker-threads (default: 5)\n"
              "  -c Datei         Konfigurationsdatei (default: " TNTNET_CONF ")\n"
              "  -C Zeit          Lebenszeit unbenutzter Objekte in Sekunden (default: 60)\n";
@@ -214,26 +207,6 @@ namespace tnt
           throw std::runtime_error("propertyfile " + pf + " not found");
 
         log_init(pf.c_str());
-      }
-    }
-
-    ip = arg_ip;
-    port = arg_port;
-
-    if (!arg_ip.isSet())
-    {
-      tntconfig::config_value_type v = config.getConfigValue("Listen");
-      if (v.size() == 1)
-        ip = *v.begin();
-    }
-
-    if (!arg_port.isSet())
-    {
-      tntconfig::config_value_type v = config.getConfigValue("Port");
-      if (v.size() == 1)
-      {
-        std::istringstream in(*v.begin());
-        in >> port;
       }
     }
 
@@ -368,7 +341,10 @@ namespace tnt
 
   static inline bool isTrue(char ch)
   {
-    return ch == '1' || ch == 't' || ch == 'T' || ch == 'j' || ch == 'J';
+    return ch == '1'
+        || ch == 't' || ch == 'T'
+        || ch == 'y' || ch == 'Y'
+        || ch == 'j' || ch == 'J';
   }
 
   static inline bool isTrue(const std::string& s)

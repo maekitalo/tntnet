@@ -32,8 +32,6 @@ namespace tnt
 {
   class tntnet
   {
-      arg<const char*> arg_ip;
-      arg<unsigned short int> arg_port;
       arg<unsigned> arg_numthreads;
       arg<const char*> conf;
       tntconfig config;
@@ -42,8 +40,6 @@ namespace tnt
       arg<unsigned> arg_lifetime;
 
       unsigned numthreads;
-      unsigned short int port;
-      std::string ip;
       unsigned lifetime;
 
       jobqueue queue;
