@@ -55,7 +55,9 @@ namespace tnt
       class load_library_listener
       {
         public:
-          virtual void operator() (component_library&) = 0;
+          virtual void onLoadLibrary(component_library&) = 0;
+          virtual void onCreateComponent(component_library&,
+            const compident& ci, component&) = 0;
       };
 
     private:

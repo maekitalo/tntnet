@@ -70,19 +70,25 @@ component& comploader::fetchComp(const compident& ci,
     {
       component_library& lib = fetchLib(ci.libname);
       component* comp = lib.create(ci.compname, *this, rootmapper);
+
+      // notify listener
+      for (listener_container_type::iterator l = listener.begin();
+           l != listener.end(); ++l)
+        (*l)->onCreateComponent(lib, ci, *comp);
+
       componentmap[ci] = comp;
       comp->touch();
       return *comp;
     }
     else
-	{
-	  it->second->touch();
+    {
+      it->second->touch();
       return *(it->second);
-	}
+    }
   }
   else
   {
-	it->second->touch();
+    it->second->touch();
     return *(it->second);
   }
 }
@@ -118,7 +124,7 @@ component_library& comploader::fetchLib(const std::string& libname)
       // notify listener
       for (listener_container_type::iterator l = listener.begin();
            l != listener.end(); ++l)
-        (**l)(lib);
+        (*l)->onLoadLibrary(lib);
 
       i = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
     }
@@ -147,28 +153,28 @@ void comploader::cleanup(unsigned seconds)
   for (componentmap_type::iterator it = componentmap.begin();
        it != componentmap.end(); ++it)
   {
-	if (it->second->getLastAccesstime() < t)
-	{
-	  // da ist was aufzuräumen
-	  rdlock.Unlock();
+    if (it->second->getLastAccesstime() < t)
+    {
+      // da ist was aufzuräumen
+      rdlock.Unlock();
 
       WrLock wrlock(componentMonitor);
-	  while (it != componentmap.end())
-	  {
-	    if (it->second->getLastAccesstime() < t)
-		{
-		  componentmap_type::iterator it2 = it;
-		  ++it;
+      while (it != componentmap.end())
+      {
+        if (it->second->getLastAccesstime() < t)
+        {
+          componentmap_type::iterator it2 = it;
+          ++it;
           log_debug("drop " << it2->first);
-		  if (it2->second->drop())
+          if (it2->second->drop())
             log_debug("deleted " << it2->first);
-		  componentmap.erase(it2);
-		}
-		else
-		  ++it;
-	  }
-	  break;
-	}
+          componentmap.erase(it2);
+        }
+      else
+        ++it;
+      }
+      break;
+    }
   }
 }
 
