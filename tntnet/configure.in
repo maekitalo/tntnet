@@ -22,14 +22,14 @@ AC_CHECK_HEADERS([cxxtools/tcpstream.h])
 
 loggertype=stdout
 
-AC_CHECK_HEADERS([log4cxx/logger.h],[AC_DEFINE([HAVE_LOG4CXX], [], [check for log4cxx])
-   loggertype=log4cxx
-   LDFLAGS=-llog4cxx])
-
-if test $loggertype = stdout; then
 AC_CHECK_HEADERS([log4cplus/logger.h],[AC_DEFINE([HAVE_LOG4CPLUS], [], [check for log4cplus]
    loggertype=log4cplus
    LDFLAGS=-llog4cplus)])
+
+if test $loggertype = stdout; then
+AC_CHECK_HEADERS([log4cxx/logger.h],[AC_DEFINE([HAVE_LOG4CXX], [], [check for log4cxx])
+   loggertype=log4cxx
+   LDFLAGS=-llog4cxx])
 fi
 
 if test $loggertype = stdout; then
