@@ -49,6 +49,10 @@ Boston, MA  02111-1307  USA
 # define TNTNET_CONF CONFIG_DIR "tntnet.conf"
 #endif
 
+#ifndef TNTNET_PID
+# define TNTNET_PID "/var/run/tntnet.pid"
+#endif
+
 namespace
 {
   ////////////////////////////////////////////////////////////////////////
@@ -167,7 +171,7 @@ namespace tnt
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
       arg_lifetime(argc, argv, 'C', 60),
-      arg_pidfile(argc, argv, 'p', "/var/run/tntnet.pid")
+      arg_pidfile(argc, argv, 'p')
   {
     if (argc != 1)
     {
@@ -414,7 +418,7 @@ namespace tnt
   void tntnet::writePidfile(int pid)
   {
     pidFileName = arg_pidfile.isSet() ? arg_pidfile.getValue()
-                                      : config.getSingleValue("PidFile");
+                                      : config.getSingleValue("PidFile", TNTNET_PID);
 
     log_debug("pidfile=" << pidFileName);
 
