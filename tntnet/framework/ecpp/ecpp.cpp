@@ -105,7 +105,14 @@ namespace tnt
 
   component& ecppComponent::fetchComp(const compident& ci) const
   {
-    return loader.fetchComp(ci, rootmapper);
+    if (ci.libname.empty())
+    {
+      compident cii(ci);
+      cii.libname = myident.libname;
+      return loader.fetchComp(cii, rootmapper);
+    }
+    else
+      return loader.fetchComp(ci, rootmapper);
   }
 
   ecppSubComponent& ecppComponent::fetchSubComp(const std::string& sub) const

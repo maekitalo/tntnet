@@ -55,7 +55,7 @@ namespace tnt
       void monitorProcess(int workerPid);
       void workerProcess();
 
-      log_declare_class("tntnet.tntnet");
+      log_declare_class();
 
     public:
       tntnet(int argc, char* argv[]);

@@ -151,6 +151,7 @@ namespace tnt
   //
   bool tntnet::stop = false;
   std::string tntnet::pidFileName;
+  log_define_class(tntnet, "tntnet.tntnet");
 
   tntnet::tntnet(int argc, char* argv[])
     : arg_ip(argc, argv, 'i', "0.0.0.0"),

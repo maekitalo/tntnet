@@ -154,6 +154,7 @@ class ecppGenerator : public tnt::ecppParser
     bool externData;
 
     time_t c_time;
+    const char* gentime;
 
   public:
     ecppGenerator();

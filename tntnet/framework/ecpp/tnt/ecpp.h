@@ -70,18 +70,18 @@ namespace tnt
   //
   class ecppSubComponent : public ecppComponent
   {
-      ecppComponent& parent;
+      ecppComponent& main;
       std::string subcompname;
 
       virtual subcomps_type& getSubcomps()
-        { return parent.getSubcomps(); }
+        { return main.getSubcomps(); }
       virtual const subcomps_type& getSubcomps() const
-        { return parent.getSubcomps(); }
+        { return main.getSubcomps(); }
 
     public:
       ecppSubComponent(ecppComponent& p, const std::string& name)
         : ecppComponent(p.myident, p.rootmapper, p.loader),
-          parent(p),
+          main(p),
           subcompname(name)
         {
           p.registerSubComp(name, this);
@@ -89,7 +89,9 @@ namespace tnt
 
       virtual bool drop();
       subcompident getCompident() const
-        { return subcompident(parent.getCompident(), subcompname); }
+        { return subcompident(main.getCompident(), subcompname); }
+
+      ecppComponent& getMainComponent() const { return main; }
   };
 
   inline unsigned ecppComponent::callComp(const std::string& url, httpRequest& request,

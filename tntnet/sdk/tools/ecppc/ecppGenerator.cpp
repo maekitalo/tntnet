@@ -254,7 +254,11 @@ ecppGenerator::ecppGenerator()
     filter(filter_null),
     compress(false),
     c_time(0)
-{ }
+{
+  time_t cur;
+  time(&cur);
+  gentime = asctime(localtime(&cur));
+}
 
 void ecppGenerator::processHtml(const std::string& html)
 {
@@ -369,7 +373,7 @@ void ecppGenerator::processCall(const std::string& comp,
         << "    query_params cq(qparam, false);\n";
       if (comp[0] == '.')
       {
-        m << "    top()." << comp.substr(1) << "(request, reply, cq";
+        m << "    main()." << comp.substr(1) << "(request, reply, cq";
         if (!cppargs.empty())
           m << ", " << cppargs;
         m << ");\n";
@@ -382,7 +386,7 @@ void ecppGenerator::processCall(const std::string& comp,
     {
       if (comp[0] == '.')
       {
-        m << "    top()." << comp.substr(1) << "(request, reply, " << pass_cgi;
+        m << "    main()." << comp.substr(1) << "(request, reply, " << pass_cgi;
         if (!cppargs.empty())
           m << ", " << cppargs;
         m << ");\n";
@@ -406,7 +410,7 @@ void ecppGenerator::processCall(const std::string& comp,
 
     if (comp[0] == '.')
     {
-      m << "    top()" << comp << "(request, reply, cq";
+      m << "    main()" << comp << "(request, reply, cq";
       if (!cppargs.empty())
         m << ", " << cppargs;
       m << ");\n";
@@ -459,19 +463,21 @@ std::string ecppGenerator::getHeader(const std::string& basename,
 {
   std::ostringstream header;
   header << "////////////////////////////////////////////////////////////////////////\n"
-         << "// " << basename << '\n'
-         << "// generated with ecppc\n"
-         << "//\n\n"
-         << "#ifndef ECPP_COMPONENT_" << classname << "_H\n"
-         << "#define ECPP_COMPONENT_" << classname << "_H\n\n"
-         << "#include <tnt/ecpp.h>\n\n";
+            "// " << basename << "\n"
+            "// generated with ecppc\n"
+            "// date: " << gentime <<
+            "//\n\n"
+            "#ifndef ECPP_COMPONENT_" << classname << "_H\n"
+            "#define ECPP_COMPONENT_" << classname << "_H\n\n"
+            "#include <tnt/ecpp.h>\n\n";
 
   if (!componentclass.empty())
     header << "#include \"" << componentclass << ".h\"\n";
   if (!baseclass.empty())
     header << "#include \"" << baseclass << ".h\"\n";
 
-  header << "\n"
+  header << "#include <tnt/log.h>\n"
+         << "\n"
          << "// <%pre>\n"
          << pre
          << "// </%pre>\n\n"
@@ -496,7 +502,8 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "{\n"
             "    friend component* create_" << classname << "(const compident& ci,\n"
             "      const urlmapper& um, comploader& cl);\n\n"
-            "    " << classname << "& top()  { return *this; }\n\n"
+            "    " << classname << "& main()  { return *this; }\n\n" 
+            "    log_declare_class();\n\n" 
             "    // <%declare>\n"
          << declare
          << "    // </%declare>\n\n";
@@ -524,12 +531,13 @@ std::string ecppGenerator::getHeader(const std::string& basename,
   {
     header << "    class " << i->name << "_type : public ecppSubComponent\n"
               "    {\n"
-              "        " << classname << "& main;\n"
-              "        " << classname << "& top()  { return main; }\n\n"
+              "        log_declare_class();\n\n" 
+              "        " << classname << "& mainComp;\n"
+              "        " << classname << "& main()  { return mainComp; }\n\n"
               "      public:\n"
               "        " << i->name << "_type(" << classname << "& m, const std::string& name)\n"
               "          : ecppSubComponent(m, name),\n"
-              "            main(m)\n"
+              "            mainComp(m)\n"
               "          { }\n"
               "        unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
@@ -558,11 +566,12 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 {
   std::ostringstream code;
   code << "////////////////////////////////////////////////////////////////////////\n"
-       << "// " << basename << '\n'
-       << "// generated with ecppc\n"
-       << "//\n\n"
-       << "#include <tnt/http.h>\n"
-       << "#include <tnt/data.h>\n";
+          "// " << basename << "\n"
+          "// generated with ecppc\n"
+          "// date: " << gentime <<
+          "//\n\n"
+          "#include <tnt/http.h>\n"
+          "#include <tnt/data.h>\n";
 
   if (compress)
     code << "#include <tnt/zdata.h>\n";
@@ -573,9 +582,6 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   if (externData)
     code << "#include <tnt/comploader.h>\n"
             "#include <stdlib.h>\n";
-
-  if (isDebug())
-    code << "#include <tnt/log.h>\n";
 
   code << "#include \"" << classname << ".h\"\n\n";
 
@@ -670,14 +676,16 @@ std::string ecppGenerator::getCpp(const std::string& basename,
          << "}\n\n";
   }
 
-  // %shared and constructor
+  // logger, %shared and constructor
   //
-  code << "// <%shared>\n"
+  code << "log_define_class(" << classname << ", \"component." << classname << "\")\n\n" 
+       << "// <%shared>\n"
        << shared
        << "// </%shared>\n\n"
        << classname << "::" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
           "  : ecppComponent(ci, um, cl)";
 
+  // initialize subcomponents
   for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
     code << ",\n"
             "    " << i->name << "(*this, \"" << i->name << "\")";
@@ -732,7 +740,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "  log_debug_ns(compcall, \"execute " << classname << " \" << qparam.getUrl());\n";
 
   if (externData && !data.empty())
-    code << "  const component* dataComponent = top().getDataComponent();\n";
+    code << "  const component* dataComponent = main().getDataComponent();\n";
 
   if (!mimetype.empty())
     code << "  reply.setContentType(\"" << mimetype << "\");\n";
@@ -832,7 +840,10 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 
   for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
   {
-    code << "unsigned " << classname << "::" << i->name << "_type::operator() (httpRequest& request, httpReply& reply, query_params& qparam";
+    code << "log_define_class(" << classname << "::" << i->name << "_type, \"component."
+         << classname << '.' << i->name << "\")\n\n" 
+            "unsigned " << classname << "::" << i->name
+         << "_type::operator() (httpRequest& request, httpReply& reply, query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
          j != i->cppargs.end(); ++j)
       code << ", " << j->first;
@@ -843,7 +854,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
       code << "  log_debug_ns(compcall, \"execute " << classname << "::" << i->name << " \" << qparam.getUrl());\n";
 
     if (externData && !data.empty())
-      code << "  const component* dataComponent = top().getDataComponent();\n";
+      code << "  const component* dataComponent = main().getDataComponent();\n";
 
     code << i->getBody(isDebug() ? classname + "::" + i->name : std::string())
          << "}\n\n";
@@ -860,7 +871,8 @@ std::string ecppGenerator::getDataCpp(const std::string& basename,
   std::ostringstream code;
   code << "////////////////////////////////////////////////////////////////////////\n"
           "// " << basename << "\n"
-          "// generated with makerequest\n"
+          "// generated with ecppc\n"
+          "// date: " << gentime <<
           "//\n\n";
 
   if (compress)
