@@ -5,6 +5,7 @@
 #include <tnt/component.h>
 #include <tnt/http.h>
 #include <tnt/tntconfig.h>
+#include <tnt/log.h>
 #include <fstream>
 #include <cxxtools/thread.h>
 
@@ -84,12 +85,18 @@ tnt::component* create_static(const tnt::compident& ci,
 // componentdefinition
 //
 
-std::string staticcomp::document_root = "htdocs";
+std::string staticcomp::document_root;
 
 unsigned staticcomp::operator() (tnt::httpRequest& request,
   tnt::httpReply& reply, query_params& qparams)
 {
-  std::string file = document_root + '/' + request.getPathInfo();
+  std::string file;
+  if (!document_root.empty())
+    file = document_root + '/';
+  file += request.getPathInfo();
+
+  log_debug_ns(tntcomp, "file: " << file);
+
   std::ifstream in(file.c_str());
 
   if (request.getArgs().size() > 0)
