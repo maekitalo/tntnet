@@ -46,8 +46,8 @@ namespace tnt
     if (attribute == "name")
     {
       name = value;
-      std::transform(name.begin(), name.end(), name.begin(),
-        std::ptr_fun(tolower));
+      //std::transform(name.begin(), name.end(), name.begin(),
+        //std::ptr_fun(tolower));
     }
     else if (attribute == "filename")
       filename = value;
