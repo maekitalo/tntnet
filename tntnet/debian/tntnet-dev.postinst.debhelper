@@ -1,0 +1,7 @@
+# Automatically added by dh_installdocs
+if [ "$1" = "configure" ]; then
+	if [ -d /usr/doc -a ! -e /usr/doc/tntnet-dev -a -d /usr/share/doc/tntnet-dev ]; then
+		ln -sf ../share/doc/tntnet-dev /usr/doc/tntnet-dev
+	fi
+fi
+# End automatically added section

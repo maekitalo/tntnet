@@ -1,0 +1,64 @@
+#!/bin/sh
+
+PIDFILE=/var/run/tntnet.en_US.pid
+COMPPATH=/usr/lib/component
+export LANG=en_US
+
+case "$1" in
+	start)
+		echo -n "Starting tntnet"
+		if [ -f $PIDFILE ]
+		then
+			echo -n " - tntnet already running"
+		else
+			export LD_LIBRARY_PATH=$COMPPATH
+			tntnet -c /etc/tntnet/tntnet.en_US.conf
+		fi
+		echo "."
+		;;
+
+	stop)
+		echo -n "Stop tntnet"
+		if [ ! -f $PIDFILE ]
+		then
+			echo " tntnet not running"
+			exit 1
+		fi
+
+		PID=`cat $PIDFILE`
+
+		[ -f $PIDFILE ] && kill $PID
+
+		if [ -f $PIDFILE ]; then
+		  sleep 1
+		  echo -n "."
+		  kill $PID 2>/dev/null
+		fi
+
+		if [ -f $PIDFILE ]; then
+		  sleep 1
+		  echo -n "."
+		  kill $PID 2>/dev/null
+		fi
+
+		[ -f $PIDFILE ] && echo "failed"
+
+		echo "."
+		;;
+
+	status)
+		if [ ! -f $PIDFILE ]
+		then
+			echo tntnet not running
+		elif ps `cat /var/run/tntnet.pid` >/dev/null
+		then
+			echo tntnet running
+		else
+			echo tntnet unknown state
+		fi
+		;;
+
+	*)
+		echo "Usage: $0 start|stop|status"
+		;;
+esac

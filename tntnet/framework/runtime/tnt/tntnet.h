@@ -1,0 +1,69 @@
+////////////////////////////////////////////////////////////////////////
+// tntnet.h
+//
+
+#ifndef TNTNET_H
+#define TNTNET_H
+
+#include <cxxtools/arg.h>
+#include "tnt/tntconfig.h"
+#include "tnt/job.h"
+#include <set>
+
+namespace tnt
+{
+  class server;
+
+  class tntnet
+  {
+      arg<const char*> arg_ip;
+      arg<unsigned short int> arg_port;
+      arg<unsigned> arg_numthreads;
+      arg<const char*> conf;
+      tntconfig config;
+      arg<const char*> propertyfilename;
+      arg<bool> debug;
+      arg<unsigned> arg_lifetime;
+
+      unsigned numthreads;
+      unsigned short int port;
+      std::string ip;
+      unsigned lifetime;
+
+      jobqueue queue;
+
+      static bool stop;
+      MethodThread<tntnet> cleaner_thread;
+      typedef std::set<server*> servers_type;
+      servers_type servers;
+      typedef std::set<Thread*> listeners_type;
+      listeners_type listeners;
+
+      static std::string pidFileName;
+
+      // helper methods
+      void setUser() const;
+      void setGroup() const;
+      void mkDaemon() const;
+      void closeStdHandles() const;
+
+      // noncopyable
+      tntnet(const tntnet&);
+      tntnet& operator= (const tntnet&);
+
+      void monitorProcess(int workerPid);
+      void workerProcess();
+
+    public:
+      tntnet(int argc, char* argv[]);
+      int run();
+
+      void Clean();
+      static void shutdown();
+      static bool shouldStop()   { return stop; }
+  };
+
+}
+
+#endif // TNTNET_H
+

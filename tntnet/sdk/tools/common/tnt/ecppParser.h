@@ -1,0 +1,84 @@
+////////////////////////////////////////////////////////////////////////
+// ecppParser.h
+//
+
+#ifndef ECPPPARSER_H
+#define ECPPPARSER_H
+
+#include <iostream>
+#include <string>
+#include <stdexcept>
+#include <map>
+#include <list>
+
+namespace tnt
+{
+
+class ecppParser
+{
+    bool inComp;
+    bool debug;
+    bool splitBar;
+
+  public:
+    ecppParser()
+      : inComp(false),
+        debug(false),
+        splitBar(false)
+    { }
+    virtual ~ecppParser()
+    { }
+
+    void parse(std::istream& in);
+
+    void setDebug(bool sw = true)     { debug = sw; }
+    bool isDebug() const              { return debug; }
+
+    void setSplitBar(bool sw = true)  { splitBar = sw; }
+    bool isSplitBar() const           { return splitBar; }
+
+  protected:
+    typedef std::multimap<std::string, std::string> comp_args_type;
+    typedef std::list<std::pair<std::string, std::string> > cppargs_type;
+
+  private:
+    virtual void start();
+    virtual void end();
+    virtual void processHtml(const std::string& html);
+    virtual void processExpression(const std::string& expr);
+    virtual void processCpp(const std::string& code);
+    virtual void processPre(const std::string& code);
+    virtual void processDeclare(const std::string& code);
+    virtual void processInit(const std::string& code);
+    virtual void processCleanup(const std::string& code);
+    virtual void processArg(const std::string& name,
+      const std::string& value);
+    virtual void processAttr(const std::string& name,
+      const std::string& value);
+    virtual void processCall(const std::string& comp,
+      const comp_args_type& args, const std::string& pass_cgi,
+      const std::string& cppargs);
+    virtual void processDeclareShared(const std::string& code);
+    virtual void processShared(const std::string& code);
+    virtual void startComp(const std::string& name, const cppargs_type& cppargs);
+    virtual void processComp(const std::string& code);
+    virtual void processCondExpr(const std::string& cond, const std::string& expr);
+    virtual void tokenSplit(bool start);
+
+};
+
+class parse_error : public std::runtime_error
+{
+    std::string msg;
+
+  public:
+    parse_error(const std::string& msg, int state, unsigned line);
+    ~parse_error() throw()
+    { }
+    const char* what() const throw();
+};
+
+}
+
+#endif // ECPPPARSER_H
+

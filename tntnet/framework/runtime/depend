@@ -1,0 +1,28 @@
+server.o: server.cpp tnt/server.h \
+  /home/users/istvan/Projekte/cxxtools/include/tcpstream.h \
+  /home/users/istvan/Projekte/cxxtools/include/thread.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/comploader.h \
+  /home/users/istvan/Projekte/cxxtools/include/dlloader.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/urlmapper.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/component.h \
+  tnt/dispatcher.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/http.h \
+  /home/users/istvan/Projekte/cxxtools/include/query_params.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/log.h
+dispatcher.o: dispatcher.cpp tnt/dispatcher.h \
+  /home/users/istvan/Projekte/cxxtools/include/thread.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/urlmapper.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/component.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/http.h \
+  /home/users/istvan/Projekte/cxxtools/include/query_params.h
+tntnet.o: tntnet.cpp tnt/server.h \
+  /home/users/istvan/Projekte/cxxtools/include/tcpstream.h \
+  /home/users/istvan/Projekte/cxxtools/include/thread.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/comploader.h \
+  /home/users/istvan/Projekte/cxxtools/include/dlloader.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/urlmapper.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/component.h \
+  tnt/dispatcher.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/tntconfig.h \
+  /home/users/istvan/Projekte/tntnet/sdk/include/public/tnt/log.h \
+  /home/users/istvan/Projekte/cxxtools/include/arg.h

@@ -1,0 +1,5 @@
+<%args>
+wid = ""
+</%args>
+
+Das sind die Wertungen zu Wettkampf <$ wid $>

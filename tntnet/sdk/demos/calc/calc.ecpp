@@ -1,0 +1,63 @@
+<%args>
+arg1 = ""
+arg2 = ""
+op = ""
+method = "post"
+</%args>
+<%pre>
+
+using namespace std;
+
+</%pre>
+<%cpp>
+
+  double v1, v2, result = 0.0;
+
+  bool result_ok;
+  if ( (istringstream(arg1) >> v1)
+    && (istringstream(arg2) >> v2))
+  {
+    result_ok = true;
+    if (op == "+")
+      result = v1 + v2;
+    else if (op == "-")
+      result = v1 - v2;
+    else if (op == "*")
+      result = v1 * v2;
+    else if (op == "/" && v2 != 0)
+      result = v1 / v2;
+    else
+      result_ok = false;
+  }
+  else
+  {
+    result_ok = false;
+  }
+
+</%cpp>
+<html>
+ <head>
+  <title>Rechner</title>
+ </head>
+ <body bgcolor=#ffffcc>
+  <h1>Tommi's Tnt-Calculator</h1>
+
+  <form method=<$method$>>
+   <input type=text name=arg1 value='<$arg1$>'> <br>
+   <input type=text name=arg2 value='<$arg2$>'> <br>
+   <input type=submit name=op value='+'>
+   <input type=submit name=op value='-'>
+   <input type=submit name=op value='*'>
+   <input type=submit name=op value='/'>
+
+% if (method == "get") {
+   <input type=hidden name=method value=get>
+% }
+  </form>
+% if (result_ok) {
+  <hr>
+  <$arg1$> <$op$> <$arg2$> = <$result$>
+% }
+
+ </body>
+</html>

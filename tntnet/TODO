@@ -1,0 +1,14 @@
+- cgi.so
+- sauberes Beenden
+- entladen von shared libs
+- dynamische Threaderzeugung/-beendigung
+- keep-alive
+
+doc:
+- ingnorieren von Zeilenschaltungen nach %-Tags
+- '«»' (split)
+- '\' (escape)
+- multipart
+- <%attr>
+- ecppl/ecppll
+- ecppc -d (debug)

@@ -1,0 +1,31 @@
+AC_INIT(tntnet, 1.0.0, [Tommi Mäkitalo <t.maekitalo@epgmbh.de>])
+AM_INIT_AUTOMAKE(tntnet, 1.0.0)
+
+abi_current=1
+abi_revision=0
+abi_age=0
+sonumber=${abi_current}:${abi_revision}:${abi_age}
+AC_SUBST(sonumber)
+
+unset CDPATH
+
+AC_CONFIG_HEADERS([framework/common/tntnet_config.h])
+AC_CONFIG_SRCDIR([framework/runtime/tntnet.cpp])
+
+AC_PROG_CXX
+AC_PROG_LIBTOOL
+
+AC_CONFIG_FILES([
+    Makefile
+    sdk/Makefile
+    sdk/tools/Makefile
+    sdk/tools/common/Makefile
+    sdk/tools/ecppc/Makefile
+    sdk/tools/ecpplang/Makefile
+    sdk/tools/ecppll/Makefile
+    framework/Makefile
+    framework/common/Makefile
+    framework/runtime/Makefile
+    ])
+
+AC_OUTPUT

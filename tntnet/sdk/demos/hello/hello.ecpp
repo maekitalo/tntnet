@@ -1,0 +1,45 @@
+<%shared>
+
+static std::string name;
+
+extern "C"
+  bool config(const std::string& key, const std::vector<std::string>& values)
+  {
+    if (key == "Hello" && values.size() >= 1)
+    {
+      name = values[0];
+      return true;
+    }
+    return false;
+  }
+
+</%shared>
+<%cpp>
+
+  const httpRequest::args_type& args = request.getArgs();
+
+</%cpp>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+ </head>
+
+ <body bgcolor='#FFFFFF'>
+
+  <h1>Hello <$name$></h1>
+
+  <p>
+  pathinfo = <$request.getPathInfo()$>
+  </p>
+
+  <h2>Argumente:</h2>
+
+  <ol>
+% for (httpRequest::args_type::const_iterator i = args.begin(); i != args.end(); ++i) {
+   <li><$*i$></li>
+% }
+  </ol>
+
+ </body>
+</html>
+
