@@ -103,6 +103,7 @@ namespace tnt
       static const std::string KeepAlive;
       static const std::string KeepAliveParam;
       static const std::string IfModifiedSince;
+      static const std::string Host;
 
     private:
       std::string method;
@@ -145,6 +146,8 @@ namespace tnt
 
       size_t getContentSize() const
         { return content_size; }
+      std::string getVirtualHost() const
+        { return getHeader(Host); }
 
       header_type::const_iterator header_begin() const
         { return header.begin(); }
@@ -205,6 +208,10 @@ namespace tnt
 
       void setArgs(const args_type& a)             { args = a; }
       const args_type& getArgs() const             { return args; }
+      args_type& getArgs()                         { return args; }
+
+      args_type::const_reference getArgDef(args_type::size_type n,
+        const std::string& def = std::string()) const;
       args_type::const_reference getArg(args_type::size_type n) const
                                                    { return args[n]; }
       args_type::size_type getArgsCount() const    { return args.size(); }

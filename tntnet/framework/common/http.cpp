@@ -45,6 +45,7 @@ namespace tnt
   const std::string httpMessage::KeepAlive = "Keep-Alive:";
   const std::string httpMessage::KeepAliveParam = "timeout=15, max=10";
   const std::string httpMessage::IfModifiedSince = "If-Modified-Since:";
+  const std::string httpMessage::Host = "Host:";
 
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
@@ -521,6 +522,12 @@ void httpReply::sendHeader(bool keepAlive) const
 
     if (header.find(KeepAlive) == header.end())
       sendHeader(KeepAlive, KeepAliveParam);
+
+    if (header.find(Content_Length) == header.end())
+    {
+      log_debug(Content_Length << ' ' << outstream.str().size());
+      socket << Content_Length << ' ' << outstream.str().size() << "\r\n";
+    }
   }
 
   if (header.find(Content_Type) == header.end())
