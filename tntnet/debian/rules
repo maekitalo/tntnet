@@ -62,7 +62,7 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/tmp
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp/usr
+	$(MAKE) install ROOTDIR=$(CURDIR)/debian/tmp DESTDIR=$(CURDIR)/debian/tmp/usr CONFDIR=$(CURDIR)/debian/tmp/etc/tntnet INITDIR=$(CURDIR)/debian/tmp/etc/init.d
 
 
 # Build architecture-independent files here.

@@ -2,7 +2,7 @@
 
 PIDFILE=/var/run/tntnet.pid
 COMPPATH=/usr/lib/component
-export LANG=de_DE
+[ "$LANG" == "" ] && export LANG=de_DE
 
 function start() {
 	export LD_LIBRARY_PATH=$COMPPATH

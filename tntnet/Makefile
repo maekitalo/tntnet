@@ -2,6 +2,8 @@ DESTDIR = $(ROOTDIR)/usr/local
 LIBDIR = $(DESTDIR)/lib
 INCDIR = $(DESTDIR)/include
 BINDIR = $(DESTDIR)/bin
+CONFDIR = $(DESTDIR)/etc/tntnet
+INITDIR = $(DESTDIR)/etc/init.d
 
 .PHONY: all lib debian install clean
 
@@ -28,19 +30,28 @@ clean:
 	done
 
 $(LIBDIR):
-	mkdir -p $(LIBDIR)
+	mkdir -p $@
 
 $(INCDIR):
-	mkdir -p $(INCDIR)
+	mkdir -p $@
 
 $(BINDIR):
-	mkdir -p $(BINDIR)
+	mkdir -p $@
 
-install: $(LIBDIR) $(INCDIR) $(BINDIR)
+$(CONFDIR):
+	mkdir -p $@
+
+$(INITDIR):
+	mkdir -p $@
+
+install: $(LIBDIR) $(INCDIR) $(BINDIR) $(CONFDIR) $(INITDIR)
 	@for m in $(MODULES); \
 	do \
 	  $(MAKE) -C $$m install || exit 1; \
 	done
+	cp -ra etc/tntnet/tntnet.conf $(CONFDIR)
+	cp -ra etc/tntnet/tntnet.properties $(CONFDIR)
+	cp -ra etc/init.d/tntnet $(INITDIR)
 
 debian:
 	dpkg-buildpackage -rfakeroot -b -uc
