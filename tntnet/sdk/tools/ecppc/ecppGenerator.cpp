@@ -495,6 +495,7 @@ std::string ecppGenerator::getHeader(const std::string& basename,
 
   header << "#include <tnt/log.h>\n"
          << "\n"
+         << "template <typename T> void use(const T&) { };\n\n"
          << "// <%pre>\n"
          << pre
          << "// </%pre>\n\n"
@@ -735,6 +736,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "  const component* dataComponent = main().getDataComponent(request);\n\n";
   else
     code << "  const component* dataComponent = this;\n\n";
+  code << "  use(dataComponent);\n";
 
   if (!mimetype.empty())
     code << "  reply.setContentType(\"" << mimetype << "\");\n";
@@ -850,7 +852,8 @@ std::string ecppGenerator::getCpp(const std::string& basename,
       code << "  log_trace_ns(compcall, \"" << classname << "::" << i->name << " \" + qparam.getUrl());\n";
 
     if (externData && !data.empty())
-      code << "  const component* dataComponent = main().getDataComponent(request);\n";
+      code << "  const component* dataComponent = main().getDataComponent(request);\n"
+              "  use(dataComponent);\n";
 
     code << i->getBody()
          << "}\n\n";
