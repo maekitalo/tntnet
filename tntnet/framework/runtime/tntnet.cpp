@@ -47,15 +47,31 @@ namespace
         const std::vector<std::string>& values);
 
       const tnt::tntconfig& config;
+      void configure(config_function_type config_function) const;
 
     public:
       libconfigurator(const tnt::tntconfig& c)
         : config(c)
         { }
-      void operator() (tnt::component_library& lib);
+      void onLoadLibrary(tnt::component_library& lib);
+      void onCreateComponent(tnt::component_library& lib,
+        const tnt::compident& ci, tnt::component& comp);
   };
 
-  void libconfigurator::operator() (tnt::component_library& lib)
+  void libconfigurator::configure(config_function_type config_function) const
+  {
+    const tnt::tntconfig::config_values_type& values =
+    config.getConfigValues();
+
+    tnt::tntconfig::config_values_type::const_iterator vi;
+    for (vi = values.begin(); vi != values.end(); ++vi)
+    {
+      const tnt::tntconfig::config_entry_type& v = *vi;
+      config_function(v.key, v.values);
+    }
+  }
+
+  void libconfigurator::onLoadLibrary(tnt::component_library& lib)
   {
     dl::symbol config_symbol;
     try
@@ -63,16 +79,24 @@ namespace
       config_symbol = lib.sym("config");
       config_function_type config_function =
         (config_function_type)config_symbol.getSym();
+      configure(config_function);
 
-      const tnt::tntconfig::config_values_type& values =
-        config.getConfigValues();
+    }
+    catch(const dl::symbol_not_found&)
+    {
+    }
+  }
 
-      tnt::tntconfig::config_values_type::const_iterator vi;
-      for (vi = values.begin(); vi != values.end(); ++vi)
-      {
-        const tnt::tntconfig::config_entry_type& v = *vi;
-        config_function(v.key, v.values);
-      }
+  void libconfigurator::onCreateComponent(tnt::component_library& lib,
+    const tnt::compident& ci, tnt::component& comp)
+  {
+    dl::symbol config_symbol;
+    try
+    {
+      config_symbol = lib.sym(("config_" + ci.compname).c_str());
+      config_function_type config_function =
+        (config_function_type)config_symbol.getSym();
+      configure(config_function);
     }
     catch(const dl::symbol_not_found&)
     {
@@ -104,9 +128,9 @@ namespace
         compident_type ci = compident_type(args[1]);
         if (args.size() > 2)
         {
-          ci.pathinfo = args[2];
+          ci.setPathInfo(args[2]);
           if (args.size() > 3)
-            ci.args = compident_type::args_type(args.begin() + 3, args.end());
+            ci.setArgs(compident_type::args_type(args.begin() + 3, args.end()));
         }
 
         dis.addUrlMapEntry(url, ci);
@@ -445,29 +469,38 @@ namespace tnt
     tntconfig::config_values_type configListen;
     config.getConfigValues("Listen", configListen);
 
-    tntconfig::config_values_type::const_iterator it;
-    for (it = configListen.begin(); it != configListen.end(); ++it)
+    if (configListen.empty())
     {
-      if (it->values.empty())
-        throw std::runtime_error("empty Listen-entry");
-
-      unsigned short int port = 80;
-      if (it->values.size() >= 2)
-      {
-        std::istringstream p(it->values[1]);
-        p >> port;
-        if (!p)
-        {
-          std::ostringstream msg;
-          msg << "invalid port " << it->values[1];
-          throw std::runtime_error(msg.str());
-        }
-      }
-
-      std::string ip(it->values[0]);
-      log_debug("create listener ip=" << ip << " port=" << port);
-      Thread* s = new tnt::listener(ip, port, queue);
+      log_warn("no listeners defined - using 0.0.0.0:80");
+      Thread* s = new tnt::listener("0.0.0.0", 80, queue);
       listeners.insert(s);
+    }
+    else
+    {
+      for (tntconfig::config_values_type::const_iterator it = configListen.begin();
+           it != configListen.end(); ++it)
+      {
+        if (it->values.empty())
+          throw std::runtime_error("empty Listen-entry");
+
+        unsigned short int port = 80;
+        if (it->values.size() >= 2)
+        {
+          std::istringstream p(it->values[1]);
+          p >> port;
+          if (!p)
+          {
+            std::ostringstream msg;
+            msg << "invalid port " << it->values[1];
+            throw std::runtime_error(msg.str());
+          }
+        }
+
+        std::string ip(it->values[0]);
+        log_debug("create listener ip=" << ip << " port=" << port);
+        Thread* s = new tnt::listener(ip, port, queue);
+        listeners.insert(s);
+      }
     }
 
     // create ssl-listener-threads
@@ -479,7 +512,8 @@ namespace tnt
     if (!configListen.empty() && certificateFile.empty())
       throw std::runtime_error("SslCertificate not configured");
 
-    for (it = configListen.begin(); it != configListen.end(); ++it)
+    for (tntconfig::config_values_type::const_iterator it = configListen.begin();
+         it != configListen.end(); ++it)
     {
       if (it->values.empty())
         throw std::runtime_error("empty SslListen-entry");
