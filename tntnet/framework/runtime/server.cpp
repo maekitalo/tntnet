@@ -59,12 +59,17 @@ namespace tnt
             httpRequest request;
             socket >> request;
 
-            if (!socket)
+            if (socket.eof())
             {
-              if (!socket.eof())
-                log_error("stream error");
+              if (socket.fail())
+                log_warn("stream error");
               break;
             }
+
+            log_debug("request: " << request.getMethod() << ' ' << request.getUrl());
+            for (httpMessage::header_type::const_iterator it = request.header_begin();
+                 it != request.header_end(); ++it)
+              log_debug(it->first << ' ' << it->second);
 
             request.setPeerAddr(j->getPeeraddr_in());
             request.setServerAddr(j->getServeraddr_in());
@@ -116,6 +121,10 @@ namespace tnt
                  << "<html><body><h1>Error</h1><p>"
                  << e.what() << "</p></body></html>" << std::endl;
         }
+      }
+      catch (const tcp::Timeout& e)
+      {
+        log_warn("Timout");
       }
       catch (const std::exception& e)
       {

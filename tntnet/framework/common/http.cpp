@@ -222,11 +222,13 @@ void httpMessage::parseStartline(std::istream& in)
     }
   }
 
-  if (state != state_end)
+  if (state == state_cmd0)
+    in.setstate(std::ios_base::eofbit);
+  else if (state != state_end)
     in.setstate(std::ios_base::failbit);
 
   if (!in)
-    log_debug("error reading http-Message s" << state);
+    log_debug("error reading http-Message in state s" << state);
 }
 
 void httpMessage::parseBody(std::istream& in)
