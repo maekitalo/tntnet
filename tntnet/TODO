@@ -3,6 +3,7 @@
 - entladen von shared libs
 - dynamische Threadbeendigung
 - ranges
+- serialisation i10n/boost?
 
 doc:
 - ingnorieren von Zeilenschaltungen nach %-Tags

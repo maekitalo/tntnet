@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/tntnet.h"
 #include "tnt/dispatcher.h"
 #include "tnt/listener.h"
+#include "tnt/http.h"
 
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/log.h>
@@ -565,6 +566,11 @@ namespace tnt
           server::addSearchPath(it->params[0]);
       }
     }
+
+    // configure http-message
+    httpMessage::setMaxRequestSize(config.getUnsignedValue("MaxRequestSize"));
+    httpMessage::setMaxHeaderSize(config.getUnsignedValue("MaxHeaderSize"));
+    httpMessage::setMaxBodySize(config.getUnsignedValue("MaxBodySize"));
 
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");

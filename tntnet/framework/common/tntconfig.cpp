@@ -288,4 +288,18 @@ namespace tnt
     return def;
   }
 
+  unsigned tntconfig::getUnsignedValue(const std::string& key, unsigned def) const
+  {
+    std::string value = getSingleValue(key);
+    if (!value.empty())
+    {
+      std::istringstream in(value);
+      unsigned ret;
+      in >> ret;
+      if (in)
+        return ret;
+    }
+
+    return def;
+  }
 }

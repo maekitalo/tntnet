@@ -116,6 +116,12 @@ namespace tnt
 
       size_t content_size;
 
+      static size_t maxRequestSize;
+      static size_t maxHeaderSize;
+      static size_t maxBodySize;
+      static size_t keepAliveTimeout;
+      static size_t keepAliveCount;
+
     protected:
       header_type header;
 
@@ -174,6 +180,10 @@ namespace tnt
       static std::string htdate(struct tm* tm);
 
       static bool checkUrl(const std::string& url);
+
+      static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }
+      static void setMaxHeaderSize(size_t s)     { maxHeaderSize = s; }
+      static void setMaxBodySize(size_t s)       { maxBodySize = s; }
 
     private:
       void parseStartline(std::istream& in);

@@ -75,6 +75,7 @@ namespace tnt
         try
         {
           bool keepAlive;
+          unsigned keepAliveCount = 10;
           do
           {
             keepAlive = false;
@@ -102,22 +103,26 @@ namespace tnt
             httpReply reply(socket);
             reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
             reply.setMethod(request.getMethod());
-            if (!request.keepAlive())
-              reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
-            else
+            if (request.keepAlive())
               reply.setHeader(httpMessage::Connection, httpMessage::Connection_Keep_Alive);
+            else
+              reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
 
             try
             {
               Dispatch(request, reply);
               keepAlive = socket
+                       && --keepAliveCount > 0
                        && request.keepAlive()
                        && reply.keepAlive();
               if (keepAlive)
                 log_debug("keep alive");
               else
+              {
                 log_debug("no keep alive request/reply="
                     << request.keepAlive() << '/' << reply.keepAlive());
+                reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
+              }
             }
             catch (const cxxtools::dl::dlopen_error& e)
             {
@@ -151,7 +156,7 @@ namespace tnt
       }
       catch (const cxxtools::tcp::Timeout& e)
       {
-        log_warn("Timout");
+        log_debug("Timeout");
       }
       catch (const std::exception& e)
       {

@@ -73,7 +73,7 @@ namespace tnt
 
     public:
       tcpjob()
-        : socket(1024, 60000)
+        : socket(1024, 15000)
         { }
 
       void Accept(const cxxtools::tcp::Server& listener);
@@ -91,7 +91,7 @@ namespace tnt
 
     public:
       ssl_tcpjob()
-        : socket(1024, 60000)
+        : socket(1024, 15000)
         { }
 
       void Accept(const SslServer& listener);

@@ -98,6 +98,8 @@ namespace tnt
       std::string getSingleValue(
            const std::string& key,
            const params_type::value_type& def = params_type::value_type()) const;
+
+      unsigned getUnsignedValue(const std::string& key, unsigned def = 0) const;
   };
 }
 

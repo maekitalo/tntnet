@@ -21,16 +21,19 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/messageheader.h>
 #include <iostream>
+#include <cxxtools/log.h>
 
 namespace tnt
 {
+  log_define("tntnet.messageheader");
+
   std::istream& operator>> (std::istream& in, messageheader& data)
   {
     data.parse(in);
     return in;
   }
 
-  void messageheader::parse(std::istream& in)
+  void messageheader::parse(std::istream& in, size_t maxHeaderSize)
   {
     enum state_type
     {
@@ -50,9 +53,11 @@ namespace tnt
     std::streambuf* buf = in.rdbuf();
 
     std::string fieldname, fieldbody;
+    size_t count = 0;
 
     while (state != state_end
-        && buf->sgetc() != std::ios::traits_type::eof())
+        && buf->sgetc() != std::ios::traits_type::eof()
+        && (maxHeaderSize == 0 || ++count < maxHeaderSize))
     {
       char ch = buf->sbumpc();
       switch (state)
@@ -196,6 +201,13 @@ namespace tnt
         case state_end:
           break;
       }
+
+    }
+
+    if (maxHeaderSize != 0 && count >= maxHeaderSize)
+    {
+      log_warn("max header size " << maxHeaderSize << " exceeded");
+      in.setstate(std::ios_base::failbit);
     }
   }
 

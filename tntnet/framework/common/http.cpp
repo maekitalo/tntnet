@@ -51,6 +51,10 @@ namespace tnt
   const std::string httpMessage::CacheControl = "Cache-Control:";
   const std::string httpMessage::Content_MD5 = "Content-MD5:";
 
+  size_t httpMessage::maxRequestSize = 0;
+  size_t httpMessage::maxHeaderSize = 0;
+  size_t httpMessage::maxBodySize = 0;
+
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
 //
@@ -74,7 +78,7 @@ void httpMessage::parse(std::istream& in)
   log_debug("method=" << getMethod());
   if (in)
   {
-    header.parse(in);
+    header.parse(in, maxHeaderSize);
     if (in)
       parseBody(in);
   }
@@ -171,9 +175,11 @@ void httpMessage::parseStartline(std::istream& in)
   clear();
 
   std::streambuf* buf = in.rdbuf();
+  size_t count = 0;
 
   while (state != state_end
-      && buf->sgetc() != std::ios::traits_type::eof())
+      && buf->sgetc() != std::ios::traits_type::eof()
+      && (maxRequestSize == 0 || ++count < maxRequestSize))
   {
     char ch = buf->sbumpc();
     switch(state)
@@ -254,16 +260,21 @@ void httpMessage::parseStartline(std::istream& in)
     }
   }
 
-  if (url.compare(0, 7, "http://") == 0 || url.compare(0, 7, "HTTP://") == 0)
-    url.erase(0, url.find('/', 7));
-  else if (url.compare(0, 8, "https://") == 0 || url.compare(0, 8, "HTTPS://") == 0)
-    url.erase(0, url.find('/', 8));
-
   if (state != state_end)
     in.setstate(std::ios_base::eofbit);
 
   if (!in)
-    log_warn("error reading http-Message in state s" << state);
+  {
+    if (maxRequestSize > 0 && count >= maxRequestSize)
+      log_warn("max request size " << maxRequestSize << " exceeded");
+    else
+      log_warn("error reading http-Message in state s" << state);
+  }
+
+  if (url.compare(0, 7, "http://") == 0 || url.compare(0, 7, "HTTP://") == 0)
+    url.erase(0, url.find('/', 7));
+  else if (url.compare(0, 8, "https://") == 0 || url.compare(0, 8, "HTTPS://") == 0)
+    url.erase(0, url.find('/', 8));
 }
 
 void httpMessage::parseBody(std::istream& in)
@@ -276,14 +287,22 @@ void httpMessage::parseBody(std::istream& in)
     if (!valuestream)
       throw httpError("400 missing Content-Length");
 
-    body.clear();
-    char buffer[512];
-    size_t size = content_size;
-    while (size > 0
-      && (in.read(buffer, std::min(sizeof(buffer), size)), in.gcount() > 0))
+    if (maxBodySize > 0 && content_size > maxBodySize)
     {
-      body.append(buffer, in.gcount());
-      size -= in.gcount();
+      log_warn("max body size " << maxBodySize << " exceeded");
+      in.setstate(std::ios_base::eofbit);
+    }
+    else
+    {
+      body.clear();
+      char buffer[512];
+      size_t size = content_size;
+      while (size > 0
+        && (in.read(buffer, std::min(sizeof(buffer), size)), in.gcount() > 0))
+      {
+        body.append(buffer, in.gcount());
+        size -= in.gcount();
+      }
     }
   }
 }
