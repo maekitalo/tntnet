@@ -1,5 +1,5 @@
 /* component.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -21,6 +21,8 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/component.h"
 #include "tnt/http.h"
+#include "tnt/httpreply.h"
+#include <sstream>
 
 namespace tnt
 {
@@ -56,4 +58,19 @@ namespace tnt
 
   const char* component::getDataPtr(const httpRequest& request, unsigned n) const
   { return 0; }
+
+  std::string component::operator() (httpRequest& request, cxxtools::query_params& qparam)
+  {
+    // set up new reply-object
+    std::ostringstream result;
+    httpReply reply(result);
+
+    // don't output any http-headers
+    reply.setDirectModeNoFlush();
+
+    // call the component
+    (*this)(request, reply, qparam);
+
+    return result.str();
+  }
 }

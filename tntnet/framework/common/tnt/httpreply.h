@@ -40,7 +40,7 @@ namespace tnt
       std::ostream* current_outstream;
 
     public:
-      httpReply(std::ostream& s);
+      explicit httpReply(std::ostream& s);
 
       void setContentType(const std::string& t)    { contentType = t; }
       const std::string& getContentType() const    { return contentType; }

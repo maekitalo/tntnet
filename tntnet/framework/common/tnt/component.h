@@ -1,5 +1,5 @@
 /* tnt/component.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -96,6 +96,9 @@ class component
     virtual const char* getDataPtr(const httpRequest& request, unsigned n) const;
     std::string getData(const httpRequest& r, unsigned n) const
       { return std::string(getDataPtr(r, n), getDataLen(r, n)); }
+
+    /// return output as a string rather than outputting to stream
+    std::string operator() (httpRequest& request, cxxtools::query_params& qparam);
 };
 
 }
