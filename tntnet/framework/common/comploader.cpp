@@ -32,6 +32,8 @@ component* component_library::create(
   const std::string& component_name, comploader& cl,
   const urlmapper& rootmapper)
 {
+  log_trace("create " + component_name);
+
   creator_type creator;
 
   // look for creator in my map
@@ -70,6 +72,8 @@ comploader::search_path_type comploader::search_path;
 component& comploader::fetchComp(const compident& ci,
   const urlmapper& rootmapper)
 {
+  log_trace("fetchComp " + ci.toString());
+
   RdLock lock(componentMonitor);
 
   // lookup component
@@ -113,6 +117,8 @@ component& comploader::fetchComp(const compident& ci,
 
 component_library& comploader::fetchLib(const std::string& libname)
 {
+  log_trace("fetchLib " + libname);
+
   RdLock lock(libraryMonitor);
   librarymap_type::iterator i = librarymap.find(libname);
   if (i == librarymap.end())
