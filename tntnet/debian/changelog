@@ -1,8 +1,9 @@
 tntnet (1.2.1-1) unstable; urgency=low
 
   * Content-MD5-header
+  * moved logging-wrapper to cxxtools (1.2.1)
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Sun, 28 Nov 2004 16:59:56 +0100
+ -- Tommi Maekitalo <tommi@fserv.eckpart.de>  Sun,  5 Dec 2004 21:34:40 +0100
 
 tntnet (1.2.0-1) unstable; urgency=low
 
