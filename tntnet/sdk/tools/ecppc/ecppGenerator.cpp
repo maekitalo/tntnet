@@ -739,7 +739,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
        << "{\n";
 
   if (isDebug())
-    code << "  log_debug_ns(compcall, \"execute " << classname << " \" << qparam.getUrl());\n";
+    code << "  log_trace_ns(compcall, \"" << classname << " \" + qparam.getUrl());\n";
 
   if (externData && !data.empty())
     code << "  const component* dataComponent = main().getDataComponent();\n";
@@ -757,7 +757,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "  }\n\n"
             "  reply.setDirectMode();\n\n";
 
-  code << maincomp.getBody(isDebug() ? classname : std::string())
+  code << maincomp.getBody()
        << "}\n\n";
 
   code << "bool " << classname << "::drop()\n"
@@ -858,12 +858,12 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "{\n";
 
     if (isDebug())
-      code << "  log_debug_ns(compcall, \"execute " << classname << "::" << i->name << " \" << qparam.getUrl());\n";
+      code << "  log_trace_ns(compcall, \"" << classname << "::" << i->name << " \" + qparam.getUrl());\n";
 
     if (externData && !data.empty())
       code << "  const component* dataComponent = main().getDataComponent();\n";
 
-    code << i->getBody(isDebug() ? classname + "::" + i->name : std::string())
+    code << i->getBody()
          << "}\n\n";
   }
 
@@ -922,7 +922,7 @@ std::string ecppGenerator::getDataCpp(const std::string& basename,
   return code.str();
 }
 
-std::string ecppGenerator::comp::getBody(const std::string& signature) const
+std::string ecppGenerator::comp::getBody() const
 {
   std::ostringstream body;
   body << "  // <%args>\n"
@@ -930,11 +930,7 @@ std::string ecppGenerator::comp::getBody(const std::string& signature) const
        << "  // </%args>\n\n"
        << "  // <%cpp>\n"
        << main
-       << "  // <%/cpp>\n";
-
-  if (!signature.empty())
-    body << "  log_debug_ns(compcall, \"" << signature << " OK\");\n";
-
-  body << "  return HTTP_OK;\n";
+       << "  // <%/cpp>\n"
+       << "  return HTTP_OK;\n";
   return body.str();
 }

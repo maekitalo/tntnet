@@ -115,7 +115,7 @@ class ecppGenerator : public tnt::ecppParser
     {
       std::string main;
       std::string args;
-      std::string getBody(const std::string& signature) const;
+      std::string getBody() const;
     };
 
     struct subcomp : public comp
