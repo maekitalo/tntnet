@@ -30,22 +30,12 @@ struct compident
   }
 
   compident() { }
-  compident(const std::string& l, const::std::string& n)
+  compident(const std::string& l, const std::string& n)
     : libname(l),
       compname(n)
   { }
 
-  explicit compident(const std::string& ident)
-  {
-    std::string::size_type pos = ident.find('@');
-    if (pos == std::string::npos)
-      compname = ident;
-    else
-    {
-      compname = ident.substr(0, pos);
-      libname = ident.substr(pos + 1);
-    }
-  }
+  explicit compident(const std::string& ident);
 
   std::string toString() const
   { return compname + '@' + libname; }

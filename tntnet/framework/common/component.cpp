@@ -7,6 +7,18 @@
 
 namespace tnt
 {
+  compident::compident(const std::string& ident)
+  {
+    std::string::size_type pos = ident.find('@');
+    if (pos == std::string::npos)
+      compname = ident;
+    else
+    {
+      compname = ident.substr(0, pos);
+      libname = ident.substr(pos + 1);
+    }
+  }
+
   unsigned component::operator() (httpRequest& request,
     httpReply& reply, query_params& qparam)
   {
