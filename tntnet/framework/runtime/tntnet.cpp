@@ -246,6 +246,18 @@ namespace tnt
         in >> lifetime;
       }
     }
+
+    tntconfig::config_values_type configSetEnv;
+    config.getConfigValues("SetEnv", configSetEnv);
+    for (tntconfig::config_values_type::const_iterator it = configSetEnv.begin();
+         it != configSetEnv.end(); ++it)
+    {
+      if (it->values.size() >= 2)
+      {
+        log_debug("setenv " << it->values[0] << "=\"" << it->values[1] << '"');
+        ::setenv(it->values[0].c_str(), it->values[1].c_str(), 1);
+      }
+    }
   }
 
   void tntnet::setGroup() const
@@ -354,7 +366,7 @@ namespace tnt
   int tntnet::run()
   {
     std::string daemon = config.getSingleValue("Daemon");
-    if (isTrue(daemon))
+    if (!debug && isTrue(daemon))
     {
       mkDaemon();
 
@@ -541,6 +553,18 @@ namespace tnt
     // change group and user
     setGroup();
     setUser();
+
+    // configure server (static)
+    {
+      tntconfig::config_values_type compPath;
+      config.getConfigValues("CompPath", compPath);
+      for (tntconfig::config_values_type::const_iterator it = compPath.begin();
+           it != compPath.end(); ++it)
+      {
+        if (it->values.size() > 0)
+          server::addSearchPath(it->values[0]);
+      }
+    }
 
     // create server-threads
     log_info("create " << numthreads << " server threads");
