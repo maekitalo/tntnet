@@ -68,7 +68,7 @@ namespace tnt
       log_warn("invalid character " << chartoprint(ch) << " in state-cr");
       failed_flag = true;
     }
-    return failed();
+    return true;
   }
 
   bool messageheader::parser::state_fieldname(char ch)
