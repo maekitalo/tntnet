@@ -157,9 +157,7 @@ namespace tnt
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
       arg_lifetime(argc, argv, 'C', 60),
-      numthreads(5),
-      lifetime(60),
-      cleaner_thread(*this, &tntnet::Clean)
+      numthreads(5)
   {
     if (argc != 1)
     {
@@ -233,14 +231,15 @@ namespace tnt
       }
     }
 
-    lifetime = arg_lifetime;
     if (!arg_lifetime.isSet())
     {
       tntconfig::config_value_type v = config.getConfigValue("Lifetime");
       if (v.size() >= 1)
       {
         std::istringstream in(*v.begin());
-        in >> lifetime;
+        unsigned lifetime;
+        if (in >> lifetime)
+          server::setCompLifetime(lifetime);
       }
     }
 
@@ -563,27 +562,23 @@ namespace tnt
       }
     }
 
-    // create server-threads
-    log_info("create " << numthreads << " server threads");
-    for (unsigned i = 0; i < numthreads; ++i)
-    {
-      server* s = new server(queue, dispatcher, &myconfigurator);
-      servers.insert(s);
-      log_debug("create server " << i);
-    }
-
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");
     for (listeners_type::iterator it = listeners.begin();
          it != listeners.end(); ++it)
       (*it)->Create();
 
-    // launch server-threads
-    for (servers_type::iterator it = servers.begin();
-         it != servers.end(); ++it)
-      (*it)->Create();
+    // create server-threads
+    log_info("create " << numthreads << " server threads");
+    for (unsigned i = 0; i < numthreads; ++i)
+    {
+      log_debug("create server " << i);
+      server* s = new server(queue, dispatcher, &myconfigurator);
+      s->Create();
+    }
 
     log_debug("start cleaner thread");
+    FunctionThread<void ()> cleaner_thread(server::CleanerThread);
     cleaner_thread.Create();
 
     while (1)
@@ -593,51 +588,18 @@ namespace tnt
         queue.noWaitThreads.Wait(lock);
       }
 
-      log_info("create server " << (servers.size() + 1));
+      log_info("create server");
       server* s = new server(queue, dispatcher, &myconfigurator);
-      servers.insert(s);
       s->Create();
     }
 
     // join-loop
-    while (!servers.empty())
-    {
-      servers_type::value_type s = *servers.begin();
-      servers.erase(s);
-      s->Join();
-      delete s;
-    }
-
     while (!listeners.empty())
     {
       listeners_type::value_type s = *listeners.begin();
       listeners.erase(s);
       s->Join();
       delete s;
-    }
-  }
-
-  void tntnet::Clean()
-  {
-    while (!stop)
-    {
-      unsigned count = 10;
-      while (count > 0 && !stop)
-      {
-        --count;
-        sleep(1);
-      }
-
-      if (!stop)
-      {
-        log_debug("cleanup");
-        for (servers_type::iterator it = servers.begin();
-             it != servers.end(); ++it)
-        {
-          server* s = *it;
-          s->cleanup(lifetime);
-        }
-      }
     }
   }
 

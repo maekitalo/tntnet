@@ -13,8 +13,6 @@
 
 namespace tnt
 {
-  class server;
-
   class tntnet
   {
       arg<const char*> arg_ip;
@@ -34,9 +32,6 @@ namespace tnt
       jobqueue queue;
 
       static bool stop;
-      MethodThread<tntnet> cleaner_thread;
-      typedef std::set<server*> servers_type;
-      servers_type servers;
       typedef std::set<Thread*> listeners_type;
       listeners_type listeners;
 
@@ -61,7 +56,6 @@ namespace tnt
       tntnet(int argc, char* argv[]);
       int run();
 
-      void Clean();
       static void shutdown();
       static bool shouldStop()   { return stop; }
   };

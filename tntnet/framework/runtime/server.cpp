@@ -27,6 +27,8 @@ namespace tnt
 {
   Mutex server::mutex;
   unsigned server::nextThreadNumber = 0;
+  server::servers_type server::servers;
+  unsigned server::compLifetime = 60;
 
   log_define_class(server, "tntnet.server");
 
@@ -39,12 +41,14 @@ namespace tnt
     log_debug("initialize thread " << threadNumber);
     if (libconfigurator)
       mycomploader.addLoadLibraryListener(libconfigurator);
+    MutexLock lock(mutex);
+    servers.insert(this);
   }
 
   void server::Run()
   {
     log_debug("start thread " << threadNumber);
-    while(1)
+    while (1)
     {
       jobqueue::job_ptr j = queue.get();
       std::iostream& socket = j->getStream();
@@ -129,6 +133,10 @@ namespace tnt
         log_error(e.what());
       }
     }
+
+    log_debug("stop server thread");
+    MutexLock lock(mutex);
+    servers.erase(this);
   }
 
   void server::Dispatch(httpRequest& request, httpReply& reply)
@@ -174,4 +182,20 @@ namespace tnt
     throw notFoundException(request.getUrl());
   }
 
+  void server::CleanerThread()
+  {
+    while (1)
+    {
+      sleep(10);
+
+      log_debug("cleanup");
+
+      {
+        MutexLock lock(mutex);
+        for (servers_type::iterator it = servers.begin();
+             it != servers.end(); ++it)
+          (*it)->cleanup(compLifetime);
+      }
+    }
+  }
 }
