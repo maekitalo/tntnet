@@ -50,14 +50,13 @@ namespace tnt
       component_library()
         { }
 
-      component_library(const std::string& path, const std::string& name,
-          int flag = RTLD_LAZY)
-        : cxxtools::dl::library((path + '/' + name + ".so").c_str(), flag),
+      component_library(const std::string& path, const std::string& name)
+        : cxxtools::dl::library((path + '/' + name).c_str()),
           libname(name)
         { }
 
-      component_library(const std::string& name, int flag = RTLD_LAZY)
-        : cxxtools::dl::library((name + ".so").c_str(), flag),
+      component_library(const std::string& name)
+        : cxxtools::dl::library(name.c_str()),
           libname(name)
         { }
 
