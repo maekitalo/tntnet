@@ -87,7 +87,7 @@ namespace tnt
       ecppSubComponent& fetchSubComp(const std::string& sub) const;
 
       unsigned callComp(const std::string& url, httpRequest& request,
-        httpReply& reply, query_params& qparam);
+        httpReply& reply, cxxtools::query_params& qparam);
 
       const compident& getCompident() const  { return myident; }
 
@@ -123,8 +123,9 @@ namespace tnt
       ecppComponent& getMainComponent() const { return main; }
   };
 
-  inline unsigned ecppComponent::callComp(const std::string& url, httpRequest& request,
-    httpReply& reply, query_params& qparam)
+  inline unsigned ecppComponent::callComp(const std::string& url,
+    httpRequest& request, httpReply& reply,
+    cxxtools::query_params& qparam)
   {
     return fetchComp(url)(request, reply, qparam);
   }

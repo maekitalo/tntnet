@@ -1,6 +1,6 @@
 bin_PROGRAMS = ecppc
 
-INCLUDES = -I../common -I$(top_builddir)/framework/common
+AM_CPPFLAGS = -I../common -I$(top_builddir)/framework/common
 
 ecppc_SOURCES = \
 	ecppc.cpp \

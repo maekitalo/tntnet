@@ -387,7 +387,7 @@ void ecppGenerator::processCall(const std::string& comp,
     if (pass_cgi.empty())
     {
       m << "  {\n"
-        << "    query_params cq(qparam, false);\n";
+        << "    cxxtools::query_params cq(qparam, false);\n";
       if (comp[0] == '.')
       {
         m << "    main()." << comp.substr(1) << "(request, reply, cq";
@@ -416,9 +416,9 @@ void ecppGenerator::processCall(const std::string& comp,
   {
     m << "  {\n";
     if (pass_cgi.empty())
-      m << "    query_params cq(qparam, false);\n";
+      m << "    cxxtools::query_params cq(qparam, false);\n";
     else
-      m << "    query_params cq(" << pass_cgi << ");\n";
+      m << "    cxxtools::query_params cq(" << pass_cgi << ");\n";
 
     for (comp_args_type::const_iterator i = args.begin();
          i != args.end(); ++i)
@@ -527,7 +527,7 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "    " << classname << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
             "    ~" << classname << "();\n\n"
             "  public:\n"
-            "    unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam);\n"
+            "    unsigned operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam);\n"
             "    bool drop();\n"
             "    unsigned    getDataCount(const httpRequest& request) const;\n"
             "    unsigned    getDataLen(const httpRequest& request, unsigned n) const;\n"
@@ -551,7 +551,7 @@ std::string ecppGenerator::getHeader(const std::string& basename,
               "          : ecppSubComponent(m, name),\n"
               "            mainComp(m)\n"
               "          { }\n"
-              "        unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam";
+              "        unsigned operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
          j != i->cppargs.end(); ++j)
     {
@@ -599,18 +599,17 @@ std::string ecppGenerator::getCpp(const std::string& basename,
        << "template <typename T> inline void use(const T&) { };\n\n"
        << "namespace ecpp_component\n"
        << "{\n"
-       << "static Mutex mutex;\n\n";
+       << "static cxxtools::Mutex mutex;\n\n";
 
   if (compress)
   {
     code << "static tnt::zdata raw_data(\n\"";
 
     uLongf s = data.size() * data.size() / 100 + 100;
-    DynBuffer p;
+    cxxtools::dynbuffer<Bytef> p;
     p.reserve(s);
 
-    int z_ret = ::compress((Bytef*)p.data(), &s,
-      (const Bytef*)data.ptr(), data.size());
+    int z_ret = ::compress(p.data(), &s, (const Bytef*)data.ptr(), data.size());
 
     if (z_ret != Z_OK)
     {
@@ -620,8 +619,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
          z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
     }
 
-    std::transform(
-      (Bytef*)p.data(), (Bytef*)p.data() + s,
+    std::transform(p.data(), p.data() + s,
       std::ostream_iterator<const char*>(code),
       stringescaper());
 
@@ -661,7 +659,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
          << "static unsigned refs = 0;\n\n"
          << "component* create_" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
          << "{\n"
-         << "  MutexLock lock(mutex);\n"
+         << "  cxxtools::MutexLock lock(mutex);\n"
          << "  if (theComponent == 0)\n"
          << "  {\n"
          << "    theComponent = new ecpp_component::" << classname << "(ci, um, cl);\n";
@@ -714,7 +712,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
        << cleanup
        << "  // </%cleanup>\n"
           "}\n\n"
-          "unsigned " << classname << "::operator() (httpRequest& request, httpReply& reply, query_params& qparam)\n"
+          "unsigned " << classname << "::operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam)\n"
        << "{\n";
 
   if (isDebug())
@@ -753,7 +751,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
        << "{\n";
   if (singleton)
   {
-    code << "  MutexLock lock(mutex);\n"
+    code << "  cxxtools::MutexLock lock(mutex);\n"
          << "  if (--refs == 0)\n"
          << "  {\n"
          << "    delete this;\n"
@@ -839,7 +837,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "log_define_class(" << classname << "::" << i->name << "_type, \"component."
          << classname << '.' << i->name << "\")\n\n" 
             "unsigned " << classname << "::" << i->name
-         << "_type::operator() (httpRequest& request, httpReply& reply, query_params& qparam";
+         << "_type::operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
          j != i->cppargs.end(); ++j)
       code << ", " << j->first;
@@ -890,7 +888,7 @@ std::string ecppGenerator::getDataCpp(const std::string& basename,
     }
 
     std::transform(
-      (Bytef*)p, (Bytef*)p + s,
+      p, p + s,
       std::ostream_iterator<const char*>(code),
       stringescaper());
     code << "\"\n"

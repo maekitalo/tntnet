@@ -30,7 +30,7 @@ namespace tnt
   class comploader;
 }
 
-static Mutex mutex;
+static cxxtools::Mutex mutex;
 static tnt::component* theComponent = 0;
 static unsigned refs = 0;
 
@@ -53,7 +53,7 @@ class redirectcomp : public tnt::component
 
   public:
     virtual unsigned operator() (tnt::httpRequest& request,
-      tnt::httpReply& reply, query_params& qparam);
+      tnt::httpReply& reply, cxxtools::query_params& qparam);
     virtual bool drop();
 };
 
@@ -64,7 +64,7 @@ class redirectcomp : public tnt::component
 tnt::component* create_redirect(const tnt::compident& ci, const tnt::urlmapper& um,
   tnt::comploader& cl)
 {
-  MutexLock lock(mutex);
+  cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
     theComponent = new redirectcomp();
@@ -78,14 +78,14 @@ tnt::component* create_redirect(const tnt::compident& ci, const tnt::urlmapper& 
 // componentdefinition
 //
 unsigned redirectcomp::operator() (tnt::httpRequest& request,
-  tnt::httpReply& reply, query_params&)
+  tnt::httpReply& reply, cxxtools::query_params&)
 {
   return reply.redirect(request.getPathInfo());
 }
 
 bool redirectcomp::drop()
 {
-  MutexLock lock(mutex);
+  cxxtools::MutexLock lock(mutex);
   if (--refs == 0)
   {
      delete this;

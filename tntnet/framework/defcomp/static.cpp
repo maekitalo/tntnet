@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-static Mutex mutex;
+static cxxtools::Mutex mutex;
 static tnt::component* theComponent = 0;
 static unsigned refs = 0;
 
@@ -49,7 +49,7 @@ bool config_static(const tnt::tntconfig::name_type& key,
 tnt::component* create_static(const tnt::compident& ci,
   const tnt::urlmapper& um, tnt::comploader& cl)
 {
-  MutexLock lock(mutex);
+  cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
     theComponent = new tntcomp::staticcomp();
@@ -70,7 +70,7 @@ namespace tntcomp
   std::string staticcomp::document_root;
 
   unsigned staticcomp::operator() (tnt::httpRequest& request,
-    tnt::httpReply& reply, query_params& qparams)
+    tnt::httpReply& reply, cxxtools::query_params& qparams)
   {
     if (!tnt::httpRequest::checkUrl(request.getPathInfo()))
       throw tnt::httpError(HTTP_BAD_REQUEST, "illegal url");
@@ -125,7 +125,7 @@ namespace tntcomp
 
   bool staticcomp::drop()
   {
-    MutexLock lock(mutex);
+    cxxtools::MutexLock lock(mutex);
     if (--refs == 0)
     {
       delete this;

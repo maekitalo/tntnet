@@ -69,7 +69,7 @@ namespace tnt
 
   class tcpjob : public job
   {
-      tcp::iostream socket;
+      cxxtools::tcp::iostream socket;
       struct sockaddr_in sockaddr_in;
 
     public:
@@ -77,7 +77,7 @@ namespace tnt
         : socket(1024, 60000)
         { }
 
-      void Accept(const tcp::Server& listener);
+      void Accept(const cxxtools::tcp::Server& listener);
 
       std::iostream& getStream();
       const struct sockaddr_in& getPeeraddr_in() const;
@@ -108,11 +108,11 @@ namespace tnt
   {
     public:
       typedef boost::shared_ptr<job> job_ptr;
-      Condition noWaitThreads;
+      cxxtools::Condition noWaitThreads;
 
     private:
       std::deque<job_ptr> jobs;
-      Condition notEmpty;
+      cxxtools::Condition notEmpty;
       unsigned waitThreads;
 
       log_declare_class();

@@ -235,10 +235,10 @@ int main(int argc, char* argv[])
 
   try
   {
-    arg<const char*> ofile(argc, argv, 'o');
-    arg<const char*> compname(argc, argv, 'n', "component");
-    arg<bool> fail_on_warn(argc, argv, 'F');
-    arg<const char*> splitChars(argc, argv, "--split-chars");
+    cxxtools::arg<const char*> ofile(argc, argv, 'o');
+    cxxtools::arg<const char*> compname(argc, argv, 'n', "component");
+    cxxtools::arg<bool> fail_on_warn(argc, argv, 'F');
+    cxxtools::arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 3)
     {

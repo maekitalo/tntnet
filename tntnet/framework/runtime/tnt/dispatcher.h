@@ -70,7 +70,7 @@ namespace tnt
     private:
       typedef std::vector<std::pair<boost::regex, compident_type> > urlmap_type;
       urlmap_type urlmap;   // map url to soname/compname
-      mutable RWLock rwlock;
+      mutable cxxtools::RWLock rwlock;
 
       typedef std::pair<compident_type, urlmap_type::iterator> nextcomp_pair_type;
 
@@ -90,7 +90,7 @@ namespace tnt
       class pos_type
       {
           const dispatcher& dis;
-          RdLock lock;
+          cxxtools::RdLock lock;
           urlmap_type::const_iterator pos;
           std::string url;
           bool first;
@@ -110,7 +110,7 @@ namespace tnt
       template <class OutputIterator>
         void mapCompAll(const std::string& compUrl, OutputIterator it)
       {
-        RdLock lock(rwlock);
+        cxxtools::RdLock lock(rwlock);
         urlmap_type::const_iterator pos = urlmap.begin();
         compident_type ci;
         while (mapCompNext(compUrl, ci, pos))

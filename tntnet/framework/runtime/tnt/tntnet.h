@@ -32,13 +32,13 @@ namespace tnt
 {
   class tntnet
   {
-      arg<unsigned> arg_numthreads;
-      arg<const char*> conf;
+      cxxtools::arg<unsigned> arg_numthreads;
+      cxxtools::arg<const char*> conf;
       tntconfig config;
-      arg<const char*> propertyfilename;
-      arg<bool> debug;
-      arg<unsigned> arg_lifetime;
-      arg<const char*> arg_pidfile;
+      cxxtools::arg<const char*> propertyfilename;
+      cxxtools::arg<bool> debug;
+      cxxtools::arg<unsigned> arg_lifetime;
+      cxxtools::arg<const char*> arg_pidfile;
 
       unsigned numthreads;
       unsigned lifetime;
@@ -46,7 +46,7 @@ namespace tnt
       jobqueue queue;
 
       static bool stop;
-      typedef std::set<Thread*> listeners_type;
+      typedef std::set<cxxtools::Thread*> listeners_type;
       listeners_type listeners;
 
       static std::string pidFileName;

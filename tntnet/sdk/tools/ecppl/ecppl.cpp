@@ -33,11 +33,11 @@ int main(int argc, char* argv[])
   std::ios::sync_with_stdio(false);
   try
   {
-    arg<bool> debug(argc, argv, 'd');
-    arg<bool> lang(argc, argv, 'l');
-    arg<bool> nolang(argc, argv, 'n');
-    arg<const char*> ofile(argc, argv, 'o');
-    arg<const char*> splitChars(argc, argv, "--split-chars");
+    cxxtools::arg<bool> debug(argc, argv, 'd');
+    cxxtools::arg<bool> lang(argc, argv, 'l');
+    cxxtools::arg<bool> nolang(argc, argv, 'n');
+    cxxtools::arg<const char*> ofile(argc, argv, 'o');
+    cxxtools::arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 2)
     {

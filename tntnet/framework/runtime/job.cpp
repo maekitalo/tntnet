@@ -27,7 +27,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // tcpjob
   //
-  void tcpjob::Accept(const tcp::Server& listener)
+  void tcpjob::Accept(const cxxtools::tcp::Server& listener)
   {
     log_debug("accept");
     socket.Accept(listener);
@@ -88,7 +88,7 @@ namespace tnt
   void jobqueue::put(job_ptr j)
   {
     log_debug("jobqueue::put");
-    MutexLock lock(notEmpty);
+    cxxtools::MutexLock lock(notEmpty);
     jobs.push_back(j);
     notEmpty.Signal();
   }
@@ -98,7 +98,7 @@ namespace tnt
     // warten, bis ein Job vohanden ist
     ++waitThreads;
 
-    MutexLock lock(notEmpty);
+    cxxtools::MutexLock lock(notEmpty);
     while (jobs.empty())
       notEmpty.Wait(lock);
 

@@ -35,9 +35,9 @@ namespace tnt
   class dispatcher;
   class jobqueue;
 
-  class server : public Thread
+  class server : public cxxtools::Thread
   {
-      static Mutex mutex;
+      static cxxtools::Mutex mutex;
       static unsigned nextThreadNumber;
 
       jobqueue& queue;

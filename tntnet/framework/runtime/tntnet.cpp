@@ -90,7 +90,7 @@ namespace
 
   void libconfigurator::onLoadLibrary(tnt::component_library& lib)
   {
-    dl::symbol config_symbol;
+    cxxtools::dl::symbol config_symbol;
     try
     {
       config_symbol = lib.sym("config");
@@ -99,7 +99,7 @@ namespace
       configure(config_function);
 
     }
-    catch(const dl::symbol_not_found&)
+    catch(const cxxtools::dl::symbol_not_found&)
     {
     }
   }
@@ -107,7 +107,7 @@ namespace
   void libconfigurator::onCreateComponent(tnt::component_library& lib,
     const tnt::compident& ci, tnt::component& comp)
   {
-    dl::symbol config_symbol;
+    cxxtools::dl::symbol config_symbol;
     try
     {
       config_symbol = lib.sym(("config_" + ci.compname).c_str());
@@ -115,7 +115,7 @@ namespace
         (config_function_type)config_symbol.getSym();
       configure(config_function);
     }
-    catch(const dl::symbol_not_found&)
+    catch(const cxxtools::dl::symbol_not_found&)
     {
     }
   }
@@ -484,7 +484,7 @@ namespace tnt
     if (configListen.empty())
     {
       log_warn("no listeners defined - using 0.0.0.0:80");
-      Thread* s = new tnt::listener("0.0.0.0", 80, queue);
+      cxxtools::Thread* s = new tnt::listener("0.0.0.0", 80, queue);
       listeners.insert(s);
     }
     else
@@ -510,7 +510,7 @@ namespace tnt
 
         std::string ip(it->params[0]);
         log_debug("create listener ip=" << ip << " port=" << port);
-        Thread* s = new tnt::listener(ip, port, queue);
+        cxxtools::Thread* s = new tnt::listener(ip, port, queue);
         listeners.insert(s);
       }
     }
@@ -545,8 +545,8 @@ namespace tnt
 
       std::string ip(it->params[0]);
       log_debug("create ssl-listener ip=" << ip << " port=" << port);
-      Thread* s = new ssllistener(certificateFile.c_str(), certificateKey.c_str(),
-          ip, port, queue);
+      cxxtools::Thread* s = new ssllistener(certificateFile.c_str(),
+          certificateKey.c_str(), ip, port, queue);
       listeners.insert(s);
     }
 
@@ -582,13 +582,13 @@ namespace tnt
     }
 
     log_debug("start cleaner thread");
-    FunctionThread<void ()> cleaner_thread(server::CleanerThread);
+    cxxtools::FunctionThread<void ()> cleaner_thread(server::CleanerThread);
     cleaner_thread.Create();
 
     while (1)
     {
       {
-        MutexLock lock(queue.noWaitThreads);
+        cxxtools::MutexLock lock(queue.noWaitThreads);
         queue.noWaitThreads.Wait(lock);
       }
 

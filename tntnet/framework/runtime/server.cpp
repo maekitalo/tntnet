@@ -42,7 +42,7 @@ namespace
 
 namespace tnt
 {
-  Mutex server::mutex;
+  cxxtools::Mutex server::mutex;
   unsigned server::nextThreadNumber = 0;
   server::servers_type server::servers;
   unsigned server::compLifetime = 60;
@@ -58,7 +58,7 @@ namespace tnt
     log_debug("initialize thread " << threadNumber);
     if (libconfigurator)
       mycomploader.addLoadLibraryListener(libconfigurator);
-    MutexLock lock(mutex);
+    cxxtools::MutexLock lock(mutex);
     servers.insert(this);
   }
 
@@ -114,12 +114,12 @@ namespace tnt
                 log_debug("no keep alive request/reply="
                     << request.keepAlive() << '/' << reply.keepAlive());
             }
-            catch (const dl::dlopen_error& e)
+            catch (const cxxtools::dl::dlopen_error& e)
             {
               log_warn("dl::dlopen_error catched");
               throw notFoundException(e.getLibname());
             }
-            catch (const dl::symbol_not_found& e)
+            catch (const cxxtools::dl::symbol_not_found& e)
             {
               log_warn("dl::symbol_not_found catched");
               throw notFoundException(e.getSymbol());
@@ -144,7 +144,7 @@ namespace tnt
                  << e.what() << "</p></body></html>" << std::endl;
         }
       }
-      catch (const tcp::Timeout& e)
+      catch (const cxxtools::tcp::Timeout& e)
       {
         log_warn("Timout");
       }
@@ -155,7 +155,7 @@ namespace tnt
     }
 
     log_debug("stop server thread");
-    MutexLock lock(mutex);
+    cxxtools::MutexLock lock(mutex);
     servers.erase(this);
   }
 
@@ -211,7 +211,7 @@ namespace tnt
       log_debug("cleanup");
 
       {
-        MutexLock lock(mutex);
+        cxxtools::MutexLock lock(mutex);
         for (servers_type::iterator it = servers.begin();
              it != servers.end(); ++it)
           (*it)->cleanup(compLifetime);

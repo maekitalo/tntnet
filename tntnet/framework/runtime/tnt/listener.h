@@ -29,11 +29,11 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class listener : public Thread
+  class listener : public cxxtools::Thread
   {
       log_declare_class();
 
-      tcp::Server server;
+      cxxtools::tcp::Server server;
       jobqueue& queue;
 
     public:
@@ -41,7 +41,7 @@ namespace tnt
       virtual void Run();
   };
 
-  class ssllistener : public Thread
+  class ssllistener : public cxxtools::Thread
   {
       log_declare_class();
 

@@ -58,7 +58,7 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // ecppComponent
   //
-  RWLock equivMonitor;
+  cxxtools::RWLock equivMonitor;
   ecppComponent::libnotfound_type ecppComponent::libnotfound;
   ecppComponent::compnotfound_type ecppComponent::compnotfound;
 
@@ -157,7 +157,7 @@ namespace tnt
 
       // check compidentmap
       {
-        RdLock lock(equivMonitor);
+        cxxtools::RdLock lock(equivMonitor);
 
         libnotfound_type::const_iterator lit = libnotfound.find(ci.libname);
         if (lit != libnotfound.end())
@@ -172,12 +172,12 @@ namespace tnt
       {
         return &fetchComp(ci);
       }
-      catch (const dl::symbol_not_found&)
+      catch (const cxxtools::dl::symbol_not_found&)
       {
         // symbol with lang not found - remember this
         rememberCompNotFound(ci);
       }
-      catch (const dl::dlopen_error&)
+      catch (const cxxtools::dl::dlopen_error&)
       {
         // library with lang not found - remember this
         rememberLibNotFound(ci.libname);
@@ -190,14 +190,14 @@ namespace tnt
   void ecppComponent::rememberLibNotFound(const std::string& lib)
   {
     log_debug("remember lib not found " << lib);
-    WrLock wrlock(equivMonitor);
+    cxxtools::WrLock wrlock(equivMonitor);
     libnotfound.insert(lib);
   }
 
   void ecppComponent::rememberCompNotFound(const compident& ci)
   {
     log_debug("remember comp not found " << ci);
-    WrLock wrlock(equivMonitor);
+    cxxtools::WrLock wrlock(equivMonitor);
     compnotfound.insert(ci);
   }
 

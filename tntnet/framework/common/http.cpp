@@ -423,8 +423,8 @@ void httpRequest::parse(std::istream& in)
     }
 
     {
-      static Mutex monitor;
-      MutexLock lock(monitor);
+      static cxxtools::Mutex monitor;
+      cxxtools::MutexLock lock(monitor);
       serial = ++serial_;
     }
   }
@@ -432,8 +432,8 @@ void httpRequest::parse(std::istream& in)
 
 std::string httpRequest::getPeerIp() const
 {
-  static Mutex monitor;
-  MutexLock lock(monitor);
+  static cxxtools::Mutex monitor;
+  cxxtools::MutexLock lock(monitor);
 
   char* p = inet_ntoa(peerAddr.sin_addr);
   return std::string(p);
@@ -441,8 +441,8 @@ std::string httpRequest::getPeerIp() const
 
 std::string httpRequest::getServerIp() const
 {
-  static Mutex monitor;
-  MutexLock lock(monitor);
+  static cxxtools::Mutex monitor;
+  cxxtools::MutexLock lock(monitor);
 
   char* p = inet_ntoa(serverAddr.sin_addr);
   return std::string(p);

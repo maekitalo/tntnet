@@ -27,7 +27,10 @@ Boston, MA  02111-1307  USA
 #include <iostream>
 #include <limits>
 
-class query_params;
+namespace cxxtools
+{
+  class query_params;
+}
 
 namespace tnt
 {
@@ -82,7 +85,7 @@ class component
     void unlock()                    { touch(); }
 
     virtual unsigned operator() (httpRequest& request,
-      httpReply& reply, query_params& qparam);
+      httpReply& reply, cxxtools::query_params& qparam);
     virtual bool drop() = 0;
 
     virtual std::string getAttribute(const std::string& name,

@@ -33,7 +33,7 @@ namespace tnt
   class comploader;
 }
 
-static Mutex mutex;
+static cxxtools::Mutex mutex;
 static tnt::component* theComponent = 0;
 static unsigned refs = 0;
 
@@ -58,7 +58,7 @@ class unzipcomp : public tnt::component
 
   public:
     virtual unsigned operator() (tnt::httpRequest& request,
-      tnt::httpReply& reply, query_params& qparam);
+      tnt::httpReply& reply, cxxtools::query_params& qparam);
     virtual bool drop();
 };
 
@@ -69,7 +69,7 @@ class unzipcomp : public tnt::component
 tnt::component* create_unzip(const tnt::compident& ci,
   const tnt::urlmapper& um, tnt::comploader& cl)
 {
-  MutexLock lock(mutex);
+  cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
     theComponent = new unzipcomp();
@@ -86,7 +86,7 @@ tnt::component* create_unzip(const tnt::compident& ci,
 //
 
 unsigned unzipcomp::operator() (tnt::httpRequest& request,
-  tnt::httpReply& reply, query_params& qparams)
+  tnt::httpReply& reply, cxxtools::query_params& qparams)
 {
   std::string pi = request.getPathInfo();
 
@@ -109,7 +109,7 @@ unsigned unzipcomp::operator() (tnt::httpRequest& request,
 
 bool unzipcomp::drop()
 {
-  MutexLock lock(mutex);
+  cxxtools::MutexLock lock(mutex);
   if (--refs == 0)
   {
     delete this;

@@ -56,7 +56,7 @@ namespace tntcomp
 
     public:
       virtual unsigned operator() (tnt::httpRequest& request,
-        tnt::httpReply& reply, query_params& qparam);
+        tnt::httpReply& reply, cxxtools::query_params& qparam);
       virtual bool drop();
 
       static void setDocumentRoot(const std::string& s)

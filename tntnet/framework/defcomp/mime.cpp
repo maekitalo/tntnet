@@ -32,7 +32,7 @@ namespace tnt
   class comploader;
 }
 
-static Mutex mutex;
+static cxxtools::Mutex mutex;
 static tnt::component* theComponent = 0;
 static unsigned refs = 0;
 static bool configured = false;
@@ -69,7 +69,7 @@ namespace tntcomp
 
     public:
       virtual unsigned operator() (tnt::httpRequest& request,
-        tnt::httpReply& reply, query_params& qparam);
+        tnt::httpReply& reply, cxxtools::query_params& qparam);
       virtual bool drop();
 
       static void setDefaultType(const std::string& type)
@@ -134,7 +134,7 @@ bool config_mime(const tnt::tntconfig::name_type& key,
 tnt::component* create_mime(const tnt::compident& ci,
   const tnt::urlmapper& um, tnt::comploader& cl)
 {
-  MutexLock lock(mutex);
+  cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
     theComponent = new tntcomp::mime();
@@ -158,7 +158,7 @@ namespace tntcomp
   std::string mime::default_type;
 
   unsigned mime::operator() (tnt::httpRequest& request,
-    tnt::httpReply& reply, query_params& qparams)
+    tnt::httpReply& reply, cxxtools::query_params& qparams)
   {
     std::string path = request.getPathInfo();
 
@@ -192,7 +192,7 @@ namespace tntcomp
 
   bool mime::drop()
   {
-    MutexLock lock(mutex);
+    cxxtools::MutexLock lock(mutex);
     if (--refs == 0)
     {
       delete this;

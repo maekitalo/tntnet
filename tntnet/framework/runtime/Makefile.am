@@ -1,6 +1,6 @@
 bin_PROGRAMS = tntnet
 
-INCLUDES = -I../common
+AM_CPPFLAGS = -I../common
 
 tntnet_SOURCES = \
 	dispatcher.cpp \

@@ -29,7 +29,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  static Mutex mutex;
+  static cxxtools::Mutex mutex;
 
   void sodata::setLangSuffix()
   {
@@ -42,20 +42,20 @@ namespace tnt
 
   void sodata::addRef(const compident& ci)
   {
-    MutexLock lock(mutex);
+    cxxtools::MutexLock lock(mutex);
     if (refs++ == 0)
     {
       // read data from shared library
       log_debug("load library " << ci.libname << sosuffix);
-      dl::library so((ci.libname + sosuffix + ".so").c_str());
+      cxxtools::dl::library so((ci.libname + sosuffix + ".so").c_str());
 
-      dl::symbol datalen_sym = so.sym((ci.compname + "_datalen").c_str());
+      cxxtools::dl::symbol datalen_sym = so.sym((ci.compname + "_datalen").c_str());
       unsigned datalen = *reinterpret_cast<unsigned*>(datalen_sym.getSym());
       try
       {
         // try to read compressed data
-        dl::symbol zdata_sym = so.sym((ci.compname + "_zdata").c_str());
-        dl::symbol zdatalen_sym = so.sym((ci.compname + "_zdatalen").c_str());
+        cxxtools::dl::symbol zdata_sym = so.sym((ci.compname + "_zdata").c_str());
+        cxxtools::dl::symbol zdatalen_sym = so.sym((ci.compname + "_zdatalen").c_str());
 
         const char** zdata = reinterpret_cast<const char**>(zdata_sym.getSym());
         unsigned zdatalen = *reinterpret_cast<unsigned*>(zdatalen_sym.getSym());
@@ -77,10 +77,10 @@ namespace tnt
 
         log_debug("uncompress ready");
       }
-      catch(const dl::symbol_not_found&)
+      catch(const cxxtools::dl::symbol_not_found&)
       {
         // compressed data not found - try uncompressed
-        dl::symbol data_sym = so.sym((ci.compname + "_data").c_str());
+        cxxtools::dl::symbol data_sym = so.sym((ci.compname + "_data").c_str());
         const char** srcdata = reinterpret_cast<const char**>(data_sym.getSym());
 
         log_debug(datalen << " bytes data");
@@ -94,7 +94,7 @@ namespace tnt
 
   void sodata::release()
   {
-    MutexLock lock(mutex);
+    cxxtools::MutexLock lock(mutex);
     if (--refs <= 0)
     {
       log_debug("release");

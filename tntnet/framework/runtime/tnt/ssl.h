@@ -41,7 +41,7 @@ namespace tnt
       { return code; }
   };
 
-  class SslServer : public tcp::Server
+  class SslServer : public cxxtools::tcp::Server
   {
       SSL_CTX* ctx;
       void installCertificates(const char* certificateFile, const char* privateKeyFile);
@@ -54,7 +54,7 @@ namespace tnt
       SSL_CTX* getSslContext() const  { return ctx; }
   };
 
-  class SslStream : public tcp::Stream
+  class SslStream : public cxxtools::tcp::Stream
   {
       SSL* ssl;
 
@@ -62,7 +62,7 @@ namespace tnt
       SslStream();
 
       explicit SslStream(int fd)
-        : tcp::Stream(fd)
+        : cxxtools::tcp::Stream(fd)
         { }
 
       explicit SslStream(const SslServer& server);

@@ -189,7 +189,7 @@ namespace tnt
     private:
       std::string pathinfo;
       args_type args;
-      query_params qparam;
+      cxxtools::query_params qparam;
       struct sockaddr_in peerAddr;
       struct sockaddr_in serverAddr;
       contenttype ct;
@@ -221,8 +221,8 @@ namespace tnt
 
       virtual void parse(std::istream& in);
 
-      query_params& getQueryParams()              { return qparam; }
-      const query_params& getQueryParams() const  { return qparam; }
+      cxxtools::query_params& getQueryParams()              { return qparam; }
+      const cxxtools::query_params& getQueryParams() const  { return qparam; }
 
       void setPeerAddr(const struct sockaddr_in& p)
         { memcpy(&peerAddr, &p, sizeof(struct sockaddr_in)); }

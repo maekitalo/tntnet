@@ -170,7 +170,7 @@ namespace tnt
   {
     if (key == "include" && params.size() == 1)
     {
-      std::istream* inp = new multi_ifstream(params[0].c_str());
+      std::istream* inp = new cxxtools::multi_ifstream(params[0].c_str());
       if (!*inp)
       {
         delete inp;

@@ -35,23 +35,23 @@ int main(int argc, char* argv[])
 
   try
   {
-    std::string requestname = arg<const char*>(argc, argv, 'n', "").getValue();
-    std::string ofile = arg<const char*>(argc, argv, 'o', "").getValue();
-    std::string odir = arg<const char*>(argc, argv, 'O', "").getValue();
-    arg<const char*> mimetype(argc, argv, 'm', 0);
-    arg<bool> binary(argc, argv, 'b');
-    arg<bool> singleton(argc, argv, 's');
-    arg<const char*> componentclass(argc, argv, 'C', 0);
-    arg<const char*> baseclass(argc, argv, 'B', 0);
-    arg<bool> htmlcompress(argc, argv, "--compress-html");
-    arg<bool> csscompress(argc, argv, "--compress-css");
-    arg<bool> jscompress(argc, argv, "--compress-js");
-    arg<bool> compress(argc, argv, 'z');
-    arg<bool> externData(argc, argv, 'x');
-    arg<bool> verbose(argc, argv, 'v');
-    arg<bool> debug(argc, argv, 'd');
-    arg<bool> splitBar(argc, argv, 'S');
-    arg<const char*> splitChars(argc, argv, "--split-chars");
+    std::string requestname = cxxtools::arg<const char*>(argc, argv, 'n', "").getValue();
+    std::string ofile = cxxtools::arg<const char*>(argc, argv, 'o', "").getValue();
+    std::string odir = cxxtools::arg<const char*>(argc, argv, 'O', "").getValue();
+    cxxtools::arg<const char*> mimetype(argc, argv, 'm', 0);
+    cxxtools::arg<bool> binary(argc, argv, 'b');
+    cxxtools::arg<bool> singleton(argc, argv, 's');
+    cxxtools::arg<const char*> componentclass(argc, argv, 'C', 0);
+    cxxtools::arg<const char*> baseclass(argc, argv, 'B', 0);
+    cxxtools::arg<bool> htmlcompress(argc, argv, "--compress-html");
+    cxxtools::arg<bool> csscompress(argc, argv, "--compress-css");
+    cxxtools::arg<bool> jscompress(argc, argv, "--compress-js");
+    cxxtools::arg<bool> compress(argc, argv, 'z');
+    cxxtools::arg<bool> externData(argc, argv, 'x');
+    cxxtools::arg<bool> verbose(argc, argv, 'v');
+    cxxtools::arg<bool> debug(argc, argv, 'd');
+    cxxtools::arg<bool> splitBar(argc, argv, 'S');
+    cxxtools::arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 2 || argv[1][0] == '-')
     {

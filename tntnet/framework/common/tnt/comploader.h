@@ -37,7 +37,7 @@ namespace tnt
   class comploader;
 
   /// Hält Symbole zum erzeugen von Komponenten.
-  class component_library : public dl::library
+  class component_library : public cxxtools::dl::library
   {
       typedef component* (*creator_type)(const compident&,
         const urlmapper&, comploader&);
@@ -52,12 +52,12 @@ namespace tnt
 
       component_library(const std::string& path, const std::string& name,
           int flag = RTLD_LAZY)
-        : dl::library((path + '/' + name + ".so").c_str(), flag),
+        : cxxtools::dl::library((path + '/' + name + ".so").c_str(), flag),
           libname(name)
         { }
 
       component_library(const std::string& name, int flag = RTLD_LAZY)
-        : dl::library((name + ".so").c_str(), flag),
+        : cxxtools::dl::library((name + ".so").c_str(), flag),
           libname(name)
         { }
 
@@ -88,11 +88,11 @@ namespace tnt
       typedef std::list<std::string> search_path_type;
 
       // loaded libraries
-      static RWLock libraryMonitor;
+      static cxxtools::RWLock libraryMonitor;
       static librarymap_type librarymap;
 
       // map soname/compname to compinstance
-      RWLock componentMonitor;
+      cxxtools::RWLock componentMonitor;
       componentmap_type componentmap;
       listener_container_type listener;
       static search_path_type search_path;

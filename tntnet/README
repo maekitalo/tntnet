@@ -24,3 +24,9 @@ cxxtools - my own collection of C++-utilities (http://www.tntnet.org)
 
 The build-system is created with autoconf/automake. Further informations you
 can find in the file "INSTALL".
+
+this version needs cxxtools version >=1.2.
+
+The build-system is prepared to use log4cxx if log4cplus is not installed, but
+this does not work yet. If configure don't find log4cplus, log4cxx is searched
+next. If it is found, the configuration will be unusable.

@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-static Mutex mutex;
+static cxxtools::Mutex mutex;
 static tnt::component* theComponent = 0;
 static unsigned refs = 0;
 
@@ -38,7 +38,7 @@ static unsigned refs = 0;
 tnt::component* create_fstatic(const tnt::compident& ci,
   const tnt::urlmapper& um, tnt::comploader& cl)
 {
-  MutexLock lock(mutex);
+  cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
     theComponent = new tntcomp::fstaticcomp();
@@ -57,7 +57,7 @@ namespace tntcomp
   //
 
   unsigned fstaticcomp::operator() (tnt::httpRequest& request,
-    tnt::httpReply& reply, query_params& qparams)
+    tnt::httpReply& reply, cxxtools::query_params& qparams)
   {
     if (!tnt::httpRequest::checkUrl(request.getPathInfo()))
       throw tnt::httpError(HTTP_BAD_REQUEST, "illegal url");
@@ -111,7 +111,7 @@ namespace tntcomp
 
   bool fstaticcomp::drop()
   {
-    MutexLock lock(mutex);
+    cxxtools::MutexLock lock(mutex);
     if (--refs == 0)
     {
       delete this;

@@ -29,7 +29,7 @@ namespace tnt
 
 void dispatcher::addUrlMapEntry(const std::string& url, const compident_type& ci)
 {
-  WrLock lock(rwlock);
+  cxxtools::WrLock lock(rwlock);
 
   urlmap.push_back(urlmap_type::value_type(boost::regex(url), ci));
 }

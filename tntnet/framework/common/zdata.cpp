@@ -23,26 +23,15 @@ Boston, MA  02111-1307  USA
 #include <zlib.h>
 #include <stdexcept>
 #include <tnt/log.h>
-
-#ifndef NOTHREAD
-#define THREAD 1
-#endif
-
-#ifdef THREAD
 #include <cxxtools/thread.h>
-#endif
 
 namespace tnt
 {
-#ifdef THREAD
-  static Mutex mutex;
-#endif
+  static cxxtools::Mutex mutex;
 
   void zdata::addRef()
   {
-#ifdef THREAD
-    MutexLock lock(mutex);
-#endif
+    cxxtools::MutexLock lock(mutex);
     if (refs++ == 0)
     {
       // allocate uncompressed data
@@ -65,9 +54,7 @@ namespace tnt
 
   void zdata::release()
   {
-#ifdef THREAD
-    MutexLock lock(mutex);
-#endif
+    cxxtools::MutexLock lock(mutex);
     if (--refs <= 0)
     {
       log_debug("release " << data_len << " uncompressed bytes");

@@ -37,7 +37,7 @@ namespace tnt
   }
 
   unsigned component::operator() (httpRequest& request,
-    httpReply& reply, query_params& qparam)
+    httpReply& reply, cxxtools::query_params& qparam)
   {
     return DECLINED;
   }

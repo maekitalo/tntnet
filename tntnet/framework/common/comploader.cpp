@@ -67,7 +67,7 @@ comploader::~comploader()
     i->second->drop();
 }
 
-RWLock comploader::libraryMonitor;
+cxxtools::RWLock comploader::libraryMonitor;
 comploader::librarymap_type comploader::librarymap;
 comploader::search_path_type comploader::search_path;
 
@@ -76,7 +76,7 @@ component& comploader::fetchComp(const compident& ci,
 {
   log_trace("fetchComp " + ci.toString());
 
-  RdLock lock(componentMonitor);
+  cxxtools::RdLock lock(componentMonitor);
 
   // lookup component
   componentmap_type::iterator it = componentmap.find(ci);
@@ -86,7 +86,7 @@ component& comploader::fetchComp(const compident& ci,
     // component
     lock.Unlock();
 
-    WrLock wrlock(componentMonitor);
+    cxxtools::WrLock wrlock(componentMonitor);
 
     // doublecheck after getting writelock
     it = componentmap.find(ci);
@@ -121,13 +121,13 @@ component_library& comploader::fetchLib(const std::string& libname)
 {
   log_trace("fetchLib " + libname);
 
-  RdLock lock(libraryMonitor);
+  cxxtools::RdLock lock(libraryMonitor);
   librarymap_type::iterator i = librarymap.find(libname);
   if (i == librarymap.end())
   {
     lock.Unlock();
 
-    WrLock wrlock(libraryMonitor);
+    cxxtools::WrLock wrlock(libraryMonitor);
 
     // doublecheck after writelock
     librarymap_type::iterator i = librarymap.find(libname);
@@ -148,7 +148,7 @@ component_library& comploader::fetchLib(const std::string& libname)
           found = true;
           break;
         }
-        catch (const dl::dlopen_error&)
+        catch (const cxxtools::dl::dlopen_error&)
         {
         }
       }
@@ -160,7 +160,7 @@ component_library& comploader::fetchLib(const std::string& libname)
           log_debug("load library " << libname << " from current dir");
           lib = component_library(".", libname);
         }
-        catch (const dl::dlopen_error&)
+        catch (const cxxtools::dl::dlopen_error&)
         {
           log_debug("library in current dir not found - search lib-path");
           lib = component_library(libname);
@@ -195,7 +195,7 @@ void comploader::cleanup(unsigned seconds)
 {
   time_t t = time(0) - seconds;
 
-  RdLock rdlock(componentMonitor);
+  cxxtools::RdLock rdlock(componentMonitor);
   for (componentmap_type::iterator it = componentmap.begin();
        it != componentmap.end(); ++it)
   {
@@ -204,7 +204,7 @@ void comploader::cleanup(unsigned seconds)
       // da ist was aufzuräumen
       rdlock.Unlock();
 
-      WrLock wrlock(componentMonitor);
+      cxxtools::WrLock wrlock(componentMonitor);
       while (it != componentmap.end())
       {
         if (it->second->getLastAccesstime() < t)

@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   static bool initialized = false;
-  static Mutex mutex;
+  static cxxtools::Mutex mutex;
 
   static void checkSslError()
   {
@@ -46,7 +46,7 @@ namespace tnt
   {
     if (!initialized)
     {
-      MutexLock lock(mutex);
+      cxxtools::MutexLock lock(mutex);
       if (!initialized)
       {
         SSL_load_error_strings();

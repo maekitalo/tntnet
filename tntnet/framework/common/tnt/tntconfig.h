@@ -56,7 +56,7 @@ namespace tnt
       config_parser()
         : state(state_start)
         { }
-      vurtual ~config_parser()
+      virtual ~config_parser()
         { }
 
       void parse(char ch);
