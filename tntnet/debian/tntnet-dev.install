@@ -1,7 +1,5 @@
-debian/tmp/usr/bin/tntnet
 debian/tmp/usr/bin/ecppc
 debian/tmp/usr/bin/ecppl
 debian/tmp/usr/bin/ecppll
 debian/tmp/usr/lib/libtntnet_sdk.*
-debian/tmp/usr/lib/tntnet.so
 debian/tmp/usr/include/tnt/*
