@@ -6,6 +6,7 @@ License: GPL
 Group: Productivity/Networking/Web/Servers
 Source: tntnet-1.0.0.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
+Requires: log4cplus cxxtools
 
 %description
 tntnet is a Webserver for c++-webapplications including tools
@@ -14,7 +15,7 @@ for creating these applications.
 %package devel
 Summary: Include Files and Libraries mandatory for Development.
 Group: Productivity/Networking/Web/Servers
-Requires:     cxxtools tntnet = %{version}
+Requires:     tntnet = %{version} log4cplus-devel cxxtools-devel
 
 %description devel
 This package contains all necessary include files and libraries needed
