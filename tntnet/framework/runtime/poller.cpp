@@ -85,8 +85,8 @@ namespace tnt
       try
       {
         log_debug("poll timeout=" << poll_timeout);
-        int ret = ::poll(pollfds.data(), current_jobs.size() + 1,
-          poll_timeout);
+        ::poll(pollfds.data(), current_jobs.size() + 1, poll_timeout);
+
         poll_timeout = -1;
 
         if (pollfds[0].revents != 0)
