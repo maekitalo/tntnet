@@ -37,7 +37,7 @@
   }
 
 #define log_declare_class(category)   \
-  log4cplus::Logger getLogger()  \
+  static log4cplus::Logger getLogger()   \
   {  \
     static const std::string log_category = category;  \
     log4cplus::Logger tntlogger = log4cplus::Logger::getInstance(log_category);  \
