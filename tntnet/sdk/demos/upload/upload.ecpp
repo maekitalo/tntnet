@@ -3,33 +3,58 @@
 </%pre>
 <html>
  <body>
+
+  <# for upload we need to use this enctype-attribute #>
   <form enctype="multipart/form-data">
+
    <input type="file" name="upload">
    <input type="submit">
+
   </form>
+
 <{
+
+  // request.getMultipart() gives us access to all parts of
+  // the multipart-encoded request
   const tnt::multipart& mp = request.getMultipart();
+
+  // we look for a part named like our name-attribute of the upload-field
   tnt::multipart::const_iterator it = mp.find("upload");
+
   if (it != mp.end())
   {
+    // we got a const-iterator to the uploaded data
+    
 }>
-    file received; data:
+
+    <p><$ std::distance(it->getBodyBegin(), it->getBodyEnd()) $> bytes received; data:</p>
+
 <pre>
 <{
-cxxtools::hdostream hd(reply.out());
-if (it->getBodyEnd() - it->getBodyBegin() > 1024)
-{
-  std::copy(it->getBodyBegin(),
-            it->getBodyBegin() + 1024,
-            std::ostreambuf_iterator<char>(hd));
-}
-else
-{
-  std::copy(it->getBodyBegin(),
-            it->getBodyEnd(),
-            std::ostreambuf_iterator<char>(hd));
-}
-hd.flush();
+
+  // cxxtools::hdostream is a outstream, which converts the data to a hexdump
+  // and prints it to a target-ostream. "reply.out()" gives us a ostream
+  // to our client.
+
+  cxxtools::hdostream hd(reply.out());
+
+  // hexdump first 1k of uploaded file
+  if (std::distance(it->getBodyBegin(), it->getBodyEnd()) > 1024)
+  {
+    std::copy(it->getBodyBegin(),
+              it->getBodyBegin() + 1024,
+              std::ostreambuf_iterator<char>(hd));
+  }
+  else
+  {
+    std::copy(it->getBodyBegin(),
+              it->getBodyEnd(),
+              std::ostreambuf_iterator<char>(hd));
+  }
+
+  // print last line
+  hd.flush();
+
 }>
 </pre>
 <{

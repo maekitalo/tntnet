@@ -7,3 +7,5 @@ usr/lib/*.la
 usr/bin/ecppc
 usr/bin/ecppl
 usr/bin/ecppll
+usr/bin/ecppll
+usr/bin/tntnet-config

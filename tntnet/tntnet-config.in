@@ -68,9 +68,10 @@ MaxRequestSize  65536
 #CompPath       path1   path2   path3
 #Load           webapp  # preload webapplication
 #BufferSize     16384
-#SocketTimeout  200
-#KeepAliveTimeout 15000
-#KeepAliveMax   100
+#SocketReadTimeout  200
+#SocketWriteTimeout 10000
+#KeepAliveTimeout   15000
+#KeepAliveMax       100
 EOF
 }
 
