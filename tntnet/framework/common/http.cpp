@@ -249,9 +249,9 @@ void httpMessage::parseStartline(std::istream& in)
     }
   }
 
-  if (url.compare(0, 7, "http://") == 0 || url.compare(0, 7, "HTTP://"))
+  if (url.compare(0, 7, "http://") == 0 || url.compare(0, 7, "HTTP://") == 0)
     url.erase(0, url.find('/', 7));
-  else if (url.compare(0, 8, "https://") == 0 || url.compare(0, 8, "HTTPS://"))
+  else if (url.compare(0, 8, "https://") == 0 || url.compare(0, 8, "HTTPS://") == 0)
     url.erase(0, url.find('/', 8));
 
   if (state != state_end)
@@ -566,12 +566,10 @@ void httpReply::setDirectMode(bool keepAlive)
   if (!isDirectMode())
   {
     log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-           << " 200 OK\n"
-              "Content-Type: " << contentType);
+           << " 200 OK");
 
     socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-           << " 200 OK\r\n"
-              "Content-Type: " << contentType << "\r\n";
+           << " 200 OK\r\n";
 
     sendHeaders(keepAlive);
 
