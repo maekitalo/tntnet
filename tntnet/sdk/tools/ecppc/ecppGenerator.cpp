@@ -493,9 +493,7 @@ std::string ecppGenerator::getHeader(const std::string& basename,
   if (!baseclass.empty())
     header << "#include \"" << baseclass << ".h\"\n";
 
-  header << "#include <tnt/log.h>\n"
-         << "\n"
-         << "template <typename T> void use(const T&) { };\n\n"
+  header << "#include <tnt/log.h>\n\n"
          << "// <%pre>\n"
          << pre
          << "// </%pre>\n\n"
@@ -597,9 +595,9 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "#include <tnt/comploader.h>\n"
             "#include <stdlib.h>\n";
 
-  code << "#include \"" << classname << ".h\"\n\n";
-
-  code << "namespace ecpp_component\n"
+  code << "#include \"" << classname << ".h\"\n\n"
+       << "template <typename T> inline void use(const T&) { };\n\n"
+       << "namespace ecpp_component\n"
        << "{\n"
        << "static Mutex mutex;\n\n";
 
