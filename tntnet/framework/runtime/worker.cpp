@@ -152,12 +152,12 @@ namespace tnt
       }
       catch (const cxxtools::dl::dlopen_error& e)
       {
-        log_warn("dl::dlopen_error catched");
+        log_warn("dl::dlopen_error catched - libname " << e.getLibname());
         throw notFoundException(e.getLibname());
       }
       catch (const cxxtools::dl::symbol_not_found& e)
       {
-        log_warn("dl::symbol_not_found catched");
+        log_warn("dl::symbol_not_found catched - symbol " << e.getSymbol());
         throw notFoundException(e.getSymbol());
       }
       catch (const httpError& e)
