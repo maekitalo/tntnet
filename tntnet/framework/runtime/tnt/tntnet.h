@@ -38,6 +38,7 @@ namespace tnt
       arg<const char*> propertyfilename;
       arg<bool> debug;
       arg<unsigned> arg_lifetime;
+      arg<const char*> arg_pidfile;
 
       unsigned numthreads;
       unsigned lifetime;
@@ -60,6 +61,7 @@ namespace tnt
       tntnet(const tntnet&);
       tntnet& operator= (const tntnet&);
 
+      void writePidfile(int pid);
       void monitorProcess(int workerPid);
       void workerProcess();
 

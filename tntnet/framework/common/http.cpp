@@ -46,6 +46,7 @@ namespace tnt
   const std::string httpMessage::KeepAliveParam = "timeout=15, max=10";
   const std::string httpMessage::IfModifiedSince = "If-Modified-Since:";
   const std::string httpMessage::Host = "Host:";
+  const std::string httpMessage::CacheControl = "Cache-Control:";
 
 ////////////////////////////////////////////////////////////////////////
 // httpMessage

@@ -1,3 +1,15 @@
+tntnet (1.1.3-1) unstable; urgency=low
+
+  * generate tntnet.conf with autoconf to get autoconf-parameters in
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Fri, 12 Nov 2004 12:04:16 +0100
+
+tntnet (1.1.2-2) unstable; urgency=low
+
+  * added missing tntnet.so.*
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Thu, 11 Nov 2004 16:28:29 +0100
+
 tntnet (1.1.2-1) unstable; urgency=low
 
   * improved autoconf/automake-buildsystem

@@ -166,16 +166,17 @@ namespace tnt
       conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
-      arg_lifetime(argc, argv, 'C', 60)
+      arg_lifetime(argc, argv, 'C', 60),
+      arg_pidfile(argc, argv, 'p', "/var/run/tntnet.pid")
   {
     if (argc != 1)
     {
       std::ostringstream msg;
       msg << PACKAGE_STRING "\n\n"
-             "Aufruf: " << argv[0] << " {Optionen}\n\n"
-             "  -t anzahl        Anzahl der zu startenden worker-threads (default: 5)\n"
-             "  -c Datei         Konfigurationsdatei (default: " TNTNET_CONF ")\n"
-             "  -C Zeit          Lebenszeit unbenutzter Objekte in Sekunden (default: 60)\n";
+             "usage: " << argv[0] << " {options}\n\n"
+             "  -c file          configurationfile (default: " TNTNET_CONF ")\n"
+             "  -d               enable all debug output (ignoring properties-file)\n"
+             "  -p file          pidfile (only in daemon-mode)\n";
       throw std::invalid_argument(msg.str());
     }
 
@@ -410,18 +411,34 @@ namespace tnt
     return 0;
   }
 
+  void tntnet::writePidfile(int pid)
+  {
+    const char* pidfilename = 0;
+    std::string configPidFile;
+
+    if (arg_pidfile)
+      pidfilename = arg_pidfile;
+    else
+    {
+      configPidFile = config.getSingleValue("PidFile");
+      if (!pidFileName.empty())
+        pidfilename = configPidFile.c_str();
+    }
+
+    if (pidfilename)
+    {
+      std::ofstream pidfile(pidfilename);
+      if (!pidfile)
+        throw std::runtime_error(
+          std::string("unable to open PidFile ") + pidfilename);
+      pidfile << pid;
+    }
+  }
+
   void tntnet::monitorProcess(int workerPid)
   {
     // write child-pid
-    pidFileName = config.getSingleValue("PidFile");
-    if (!pidFileName.empty())
-    {
-      std::ofstream pidfile(pidFileName.c_str());
-      if (!pidfile)
-        throw std::runtime_error(
-          "unable to open PidFile " + pidFileName);
-      pidfile << workerPid;
-    }
+    writePidfile(workerPid);
 
     if (chdir("/") == -1)
       throw std::runtime_error(

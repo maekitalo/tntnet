@@ -104,6 +104,7 @@ namespace tnt
       static const std::string KeepAliveParam;
       static const std::string IfModifiedSince;
       static const std::string Host;
+      static const std::string CacheControl;
 
     private:
       std::string method;

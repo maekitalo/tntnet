@@ -10,7 +10,6 @@ SUBDIRS = \
     etc
 
 EXTRA_DIST = ecpp.vim \
-    etc/tntnet/tntnet.conf \
     doc/tntnet_doku.doc \
     doc/logo-tntnet.cdr \
     debian/changelog \

@@ -1,0 +1,24 @@
+# tntnet.conf
+#
+
+PropertyFile	@sysconfdir@/tntnet/tntnet.properties
+
+Listen	0.0.0.0 80
+
+#SslCertificate @sysconfdir@/tntnet/tntnet.pem
+#SslKey @sysconfdir@/tntnet/tntnet.key
+#SslListen 0.0.0.0 443
+
+Daemon	1
+#PidFile	/var/run/tntnet.pid
+User	www-data
+Group	www-data
+CompPath @libdir@/tntnet
+CompPath @datadir@/tntnet
+
+include @sysconfdir@/tntnet.d/*.conf
+include @sysconfdir@/tntnet/mime.conf
+
+MapUrl .*     mime@tntnet
+MapUrl (.*)/  static@tntnet /var/www/$1/index.html
+MapUrl /(.*)  static@tntnet /var/www/$1
