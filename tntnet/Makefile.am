@@ -6,11 +6,25 @@ SUBDIRS = \
     sdk/tools/common \
     sdk/tools/ecppc \
     sdk/tools/ecppl \
-    sdk/tools/ecppll
+    sdk/tools/ecppll \
+    etc
 
 EXTRA_DIST = ecpp.vim \
     etc/tntnet/tntnet.conf \
-    etc/tntnet/mime.conf \
-    etc/tntnet/tntnet.properties \
-	doc/tntnet_doku.doc \
-	doc/logo-tntnet.cdr
+    doc/tntnet_doku.doc \
+    doc/logo-tntnet.cdr \
+    debian/changelog \
+    debian/compat \
+    debian/control \
+    debian/copyright \
+    debian/docs \
+    debian/rules \
+    debian/tntnet-base.dirs \
+    debian/tntnet-base.install \
+    debian/tntnet-dev.dirs \
+    debian/tntnet-dev.install \
+    debian/tntnet-server.conffiles \
+    debian/tntnet-server.dirs \
+    debian/tntnet-server.install \
+    debian/tntnet-server.postinst \
+    debian/tntnet-server.prerm
