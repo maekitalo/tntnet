@@ -9,11 +9,8 @@
 
 namespace tnt
 {
-  static const char * SSLerrmessage(void);
-
   static bool initialized = false;
   static Mutex mutex;
-  static SSL_CTX* ctx;
 
   static void checkSslError()
   {
@@ -146,8 +143,8 @@ namespace tnt
   //
   ssl_streambuf::ssl_streambuf(SslStream& stream, unsigned bufsize, int timeout)
     : m_stream(stream),
-      m_bufsize(bufsize),
       m_buffer(new char_type[bufsize]),
+      m_bufsize(bufsize),
       m_timeout(timeout)
   { }
 

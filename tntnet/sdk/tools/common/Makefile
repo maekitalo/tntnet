@@ -25,6 +25,7 @@ libtntnet_sdk.so: libtntnet_sdk.so.$(VERSION)
 
 install: libtntnet_sdk.so.$(VERSION)
 	cp $^ $(LIBDIR)
+	strip $(LIBDIR)/$^
 	cp -ra --parents tnt/*.h $(INCDIR)
 	ln -s libtntnet_sdk.so.$(VERSION) $(LIBDIR)/libtntnet_sdk.so
 

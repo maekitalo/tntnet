@@ -1,6 +1,6 @@
 all : ecppc
 
-CXXFLAGS=-I../common -I../../../framework/common $(LOCAL_CXXFLAGS)
+CXXFLAGS=-Wall -O2 -I../common -I../../../framework/common $(LOCAL_CXXFLAGS)
 LDFLAGS=-L../common -L../../../framework/common -ltntnet_sdk -ltntnet -lcxxtools $(LOCAL_LDFLAGS)
 DESTDIR = $(ROOTDIR)/usr/local
 BINDIR = $(DESTDIR)/bin

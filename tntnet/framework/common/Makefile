@@ -35,6 +35,7 @@ libtntnet.so: libtntnet.so.$(VERSION)
 
 install: libtntnet.so.$(VERSION)
 	cp $^ $(LIBDIR)
+	strip $(LIBDIR)/$^
 	cp -ra --parents tnt/*.h $(INCDIR)
 	ln -sf libtntnet.so.$(VERSION) $(LIBDIR)/libtntnet.so
 

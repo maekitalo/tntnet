@@ -93,14 +93,14 @@ currently no client-support
 
     public:
       explicit ssl_iostream(unsigned bufsize = 256, int timeout = -1)
-        : std::iostream(&m_buffer),
-          SslStream(-1),
+        : SslStream(-1),
+          std::iostream(&m_buffer),
           m_buffer(*this, bufsize, timeout)
         { }
 
       explicit ssl_iostream(const SslServer& server, unsigned bufsize = 256, int timeout = -1)
-        : std::iostream(&m_buffer),
-          SslStream(server),
+        : SslStream(server),
+          std::iostream(&m_buffer),
           m_buffer(*this, bufsize, timeout)
         { }
 
