@@ -127,6 +127,13 @@ normal parameterlist just like in c++-functions after the defition
  <& localcomp param3="value1" param3="value2"
               param4="17" param4=(28) &>
 
+<h2> call subcomponents in c++-blocks </h2>
+<{
+
+  callComp("extcomp@extcomp", request, reply, qparam);
+
+}>
+
 </body>
 </html>
 

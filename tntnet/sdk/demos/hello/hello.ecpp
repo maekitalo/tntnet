@@ -12,6 +12,7 @@ name             // define query-parameter
  </head>
 
  <body bgcolor="#FFFFFF">
+  <img src="tntnet.jpg" align="right">
 
   <h1>Hello <$ name.empty() ? "World" : name $></h1>
 
@@ -20,8 +21,6 @@ name             // define query-parameter
    <input type="text" name="name" value="<$name$>"> <br>
    <input type="submit">
   </form>
-
-  <img src="img.gif">
 
  </body>
 </html>

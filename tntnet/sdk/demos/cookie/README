@@ -1,12 +1,12 @@
-Demo-application "subcomp" 
+Demo-application "cookie" 
 ========================
 
-This application shows various ways to embed subcomponents into a page and how
-to pass parameters to them.
+This application extends the "hello"-demo-application with cookie-support. The
+entered name is stored in a cookie for 1 hour.
 
 To run the application enter "tntnet -c tntnet.conf" in this directory. If you 
 have not yet installed but only built tntnet, you need to enter the path to 
 the generated tntnet-program: 
   "../../../framework/runtime/tntnet -c tntnet.conf"
 
-You can see the result in your browser at http://localhost:8000/subcomp
+You can see the result in your browser at http://localhost:8000/cookie

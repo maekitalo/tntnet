@@ -97,6 +97,13 @@ namespace tnt
       unsigned callComp(const subcompident& ci, httpRequest& request,
         httpReply& reply, cxxtools::query_params& qparam);
 
+      std::string scallComp(const std::string& url, httpRequest& request,
+        cxxtools::query_params& qparam);
+      std::string scallComp(const compident& ci, httpRequest& request,
+        cxxtools::query_params& qparam);
+      std::string scallComp(const subcompident& ci, httpRequest& request,
+        cxxtools::query_params& qparam);
+
       const compident& getCompident() const  { return myident; }
 
       const component* getDataComponent(const httpRequest& request) const;
@@ -151,6 +158,25 @@ namespace tnt
   {
     return dynamic_cast<ecppComponent&>(fetchComp(ci))
                .fetchSubComp(ci.subname)(request, reply, qparam);
+  }
+
+  inline std::string ecppComponent::scallComp(const std::string& url,
+    httpRequest& request, cxxtools::query_params& qparam)
+  {
+    return fetchComp(url)(request, qparam);
+  }
+
+  inline std::string ecppComponent::scallComp(const compident& ci,
+    httpRequest& request, cxxtools::query_params& qparam)
+  {
+    return fetchComp(ci)(request, qparam);
+  }
+
+  inline std::string ecppComponent::scallComp(const subcompident& ci,
+    httpRequest& request, cxxtools::query_params& qparam)
+  {
+    return dynamic_cast<ecppComponent&>(fetchComp(ci))
+               .fetchSubComp(ci.subname)(request, qparam);
   }
 
 }

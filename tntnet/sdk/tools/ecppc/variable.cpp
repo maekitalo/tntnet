@@ -140,7 +140,7 @@ namespace tnt
         // type defaults to std::string
         if (value.empty())
           o << "    " << classname << "::" << name 
-            << " = cl.getConfig().getValue(\"" << name << "\");";
+            << " = cl.getConfig().getValue(\"" << name << "\");\n";
         else
           o << "    if (cl.getConfig().hasValue(\"" << name << "\"))\n"
             << "      " << classname << "::" << name << " = cl.getConfig().getValue(\"" << name << "\");\n";

@@ -38,6 +38,6 @@
   }
 
 }>
-  This is no header
+  This is no header, because the h2-tag is removed from the output.
 </body>
 </html>

@@ -52,9 +52,8 @@ Listen	        0.0.0.0 8000
 # this propertyfile defines, what and where to log
 PropertyFile    tntnet.properties
 
-# set limit to prevent DoS-attacks
-MaxRequestSize  65536
-
+# set limit to prevent DoS-attacks (default 0=no limit)
+#MaxRequestSize 65536
 #User           tntnet
 #Group          tntnet
 #Dir            /
