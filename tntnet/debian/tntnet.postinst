@@ -22,7 +22,7 @@ set -e
 
 case "$1" in
   configure)
-    update-rc.d tntnet defaults 99 01 > /dev/null 2>&1
+    update-rc.d tntnet defaults 98 02 > /dev/null 2>&1
 
     if ! /etc/init.d/tntnet start; then
      echo "error in /etc/init.d/tntnet start"
