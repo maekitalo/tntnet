@@ -26,6 +26,8 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  log_define_class(listener, "tntnet.listener");
+
   listener::listener(const std::string& ipaddr, unsigned short int port, jobqueue& q)
     : server(ipaddr, port),
       queue(q)
@@ -52,6 +54,8 @@ namespace tnt
       }
     }
   }
+
+  log_define_class(ssllistener, "tntnet.listener.ssl");
 
   ssllistener::ssllistener(const char* certificateFile,
       const char* keyFile,

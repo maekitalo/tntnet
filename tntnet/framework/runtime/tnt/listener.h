@@ -25,11 +25,14 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/thread.h>
 #include "tnt/job.h"
 #include "tnt/ssl.h"
+#include "tnt/logfwd.h"
 
 namespace tnt
 {
   class listener : public Thread
   {
+      log_declare_class();
+
       tcp::Server server;
       jobqueue& queue;
 
@@ -40,6 +43,8 @@ namespace tnt
 
   class ssllistener : public Thread
   {
+      log_declare_class();
+
       SslServer server;
       jobqueue& queue;
 
