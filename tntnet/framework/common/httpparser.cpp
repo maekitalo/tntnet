@@ -52,7 +52,10 @@ namespace tnt
   bool httpMessage::parser::state_cmd(char ch)
   {
     if (std::isspace(ch))
+    {
+      log_debug("method=" << message.method);
       SET_STATE(state_url0);
+    }
     else
       message.method += ch;
     return false;
@@ -73,15 +76,21 @@ namespace tnt
         failed_flag = true;
       }
     }
-    return !failed_flag;
+    return failed_flag;
   }
 
   bool httpMessage::parser::state_url(char ch)
   {
     if (ch == '?')
+    {
+      log_debug("url=" << message.url);
       SET_STATE(state_qparam);
+    }
     else if (std::isspace(ch))
+    {
+      log_debug("url=" << message.url);
       SET_STATE(state_version);
+    }
     else if (ch > ' ')
       message.url += ch;
     else
@@ -89,13 +98,16 @@ namespace tnt
       httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
     }
-    return !failed_flag;
+    return failed_flag;
   }
 
   bool httpMessage::parser::state_qparam(char ch)
   {
     if (std::isspace(ch))
+    {
+      log_debug("query_string=" << message.query_string);
       SET_STATE(state_version);
+    }
     else
       message.query_string += ch;
     return false;
@@ -159,6 +171,13 @@ namespace tnt
   {
     if (headerParser.parse(ch))
     {
+      if (headerParser.failed())
+      {
+        httpCode = HTTP_BAD_REQUEST;
+        failed_flag = true;
+        return true;
+      }
+
       std::string content_length_header = message.getHeader(Content_Length);
       if (!content_length_header.empty())
       {

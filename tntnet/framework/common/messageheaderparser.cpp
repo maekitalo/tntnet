@@ -24,6 +24,8 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  log_define("tntnet.messageheader.parser");
+
   #define SET_STATE(new_state)  state = &parser::new_state
 
   bool messageheader::parser::state_0(char ch)
@@ -42,6 +44,7 @@ namespace tnt
       failed_flag = true;
       return true;
     }
+
     return false;
   }
 
@@ -131,6 +134,7 @@ namespace tnt
       SET_STATE(state_end_cr);
     else if (ch == '\n')
     {
+      log_debug("header " << fieldname << ": " << fieldbody);
       switch (header.onField(fieldname, fieldbody))
       {
         case OK:

@@ -58,7 +58,8 @@ namespace tnt
         : tnt::parser<parser>(&parser::state_cmd0),
           headerParser(message_.header),
           message(message_),
-          httpCode(HTTP_OK)
+          httpCode(HTTP_OK),
+          requestSize(0)
         { }
 
       void clear();

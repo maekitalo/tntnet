@@ -37,7 +37,7 @@ namespace tnt
       bool failed_flag;
 
       virtual void pre(char ch)    { }
-      virtual bool post(bool ret)  { }
+      virtual bool post(bool ret)  { return ret; }
 
     public:
       explicit parser(state_type initial_state)
