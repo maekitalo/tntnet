@@ -109,9 +109,10 @@ namespace tnt
                        && request.keepAlive()
                        && reply.keepAlive();
               if (keepAlive)
-                log_info("keep alive");
+                log_debug("keep alive");
               else
-                log_debug("no keep alive request/reply=" << request.keepAlive() << '/' << reply.keepAlive());
+                log_debug("no keep alive request/reply="
+                    << request.keepAlive() << '/' << reply.keepAlive());
             }
             catch (const dl::dlopen_error& e)
             {
