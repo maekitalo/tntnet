@@ -65,7 +65,7 @@ unzipFileStreamBuf::int_type unzipFileStreamBuf::underflow()
   if (n == 0)
     return traits_type::eof();
   setg(buffer, buffer, buffer + n);
-  return (int_type)(unsigned char)buffer[0];
+  return traits_type::to_int_type(buffer[0]);
 }
 
 int unzipFileStreamBuf::sync()
