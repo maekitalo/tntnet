@@ -12,12 +12,13 @@ EXTRA_DIST = tntnet.conf tntnet.properties
 
 SUFFIXES=.ecpp .gif .jpg
 
+ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
+
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $(ECPPFLAGS) $(ECPPFLAGS_CPP) $<
+	$(ECPPC) $(ECPPFLAGS) $(ECPPFLAGS_CPP) $<
 
 .gif.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/gif $(ECPPFLAGS) $<
+	$(ECPPC) -b -m image/gif $(ECPPFLAGS) $<
 
 .jpg.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/jpg $(ECPPFLAGS) $<
-
+	$(ECPPC) -b -m image/jpg $(ECPPFLAGS) $<
