@@ -1,3 +1,5 @@
+.PHONY: all install clean depend
+
 all : tntnet
 
 BINDIR = $(DESTDIR)/bin
