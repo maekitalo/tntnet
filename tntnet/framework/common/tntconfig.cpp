@@ -277,7 +277,7 @@ namespace tnt
         ret.push_back(*it);
   }
 
-  std::string tntconfig::getSingleValue(
+  std::string tntconfig::getValue(
        const std::string& key,
        const params_type::value_type& def) const
   {
@@ -285,21 +285,6 @@ namespace tnt
          it != config_entries.end(); ++it)
       if (it->key == key && it->params.size() > 0)
         return it->params[0];
-    return def;
-  }
-
-  unsigned tntconfig::getUnsignedValue(const std::string& key, unsigned def) const
-  {
-    std::string value = getSingleValue(key);
-    if (!value.empty())
-    {
-      std::istringstream in(value);
-      unsigned ret;
-      in >> ret;
-      if (in)
-        return ret;
-    }
-
     return def;
   }
 }

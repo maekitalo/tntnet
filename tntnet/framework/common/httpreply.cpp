@@ -61,25 +61,27 @@ namespace tnt
 
   void httpReply::sendHeaders(bool keepAlive)
   {
-    if (header.find(Date) == header.end())
+    if (!hasHeader(Date))
       setHeader(Date, htdate(time(0)));
 
-    if (header.find(Server) == header.end())
+    if (!hasHeader(Server))
       setHeader(Server, ServerName);
 
     if (keepAlive)
     {
-      if (header.find(Connection) == header.end())
-        setHeader(Connection, Connection_Keep_Alive);
+      if (!hasHeader(Connection))
+        setKeepAliveHeader(15, 100);
 
-      if (header.find(KeepAlive) == header.end())
-        setHeader(KeepAlive, KeepAliveParam);
-
-      if (header.find(Content_Length) == header.end())
+      if (!hasHeader(Content_Length))
         setContentLengthHeader(outstream.str().size());
     }
+    else
+    {
+      if (!hasHeader(Connection))
+        setKeepAliveHeader(0);
+    }
 
-    if (header.find(Content_Type) == header.end())
+    if (!hasHeader(Content_Type))
       setHeader(Content_Type, contentType);
 
     for (header_type::const_iterator it = header.begin();

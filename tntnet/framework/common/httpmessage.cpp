@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/log.h>
 #include <list>
 #include <sstream>
+#include <config.h>
 
 namespace tnt
 {
@@ -33,12 +34,11 @@ namespace tnt
   const std::string httpMessage::Connection_Keep_Alive = "Keep-Alive";
   const std::string httpMessage::Last_Modified = "Last-Modified:";
   const std::string httpMessage::Server = "Server:";
-  const std::string httpMessage::ServerName = "tntnet 1.1";
+  const std::string httpMessage::ServerName = "Tntnet " VERSION;
   const std::string httpMessage::Location = "Location:";
   const std::string httpMessage::AcceptLanguage = "Accept-Language:";
   const std::string httpMessage::Date = "Date:";
   const std::string httpMessage::KeepAlive = "Keep-Alive:";
-  const std::string httpMessage::KeepAliveParam = "timeout=15, max=10";
   const std::string httpMessage::IfModifiedSince = "If-Modified-Since:";
   const std::string httpMessage::Host = "Host:";
   const std::string httpMessage::CacheControl = "Cache-Control:";
@@ -82,6 +82,23 @@ namespace tnt
     std::ostringstream s;
     s << size;
     setHeader(Content_Length, s.str());
+  }
+
+  void httpMessage::setKeepAliveHeader(unsigned timeout, unsigned max)
+  {
+    if (timeout > 0)
+    {
+      std::ostringstream s;
+      s << "timeout=" << timeout << ", max=" << max,
+      setHeader(KeepAlive, s.str());
+
+      setHeader(Connection, Connection_Keep_Alive);
+    }
+    else
+    {
+      removeHeader(KeepAlive);
+      setHeader(Connection, Connection_close);
+    }
   }
 
   std::string httpMessage::dumpHeader() const

@@ -64,6 +64,8 @@ namespace tnt
 {
   static const unsigned socket_timeout = 200;
   static const unsigned keepalive_timeout = 15000;
+  static const unsigned keepalive_count = 100;
+  static const unsigned socket_buffer_size = 2048;
 
   /** job - one per request */
   class job
@@ -77,7 +79,7 @@ namespace tnt
     public:
       job()
         : parser(request),
-          keepAliveCounter(10),
+          keepAliveCounter(100),
           lastAccessTime(0)
         { }
       virtual ~job();
@@ -101,7 +103,7 @@ namespace tnt
 
     public:
       tcpjob()
-        : socket(1024, socket_timeout)
+        : socket(socket_buffer_size, socket_timeout)
         { }
 
       void Accept(const cxxtools::tcp::Server& listener);
@@ -117,7 +119,7 @@ namespace tnt
 
     public:
       ssl_tcpjob()
-        : socket(1024, socket_timeout)
+        : socket(socket_buffer_size, socket_timeout)
         { }
 
       void Accept(const SslServer& listener);

@@ -1,5 +1,5 @@
 /* tnt/server.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -52,12 +52,14 @@ namespace tnt
       static servers_type servers;
 
       static unsigned compLifetime;
+      static unsigned minServers;
 
       bool processRequest(httpRequest& request, std::iostream& socket, bool keepAlive);
 
     public:
       server(jobqueue& queue, const dispatcher& dispatcher,
         poller& poller, comploader::load_library_listener* libconfigurator);
+      ~server();
 
       virtual void Run();
 
@@ -70,6 +72,10 @@ namespace tnt
       static void CleanerThread();
       static void setCompLifetime(unsigned sec)
       { compLifetime = sec; }
+
+      static servers_type::size_type getCountServers();
+      static void setMinServers(unsigned n)
+      { minServers = n; }
   };
 }
 

@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 namespace tnt
 {
@@ -95,11 +96,21 @@ namespace tnt
            const std::string& key,
            config_entries_type& ret) const;
 
-      std::string getSingleValue(
+      std::string getValue(
            const std::string& key,
            const params_type::value_type& def = params_type::value_type()) const;
+      template <typename T>
+        T getValue(const std::string& key, const T& def) const
+        {
+          T ret;
+          std::istringstream v(getValue(key));
+          return (v >> ret) ? ret : def;
+        }
 
-      unsigned getUnsignedValue(const std::string& key, unsigned def = 0) const;
+      std::string getValue(const std::string& key, const char* def) const
+      {
+        return getValue(key, std::string(def).c_str());
+      }
   };
 }
 

@@ -48,7 +48,6 @@ namespace tnt
       static const std::string AcceptLanguage;
       static const std::string Date;
       static const std::string KeepAlive;
-      static const std::string KeepAliveParam;
       static const std::string IfModifiedSince;
       static const std::string Host;
       static const std::string CacheControl;
@@ -113,8 +112,7 @@ namespace tnt
 
       void setHeader(const std::string& key, const std::string& value);
       void setContentLengthHeader(size_t size);
-      void setKeepAliveHeader(bool keepAlive = true)
-        { setHeader(Connection, keepAlive ? Connection_Keep_Alive : Connection_close); }
+      void setKeepAliveHeader(unsigned timeout = 15, unsigned max = 100);
       void removeHeader(const std::string& key)
         { header.erase(key); }
 

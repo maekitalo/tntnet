@@ -51,6 +51,7 @@ namespace tnt
   unsigned server::nextThreadNumber = 0;
   server::servers_type server::servers;
   unsigned server::compLifetime = 60;
+  unsigned server::minServers = 2;
 
   server::server(jobqueue& q, const dispatcher& d,
     poller& p, comploader::load_library_listener* libconfigurator)
@@ -62,18 +63,25 @@ namespace tnt
     log_debug("initialize thread " << threadNumber);
     if (libconfigurator)
       mycomploader.addLoadLibraryListener(libconfigurator);
+
     cxxtools::MutexLock lock(mutex);
     servers.insert(this);
+  }
+
+  server::~server()
+  {
+    cxxtools::MutexLock lock(mutex);
+    servers.erase(this);
   }
 
   void server::Run()
   {
     log_debug("start thread " << threadNumber);
-    while (1)
+    while (queue.getWaitThreadCount() < minServers)
     {
       log_debug("waiting for job");
       jobqueue::job_ptr j = queue.get();
-      log_debug("got job; fd=" << j->getFd());
+      log_debug("got job - fd=" << j->getFd());
 
       std::iostream& socket = j->getStream();
 
@@ -109,6 +117,8 @@ namespace tnt
         mypoller.addIdleJob(j);
       }
     }
+
+    log_debug("end worker-thread " << threadNumber);
   }
 
   bool server::processRequest(httpRequest& request, std::iostream& socket,
@@ -242,5 +252,11 @@ namespace tnt
           (*it)->cleanup(compLifetime);
       }
     }
+  }
+
+  server::servers_type::size_type server::getCountServers()
+  {
+    cxxtools::MutexLock lock(mutex);
+    return servers.size();
   }
 }

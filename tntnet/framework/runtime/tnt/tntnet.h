@@ -1,5 +1,5 @@
 /* tnt/tntnet.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -32,16 +32,13 @@ namespace tnt
 {
   class tntnet
   {
-      cxxtools::arg<unsigned> arg_numthreads;
       cxxtools::arg<const char*> conf;
       tntconfig config;
       cxxtools::arg<const char*> propertyfilename;
       cxxtools::arg<bool> debug;
-      cxxtools::arg<unsigned> arg_lifetime;
-      cxxtools::arg<const char*> arg_pidfile;
 
-      unsigned numthreads;
-      unsigned lifetime;
+      unsigned minthreads;
+      unsigned maxthreads;
 
       jobqueue queue;
 

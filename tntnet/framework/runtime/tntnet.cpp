@@ -167,12 +167,9 @@ namespace tnt
   std::string tntnet::pidFileName;
 
   tntnet::tntnet(int argc, char* argv[])
-    : arg_numthreads(argc, argv, 't', 5),
-      conf(argc, argv, 'c', TNTNET_CONF),
+    : conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
-      arg_lifetime(argc, argv, 'C', 60),
-      arg_pidfile(argc, argv, 'p'),
       pollerthread(queue)
   {
     if (argc != 1)
@@ -181,8 +178,7 @@ namespace tnt
       msg << PACKAGE_STRING "\n\n"
              "usage: " << argv[0] << " {options}\n\n"
              "  -c file          configurationfile (default: " TNTNET_CONF ")\n"
-             "  -d               enable all debug output (ignoring properties-file)\n"
-             "  -p file          pidfile (only in daemon-mode)\n";
+             "  -d               enable all debug output (ignoring properties-file)\n";
       throw std::invalid_argument(msg.str());
     }
 
@@ -199,7 +195,7 @@ namespace tnt
       if (propertyfilename.isSet())
         pf = propertyfilename.getValue();
       else
-        pf = config.getSingleValue("PropertyFile");
+        pf = config.getValue("PropertyFile");
 
       if (pf.empty())
         log_init();
@@ -213,28 +209,9 @@ namespace tnt
       }
     }
 
-    numthreads = arg_numthreads;
-    if (!arg_numthreads.isSet())
-    {
-      tntconfig::params_type v = config.getConfigValue("Threads");
-      if (v.size() == 1)
-      {
-        std::istringstream in(*v.begin());
-        in >> numthreads;
-      }
-    }
-
-    if (!arg_lifetime.isSet())
-    {
-      tntconfig::params_type v = config.getConfigValue("Lifetime");
-      if (v.size() >= 1)
-      {
-        std::istringstream in(*v.begin());
-        unsigned lifetime;
-        if (in >> lifetime)
-          server::setCompLifetime(lifetime);
-      }
-    }
+    minthreads = config.getValue<unsigned>("MinThreads", 5);
+    maxthreads = config.getValue<unsigned>("MaxThreads", 10);
+    server::setMinServers(minthreads);
 
     tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -371,19 +348,19 @@ namespace tnt
 
   int tntnet::run()
   {
-    std::string daemon = config.getSingleValue("Daemon");
+    std::string daemon = config.getValue("Daemon");
     if (!debug && isTrue(daemon))
     {
       mkDaemon();
 
       // close stdin, stdout and stderr
-      std::string noclosestd = config.getSingleValue("NoCloseStdout");
+      std::string noclosestd = config.getValue("NoCloseStdout");
       if (!isTrue(noclosestd))
         closeStdHandles();
       else
         log_debug("not closing stdout");
 
-      std::string nomonitor = config.getSingleValue("NoMonitor");
+      std::string nomonitor = config.getValue("NoMonitor");
       if (isTrue(nomonitor))
       {
         log_debug("start worker-process without monitor");
@@ -433,8 +410,7 @@ namespace tnt
 
   void tntnet::writePidfile(int pid)
   {
-    pidFileName = arg_pidfile.isSet() ? arg_pidfile.getValue()
-                                      : config.getSingleValue("PidFile", TNTNET_PID);
+    pidFileName = config.getValue("PidFile", TNTNET_PID);
 
     log_debug("pidfile=" << pidFileName);
 
@@ -533,8 +509,8 @@ namespace tnt
 
 #ifdef USE_SSL
     // create ssl-listener-threads
-    std::string certificateFile = config.getSingleValue("SslCertificate");
-    std::string certificateKey = config.getSingleValue("SslKey", certificateFile);
+    std::string certificateFile = config.getValue("SslCertificate");
+    std::string certificateKey = config.getValue("SslKey", certificateFile);
     configListen.clear();
     config.getConfigValues("SslListen", configListen);
 
@@ -585,7 +561,7 @@ namespace tnt
     }
 
     // configure http-message
-    httpMessage::setMaxRequestSize(config.getUnsignedValue("MaxRequestSize"));
+    httpMessage::setMaxRequestSize(config.getValue("MaxRequestSize", static_cast<unsigned>(0)));
 
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");
@@ -594,8 +570,8 @@ namespace tnt
       (*it)->Create();
 
     // create server-threads
-    log_info("create " << numthreads << " server threads");
-    for (unsigned i = 0; i < numthreads; ++i)
+    log_info("create " << minthreads << " server threads");
+    for (unsigned i = 0; i < minthreads; ++i)
     {
       log_debug("create server " << i);
       server* s = new server(queue, dispatcher, pollerthread, &myconfigurator);
@@ -617,9 +593,14 @@ namespace tnt
         queue.noWaitThreads.Wait(lock);
       }
 
-      log_info("create server");
-      server* s = new server(queue, dispatcher, pollerthread, &myconfigurator);
-      s->Create();
+      if (server::getCountServers() < maxthreads)
+      {
+        log_info("create server (" << server::getCountServers() << '<' << maxthreads << ')');
+        server* s = new server(queue, dispatcher, pollerthread, &myconfigurator);
+        s->Create();
+      }
+      else
+        log_warn("max servercount " << maxthreads << " reached");
     }
 
     // join-loop
