@@ -1,5 +1,5 @@
 /* tntconfig.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -25,9 +25,12 @@ Boston, MA  02111-1307  USA
 #include <stack>
 #include <sstream>
 #include <cxxtools/multifstream.h>
+#include <cxxtools/log.h>
 
 namespace tnt
 {
+  log_define("tntnet.tntconfig");
+
   //////////////////////////////////////////////////////////////////////
   // config_parser
   //
@@ -281,10 +284,31 @@ namespace tnt
        const std::string& key,
        const params_type::value_type& def) const
   {
+    log_debug("getValue(\"" << key << "\", \"" << def << "\")");
     for (config_entries_type::const_iterator it = config_entries.begin();
          it != config_entries.end(); ++it)
       if (it->key == key && it->params.size() > 0)
+      {
+        log_debug("getValue returns \"" << it->params[0] << '"');
         return it->params[0];
+      }
+
+    log_debug("getValue returns default \"" << def << '"');
     return def;
   }
+
+  bool tntconfig::hasValue(const std::string& key) const
+  {
+    log_debug("hasValue(\"" << key << "\")");
+    for (config_entries_type::const_iterator it = config_entries.begin();
+         it != config_entries.end(); ++it)
+      if (it->key == key && it->params.size() > 0)
+      {
+        log_debug("hasValue returns true");
+        return true;
+      }
+    log_debug("hasValue returns false");
+    return false;
+  }
+
 }

@@ -38,8 +38,6 @@ extern "C"
 {
   tnt::component* create_static(const tnt::compident& ci,
     const tnt::urlmapper& um, tnt::comploader& cl);
-  bool config_static(const tnt::tntconfig::name_type& key,
-    const tnt::tntconfig::params_type& values);
 }
 
 namespace tntcomp

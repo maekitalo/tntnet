@@ -355,6 +355,12 @@ void ecppGenerator::processCleanup(const std::string& code)
 void ecppGenerator::processArg(const std::string& name,
   const std::string& value)
 {
+  currentComp->args.push_back(variable_declaration(name, value));
+}
+
+ecppGenerator::variable_declaration::variable_declaration(const std::string& arg,
+  const std::string& value_)
+{
   // 'name' might be prefixed by a type
   // the variablename is the last word in 'name'
   // type is the rest before the variablename
@@ -364,94 +370,24 @@ void ecppGenerator::processArg(const std::string& name,
   //   " ns :: someclass  param"
   std::ostringstream a;
 
-  std::string::size_type e = name.size();
-  while (e > 0 && std::isspace(name.at(e - 1)))
+  std::string::size_type e = arg.size();
+  while (e > 0 && std::isspace(arg.at(e - 1)))
     --e;
-  // e points past the last character of our name
+  // e points past the last character of our arg
 
   std::string::size_type b = e;
-  while (b > 0 && !std::isspace(name.at(b - 1)))
+  while (b > 0 && !std::isspace(arg.at(b - 1)))
     --b;
-  // b points to the first character of our name
+  // b points to the first character of our arg
 
   std::string::size_type t = b;
-  while (t > 0 && std::isspace(name.at(t - 1)))
+  while (t > 0 && std::isspace(arg.at(t - 1)))
     --t;
   // t points past the last character of the type
 
-  if (t > 0)
-  {
-    // we have a type
-
-    // print out type and name
-    std::copy(name.begin(),
-              name.begin() + e,
-              std::ostreambuf_iterator<char>(a));
-    a << " = ";
-
-    if (value.empty())
-    {
-      // no default-value
-
-      a << "tnt::string_to<";
-      // print out type
-      std::copy(name.begin(),
-                name.begin() + t,
-                std::ostreambuf_iterator<char>(a));
-      a << ">( qparam.param(\"";
-      // print out name-part
-      std::copy(name.begin() + b,
-                name.begin() + e,
-                std::ostreambuf_iterator<char>(a));
-      a << "\") );\n";
-    }
-    else
-    {
-      // with default-value
-      a << "qparam.has(\"";
-      std::copy(name.begin() + b,
-                name.begin() + e,
-                std::ostreambuf_iterator<char>(a));
-      a << "\") ? tnt::string_to<";
-      std::copy(name.begin(),
-                name.begin() + t,
-                std::ostreambuf_iterator<char>(a));
-      a << ">(qparam.param(\"";
-      std::copy(name.begin() + b,
-                name.begin() + e,
-                std::ostreambuf_iterator<char>(a));
-      a << "\")) : " << value << ";\n";
-    }
-  }
-  else
-  {
-    // type defaults to std::string
-    a << "std::string ";
-
-    // print out name-part
-    std::copy(name.begin() + b,
-              name.begin() + e,
-              std::ostreambuf_iterator<char>(a));
-
-    a << " = qparam.param(\"";
-    // print out name-part
-    std::copy(name.begin() + b,
-              name.begin() + e,
-              std::ostreambuf_iterator<char>(a));
-    a << '"';
-    if (!value.empty())
-    {
-      a << ", ";
-      if (t > 0)
-        a << "tnt::to_string(" << value << ')';
-      else
-        a << value;
-    }
-
-    a << ");\n";
-  }
-
-  currentComp->args += a.str();
+  name = std::string(arg.begin() + b, arg.begin() + e);
+  type = std::string(arg.begin(), arg.begin() + t);
+  value = value_;
 }
 
 void ecppGenerator::processAttr(const std::string& name,
@@ -562,6 +498,11 @@ void ecppGenerator::processCondExpr(const std::string& cond, const std::string& 
   currentComp->main += m.str();
 }
 
+void ecppGenerator::processConfig(const std::string& name, const std::string& value)
+{
+  configs.push_back(variable_declaration(name, value));
+}
+
 std::string ecppGenerator::getHeader(const std::string& basename,
   const std::string& classname, const std::string& ns)
 {
@@ -619,6 +560,11 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "    // <%declare>\n"
          << declare
          << "    // </%declare>\n\n"
+         << "    // <%config>\n";
+  for (variable_declarations::const_iterator it = configs.begin();
+       it != configs.end(); ++it)
+    header << it->getConfigHDecl() << '\n';
+  header << "    // </%config>\n\n"
             "  protected:\n"
             "    " << classname << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
             "    ~" << classname << "();\n\n"
@@ -698,6 +644,9 @@ std::string ecppGenerator::getCpp(const std::string& basename,
           "#include <tnt/httpreply.h>\n"
           "#include <tnt/http.h>\n"
           "#include <tnt/data.h>\n";
+  if (!configs.empty())
+    code << "#include <tnt/comploader.h>\n"
+            "#include <tnt/tntconfig.h>\n";
 
   if (compress)
     code << "#include <tnt/zdata.h>\n";
@@ -784,17 +733,22 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "  if (theComponent == 0)\n"
             "  {\n"
             "    log_debug(\"create new component \\\"\" << ci << '\"');\n"
-            "    theComponent = new ecpp_component::" << ns_classname << "(ci, um, cl);\n";
+            "    theComponent = new " << ns_classname << "(ci, um, cl);\n";
 
     if (compress)
       code << "    raw_data.addRef();\n";
 
-    code << "    refs = 1;\n"
-         << "  }\n"
-		 << "  else\n"
-		 << "    ++refs;\n"
-         << "  return theComponent;\n"
-         << "}\n\n";
+    code << "    refs = 1;\n\n"
+            "    // <%config>\n";
+    for (variable_declarations::const_iterator it = configs.begin();
+         it != configs.end(); ++it)
+      code << it->getConfigInit(classname) << '\n';
+    code << "    // </%config>\n"
+            "  }\n"
+		    "  else\n"
+		    "    ++refs;\n"
+            "  return theComponent;\n"
+            "}\n\n";
   }
   else
   {
@@ -804,7 +758,12 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     if (compress)
       code << "  raw_data.addRef();\n";
 
-    code << "  return new " << classname << "(ci, um, cl);\n"
+    code << "    <%config>\n";
+    for (variable_declarations::const_iterator it = configs.begin();
+         it != configs.end(); ++it)
+      code << it->getConfigInit(classname) << '\n';
+    code << "    </%config>\n\n"
+            "  return new " << classname << "(ci, um, cl);\n"
          << "}\n\n";
   }
 
@@ -813,6 +772,11 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   code << "// <%shared>\n"
        << shared
        << "// </%shared>\n\n"
+          "// <%config>\n";
+  for (variable_declarations::const_iterator it = configs.begin();
+       it != configs.end(); ++it)
+    code << it->getConfigDecl(classname) << '\n';
+  code << "// </%config>\n\n"
        << classname << "::" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
           "  : ecppComponent(ci, um, cl)";
 
@@ -1035,11 +999,112 @@ std::string ecppGenerator::comp::getBody() const
 {
   std::ostringstream body;
   body << "  // <%args>\n"
-       << args
+       << getArgs()
        << "  // </%args>\n\n"
        << "  // <%cpp>\n"
        << main
        << "  // <%/cpp>\n"
        << "  return HTTP_OK;\n";
   return body.str();
+}
+
+std::string ecppGenerator::comp::getArgs() const
+{
+  std::ostringstream s;
+
+  for (variable_declarations::const_iterator it = args.begin();
+       it != args.end(); ++it)
+    s << it->getParamCode() << '\n';
+
+  return s.str();
+}
+
+std::string ecppGenerator::variable_declaration::getParamCode() const
+{
+  std::ostringstream a;
+
+  if (!type.empty())
+  {
+    // we have a type
+
+    // print out type and name
+    a << type << ' ' << name << " = ";
+
+    if (value.empty())
+    {
+      // no default-value
+
+      a << "tnt::string_to<" << type << ">( qparam.param(\""
+        << name << "\") );";
+    }
+    else
+    {
+      // with default-value
+      a << "qparam.has(\"" << name << "\") ? tnt::string_to<"
+        << type << ">(qparam.param(\"" << name
+        << "\")) : " << value << ";";
+    }
+  }
+  else
+  {
+    // type defaults to std::string
+    a << "std::string " << name 
+      << " = qparam.param(\"" << name << '"';
+    if (!value.empty())
+      a << ", " << value;
+
+    a << ");";
+  }
+
+  return a.str();
+}
+
+std::string ecppGenerator::variable_declaration::getConfigInit(const std::string& classname) const
+{
+  std::ostringstream a;
+
+  if (!type.empty())
+  {
+    // we have a type
+
+    a << "    if (cl.getConfig().hasValue(\"" << name << "\"))\n"
+      << "      " << classname << "::" << name << " = tnt::string_to<" << type
+      << ">( cl.getConfig().getValue(\"" << name << "\") );";
+  }
+  else
+  {
+    // type defaults to std::string
+    if (value.empty())
+      a << "    " << classname << "::" << name 
+        << " = cl.getConfig().getValue(\"" << name << "\");";
+    else
+      a << "    if (cl.getConfig().hasValue(\"" << name << "\"))\n"
+        << "      " << classname << "::" << name << " = cl.getConfig().getValue(\"" << name << "\");";
+  }
+
+  return a.str();
+}
+
+std::string ecppGenerator::variable_declaration::getConfigDecl(const std::string& classname) const
+{
+  std::ostringstream a;
+
+  std::string t = type.empty() ? "std::string" : type;
+
+  a << t << ' ' << classname << "::" << name;
+  if (!value.empty())
+    a << " = " << value;
+  a << ';';
+
+  return a.str();
+}
+
+std::string ecppGenerator::variable_declaration::getConfigHDecl() const
+{
+  std::ostringstream a;
+
+  std::string t = type.empty() ? "std::string" : type;
+
+  a << "    static " << t << " " << name << ';';
+  return a.str();
 }

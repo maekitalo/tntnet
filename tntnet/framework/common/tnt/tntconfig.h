@@ -1,5 +1,5 @@
 /* tnt/tntconfig.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -98,7 +98,7 @@ namespace tnt
 
       std::string getValue(
            const std::string& key,
-           const params_type::value_type& def = params_type::value_type()) const;
+           const std::string& def = std::string()) const;
       template <typename T>
         T getValue(const std::string& key, const T& def) const
         {
@@ -111,6 +111,8 @@ namespace tnt
       {
         return getValue(key, std::string(def).c_str());
       }
+
+      bool hasValue(const std::string& key) const;
   };
 }
 

@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef ECPP_H
-#define ECPP_H
+#ifndef TNT_ECPP_H
+#define TNT_ECPP_H
 
 #include <tnt/component.h>
 #include <map>
@@ -144,5 +144,5 @@ namespace ecpp_component
   using tnt::httpReply;
 }
 
-#endif // ECPP_H
+#endif // TNT_ECPP_H
 

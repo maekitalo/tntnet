@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <tnt/tntconfig.h>
+#include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/thread.h>
 #include <cxxtools/log.h>
@@ -33,7 +34,6 @@ log_define("tntnet.mime");
 namespace tnt
 {
   class urlmapper;
-  class comploader;
 }
 
 static cxxtools::Mutex mutex;
@@ -48,8 +48,6 @@ extern "C"
 {
   tnt::component* create_mime(const tnt::compident& ci,
     const tnt::urlmapper& um, tnt::comploader& cl);
-  bool config_mime(const tnt::tntconfig::name_type& key,
-    const tnt::tntconfig::params_type& values);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -89,51 +87,47 @@ namespace tntcomp
 // external functions
 //
 
-bool config_mime(const tnt::tntconfig::name_type& key,
-  const tnt::tntconfig::params_type& values)
+class mime_configurator
 {
-  if (configured)
-    return false;
-
-  if (key == tntcomp::mime::ConfigDefaultType)
-  {
-    if (values.size() >= 1)
+  public:
+    void operator() (const tnt::tntconfig::config_entry_type& entry)
     {
-      if (!tntcomp::mime::getDefaultType().empty())
-        log_warn("DefaultType already set");
-      else
+      if (entry.key == tntcomp::mime::ConfigDefaultType)
       {
-        log_debug("DefaultType " << values[0]);
-        tntcomp::mime::setDefaultType(values[0]);
-        return true;
+        if (entry.params.size() >= 1)
+        {
+          if (!tntcomp::mime::getDefaultType().empty())
+            log_warn("DefaultType already set");
+          else
+          {
+            log_debug("DefaultType " << entry.params[0]);
+            tntcomp::mime::setDefaultType(entry.params[0]);
+          }
+        }
+        else
+        {
+          log_warn("missing parameter in DefaultType");
+        }
+      }
+      else if (entry.key == tntcomp::mime::ConfigAddType)
+      {
+        if (entry.params.size() >= 2)
+        {
+          for (tnt::tntconfig::params_type::size_type i = 1;
+               i < entry.params.size(); ++i)
+          {
+            log_debug("AddType \"" << entry.params[0]
+              << "\" \"" << entry.params[i] << '"');
+            tntcomp::mime::addType(entry.params[0], entry.params[i]);
+          }
+        }
+        else
+        {
+          log_warn("missing parameter in AddType");
+        }
       }
     }
-    else
-    {
-      log_warn("missing parameter in DefaultType");
-    }
-  }
-  else if (key == tntcomp::mime::ConfigAddType)
-  {
-    if (values.size() >= 2)
-    {
-      for (tnt::tntconfig::params_type::size_type i = 1;
-           i < values.size(); ++i)
-      {
-        log_debug("AddType \"" << values[0]
-          << "\" \"" << values[i] << '"');
-        tntcomp::mime::addType(values[0], values[i]);
-      }
-      return true;
-    }
-    else
-    {
-      log_warn("missing parameter in AddType");
-    }
-  }
-
-  return false;
-}
+};
 
 tnt::component* create_mime(const tnt::compident& ci,
   const tnt::urlmapper& um, tnt::comploader& cl)
@@ -143,6 +137,15 @@ tnt::component* create_mime(const tnt::compident& ci,
   {
     theComponent = new tntcomp::mime();
     refs = 1;
+
+    if (!configured)
+    {
+      const tnt::tntconfig& config = cl.getConfig();
+      std::for_each(config.getConfigValues().begin(),
+                    config.getConfigValues().end(),
+                    mime_configurator());
+      configured = true;
+    }
   }
   else
     ++refs;

@@ -54,15 +54,14 @@ namespace tnt
   unsigned worker::minThreads = 2;
 
   worker::worker(jobqueue& q, const dispatcher& d,
-    poller& p, comploader::load_library_listener* libconfigurator)
+    poller& p, const tntconfig& config)
     : queue(q),
       mypoller(p),
       ourdispatcher(d),
+      mycomploader(config),
       threadNumber(++nextThreadNumber)
   {
     log_debug("initialize thread " << threadNumber);
-    if (libconfigurator)
-      mycomploader.addLoadLibraryListener(libconfigurator);
 
     cxxtools::MutexLock lock(mutex);
     workers.insert(this);

@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
 #include <cxxtools/thread.h>
@@ -39,17 +40,6 @@ static unsigned refs = 0;
 // external functions
 //
 
-bool config_static(const tnt::tntconfig::name_type& key,
-  const tnt::tntconfig::params_type& values)
-{
-  if (key == "DocumentRoot" && values.size() >= 1)
-  {
-    tntcomp::staticcomp::setDocumentRoot(values[0]);
-    return true;
-  }
-  return false;
-}
-
 tnt::component* create_static(const tnt::compident& ci,
   const tnt::urlmapper& um, tnt::comploader& cl)
 {
@@ -58,6 +48,8 @@ tnt::component* create_static(const tnt::compident& ci,
   {
     theComponent = new tntcomp::staticcomp();
     refs = 1;
+
+    tntcomp::staticcomp::setDocumentRoot(cl.getConfig().getValue("DocumentRoot"));
   }
   else
     ++refs;

@@ -128,12 +128,32 @@ class ecppGenerator : public tnt::ecppParser
     std::string componentclass;
     std::string baseclass;
 
+    struct variable_declaration
+    {
+      std::string name;
+      std::string type;
+      std::string value;
+
+      variable_declaration()  { }
+      variable_declaration(const std::string& arg, const std::string& name);
+
+      std::string getParamCode() const;
+      std::string getConfigInit(const std::string& classname) const;
+      std::string getConfigDecl(const std::string& classname) const;
+      std::string getConfigHDecl() const;
+    };
+
+    typedef std::list<variable_declaration> variable_declarations;
+
     struct comp
     {
       std::string main;
-      std::string args;
+      variable_declarations args;
       std::string getBody() const;
+      std::string getArgs() const;
     };
+
+    variable_declarations configs;
 
     struct subcomp : public comp
     {
@@ -216,7 +236,7 @@ class ecppGenerator : public tnt::ecppParser
     virtual void processDeclare(const std::string& code);
     virtual void processInit(const std::string& code);
     virtual void processCleanup(const std::string& code);
-    virtual void processArg(const std::string& arg,
+    virtual void processArg(const std::string& name,
       const std::string& value);
     virtual void processAttr(const std::string& name,
       const std::string& value);
@@ -228,6 +248,7 @@ class ecppGenerator : public tnt::ecppParser
     virtual void startComp(const std::string& name, const cppargs_type& cppargs);
     virtual void processComp(const std::string& code);
     virtual void processCondExpr(const std::string& cond, const std::string& expr);
+    virtual void processConfig(const std::string& name, const std::string& value);
 
     std::string getHeader(const std::string& basename,
       const std::string& classname, const std::string& ns);

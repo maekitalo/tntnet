@@ -58,7 +58,7 @@ namespace tnt
 
     public:
       worker(jobqueue& queue, const dispatcher& dispatcher,
-        poller& poller, comploader::load_library_listener* libconfigurator);
+        poller& poller, const tntconfig& config);
       ~worker();
 
       virtual void Run();

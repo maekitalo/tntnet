@@ -57,71 +57,6 @@ log_define("tntnet.tntnet");
 
 namespace
 {
-  ////////////////////////////////////////////////////////////////////////
-  // libconfigurator
-  //
-  class libconfigurator : public tnt::comploader::load_library_listener
-  {
-      typedef void (*config_function_type)(const std::string& name,
-        const std::vector<std::string>& params);
-
-      const tnt::tntconfig& config;
-      void configure(config_function_type config_function) const;
-
-    public:
-      libconfigurator(const tnt::tntconfig& c)
-        : config(c)
-        { }
-      void onLoadLibrary(tnt::component_library& lib);
-      void onCreateComponent(tnt::component_library& lib,
-        const tnt::compident& ci, tnt::component& comp);
-  };
-
-  void libconfigurator::configure(config_function_type config_function) const
-  {
-    const tnt::tntconfig::config_entries_type& params =
-      config.getConfigValues();
-
-    tnt::tntconfig::config_entries_type::const_iterator vi;
-    for (vi = params.begin(); vi != params.end(); ++vi)
-    {
-      const tnt::tntconfig::config_entry_type& v = *vi;
-      config_function(v.key, v.params);
-    }
-  }
-
-  void libconfigurator::onLoadLibrary(tnt::component_library& lib)
-  {
-    cxxtools::dl::symbol config_symbol;
-    try
-    {
-      config_symbol = lib.sym("config");
-      config_function_type config_function =
-        (config_function_type)config_symbol.getSym();
-      configure(config_function);
-
-    }
-    catch(const cxxtools::dl::symbol_not_found&)
-    {
-    }
-  }
-
-  void libconfigurator::onCreateComponent(tnt::component_library& lib,
-    const tnt::compident& ci, tnt::component& comp)
-  {
-    cxxtools::dl::symbol config_symbol;
-    try
-    {
-      config_symbol = lib.sym(("config_" + ci.compname).c_str());
-      config_function_type config_function =
-        (config_function_type)config_symbol.getSym();
-      configure(config_function);
-    }
-    catch(const cxxtools::dl::symbol_not_found&)
-    {
-    }
-  }
-
   void configureDispatcher(tnt::dispatcher& dis, const tnt::tntconfig& config)
   {
     typedef tnt::dispatcher::compident_type compident_type;
@@ -171,7 +106,7 @@ namespace tnt
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
       pollerthread(queue),
-      queue(10)
+      queue(100)
   {
     if (argc != 1)
     {
@@ -212,8 +147,9 @@ namespace tnt
 
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
+    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 1000);
     worker::setMinThreads(minthreads);
-    queue.setCapacity(config.getValue<unsigned>("QueueSize", 10));
+    queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
 
     tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -469,8 +405,6 @@ namespace tnt
     dispatcher dispatcher;
     configureDispatcher(dispatcher, config);
 
-    libconfigurator myconfigurator(config);
-
     // create listener-threads
     tntconfig::config_entries_type configListen;
     config.getConfigValues("Listen", configListen);
@@ -576,7 +510,7 @@ namespace tnt
     for (unsigned i = 0; i < minthreads; ++i)
     {
       log_debug("create worker " << i);
-      worker* s = new worker(queue, dispatcher, pollerthread, &myconfigurator);
+      worker* s = new worker(queue, dispatcher, pollerthread, config);
       s->Create();
     }
 
@@ -599,13 +533,13 @@ namespace tnt
       if (worker::getCountThreads() < maxthreads)
       {
         log_info("create workerthread");
-        worker* s = new worker(queue, dispatcher, pollerthread, &myconfigurator);
+        worker* s = new worker(queue, dispatcher, pollerthread, config);
         s->Create();
       }
       else
         log_warn("max worker-threadcount " << maxthreads << " reached");
 
-      sleep(1);
+      usleep(threadstartdelay);
     }
 
     // join-loop

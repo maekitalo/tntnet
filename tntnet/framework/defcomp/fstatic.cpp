@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
 #include <cxxtools/thread.h>
@@ -47,6 +48,8 @@ tnt::component* create_fstatic(const tnt::compident& ci,
   {
     theComponent = new tntcomp::fstaticcomp();
     refs = 1;
+
+    tntcomp::staticcomp::setDocumentRoot(cl.getConfig().getValue("DocumentRoot"));
   }
   else
     ++refs;

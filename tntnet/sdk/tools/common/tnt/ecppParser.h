@@ -1,5 +1,5 @@
 /* tnt/ecppParser.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -39,6 +39,8 @@ class ecppParser
 
     char split_start;
     char split_end;
+
+    std::string tag;
 
   public:
     ecppParser()
@@ -94,8 +96,10 @@ class ecppParser
     virtual void startComp(const std::string& name, const cppargs_type& cppargs);
     virtual void processComp(const std::string& code);
     virtual void processCondExpr(const std::string& cond, const std::string& expr);
+    virtual void processConfig(const std::string& code, const std::string& value);
     virtual void tokenSplit(bool start);
 
+    void processNV(const std::string& name, const std::string& value);
 };
 
 class parse_error : public std::runtime_error

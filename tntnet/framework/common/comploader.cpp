@@ -95,11 +95,6 @@ component& comploader::fetchComp(const compident& ci,
       component_library& lib = fetchLib(ci.libname);
       component* comp = lib.create(ci.compname, *this, rootmapper);
 
-      // notify listener
-      for (listener_container_type::iterator l = listener.begin();
-           l != listener.end(); ++l)
-        (*l)->onCreateComponent(lib, ci, *comp);
-
       componentmap[ci] = comp;
       comp->touch();
       return *comp;
@@ -167,11 +162,6 @@ component_library& comploader::fetchLib(const std::string& libname)
         }
       }
 
-      // notify listener
-      for (listener_container_type::iterator l = listener.begin();
-           l != listener.end(); ++l)
-        (*l)->onLoadLibrary(lib);
-
       i = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
     }
 
@@ -179,16 +169,6 @@ component_library& comploader::fetchLib(const std::string& libname)
   }
   else
     return i->second;
-}
-
-void comploader::addLoadLibraryListener(load_library_listener* l)
-{
-  listener.insert(l);
-}
-
-bool comploader::removeLoadLibraryListener(load_library_listener* l)
-{
-  return listener.erase(l) > 0;
 }
 
 void comploader::cleanup(unsigned seconds)

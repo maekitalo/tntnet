@@ -1,5 +1,5 @@
 /* tnt/comploader.h
-   Copyright (C) 2003 Tommi MÃ¤kitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -34,6 +34,7 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   class comploader;
+  class tntconfig;
 
   /// Hält Symbole zum erzeugen von Komponenten.
   class component_library : public cxxtools::dl::library
@@ -68,19 +69,9 @@ namespace tnt
   /// pro-Thread Klasse zum laden von Komponenten
   class comploader
   {
-    public:
-      class load_library_listener
-      {
-        public:
-          virtual void onLoadLibrary(component_library&) = 0;
-          virtual void onCreateComponent(component_library&,
-            const compident& ci, component&) = 0;
-      };
-
     private:
       typedef std::map<std::string, component_library> librarymap_type;
       typedef std::map<compident, component*> componentmap_type;
-      typedef std::set<load_library_listener*> listener_container_type;
       typedef std::list<std::string> search_path_type;
 
       // loaded libraries
@@ -90,10 +81,13 @@ namespace tnt
       // map soname/compname to compinstance
       cxxtools::RWLock componentMonitor;
       componentmap_type componentmap;
-      listener_container_type listener;
+      const tntconfig& config;
       static search_path_type search_path;
 
     public:
+      comploader(const tntconfig& config_)
+        : config(config_)
+        { }
       virtual ~comploader();
 
       virtual component& fetchComp(const compident& compident,
@@ -102,10 +96,9 @@ namespace tnt
       // lookup library; load if needed
       virtual component_library& fetchLib(const std::string& libname);
 
-      void addLoadLibraryListener(load_library_listener* listener);
-      bool removeLoadLibraryListener(load_library_listener* listener);
-
       void cleanup(unsigned seconds);  // delete comps older than seconds
+
+      const tntconfig& getConfig() const  { return config; }
 
       static void addSearchPath(const std::string& path)
         { search_path.push_back(path); }

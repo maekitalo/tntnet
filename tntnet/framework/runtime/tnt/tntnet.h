@@ -39,6 +39,7 @@ namespace tnt
 
       unsigned minthreads;
       unsigned maxthreads;
+      unsigned long threadstartdelay;
 
       jobqueue queue;
 

@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:    ECPP
-" Maintainer:  Tommi Mäkitalo <tommi@maekitalo.de>
-" Last change: 2003 Sep 10
+" Maintainer:  Tommi Maekitalo <tommi@tntnet.org>
+" Last change: 2005 Jan 30
 " URL:         http://www.maekitalo.de/vim/ecpp.vim
 "
 "
@@ -51,6 +51,7 @@ syn region ecppCpps matchgroup=Delimiter start="<{" end="}>" contains=@cppTop
 syn region ecppComp keepend matchgroup=Delimiter start="<&" end="&>" contains=@cppTop
 
 syn region ecppArgs matchgroup=Delimiter start="<%args>" end="</%args>" contains=@cppTop
+syn region ecppConfig matchgroup=Delimiter start="<%config>" end="</%config>" contains=@cppTop
 syn region ecppAttr matchgroup=Delimiter start="<%attr>" end="</%attr>" contains=@cppTop
 syn region ecppVar matchgroup=Delimiter start="<%var>" end="</%var>" contains=@cppTop
 
@@ -58,7 +59,7 @@ syn region ecppInit matchgroup=Delimiter start="<%init>" end="</%init>" contains
 syn region ecppPre matchgroup=Delimiter start="<%pre>" end="</%pre>" contains=@cppTop
 syn region ecppGlobal matchgroup=Delimiter start="<%global>" end="</%global>" contains=@cppTop
 syn region ecppDeclare matchgroup=Delimiter start="<%declare>" end="</%declare>" contains=@cppTop
-syn region ecppDeclare matchgroup=Delimiter start="<%declare_shared>" end="</%declare_shared>" contains=@cppTop
+syn region ecppDeclareShared matchgroup=Delimiter start="<%declare_shared>" end="</%declare_shared>" contains=@cppTop
 syn region ecppDefine matchgroup=Delimiter start="<%define>" end="</%define>" contains=@cppTop
 syn region ecppCleanup matchgroup=Delimiter start="<%cleanup>" end="</%cleanup>" contains=@cppTop
 " syn region ecppOnce matchgroup=Delimiter start="<%once>" end="</%once>" contains=@cppTop
@@ -81,7 +82,7 @@ syn region ecppTranslateTag matchgroup=Delimiter start="{" end="}"
 
 " syn region ecppClass matchgroup=Delimiter start="<%class>" end="</%class>" contains=@cppTop
 
-syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppArgs,ecppAttr,ecppVar,ecppInit,ecppInit,ecppCleanup,ecppShared,ecppDef,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDefine,ecppComment,ecppTranslateTag,ecppTranslate
+syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppInit,ecppCleanup,ecppShared,ecppDef,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDeclareShared,ecppDefine,ecppComment,ecppTranslateTag,ecppTranslate
 
 " Set up default highlighting. Almost all of this is done in the included
 " syntax files.

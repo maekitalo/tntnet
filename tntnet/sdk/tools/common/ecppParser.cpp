@@ -89,7 +89,7 @@ void ecppParser::parse(std::istream& in)
     state_condexpre };
 
   state_type state = state_nl;
-  std::string tag, etag, tagarg;
+  std::string etag, tagarg;
   std::string html, code, arg, argtype, value;
   std::string comp;
   std::string cond, expr;
@@ -248,7 +248,7 @@ void ecppParser::parse(std::istream& in)
       case state_tag:
         if (ch == '>')
         {
-          if (tag == "args")
+          if (tag == "args" || tag == "config")
             state = state_args0;
           else if (tag == "attr")
             state = state_attr0;
@@ -461,7 +461,7 @@ void ecppParser::parse(std::istream& in)
             processShared(code);
           else if (tag == "cpp")
             processCpp(code);
-          else if (tag == "args" || tag == "attr")
+          else if (tag == "args" || tag == "attr" || tag == "config")
             ;
           else
             throw parse_error("unknown tag " + tag, state, curline);
@@ -550,13 +550,13 @@ void ecppParser::parse(std::istream& in)
         }
         else if (ch == '/')
         {
-          processArg(arg, std::string());
+          processNV(arg, std::string());
           arg.clear();
           state = state_argscomment0;
         }
         else if (ch == '\n')
         {
-          processArg(arg, std::string());
+          processNV(arg, std::string());
           arg.clear();
           state = state_args0;
         }
@@ -572,13 +572,13 @@ void ecppParser::parse(std::istream& in)
         }
         else if (ch == '\n')
         {
-          processArg(arg, std::string());
+          processNV(arg, std::string());
           arg.clear();
           state = state_args0;
         }
         else if (!std::isspace(ch))
         {
-          processArg(arg, std::string());
+          processNV(arg, std::string());
           arg.clear();
 
           if (ch == '<')
@@ -596,7 +596,7 @@ void ecppParser::parse(std::istream& in)
       case state_argsval:
         if (ch == '\n')
         {
-          processArg(arg, value);
+          processNV(arg, value);
           arg.clear();
           value.clear();
           state = state_args0;
@@ -633,14 +633,14 @@ void ecppParser::parse(std::istream& in)
       case state_argsvalcomment0:
         if (ch == '/')
         {
-          processArg(arg, value);
+          processNV(arg, value);
           arg.clear();
           value.clear();
           state = state_argscomment;
         }
         else if (ch == '\n')
         {
-          processArg(arg, value);
+          processNV(arg, value);
           arg.clear();
           value.clear();
           state = state_args0;
@@ -1098,6 +1098,18 @@ void ecppParser::processComp(const std::string& code)
 
 void ecppParser::processCondExpr(const std::string& cond, const std::string& expr)
 {
+}
+
+void ecppParser::processConfig(const std::string& cond, const std::string& value)
+{
+}
+
+void ecppParser::processNV(const std::string& name, const std::string& value)
+{
+  if (tag == "args")
+    processArg(name, value);
+  else if (tag == "config")
+    processConfig(name, value);
 }
 
 void ecppParser::tokenSplit(bool start)
