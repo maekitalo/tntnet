@@ -10,6 +10,7 @@ SUBDIRS = \
 
 EXTRA_DIST = ecpp.vim \
     etc/tntnet/tntnet.conf \
+    etc/tntnet/mime.conf \
     etc/tntnet/tntnet.properties \
 	doc/tntnet_doku.doc \
 	doc/logo-tntnet.cdr
