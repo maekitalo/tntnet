@@ -7,13 +7,13 @@ tntnet_SOURCES = \
 	job.cpp \
 	listener.cpp \
 	poller.cpp \
-	server.cpp \
+	worker.cpp \
 	tntnet.cpp \
 	tnt/dispatcher.h \
 	tnt/job.h \
 	tnt/listener.h \
 	tnt/poller.h \
-	tnt/server.h \
+	tnt/worker.h \
 	tnt/tntnet.h
 
 tntnet_LDFLAGS = -lboost_regex -lpthread $(cxxtools_ldflags)

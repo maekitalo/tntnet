@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#include "tnt/server.h"
+#include "tnt/worker.h"
 #include "tnt/tntnet.h"
 #include "tnt/dispatcher.h"
 #include "tnt/listener.h"
@@ -211,7 +211,7 @@ namespace tnt
 
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
-    server::setMinServers(minthreads);
+    worker::setMinThreads(minthreads);
 
     tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -548,7 +548,7 @@ namespace tnt
     setGroup();
     setUser();
 
-    // configure server (static)
+    // configure worker (static)
     {
       tntconfig::config_entries_type compPath;
       config.getConfigValues("CompPath", compPath);
@@ -556,7 +556,7 @@ namespace tnt
            it != compPath.end(); ++it)
       {
         if (it->params.size() > 0)
-          server::addSearchPath(it->params[0]);
+          worker::addSearchPath(it->params[0]);
       }
     }
 
@@ -569,12 +569,12 @@ namespace tnt
          it != listeners.end(); ++it)
       (*it)->Create();
 
-    // create server-threads
-    log_info("create " << minthreads << " server threads");
+    // create worker-threads
+    log_info("create " << minthreads << " worker threads");
     for (unsigned i = 0; i < minthreads; ++i)
     {
-      log_debug("create server " << i);
-      server* s = new server(queue, dispatcher, pollerthread, &myconfigurator);
+      log_debug("create worker " << i);
+      worker* s = new worker(queue, dispatcher, pollerthread, &myconfigurator);
       s->Create();
     }
 
@@ -583,7 +583,7 @@ namespace tnt
     pollerthread.Create();
 
     log_debug("start cleaner thread");
-    cxxtools::FunctionThread<void ()> cleaner_thread(server::CleanerThread);
+    cxxtools::FunctionThread<void ()> cleaner_thread(worker::CleanerThread);
     cleaner_thread.Create();
 
     while (1)
@@ -593,14 +593,14 @@ namespace tnt
         queue.noWaitThreads.Wait(lock);
       }
 
-      if (server::getCountServers() < maxthreads)
+      if (worker::getCountThreads() < maxthreads)
       {
-        log_info("create server (" << server::getCountServers() << '<' << maxthreads << ')');
-        server* s = new server(queue, dispatcher, pollerthread, &myconfigurator);
+        log_info("create workerthread");
+        worker* s = new worker(queue, dispatcher, pollerthread, &myconfigurator);
         s->Create();
       }
       else
-        log_warn("max servercount " << maxthreads << " reached");
+        log_warn("max worker-threadcount " << maxthreads << " reached");
     }
 
     // join-loop

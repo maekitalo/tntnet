@@ -1,4 +1,4 @@
-/* tnt/server.h
+/* tnt/worker.h
    Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef TNT_SERVER_H
-#define TNT_SERVER_H
+#ifndef TNT_WORKER_H
+#define TNT_WORKER_H
 
 #include <string>
 #include <cxxtools/tcpstream.h>
@@ -35,7 +35,7 @@ namespace tnt
   class jobqueue;
   class poller;
 
-  class server : public cxxtools::Thread
+  class worker : public cxxtools::Thread
   {
       static cxxtools::Mutex mutex;
       static unsigned nextThreadNumber;
@@ -48,18 +48,18 @@ namespace tnt
 
       unsigned threadNumber;
 
-      typedef std::set<server*> servers_type;
-      static servers_type servers;
+      typedef std::set<worker*> workers_type;
+      static workers_type workers;
 
       static unsigned compLifetime;
-      static unsigned minServers;
+      static unsigned minThreads;
 
       bool processRequest(httpRequest& request, std::iostream& socket, bool keepAlive);
 
     public:
-      server(jobqueue& queue, const dispatcher& dispatcher,
+      worker(jobqueue& queue, const dispatcher& dispatcher,
         poller& poller, comploader::load_library_listener* libconfigurator);
-      ~server();
+      ~worker();
 
       virtual void Run();
 
@@ -73,11 +73,11 @@ namespace tnt
       static void setCompLifetime(unsigned sec)
       { compLifetime = sec; }
 
-      static servers_type::size_type getCountServers();
-      static void setMinServers(unsigned n)
-      { minServers = n; }
+      static workers_type::size_type getCountThreads();
+      static void setMinThreads(unsigned n)
+      { minThreads = n; }
   };
 }
 
-#endif // TNT_SERVER_H
+#endif // TNT_WORKER_H
 

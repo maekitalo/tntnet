@@ -1,4 +1,4 @@
-/* server.cpp
+/* worker.cpp
    Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#include "tnt/server.h"
+#include "tnt/worker.h"
 #include "tnt/dispatcher.h"
 #include "tnt/job.h"
 #include <tnt/httprequest.h>
@@ -28,7 +28,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/poller.h>
 #include <cxxtools/log.h>
 
-log_define("tntnet.server");
+log_define("tntnet.worker");
 
 namespace
 {
@@ -47,13 +47,13 @@ namespace
 
 namespace tnt
 {
-  cxxtools::Mutex server::mutex;
-  unsigned server::nextThreadNumber = 0;
-  server::servers_type server::servers;
-  unsigned server::compLifetime = 60;
-  unsigned server::minServers = 2;
+  cxxtools::Mutex worker::mutex;
+  unsigned worker::nextThreadNumber = 0;
+  worker::workers_type worker::workers;
+  unsigned worker::compLifetime = 60;
+  unsigned worker::minThreads = 2;
 
-  server::server(jobqueue& q, const dispatcher& d,
+  worker::worker(jobqueue& q, const dispatcher& d,
     poller& p, comploader::load_library_listener* libconfigurator)
     : queue(q),
       mypoller(p),
@@ -65,19 +65,19 @@ namespace tnt
       mycomploader.addLoadLibraryListener(libconfigurator);
 
     cxxtools::MutexLock lock(mutex);
-    servers.insert(this);
+    workers.insert(this);
   }
 
-  server::~server()
+  worker::~worker()
   {
     cxxtools::MutexLock lock(mutex);
-    servers.erase(this);
+    workers.erase(this);
   }
 
-  void server::Run()
+  void worker::Run()
   {
     log_debug("start thread " << threadNumber);
-    while (queue.getWaitThreadCount() < minServers)
+    while (queue.getWaitThreadCount() < minThreads)
     {
       log_debug("waiting for job");
       jobqueue::job_ptr j = queue.get();
@@ -121,7 +121,7 @@ namespace tnt
     log_debug("end worker-thread " << threadNumber);
   }
 
-  bool server::processRequest(httpRequest& request, std::iostream& socket,
+  bool worker::processRequest(httpRequest& request, std::iostream& socket,
          bool keepAlive)
   {
     // log message
@@ -194,7 +194,7 @@ namespace tnt
     return keepAlive;
   }
 
-  void server::Dispatch(httpRequest& request, httpReply& reply)
+  void worker::Dispatch(httpRequest& request, httpReply& reply)
   {
     const std::string& url = request.getUrl();
 
@@ -237,7 +237,7 @@ namespace tnt
     throw notFoundException(request.getUrl());
   }
 
-  void server::CleanerThread()
+  void worker::CleanerThread()
   {
     while (1)
     {
@@ -247,16 +247,16 @@ namespace tnt
 
       {
         cxxtools::MutexLock lock(mutex);
-        for (servers_type::iterator it = servers.begin();
-             it != servers.end(); ++it)
+        for (workers_type::iterator it = workers.begin();
+             it != workers.end(); ++it)
           (*it)->cleanup(compLifetime);
       }
     }
   }
 
-  server::servers_type::size_type server::getCountServers()
+  worker::workers_type::size_type worker::getCountThreads()
   {
     cxxtools::MutexLock lock(mutex);
-    return servers.size();
+    return workers.size();
   }
 }
