@@ -1,3 +1,4 @@
 debian/tmp/usr/lib/libtntnet.*
 debian/tmp/usr/lib/libecpp.*
+debian/tmp/usr/lib/tntnet.so
 debian/tmp/usr/bin/tntnet
