@@ -1,3 +1,5 @@
+bin_SCRIPTS = tntnet-config
+
 SUBDIRS = \
     framework/common \
     framework/runtime \
@@ -9,6 +11,7 @@ SUBDIRS = \
     sdk/tools/ecppll \
     sdk/demos/calc \
     sdk/demos/hello \
+    sdk/demos/cookie \
     sdk/demos/subcomp \
     sdk/demos/upload \
     etc

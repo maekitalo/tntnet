@@ -6,19 +6,16 @@ hello_la_SOURCES = \
 hello_la_LDFLAGS = -module
 hello_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
+data_DATA = tntnet.conf tntnet.properties
+CLEANFILES = hello.h hello.cpp tntnet.conf tntnet.properties
+
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
-EXTRA_DIST = tntnet.conf tntnet.properties
-
-SUFFIXES=.ecpp .gif .jpg
-
-ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
-
+SUFFIXES=.ecpp
 .ecpp.cpp:
-	$(ECPPC) $(ECPPFLAGS) $(ECPPFLAGS_CPP) $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 
-.gif.cpp:
-	$(ECPPC) -b -m image/gif $(ECPPFLAGS) $<
-
-.jpg.cpp:
-	$(ECPPC) -b -m image/jpg $(ECPPFLAGS) $<
+tntnet.properties:
+	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+tntnet.conf:
+	$(top_builddir)/tntnet-config --config >$@

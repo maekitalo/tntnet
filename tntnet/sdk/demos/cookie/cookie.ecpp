@@ -1,5 +1,7 @@
 <#
-  this is a simple hello-world-application
+  This is a simple hello-world-application with cookie-support
+
+  It stores the name in a cookie
 #>
 <%args>
 name             // define query-parameter
@@ -9,17 +11,16 @@ clearcookie
 </%args>
 <%cpp>
 
-  log_debug("check name");
-  if (!clearcookie.empty())
-    reply.clearCookie("name");
-  else
-  {
-    if (name.empty())
-      name = request.getCookie("name");
+  if (name.empty())
+    name = request.getCookie("name");
 
-    if (!request.hasCookie("name"))
-      reply.setCookie("name", name);
-  }
+  if (!clearcookie.empty())
+
+    reply.clearCookie("name");   // delete cookie from client
+
+  else if (!name.empty() && request.getCookie("name").getValue() != name)
+
+    reply.setCookie("name", name, 3600);  // set cookie when new or modified
 
 </%cpp>
 <html>
@@ -35,7 +36,7 @@ clearcookie
    What's your name?
    <input type="text" name="name" value="<$name$>"> <br>
    <input type="submit">
-   <input type="submit" name="clearcookie" value="cookie l&ouml;schen">
+   <input type="submit" name="clearcookie" value="delete cookie">
   </form>
 
  </body>

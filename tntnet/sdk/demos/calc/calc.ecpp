@@ -1,10 +1,11 @@
 <%args>
-double arg1 = 0
-double arg2 = 0
-char op = ' '
-method = "post"
+double arg1 = 0     // typed parameter with default value
+double arg2 = 0     // typed parameter with default value
+char op = ' '       // typed parameter with default value
+method = "post"     // parameter with default type std::string
 </%args>
-<{
+
+<{  // <= this starts a c++-processing-block
 
   double result = 0.0;
 
@@ -18,7 +19,8 @@ method = "post"
     default: result_ok = false;
   }
 
-}>
+}> <# <= this ends a c++-processing-block (and this is a ecpp-comment) #>
+
 <html>
  <head>
   <title>Calculator</title>
@@ -26,7 +28,10 @@ method = "post"
  <body bgcolor=#ffffcc>
   <h1>Tommi's Tnt-Calculator</h1>
 
-  <form method=<$method$>>
+  <form method=<$method$>>   <# print value of a c++-variable #>
+
+   <# you can output other types as well - arg1 and arg2 are of type double.
+      They just need a outputstream-operator #>
    <input type="text" name="arg1" value="<$arg1$>"> <br>
    <input type="text" name="arg2" value="<$arg2$>"> <br>
    <input type="submit" name="op" value="+">
@@ -34,13 +39,19 @@ method = "post"
    <input type="submit" name="op" value="*">
    <input type="submit" name="op" value="/">
 
-% if (method == "get") {
+% if (method == "get") {    // '%' in the first column makes a c++-one-liner
+
    <input type=hidden name=method value=get>
+
 % }
+
   </form>
+
 % if (result_ok) {
+
   <hr>
   <$arg1$> <$op$> <$arg2$> = <$result$>
+
 % }
 
  </body>

@@ -1,11 +1,8 @@
 - cgi.so
 - sauberes Beenden
 - entladen von shared libs
-- dynamische Threadbeendigung
 - ranges
 - serialisation i10n/boost?
-- tnt::transaction
-- Cookies
 
 doc:
 - ingnorieren von Zeilenschaltungen nach %-Tags

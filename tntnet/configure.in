@@ -1,5 +1,5 @@
-AC_INIT([tntnet],[1.3.0],[Tommi Maekitalo <tommi@tntnet.org>])
-AM_INIT_AUTOMAKE(tntnet, 1.3.0)
+AC_INIT([tntnet],[1.3.0rc2],[Tommi Maekitalo <tommi@tntnet.org>])
+AM_INIT_AUTOMAKE(tntnet, 1.3.0rc2)
 
 abi_current=3
 abi_revision=1
@@ -29,6 +29,7 @@ CXXTOOLS_CXXFLAGS=`$CXXTOOLS_CONFIG --cxxflags`
 CXXTOOLS_LDFLAGS=`$CXXTOOLS_CONFIG --libs`
 CXXTOOLS_LOG_LDFLAGS=`$CXXTOOLS_CONFIG --log-libs`
 
+AC_SUBST(CXXTOOLS_CONFIG)
 AC_SUBST(CXXTOOLS_CXXFLAGS)
 AC_SUBST(CXXTOOLS_LDFLAGS)
 AC_SUBST(CXXTOOLS_LOG_LDFLAGS)
@@ -77,9 +78,13 @@ AC_CONFIG_FILES([
     sdk/tools/ecppll/Makefile
     sdk/demos/calc/Makefile
     sdk/demos/hello/Makefile
+    sdk/demos/cookie/Makefile
     sdk/demos/subcomp/Makefile
     sdk/demos/upload/Makefile
     etc/Makefile
+    tntnet-config
     ])
 
 AC_OUTPUT
+
+chmod +x tntnet-config

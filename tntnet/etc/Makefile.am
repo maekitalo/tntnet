@@ -6,10 +6,14 @@ nobase_sysconf_DATA = \
 
 nobase_dist_sysconf_DATA = \
     tntnet/mime.conf \
-    tntnet/tntnet.properties \
     init.d/tntnet
+
+nobase_nodist_sysconf_DATA = \
+    tntnet/tntnet.properties
 
 tntnet/tntnet.conf: tntnet/tntnet.conf.in
 	sed -e 's,@libdir\@,@libdir@,g;' \
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
 		-e 's,@datadir\@,@datadir@,g;' <$< >$@
+tntnet/tntnet.properties:
+	cxxtools-config --properties tntnet >$@
