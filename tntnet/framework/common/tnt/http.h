@@ -250,11 +250,7 @@ namespace tnt
       void sendHeader(const std::string key, const std::string param) const;
 
     public:
-      httpReply(std::ostream& s)
-        : contentType("text/html"),
-          socket(s),
-          current_outstream(&outstream)
-      { }
+      httpReply(std::ostream& s);
 
       void setContentType(const std::string& t)    { contentType = t; }
       const std::string& getContentType() const    { return contentType; }

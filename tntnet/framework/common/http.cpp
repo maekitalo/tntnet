@@ -473,6 +473,13 @@ std::string httpRequest::getLang() const
 ////////////////////////////////////////////////////////////////////////
 // httpReply
 //
+httpReply::httpReply(std::ostream& s)
+  : contentType("text/html"),
+    socket(s),
+    current_outstream(&outstream)
+{
+  outstream.str().reserve(1024);
+}
 
 void httpReply::sendReply(unsigned ret)
 {
