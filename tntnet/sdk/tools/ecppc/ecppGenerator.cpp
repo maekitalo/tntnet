@@ -369,7 +369,7 @@ void ecppGenerator::processCall(const std::string& comp,
         << "    query_params cq(qparam, false);\n";
       if (comp[0] == '.')
       {
-        m << "    " << comp.substr(1) << "(request, reply, cq";
+        m << "    top()." << comp.substr(1) << "(request, reply, cq";
         if (!cppargs.empty())
           m << ", " << cppargs;
         m << ");\n";
@@ -382,7 +382,7 @@ void ecppGenerator::processCall(const std::string& comp,
     {
       if (comp[0] == '.')
       {
-        m << "    " << comp.substr(1) << "(request, reply, " << pass_cgi;
+        m << "    top()." << comp.substr(1) << "(request, reply, " << pass_cgi;
         if (!cppargs.empty())
           m << ", " << cppargs;
         m << ");\n";
@@ -406,7 +406,7 @@ void ecppGenerator::processCall(const std::string& comp,
 
     if (comp[0] == '.')
     {
-      m << "    " << comp.substr(1) << "(request, reply, cq";
+      m << "    top()" << comp << "(request, reply, cq";
       if (!cppargs.empty())
         m << ", " << cppargs;
       m << ");\n";
@@ -495,22 +495,43 @@ std::string ecppGenerator::getHeader(const std::string& basename,
   header << "\n"
             "{\n"
             "    friend component* create_" << classname << "(const compident& ci,\n"
-            "      const urlmapper& um, comploader& cl);\n"
-            "    // <%declare>\n\n"
+            "      const urlmapper& um, comploader& cl);\n\n"
+            "    " << classname << "& top()  { return *this; }\n\n"
+            "    // <%declare>\n"
          << declare
          << "    // </%declare>\n\n";
   if (externData)
     header << "  private:\n"
-              "    mutable compident dataCompident;\n"
-              "    component* getDataComponent() const;\n\n";
+              "    mutable compident dataCompident;\n\n";
   header << "  protected:\n"
             "    " << classname << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
             "    ~" << classname << "();\n\n"
             "  public:\n"
-            "    unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam);\n";
+            "    const component* getDataComponent() const;\n\n"
+            "    unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam);\n"
+            "    bool drop();\n"
+            "    unsigned    getDataCount() const;\n"
+            "    unsigned    getDataLen(unsigned n) const;\n"
+            "    const char* getDataPtr(unsigned n) const;\n";
+  if (!attr.empty())
+    header << "    std::string getAttribute(const std::string& name,\n"
+              "      const std::string& def = std::string()) const;\n";
+
+  header << '\n';
+
+  // Deklaration der Subcomponenten
   for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
   {
-    header << "    unsigned " << i->name << "(httpRequest& request, httpReply& reply, query_params& qparam";
+    header << "    class " << i->name << "_type : public ecppSubComponent\n"
+              "    {\n"
+              "        " << classname << "& main;\n"
+              "        " << classname << "& top()  { return main; }\n\n"
+              "      public:\n"
+              "        " << i->name << "_type(" << classname << "& m, const std::string& name)\n"
+              "          : ecppSubComponent(m, name),\n"
+              "            main(m)\n"
+              "          { }\n"
+              "        unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
          j != i->cppargs.end(); ++j)
     {
@@ -518,15 +539,13 @@ std::string ecppGenerator::getHeader(const std::string& basename,
       if (!j->second.empty())
         header << '=' << j->second;
     }
-    header << ");\n";
+    header << ");\n"
+              "    };\n\n";
   }
-  header << "    bool drop();\n"
-         << "    unsigned    getDataCount() const;\n"
-         << "    unsigned    getDataLen(unsigned n) const;\n"
-         << "    const char* getDataPtr(unsigned n) const;\n";
-  if (!attr.empty())
-    header << "    std::string getAttribute(const std::string& name,\n"
-              "      const std::string& def = std::string()) const;\n";
+
+  // Instanzen der Subcomponenten
+  for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
+    header << "    " << i->name << "_type " << i->name << ";\n";
 
   header << "};\n\n"
          << "}; // namespace ecpp_component\n\n"
@@ -617,6 +636,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "#define DATA_COUNT() data.size()\n\n";
   }
 
+  // creator
   if (singleton)
   {
     code << "static component* theComponent = 0;\n"
@@ -650,13 +670,21 @@ std::string ecppGenerator::getCpp(const std::string& basename,
          << "}\n\n";
   }
 
+  // %shared and constructor
+  //
   code << "// <%shared>\n"
        << shared
        << "// </%shared>\n\n"
        << classname << "::" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
-          "  : ecppComponent(ci, um, cl)\n"
-          "{\n"
-          "  // <%init>\n"
+          "  : ecppComponent(ci, um, cl)";
+
+  for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
+    code << ",\n"
+            "    " << i->name << "(*this, \"" << i->name << "\")";
+
+  code << "\n{\n";
+
+  code << "  // <%init>\n"
        << init
        << "  // </%init>\n"
           "}\n\n"
@@ -668,7 +696,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
           "}\n\n";
 
   if (externData)
-    code << "component* " << classname << "::getDataComponent() const\n"
+    code << "const component* " << classname << "::getDataComponent() const\n"
             "{\n"
             "  if (dataCompident.empty())\n"
             "  {\n"
@@ -704,7 +732,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "  log_debug_ns(compcall, \"execute " << classname << " \" << qparam.getUrl());\n";
 
   if (externData && !data.empty())
-    code << "  component* dataComponent = getDataComponent();\n";
+    code << "  const component* dataComponent = top().getDataComponent();\n";
 
   if (!mimetype.empty())
     code << "  reply.setContentType(\"" << mimetype << "\");\n";
@@ -717,24 +745,6 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   code << maincomp.getBody(isDebug() ? classname : std::string())
        << "}\n\n";
 
-  for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
-  {
-    code << "unsigned " << classname << "::" << i->name << "(httpRequest& request, httpReply& reply, query_params& qparam";
-    for (cppargs_type::const_iterator j = i->cppargs.begin();
-         j != i->cppargs.end(); ++j)
-      code << ", " << j->first;
-    code << ")\n"
-            "{\n";
-
-    if (isDebug())
-      code << "  log_debug_ns(compcall, \"execute " << classname << "::" << i->name << " \" << qparam.getUrl());\n";
-
-    if (externData && !data.empty())
-      code << "  component* dataComponent = getDataComponent();\n";
-
-    code << i->getBody(isDebug() ? classname + "::" + i->name : std::string())
-         << "}\n\n";
-  }
   code << "bool " << classname << "::drop()\n"
        << "{\n";
   if (singleton)
@@ -767,7 +777,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   {
     code << "unsigned " << classname << "::getDataLen(unsigned n) const\n"
             "{\n"
-            "  component* dataComponent = getDataComponent();\n"
+            "  const component* dataComponent = getDataComponent();\n"
             "  if (dataComponent == this)\n"
             "  {\n"
             "    if (n >= data.size())\n"
@@ -779,7 +789,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "}\n\n"
             "const char* " << classname << "::getDataPtr(unsigned n) const\n"
             "{\n"
-            "  component* dataComponent = getDataComponent();\n"
+            "  const component* dataComponent = getDataComponent();\n"
             "  if (dataComponent == this)\n"
             "  {\n"
             "    if (n >= data.size())\n"
@@ -818,6 +828,25 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "  return def;\n"
             "} // </%attr>\n\n";
 
+  }
+
+  for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
+  {
+    code << "unsigned " << classname << "::" << i->name << "_type::operator() (httpRequest& request, httpReply& reply, query_params& qparam";
+    for (cppargs_type::const_iterator j = i->cppargs.begin();
+         j != i->cppargs.end(); ++j)
+      code << ", " << j->first;
+    code << ")\n"
+            "{\n";
+
+    if (isDebug())
+      code << "  log_debug_ns(compcall, \"execute " << classname << "::" << i->name << " \" << qparam.getUrl());\n";
+
+    if (externData && !data.empty())
+      code << "  const component* dataComponent = top().getDataComponent();\n";
+
+    code << i->getBody(isDebug() ? classname + "::" + i->name : std::string())
+         << "}\n\n";
   }
 
   code << "}; // namespace ecpp_component\n";
