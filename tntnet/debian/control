@@ -8,7 +8,7 @@ Package: tntnet-dev
 Section: devel
 Architecture: any
 Depends: tntnet (= ${Source-Version})
-Description: <insert up to 60 chars description>
+Description: Web-application-server
  <insert long description, indented with spaces>
 
 Package: tntnet
@@ -17,5 +17,5 @@ Architecture: any
 Depends: ${shlibs:Depends}, cxxtools
 Conflicts: httpd
 Provides: httpd
-Description: Web-Server in c++
+Description: Web-application-server
  <insert long description, indented with spaces>
