@@ -1,3 +1,10 @@
+tntnet (1.1.2-1) unstable; urgency=low
+
+  * improved autoconf/automake-buildsystem
+  * minor feature-improvements and bugfixes
+
+ -- Tommi Maekitalo <tommi@tntnet.org>  Wed,  3 Nov 2004 21:05:31 +0100
+
 tntnet (1.1.1-1) unstable; urgency=low
 
   * buldsystem changed to autoconf/automake

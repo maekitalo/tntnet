@@ -1,5 +1,9 @@
-debian/tmp/usr/bin/ecppc
-debian/tmp/usr/bin/ecppl
-debian/tmp/usr/bin/ecppll
-debian/tmp/usr/lib/libtntnet_sdk.*
-debian/tmp/usr/include/tnt/*
+usr/include/*
+usr/lib/lib*.a
+usr/lib/lib*.so
+usr/lib/libtntnet_sdk.*
+usr/lib/pkgconfig/*
+usr/lib/*.la
+usr/bin/ecppc
+usr/bin/ecppl
+usr/bin/ecppll
