@@ -132,7 +132,6 @@ namespace tnt
     httpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
     reply.setMethod(request.getMethod());
-    reply.setKeepAliveHeader(job::getKeepAliveTimeout() / 1000, keepAliveCount);
 
     // process request
     try
@@ -140,8 +139,10 @@ namespace tnt
       try
       {
         Dispatch(request, reply, keepAliveCount);
+
         if (!request.keepAlive() || !reply.keepAlive())
           keepAliveCount = 0;
+
         if (keepAliveCount > 0)
           log_debug("keep alive");
         else
@@ -213,12 +214,17 @@ namespace tnt
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())
+          {
             log_info("request ready, returncode " << http_return);
+            reply.out().flush();
+          }
           else
+          {
             log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
-          reply.sendReply(http_return, keepAliveCount,
-            job::getKeepAliveTimeout() + 999 / 1000);
+            reply.sendReply(http_return, keepAliveCount,
+              job::getKeepAliveTimeout() + 999 / 1000);
+          }
           return;
         }
         else
