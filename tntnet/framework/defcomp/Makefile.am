@@ -19,3 +19,4 @@ tntnet_la_SOURCES = \
 
 tntnet_la_LDFLAGS = -module
 tntnet_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+AM_CPPFLAGS = @CXXTOOLS_CXXFLAGS@

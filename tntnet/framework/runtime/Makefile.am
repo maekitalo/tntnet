@@ -1,7 +1,5 @@
 bin_PROGRAMS = tntnet
 
-AM_CPPFLAGS = -I../common
-
 tntnet_SOURCES = \
 	dispatcher.cpp \
 	job.cpp \
@@ -16,7 +14,7 @@ tntnet_SOURCES = \
 	tnt/worker.h \
 	tnt/tntnet.h
 
-tntnet_LDFLAGS = -lboost_regex -lpthread $(cxxtools_ldflags)
+tntnet_LDFLAGS = -lboost_regex -lpthread
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
 
 if MAKE_OPENSSL
@@ -25,3 +23,5 @@ tntnet_SOURCES += \
 	tnt/ssl.h
 tntnet_LDFLAGS += -lssl
 endif
+
+AM_CPPFLAGS = @CXXTOOLS_CXXFLAGS@

@@ -20,32 +20,21 @@ AC_LANG(C++)
 #
 # Cxxtools
 #
-AC_ARG_WITH([cxxtools],
-  AS_HELP_STRING([--with-cxxtools], [specify installation-path of cxxtools]),
-  [ cxxtools_dir=$withval ],
-  [
-    for dir in /usr/local /usr; do
-      if test -f "$dir/share/cxxtools/cxxtools-log-ldflags"; then
-        cxxtools_dir=$dir
-        break
-      fi
-    done
-  ])
+AC_PATH_PROGS(CXXTOOLS_CONFIG, cxxtools-config)
+if ! test -x "$CXXTOOLS_CONFIG"; then
+  AC_MSG_ERROR([cxxtools configuration script was not found])
+fi
+
+CXXTOOLS_CXXFLAGS=`$CXXTOOLS_CONFIG --cxxflags`
+CXXTOOLS_LDFLAGS=`$CXXTOOLS_CONFIG --libs`
+CXXTOOLS_LOG_LDFLAGS=`$CXXTOOLS_CONFIG --log-libs`
+
+AC_SUBST(CXXTOOLS_CXXFLAGS)
+AC_SUBST(CXXTOOLS_LDFLAGS)
+AC_SUBST(CXXTOOLS_LOG_LDFLAGS)
+
 AC_CHECK_HEADER([cxxtools/tcpstream.h])
 AC_CHECK_HEADER([cxxtools/log.h])
-
-AC_CHECK_FILE(
-  [$cxxtools_dir/share/cxxtools/cxxtools-cxxflags],
-  [ CXXFLAGS="$CXXFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-cxxflags`" ],
-  AC_MSG_WARN("$cxxtools_dir/share/cxxtools/cxxtools-cxxflags not found") )
-AC_CHECK_FILE(
-  [$cxxtools_dir/share/cxxtools/cxxtools-ldflags],
-  [ LDFLAGS="$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-ldflags`" ],
-  AC_MSG_WARN("$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-ldflags`") )
-AC_CHECK_FILE(
-  [$cxxtools_dir/share/cxxtools/cxxtools-log-ldflags],
-  [ LDFLAGS="$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-log-ldflags`" ],
-  AC_MSG_WARN("$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-log-ldflags`") )
 
 #
 # OpenSSL
@@ -88,6 +77,7 @@ AC_CONFIG_FILES([
     sdk/tools/ecppll/Makefile
     sdk/demos/calc/Makefile
     sdk/demos/hello/Makefile
+    sdk/demos/upload/Makefile
     etc/Makefile
     ])
 

@@ -1,10 +1,10 @@
 bin_PROGRAMS = ecppc
 
-AM_CPPFLAGS = -I../common -I$(top_builddir)/framework/common
-
 ecppc_SOURCES = \
 	ecppc.cpp \
 	ecppGenerator.cpp \
 	ecppGenerator.h
 
 ecppc_LDADD = $(top_builddir)/framework/common/libtntnet.la $(top_builddir)/sdk/tools/common/libtntnet_sdk.la
+
+AM_CPPFLAGS = -I$(top_builddir)/sdk/tools/common @CXXTOOLS_CXXFLAGS@
