@@ -1,2 +1,3 @@
 export CXX=g++-3.0
+export CC=gcc-3.0
 export LOCAL_CXXFLAGS='-I/usr/include/boost-1_31 -I/usr/include/libxml++-1.0 -I/usr/include/postgresql'
