@@ -479,7 +479,7 @@ namespace tnt
         code << "  log_trace(\"" << classname << " \" << qparam.getUrl());\n\n";
 
       if (raw)
-        code << "  reply.setKeepAliveHeader(request.keepAlive());\n\n";
+        code << "  reply.setKeepAliveHeader();\n\n";
       if (!mimetype.empty())
         code << "  reply.setContentType(\"" << mimetype << "\");\n";
 
