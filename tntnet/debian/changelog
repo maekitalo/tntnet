@@ -1,3 +1,16 @@
+tntnet (1.1-4) unstable; urgency=low
+
+  * resolved: server might crash under high load, because I linked it
+    with the non-multithreaded regex-library
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Mon, 20 Sep 2004 14:51:34 +0200
+
+tntnet (1.1-3) unstable; urgency=low
+
+  * new build for compatibility with cxxtools 1.1
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Thu, 16 Sep 2004 22:28:57 +0200
+
 tntnet (1.1-2) unstable; urgency=low
 
   * Korrekturen im HTTP-Header
