@@ -489,6 +489,8 @@ void ecppParser::parse(std::istream& in)
           }
           state = state_cpp1;
         }
+        else if (ch == '\\')
+          state = state_htmlesc;
         else if (splitBar && (ch == split_start|| ch == split_end))
         {
           if (!html.empty())
