@@ -10,7 +10,6 @@ AC_SUBST(sonumber)
 unset CDPATH
 
 AC_CONFIG_HEADERS([framework/common/config.h])
-AC_CONFIG_HEADERS([framework/common/tnt/config.h])
 AC_CONFIG_SRCDIR([framework/runtime/tntnet.cpp])
 
 AC_PROG_CXX(g++-3.0 g++ c++ CC)
@@ -20,6 +19,29 @@ AC_LANG(C++)
 
 AC_CHECK_HEADERS([cxxtools/tcpstream.h])
 AC_CHECK_HEADERS([cxxtools/log.h], [], [AC_MSG_ERROR(use cxxtools with logging - version >= 1.2.1)])
+
+AC_ARG_WITH([cxxtools],
+  AS_HELP_STRING([--with-cxxtools], [specify installation-path of cxxtools]),
+  AC_CHECK_FILE(
+      ["$withval/cxxtools/cxxtools-log-ldflags"],
+      [ cxxtools_ldflags=`cat $withval/cxxtools/cxxtools-log-ldflags` ],
+      AC_MSG_ERROR("$withval/cxxtools/cxxtools-log-ldflags not found")
+    ),
+  [
+    for dir in /usr/local/share /usr/share; do
+      if test -f "$dir/cxxtools/cxxtools-log-ldflags"; then
+        cxxtools_dir=$dir
+        break
+      fi
+    done
+
+    AC_CHECK_FILE(
+      [$cxxtools_dir/cxxtools/cxxtools-log-ldflags],
+      [ cxxtools_ldflags=`cat $cxxtools_dir/cxxtools/cxxtools-log-ldflags` ],
+      AC_MSG_ERROR("cxxtools not found") )
+  ])
+
+AC_SUBST(cxxtools_ldflags)
 
 AC_CHECK_HEADER([boost/regex.hpp])
 

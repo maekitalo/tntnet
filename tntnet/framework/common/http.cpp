@@ -54,7 +54,7 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
 //
-log_define_static("tntnet.http");
+log_define("tntnet.http");
 
 void httpMessage::clear()
 {

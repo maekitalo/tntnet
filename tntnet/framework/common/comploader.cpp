@@ -28,13 +28,13 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // component_library
 //
-log_define_static("tntnet.comploader");
+log_define("tntnet.comploader");
 
 component* component_library::create(
   const std::string& component_name, comploader& cl,
   const urlmapper& rootmapper)
 {
-  log_trace("create " + component_name);
+  log_debug("create " << component_name);
 
   creator_type creator;
 
@@ -74,7 +74,7 @@ comploader::search_path_type comploader::search_path;
 component& comploader::fetchComp(const compident& ci,
   const urlmapper& rootmapper)
 {
-  log_trace("fetchComp " + ci.toString());
+  log_debug("fetchComp " << ci.toString());
 
   cxxtools::RdLock lock(componentMonitor);
 
@@ -119,7 +119,7 @@ component& comploader::fetchComp(const compident& ci,
 
 component_library& comploader::fetchLib(const std::string& libname)
 {
-  log_trace("fetchLib " + libname);
+  log_debug("fetchLib " << libname);
 
   cxxtools::RdLock lock(libraryMonitor);
   librarymap_type::iterator i = librarymap.find(libname);

@@ -29,7 +29,7 @@ Boston, MA  02111-1307  USA
 #include <zlib.h>
 #include <stdlib.h>
 
-log_define_static("tntnet.data");
+log_define("tntnet.data");
 
 namespace tnt
 {

@@ -6,7 +6,6 @@ libtntnet_la_SOURCES = \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	http.cpp \
-	log.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
 	multipart.cpp \
@@ -21,7 +20,6 @@ nobase_include_HEADERS = \
 	tnt/contenttype.h \
 	tnt/data.h \
 	tnt/http.h \
-	tnt/log.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/multipart.h \
@@ -30,9 +28,4 @@ nobase_include_HEADERS = \
 	tnt/urlmapper.h \
 	tnt/zdata.h
 
-nobase_nodist_include_HEADERS = \
-	tnt/config.h
-
-libtntnet_la_LDFLAGS = -version-info @sonumber@ -lcxxtools -lcxxtools-log -lz
-
-DISTCLEANFILES = tnt/config.h
+libtntnet_la_LDFLAGS = -version-info @sonumber@ -lcxxtools @cxxtools_ldflags@ -lz

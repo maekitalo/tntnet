@@ -26,6 +26,7 @@ Boston, MA  02111-1307  USA
 
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/log.h>
+#include <cxxtools/loginit.h>
 
 #include <iostream>
 #include <fstream>
@@ -51,7 +52,7 @@ Boston, MA  02111-1307  USA
 # define TNTNET_PID "/var/run/tntnet.pid"
 #endif
 
-log_define_static("tntnet.tntnet");
+log_define("tntnet.tntnet");
 
 namespace
 {

@@ -22,7 +22,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/job.h"
 #include <cxxtools/log.h>
 
-log_define_static("tntnet.jobqueue");
+log_define("tntnet.jobqueue");
 
 namespace tnt
 {

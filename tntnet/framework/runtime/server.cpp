@@ -25,7 +25,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/http.h>
 #include <cxxtools/log.h>
 
-log_define_static("tntnet.server");
+log_define("tntnet.server");
 
 namespace
 {

@@ -1,9 +1,0 @@
-
-/* check for log4cplus loggertype=log4cplus LDFLAGS=-llog4cplus */
-#undef TNTNET_USE_LOG4CPLUS
-
-/* check for log4cxx */
-#undef TNTNET_USE_LOG4CXX
-
-/* use logging to stdout */
-#undef TNTNET_USE_LOGSTDOUT

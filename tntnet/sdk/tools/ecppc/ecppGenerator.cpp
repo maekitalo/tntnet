@@ -607,7 +607,7 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "    friend component* create_" << classname << "(const compident& ci,\n"
             "      const urlmapper& um, comploader& cl);\n\n"
             "    " << classname << "& main()  { return *this; }\n\n" 
-            "    log_declare_class();\n\n" 
+            "    log_define(\"component." << classname << "\");\n\n" 
             "    // <%declare>\n"
          << declare
          << "    // </%declare>\n\n"
@@ -631,7 +631,7 @@ std::string ecppGenerator::getHeader(const std::string& basename,
   {
     header << "    class " << i->name << "_type : public ecppSubComponent\n"
               "    {\n"
-              "        log_declare_class();\n\n" 
+              "        log_define(\"component." << classname << '.' << i->name << "\");\n\n" 
               "        " << classname << "& mainComp;\n"
               "        " << classname << "& main()  { return mainComp; }\n\n"
               "      public:\n"
@@ -776,8 +776,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 
   // logger, %shared and constructor
   //
-  code << "log_define_class(" << classname << ", \"component." << classname << "\")\n\n" 
-       << "// <%shared>\n"
+  code << "// <%shared>\n"
        << shared
        << "// </%shared>\n\n"
        << classname << "::" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
@@ -922,9 +921,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 
   for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
   {
-    code << "log_define_class(" << classname << "::" << i->name << "_type, \"component."
-         << classname << '.' << i->name << "\")\n\n" 
-            "unsigned " << classname << "::" << i->name
+    code << "unsigned " << classname << "::" << i->name
          << "_type::operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam";
     for (cppargs_type::const_iterator j = i->cppargs.begin();
          j != i->cppargs.end(); ++j)

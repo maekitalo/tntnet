@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-log_define_static("tntnet.fstatic");
+log_define("tntnet.fstatic");
 
 static cxxtools::Mutex mutex;
 static tnt::component* theComponent = 0;
