@@ -17,9 +17,7 @@ CompPath @libdir@/tntnet
 CompPath @datadir@/tntnet
 
 # set some limits to prevent DoS-attacks
-MaxRequestSize      256
-MaxBodySize     1048576  # 1 MB
-MaxHeaderSize      1024
+MaxRequestSize     1048576  # 1 MB
 
 include @sysconfdir@/tntnet.d/*.conf
 include @sysconfdir@/tntnet/mime.conf
