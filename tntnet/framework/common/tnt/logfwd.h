@@ -37,6 +37,10 @@ Boston, MA  02111-1307  USA
 #define log_declare_class()  \
   static log4cxx::LoggerPtr getLogger()
 
+#define log_declare_class_ns(ns)   \
+  static log4cxx::LoggerPtr getLogger()
+   { return ns::getLogger(); }
+
 #endif
 
 #ifdef TNTNET_USE_LOG4CPLUS
@@ -56,6 +60,10 @@ namespace log4cplus
 #define log_declare_class()   \
   static log4cplus::Logger getLogger()
 
+#define log_declare_class_ns(ns)   \
+  static log4cplus::Logger getLogger() \
+   { return ns::getLogger(); }
+
 #endif
 
 #ifdef TNTNET_USE_LOGSTDOUT
@@ -65,8 +73,8 @@ namespace log4cplus
 
 
 #define log_declare_namespace(ns)
-
 #define log_declare_class()
+#define log_declare_class_ns()
 
 #endif
 
