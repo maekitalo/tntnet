@@ -392,9 +392,9 @@ int main(int argc, char* argv[])
     std::auto_ptr<ecppll> app;
 
     if (textformat)
-      app = new ecppll_text;
+      app = std::auto_ptr<ecppll>(new ecppll_text);
     else
-      app = new ecppll_num;
+      app = std::auto_ptr<ecppll>(new ecppll_num);
 
     app->setFailOnWarn(fail_on_warn);
     app->readReplaceTokens(txt);
