@@ -95,6 +95,14 @@ namespace tntcomp
       reply.throwNotFound(request.getPathInfo());
     }
 
+    std::string lastModified = tnt::httpMessage::htdate(st.st_ctime);
+
+    {
+      std::string s = request.getHeader(tnt::httpMessage::IfModifiedSince);
+      if (s == lastModified)
+        return HTTP_NOT_MODIFIED;
+    }
+
     std::ifstream in(file.c_str());
 
     if (!in)
@@ -107,7 +115,9 @@ namespace tntcomp
     if (request.getArgs().size() > 0 && request.getArg(0).size() > 0)
       reply.setContentType(request.getArg(0));
 
-    // send datea
+    reply.setHeader(tnt::httpMessage::Last_Modified, lastModified);
+
+    // send data
     reply.out() << in.rdbuf();
 
     return HTTP_OK;
