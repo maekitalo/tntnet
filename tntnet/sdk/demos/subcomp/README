@@ -1,0 +1,5 @@
+Examples for embedding components.
+==================================
+
+To run it, run "tntnet -c tntnet.conf" and enter the url
+"http://localhost:8000/subcomp" in your browser.

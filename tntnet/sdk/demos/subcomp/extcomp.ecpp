@@ -1,0 +1,5 @@
+Here is a component <i>extcomp</i>
+
+<%def subcomp>
+Here is a subcomponent <i>subcomp</i> of <i>extcomp</i>
+</%def>
