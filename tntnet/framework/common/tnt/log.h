@@ -23,7 +23,7 @@
 #define log_info_ns(ns, expr)   do { LOG4CPLUS_INFO(ns::getLogger(), expr); } while (false)
 #define log_debug_ns(ns, expr)  do { LOG4CPLUS_DEBUG(ns::getLogger(), expr); } while (false)
 
-#define log_trace_ns(event)  LOG4CPLUS_TRACE_METHOD(ns::getLogger(), event)
+#define log_trace_ns(ns, event)  LOG4CPLUS_TRACE_METHOD(ns::getLogger(), event)
 
 /// Makros zum definieren von Loggingkategorien pro Namespace
 
