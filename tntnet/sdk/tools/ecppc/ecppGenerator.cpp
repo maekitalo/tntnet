@@ -724,9 +724,12 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   if (raw)
     code << "  reply.setKeepAliveHeader(request.keepAlive());\n\n";
 
-  code << "  std::string s = request.getHeader(tnt::httpMessage::IfModifiedSince);\n"
-          "  if (s == \"" << tnt::httpMessage::htdate(c_time) << "\")\n"
-       << "    return HTTP_NOT_MODIFIED;\n\n";
+  if (c_time)
+    code << "  {\n"
+            "    std::string s = request.getHeader(tnt::httpMessage::IfModifiedSince);\n"
+            "    if (s == \"" << tnt::httpMessage::htdate(c_time) << "\")\n"
+            "      return HTTP_NOT_MODIFIED;\n"
+            "  }\n";
 
   if (externData && !data.empty())
     code << "  const component* dataComponent = main().getDataComponent(request);\n\n";
