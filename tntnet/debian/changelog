@@ -1,3 +1,9 @@
+tntnet (1.1-2) unstable; urgency=low
+
+  * Korrekturen im HTTP-Header
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Tue,  7 Sep 2004 12:20:32 +0200
+
 tntnet (1.1-1) unstable; urgency=low
 
   * ecpp-components read LANG from request first.

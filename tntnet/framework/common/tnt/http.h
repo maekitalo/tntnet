@@ -81,6 +81,10 @@ namespace tnt
       static const std::string ServerName;
       static const std::string Location;
       static const std::string AcceptLanguage;
+      static const std::string Date;
+      static const std::string KeepAlive;
+      static const std::string KeepAliveParam;
+      static const std::string IfModifiedSince;
 
     private:
       std::string method;
@@ -130,6 +134,8 @@ namespace tnt
 
       void setHeader(const std::string& key, const std::string& value);
       void setContentLengthHeader(size_t size);
+      void setKeepAliveHeader(bool keepAlive = true)
+        { setHeader(Connection, keepAlive ? Connection_Keep_Alive : Connection_close); }
 
       std::string dumpHeader() const;
       void dumpHeader(std::ostream& out) const;
@@ -224,6 +230,8 @@ namespace tnt
       std::ostringstream outstream;
       std::ostream* current_outstream;
 
+      void sendHeader(const std::string key, const std::string param) const;
+
     public:
       httpReply(std::ostream& s)
         : contentType("text/html"),
@@ -247,12 +255,14 @@ namespace tnt
 
       std::ostream& out()   { return *current_outstream; }
 
-      virtual void setDirectMode();
+      virtual void setDirectMode(bool keepAlive = false);
       virtual void setDirectModeNoFlush();
       virtual bool isDirectMode() const
         { return current_outstream == &socket; }
       std::string::size_type getContentSize() const
         { return outstream.str().size(); }
+
+      void sendHeader(bool keepAlive = false) const;
   };
 
   /// HTTP-Fehler-Klasse

@@ -702,27 +702,31 @@ std::string ecppGenerator::getCpp(const std::string& basename,
        << "{\n";
 
   if (isDebug())
-    code << "  log_trace_ns(compcall, \"" << classname << " \" + qparam.getUrl());\n";
+    code << "  log_trace_ns(compcall, \"" << classname << " \" + qparam.getUrl());\n\n";
+
+  if (raw)
+    code << "  reply.setKeepAliveHeader(request.keepAlive());\n\n";
+
+  code << "  std::string s = request.getHeader(tnt::httpMessage::IfModifiedSince);\n"
+          "  if (s == \"" << tnt::httpMessage::htdate(c_time) << "\")\n"
+       << "    return HTTP_NOT_MODIFIED;\n\n";
 
   if (externData && !data.empty())
-    code << "  const component* dataComponent = main().getDataComponent(request);\n";
+    code << "  const component* dataComponent = main().getDataComponent(request);\n\n";
   else
-    code << "  const component* dataComponent = this;\n";
+    code << "  const component* dataComponent = this;\n\n";
 
   if (!mimetype.empty())
     code << "  reply.setContentType(\"" << mimetype << "\");\n";
   if (c_time)
     code << "  reply.setHeader(tnt::httpMessage::Last_Modified, \""
-         << tnt::httpMessage::htdate(c_time) << "\");\n\n";
+         << tnt::httpMessage::htdate(c_time) << "\");\n";
   if (raw)
-    code << "  if (request.keepAlive())\n"
-            "  {\n"
-            "    reply.setHeader(tnt::httpMessage::Connection, tnt::httpMessage::Connection_Keep_Alive);\n"
-            "    reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
-            "  }\n\n"
-            "  reply.setDirectMode();\n\n";
+    code << "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
+            "  reply.setDirectMode(request.keepAlive());\n";
 
-  code << maincomp.getBody()
+  code << '\n'
+       << maincomp.getBody()
        << "}\n\n";
 
   code << "bool " << classname << "::drop()\n"
