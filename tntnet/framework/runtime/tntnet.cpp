@@ -365,7 +365,7 @@ namespace tnt
 
   static inline bool isTrue(const std::string& s)
   {
-    return isTrue(s[0]);
+    return isTrue(s.size() > 0 && s[0]);
   }
 
   int tntnet::run()
