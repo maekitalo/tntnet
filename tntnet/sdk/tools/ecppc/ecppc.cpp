@@ -128,7 +128,12 @@ int main(int argc, char* argv[])
     }
 
     if (ofile.empty())
-      ofile = requestname;
+    {
+      if (ns.empty())
+        ofile = requestname;
+      else
+        ofile = ns + '/' + requestname;
+    }
 
     // Output auf ".h" and ".cpp" pruefen
     if (ofile.size() == ofile.rfind(".h") + 2)
