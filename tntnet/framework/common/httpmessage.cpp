@@ -91,6 +91,8 @@ namespace tnt
   void httpMessage::setKeepAliveHeader(unsigned timeout, unsigned max)
   {
     log_debug("setKeepAliveHeader(" << timeout << ", " << max << ')');
+    removeHeader(Connection);
+    removeHeader(KeepAlive);
     if (timeout > 0)
     {
       std::ostringstream s;
@@ -100,10 +102,7 @@ namespace tnt
       setHeader(Connection, Connection_Keep_Alive);
     }
     else
-    {
-      removeHeader(KeepAlive);
       setHeader(Connection, Connection_close);
-    }
   }
 
   std::string httpMessage::dumpHeader() const
@@ -118,23 +117,6 @@ namespace tnt
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
       out << it->first << ' ' << it->second << '\n';
-  }
-
-  bool httpMessage::keepAlive() const
-  {
-    header_type::const_iterator it = header.find(Connection);
-
-    if (getMajorVersion() == 1
-     && getMinorVersion() == 1)
-    {
-      // keep-Alive if value not "close"
-      return it == header.end() || it->second != Connection_close;
-    }
-    else
-    {
-      // keep-Alive if explicitely requested
-      return it != header.end() && it->second == Connection_Keep_Alive;
-    }
   }
 
   std::string httpMessage::htdate(time_t t)

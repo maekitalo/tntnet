@@ -39,6 +39,11 @@ namespace tnt
       std::ostringstream outstream;
       std::ostream* current_outstream;
 
+      unsigned keepAliveCounter;
+      static unsigned keepAliveTimeout;
+
+      void send(unsigned ret);
+
     public:
       explicit httpReply(std::ostream& s);
 
@@ -50,18 +55,17 @@ namespace tnt
       virtual void throwNotFound(const std::string& errorMessage) const;
       unsigned redirect(const std::string& newLocation);
 
-      void sendReply(unsigned ret, unsigned keepAliveCount, unsigned keepAliveTimeout);
+      void sendReply(unsigned ret);
 
       std::ostream& out()   { return *current_outstream; }
 
-      virtual void setDirectMode(unsigned keepAliveTimeout = 0, unsigned keepAliveMax = 0);
+      virtual void setDirectMode();
       virtual void setDirectModeNoFlush();
       virtual bool isDirectMode() const
         { return current_outstream == &socket; }
       std::string::size_type getContentSize() const
         { return outstream.str().size(); }
 
-      void sendHeaders(unsigned keepAliveTimeout = 0, unsigned keepAliveMax = 0);
       void setMd5Sum();
 
       void setCookie(const std::string& name, const cookie& value);
@@ -77,6 +81,13 @@ namespace tnt
         { return httpcookies.hasCookies(); }
       const cookies& getCookies() const
         { return httpcookies; }
+
+      void setKeepAliveCounter(unsigned c)  { keepAliveCounter = c; }
+      unsigned getKeepAliveCounter() const  { return keepAliveCounter; }
+      static void setKeepAliveTimeout(unsigned ms)  { keepAliveTimeout = ms; }
+      static unsigned getKeepAliveTimeout()         { return keepAliveTimeout; }
+
+      bool keepAlive() const;
   };
 
   /// HTTP-error-class

@@ -54,7 +54,8 @@ namespace tnt
       static unsigned compLifetime;
       static unsigned minThreads;
 
-      unsigned processRequest(httpRequest& request, std::iostream& socket, unsigned keepAliveCount);
+      bool processRequest(httpRequest& request, std::iostream& socket,
+        unsigned keepAliveCount);
 
     public:
       worker(jobqueue& queue, const dispatcher& dispatcher,
@@ -63,7 +64,7 @@ namespace tnt
 
       virtual void Run();
 
-      void Dispatch(httpRequest& request, httpReply& reply, unsigned keepAliveCount = 0);
+      void Dispatch(httpRequest& request, httpReply& reply);
       void cleanup(unsigned seconds)
       { mycomploader.cleanup(seconds); }
       static void addSearchPath(const std::string& path)

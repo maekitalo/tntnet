@@ -123,8 +123,6 @@ namespace tnt
       std::string dumpHeader() const;
       void dumpHeader(std::ostream& out) const;
 
-      bool keepAlive() const;
-
       static std::string htdate(time_t t);
       static std::string htdate(struct tm* tm);
 

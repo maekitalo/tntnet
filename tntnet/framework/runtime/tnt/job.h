@@ -72,7 +72,6 @@ namespace tnt
       time_t lastAccessTime;
 
       static unsigned socket_timeout;
-      static unsigned keepalive_timeout;
       static unsigned keepalive_max;
       static unsigned socket_buffer_size;
 
@@ -97,12 +96,12 @@ namespace tnt
       int msecToTimeout() const;
 
       static void setSocketTimeout(unsigned ms)     { socket_timeout = ms; }
-      static void setKeepAliveTimeout(unsigned ms)  { keepalive_timeout = ms; }
+      static void setKeepAliveTimeout(unsigned ms);
       static void setKeepAliveMax(unsigned n)       { keepalive_max = n; }
       static void setSocketBufferSize(unsigned b)   { socket_buffer_size = b; }
 
       static unsigned getSocketTimeout()      { return socket_timeout; }
-      static unsigned getKeepAliveTimeout()   { return keepalive_timeout; }
+      static unsigned getKeepAliveTimeout();
       static unsigned getKeepAliveMax()       { return keepalive_max; }
       static unsigned getSocketBufferSize()   { return socket_buffer_size; }
   };

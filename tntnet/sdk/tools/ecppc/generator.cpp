@@ -501,7 +501,7 @@ namespace tnt
              << tnt::httpMessage::htdate(c_time) << "\");\n";
       if (raw)
         code << "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
-                "  reply.setDirectMode(request.keepAlive());\n";
+                "  reply.setDirectMode();\n";
 
       code << '\n';
       maincomp.getBody(code);

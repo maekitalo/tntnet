@@ -102,13 +102,12 @@ namespace tnt
           else
           {
             j->getRequest().doPostParse();
-            unsigned keepAliveCount = processRequest(
-              j->getRequest(), socket, j->decrementKeepAliveCounter());
-            if (keepAliveCount > 0)
-            {
-              keepAlive = true;
+
+            keepAlive = processRequest(j->getRequest(), socket,
+              j->decrementKeepAliveCounter());
+
+            if (keepAlive)
               j->clear();
-            }
           }
         } while (keepAlive);
       }
@@ -122,7 +121,7 @@ namespace tnt
     log_info("end worker-thread " << threadNumber);
   }
 
-  unsigned worker::processRequest(httpRequest& request, std::iostream& socket,
+  bool worker::processRequest(httpRequest& request, std::iostream& socket,
          unsigned keepAliveCount)
   {
     // log message
@@ -133,12 +132,15 @@ namespace tnt
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
     reply.setMethod(request.getMethod());
 
+    if (request.keepAlive())
+      reply.setKeepAliveCounter(keepAliveCount);
+
     // process request
     try
     {
       try
       {
-        Dispatch(request, reply, keepAliveCount);
+        Dispatch(request, reply);
 
         if (!request.keepAlive() || !reply.keepAlive())
           keepAliveCount = 0;
@@ -185,10 +187,10 @@ namespace tnt
       return false;
     }
 
-    return keepAliveCount;
+    return keepAliveCount > 0;
   }
 
-  void worker::Dispatch(httpRequest& request, httpReply& reply, unsigned keepAliveCount)
+  void worker::Dispatch(httpRequest& request, httpReply& reply)
   {
     const std::string& url = request.getUrl();
 
@@ -222,8 +224,7 @@ namespace tnt
           {
             log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
-            reply.sendReply(http_return, keepAliveCount,
-              job::getKeepAliveTimeout() + 999 / 1000);
+            reply.sendReply(http_return);
           }
           return;
         }

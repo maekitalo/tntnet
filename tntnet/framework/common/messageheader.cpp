@@ -21,9 +21,12 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/messageheader.h>
 #include <tnt/messageheaderparser.h>
+#include <cxxtools/log.h>
 
 namespace tnt
 {
+  log_define("tntnet.messageheader");
+
   std::istream& operator>> (std::istream& in, messageheader& data)
   {
     data.parse(in);
@@ -38,6 +41,7 @@ namespace tnt
 
   messageheader::return_type messageheader::onField(const std::string& name, const std::string& value)
   {
+    log_debug(name << ": " << value);
     insert(value_type(name, value));
     return OK;
   }

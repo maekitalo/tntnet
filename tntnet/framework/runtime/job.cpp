@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include "tnt/job.h"
+#include <tnt/httpreply.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.job");
@@ -27,7 +28,6 @@ log_define("tntnet.job");
 namespace tnt
 {
   unsigned job::socket_timeout = 200;
-  unsigned job::keepalive_timeout = 15000;
   unsigned job::keepalive_max = 100;
   unsigned job::socket_buffer_size = 4096;
 
@@ -43,7 +43,19 @@ namespace tnt
 
   int job::msecToTimeout() const
   {
-    return (lastAccessTime - time(0) + 1) * 1000 + keepalive_timeout - socket_timeout;
+    return (lastAccessTime - time(0) + 1) * 1000
+         + getKeepAliveTimeout()
+         - socket_timeout;
+  }
+
+  void job::setKeepAliveTimeout(unsigned ms)
+  {
+    httpReply::setKeepAliveTimeout(ms);
+  }
+
+  unsigned job::getKeepAliveTimeout()
+  {
+    return httpReply::getKeepAliveTimeout();
   }
 
   ////////////////////////////////////////////////////////////////////////

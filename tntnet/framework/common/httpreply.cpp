@@ -31,46 +31,26 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // httpReply
   //
-  httpReply::httpReply(std::ostream& s)
-    : contentType("text/html"),
-      socket(s),
-      current_outstream(&outstream)
-  { }
+  unsigned httpReply::keepAliveTimeout = 15000;
 
-  void httpReply::sendReply(unsigned ret, unsigned keepAliveCount, unsigned keepAliveTimeout)
+  void httpReply::send(unsigned ret)
   {
-    if (!isDirectMode())
-    {
-      log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK");
-      socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK" << "\r\n";
+    log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+           << ' ' << ret << " OK");
+    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+           << ' ' << ret << " OK" << "\r\n";
 
-      sendHeaders(keepAliveTimeout, keepAliveCount);
-
-      socket << "\r\n";
-      if (getMethod() == "HEAD")
-        log_debug("HEAD-request - empty body");
-      else
-      {
-        log_debug("send " << outstream.str().size() << " bytes body, method=" << getMethod());
-        socket << outstream.str();
-      }
-    }
-
-    socket.flush();
-  }
-
-  void httpReply::sendHeaders(unsigned keepAliveTimeout, unsigned keepAliveMax)
-  {
     if (!hasHeader(Date))
       setHeader(Date, htdate(time(0)));
 
     if (!hasHeader(Server))
       setHeader(Server, ServerName);
 
-    if (keepAliveTimeout > 0 && keepAliveMax > 0)
+    if (keepAliveTimeout > 0 && keepAliveCounter > 0)
     {
       if (!hasHeader(Connection))
-        setKeepAliveHeader(keepAliveTimeout, keepAliveMax);
+        setKeepAliveHeader(getKeepAliveTimeout() + 999 / 1000,
+                           getKeepAliveCounter());
 
       if (!hasHeader(Content_Length))
         setContentLengthHeader(outstream.str().size());
@@ -95,6 +75,43 @@ namespace tnt
     {
       log_debug(SetCookie << ' ' << httpcookies);
       socket << SetCookie << ' ' << httpcookies << "\r\n";
+    }
+
+    socket << "\r\n";
+
+    if (getMethod() == "HEAD")
+      log_debug("HEAD-request - empty body");
+    else
+    {
+      log_debug("send " << outstream.str().size()
+             << " bytes body, method=" << getMethod());
+      socket << outstream.str();
+    }
+  }
+
+  httpReply::httpReply(std::ostream& s)
+    : contentType("text/html"),
+      socket(s),
+      current_outstream(&outstream),
+      keepAliveCounter(0)
+  { }
+
+  void httpReply::sendReply(unsigned ret)
+  {
+    if (!isDirectMode())
+    {
+      send(ret);
+
+      if (getMethod() == "HEAD")
+        log_debug("HEAD-request - empty body");
+      else
+      {
+        log_debug("send " << outstream.str().size()
+               << " bytes body, method=" << getMethod());
+        socket << outstream.str();
+      }
+
+      socket.flush();
     }
   }
 
@@ -126,27 +143,12 @@ namespace tnt
     return HTTP_MOVED_TEMPORARILY;
   }
 
-  void httpReply::setDirectMode(unsigned keepAliveTimeout, unsigned keepAliveMax)
+  void httpReply::setDirectMode()
   {
     if (!isDirectMode())
     {
-      log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-             << " 200 OK");
-
-      socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-             << " 200 OK\r\n";
-
-      sendHeaders(keepAliveTimeout, keepAliveMax);
-
-      socket << "\r\n";
-      if (getMethod() == "HEAD")
-        log_debug("HEAD-request - empty body");
-      else
-      {
-        log_debug("send " << outstream.str().size() << " bytes body");
-        socket << outstream.str();
-        current_outstream = &socket;
-      }
+      send(HTTP_OK);
+      current_outstream = &socket;
     }
   }
 
@@ -161,4 +163,24 @@ namespace tnt
     httpcookies.setCookie(name, value);
   }
 
+  bool httpReply::keepAlive() const
+  {
+    if (getKeepAliveCounter() <= 0
+        || getKeepAliveTimeout() <= 0)
+      return false;
+
+    header_type::const_iterator it = header.find(Connection);
+
+    if (getMajorVersion() == 1
+     && getMinorVersion() == 1)
+    {
+      // keep-Alive if value not "close"
+      return it == header.end() || it->second != Connection_close;
+    }
+    else
+    {
+      // keep-Alive if explicitely requested
+      return it != header.end() && it->second == Connection_Keep_Alive;
+    }
+  }
 }
