@@ -48,6 +48,7 @@ comploader::~comploader()
 
 RWLock comploader::libraryMonitor;
 comploader::librarymap_type comploader::librarymap;
+comploader::search_path_type comploader::search_path;
 
 component& comploader::fetchComp(const compident& ci,
   const urlmapper& rootmapper)
@@ -110,15 +111,35 @@ component_library& comploader::fetchLib(const std::string& libname)
       // load library
       log_info("load library " << libname);
       component_library lib;
-      try
+
+      bool found = false;
+      for (search_path_type::const_iterator p = search_path.begin();
+           p != search_path.end(); ++p)
       {
-        log_debug("load library " << libname << " from current dir");
-        lib = component_library(".", libname);
+        try
+        {
+          log_debug("load library " << libname << " from " << *p << " dir");
+          lib = component_library(*p, libname);
+          found = true;
+          break;
+        }
+        catch (const dl::dlopen_error&)
+        {
+        }
       }
-      catch (const dl::dlopen_error&)
+
+      if (!found)
       {
-        log_debug("library in current dir not found - sarch path");
-        lib = component_library(libname);
+        try
+        {
+          log_debug("load library " << libname << " from current dir");
+          lib = component_library(".", libname);
+        }
+        catch (const dl::dlopen_error&)
+        {
+          log_debug("library in current dir not found - sarch lib-path");
+          lib = component_library(libname);
+        }
       }
 
       // notify listener

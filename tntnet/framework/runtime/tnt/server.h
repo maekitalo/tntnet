@@ -38,6 +38,8 @@ namespace tnt
       void Dispatch(httpRequest& request, httpReply& reply);
       void cleanup(unsigned seconds)
       { mycomploader.cleanup(seconds); }
+      static void addSearchPath(const std::string& path)
+      { comploader::addSearchPath(path); }
 
     private:
       void executeQuery(const std::string& header);

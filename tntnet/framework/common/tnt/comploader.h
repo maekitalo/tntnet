@@ -9,6 +9,7 @@
 #include "urlmapper.h"
 #include <map>
 #include <set>
+#include <list>
 #include <string>
 #include <utility>
 #include <cxxtools/thread.h>
@@ -64,6 +65,7 @@ namespace tnt
       typedef std::map<std::string, component_library> librarymap_type;
       typedef std::map<compident, component*> componentmap_type;
       typedef std::set<load_library_listener*> listener_container_type;
+      typedef std::list<std::string> search_path_type;
 
       // loaded libraries
       static RWLock libraryMonitor;
@@ -73,6 +75,7 @@ namespace tnt
       RWLock componentMonitor;
       componentmap_type componentmap;
       listener_container_type listener;
+      static search_path_type search_path;
 
     public:
       virtual ~comploader();
@@ -87,6 +90,9 @@ namespace tnt
       bool removeLoadLibraryListener(load_library_listener* listener);
 
       void cleanup(unsigned seconds);  // delete comps older than seconds
+
+      static void addSearchPath(const std::string& path)
+        { search_path.push_back(path); }
   };
 }
 
