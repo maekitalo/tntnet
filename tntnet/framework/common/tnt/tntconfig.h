@@ -109,7 +109,7 @@ namespace tnt
 
       std::string getValue(const std::string& key, const char* def) const
       {
-        return getValue(key, std::string(def).c_str());
+        return getValue(key, std::string(def));
       }
 
       bool hasValue(const std::string& key) const;
