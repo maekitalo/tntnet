@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stack>
 #include <sstream>
+#include <cxxtools/multifstream.h>
 
 namespace tnt
 {
@@ -30,7 +31,7 @@ namespace tnt
   {
     if (ce.key == "include" && ce.values.size() == 1)
     {
-      std::istream* inptr = new std::ifstream(ce.values[0].c_str());
+      std::istream* inptr = new multi_ifstream(ce.values[0].c_str());
       if (!inptr && !*inptr)
       {
         delete inptr;
