@@ -1,30 +1,22 @@
-/* crypt.h -- base code for crypt/uncrypt ZIPfile
+/* crypt.h
+   Copyright (C) 2003 Tommi Mäkitalo
 
+This file is part of tntnet.
 
-   Version 1.00, September 10th, 2003
+Tntnet is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-   Copyright (C) 1998-2003 Gilles Vollant
+Tntnet is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-   This code is a modified version of crypting code in Infozip distribution
-
-   The encryption/decryption parts of this source code (as opposed to the
-   non-echoing password parts) were originally written in Europe.  The
-   whole source package can be freely distributed, including from the USA.
-   (Prior to January 2000, re-export from the US was a violation of US law.)
-
-   This encryption code is a direct transcription of the algorithm from
-   Roger Schlafly, described by Phil Katz in the file appnote.txt.  This
-   file (appnote.txt) is distributed with the PKZIP program (even in the
-   version without encryption capabilities).
-
-   If you don't need crypting in your application, just define symbols
-   NOCRYPT and NOUNCRYPT.
-
-   This code support the "Traditional PKWARE Encryption".
-
-   The new AES encryption added on Zip format by Winzip (see the page
-   http://www.winzip.com/aes_info.htm ) and PKWare PKZip 5.x Strong
-   Encryption is not supported.
+You should have received a copy of the GNU General Public License
+along with tntnet; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330,
+Boston, MA  02111-1307  USA
 */
 
 #define CRC32(c, b) ((*(pcrc_32_tab+(((int)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
