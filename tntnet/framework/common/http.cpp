@@ -116,17 +116,18 @@ void httpMessage::dumpHeader(std::ostream& out) const
 bool httpMessage::keepAlive() const
 {
   header_type::const_iterator it = header.find(Connection);
-  if (it == header.end())
-    return false;
 
   if (getMajorVersion() == 1
    && getMinorVersion() == 1)
   {
     // keep-Alive if value not "close"
-    return it->second != Connection_close;
+    return it == header.end() || it->second != Connection_close;
   }
   else
-    return it->second == Connection_Keep_Alive;
+  {
+    // keep-Alive if explicitely requested
+    return it != header.end() && it->second == Connection_Keep_Alive;
+  }
 }
 
 std::string httpMessage::htdate(time_t t)

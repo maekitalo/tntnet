@@ -104,6 +104,8 @@ namespace tnt
             reply.setMethod(request.getMethod());
             if (!request.keepAlive())
               reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
+            else
+              reply.setHeader(httpMessage::Connection, httpMessage::Connection_Keep_Alive);
 
             try
             {
