@@ -30,7 +30,7 @@ namespace tnt
     void parser::parse(std::istream& in)
     {
       enum state_type {
-        state_html0,
+        state_html0,  // 0
         state_html,
         state_htmlesc,
         state_tagstart,
@@ -40,7 +40,7 @@ namespace tnt
         state_tagarg0,
         state_tagarg,
         state_tagarge,
-        state_defarg0,
+        state_defarg0,  // 10
         state_defarg,
         state_defargdefval0,
         state_defargdefval,
@@ -50,7 +50,7 @@ namespace tnt
         state_cppe0,
         state_cppe1,
         state_cppetag,
-        state_cppstring,
+        state_cppstring,  // 20
         state_nl,
         state_cpp1,
         state_args0,
@@ -60,7 +60,7 @@ namespace tnt
         state_argsval,
         state_argsvalstring,
         state_argscomment0,
-        state_argscomment,
+        state_argscomment,  // 30
         state_argsvalcomment0,
         state_attr0,
         state_attr0comment,
@@ -70,7 +70,7 @@ namespace tnt
         state_attrvalstring,
         state_attrcomment0,
         state_attrcomment,
-        state_attrvalcomment0,
+        state_attrvalcomment0,  // 40
         state_call0,
         state_callname_expr,
         state_callname_string,
@@ -80,7 +80,7 @@ namespace tnt
         state_callend,
         state_callarg0,
         state_callarg,
-        state_callarge,
+        state_callarge,   // 50
         state_callval_expr,
         state_callval_string,
         state_callval_word,
@@ -90,7 +90,7 @@ namespace tnt
         state_commente,
         state_compe0,
         state_compe,
-        state_cond,
+        state_cond,  // 60
         state_condexpr,
         state_condexpre };
 
@@ -868,6 +868,7 @@ namespace tnt
               arg.clear();
               comp.clear();
               comp_args.clear();
+              pass_cgi.clear();
               defarg.clear();
               state = state_callend;
             }
@@ -890,6 +891,7 @@ namespace tnt
               arg.clear();
               comp.clear();
               comp_args.clear();
+              pass_cgi.clear();
               defarg.clear();
               state = state_callend;
             }
@@ -912,6 +914,7 @@ namespace tnt
               arg.clear();
               comp.clear();
               comp_args.clear();
+              pass_cgi.clear();
               defarg.clear();
               state = state_callend;
             }
