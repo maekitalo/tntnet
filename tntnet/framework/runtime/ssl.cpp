@@ -239,7 +239,7 @@ namespace tnt
     int n = 0;
     int s = bufsize;
 
-    while (n < s)
+    while (true)
     {
       n = SSL_write(ssl, buffer, s);
       checkSslError();
@@ -250,7 +250,7 @@ namespace tnt
         s -= n;
       }
 
-      if (s == 0)
+      if (s <= 0)
         break;
 
       struct pollfd fds;
