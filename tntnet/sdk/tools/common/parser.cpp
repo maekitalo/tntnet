@@ -838,7 +838,7 @@ namespace tnt
 
           case state_call_cpparg:
             if (bracket_count == 0 && ch == ')')
-              state = state_callarg;
+              state = state_callarg0;
             else
             {
               defarg += ch;
