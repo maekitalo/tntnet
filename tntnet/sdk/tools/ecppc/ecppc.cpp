@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define VERSION "1.1"
+#include "config.h"
 
 int main(int argc, char* argv[])
 {
@@ -56,7 +56,8 @@ int main(int argc, char* argv[])
     if (argc != 2 || argv[1][0] == '-')
     {
       std::cerr
-        << "Aufruf: " << argv[0] << " {Optionen} Quelldatei\n\n"
+        << PACKAGE_STRING "\n\n"
+           "Aufruf: " << argv[0] << " {Optionen} Quelldatei\n\n"
            "  -o Dateiname     Ausgabedatei\n"
            "  -n name          Klassename\n"
            "  -m typ           Mimetyp\n"

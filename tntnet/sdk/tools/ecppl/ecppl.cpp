@@ -26,6 +26,8 @@ Boston, MA  02111-1307  USA
 #include <exception>
 #include <cxxtools/arg.h>
 
+#include "config.h"
+
 int main(int argc, char* argv[])
 {
   std::ios::sync_with_stdio(false);
@@ -40,7 +42,8 @@ int main(int argc, char* argv[])
     if (argc != 2)
     {
       std::cerr
-        << "Aufruf: " << argv[0] << " {Optionen} Quelldatei\n\n"
+        << PACKAGE_STRING "\n\n"
+           "Aufruf: " << argv[0] << " {Optionen} Quelldatei\n\n"
            "Generiert aus ecpp-Komponenten eine Tabulator-separierte Textdatei mit\n"
            "Texten, die zu übersetzen sind.\n\n"
            "  -o Dateiname   Ausgabedatei\n"

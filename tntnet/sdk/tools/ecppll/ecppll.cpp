@@ -31,6 +31,8 @@ Boston, MA  02111-1307  USA
 #include <list>
 #include <memory>
 
+#include "config.h"
+
 ////////////////////////////////////////////////////////////////////////
 // ecppll - Applikationsklasse - Basisklasse
 //
@@ -240,11 +242,13 @@ int main(int argc, char* argv[])
 
     if (argc != 3)
     {
-      std::cerr << "Aufruf " << argv[0] << " {Optionen} <ecpp-Komponente> <übersetzte Texte>\n\n"
-                   " -o outfile   Ausagedatei\n"
-                   " -n compname  Komponentenname\n"
-                   " -F           Warnungen als Fehler\n"
-                   " --split-chars zz setze alternative Teilungszeichen\n";
+      std::cerr
+        << PACKAGE_STRING "\n\n"
+           "Aufruf " << argv[0] << " {Optionen} <ecpp-Komponente> <übersetzte Texte>\n\n"
+           " -o outfile   Ausagedatei\n"
+           " -n compname  Komponentenname\n"
+           " -F           Warnungen als Fehler\n"
+           " --split-chars zz setze alternative Teilungszeichen\n";
       return 1;
     }
 
