@@ -31,23 +31,44 @@ namespace tnt
 
   const cookie cookies::empty_cookie;
 
-  const std::string cookie::Comment = "Comment";
-  const std::string cookie::Domain  = "Domain";
-  const std::string cookie::MaxAge  = "Max-Age";
-  const std::string cookie::Path    = "Path";
-  const std::string cookie::Secure  = "Secure";
-  const std::string cookie::Version = "Version";
-  const std::string cookie::Expires = "Expires";
+  const std::string cookie::MaxAge  = "max-age";
+  const std::string cookie::Comment = "comment";
+  const std::string cookie::Domain  = "domain";
+  const std::string cookie::Path    = "path";
+  const std::string cookie::Secure  = "secure";
+  const std::string cookie::Version = "version";
+  const std::string cookie::Expires = "expires";
+
+  unsigned cookie::getMaxAge() const
+  {
+    std::string a = getAttr(MaxAge);
+    if (!a.empty())
+    {
+      std::istringstream s(a);
+      unsigned ret;
+      s >> ret;
+      if (s)
+        return ret;
+    }
+    return 0;
+  }
+
+  void cookie::setMaxAge(unsigned value)
+  {
+    std::ostringstream s;
+    s << value;
+    setAttr(MaxAge, s.str());
+  }
 
   void cookies::clearCookie(const std::string& name)
   {
     cookies_type::iterator it = data.find(name);
     if (it != data.end())
-      it->second.setMaxAge("0");
+      it->second.setAttr(cookie::MaxAge, "0");
     else
     {
       cookie c;
-      c.setMaxAge("0");
+      c.setAttr(cookie::MaxAge, "0");
       setCookie(name, c);
     }
   }
@@ -55,7 +76,7 @@ namespace tnt
   void cookies::clearCookie(const std::string& name, const cookie& c)
   {
     cookie cc(c);
-    cc.setMaxAge("0");
+    cc.setAttr(cookie::MaxAge, "0");
     setCookie(name, cc);
   }
 
@@ -103,9 +124,17 @@ namespace tnt
   {
     if (attr)
     {
-      log_debug("attribute: " << name << '=' << value);
-      current_attrs->insert(
-        cookie::attrs_type::value_type(name, value));
+      if (name == cookie::Secure)
+      {
+        log_debug("attribute: secure");
+        current_cookie.secure = true;
+      }
+      else
+      {
+        log_debug("attribute: " << name << '=' << value);
+        current_attrs->insert(
+          cookie::attrs_type::value_type(name, value));
+      }
     }
     else
     {
@@ -116,6 +145,7 @@ namespace tnt
 
       current_cookie_name = name;
       current_cookie.value = value;
+      current_cookie.secure = false;
       name.clear();
       current_attrs = &current_cookie.attrs;
       current_cookie.attrs = common_attrs;
@@ -143,7 +173,7 @@ namespace tnt
     for (std::string::const_iterator it = header.begin();
          it != header.end(); ++it)
     {
-      char ch = *it;
+      char ch = std::tolower(*it);
       switch(state)
       {
         case state_0:
@@ -163,9 +193,11 @@ namespace tnt
 
         case state_name:
           if (std::isspace(ch))
-            state = state_eq;
+            state = (name == cookie::Secure ? state_valuee : state_eq);
           else if (ch == '=')
-            state = state_value0;
+            state = (name == cookie::Secure ? state_valuee : state_value0);
+          else if ((ch == ',' || ch == ';') && name == cookie::Secure)
+            state = state_valuee;
           else
             name += ch;
           break;
@@ -259,6 +291,10 @@ namespace tnt
 
       // print name (Customer="WILE_E_COYOTE")
       out << it->first << "=\"" << cookie.getValue() << '"';
+
+      // print secure-attribute
+      if (cookie.secure)
+        out << "; " << cookie::Secure;
 
       // print attributes
       for (cookie::attrs_type::const_iterator a = cookie.attrs.begin();

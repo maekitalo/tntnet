@@ -37,9 +37,9 @@ namespace tnt
       friend class cookie_parser;
 
     public:
+      static const std::string MaxAge;
       static const std::string Comment;
       static const std::string Domain;
-      static const std::string MaxAge;
       static const std::string Path;
       static const std::string Secure;
       static const std::string Version;
@@ -49,14 +49,20 @@ namespace tnt
       typedef std::map<std::string, std::string> attrs_type;
       std::string value;
       attrs_type attrs;
+      bool secure;
 
     public:
-      cookie()  { }
+      cookie()
+        : secure(false)
+      { }
+
       cookie(const std::string& v)
-        : value(v)
+        : value(v),
+          secure(false)
       { }
       cookie(const char* v)
-        : value(v)
+        : value(v),
+          secure(false)
       { }
 
       const std::string& getValue() const  { return value; }
@@ -72,21 +78,21 @@ namespace tnt
       void setAttr(const std::string& name, const std::string& value)
         { attrs[name] = value; }
 
+      unsigned    getMaxAge() const;
       std::string getComment() const { return getAttr(Comment); }
       std::string getDomain() const  { return getAttr(Domain); }
-      std::string getMaxAge() const  { return getAttr(MaxAge); }
       std::string getPath() const    { return getAttr(Path); }
-      std::string getSecure() const  { return getAttr(Secure); }
       std::string getVersion() const { return getAttr(Version); }
       std::string getExpires() const { return getAttr(Expires); }
+      bool        isSecure() const   { return secure; }
 
+      void setMaxAge(unsigned value);
       void setComment(const std::string& value)  { setAttr(Comment, value); }
       void setDomain(const std::string& value)   { setAttr(Domain, value); }
-      void setMaxAge(const std::string& value)   { setAttr(MaxAge, value); }
       void setPath(const std::string& value)     { setAttr(Path, value); }
-      void setSecure(const std::string& value)   { setAttr(Secure, value); }
       void setVersion(const std::string& value)  { setAttr(Version, value); }
       void setExpires(const std::string& value)  { setAttr(Expires, value); }
+      void setSecure(bool f = true)              { secure = f; }
   };
 
   class cookies
