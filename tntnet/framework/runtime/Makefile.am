@@ -14,11 +14,12 @@ tntnet_SOURCES = \
 	tnt/server.h \
 	tnt/tntnet.h
 
+tntnet_LDFLAGS = -lboost_regex -lpthread $(cxxtools_ldflags)
+tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
+
 if MAKE_OPENSSL
 tntnet_SOURCES += \
 	ssl.cpp \
 	tnt/ssl.h
+tntnet_LDFLAGS += -lssl
 endif
-
-tntnet_LDFLAGS = -lboost_regex -lpthread $(cxxtools_ldflags)
-tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
