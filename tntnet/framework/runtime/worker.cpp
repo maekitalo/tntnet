@@ -27,6 +27,9 @@ Boston, MA  02111-1307  USA
 #include <tnt/http.h>
 #include <tnt/poller.h>
 #include <cxxtools/log.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 log_define("tntnet.worker");
 
@@ -129,7 +132,10 @@ namespace tnt
          unsigned keepAliveCount)
   {
     // log message
-    log_debug("process request: " << request.getMethod() << ' ' << request.getUrl());
+    char buffer[20];
+    log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
+      << " from client "
+      << inet_ntop(AF_INET, &(request.getPeerAddr().sin_addr), buffer, sizeof(buffer)));
 
     // create reply-object
     httpReply reply(socket);
