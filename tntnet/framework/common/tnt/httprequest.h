@@ -59,6 +59,8 @@ namespace tnt
         { }
       httpRequest(const std::string& url);
 
+      void clear();
+
       void setPathInfo(const std::string& p)       { pathinfo = p; }
       const std::string& getPathInfo() const       { return pathinfo; }
 

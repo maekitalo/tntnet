@@ -83,7 +83,7 @@ namespace tnt
       virtual ~httpMessage()
       { }
 
-      void clear();
+      virtual void clear();
 
       const std::string& getMethod() const      { return method; }
       void setMethod(const std::string& m)      { method = m; }

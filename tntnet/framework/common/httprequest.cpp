@@ -44,6 +44,16 @@ namespace tnt
     parse(s);
   }
 
+  void httpRequest::clear()
+  {
+    httpMessage::clear();
+    pathinfo.clear();
+    args.clear();
+    qparam.clear();
+    ct = contenttype();
+    lang_init = false;
+  }
+
   void httpRequest::parse(std::istream& in)
   {
     parser p(*this);

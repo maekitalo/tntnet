@@ -41,7 +41,7 @@ namespace tnt
   void job::clear()
   {
     parser.reset();
-    request = httpRequest();
+    request.clear();
     touch();
   }
 
