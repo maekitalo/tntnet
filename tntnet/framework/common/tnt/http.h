@@ -256,8 +256,6 @@ namespace tnt
       std::ostringstream outstream;
       std::ostream* current_outstream;
 
-      void sendHeader(const std::string key, const std::string param) const;
-
     public:
       httpReply(std::ostream& s);
 
@@ -284,7 +282,7 @@ namespace tnt
       std::string::size_type getContentSize() const
         { return outstream.str().size(); }
 
-      void sendHeader(bool keepAlive = false) const;
+      void sendHeaders(bool keepAlive = false);
   };
 
   /// HTTP-Fehler-Klasse

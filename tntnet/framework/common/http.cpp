@@ -246,10 +246,8 @@ void httpMessage::parseStartline(std::istream& in)
     }
   }
 
-  if (state == state_cmd0)
+  if (state != state_end)
     in.setstate(std::ios_base::eofbit);
-  else if (state != state_end)
-    in.setstate(std::ios_base::failbit);
 
   if (!in)
     log_warn("error reading http-Message in state s" << state);
@@ -492,7 +490,7 @@ void httpReply::sendReply(unsigned ret)
     log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK");
     socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK";
 
-    sendHeader(true);
+    sendHeaders(true);
 
     socket << "\r\n"
            << outstream.str();
@@ -501,41 +499,35 @@ void httpReply::sendReply(unsigned ret)
   socket.flush();
 }
 
-void httpReply::sendHeader(const std::string key, const std::string param) const
-{
-  log_debug(key << ' ' << param);
-  socket << key << ' ' << param << "\r\n";
-}
-
-void httpReply::sendHeader(bool keepAlive) const
+void httpReply::sendHeaders(bool keepAlive)
 {
   if (header.find(Date) == header.end())
-    sendHeader(Date, htdate(time(0)));
+    setHeader(Date, htdate(time(0)));
 
   if (header.find(Server) == header.end())
-    sendHeader(Server, ServerName);
+    setHeader(Server, ServerName);
 
   if (keepAlive)
   {
     if (header.find(Connection) == header.end())
-      sendHeader(Connection, Connection_Keep_Alive);
+      setHeader(Connection, Connection_Keep_Alive);
 
     if (header.find(KeepAlive) == header.end())
-      sendHeader(KeepAlive, KeepAliveParam);
+      setHeader(KeepAlive, KeepAliveParam);
 
     if (header.find(Content_Length) == header.end())
-    {
-      log_debug(Content_Length << ' ' << outstream.str().size());
-      socket << Content_Length << ' ' << outstream.str().size() << "\r\n";
-    }
+      setContentLengthHeader(outstream.str().size());
   }
 
   if (header.find(Content_Type) == header.end())
-    sendHeader(Content_Type, contentType);
+    setHeader(Content_Type, contentType);
 
   for (header_type::const_iterator it = header.begin();
        it != header.end(); ++it)
-    sendHeader(it->first, it->second);
+  {
+    log_debug(it->first << ' ' << it->second);
+    socket << it->first << ' ' << it->second << "\r\n";
+  }
 }
 
 void httpReply::throwError(unsigned errorCode, const std::string& errorMessage) const
@@ -565,7 +557,7 @@ void httpReply::setDirectMode(bool keepAlive)
            << " 200 OK\n"
               "Content-Type: " << contentType << "\r\n";
 
-    sendHeader(keepAlive);
+    sendHeaders(keepAlive);
 
     socket << "\r\n"
            << outstream.str();
