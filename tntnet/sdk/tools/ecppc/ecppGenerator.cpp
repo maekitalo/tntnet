@@ -758,11 +758,22 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     if (compress)
       code << "  raw_data.addRef();\n";
 
-    code << "    <%config>\n";
+    code << "  // <%config>\n";
+    if (!configs.empty())
+    {
+            "  if (!config_init)\n"
+            "  {\n"
+            "    cxxtools::MutexLock lock(mutex);\n"
+            "    if (!config_init)\n"
+            "    {\n";
     for (variable_declarations::const_iterator it = configs.begin();
          it != configs.end(); ++it)
       code << it->getConfigInit(classname) << '\n';
-    code << "    </%config>\n\n"
+    code << "      config_init = true;\n"
+            "    }\n"
+            "  }\n";
+    }
+    code << "  // </%config>\n\n"
             "  return new " << classname << "(ci, um, cl);\n"
          << "}\n\n";
   }
@@ -771,8 +782,10 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   //
   code << "// <%shared>\n"
        << shared
-       << "// </%shared>\n\n"
-          "// <%config>\n";
+       << "// </%shared>\n\n";
+  if (singleton && !configs.empty())
+    code << "bool config_init = false;\n";
+  code << "// <%config>\n";
   for (variable_declarations::const_iterator it = configs.begin();
        it != configs.end(); ++it)
     code << it->getConfigDecl(classname) << '\n';
