@@ -71,6 +71,7 @@ void httpMessage::clear()
 void httpMessage::parse(std::istream& in)
 {
   parseStartline(in);
+  log_debug("method=" << getMethod());
   if (in)
   {
     header.parse(in);
@@ -510,8 +511,13 @@ void httpReply::sendReply(unsigned ret)
     sendHeaders(true);
 
     socket << "\r\n";
-    if (getMethod() != "HEAD")
+    if (getMethod() == "HEAD")
+      log_debug("HEAD-request - empty body");
+    else
+    {
+      log_debug("send " << outstream.str().size() << " bytes body, method=" << getMethod());
       socket << outstream.str();
+    }
   }
 
   socket.flush();
@@ -535,13 +541,6 @@ void httpReply::sendHeaders(bool keepAlive)
 
     if (header.find(Content_Length) == header.end())
       setContentLengthHeader(outstream.str().size());
-
-    if (header.find(Content_MD5) == header.end())
-    {
-      cxxtools::md5stream md5;
-      md5 << outstream.str().size();
-      setHeader(Content_MD5, md5.getHexDigest());
-    }
   }
 
   if (header.find(Content_Type) == header.end())
@@ -553,6 +552,13 @@ void httpReply::sendHeaders(bool keepAlive)
     log_debug(it->first << ' ' << it->second);
     socket << it->first << ' ' << it->second << "\r\n";
   }
+}
+
+void httpReply::setMd5Sum()
+{
+  cxxtools::md5stream md5;
+  md5 << outstream.str().size();
+  setHeader(Content_MD5, md5.getHexDigest());
 }
 
 void httpReply::throwError(unsigned errorCode, const std::string& errorMessage) const
@@ -583,8 +589,11 @@ void httpReply::setDirectMode(bool keepAlive)
     sendHeaders(keepAlive);
 
     socket << "\r\n";
-    if (getMethod() != "HEAD")
+    if (getMethod() == "HEAD")
+      log_debug("HEAD-request - empty body");
+    else
     {
+      log_debug("send " << outstream.str().size() << " bytes body");
       socket << outstream.str();
       current_outstream = &socket;
     }

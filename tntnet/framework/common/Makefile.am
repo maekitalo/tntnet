@@ -6,6 +6,7 @@ libtntnet_la_SOURCES = \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	http.cpp \
+	log.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
 	multipart.cpp \

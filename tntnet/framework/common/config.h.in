@@ -1,5 +1,8 @@
 /* framework/common/config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define to 1 if you have the <cxxtools/log.h> header file. */
+#undef HAVE_CXXTOOLS_LOG_H
+
 /* Define to 1 if you have the <cxxtools/tcpstream.h> header file. */
 #undef HAVE_CXXTOOLS_TCPSTREAM_H
 

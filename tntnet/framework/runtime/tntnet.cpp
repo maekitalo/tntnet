@@ -37,6 +37,7 @@ Boston, MA  02111-1307  USA
 #include <signal.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <config.h>
 
 #ifndef CONFIG_DIR
 # define CONFIG_DIR "/etc/tntnet/"

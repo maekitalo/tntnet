@@ -131,6 +131,7 @@ namespace tnt
       virtual void parse(std::istream& in);
 
       const std::string& getMethod() const      { return method; }
+      void setMethod(const std::string& m)      { method = m; }
       /// return url with get-parameter
       std::string getQuery() const
         { return query_string.empty() ? url : url + '?' + query_string; }
@@ -289,6 +290,7 @@ namespace tnt
         { return outstream.str().size(); }
 
       void sendHeaders(bool keepAlive = false);
+      void setMd5Sum();
   };
 
   /// HTTP-Fehler-Klasse
