@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/listener.h"
 #include "tnt/log.h"
 #include "tnt/loginit.h"
+#include "config.h"
 
 #include <iostream>
 #include <fstream>
@@ -171,7 +172,8 @@ namespace tnt
     if (argc != 1)
     {
       std::ostringstream msg;
-      msg << "Aufruf: " << argv[0] << " {Optionen}\n\n"
+      msg << PACKAGE_STRING "\n\n"
+             "Aufruf: " << argv[0] << " {Optionen}\n\n"
              "  -t anzahl        Anzahl der zu startenden worker-threads (default: 5)\n"
              "  -c Datei         Konfigurationsdatei (default: " TNTNET_CONF ")\n"
              "  -C Zeit          Lebenszeit unbenutzter Objekte in Sekunden (default: 60)\n";
@@ -624,5 +626,6 @@ int main(int argc, char* argv[])
   {
     log_fatal(e.what());
     std::cerr << e.what() << std::endl;
+    return -1;
   }
 }
