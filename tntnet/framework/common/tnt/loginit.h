@@ -16,7 +16,7 @@
 
 inline void log_init(log4cplus::LogLevel level = log4cplus::ERROR_LOG_LEVEL)
 {
-  log4cplus::SharedAppenderPtr appender(new log4cplus::ConsoleAppender(false, true));
+  log4cplus::SharedAppenderPtr appender(new log4cplus::ConsoleAppender(true, true));
   appender->setName("Main");
 
   log4cplus::Logger root = log4cplus::Logger::getRoot();
