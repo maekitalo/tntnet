@@ -720,6 +720,8 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 
   if (raw)
     code << "  reply.setKeepAliveHeader(request.keepAlive());\n\n";
+  if (!mimetype.empty())
+    code << "  reply.setContentType(\"" << mimetype << "\");\n";
 
   if (c_time)
     code << "  {\n"
@@ -734,8 +736,6 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "  const component* dataComponent = this;\n";
   code << "  ::use(dataComponent);\n";
 
-  if (!mimetype.empty())
-    code << "  reply.setContentType(\"" << mimetype << "\");\n";
   if (c_time)
     code << "  reply.setHeader(tnt::httpMessage::Last_Modified, \""
          << tnt::httpMessage::htdate(c_time) << "\");\n";
