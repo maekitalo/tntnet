@@ -92,9 +92,16 @@ namespace tnt
         typedef std::list<body_part_pointer> body_type;
         typedef std::set<std::string> subcomps_type;
         body_type data;
-        subcomps_type subcomps;
+        subcomps_type mysubcomps;
+        const subcomps_type& subcomps;
 
+      protected:
       public:
+        body()
+          : subcomps(mysubcomps)  { }
+        body(const body& main, int)
+          : subcomps(main.mysubcomps)  { }
+
         void addHtml(const std::string& code)
         {
           data.push_back(
@@ -114,7 +121,7 @@ namespace tnt
 
         void addSubcomp(const std::string& comp)
         {
-          subcomps.insert(comp);
+          mysubcomps.insert(comp);
         }
 
         bool hasSubcomp(const std::string& comp)

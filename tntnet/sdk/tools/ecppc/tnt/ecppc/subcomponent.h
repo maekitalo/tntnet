@@ -40,8 +40,9 @@ namespace tnt
             outerclass(0)
           { }
 
-        subcomponent(const std::string& classname_, const component& outerclass_, const cppargs_type& cppargs_)
-          : component(classname_),
+        subcomponent(const std::string& classname_,
+            const component& outerclass_, const cppargs_type& cppargs_)
+          : component(outerclass_, classname_),
             outerclass(&outerclass_),
             cppargs(cppargs_)
           { }

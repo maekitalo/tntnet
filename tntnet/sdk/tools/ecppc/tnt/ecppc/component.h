@@ -39,6 +39,14 @@ namespace tnt
         variables_type args;
         body compbody;
 
+      protected:
+        component(const component& main, const std::string& classname_,
+          const std::string& ns_ = std::string())
+          : classname(classname_),
+            ns(ns_),
+            compbody(main.compbody, 1)
+          { }
+
       public:
         explicit component(const std::string& classname_, const std::string& ns_ = std::string())
           : classname(classname_),
