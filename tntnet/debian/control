@@ -1,6 +1,6 @@
 Source: tntnet
 Priority: optional
-Maintainer: hotspot <hotspot@epgmbh.de>
+Maintainer: hotspot <t.maekitalo@epgmbh.de>
 Build-Depends: debhelper (>> 3.0.0)
 Standards-Version: 3.5.2
 
