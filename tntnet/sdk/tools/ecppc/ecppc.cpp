@@ -1,5 +1,5 @@
 /* ecppc.cpp
-   Copyright (C) 2003 Tommi Maekitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#include "ecppGenerator.h"
+#include "tnt/ecppc/generator.h"
 #include <fstream>
 #include <sstream>
 #include <cxxtools/arg.h>
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     // initialisiere Generator
     //
 
-    ecppGenerator generator;
+    tnt::ecppc::generator generator(requestname, ns);
     generator.setDebug(debug);
 
     if (mimetype.isSet())
@@ -212,13 +212,13 @@ int main(int argc, char* argv[])
     if (verbose)
       std::cout << "generate " << obase << ".h" << std::endl;
     std::ofstream hout((obase + ".h").c_str());
-    hout << generator.getHeader(ofile + ".h", requestname, ns);
+    hout << generator.getHeader(ofile + ".h");
     hout.close();
 
     if (verbose)
       std::cout << "generate " << obase << ".cpp" << std::endl;
     std::ofstream sout((obase + ".cpp").c_str());
-    sout << generator.getCpp(ofile + ".cpp", requestname, ns);
+    sout << generator.getCpp(ofile + ".cpp");
     sout.close();
   }
   catch(const std::exception& e)
