@@ -510,7 +510,7 @@ void httpReply::sendReply(unsigned ret)
     log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK");
     socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK" << "\r\n";
 
-    sendHeaders(true);
+    sendHeaders(keepAlive());
 
     socket << "\r\n";
     if (getMethod() == "HEAD")

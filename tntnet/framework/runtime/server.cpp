@@ -102,6 +102,8 @@ namespace tnt
             httpReply reply(socket);
             reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
             reply.setMethod(request.getMethod());
+            if (!request.keepAlive())
+              reply.setHeader(httpMessage::Connection, httpMessage::Connection_close);
 
             try
             {
