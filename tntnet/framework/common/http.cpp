@@ -49,6 +49,7 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
 //
+log_define_class(httpMessage, "tntnet.http");
 
 void httpMessage::clear()
 {
@@ -250,7 +251,7 @@ void httpMessage::parseStartline(std::istream& in)
     in.setstate(std::ios_base::failbit);
 
   if (!in)
-    log_debug("error reading http-Message in state s" << state);
+    log_warn("error reading http-Message in state s" << state);
 }
 
 void httpMessage::parseBody(std::istream& in)
@@ -405,8 +406,10 @@ void httpRequest::parse(std::istream& in)
             // hochgeladene Dateien nicht in qparam übernehmen
             if (it->getFilename().empty())
             {
-              qparam.add(it->getName(),
-                std::string(it->getBodyBegin(), it->getBodyEnd()));
+              std::string multipartBody(it->getBodyBegin(), it->getBodyEnd());
+              log_debug("multipart-item name=" << it->getName()
+                     << " body=" << multipartBody);
+              qparam.add(it->getName(), multipartBody);
             }
           }
         }
@@ -451,16 +454,18 @@ std::string httpRequest::getLang() const
   {
     static const std::string LANG = "LANG";
     log_debug("httpRequest::getLang() " << qparam.dump());
-    if (qparam.has(LANG))
-    {
-      log_debug("LANG from query-parameter");
-      lang = qparam[LANG];
-    }
-    else
+
+    lang = qparam[LANG];
+
+    if (lang.empty())
     {
       const char* LANG = ::getenv("LANG");
       if (LANG)
         lang = LANG;
+    }
+    else
+    {
+      log_debug("LANG from query-parameter");
     }
 
     log_info("LANG=" << lang);
@@ -477,9 +482,7 @@ httpReply::httpReply(std::ostream& s)
   : contentType("text/html"),
     socket(s),
     current_outstream(&outstream)
-{
-  outstream.str().reserve(1024);
-}
+{ }
 
 void httpReply::sendReply(unsigned ret)
 {

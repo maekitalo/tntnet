@@ -30,6 +30,7 @@ Boston, MA  02111-1307  USA
 #include <string>
 #include <utility>
 #include <cxxtools/thread.h>
+#include <tnt/logfwd.h>
 
 namespace tnt
 {
@@ -70,6 +71,8 @@ namespace tnt
   class comploader
   {
     public:
+      log_declare_class();
+
       class load_library_listener
       {
         public:

@@ -28,6 +28,8 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // component_library
 //
+log_define_class(comploader, "tntnet.comploader");
+
 component* component_library::create(
   const std::string& component_name, comploader& cl,
   const urlmapper& rootmapper)
@@ -41,7 +43,7 @@ component* component_library::create(
   if (i == creatormap.end())
   {
     // creatorsymbol not known - load it
-    log_info("lookup symbol create_" << component_name);
+    log_info_ns(comploader, "lookup symbol create_" << component_name);
 
     creator = (creator_type)sym(("create_" + component_name).c_str()).getSym();
     creatormap.insert(creatormap_type::value_type(component_name, creator));
@@ -51,7 +53,7 @@ component* component_library::create(
 
   // call the creator-function
   compident ci = compident(libname, component_name);
-  log_info("create " << ci);
+  log_info_ns(comploader, "create " << ci);
   return creator(ci, rootmapper, cl);
 }
 
