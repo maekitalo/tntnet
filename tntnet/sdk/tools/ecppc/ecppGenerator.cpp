@@ -783,7 +783,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   code << "// <%shared>\n"
        << shared
        << "// </%shared>\n\n";
-  if (singleton && !configs.empty())
+  if (!singleton && !configs.empty())
     code << "bool config_init = false;\n";
   code << "// <%config>\n";
   for (variable_declarations::const_iterator it = configs.begin();
