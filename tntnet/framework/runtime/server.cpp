@@ -164,9 +164,9 @@ namespace tnt
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())
-            log_debug("request processed");
+            log_info("request ready");
           else
-            log_debug("request processed - ContentSize: " << reply.getContentSize());
+            log_info("request ready - ContentSize: " << reply.getContentSize());
 
           reply.sendReply(http_return);
           return;
