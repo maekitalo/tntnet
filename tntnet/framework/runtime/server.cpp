@@ -84,6 +84,8 @@ namespace tnt
                 ++countKeepAlive;
                 log_info("keep alive");
               }
+              else
+                log_debug("no keep alive request/reply=" << request.keepAlive() << '/' << reply.keepAlive());
             }
             catch (const dl::dlopen_error& e)
             {
@@ -154,6 +156,8 @@ namespace tnt
           reply.sendReply(http_return);
           return;
         }
+        else
+          log_debug("component " << ci << " returned DECLINED");
       }
       catch (const notFoundException&)
       {
