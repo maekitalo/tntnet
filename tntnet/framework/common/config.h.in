@@ -54,14 +54,5 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* check for log4cplus */
-#undef TNTNET_USE_LOG4CPLUS
-
-/* check for log4cxx */
-#undef TNTNET_USE_LOG4CXX
-
-/* use logging to stdout */
-#undef TNTNET_USE_LOGSTDOUT
-
 /* Version number of package */
 #undef VERSION

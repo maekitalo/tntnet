@@ -28,7 +28,6 @@ Boston, MA  02111-1307  USA
 #include <tnt/messageheader.h>
 #include <tnt/contenttype.h>
 #include <tnt/multipart.h>
-#include <tnt/logfwd.h>
 
 static const unsigned DECLINED = 0;
 static const unsigned HTTP_CONTINUE = 100;
@@ -118,7 +117,6 @@ namespace tnt
       size_t content_size;
 
     protected:
-      log_declare_class();
       header_type header;
 
     public:

@@ -23,14 +23,12 @@ Boston, MA  02111-1307  USA
 #include "tnt/tntnet.h"
 #include "tnt/dispatcher.h"
 #include "tnt/listener.h"
-#include "tnt/log.h"
-#include "tnt/loginit.h"
+
+#include <cxxtools/tcpstream.h>
+#include <cxxtools/log.h>
 
 #include <iostream>
 #include <fstream>
-#include <cxxtools/tcpstream.h>
-#include <unistd.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -39,7 +37,6 @@ Boston, MA  02111-1307  USA
 #include <signal.h>
 #include <sys/wait.h>
 #include <errno.h>
-//#include <locale.h>
 
 #ifndef CONFIG_DIR
 # define CONFIG_DIR "/etc/tntnet/"
@@ -52,6 +49,8 @@ Boston, MA  02111-1307  USA
 #ifndef TNTNET_PID
 # define TNTNET_PID "/var/run/tntnet.pid"
 #endif
+
+log_define_static("tntnet.tntnet");
 
 namespace
 {
@@ -163,7 +162,6 @@ namespace tnt
   //
   bool tntnet::stop = false;
   std::string tntnet::pidFileName;
-  log_define_class(tntnet, "tntnet.tntnet");
 
   tntnet::tntnet(int argc, char* argv[])
     : arg_numthreads(argc, argv, 't', 2),
@@ -189,7 +187,7 @@ namespace tnt
     if (debug)
     {
       log_init_debug();
-      log_warn("Debugmodus aktiv");
+      log_warn("Debugmode");
     }
     else
     {
@@ -622,8 +620,6 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // main
 //
-
-log_define_static("main")
 
 int main(int argc, char* argv[])
 {

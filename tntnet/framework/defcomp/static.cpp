@@ -21,11 +21,13 @@ Boston, MA  02111-1307  USA
 
 #include "static.h"
 #include <tnt/http.h>
-#include <tnt/log.h>
 #include <fstream>
+#include <cxxtools/log.h>
 #include <cxxtools/thread.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+log_define_static("tntnet.static");
 
 static cxxtools::Mutex mutex;
 static tnt::component* theComponent = 0;

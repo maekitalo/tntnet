@@ -22,7 +22,9 @@ Boston, MA  02111-1307  USA
 #include "tnt/ssl.h"
 #include <cxxtools/thread.h>
 #include <openssl/err.h>
-#include "tnt/log.h"
+#include <cxxtools/log.h>
+
+log_define_static("tntnet.ssl");
 
 namespace tnt
 {

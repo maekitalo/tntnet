@@ -1,5 +1,5 @@
 /* comploader.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -20,7 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/comploader.h>
-#include <tnt/log.h>
+#include <cxxtools/log.h>
 
 namespace tnt
 {
@@ -28,7 +28,7 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // component_library
 //
-log_define_class(comploader, "tntnet.comploader");
+log_define_static("tntnet.comploader");
 
 component* component_library::create(
   const std::string& component_name, comploader& cl,
@@ -43,7 +43,7 @@ component* component_library::create(
   if (i == creatormap.end())
   {
     // creatorsymbol not known - load it
-    log_info_ns(comploader, "lookup symbol create_" << component_name);
+    log_info("lookup symbol create_" << component_name);
 
     creator = (creator_type)sym(("create_" + component_name).c_str()).getSym();
     creatormap.insert(creatormap_type::value_type(component_name, creator));
@@ -53,7 +53,7 @@ component* component_library::create(
 
   // call the creator-function
   compident ci = compident(libname, component_name);
-  log_info_ns(comploader, "create " << ci);
+  log_info("create " << ci);
   return creator(ci, rootmapper, cl);
 }
 

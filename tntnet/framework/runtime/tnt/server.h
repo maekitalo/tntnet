@@ -26,7 +26,6 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/thread.h>
 #include <tnt/comploader.h>
-#include "tnt/logfwd.h"
 
 namespace tnt
 {
@@ -51,8 +50,6 @@ namespace tnt
       static servers_type servers;
 
       static unsigned compLifetime;
-
-      log_declare_class();
 
     public:
       server(jobqueue& queue, const dispatcher& dispatcher,

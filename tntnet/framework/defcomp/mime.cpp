@@ -24,7 +24,9 @@ Boston, MA  02111-1307  USA
 #include <tnt/tntconfig.h>
 #include <fstream>
 #include <cxxtools/thread.h>
-#include <tnt/log.h>
+#include <cxxtools/log.h>
+
+log_define_static("tntnet.mime");
 
 namespace tnt
 {
@@ -96,17 +98,17 @@ bool config_mime(const tnt::tntconfig::name_type& key,
     if (values.size() >= 1)
     {
       if (!tntcomp::mime::getDefaultType().empty())
-        log_warn_ns(tntcomp, "DefaultType already set");
+        log_warn("DefaultType already set");
       else
       {
-        log_debug_ns(tntcomp, "DefaultType " << values[0]);
+        log_debug("DefaultType " << values[0]);
         tntcomp::mime::setDefaultType(values[0]);
         return true;
       }
     }
     else
     {
-      log_warn_ns(tntcomp, "missing parameter in DefaultType");
+      log_warn("missing parameter in DefaultType");
     }
   }
   else if (key == tntcomp::mime::ConfigAddType)
@@ -116,7 +118,7 @@ bool config_mime(const tnt::tntconfig::name_type& key,
       for (tnt::tntconfig::params_type::size_type i = 1;
            i < values.size(); ++i)
       {
-        log_debug_ns(tntcomp, "AddType \"" << values[0]
+        log_debug("AddType \"" << values[0]
           << "\" \"" << values[i] << '"');
         tntcomp::mime::addType(values[0], values[i]);
       }
@@ -124,7 +126,7 @@ bool config_mime(const tnt::tntconfig::name_type& key,
     }
     else
     {
-      log_warn_ns(tntcomp, "missing parameter in AddType");
+      log_warn("missing parameter in AddType");
     }
   }
 

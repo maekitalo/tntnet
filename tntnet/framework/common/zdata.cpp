@@ -22,8 +22,10 @@ Boston, MA  02111-1307  USA
 #include <tnt/zdata.h>
 #include <zlib.h>
 #include <stdexcept>
-#include <tnt/log.h>
 #include <cxxtools/thread.h>
+#include <cxxtools/log.h>
+
+log_define_static("tntnet.data");
 
 namespace tnt
 {

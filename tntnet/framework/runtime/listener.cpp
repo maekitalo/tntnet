@@ -21,13 +21,13 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/listener.h"
 #include "tnt/ssl.h"
-#include "tnt/log.h"
 #include "tnt/tntnet.h"
+#include <cxxtools/log.h>
+
+log_define_static("tntnet.listener");
 
 namespace tnt
 {
-  log_define_class(listener, "tntnet.listener");
-
   listener::listener(const std::string& ipaddr, unsigned short int port, jobqueue& q)
     : server(ipaddr, port),
       queue(q)
@@ -54,8 +54,6 @@ namespace tnt
       }
     }
   }
-
-  log_define_class(ssllistener, "tntnet.listener.ssl");
 
   ssllistener::ssllistener(const char* certificateFile,
       const char* keyFile,

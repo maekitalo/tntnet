@@ -1,5 +1,5 @@
 /* sodata.cpp
-   Copyright (C) 2003 Tommi MÃ¤kitalo
+   Copyright (C) 2003 Tommi Mäkitalo
 
 This file is part of tntnet.
 
@@ -20,12 +20,16 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/sodata.h>
-#include <tnt/log.h>
-#include <cxxtools/thread.h>
-#include <zlib.h>
 #include <tnt/component.h>
+
+#include <cxxtools/thread.h>
 #include <cxxtools/dlloader.h>
+#include <cxxtools/log.h>
+
+#include <zlib.h>
 #include <stdlib.h>
+
+log_define_static("tntnet.data");
 
 namespace tnt
 {
@@ -47,7 +51,7 @@ namespace tnt
     {
       // read data from shared library
       log_debug("load library " << ci.libname << sosuffix);
-      cxxtools::dl::library so((ci.libname + sosuffix + ".so").c_str());
+      cxxtools::dl::library so((ci.libname + sosuffix).c_str());
 
       cxxtools::dl::symbol datalen_sym = so.sym((ci.compname + "_datalen").c_str());
       unsigned datalen = *reinterpret_cast<unsigned*>(datalen_sym.getSym());

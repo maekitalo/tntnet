@@ -23,7 +23,9 @@ Boston, MA  02111-1307  USA
 #include "tnt/dispatcher.h"
 #include "tnt/job.h"
 #include <tnt/http.h>
-#include <tnt/log.h>
+#include <cxxtools/log.h>
+
+log_define_static("tntnet.server");
 
 namespace
 {
@@ -46,8 +48,6 @@ namespace tnt
   unsigned server::nextThreadNumber = 0;
   server::servers_type server::servers;
   unsigned server::compLifetime = 60;
-
-  log_define_class(server, "tntnet.server");
 
   server::server(jobqueue& q, const dispatcher& d,
     comploader::load_library_listener* libconfigurator)

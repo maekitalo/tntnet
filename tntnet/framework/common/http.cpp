@@ -20,15 +20,16 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/http.h>
-#include <tnt/log.h>
 #include <tnt/contenttype.h>
 #include <tnt/multipart.h>
 #include <tnt/contentdisposition.h>
+
 #include <list>
 #include <algorithm>
 #include <arpa/inet.h>
 #include <cxxtools/thread.h>
 #include <cxxtools/md5stream.h>
+#include <cxxtools/log.h>
 
 namespace tnt
 {
@@ -53,7 +54,7 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
 //
-log_define_class(httpMessage, "tntnet.http");
+log_define_static("tntnet.http");
 
 void httpMessage::clear()
 {

@@ -26,7 +26,6 @@ Boston, MA  02111-1307  USA
 #include "tnt/tntconfig.h"
 #include "tnt/job.h"
 #include <set>
-#include "tnt/log.h"
 
 namespace tnt
 {
@@ -64,8 +63,6 @@ namespace tnt
       void writePidfile(int pid);
       void monitorProcess(int workerPid);
       void workerProcess();
-
-      log_declare_class();
 
     public:
       tntnet(int argc, char* argv[]);

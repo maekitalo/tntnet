@@ -486,14 +486,14 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "//\n\n"
             "#ifndef ECPP_COMPONENT_" << classname << "_H\n"
             "#define ECPP_COMPONENT_" << classname << "_H\n\n"
-            "#include <tnt/ecpp.h>\n\n";
+            "#include <tnt/ecpp.h>\n";
 
   if (!componentclass.empty())
     header << "#include \"" << componentclass << ".h\"\n";
   if (!baseclass.empty())
     header << "#include \"" << baseclass << ".h\"\n";
 
-  header << "#include <tnt/log.h>\n\n"
+  header << "#include <cxxtools/log.h>\n\n"
          << "// <%pre>\n"
          << pre
          << "// </%pre>\n\n"
@@ -716,7 +716,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
        << "{\n";
 
   if (isDebug())
-    code << "  log_trace_ns(compcall, \"" << classname << " \" + qparam.getUrl());\n\n";
+    code << "  log_trace(\"" << classname << " \" + qparam.getUrl());\n\n";
 
   if (raw)
     code << "  reply.setKeepAliveHeader(request.keepAlive());\n\n";
@@ -845,7 +845,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "{\n";
 
     if (isDebug())
-      code << "  log_trace_ns(compcall, \"" << classname << "::" << i->name << " \" + qparam.getUrl());\n";
+      code << "  log_trace(\"" << classname << "::" << i->name << " \" + qparam.getUrl());\n";
 
     if (externData && !data.empty())
       code << "  const component* dataComponent = main().getDataComponent(request);\n"

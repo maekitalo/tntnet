@@ -18,3 +18,4 @@ tntnet_la_SOURCES = \
 	unzipcomp/unzip_pp.h
 
 tntnet_la_LDFLAGS = -module
+tntnet_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la

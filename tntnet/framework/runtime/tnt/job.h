@@ -27,7 +27,6 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/thread.h>
 #include <cxxtools/tcpstream.h>
 #include "tnt/ssl.h"
-#include "tnt/logfwd.h"
 
 /**
 // in tntnet (mainthread):
@@ -114,8 +113,6 @@ namespace tnt
       std::deque<job_ptr> jobs;
       cxxtools::Condition notEmpty;
       unsigned waitThreads;
-
-      log_declare_class();
 
     public:
       jobqueue()
