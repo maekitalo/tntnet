@@ -22,6 +22,7 @@ namespace tnt
   const std::string httpMessage::Last_Modified = "Last-Modified";
   const std::string httpMessage::Server = "Server:";
   const std::string httpMessage::ServerName = "tntnet 1.0";
+  const std::string httpMessage::Location = "Location:";
 
 ////////////////////////////////////////////////////////////////////////
 // httpMessage

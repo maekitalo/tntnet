@@ -79,6 +79,7 @@ namespace tnt
       static const std::string Last_Modified;
       static const std::string Server;
       static const std::string ServerName;
+      static const std::string Location;
 
     private:
       std::string method;
@@ -230,7 +231,7 @@ namespace tnt
       virtual void throwNotFound(const std::string& errorMessage) const;
       unsigned redirect(const std::string& newLocation)
       {
-        setHeader("Location", newLocation);
+        setHeader(Location, newLocation);
         return HTTP_MOVED_TEMPORARILY;
       }
 
