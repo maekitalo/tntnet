@@ -1,5 +1,5 @@
 /* tnt/http.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -28,6 +28,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/messageheader.h>
 #include <tnt/contenttype.h>
 #include <tnt/multipart.h>
+#include <tnt/cookie.h>
 
 static const unsigned DECLINED = 0;
 static const unsigned HTTP_CONTINUE = 100;
@@ -105,6 +106,8 @@ namespace tnt
       static const std::string Host;
       static const std::string CacheControl;
       static const std::string Content_MD5;
+      static const std::string SetCookie;
+      static const std::string Cookie;
 
     private:
       std::string method;
@@ -124,6 +127,7 @@ namespace tnt
 
     protected:
       header_type header;
+      cookies httpcookies;
 
     public:
       httpMessage()
@@ -143,6 +147,7 @@ namespace tnt
         { return query_string.empty() ? url : url + '?' + query_string; }
       const std::string& getUrl() const         { return url; }
       const std::string& getQueryString() const { return query_string; }
+      bool hasHeader(const std::string& key)    { return header.find(key) != header.end(); }
       std::string getHeader(const std::string& key,
         const std::string& def = std::string()) const;
       const std::string& getBody() const        { return body; }
@@ -263,6 +268,15 @@ namespace tnt
       unsigned getSerial() const             { return serial; }
 
       std::string getLang() const;
+
+      const cookies& getCookies() const;
+
+      bool hasCookie(const std::string& name) const
+        { return getCookies().hasCookie(name); }
+      bool hasCookies() const
+        { return getCookies().hasCookies(); }
+      const cookie& getCookie(const std::string& name) const
+        { return getCookies().getCookie(name); }
   };
 
   /// eine HTTP-Reply-message
@@ -301,6 +315,18 @@ namespace tnt
 
       void sendHeaders(bool keepAlive = false);
       void setMd5Sum();
+
+      void setCookie(const std::string& name, const cookie& value);
+      void setCookies(const cookies& c)
+        { httpcookies = c; }
+      void clearCookie(const std::string& name)
+        { httpcookies.clearCookie(name); }
+      void clearCookie(const std::string& name, const cookie& c)
+        { httpcookies.clearCookie(name, c); }
+      bool hasCookies() const
+        { return httpcookies.hasCookies(); }
+      const cookies& getCookies() const
+        { return httpcookies; }
   };
 
   /// HTTP-Fehler-Klasse

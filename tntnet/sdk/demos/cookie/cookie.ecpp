@@ -1,0 +1,43 @@
+<#
+  this is a simple hello-world-application
+#>
+<%args>
+name             // define query-parameter
+                 // this defines a variable of type std::string with
+                 // the name "name"
+clearcookie
+</%args>
+<%cpp>
+
+  log_debug("check name");
+  if (!clearcookie.empty())
+    reply.clearCookie("name");
+  else
+  {
+    if (name.empty())
+      name = request.getCookie("name");
+
+    if (!request.hasCookie("name"))
+      reply.setCookie("name", name);
+  }
+
+</%cpp>
+<html>
+ <head>
+  <title>Hello World-application for tntnet</title>
+ </head>
+
+ <body bgcolor="#FFFFFF">
+
+  <h1>Hello <$ name.empty() ? "World" : name $></h1>
+
+  <form>
+   What's your name?
+   <input type="text" name="name" value="<$name$>"> <br>
+   <input type="submit">
+   <input type="submit" name="clearcookie" value="cookie l&ouml;schen">
+  </form>
+
+ </body>
+</html>
+

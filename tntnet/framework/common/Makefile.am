@@ -5,6 +5,7 @@ libtntnet_la_SOURCES = \
 	component.cpp \
 	contentdisposition.cpp \
 	contenttype.cpp \
+	cookie.cpp \
 	http.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
@@ -18,6 +19,7 @@ nobase_include_HEADERS = \
 	tnt/component.h \
 	tnt/contentdisposition.h \
 	tnt/contenttype.h \
+	tnt/cookie.h \
 	tnt/data.h \
 	tnt/http.h \
 	tnt/messageattribute.h \

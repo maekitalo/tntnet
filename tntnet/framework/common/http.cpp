@@ -1,5 +1,5 @@
 /* http.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -50,6 +50,8 @@ namespace tnt
   const std::string httpMessage::Host = "Host:";
   const std::string httpMessage::CacheControl = "Cache-Control:";
   const std::string httpMessage::Content_MD5 = "Content-MD5:";
+  const std::string httpMessage::SetCookie = "Set-Cookie:";
+  const std::string httpMessage::Cookie = "Cookie:";
 
   size_t httpMessage::maxRequestSize = 0;
   size_t httpMessage::maxHeaderSize = 0;
@@ -514,6 +516,21 @@ std::string httpRequest::getLang() const
   return lang;
 }
 
+const cookies& httpRequest::getCookies() const
+{
+  if (!httpcookies.hasCookies())
+  {
+    header_type::const_iterator it = header.find(Cookie);
+    if (it != header.end())
+    {
+      log_debug("parse cookie-header " << it->second);
+      const_cast<httpRequest*>(this)->httpcookies.set(it->second);
+    }
+  }
+
+  return httpcookies;
+}
+
 ////////////////////////////////////////////////////////////////////////
 // httpReply
 //
@@ -574,6 +591,12 @@ void httpReply::sendHeaders(bool keepAlive)
     log_debug(it->first << ' ' << it->second);
     socket << it->first << ' ' << it->second << "\r\n";
   }
+
+  if (hasCookies())
+  {
+    log_debug(SetCookie << ' ' << httpcookies);
+    socket << SetCookie << ' ' << httpcookies << "\r\n";
+  }
 }
 
 void httpReply::setMd5Sum()
@@ -625,6 +648,12 @@ void httpReply::setDirectMode(bool keepAlive)
 void httpReply::setDirectModeNoFlush()
 {
   current_outstream = &socket;
+}
+
+void httpReply::setCookie(const std::string& name, const cookie& value)
+{
+  log_debug("setCookie(\"" << name << "\",\"" << value.getValue() << "\")");
+  httpcookies.setCookie(name, value);
 }
 
 ////////////////////////////////////////////////////////////////////////
