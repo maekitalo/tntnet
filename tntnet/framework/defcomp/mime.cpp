@@ -45,7 +45,7 @@ extern "C"
   tnt::component* create_mime(const tnt::compident& ci,
     const tnt::urlmapper& um, tnt::comploader& cl);
   bool config_mime(const tnt::tntconfig::name_type& key,
-    const tnt::tntconfig::config_value_type& values);
+    const tnt::tntconfig::params_type& values);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ namespace tntcomp
 //
 
 bool config_mime(const tnt::tntconfig::name_type& key,
-  const tnt::tntconfig::config_value_type& values)
+  const tnt::tntconfig::params_type& values)
 {
   if (configured)
     return false;
@@ -113,7 +113,7 @@ bool config_mime(const tnt::tntconfig::name_type& key,
   {
     if (values.size() >= 2)
     {
-      for (tnt::tntconfig::config_value_type::size_type i = 1;
+      for (tnt::tntconfig::params_type::size_type i = 1;
            i < values.size(); ++i)
       {
         log_debug_ns(tntcomp, "AddType \"" << values[0]

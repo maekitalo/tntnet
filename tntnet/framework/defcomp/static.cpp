@@ -36,7 +36,7 @@ static unsigned refs = 0;
 //
 
 bool config_static(const tnt::tntconfig::name_type& key,
-  const tnt::tntconfig::config_value_type& values)
+  const tnt::tntconfig::params_type& values)
 {
   if (key == "DocumentRoot" && values.size() >= 1)
   {

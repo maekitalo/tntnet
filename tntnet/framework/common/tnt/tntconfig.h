@@ -28,24 +28,53 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  class config_parser
+  {
+    public:
+      typedef std::vector<std::string> params_type;
+
+      enum state_type {
+        state_start,
+        state_cmd,
+        state_args,
+        state_args_esc,
+        state_token,
+        state_qstring,
+        state_qstring_esc,
+        state_comment };
+
+    private:
+      std::string current_cmd;
+      params_type current_params;
+      std::string current_token;
+
+    protected:
+      state_type state;
+      virtual void onLine(const std::string& key, const params_type& value) = 0;
+
+    public:
+      config_parser()
+        : state(state_start)
+        { }
+      vurtual ~config_parser()
+        { }
+
+      void parse(char ch);
+  };
+
   class tntconfig
   {
     public:
-      typedef std::vector<std::string> config_value_type;
+      typedef config_parser::params_type params_type;
       typedef std::string name_type;
-      typedef struct {
+      struct config_entry_type {
           name_type key;
-          config_value_type values;
-          void clear()
-          {
-            key.clear();
-            values.clear();
-          }
-        } config_entry_type;
-      typedef std::vector<config_entry_type> config_values_type;
+          params_type params;
+        };
+      typedef std::vector<config_entry_type> config_entries_type;
 
     private:
-      config_values_type config_values;
+      config_entries_type config_entries;
 
     public:
       tntconfig()
@@ -53,20 +82,22 @@ namespace tnt
       void load(const char* configfile);
       void load(std::istream& in);
 
-      const config_values_type& getConfigValues() const
-      { return config_values; }
+      const config_entries_type& getConfigValues() const
+      { return config_entries; }
 
-      config_value_type getConfigValue(
+      void setConfigValue(const std::string& key, const params_type& value);
+
+      params_type getConfigValue(
            const std::string& key,
-           const config_value_type& def = config_value_type()) const;
+           const params_type& def = params_type()) const;
 
       void getConfigValues(
            const std::string& key,
-           config_values_type& ret) const;
+           config_entries_type& ret) const;
 
-      config_value_type::value_type getSingleValue(
+      std::string getSingleValue(
            const std::string& key,
-           const config_value_type::value_type& def = config_value_type::value_type()) const;
+           const params_type::value_type& def = params_type::value_type()) const;
   };
 }
 
