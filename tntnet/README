@@ -1,0 +1,26 @@
+Tntnet is a webapplicationserver for webapplications written in C++.
+
+You can write a Web-page with HTML and with special tags you embed C++-code
+into the page for active contents. These pages, called components are compiled
+into C++-classes with the ecpp-compilier "ecppc", then compiled into
+objectcode and linked into a shared library. This shared library is loaded
+by the webserver "tntnet" on request and executed.
+
+The ecpp-compiler can create also C++-classes from static files of any type,
+e. g. you can compile a jpeg-image into the library. So the complete
+webapplication is a single library.
+
+The application runs native, so they are very fast and compact.
+
+Installation
+============
+
+To install tntnet, you need some libraries, which are normally not installed
+by default. These are:
+
+boost_regex - the regular-expression library of boost (http://www.boost.org)
+log4cplus - a logging-library (http://sourceforge.net/projects/log4cplus)
+cxxtools - my own collection of C++-utilities (http://www.tntnet.org)
+
+The build-system is created with autoconf/automake. Further informations you
+can find in the file "INSTALL".
