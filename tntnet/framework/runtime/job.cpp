@@ -107,8 +107,24 @@ namespace tnt
   {
     log_debug("jobqueue::put");
     j->touch();
-    cxxtools::MutexLock lock(notEmpty);
-    jobs.push_back(j);
+
+    cxxtools::MutexLock lock(mutex);
+
+    if (capacity > 0 && jobs.size() < capacity)
+      jobs.push_back(j);
+    else
+    {
+      log_warn("jobqueue full");
+      notFull.Wait(lock);
+      jobs.push_back(j);
+    }
+
+    if (waitThreads == 0)
+    {
+      log_info("no waiting threads left");
+      noWaitThreads.Signal();
+    }
+
     notEmpty.Signal();
   }
 
@@ -117,15 +133,11 @@ namespace tnt
     // warten, bis ein Job vohanden ist
     ++waitThreads;
 
-    cxxtools::MutexLock lock(notEmpty);
+    cxxtools::MutexLock lock(mutex);
     while (jobs.empty())
       notEmpty.Wait(lock);
 
-    if (--waitThreads == 0)
-    {
-      log_warn("no waiting threads left");
-      noWaitThreads.Signal();
-    }
+    --waitThreads;
 
     log_debug("jobqueue: fetch job " << waitThreads << " waiting Threads left");
 
@@ -137,6 +149,7 @@ namespace tnt
     // einen weitern Thread
     if (!jobs.empty())
       notEmpty.Signal();
+    notFull.Signal();
 
     return j;
   }

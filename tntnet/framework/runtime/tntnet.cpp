@@ -170,7 +170,8 @@ namespace tnt
     : conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
-      pollerthread(queue)
+      pollerthread(queue),
+      queue(10)
   {
     if (argc != 1)
     {
@@ -212,6 +213,7 @@ namespace tnt
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
     worker::setMinThreads(minthreads);
+    queue.setCapacity(config.getValue<unsigned>("QueueSize", 10));
 
     tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -586,10 +588,11 @@ namespace tnt
     cxxtools::FunctionThread<void ()> cleaner_thread(worker::CleanerThread);
     cleaner_thread.Create();
 
+    cxxtools::Mutex mutex;
     while (1)
     {
       {
-        cxxtools::MutexLock lock(queue.noWaitThreads);
+        cxxtools::MutexLock lock(mutex);
         queue.noWaitThreads.Wait(lock);
       }
 
@@ -601,6 +604,8 @@ namespace tnt
       }
       else
         log_warn("max worker-threadcount " << maxthreads << " reached");
+
+      sleep(1);
     }
 
     // join-loop

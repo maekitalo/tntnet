@@ -118,7 +118,7 @@ namespace tnt
       }
     }
 
-    log_debug("end worker-thread " << threadNumber);
+    log_info("end worker-thread " << threadNumber);
   }
 
   bool worker::processRequest(httpRequest& request, std::iostream& socket,
@@ -126,12 +126,6 @@ namespace tnt
   {
     // log message
     log_debug("process request: " << request.getMethod() << ' ' << request.getUrl());
-
-    /*
-    for (httpMessage::header_type::const_iterator it = request.header_begin();
-         it != request.header_end(); ++it)
-      log_debug(it->first << ' ' << it->second);
-      */
 
     // create reply-object
     httpReply reply(socket);

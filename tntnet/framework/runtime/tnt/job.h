@@ -138,17 +138,24 @@ namespace tnt
 
     private:
       std::deque<job_ptr> jobs;
+      cxxtools::Mutex mutex;
       cxxtools::Condition notEmpty;
+      cxxtools::Condition notFull;
       unsigned waitThreads;
+      unsigned capacity;
 
     public:
-      jobqueue()
-        : waitThreads(0)
+      explicit jobqueue(unsigned capacity_)
+        : waitThreads(0),
+          capacity(capacity_)
         { }
+
       void put(job_ptr j);
       job_ptr get();
 
-      unsigned getWaitThreadCount()
+      void setCapacity(unsigned c)
+        { capacity = c; }
+      unsigned getWaitThreadCount() const
         { return waitThreads; }
   };
 }
