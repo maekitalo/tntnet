@@ -1,5 +1,6 @@
 VERSION=1.0.0
 CXXFLAGS = -Wall -O2 -I../common -Izipcomp -fPIC $(LOCAL_CXXFLAGS)
+CFLAGS = -Wall -O2 -fPIC
 LDFLAGS = -L../common -ltntnet -lz $(LOCAL_LDFLAGS)
 DESTDIR = $(ROOTDIR)/usr/local
 LIBDIR = $(DESTDIR)/lib
