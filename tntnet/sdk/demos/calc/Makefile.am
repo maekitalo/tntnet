@@ -10,3 +10,5 @@ calc_la_LDFLAGS = -module
 calc_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
+
+EXTRA_DIST = tntnet.conf tntnet.properties
