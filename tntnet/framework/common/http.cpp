@@ -209,7 +209,7 @@ void httpMessage::parseBody(std::istream& in)
 
     body.clear();
     char buffer[512];
-    unsigned size = content_size;
+    size_t size = content_size;
     while (size > 0
       && (in.read(buffer, std::min(sizeof(buffer), size)), in.gcount() > 0))
     {
