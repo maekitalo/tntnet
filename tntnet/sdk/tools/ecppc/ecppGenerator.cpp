@@ -471,7 +471,7 @@ void ecppGenerator::processCondExpr(const std::string& cond, const std::string& 
 {
   std::ostringstream m;
   m << "  if (" << cond << ")\n"
-       "    reply.out() << (" << expr << ");\n";
+       "    reply.out() << " << expr << ";\n";
   currentComp->main += m.str();
 }
 
