@@ -1,0 +1,40 @@
+<%pre>
+#include <cxxtools/hdstream.h>
+</%pre>
+<html>
+ <body>
+  <form enctype="multipart/form-data">
+   <input type="file" name="upload">
+   <input type="submit">
+  </form>
+<{
+  const tnt::multipart& mp = request.getMultipart();
+  tnt::multipart::const_iterator it = mp.find("upload");
+  if (it != mp.end())
+  {
+}>
+    file received; data:
+<pre>
+<{
+cxxtools::hdostream hd(reply.out());
+if (it->getBodyEnd() - it->getBodyBegin() > 1024)
+{
+  std::copy(it->getBodyBegin(),
+            it->getBodyBegin() + 1024,
+            std::ostreambuf_iterator<char>(hd));
+}
+else
+{
+  std::copy(it->getBodyBegin(),
+            it->getBodyEnd(),
+            std::ostreambuf_iterator<char>(hd));
+}
+hd.flush();
+}>
+</pre>
+<{
+  }
+}>
+ </body>
+</html>
+
