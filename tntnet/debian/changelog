@@ -1,3 +1,9 @@
+tntnet (1.2.1-1) unstable; urgency=low
+
+  * Content-MD5-header
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Sun, 28 Nov 2004 16:59:56 +0100
+
 tntnet (1.2.0-1) unstable; urgency=low
 
   * use cxxtools-1.2.0

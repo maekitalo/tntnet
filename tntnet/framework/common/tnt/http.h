@@ -105,6 +105,7 @@ namespace tnt
       static const std::string IfModifiedSince;
       static const std::string Host;
       static const std::string CacheControl;
+      static const std::string Content_MD5;
 
     private:
       std::string method;

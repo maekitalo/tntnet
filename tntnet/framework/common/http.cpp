@@ -28,6 +28,7 @@ Boston, MA  02111-1307  USA
 #include <algorithm>
 #include <arpa/inet.h>
 #include <cxxtools/thread.h>
+#include <cxxtools/md5stream.h>
 
 namespace tnt
 {
@@ -47,6 +48,7 @@ namespace tnt
   const std::string httpMessage::IfModifiedSince = "If-Modified-Since:";
   const std::string httpMessage::Host = "Host:";
   const std::string httpMessage::CacheControl = "Cache-Control:";
+  const std::string httpMessage::Content_MD5 = "Content-MD5:";
 
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
@@ -246,6 +248,11 @@ void httpMessage::parseStartline(std::istream& in)
         break;
     }
   }
+
+  if (url.compare(0, 7, "http://") == 0 || url.compare(0, 7, "HTTP://"))
+    url.erase(0, url.find('/', 7));
+  else if (url.compare(0, 8, "https://") == 0 || url.compare(0, 8, "HTTPS://"))
+    url.erase(0, url.find('/', 8));
 
   if (state != state_end)
     in.setstate(std::ios_base::eofbit);
@@ -493,8 +500,9 @@ void httpReply::sendReply(unsigned ret)
 
     sendHeaders(true);
 
-    socket << "\r\n"
-           << outstream.str();
+    socket << "\r\n";
+    if (getMethod() != "HEAD")
+      socket << outstream.str();
   }
 
   socket.flush();
@@ -518,6 +526,13 @@ void httpReply::sendHeaders(bool keepAlive)
 
     if (header.find(Content_Length) == header.end())
       setContentLengthHeader(outstream.str().size());
+
+    if (header.find(Content_MD5) == header.end())
+    {
+      cxxtools::md5stream md5;
+      md5 << outstream.str().size();
+      setHeader(Content_MD5, md5.getHexDigest());
+    }
   }
 
   if (header.find(Content_Type) == header.end())
@@ -560,10 +575,12 @@ void httpReply::setDirectMode(bool keepAlive)
 
     sendHeaders(keepAlive);
 
-    socket << "\r\n"
-           << outstream.str();
-
-    current_outstream = &socket;
+    socket << "\r\n";
+    if (getMethod() != "HEAD")
+    {
+      socket << outstream.str();
+      current_outstream = &socket;
+    }
   }
 }
 
