@@ -22,19 +22,43 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_LOGFWD_H
 #define TNT_LOGFWD_H
 
-namespace log4cplus
-{
-  class Logger;
-  Logger getLogger();
-};
+#include <tnt/config.h>
 
-/// Makros zum definieren von Loggingkategorien pro Namespace
+#ifdef HAVE_LOG4CXX
+////////////////////////////////////////////////////////////////////////
+// log4cxx
+//
+
+#include <log4cxx/logger.h>
+
+#define log_declare_namespace(ns)  \
+  namespace ns { log4cxx::LoggerPtr getLogger(); }
+
+#define log_declare_class()  \
+  static log4cxx::LoggerPtr getLogger()
+
+#elif HAVE_LOG4CPP
+////////////////////////////////////////////////////////////////////////
+// log4cplus
+//
 
 #define log_declare_namespace(ns)   \
   namespace ns { log4cplus::Logger getLogger(); }
 
 #define log_declare_class()   \
   static log4cplus::Logger getLogger()
+
+#else
+////////////////////////////////////////////////////////////////////////
+// logging to stdout
+//
+
+
+#define log_declare_namespace(ns)
+
+#define log_declare_class()
+
+#endif
 
 log_declare_namespace(tnt);
 log_declare_namespace(tntcomp);

@@ -25,3 +25,68 @@ log_define_namespace(tnt, "tntnet");
 log_define_namespace(tntcomp, "tntcomp");
 log_define_namespace(ecpp_component, "component");
 log_define_namespace(compcall, "compcall");
+
+#ifdef HAVE_LOG4CXX
+
+#include <log4cxx/basicconfigurator.h>
+#include <log4cxx/helpers/stringhelper.h>
+#include <log4cxx/xml/domconfigurator.h>
+#include <log4cxx/propertyconfigurator.h>
+#include <log4cxx/logmanager.h>
+
+void log_init()
+{
+  log4cxx::BasicConfigurator::configure();
+}
+
+void log_init(log4cxx::LevelPtr level)
+{
+  log4cxx::BasicConfigurator::configure();
+  log4cxx::LoggerPtr rootLogger = log4cxx::Logger::getRootLogger();
+
+  log4cxx::LogManager::getLoggerRepository()->setThreshold(level);
+}
+
+void log_init(const std::string& configFileName)
+{
+  if (log4cxx::helpers::StringHelper::endsWith(configFileName, _T(".xml")))
+  {
+    ::log4cxx::xml::DOMConfigurator::configure(configFileName);
+  }
+  else
+  {
+    ::log4cxx::PropertyConfigurator::configure(configFileName);
+  }
+}
+
+#elif HAVE_LOG4CPP
+
+#include <log4cplus/configurator.h>
+#include <log4cplus/consoleappender.h>
+
+void log_init(log4cplus::LogLevel level = log4cplus::ERROR_LOG_LEVEL)
+{
+  log4cplus::SharedAppenderPtr appender(new log4cplus::ConsoleAppender(true, true));
+  appender->setName("Main");
+
+  log4cplus::Logger root = log4cplus::Logger::getRoot();
+  root.addAppender(appender);
+  root.setLogLevel(level);
+}
+
+void log_init(const std::string& propertyfilename)
+{
+  log4cplus::PropertyConfigurator logconfig(propertyfilename);
+  logconfig.configure();
+}
+
+#else
+
+static log_level_type log_level = INFO_LOG_LEVEL;
+
+void log_init(LogLevel level)
+{
+  log_level = level;
+}
+
+#endif

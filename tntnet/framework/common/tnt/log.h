@@ -22,23 +22,87 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_LOG_H
 #define TNT_LOG_H
 
-#include <log4cplus/logger.h>
 #include <tnt/logfwd.h>
 
+#ifdef HAVE_LOG4CXX
+
+#include <log4cxx/logger.h>
+
+#define log_fatal(expr)   do { LOG4CXX_FATAL(getLogger(), expr); } while(false)
+#define log_error(expr)   do { LOG4CXX_ERROR(getLogger(), expr); } while(false)
+#define log_warn(expr)    do { LOG4CXX_WARN(getLogger(), expr); } while(false)
+#define log_info(expr)    do { LOG4CXX_INFO(getLogger(), expr); } while(false)
+#define log_debug(expr)   do { LOG4CXX_DEBUG(getLogger(), expr); } while(false)
+
+namespace tnt
+{
+  class log4cxx_tracer
+  {
+      ::log4cxx::LoggerPtr logger;
+      std::string event;
+
+    public:
+      log4cxx_tracer(::log4cxx::LoggerPtr _logger, const std::string& _event)
+        : logger(_logger),
+          event(_event)
+        { LOG4CXX_DEBUG(logger, "ENTER " + event); }
+      ~log4cxx_tracer()
+        { LOG4CXX_DEBUG(logger, "EXIT " + event); }
+  };
+}
+
+#define log_trace(event)  ::tnt::log4cxx_tracer log4cxx_trace_logger(getLogger(), event)
+
+#define log_fatal_ns(ns, expr)   do { LOG4CXX_FATAL(ns::getLogger(), expr); } while(false)
+#define log_error_ns(ns, expr)   do { LOG4CXX_ERROR(ns::getLogger(), expr); } while(false)
+#define log_warn_ns(ns, expr)    do { LOG4CXX_WARN(ns::getLogger(), expr); } while(false)
+#define log_info_ns(ns, expr)    do { LOG4CXX_INFO(ns::getLogger(), expr); } while(false)
+#define log_debug_ns(ns, expr)   do { LOG4CXX_DEBUG(ns::getLogger(), expr); } while(false)
+
+#define log_trace_ns(ns, event)  ::tnt::log4cxx_tracer log4cxx_trace_logger(ns::getLogger(), event)
+
+/// Makros zum definieren von Loggingkategorien pro Namespace
+
+#define log_define_namespace(ns, category) \
+  namespace ns \
+  { \
+    ::log4cxx::LoggerPtr getLogger()  \
+    {  \
+      static const ::std::string log_category = category;  \
+      return ::log4cxx::Logger::getLogger(log_category); \
+    } \
+  }
+#define log_declare_class_inline(category) \
+  static log4cxx::LoggerPtr getLogger()   \
+  {  \
+    static const std::string log_category = category;  \
+    return ::log4cxx::Logger::getLogger(log_category); \
+  }
+#define log_define_class(classname, category) \
+  log4cxx::LoggerPtr classname::getLogger()   \
+  {  \
+    static const std::string log_category = category;  \
+    return ::log4cxx::Logger::getLogger(log_category); \
+  }
+
+#elif HAVE_LOG4CPP
+
+#include <log4cplus/logger.h>
+
 /// logging-Makros
-#define log_fatal(expr)  do { LOG4CPLUS_FATAL(getLogger(), expr); } while (false)
-#define log_error(expr)  do { LOG4CPLUS_ERROR(getLogger(), expr); } while (false)
-#define log_warn(expr)   do { LOG4CPLUS_WARN(getLogger(), expr); } while (false)
-#define log_info(expr)   do { LOG4CPLUS_INFO(getLogger(), expr); } while (false)
-#define log_debug(expr)  do { LOG4CPLUS_DEBUG(getLogger(), expr); } while (false)
+#define log_fatal(expr)  LOG4CPLUS_FATAL(getLogger(), expr)
+#define log_error(expr)  LOG4CPLUS_ERROR(getLogger(), expr)
+#define log_warn(expr)   LOG4CPLUS_WARN(getLogger(), expr)
+#define log_info(expr)   LOG4CPLUS_INFO(getLogger(), expr)
+#define log_debug(expr)  LOG4CPLUS_DEBUG(getLogger(), expr)
 
 #define log_trace(event)  LOG4CPLUS_TRACE_METHOD(getLogger(), event)
 
-#define log_fatal_ns(ns, expr)  do { LOG4CPLUS_FATAL(ns::getLogger(), expr); } while (false)
-#define log_error_ns(ns, expr)  do { LOG4CPLUS_ERROR(ns::getLogger(), expr); } while (false)
-#define log_warn_ns(ns, expr)   do { LOG4CPLUS_WARN(ns::getLogger(), expr); } while (false)
-#define log_info_ns(ns, expr)   do { LOG4CPLUS_INFO(ns::getLogger(), expr); } while (false)
-#define log_debug_ns(ns, expr)  do { LOG4CPLUS_DEBUG(ns::getLogger(), expr); } while (false)
+#define log_fatal_ns(ns, expr)  LOG4CPLUS_FATAL(ns::getLogger(), expr)
+#define log_error_ns(ns, expr)  LOG4CPLUS_ERROR(ns::getLogger(), expr)
+#define log_warn_ns(ns, expr)   LOG4CPLUS_WARN(ns::getLogger(), expr)
+#define log_info_ns(ns, expr)   LOG4CPLUS_INFO(ns::getLogger(), expr)
+#define log_debug_ns(ns, expr)  LOG4CPLUS_DEBUG(ns::getLogger(), expr)
 
 #define log_trace_ns(ns, event)  LOG4CPLUS_TRACE_METHOD(ns::getLogger(), event)
 
@@ -55,7 +119,7 @@ Boston, MA  02111-1307  USA
     } \
   }
 
-#define log_declare_class_inline()   \
+#define log_declare_class_inline(category)   \
   static log4cplus::Logger getLogger()   \
   {  \
     static const std::string log_category = category;  \
@@ -70,5 +134,31 @@ Boston, MA  02111-1307  USA
     log4cplus::Logger tntlogger = log4cplus::Logger::getInstance(log_category);  \
     return tntlogger;  \
   }
+
+#else
+
+#define log_fatal(expr)   do { std::cout << expr; } while (false)
+#define log_error(expr)   do { std::cout << expr; } while (false)
+#define log_warn(expr)    do { std::cout << expr; } while (false)
+#define log_info(expr)    do { std::cout << expr; } while (false)
+#define log_debug(expr)
+
+#define log_trace(event)
+
+#define log_fatal_ns(ns, expr)  log_fatal(expr)
+#define log_error_ns(ns, expr)  log_error(expr)
+#define log_warn_ns(ns, expr)   log_warn(expr)
+#define log_info_ns(ns, expr)   log_info(expr)
+#define log_debug_ns(ns, expr)  log_debug(expr)
+
+#define log_trace_ns(ns, event)  log_trace(event)
+
+/// Makros zum definieren von Loggingkategorien pro Namespace
+
+#define log_define_namespace(ns, category)
+#define log_declare_class_inline(category)
+#define log_define_class(classname, category)
+
+#endif
 
 #endif // LOG_H

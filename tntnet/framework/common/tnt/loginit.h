@@ -22,8 +22,28 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_LOGINIT_H
 #define TNT_LOGINIT_H
 
-#include <log4cplus/configurator.h>
-#include <log4cplus/consoleappender.h>
+#include <tnt/config.h>
+
+#ifdef HAVE_LOG4CXX
+
+#include <log4cxx/logger.h>
+
+#define log_init_fatal()   log_init(::log4cxx::Level::FATAL)
+#define log_init_error()   log_init(::log4cxx::Level::ERROR)
+#define log_init_warn()    log_init(::log4cxx::Level::WARN)
+#define log_init_info()    log_init(::log4cxx::Level::INFO)
+#define log_init_debug()   log_init(::log4cxx::Level::DEBUG)
+#define log_init_trace()   log_init(::log4cxx::Level::TRACE)
+
+void log_init();
+void log_init(::log4cxx::LevelPtr level);
+void log_init(const std::string& filename);
+void log_init(const char* filename)
+{ log_init(std::string(filename)); }
+
+#elif HAVE_LOG4CPP
+
+#include <log4cplus/loglevel.h>
 
 #define log_init_fatal()   log_init(log4cplus::FATAL_LOG_LEVEL)
 #define log_init_error()   log_init(log4cplus::ERROR_LOG_LEVEL)
@@ -32,20 +52,31 @@ Boston, MA  02111-1307  USA
 #define log_init_debug()   log_init(log4cplus::DEBUG_LOG_LEVEL)
 #define log_init_trace()   log_init(log4cplus::TRACE_LOG_LEVEL)
 
-inline void log_init(log4cplus::LogLevel level = log4cplus::ERROR_LOG_LEVEL)
-{
-  log4cplus::SharedAppenderPtr appender(new log4cplus::ConsoleAppender(true, true));
-  appender->setName("Main");
+void log_init(log4cplus::LogLevel level = log4cplus::ERROR_LOG_LEVEL);
+void log_init(const std::string& propertyfilename);
 
-  log4cplus::Logger root = log4cplus::Logger::getRoot();
-  root.addAppender(appender);
-  root.setLogLevel(level);
+#else
+
+enum log_level_type {
+  FATAL_LOG_LEVEL = 0,
+  ERROR_LOG_LEVEL = 100,
+  WARN_LOG_LEVEL  = 200,
+  INFO_LOG_LEVEL  = 300,
+  DEBUG_LOG_LEVEL = 400,
+  TRACE_LOG_LEVEL = 500
 }
 
+#define log_init_fatal()   log_init(FATAL_LOG_LEVEL)
+#define log_init_error()   log_init(ERROR_LOG_LEVEL)
+#define log_init_warn()    log_init(WARN_LOG_LEVEL)
+#define log_init_info()    log_init(INFO_LOG_LEVEL)
+#define log_init_debug()   log_init(DEBUG_LOG_LEVEL)
+#define log_init_trace()   log_init(TRACE_LOG_LEVEL)
+
+void log_init(log_level_type level = ERROR_LOG_LEVEL);
 inline void log_init(const std::string& propertyfilename)
-{
-  log4cplus::PropertyConfigurator logconfig(propertyfilename);
-  logconfig.configure();
-}
+{ }
+
+#endif
 
 #endif
