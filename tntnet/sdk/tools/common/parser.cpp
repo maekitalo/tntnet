@@ -83,6 +83,7 @@ namespace tnt
         state_callarge,
         state_callval_expr,
         state_callval_string,
+        state_callval_word,
         state_callval0,
         state_callvale,
         state_comment,
@@ -931,7 +932,10 @@ namespace tnt
               state = state_callval_string;
             }
             else if (!std::isspace(ch))
-              throw parse_error("invalid value", state, curline);
+            {
+              value = ch;
+              state = state_callval_word;
+            }
             break;
 
           case state_callval_expr:
@@ -956,6 +960,18 @@ namespace tnt
               value.clear();
               state = state_callarg0;
             }
+            break;
+
+          case state_callval_word:
+            if (std::isspace(ch))
+            {
+              comp_args.insert(comp_args_type::value_type(arg, value));
+              arg.clear();
+              value.clear();
+              state = state_callarg0;
+            }
+            else
+              value += ch;
             break;
 
           case state_callvale:
