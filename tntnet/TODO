@@ -2,7 +2,7 @@
 - sauberes Beenden
 - entladen von shared libs
 - dynamische Threaderzeugung/-beendigung
-- keep-alive
+- ranges
 
 doc:
 - ingnorieren von Zeilenschaltungen nach %-Tags
