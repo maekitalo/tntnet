@@ -37,6 +37,7 @@
   }
 
 log_declare_namespace(tnt);
+log_declare_namespace(tntcomp);
 log_declare_namespace(ecpp_component);
 log_declare_namespace(compcall);
 
