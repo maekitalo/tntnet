@@ -2,8 +2,8 @@ DESTDIR = $(ROOTDIR)/usr/local
 LIBDIR = $(DESTDIR)/lib
 INCDIR = $(DESTDIR)/include
 BINDIR = $(DESTDIR)/bin
-CONFDIR = $(DESTDIR)/etc/tntnet
-INITDIR = $(DESTDIR)/etc/init.d
+CONFDIR = $(ROOTDIR)/etc/tntnet
+INITDIR = $(ROOTDIR)/etc/init.d
 
 .PHONY: all lib debian install clean
 
