@@ -1,7 +1,7 @@
 Summary: Server and framework for c++-webapplications
 Name: tntnet
 Version: 1.0.0
-Release: 2
+Release: 3
 License: GPL
 Group: Productivity/Networking/Web/Servers
 Source: tntnet-1.0.0.tgz
@@ -40,8 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/%{_lib}/libecpp.so*
 /usr/%{_lib}/tntnet.so
 /usr/bin/tntnet
-/etc/tntnet/*
 /etc/init.d/tntnet
+/etc/tntnet/tntnet.conf
+/etc/tntnet/tntnet.properties
 
 %files devel
 /usr/include/tnt/*.h
