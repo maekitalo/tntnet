@@ -1,9 +1,9 @@
 bin_PROGRAMS = ecppc
 
+INCLUDES = -I../common -I$(top_builddir)/framework/common
+
 ecppc_SOURCES = \
 	ecppGenerator.cpp \
-	makerequest.cpp
+	ecppc.cpp
 
-ecppc_LDFLAGS = -L../../../framework/common -L../common -ltntnet -ltntnet_sdk
-
-INCLUDES = -I../common
+ecppc_LDADD = $(top_builddir)/framework/common/libtntnet.la $(top_builddir)/sdk/tools/common/libtntnet_sdk.la

@@ -1,0 +1,18 @@
+pkglib_LTLIBRARIES = tntnet.la
+
+tntnet_la_SOURCES = \
+	error.cpp \
+	mime.cpp \
+	redirect.cpp \
+	static.cpp \
+	unzipcomp/unzip_pp.cpp \
+	unzipcomp/unzipcomp.cpp \
+	unzipcomp/unzip.c \
+	unzipcomp/ioapi.c \
+	static.h \
+	unzipcomp/crypt.h \
+	unzipcomp/ioapi.h \
+	unzipcomp/unzip.h \
+	unzipcomp/unzip_pp.h
+
+tntnet_la_LDFLAGS = -module
