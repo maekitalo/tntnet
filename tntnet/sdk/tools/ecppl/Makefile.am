@@ -1,8 +1,9 @@
 bin_PROGRAMS = ecppl
 
 ecppl_SOURCES = \
+	ecppl.cpp \
 	ecpplang.cpp \
-	ecppl.cpp
+	ecpplang.h
 
 ecppl_LDFLAGS = -L../common -ltntnet_sdk
 
