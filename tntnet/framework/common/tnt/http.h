@@ -80,6 +80,7 @@ namespace tnt
       static const std::string Server;
       static const std::string ServerName;
       static const std::string Location;
+      static const std::string AcceptLanguage;
 
     private:
       std::string method;

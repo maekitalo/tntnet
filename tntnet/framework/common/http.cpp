@@ -23,6 +23,7 @@ namespace tnt
   const std::string httpMessage::Server = "Server:";
   const std::string httpMessage::ServerName = "tntnet 1.0";
   const std::string httpMessage::Location = "Location:";
+  const std::string httpMessage::AcceptLanguage = "Accept-Language:";
 
 ////////////////////////////////////////////////////////////////////////
 // httpMessage
