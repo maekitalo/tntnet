@@ -28,6 +28,8 @@ namespace tnt
   Mutex server::mutex;
   unsigned server::nextThreadNumber = 0;
 
+  log_define_class(server, "tntnet.server");
+
   server::server(jobqueue& q, const dispatcher& d,
     comploader::load_library_listener* libconfigurator)
     : queue(q),
@@ -51,7 +53,6 @@ namespace tnt
       {
         try
         {
-          countKeepAlive = 0;
           bool keepAlive;
           do
           {
@@ -85,10 +86,7 @@ namespace tnt
                        && request.keepAlive()
                        && reply.keepAlive();
               if (keepAlive)
-              {
-                ++countKeepAlive;
                 log_info("keep alive");
-              }
               else
                 log_debug("no keep alive request/reply=" << request.keepAlive() << '/' << reply.keepAlive());
             }

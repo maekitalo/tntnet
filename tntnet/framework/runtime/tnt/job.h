@@ -10,6 +10,7 @@
 #include <cxxtools/thread.h>
 #include <cxxtools/tcpstream.h>
 #include "tnt/ssl.h"
+#include "tnt/logfwd.h"
 
 /**
 // in tntnet (mainthread):
@@ -90,14 +91,24 @@ namespace tnt
   {
     public:
       typedef boost::shared_ptr<job> job_ptr;
+      Condition noWaitThreads;
 
     private:
       std::deque<job_ptr> jobs;
       Condition notEmpty;
+      unsigned waitThreads;
+
+      log_declare_class();
 
     public:
+      jobqueue()
+        : waitThreads(0)
+        { }
       void put(job_ptr j);
       job_ptr get();
+
+      unsigned getWaitThreadCount()
+        { return waitThreads; }
   };
 }
 

@@ -9,6 +9,7 @@
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/thread.h>
 #include <tnt/comploader.h>
+#include "tnt/logfwd.h"
 
 namespace tnt
 {
@@ -28,7 +29,8 @@ namespace tnt
       comploader mycomploader;
 
       unsigned threadNumber;
-      unsigned countKeepAlive;
+
+      log_declare_class();
 
     public:
       server(jobqueue& queue, const dispatcher& dispatcher,

@@ -66,6 +66,8 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // jobqueue
   //
+  log_define_class(jobqueue, "tntnet.jobqueue");
+
   void jobqueue::put(job_ptr j)
   {
     log_debug("jobqueue::put");
@@ -77,11 +79,19 @@ namespace tnt
   jobqueue::job_ptr jobqueue::get()
   {
     // warten, bis ein Job vohanden ist
+    ++waitThreads;
+
     MutexLock lock(notEmpty);
     while (jobs.empty())
       notEmpty.Wait(lock);
 
-    log_debug("jobqueue: fetch job");
+    if (--waitThreads == 0)
+    {
+      log_warn("no waiting threads left");
+      noWaitThreads.Signal();
+    }
+
+    log_debug("jobqueue: fetch job " << waitThreads << " waiting Threads left");
 
     // nehme nächste Job (lock ist noch aktiv)
     job_ptr j = jobs.front();

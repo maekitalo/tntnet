@@ -142,11 +142,6 @@ namespace
 
 namespace tnt
 {
-  static void sig_stopprogram(int)
-  {
-    tntnet::shutdown();
-  }
-
   ////////////////////////////////////////////////////////////////////////
   // tntnet
   //
@@ -174,9 +169,9 @@ namespace tnt
              "                   (default: 0.0.0.0)\n"
              "  -p portnummer    Portnummer, auf der der Server hören soll\n"
              "                   (default: 8000)\n"
-             "  -t anzahl        Anzahl der zu startenden Threads (default: 5)\n"
+             "  -t anzahl        Anzahl der zu startenden worker-threads (default: 5)\n"
              "  -c Datei         Konfigurationsdatei (default: " TNTNET_CONF ")\n"
-             "  -C Zeit          Lebenszeit unbenutzter Objekte (default: 60)\n";
+             "  -C Zeit          Lebenszeit unbenutzter Objekte in Sekunden (default: 60)\n";
       throw std::invalid_argument(msg.str());
     }
 
@@ -591,7 +586,18 @@ namespace tnt
     log_debug("start cleaner thread");
     cleaner_thread.Create();
 
-    // TODO: load-monitoring/dynamic thread-creation
+    while (1)
+    {
+      {
+        MutexLock lock(queue.noWaitThreads);
+        queue.noWaitThreads.Wait(lock);
+      }
+
+      log_info("create server " << (servers.size() + 1));
+      server* s = new server(queue, dispatcher, &myconfigurator);
+      servers.insert(s);
+      s->Create();
+    }
 
     // join-loop
     while (!servers.empty())
