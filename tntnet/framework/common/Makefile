@@ -5,6 +5,8 @@ DESTDIR = $(ROOTDIR)/usr/local
 LIBDIR = $(DESTDIR)/lib
 INCDIR = $(DESTDIR)/include
 
+.PHONY: all install
+
 all : libtntnet.so
 
 SRCS = \
