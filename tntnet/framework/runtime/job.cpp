@@ -22,6 +22,9 @@ Boston, MA  02111-1307  USA
 #include "tnt/job.h"
 #include <tnt/httpreply.h>
 #include <cxxtools/log.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 log_define("tntnet.job");
 
@@ -66,11 +69,14 @@ namespace tnt
   {
     log_debug("accept");
     socket.Accept(listener);
-    log_debug("connection accepted");
 
     struct sockaddr s = socket.getSockAddr();
     struct sockaddr_in sockaddr_in;
     memcpy(&sockaddr_in, &s, sizeof(sockaddr_in));
+
+    char buffer[20];
+    log_debug("connection accepted from "
+      << inet_ntop(AF_INET, &(sockaddr_in.sin_addr), buffer, sizeof(buffer)));
 
     getRequest().setPeerAddr(socket.getPeeraddr_in());
     getRequest().setServerAddr(sockaddr_in);
