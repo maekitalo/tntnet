@@ -489,7 +489,7 @@ void httpReply::sendReply(unsigned ret)
   if (!isDirectMode())
   {
     log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK");
-    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK";
+    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion() << ' ' << ret << " OK" << "\r\n";
 
     sendHeaders(true);
 
@@ -555,7 +555,7 @@ void httpReply::setDirectMode(bool keepAlive)
               "Content-Type: " << contentType);
 
     socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-           << " 200 OK\n"
+           << " 200 OK\r\n"
               "Content-Type: " << contentType << "\r\n";
 
     sendHeaders(keepAlive);
