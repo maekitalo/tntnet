@@ -190,7 +190,7 @@ namespace tnt
 
       if (getTimeout() == 0)
       {
-        log_warn("timeout");
+        log_debug("read-timeout");
         throw cxxtools::tcp::Timeout();
       }
 
@@ -205,19 +205,25 @@ namespace tnt
           (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
             ? POLLIN|POLLOUT
             : POLLIN;
-        int p = ::poll(&fds, 1, /*getTimeout()*/2000);
+        int p = ::poll(&fds, 1, getTimeout());
 
         log_debug("poll => " << p << " revents=" << fds.revents);
 
-        if (p <= 0)
+        if (p < 0)
+        {
+          int errnum = errno;
+          throw cxxtools::tcp::Exception(strerror(errnum));
+        }
+        else if (p == 0)
         {
           // no data
-          log_warn("timeout");
+          log_debug("read-timeout");
           throw cxxtools::tcp::Timeout();
         }
 
         n = ::SSL_read(ssl, buffer, bufsize);
         log_debug("SSL_read returns " << n);
+        checkSslError();
 
       } while (n <= 0
          && (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ
@@ -230,9 +236,44 @@ namespace tnt
 
   int SslStream::SslWrite(const char* buffer, int bufsize) const
   {
-    int count = SSL_write(ssl, buffer, bufsize);
-    checkSslError();
-    return count;
+    int n = 0;
+    int s = bufsize;
+
+    while (n < s)
+    {
+      n = SSL_write(ssl, buffer, s);
+      checkSslError();
+
+      if (n > 0)
+      {
+        buffer += n;
+        s -= n;
+      }
+
+      if (s == 0)
+        break;
+
+      struct pollfd fds;
+      fds.fd = getFd();
+      fds.events =
+        (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ)
+          ? POLLIN|POLLOUT : POLLOUT;
+      int p = ::poll(&fds, 1, getTimeout());
+
+      if (p < 0)
+      {
+        int errnum = errno;
+        throw cxxtools::tcp::Exception(strerror(errnum));
+      }
+      else if (p == 0)
+      {
+        // no data
+        log_warn("write-timeout");
+        throw cxxtools::tcp::Timeout();
+      }
+    }
+
+    return bufsize;
   }
 
   //////////////////////////////////////////////////////////////////////

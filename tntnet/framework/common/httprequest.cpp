@@ -156,4 +156,13 @@ namespace tnt
     return httpcookies;
   }
 
+  void httpRequest::clear()
+  {
+    pathinfo.clear();
+    args.clear();
+    qparam.clear();
+    ct = contenttype();
+    mp = multipart();
+    lang_init = false;
+  }
 }

@@ -112,6 +112,8 @@ namespace tnt
         { return getCookies().hasCookies(); }
       const cookie& getCookie(const std::string& name) const
         { return getCookies().getCookie(name); }
+
+      void clear();
   };
 
   inline std::istream& operator>> (std::istream& in, httpRequest& msg)
