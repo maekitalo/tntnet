@@ -281,7 +281,7 @@ namespace tnt
 
   static inline bool isTrue(const std::string& s)
   {
-    return isTrue(s.size() > 0 && s[0]);
+    return s.size() > 0 && isTrue(s[0]);
   }
 
   int tntnet::run()
@@ -341,7 +341,10 @@ namespace tnt
       }
     }
     else
+    {
+      log_info("no daemon-mode");
       workerProcess();
+    }
 
     return 0;
   }
