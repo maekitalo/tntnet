@@ -1,3 +1,10 @@
+tntnet (1.2.3-1) unstable; urgency=low
+
+  * some protection against DoS-attacks (MaxRequestSize, MaxBodySize,
+    MaxHeaderSize)
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Wed,  5 Jan 2005 09:34:16 +0100
+
 tntnet (1.2.2-1) unstable; urgency=low
 
   * Bug in Keep-Alive fixed
