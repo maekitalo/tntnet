@@ -35,7 +35,7 @@ class redirectcomp : public tnt::component
     virtual ~redirectcomp() { };
 
   public:
-    virtual unsigned operator() (const tnt::httpRequest& request,
+    virtual unsigned operator() (tnt::httpRequest& request,
       tnt::httpReply& reply, query_params& qparam);
     virtual bool drop();
 };
@@ -60,7 +60,7 @@ tnt::component* create_redirect(const tnt::compident& ci, const tnt::urlmapper& 
 ////////////////////////////////////////////////////////////////////////
 // componentdefinition
 //
-unsigned redirectcomp::operator() (const tnt::httpRequest& request,
+unsigned redirectcomp::operator() (tnt::httpRequest& request,
   tnt::httpReply& reply, query_params&)
 {
   return reply.redirect(request.getPathInfo());

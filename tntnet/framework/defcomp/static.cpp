@@ -25,7 +25,7 @@ extern "C"
 {
   tnt::component* create_static(const tnt::compident& ci,
     const tnt::urlmapper& um, tnt::comploader& cl);
-  bool config(const tnt::tntconfig::name_type& key,
+  bool config_static(const tnt::tntconfig::name_type& key,
     const tnt::tntconfig::config_value_type& values);
 }
 
@@ -40,7 +40,7 @@ class staticcomp : public tnt::component
     virtual ~staticcomp() { };
 
   public:
-    virtual unsigned operator() (const tnt::httpRequest& request,
+    virtual unsigned operator() (tnt::httpRequest& request,
       tnt::httpReply& reply, query_params& qparam);
     virtual bool drop();
 
@@ -54,7 +54,7 @@ class staticcomp : public tnt::component
 // external functions
 //
 
-bool config(const tnt::tntconfig::name_type& key,
+bool config_static(const tnt::tntconfig::name_type& key,
   const tnt::tntconfig::config_value_type& values)
 {
   if (key == "DocumentRoot" && values.size() >= 1)
@@ -86,7 +86,7 @@ tnt::component* create_static(const tnt::compident& ci,
 
 std::string staticcomp::document_root = "htdocs";
 
-unsigned staticcomp::operator() (const tnt::httpRequest& request,
+unsigned staticcomp::operator() (tnt::httpRequest& request,
   tnt::httpReply& reply, query_params& qparams)
 {
   std::string file = document_root + '/' + request.getPathInfo();

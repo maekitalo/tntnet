@@ -35,7 +35,7 @@ class errorcomp : public tnt::component
     virtual ~errorcomp() { };
 
   public:
-    virtual unsigned operator() (const tnt::httpRequest& request,
+    virtual unsigned operator() (tnt::httpRequest& request,
       tnt::httpReply& reply, query_params& qparam);
     virtual bool drop();
 };
@@ -60,7 +60,7 @@ tnt::component* create_error(const tnt::compident& ci, const tnt::urlmapper& um,
 ////////////////////////////////////////////////////////////////////////
 // componentdefinition
 //
-unsigned errorcomp::operator() (const tnt::httpRequest& request,
+unsigned errorcomp::operator() (tnt::httpRequest& request,
   tnt::httpReply& reply, query_params&)
 {
   std::string msg;

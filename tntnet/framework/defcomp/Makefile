@@ -1,26 +1,48 @@
-include $(SDK_DIRECTORY)/make/tntnet-top.mk
-include $(CXXTOOLS_INSTALL_DIR)/make/cxxtools.mk
+VERSION=1.0.0
+CXXFLAGS = -Wall -O2 -I../common -Izipcomp -fPIC $(LOCAL_CXXFLAGS)
+LDFLAGS = -L../common -ltntnet -lz $(LOCAL_LDFLAGS)
+DESTDIR = $(ROOTDIR)/usr/local
+LIBDIR = $(DESTDIR)/lib
+COMPDIR = $(LIBDIR)
 
-LIBROOT          =tntnet
-SHOBJ            =$(LIBROOT).so
+.PHONY: install all clean depend
 
-LOCAL_LDFLAGS = -ltntnet -lecpp
+all : tntnet.so
 
-INSTALL_PRIVATE_INC=
+SRCS = \
+	error.cpp \
+	mime.cpp \
+	redirect.cpp \
+	static.cpp \
+	unzipcomp/unzip_pp.cpp \
+	unzipcomp/unzipcomp.cpp
 
-INSTALL_PUBLIC_INC=
+C_SRCS = \
+	unzipcomp/unzip.c \
+	unzipcomp/ioapi.c
 
-INSTALL_CMP=$(TEMP_OUTPUT)/$(SHOBJ)
+OBJS = $(SRCS:.cpp=.o) $(C_SRCS:.c=.o)
+DEPS = $(SRCS:.cpp=.deps) $(C_SRCS:.c=.deps)
 
+%.deps : %.cpp
+	( echo -n $(dir $<) && $(CXX) $(CXXFLAGS) -M $< || ( rm -f $@; exit 1 )) >$@
 
-SRCS =error.cpp redirect.cpp static.cpp
-OBJS =$(EP_CXX_OBJS)
+%.deps : %.c
+	( echo -n $(dir $<) && $(CC) $(CFLAGS) -M $< || ( rm -f $@; exit 1 )) >$@
 
-all: $(TEMP_OUTPUT)/$(SHOBJ)
+tntnet.so : $(OBJS)
+	$(CXX) -shared -o $@ $(LDFLAGS) $^
+
+install: tntnet.so
+	cp $^ $(COMPDIR)
+	strip $(COMPDIR)/$^
 
 clean:
-	rm -rf $(TEMP_OUTPUT) 
+	rm -f $(OBJS) $(DEPS)
 
-include $(SDK_DIRECTORY)/make/tntnet-bottom.mk
+.PHONY: depend
+depend: $(DEPS)
 
-include $(EC_SRC_DEPS)
+ifneq ($(MAKECMDGOALS),clean)
+include $(DEPS)
+endif
