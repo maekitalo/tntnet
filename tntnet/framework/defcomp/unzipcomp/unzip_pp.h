@@ -26,12 +26,7 @@ class unzipFile
 {
     unzFile file;
 
-    int checkError(int err)
-    {
-      if (err < 0)
-        throw unzipError(err);
-      return err;
-    }
+    int checkError(int err, const char* function) const;
 
   public:
     unzipFile(const std::string& path)
@@ -47,25 +42,25 @@ class unzipFile
     }
 
     void goToFirstFile()
-    { checkError(unzGoToFirstFile(file)); }
+    { checkError(unzGoToFirstFile(file), "unzGoToFirstFile"); }
 
     void goToNextFile()
-    { checkError(unzGoToNextFile(file)); }
+    { checkError(unzGoToNextFile(file), "unzGoToNextFile"); }
 
     void locateFile(const std::string& fileName, bool caseSensitivity)
-    { checkError(unzLocateFile(file, fileName.c_str(), caseSensitivity ? 1 : 0)); }
+    { checkError(unzLocateFile(file, fileName.c_str(), caseSensitivity ? 1 : 0), "unzLocateFile"); }
 
     void openCurrentFile()
-    { checkError(unzOpenCurrentFile(file)); }
+    { checkError(unzOpenCurrentFile(file), "unzOpenCurrentFile"); }
 
     void openCurrentFile(const std::string& pw)
-    { checkError(unzOpenCurrentFilePassword(file, pw.c_str())); }
+    { checkError(unzOpenCurrentFilePassword(file, pw.c_str()), "unzOpenCurrentFilePassword"); }
 
     void closeCurrentFile()
-    { checkError(unzCloseCurrentFile(file)); }
+    { checkError(unzCloseCurrentFile(file), "unzCloseCurrentFile"); }
 
     int readCurrentFile(voidp buf, unsigned len)
-    { return checkError(unzReadCurrentFile(file, buf, len)); }
+    { return checkError(unzReadCurrentFile(file, buf, len), "unzReadCurrentFile"); }
 
     unzFile getHandle()        { return file; }
 };
