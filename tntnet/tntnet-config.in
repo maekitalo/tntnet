@@ -7,7 +7,7 @@ libdir=@libdir@
 
 usage()
 {
-    cat <<EOF
+    cat 1>&2 <<EOF
 Usage: $0 [OPTION]
 
 Known values for OPTION are:
