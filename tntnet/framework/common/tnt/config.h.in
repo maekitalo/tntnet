@@ -4,3 +4,6 @@
 
 /* check for log4cxx */
 #undef TNTNET_USE_LOG4CXX
+
+/* use logging to stdout */
+#undef TNTNET_USE_LOGSTDOUT

@@ -22,9 +22,9 @@ Boston, MA  02111-1307  USA
 #include <tnt/messageattribute.h>
 #include <iostream>
 
-namespace
+namespace tnt
 {
-  bool istokenchar(char ch)
+  static inline bool istokenchar(char ch)
   {
     return ch >= 33
         && ch <= 126
@@ -33,14 +33,11 @@ namespace
         && ch != '/' && ch != '[' && ch != ']' && ch != '?'  && ch != '=';
   }
 
-  bool isblank(char ch)
+  static inline bool tnt_isblank(char ch)
   {
     return ch == ' ' || ch == '\t';
   }
-}
 
-namespace tnt
-{
   void messageattribute_parser::parse(std::istream& in)
   {
     enum state_type
@@ -81,7 +78,7 @@ namespace tnt
           break;
 
         case state_type0:
-          if (isblank(ch))
+          if (tnt_isblank(ch))
             state = state_type_sp;
           else if (ch == '/')
             state = state_subtype0;
@@ -112,7 +109,7 @@ namespace tnt
               case END:  state = state_end;  break;
             }
           }
-          else if (!isblank(ch))
+          else if (!tnt_isblank(ch))
             in.setstate(std::ios::failbit);
           break;
 
@@ -122,7 +119,7 @@ namespace tnt
             subtype = ch;
             state = state_subtype;
           }
-          else if (!isblank(ch))
+          else if (!tnt_isblank(ch))
             in.setstate(std::ios::failbit);
           break;
 
@@ -136,7 +133,7 @@ namespace tnt
               case END:  state = state_end;  break;
             }
           }
-          else if (isblank(ch))
+          else if (tnt_isblank(ch))
           {
             switch (onType(type, subtype))
             {
@@ -154,7 +151,7 @@ namespace tnt
         case state_subtype_sp:
           if (ch == ';')
             state = state_attribute0;
-          else if (!isblank(ch))
+          else if (!tnt_isblank(ch))
             state = state_end;
           break;
 
@@ -169,7 +166,7 @@ namespace tnt
         case state_attribute:
           if (istokenchar(ch))
             attribute += ch;
-          else if (isblank(ch))
+          else if (tnt_isblank(ch))
             state = state_attribute_sp;
           else if (ch == '=')
             state = state_value0;
@@ -180,7 +177,7 @@ namespace tnt
         case state_attribute_sp:
           if (ch == '=')
             state = state_value0;
-          else if (!isblank(ch))
+          else if (!tnt_isblank(ch))
             in.setstate(std::ios::failbit);
           break;
 
@@ -216,7 +213,7 @@ namespace tnt
         case state_value:
           if (istokenchar(ch))
             value += ch;
-          else if (isblank(ch))
+          else if (tnt_isblank(ch))
           {
             switch (onParameter(attribute, value))
             {

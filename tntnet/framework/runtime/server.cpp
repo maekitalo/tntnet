@@ -163,7 +163,7 @@ namespace tnt
   {
     const std::string& url = request.getUrl();
 
-    log_info("dispatch " << url);
+    log_info("dispatch " << request.getQuery());
 
     if (!httpRequest::checkUrl(url))
       throw httpError(HTTP_BAD_REQUEST, "illegal url");

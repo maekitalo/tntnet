@@ -61,6 +61,8 @@ void log_init(const std::string& propertyfilename);
 
 #ifdef TNTNET_USE_LOGSTDOUT
 
+#include <string>
+
 enum log_level_type {
   FATAL_LOG_LEVEL = 0,
   ERROR_LOG_LEVEL = 100,

@@ -86,9 +86,11 @@ void log_init(const std::string& propertyfilename)
 
 #ifdef TNTNET_USE_LOGSTDOUT
 
+#include <tnt/loginit.h>
+
 static log_level_type log_level = INFO_LOG_LEVEL;
 
-void log_init(LogLevel level)
+void log_init(log_level_type level)
 {
   log_level = level;
 }

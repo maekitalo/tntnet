@@ -133,6 +133,9 @@ namespace tnt
       virtual void parse(std::istream& in);
 
       const std::string& getMethod() const      { return method; }
+      /// return url with get-parameter
+      std::string getQuery() const
+        { return query_string.empty() ? url : url + '?' + query_string; }
       const std::string& getUrl() const         { return url; }
       const std::string& getQueryString() const { return query_string; }
       std::string getHeader(const std::string& key,

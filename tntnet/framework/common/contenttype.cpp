@@ -26,23 +26,6 @@ Boston, MA  02111-1307  USA
 #include <ctype.h>
 #include <functional>
 
-namespace
-{
-  bool istokenchar(char ch)
-  {
-    return ch >= 33
-        && ch <= 126
-        && ch != '(' && ch != ')' && ch != '<' && ch != '>'  && ch != '@'
-        && ch != ',' && ch != ';' && ch != ':' && ch != '\\' && ch != '"'
-        && ch != '/' && ch != '[' && ch != ']' && ch != '?'  && ch != '=';
-  }
-
-  bool isblank(char ch)
-  {
-    return ch == ' ' || ch == '\t';
-  }
-}
-
 namespace tnt
 {
   contenttype::contenttype(const std::string& ct)

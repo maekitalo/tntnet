@@ -61,7 +61,7 @@ namespace log4cplus
 // logging to stdout
 //
 
-
+#define log_declare()
 #define log_declare_class()
 
 #endif
