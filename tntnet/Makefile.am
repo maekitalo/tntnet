@@ -6,8 +6,7 @@ SUBDIRS = \
     sdk/tools/common \
     sdk/tools/ecppc \
     sdk/tools/ecppl \
-    sdk/tools/ecppll \
-    sdk/demos/calc
+    sdk/tools/ecppll
 
 EXTRA_DIST = ecpp.vim \
     etc/tntnet/tntnet.conf \
