@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef TNT_COMPONENT_H
+#define TNT_COMPONENT_H
 
 #include <string>
 #include <time.h>
@@ -100,4 +100,4 @@ class component
 
 }
 
-#endif // COMPONENT_H
+#endif // TNT_COMPONENT_H

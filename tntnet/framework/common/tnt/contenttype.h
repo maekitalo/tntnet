@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef CONTENTTYPE_H
-#define CONTENTTYPE_H
+#ifndef TNT_CONTENTTYPE_H
+#define TNT_CONTENTTYPE_H
 
 #include <tnt/messageattribute.h>
 #include <map>
@@ -72,5 +72,5 @@ namespace tnt
   }
 }
 
-#endif // CONTENTTYPE_H
+#endif // TNT_CONTENTTYPE_H
 

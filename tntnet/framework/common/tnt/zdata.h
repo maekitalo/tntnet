@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef ZDATA_H
-#define ZDATA_H
+#ifndef TNT_ZDATA_H
+#define TNT_ZDATA_H
 
 namespace tnt
 {
@@ -49,5 +49,5 @@ namespace tnt
   };
 }
 
-#endif // ZDATA_H
+#endif // TNT_ZDATA_H
 

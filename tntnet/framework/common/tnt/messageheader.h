@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef MESSAGEHEADER_H
-#define MESSAGEHEADER_H
+#ifndef TNT_MESSAGEHEADER_H
+#define TNT_MESSAGEHEADER_H
 
 #include <string>
 #include <map>
@@ -54,5 +54,5 @@ namespace tnt
   std::istream& operator>> (std::istream& in, messageheader& data);
 }
 
-#endif // MESSAGEHEADER_H
+#endif // TNT_MESSAGEHEADER_H
 

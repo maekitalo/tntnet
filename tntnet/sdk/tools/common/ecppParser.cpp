@@ -90,7 +90,7 @@ void ecppParser::parse(std::istream& in)
 
   state_type state = state_nl;
   std::string tag, etag, tagarg;
-  std::string html, code, arg, value;
+  std::string html, code, arg, argtype, value;
   std::string comp;
   std::string cond, expr;
   comp_args_type comp_args;
@@ -554,8 +554,12 @@ void ecppParser::parse(std::istream& in)
           arg.clear();
           state = state_argscomment0;
         }
-        else if (std::isspace(ch))
-          state = state_argsvare;
+        else if (ch == '\n')
+        {
+          processArg(arg, std::string());
+          arg.clear();
+          state = state_args0;
+        }
         else
           arg += ch;
         break;
@@ -565,6 +569,12 @@ void ecppParser::parse(std::istream& in)
         {
           value.clear();
           state = state_argsval;
+        }
+        else if (ch == '\n')
+        {
+          processArg(arg, std::string());
+          arg.clear();
+          state = state_args0;
         }
         else if (!std::isspace(ch))
         {

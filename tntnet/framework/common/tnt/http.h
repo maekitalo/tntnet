@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef HTTP_H
-#define HTTP_H
+#ifndef TNT_HTTP_H
+#define TNT_HTTP_H
 
 #include <sstream>
 #include <cxxtools/query_params.h>
@@ -321,4 +321,4 @@ namespace tnt
   };
 }
 
-#endif // HTTP_H
+#endif // TNT_HTTP_H

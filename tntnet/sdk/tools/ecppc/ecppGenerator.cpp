@@ -355,14 +355,101 @@ void ecppGenerator::processCleanup(const std::string& code)
 void ecppGenerator::processArg(const std::string& name,
   const std::string& value)
 {
+  // 'name' might be prefixed by a type
+  // the variablename is the last word in 'name'
+  // type is the rest before the variablename
+  // examples:
+  //   " int var "
+  //   " var"
+  //   " ns :: someclass  param"
   std::ostringstream a;
-  a << "  std::string "
-    << name
-    << " = qparam.param(\""
-    << name << '"';
-  if (!value.empty())
-    a << ", " << value;
-  a << ");\n";
+
+  std::string::size_type e = name.size();
+  while (e > 0 && std::isspace(name.at(e - 1)))
+    --e;
+  // e points past the last character of our name
+
+  std::string::size_type b = e;
+  while (b > 0 && !std::isspace(name.at(b - 1)))
+    --b;
+  // b points to the first character of our name
+
+  std::string::size_type t = b;
+  while (t > 0 && std::isspace(name.at(t - 1)))
+    --t;
+  // t points past the last character of the type
+
+  if (t > 0)
+  {
+    // we have a type
+
+    // print out type and name
+    std::copy(name.begin(),
+              name.begin() + e,
+              std::ostreambuf_iterator<char>(a));
+    a << " = ";
+
+    if (value.empty())
+    {
+      // no default-value
+
+      a << "tnt::string_to<";
+      // print out type
+      std::copy(name.begin(),
+                name.begin() + t,
+                std::ostreambuf_iterator<char>(a));
+      a << ">( qparam.param(\"";
+      // print out name-part
+      std::copy(name.begin() + b,
+                name.begin() + e,
+                std::ostreambuf_iterator<char>(a));
+      a << "\") );\n";
+    }
+    else
+    {
+      // with default-value
+      a << "qparam.has(\"";
+      std::copy(name.begin() + b,
+                name.begin() + e,
+                std::ostreambuf_iterator<char>(a));
+      a << "\") ? tnt::string_to<";
+      std::copy(name.begin(),
+                name.begin() + t,
+                std::ostreambuf_iterator<char>(a));
+      a << ">(qparam.param(\"";
+      std::copy(name.begin() + b,
+                name.begin() + e,
+                std::ostreambuf_iterator<char>(a));
+      a << "\")) : " << value << ";\n";
+    }
+  }
+  else
+  {
+    // type defaults to std::string
+    a << "std::string ";
+
+    // print out name-part
+    std::copy(name.begin() + b,
+              name.begin() + e,
+              std::ostreambuf_iterator<char>(a));
+
+    a << " = qparam.param(\"";
+    // print out name-part
+    std::copy(name.begin() + b,
+              name.begin() + e,
+              std::ostreambuf_iterator<char>(a));
+    a << '"';
+    if (!value.empty())
+    {
+      a << ", ";
+      if (t > 0)
+        a << "tnt::to_string(" << value << ')';
+      else
+        a << value;
+    }
+
+    a << ");\n";
+  }
 
   currentComp->args += a.str();
 }
@@ -422,8 +509,8 @@ void ecppGenerator::processCall(const std::string& comp,
 
     for (comp_args_type::const_iterator i = args.begin();
          i != args.end(); ++i)
-      m << "    cq.add(\"" << i->first << "\", "
-        << i->second << ");\n";
+      m << "    cq.add(\"" << i->first << "\", tnt::to_string("
+        << i->second << ") );\n";
 
     if (comp[0] == '.')
     {
@@ -486,7 +573,8 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "//\n\n"
             "#ifndef ECPP_COMPONENT_" << classname << "_H\n"
             "#define ECPP_COMPONENT_" << classname << "_H\n\n"
-            "#include <tnt/ecpp.h>\n";
+            "#include <tnt/ecpp.h>\n"
+            "#include <tnt/convert.h>\n";
 
   if (!componentclass.empty())
     header << "#include \"" << componentclass << ".h\"\n";

@@ -4,6 +4,7 @@ libecpp_la_SOURCES = \
 	ecpp.cpp
 
 nobase_include_HEADERS = \
+	tnt/convert.h \
 	tnt/ecpp.h
 
 libecpp_la_LDFLAGS = -L../common -ltntnet -version-info @sonumber@

@@ -19,10 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef URLMAPPER_H
-#define URLMAPPER_H
+#ifndef TNT_URLMAPPER_H
+#define TNT_URLMAPPER_H
 
-#include "component.h"
+#include <tnt/component.h>
 
 namespace tnt
 {
@@ -35,5 +35,5 @@ namespace tnt
   };
 }
 
-#endif // URLMAPPER_H
+#endif // TNT_URLMAPPER_H
 

@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef COMPLOADER_H
-#define COMPLOADER_H
+#ifndef TNT_COMPLOADER_H
+#define TNT_COMPLOADER_H
 
 #include <cxxtools/dlloader.h>
 #include "urlmapper.h"
@@ -112,5 +112,5 @@ namespace tnt
   };
 }
 
-#endif // COMPLOADER_H
+#endif // TNT_COMPLOADER_H
 
