@@ -17,32 +17,33 @@ AC_PROG_LIBTOOL
 
 AC_LANG(C++)
 
-AC_CHECK_HEADERS([cxxtools/tcpstream.h])
-AC_CHECK_HEADERS([cxxtools/log.h], [], [AC_MSG_ERROR(use cxxtools with logging - version >= 1.2.1)])
-
 AC_ARG_WITH([cxxtools],
   AS_HELP_STRING([--with-cxxtools], [specify installation-path of cxxtools]),
-  AC_CHECK_FILE(
-      ["$withval/cxxtools/cxxtools-log-ldflags"],
-      [ cxxtools_ldflags=`cat $withval/cxxtools/cxxtools-log-ldflags` ],
-      AC_MSG_ERROR("$withval/cxxtools/cxxtools-log-ldflags not found")
-    ),
+  [ cxxtools_dir=$withval ],
   [
-    for dir in /usr/local/share /usr/share; do
-      if test -f "$dir/cxxtools/cxxtools-log-ldflags"; then
+    for dir in /usr/local /usr; do
+      if test -f "$dir/share/cxxtools/cxxtools-log-ldflags"; then
         cxxtools_dir=$dir
         break
       fi
     done
-
-    AC_CHECK_FILE(
-      [$cxxtools_dir/cxxtools/cxxtools-log-ldflags],
-      [ cxxtools_ldflags=`cat $cxxtools_dir/cxxtools/cxxtools-log-ldflags` ],
-      AC_MSG_ERROR("cxxtools not found") )
   ])
 
-AC_SUBST(cxxtools_ldflags)
+AC_CHECK_FILE(
+  [$cxxtools_dir/share/cxxtools/cxxtools-cxxflags],
+  [ CXXFLAGS="$CXXFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-cxxflags`" ],
+  AC_MSG_WARN("$cxxtools_dir/share/cxxtools/cxxtools-cxxflags not found") )
+AC_CHECK_FILE(
+  [$cxxtools_dir/share/cxxtools/cxxtools-ldflags],
+  [ LDFLAGS="$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-ldflags`" ],
+  AC_MSG_WARN("$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-ldflags`") )
+AC_CHECK_FILE(
+  [$cxxtools_dir/share/cxxtools/cxxtools-log-ldflags],
+  [ LDFLAGS="$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-log-ldflags`" ],
+  AC_MSG_WARN("$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-log-ldflags`") )
 
+AC_CHECK_HEADERS([cxxtools/tcpstream.h])
+AC_CHECK_HEADERS([cxxtools/log.h])
 AC_CHECK_HEADER([boost/regex.hpp])
 
 AC_CONFIG_FILES([

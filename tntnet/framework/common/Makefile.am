@@ -32,4 +32,4 @@ nobase_include_HEADERS = \
 	tnt/urlmapper.h \
 	tnt/zdata.h
 
-libtntnet_la_LDFLAGS = -version-info @sonumber@ -lcxxtools @cxxtools_ldflags@ -lz
+libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz
