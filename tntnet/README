@@ -34,6 +34,8 @@ To create a simple application run "tntnet-config --project=hello".
 This creates a directory "hello" with a simple project and prints
 out a short message, how to run the application.
 
+There are some demo-applications you can try out and play with in sdk/demos.
+
 Installation from CVS 
 =====================
 
