@@ -21,6 +21,7 @@ nobase_include_HEADERS = \
 	tnt/contenttype.h \
 	tnt/data.h \
 	tnt/http.h \
+	tnt/log.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/multipart.h \
