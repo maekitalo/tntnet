@@ -104,7 +104,7 @@ namespace tntcomp
     }
 
     // set Content-Type
-    if (request.getArgs().size() > 0)
+    if (request.getArgs().size() > 0 && request.getArg(0).size() > 0)
       reply.setContentType(request.getArg(0));
 
     // send datea
