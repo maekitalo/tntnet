@@ -389,6 +389,14 @@ bool httpMessage::checkUrl(const std::string& url)
 //
 unsigned httpRequest::serial_ = 0;
 
+httpRequest::httpRequest(const std::string& url)
+: ssl(false),
+  lang_init(false)
+{
+  std::istringstream s("GET " + url + " HTTP/1.1\r\n");
+  parse(s);
+}
+
 void httpRequest::parse(std::istream& in)
 {
   httpMessage::parse(in);

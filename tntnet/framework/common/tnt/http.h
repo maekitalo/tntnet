@@ -206,6 +206,7 @@ namespace tnt
         : ssl(false),
           lang_init(false)
         { }
+      httpRequest(const std::string& url);
 
       void setPathInfo(const std::string& p)       { pathinfo = p; }
       const std::string& getPathInfo() const       { return pathinfo; }
