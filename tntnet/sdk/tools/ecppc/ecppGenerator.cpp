@@ -1,5 +1,5 @@
 /* ecppGenerator.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -563,16 +563,22 @@ void ecppGenerator::processCondExpr(const std::string& cond, const std::string& 
 }
 
 std::string ecppGenerator::getHeader(const std::string& basename,
-  const std::string& classname)
+  const std::string& classname, const std::string& ns)
 {
+  std::string ns_classname_;
+  if (ns.empty())
+    ns_classname_ = classname;
+  else
+    ns_classname_ = ns + '_' + classname;
+
   std::ostringstream header;
   header << "////////////////////////////////////////////////////////////////////////\n"
             "// " << basename << "\n"
             "// generated with ecppc\n"
             "// date: " << gentime <<
             "//\n\n"
-            "#ifndef ECPP_COMPONENT_" << classname << "_H\n"
-            "#define ECPP_COMPONENT_" << classname << "_H\n\n"
+            "#ifndef ECPP_COMPONENT_" << ns_classname_ << "_H\n"
+            "#define ECPP_COMPONENT_" << ns_classname_ << "_H\n\n"
             "#include <tnt/ecpp.h>\n"
             "#include <tnt/convert.h>\n";
 
@@ -581,21 +587,24 @@ std::string ecppGenerator::getHeader(const std::string& basename,
   if (!baseclass.empty())
     header << "#include \"" << baseclass << ".h\"\n";
 
-  header << "#include <cxxtools/log.h>\n\n"
-         << "// <%pre>\n"
+  header << "\n"
+            "// <%pre>\n"
          << pre
          << "// </%pre>\n\n"
-         << "namespace ecpp_component\n"
-         << "{\n"
-         << "extern \"C\"\n"
-         << "{\n"
-         << "  component* create_" << classname << "(const compident& ci, const urlmapper& um,\n"
-         << "    comploader& cl);\n"
-         << "}\n\n"
-         << "// <%declare_shared>\n"
+            "namespace ecpp_component\n"
+            "{\n\n";
+  if (!ns.empty())
+    header << "namespace " << ns << "\n"
+              "{\n\n";
+  header << "extern \"C\"\n"
+            "{\n"
+            "  component* create_" << classname << "(const compident& ci, const urlmapper& um,\n"
+            "    comploader& cl);\n"
+            "}\n\n"
+            "// <%declare_shared>\n"
          << declare_shared
          << "// </%declare_shared>\n"
-         << "class " << classname << " : public ";
+            "class " << classname << " : public ";
   if (componentclass.empty())
     header << "ecppComponent";
   else
@@ -607,7 +616,6 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "    friend component* create_" << classname << "(const compident& ci,\n"
             "      const urlmapper& um, comploader& cl);\n\n"
             "    " << classname << "& main()  { return *this; }\n\n" 
-            "    log_define(\"component." << classname << "\");\n\n" 
             "    // <%declare>\n"
          << declare
          << "    // </%declare>\n\n"
@@ -631,7 +639,6 @@ std::string ecppGenerator::getHeader(const std::string& basename,
   {
     header << "    class " << i->name << "_type : public ecppSubComponent\n"
               "    {\n"
-              "        log_define(\"component." << classname << '.' << i->name << "\");\n\n" 
               "        " << classname << "& mainComp;\n"
               "        " << classname << "& main()  { return mainComp; }\n\n"
               "      public:\n"
@@ -655,15 +662,32 @@ std::string ecppGenerator::getHeader(const std::string& basename,
   for (subcomps_type::iterator i = subcomps.begin(); i != subcomps.end(); ++i)
     header << "    " << i->name << "_type " << i->name << ";\n";
 
-  header << "};\n\n"
-         << "}; // namespace ecpp_component\n\n"
+  header << "};\n\n";
+  if (!ns.empty())
+    header << "} // namespace " << ns << "\n\n";
+  header << "} // namespace ecpp_component\n\n"
          << "#endif\n";
   return header.str();
 }
 
 std::string ecppGenerator::getCpp(const std::string& basename,
-  const std::string& classname)
+  const std::string& classname, const std::string& ns)
 {
+  std::string ns_classname;
+  std::string ns_classname_dot;
+  std::string ns_classname_slash;
+  if (ns.empty())
+  {
+    ns_classname = classname;
+    ns_classname_dot = classname;
+    ns_classname_slash = classname;
+  }
+  else
+  {
+    ns_classname = ns + "::" + classname;
+    ns_classname_dot = ns + '.' + classname;
+    ns_classname_slash = ns + '/' + classname;
+  }
   std::ostringstream code;
   code << "////////////////////////////////////////////////////////////////////////\n"
           "// " << basename << "\n"
@@ -677,17 +701,24 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "#include <tnt/zdata.h>\n";
 
   code << "#include <cxxtools/thread.h>\n"
-          "#include <stdexcept>\n";
+          "#include <cxxtools/log.h>\n"
+          "#include <stdexcept>\n\n";
 
   if (externData)
     code << "#include <tnt/comploader.h>\n"
             "#include <stdlib.h>\n";
 
-  code << "#include \"" << classname << ".h\"\n\n"
-       << "template <typename T> inline void use(const T&) { };\n\n"
-       << "namespace ecpp_component\n"
-       << "{\n"
-       << "static cxxtools::Mutex mutex;\n\n";
+  code << "#include \"" << ns_classname_slash << ".h\"\n\n"
+          "template <typename T> inline void use(const T&) { };\n\n"
+          "namespace ecpp_component\n"
+          "{\n\n";
+
+  if (!ns.empty())
+    code << "namespace " << ns << "\n"
+            "{\n\n";
+
+  code << "static cxxtools::Mutex mutex;\n\n"
+          "log_define(\"component." << ns_classname_dot << "\");\n\n";
 
   if (compress)
   {
@@ -744,13 +775,14 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   if (singleton)
   {
     code << "static component* theComponent = 0;\n"
-         << "static unsigned refs = 0;\n\n"
-         << "component* create_" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
-         << "{\n"
-         << "  cxxtools::MutexLock lock(mutex);\n"
-         << "  if (theComponent == 0)\n"
-         << "  {\n"
-         << "    theComponent = new ecpp_component::" << classname << "(ci, um, cl);\n";
+            "static unsigned refs = 0;\n\n"
+            "component* create_" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
+            "{\n"
+            "  cxxtools::MutexLock lock(mutex);\n"
+            "  if (theComponent == 0)\n"
+            "  {\n"
+            "    log_debug(\"create new component \\\"\" << ci << '\"');\n"
+            "    theComponent = new ecpp_component::" << ns_classname << "(ci, um, cl);\n";
 
     if (compress)
       code << "    raw_data.addRef();\n";
@@ -940,7 +972,9 @@ std::string ecppGenerator::getCpp(const std::string& basename,
          << "}\n\n";
   }
 
-  code << "}; // namespace ecpp_component\n";
+  if (!ns.empty())
+    code << "} // namespace " << ns << "\n\n";
+  code << "} // namespace ecpp_component\n";
 
   return code.str();
 }

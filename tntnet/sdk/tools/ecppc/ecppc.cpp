@@ -1,5 +1,5 @@
 /* ecppc.cpp
-   Copyright (C) 2003 Tommi MÃ¤kitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -35,14 +35,15 @@ int main(int argc, char* argv[])
 
   try
   {
-    std::string requestname = cxxtools::arg<const char*>(argc, argv, 'n', "").getValue();
-    std::string ofile = cxxtools::arg<const char*>(argc, argv, 'o', "").getValue();
-    std::string odir = cxxtools::arg<const char*>(argc, argv, 'O', "").getValue();
-    cxxtools::arg<const char*> mimetype(argc, argv, 'm', 0);
+    std::string requestname = cxxtools::arg<std::string>(argc, argv, 'n');
+    std::string ns = cxxtools::arg<std::string>(argc, argv, 'N');
+    std::string ofile = cxxtools::arg<std::string>(argc, argv, 'o');
+    std::string odir = cxxtools::arg<std::string>(argc, argv, 'O');
+    cxxtools::arg<std::string> mimetype(argc, argv, 'm');
     cxxtools::arg<bool> binary(argc, argv, 'b');
     cxxtools::arg<bool> singleton(argc, argv, 's');
-    cxxtools::arg<const char*> componentclass(argc, argv, 'C', 0);
-    cxxtools::arg<const char*> baseclass(argc, argv, 'B', 0);
+    cxxtools::arg<std::string> componentclass(argc, argv, 'C');
+    cxxtools::arg<std::string> baseclass(argc, argv, 'B');
     cxxtools::arg<bool> htmlcompress(argc, argv, "--compress-html");
     cxxtools::arg<bool> csscompress(argc, argv, "--compress-css");
     cxxtools::arg<bool> jscompress(argc, argv, "--compress-js");
@@ -57,24 +58,25 @@ int main(int argc, char* argv[])
     {
       std::cerr
         << PACKAGE_STRING "\n\n"
-           "Aufruf: " << argv[0] << " {Optionen} Quelldatei\n\n"
-           "  -o Dateiname     Ausgabedatei\n"
-           "  -n name          Klassename\n"
-           "  -m typ           Mimetyp\n"
-           "  -s               generiere singleton\n"
-           "  -s-              generiere kein singleton\n"
-           "  -b               binär\n"
-           "  -B klasse        zusätzliche Basisklasse\n"
-           "  -C klasse        alternative Basisklasse (muß von ecppComponent abgeleitet sein)\n"
-           "  --compress-html  entferne überflüssige Zeichen aus HTML-code\n"
-           "  --compress-css   entferne überflüssige Zeichen aus CSS-code\n"
-           "  --compress-js    entferne überflüssige Zeichen aus JavaScript-code\n"
-           "  -z               komprimiere konstanten Text\n"
-           "  -x               speichere konstanten Text extern\n"
+           "ecppc-compiler\n\n"
+           "usage: " << argv[0] << " [options] ecpp-source\n\n"
+           "  -o filename      outputfile\n"
+           "  -n name          classname\n"
+           "  -m type          Mimetype\n"
+           "  -s               generate singleton\n"
+           "  -s-              generate no singleton\n"
+           "  -b               binary\n"
+           "  -B class         additional base-class\n"
+           "  -C class         alternative base-class (derived from tnt::ecppComponent)\n"
+           "  --compress-html  remove some space in HTML-code\n"
+           "  --compress-css   remove some space in CSS-code\n"
+           "  --compress-js    remove some space in JavaScript-code\n"
+           "  -z               compress constant data\n"
+           "  -x               look for constants in language-specific library\n"
            "  -v               verbose\n"
            "  -d               debug\n"
-           "  -S               teile Chunks bei '{' und '}'\n"
-           "  --split-chars zz setze alternative Teilungszeichen\n"
+           "  -S               split chunks at '{' und '}'\n"
+           "  --split-chars zz select alternative split-chars\n"
         << std::endl;
       return -1;
     }
@@ -90,11 +92,17 @@ int main(int argc, char* argv[])
         if (pos_slash == std::string::npos)
           requestname = input.substr(0, pos_dot);
         else if (pos_slash < pos_dot)
-          requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
-        else
         {
-          std::cerr << "ungewöhnliche Inputdatei, bitte '-n' spezifizieren (siehe '--help')!" << std::endl;
-          return -1;
+          requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
+
+          if (ns.empty())
+          {
+            std::string::size_type pos_slash2 = input.find_last_of("\\/", pos_slash - 1);
+            if (pos_slash2 == std::string::npos)
+              ns = input.substr(0, pos_slash);
+            else
+              ns = input.substr(pos_slash2 + 1, pos_slash - pos_slash2 - 1);
+          }
         }
       }
       else
@@ -104,19 +112,24 @@ int main(int argc, char* argv[])
 
       if (requestname.empty())
       {
-        std::cerr << "ungewöhnliche Inputdatei, bitte '-n' spezifizieren (siehe '--help')!" << std::endl;
+        std::cerr << "cannot derive classname from filename. Use -n" << std::endl;
         return -1;
       }
 
-      if (ofile.empty())
+    }
+    else if (ns.empty())
+    {
+      std::string::size_type p = requestname.find("::");
+      if (p != std::string::npos)
       {
-        if (pos_slash == std::string::npos)
-          ofile = requestname;
-        else
-          ofile = input.substr(0, pos_slash + 1) + requestname;
+        ns = requestname.substr(0, p);
+        requestname.erase(0, p + 2);
       }
     }
-    
+
+    if (ofile.empty())
+      ofile = requestname;
+
     // Output auf ".h" and ".cpp" pruefen
     if (ofile.size() == ofile.rfind(".h") + 2)
       ofile = ofile.substr(0, ofile.size() - 2);
@@ -131,7 +144,7 @@ int main(int argc, char* argv[])
     generator.setDebug(debug);
 
     if (mimetype.isSet())
-      generator.setMimetype(mimetype.getValue());
+      generator.setMimetype(mimetype);
 
     if (htmlcompress)
       generator.setHtmlCompress();
@@ -178,9 +191,9 @@ int main(int argc, char* argv[])
     if (singleton.isSet())
       generator.setSingleton(singleton);
     if (componentclass.isSet())
-      generator.setComponentclass(componentclass.getValue());
+      generator.setComponentclass(componentclass);
     if (baseclass.isSet())
-      generator.setBaseclass(baseclass.getValue());
+      generator.setBaseclass(baseclass);
 
     std::string obase = odir;
     if (!obase.empty())
@@ -192,15 +205,15 @@ int main(int argc, char* argv[])
     //
 
     if (verbose)
-      std::cout << "generiere " << obase << ".h" << std::endl;
+      std::cout << "generate " << obase << ".h" << std::endl;
     std::ofstream hout((obase + ".h").c_str());
-    hout << generator.getHeader(ofile + ".h", requestname);
+    hout << generator.getHeader(ofile + ".h", requestname, ns);
     hout.close();
 
     if (verbose)
-      std::cout << "generiere " << obase << ".cpp" << std::endl;
+      std::cout << "generate " << obase << ".cpp" << std::endl;
     std::ofstream sout((obase + ".cpp").c_str());
-    sout << generator.getCpp(ofile + ".cpp", requestname);
+    sout << generator.getCpp(ofile + ".cpp", requestname, ns);
     sout.close();
   }
   catch(const std::exception& e)

@@ -1,44 +1,25 @@
-<%shared>
-
-static std::string name;
-
-extern "C"
-  bool config(const std::string& key, const std::vector<std::string>& values)
-  {
-    if (key == "Hello" && values.size() >= 1)
-    {
-      name = values[0];
-      return true;
-    }
-    return false;
-  }
-
-</%shared>
-<%cpp>
-
-  const httpRequest::args_type& args = request.getArgs();
-
-</%cpp>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<#
+  this is a simple hello-world-application
+#>
+<%args>
+name             // define query-parameter
+                 // this defines a variable of type std::string with
+                 // the name "name"
+</%args>
 <html>
  <head>
+  <title>Hello World-application for tntnet</title>
  </head>
 
- <body bgcolor='#FFFFFF'>
+ <body bgcolor="#FFFFFF">
 
-  <h1>Hello <$name$></h1>
+  <h1>Hello <$ name.empty() ? "World" : name $></h1>
 
-  <p>
-  pathinfo = <$request.getPathInfo()$>
-  </p>
-
-  <h2>Argumente:</h2>
-
-  <ol>
-% for (httpRequest::args_type::const_iterator i = args.begin(); i != args.end(); ++i) {
-   <li><$*i$></li>
-% }
-  </ol>
+  <form>
+   What's your name?
+   <input type="text" name="name" value="<$name$>"> <br>
+   <input type="submit">
+  </form>
 
  </body>
 </html>

@@ -1,5 +1,5 @@
 /* ./ecppl.cpp
-   Copyright (C) 2003 Tommi MÃ¤kitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -43,13 +43,12 @@ int main(int argc, char* argv[])
     {
       std::cerr
         << PACKAGE_STRING "\n\n"
-           "Aufruf: " << argv[0] << " {Optionen} Quelldatei\n\n"
-           "Generiert aus ecpp-Komponenten eine Tabulator-separierte Textdatei mit\n"
-           "Texten, die zu übersetzen sind.\n\n"
-           "  -o Dateiname   Ausgabedatei\n"
-           "  -n             nolang\n"
-           "  -l             lang (default)\n"
-           "  --split-chars zz setze alternative Teilungszeichen\n"
+           "ecppl-language-extractor\n\n"
+           "usage: " << argv[0] << " [options] ecpp-source\n\n"
+           "  -o filename        outputfile\n"
+           "  -n                 nolang\n"
+           "  -l                 lang (default)\n"
+           "  --split-chars zz   select alternative split-chars\n"
         << std::endl;
       return -1;
     }

@@ -1,5 +1,5 @@
 /* ./ecppll.cpp
-   Copyright (C) 2003 Tommi MÃ¤kitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -69,7 +69,7 @@ class ecppll : public tnt::ecppParser
     void setFailOnWarn(bool sw = true)
       { failOnWarn = sw; }
 
-    void print(std::ostream& out, const std::string& compname);
+    void print(std::ostream& out);
     int getRet() const  { return ret; }
 };
 
@@ -81,7 +81,7 @@ void ecppll::tokenSplit(bool start)
   inLang = start;
 }
 
-void ecppll::print(std::ostream& out, const std::string& compname)
+void ecppll::print(std::ostream& out)
 {
   for (data_type::const_iterator it = data.begin();
        it != data.end(); ++it)
@@ -194,7 +194,7 @@ void ecppll::processHtml(const std::string& html)
 
       if (it == replacetokens.end())
       {
-        std::cerr << "Warnung: Ersetzungstext \"" << html << "\" nicht gefunden ("
+        std::cerr << "warning: replacement-text \"" << html << "\" not found ("
           << data.size() << ')'
           << std::endl;
         warn();
@@ -204,7 +204,7 @@ void ecppll::processHtml(const std::string& html)
       {
         for (replacetokens_type::const_iterator it2 = next;
              it2 != it; ++it2)
-          std::cerr << "Warnung: Ersetzungstext \"" << it2->first << "\" übersprungen ("
+          std::cerr << "warning: replacement-text \"" << it2->first << "\" skipped ("
             << data.size() << ')'
             << std::endl;
         next = it;
@@ -236,7 +236,6 @@ int main(int argc, char* argv[])
   try
   {
     cxxtools::arg<const char*> ofile(argc, argv, 'o');
-    cxxtools::arg<const char*> compname(argc, argv, 'n', "component");
     cxxtools::arg<bool> fail_on_warn(argc, argv, 'F');
     cxxtools::arg<const char*> splitChars(argc, argv, "--split-chars");
 
@@ -244,11 +243,11 @@ int main(int argc, char* argv[])
     {
       std::cerr
         << PACKAGE_STRING "\n\n"
-           "Aufruf " << argv[0] << " {Optionen} <ecpp-Komponente> <übersetzte Texte>\n\n"
-           " -o outfile   Ausagedatei\n"
-           " -n compname  Komponentenname\n"
-           " -F           Warnungen als Fehler\n"
-           " --split-chars zz setze alternative Teilungszeichen\n";
+           "usage: " << argv[0] << " [options] ecpp-source translated-data\n\n"
+           " -o filename        outputfile\n"
+           " -F                 fail on warning\n"
+           " --split-chars zz  select alternative split-chars\n"
+        << std::endl;
       return 1;
     }
 
@@ -256,7 +255,7 @@ int main(int argc, char* argv[])
     std::ifstream ecpp(argv[1]);
     if (!ecpp)
     {
-      std::cerr << "Fehler beim öffnen der Quelldatei \"" << argv[1] << '"'
+      std::cerr << "cannot open source-file \"" << argv[1] << '"'
         << std::endl;
       return 2;
     }
@@ -265,7 +264,7 @@ int main(int argc, char* argv[])
     std::ifstream txt(argv[2]);
     if (!ecpp)
     {
-      std::cerr << "Fehler beim öffnen der Texte-Datei \"" << argv[2] << '"'
+      std::cerr << "cannot open translation-file \"" << argv[2] << '"'
         << std::endl;
       return 3;
     }
@@ -295,10 +294,10 @@ int main(int argc, char* argv[])
     if (ofile.isSet())
     {
       std::ofstream out(ofile);
-      app.print(out, compname.getValue());
+      app.print(out);
     }
     else
-      app.print(std::cout, compname.getValue());
+      app.print(std::cout);
 
     return app.getRet();
   }

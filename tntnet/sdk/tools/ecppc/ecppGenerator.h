@@ -230,9 +230,9 @@ class ecppGenerator : public tnt::ecppParser
     virtual void processCondExpr(const std::string& cond, const std::string& expr);
 
     std::string getHeader(const std::string& basename,
-      const std::string& classname);
+      const std::string& classname, const std::string& ns);
     std::string getCpp(const std::string& basename,
-      const std::string& classname);
+      const std::string& classname, const std::string& ns);
     std::string getDataCpp(const std::string& basename,
       const std::string& classname);
 };

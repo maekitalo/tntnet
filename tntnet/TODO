@@ -4,6 +4,7 @@
 - dynamische Threadbeendigung
 - ranges
 - serialisation i10n/boost?
+- tnt::transaction
 
 doc:
 - ingnorieren von Zeilenschaltungen nach %-Tags
