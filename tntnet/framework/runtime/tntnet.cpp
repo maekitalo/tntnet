@@ -30,7 +30,6 @@ Boston, MA  02111-1307  USA
 #include <fstream>
 #include <cxxtools/tcpstream.h>
 #include <unistd.h>
-#include <log4cplus/configurator.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -48,10 +47,6 @@ Boston, MA  02111-1307  USA
 
 #ifndef TNTNET_CONF
 # define TNTNET_CONF CONFIG_DIR "tntnet.conf"
-#endif
-
-#ifndef TNTNET_PROPERTIES
-# define TNTNET_PROPERTIES CONFIG_DIR "tntnet.properties"
 #endif
 
 namespace
