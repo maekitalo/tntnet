@@ -30,20 +30,66 @@ class unzipError : public std::runtime_error
 {
     int err;
 
+    static std::string formatMsg(int e, const char* msg, const char* function);
+
   public:
     unzipError(int e, const std::string& msg = "unzipError")
       : std::runtime_error(msg),
+        err(e)
+        { }
+    unzipError(int e, const char* msg, const char* function)
+      : std::runtime_error(formatMsg(e, msg, function)),
         err(e)
         { }
 
     int getErr() const  { return err; }
 };
 
+class unzipEndOfListOfFile : public unzipError
+{
+  public:
+    unzipEndOfListOfFile(const char* function = 0)
+      : unzipError(UNZ_END_OF_LIST_OF_FILE, "end of list of file", function)
+      { }
+};
+
+class unzipParamError : public unzipError
+{
+  public:
+    unzipParamError(const char* function = 0)
+      : unzipError(UNZ_PARAMERROR, "parameter error", function)
+      { }
+};
+
+class unzipBadZipFile : public unzipError
+{
+  public:
+    unzipBadZipFile(const char* function = 0)
+      : unzipError(UNZ_PARAMERROR, "bad zip file", function)
+      { }
+};
+
+class unzipInternalError : public unzipError
+{
+  public:
+    unzipInternalError(const char* function = 0)
+      : unzipError(UNZ_PARAMERROR, "internal error", function)
+      { }
+};
+
+class unzipCrcError : public unzipError
+{
+  public:
+    unzipCrcError(const char* function = 0)
+      : unzipError(UNZ_PARAMERROR, "crc error", function)
+      { }
+};
+
 class unzipFile
 {
     unzFile file;
 
-    int checkError(int err, const char* function) const;
+    int checkError(int ret, const char* function) const;
 
   public:
     unzipFile(const std::string& path)

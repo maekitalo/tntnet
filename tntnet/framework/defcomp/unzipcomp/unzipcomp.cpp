@@ -95,16 +95,23 @@ unsigned unzipcomp::operator() (tnt::httpRequest& request,
   if (request.getArgsCount() < 1)
     reply.throwError(HTTP_INTERNAL_SERVER_ERROR, "missing archive name");
 
-  unzipFile f(request.getArg(0));
-  unzipFileStream in(f, pi, false);
+  try
+  {
+    unzipFile f(request.getArg(0));
+    unzipFileStream in(f, pi, false);
 
-  // set Content-Type
-  if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
-    reply.setContentType(request.getArg(1));
+    // set Content-Type
+    if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
+      reply.setContentType(request.getArg(1));
 
-  std::copy(std::istreambuf_iterator<char>(in),
-            std::istreambuf_iterator<char>(),
-            std::ostreambuf_iterator<char>(reply.out()));
+    std::copy(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>(),
+              std::ostreambuf_iterator<char>(reply.out()));
+  }
+  catch (const unzipEndOfListOfFile&)
+  {
+    reply.throwNotFound(pi);
+  }
 
   return HTTP_OK;
 }

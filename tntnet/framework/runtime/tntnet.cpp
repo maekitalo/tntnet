@@ -302,6 +302,7 @@ namespace tnt
       if (isTrue(nomonitor))
       {
         log_debug("start worker-process without monitor");
+        writePidfile(getpid());
         if (chdir("/") == -1)
           throw std::runtime_error(
             std::string("error in chdir(): ")
@@ -332,6 +333,8 @@ namespace tnt
           }
           else
           {
+            // write child-pid
+            writePidfile(pid);
             monitorProcess(pid);
             if (!stop)
               sleep(1);
@@ -366,9 +369,6 @@ namespace tnt
 
   void tntnet::monitorProcess(int workerPid)
   {
-    // write child-pid
-    writePidfile(workerPid);
-
     if (chdir("/") == -1)
       throw std::runtime_error(
         std::string("error in chdir(): ")

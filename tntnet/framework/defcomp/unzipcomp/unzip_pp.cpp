@@ -22,38 +22,41 @@ Boston, MA  02111-1307  USA
 #include "unzip_pp.h"
 #include <sstream>
 
-int unzipFile::checkError(int err, const char* function) const
+std::string unzipError::formatMsg(int err, const char* msg, const char* function)
 {
-  if (err < 0)
+  std::ostringstream s;
+  s << "unzip-error " << err;
+  if (function && function[0])
+    s << " in function \"" << function << '"';
+  s << ": " << msg;
+  return s.str();
+}
+
+int unzipFile::checkError(int ret, const char* function) const
+{
+  if (ret < 0)
   {
-    std::ostringstream msg;
-    msg << "unzip-error " << err << " in function \"" << function << '"';
-    switch (err)
+    switch (ret)
     {
       case UNZ_END_OF_LIST_OF_FILE:
-        msg << ": end of list of file";
-        break;
+        throw unzipEndOfListOfFile(function);
 
       case UNZ_PARAMERROR:
-        msg << ": parameter error";
-        break;
+        throw unzipParamError(function);
 
       case UNZ_BADZIPFILE:
-        msg << ": bad zip file";
-        break;
+        throw unzipBadZipFile(function);
 
       case UNZ_INTERNALERROR:
-        msg << ": internal error";
-        break;
+        throw unzipInternalError(function);
 
       case UNZ_CRCERROR:
-        msg << ": crc error";
-        break;
+        throw unzipCrcError(function);
     }
 
-    throw unzipError(err, msg.str());
+    throw unzipError(ret, "unknown error", function);
   }
-  return err;
+  return ret;
 }
 
 unzipFileStreamBuf::int_type unzipFileStreamBuf::overflow(unzipFileStreamBuf::int_type c)
