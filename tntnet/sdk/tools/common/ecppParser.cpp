@@ -22,6 +22,11 @@ Boston, MA  02111-1307  USA
 #include "tnt/ecppParser.h"
 #include <sstream>
 
+//static const char split_start = '«'
+//static const char split_end = '»'
+static const char split_start = '{';
+static const char split_end = '}';
+
 namespace tnt
 {
 
@@ -122,14 +127,14 @@ void ecppParser::parse(std::istream& in)
             html += ch;
           state = state_nl;
         }
-        else if (splitBar && (ch == '«'|| ch == '»'))
+        else if (splitBar && (ch == split_start|| ch == split_end))
         {
-          if (!html.empty() || ch == '»')
+          if (!html.empty() || ch == split_end)
           {
             processHtml(html);
             html.clear();
           }
-          tokenSplit(ch == '«');
+          tokenSplit(ch == split_start);
         }
         else if (ch == '\\')
           state = state_htmlesc;
@@ -141,7 +146,8 @@ void ecppParser::parse(std::istream& in)
         break;
 
       case state_htmlesc:
-        html += ch;
+        if (ch != '\n')
+          html += ch;
         state = state_html;
         break;
 
@@ -488,14 +494,14 @@ void ecppParser::parse(std::istream& in)
           }
           state = state_cpp1;
         }
-        else if (splitBar && (ch == '«'|| ch == '»'))
+        else if (splitBar && (ch == split_start|| ch == split_end))
         {
           if (!html.empty())
           {
             processHtml(html);
             html.clear();
           }
-          tokenSplit(ch == '«');
+          tokenSplit(ch == split_start);
           state = state_html;
         }
         else

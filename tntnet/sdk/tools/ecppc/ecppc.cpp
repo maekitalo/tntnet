@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
            "  -x               speichere konstanten Text extern\n"
            "  -v               verbose\n"
            "  -d               debug\n"
-           "  -S               teile Chunks bei '«' und '»'\n"
+           "  -S               teile Chunks bei '{' und '}'\n"
         << std::endl;
       return -1;
     }
