@@ -16,4 +16,4 @@ tntnet/tntnet.conf: tntnet/tntnet.conf.in
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
 		-e 's,@datadir\@,@datadir@,g;' <$< >$@
 tntnet/tntnet.properties:
-	cxxtools-config --properties tntnet >$@
+	cxxtools-config --logfile /var/log/tntnet.log --properties tntnet >$@
