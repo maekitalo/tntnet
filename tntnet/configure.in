@@ -46,7 +46,6 @@ AC_CONFIG_FILES([
     sdk/tools/ecppc/Makefile
     sdk/tools/ecppl/Makefile
     sdk/tools/ecppll/Makefile
-    sdk/demos/calc/Makefile
     ])
 
 AC_OUTPUT
