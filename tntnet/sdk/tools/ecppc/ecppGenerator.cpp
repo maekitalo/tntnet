@@ -733,7 +733,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "  if (theComponent == 0)\n"
             "  {\n"
             "    log_debug(\"create new component \\\"\" << ci << '\"');\n"
-            "    theComponent = new " << ns_classname << "(ci, um, cl);\n";
+            "    theComponent = new ::ecpp_component::" << ns_classname << "(ci, um, cl);\n";
 
     if (compress)
       code << "    raw_data.addRef();\n";
@@ -774,7 +774,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "  }\n";
     }
     code << "  // </%config>\n\n"
-            "  return new " << classname << "(ci, um, cl);\n"
+            "  return new ::ecpp_component::" << classname << "(ci, um, cl);\n"
          << "}\n\n";
   }
 
