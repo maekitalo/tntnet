@@ -279,9 +279,14 @@ namespace tnt
         { return getCookies().getCookie(name); }
   };
 
+  class savepoint;
+
   /// eine HTTP-Reply-message
+
   class httpReply : public httpMessage
   {
+      friend class savepoint;
+
       std::string contentType;
       std::ostream& socket;
       std::ostringstream outstream;

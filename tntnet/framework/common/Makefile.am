@@ -10,6 +10,7 @@ libtntnet_la_SOURCES = \
 	messageattribute.cpp \
 	messageheader.cpp \
 	multipart.cpp \
+	savepoint.cpp \
 	sodata.cpp \
 	tntconfig.cpp \
 	zdata.cpp
@@ -25,6 +26,7 @@ nobase_include_HEADERS = \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/multipart.h \
+	tnt/savepoint.h \
 	tnt/sodata.h \
 	tnt/tntconfig.h \
 	tnt/urlmapper.h \

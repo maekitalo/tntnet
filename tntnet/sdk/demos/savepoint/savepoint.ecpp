@@ -1,0 +1,43 @@
+<%pre>
+
+#include <tnt/savepoint.h>
+
+</%pre>
+<html>
+<body>
+ <h1>savepoint-demo</h1>
+<{
+
+  try
+  {
+    tnt::savepoint sv(reply);
+
+    // everything from here until catch is not sent, because
+    // the exception rolls back the savepoint
+
+}>
+
+    <h2>
+     Title2
+
+<{
+
+  throw std::runtime_error("test"); // this skips end-tag "</h2>"
+
+}>
+
+    </h2>
+
+<{
+
+    sv.commit();
+  }
+  catch (const std::exception& e)
+  {
+    reply.out() << e.what() << std::endl;
+  }
+
+}>
+  This is no header
+</body>
+</html>
