@@ -1,6 +1,7 @@
-ifndef DESTDIR
-	export DESTDIR=/
-endif
+DESTDIR = $(ROOTDIR)/usr/local
+LIBDIR = $(DESTDIR)/lib
+INCDIR = $(DESTDIR)/include
+BINDIR = $(DESTDIR)/bin
 
 .PHONY: lib debian
 
@@ -25,16 +26,16 @@ clean:
 	  $(MAKE) -C $$m clean || exit 1; \
 	done
 
-$(DESTDIR)/usr/lib:
-	mkdir -p $(DESTDIR)/usr/lib
+$(LIBDIR):
+	mkdir -p $(LIBDIR)
 
-$(DESTDIR)/usr/include:
-	mkdir -p $(DESTDIR)/usr/include
+$(INCDIR):
+	mkdir -p $(INCDIR)
 
-$(DESTDIR)/usr/bin:
-	mkdir -p $(DESTDIR)/usr/bin
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
-install: $(DESTDIR)/usr/lib $(DESTDIR)/usr/include $(DESTDIR)/usr/bin
+install: $(LIBDIR) $(INCDIR) $(BINDIR)
 	@for m in $(MODULES); \
 	do \
 	  $(MAKE) -C $$m install || exit 1; \

@@ -1,5 +1,6 @@
 all : tntnet
 
+BINDIR = $(DESTDIR)/bin
 CXXFLAGS=-I. -I../common $(LOCAL_CXXFLAGS)
 LDFLAGS=-L../common -lpthread -ltntnet -lboost_regex-gcc-mt -lssl $(LOCAL_LDFLAGS)
 SRCS = \
@@ -21,7 +22,7 @@ tntnet : $(OBJS)
 DEPS = $(SRCS:.cpp=.deps)
 
 install: tntnet
-	cp -ra $^ $(DESTDIR)/usr/bin
+	cp -ra $^ $(BINDIR)
 
 clean:
 	rm -f $(OBJS) $(DEPS)

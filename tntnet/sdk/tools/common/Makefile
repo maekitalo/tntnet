@@ -1,6 +1,9 @@
 VERSION=1.0.0
 CXXFLAGS = -Wall -O2 -I. -fPIC $(LOCAL_CXXFLAGS)
 LDFLAGS = $(LOCAL_LDFLAGS)
+DESTDIR = $(ROOTDIR)/usr/local
+LIBDIR = $(DESTDIR)/lib
+INCDIR = $(DESTDIR)/include
 
 all : libtntnet_sdk.so
 
@@ -21,9 +24,9 @@ libtntnet_sdk.so: libtntnet_sdk.so.$(VERSION)
 	ln -sf $< $@
 
 install: libtntnet_sdk.so.$(VERSION)
-	cp $^ $(DESTDIR)/usr/lib
-	cp -ra --parents tnt/*.h $(DESTDIR)/usr/include
-	ln -s libtntnet_sdk.so.$(VERSION) $(DESTDIR)/usr/lib/libtntnet_sdk.so
+	cp $^ $(LIBDIR)
+	cp -ra --parents tnt/*.h $(INCDIR)
+	ln -s libtntnet_sdk.so.$(VERSION) $(LIBDIR)/libtntnet_sdk.so
 
 clean:
 	rm -f $(OBJS) $(DEPS)

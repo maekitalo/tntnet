@@ -1,6 +1,9 @@
 VERSION=1.0.0
 CXXFLAGS = -Wall -O2 -I. -fPIC $(LOCAL_CXXFLAGS)
 LDFLAGS = -lcxxtools -llog4cplus -lz $(LOCAL_LDFLAGS)
+DESTDIR = $(ROOTDIR)/usr/local
+LIBDIR = $(DESTDIR)/lib
+INCDIR = $(DESTDIR)/include
 
 all : libtntnet.so
 
@@ -31,9 +34,9 @@ libtntnet.so: libtntnet.so.$(VERSION)
 	ln -sf $< $@
 
 install: libtntnet.so.$(VERSION)
-	cp $^ $(DESTDIR)/usr/lib
-	cp -ra --parents tnt/*.h $(DESTDIR)/usr/include
-	ln -sf libtntnet.so.$(VERSION) $(DESTDIR)/usr/lib/libtntnet.so
+	cp $^ $(LIBDIR)
+	cp -ra --parents tnt/*.h $(INCDIR)
+	ln -sf libtntnet.so.$(VERSION) $(LIBDIR)/libtntnet.so
 
 clean:
 	rm -f $(OBJS) $(DEPS)

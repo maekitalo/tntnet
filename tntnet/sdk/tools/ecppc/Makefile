@@ -2,6 +2,8 @@ all : ecppc
 
 CXXFLAGS=-I../common -I../../../framework/common $(LOCAL_CXXFLAGS)
 LDFLAGS=-L../common -L../../../framework/common -ltntnet_sdk -ltntnet -lcxxtools $(LOCAL_LDFLAGS)
+DESTDIR = $(ROOTDIR)/usr/local
+BINDIR = $(DESTDIR)/bin
 
 SRCS = \
 	ecppc.cpp \
@@ -18,7 +20,7 @@ ecppc : $(OBJS)
 DEPS = $(SRCS:.cpp=.deps)
 
 install: ecppc
-	cp -ra $^ $(DESTDIR)/usr/bin
+	cp -ra $^ $(BINDIR)
 
 clean:
 	rm -f ecppc $(OBJS) $(DEPS)

@@ -1,6 +1,9 @@
 VERSION=1.0.0
 CXXFLAGS = -Wall -O2 -I. -I../common -fPIC $(LOCAL_CXXFLAGS)
 LDFLAGS = -L../common -ltntnet $(LOCAL_LDFLAGS)
+DESTDIR = $(ROOTDIR)/usr/local
+LIBDIR = $(DESTDIR)/lib
+INCDIR = $(DESTDIR)/include
 
 all : libecpp.so
 
@@ -19,9 +22,9 @@ libecpp.so: libecpp.so.$(VERSION)
 	ln -sf $< $@
 
 install: libecpp.so.$(VERSION)
-	cp $^ $(DESTDIR)/usr/lib
-	cp -ra --parents tnt/*.h $(DESTDIR)/usr/include
-	ln -sf libecpp.so.$(VERSION) $(DESTDIR)/usr/lib/libecpp.so
+	cp $^ $(LIBDIR)
+	cp -ra --parents tnt/*.h $(INCDIR)
+	ln -sf libecpp.so.$(VERSION) $(LIBDIR)/libecpp.so
 
 clean:
 	rm -f $(OBJS) $(DEPS)

@@ -2,6 +2,8 @@ all : ecppll
 
 CXXFLAGS=-I../common -I../../../framework/common $(LOCAL_CXXFLAGS)
 LDFLAGS=-L../common -ltntnet_sdk $(LOCAL_LDFLAGS)
+DESTDIR = $(ROOTDIR)/usr/local
+BINDIR = $(DESTDIR)/bin
 
 SRCS = \
 	ecppll.cpp
@@ -17,7 +19,7 @@ ecppll : $(OBJS)
 DEPS = $(SRCS:.cpp=.deps)
 
 install: ecppll
-	cp -ra $^ $(DESTDIR)/usr/bin
+	cp -ra $^ $(BINDIR)
 
 clean:
 	rm -f ecppll $(OBJS) $(DEPS)
