@@ -70,9 +70,6 @@ namespace tnt
       static void CleanerThread();
       static void setCompLifetime(unsigned sec)
       { compLifetime = sec; }
-
-    private:
-      void executeQuery(const std::string& header);
   };
 }
 

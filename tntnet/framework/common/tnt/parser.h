@@ -36,6 +36,9 @@ namespace tnt
 
       bool failed_flag;
 
+      virtual void pre(char ch)    { }
+      virtual bool post(bool ret)  { }
+
     public:
       explicit parser(state_type initial_state)
         : state(initial_state),
@@ -44,7 +47,8 @@ namespace tnt
 
       bool parse(char ch)
       {
-        return (static_cast<this_type*>(this)->*state)(ch);
+        pre(ch);
+        return post( (static_cast<this_type*>(this)->*state)(ch) );
       }
 
       bool parse(const char* str, unsigned size)

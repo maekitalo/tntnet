@@ -67,8 +67,6 @@ namespace tnt
       size_t content_size;
 
       static size_t maxRequestSize;
-      static size_t maxHeaderSize;
-      static size_t maxBodySize;
 
     protected:
       header_type header;
@@ -131,8 +129,6 @@ namespace tnt
       static bool checkUrl(const std::string& url);
 
       static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }
-      static void setMaxHeaderSize(size_t s)     { maxHeaderSize = s; }
-      static void setMaxBodySize(size_t s)       { maxBodySize = s; }
   };
 }
 

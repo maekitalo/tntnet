@@ -34,7 +34,9 @@ namespace tnt
   {
     message.clear();
     SET_STATE(state_cmd0);
+    httpCode = HTTP_OK;
     failed_flag = false;
+    requestSize = 0;
   }
 
   bool httpMessage::parser::state_cmd0(char ch)
@@ -60,27 +62,38 @@ namespace tnt
   {
     if (!std::isspace(ch))
     {
-      message.url = ch;
-      SET_STATE(state_url);
+      if (ch > ' ')
+      {
+        message.url = ch;
+        SET_STATE(state_url);
+      }
+      else
+      {
+        httpCode = HTTP_BAD_REQUEST;
+        failed_flag = true;
+      }
     }
-    return false;
+    return !failed_flag;
   }
 
   bool httpMessage::parser::state_url(char ch)
   {
-    log_debug("httpMessage::parser::state_url(" << ch << ')');
     if (ch == '?')
       SET_STATE(state_qparam);
     else if (std::isspace(ch))
       SET_STATE(state_version);
-    else
+    else if (ch > ' ')
       message.url += ch;
-    return false;
+    else
+    {
+      httpCode = HTTP_BAD_REQUEST;
+      failed_flag = true;
+    }
+    return !failed_flag;
   }
 
   bool httpMessage::parser::state_qparam(char ch)
   {
-    log_debug("httpMessage::parser::state_qparam(" << ch << ')');
     if (std::isspace(ch))
       SET_STATE(state_version);
     else
@@ -93,7 +106,10 @@ namespace tnt
     if (ch == '/')
       SET_STATE(state_version_major);
     else if (ch == '\r')
+    {
+      httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
+    }
     return failed_flag;
   }
 
@@ -104,7 +120,10 @@ namespace tnt
     else if (std::isdigit(ch))
       message.major_version = message.major_version * 10 + (ch - '0');
     else
+    {
+      httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
+    }
     return failed_flag;
   }
 
@@ -117,7 +136,10 @@ namespace tnt
     else if (std::isdigit(ch))
       message.minor_version = message.minor_version * 10 + (ch - '0');
     else
+    {
+      httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
+    }
     return failed_flag;
   }
 
@@ -126,7 +148,10 @@ namespace tnt
     if (ch == '\n')
       SET_STATE(state_header);
     else if (!std::isspace(ch))
+    {
+      httpCode = HTTP_BAD_REQUEST;
       failed_flag = true;
+    }
     return failed_flag;
   }
 
@@ -138,26 +163,17 @@ namespace tnt
       if (!content_length_header.empty())
       {
         std::istringstream valuestream(content_length_header);
-        valuestream >> content_size;
+        valuestream >> bodySize;
         if (!valuestream)
           throw httpError("400 missing Content-Length");
 
-        if (maxBodySize > 0 && content_size > maxBodySize)
-        {
-          log_warn("max body size " << maxBodySize << " exceeded");
-          failed_flag = true;
+        message.content_size = bodySize;
+        if (bodySize == 0)
           return true;
-        }
         else
         {
-          message.content_size = content_size;
-          if (content_size == 0)
-            return true;
-          else
-          {
-            SET_STATE(state_body);
-            return false;
-          }
+          SET_STATE(state_body);
+          return false;
         }
       }
 
@@ -170,6 +186,19 @@ namespace tnt
   bool httpMessage::parser::state_body(char ch)
   {
     message.body += ch;
-    return --content_size == 0;
+    return --bodySize == 0;
+  }
+
+  bool httpMessage::parser::post(bool ret)
+  {
+    if (++requestSize > maxRequestSize && maxRequestSize > 0)
+    {
+      log_warn("max request size " << maxRequestSize << " exceeded");
+      httpCode = HTTP_REQUEST_ENTITY_TOO_LARGE;
+      failed_flag = true;
+      return true;
+    }
+
+    return ret;
   }
 }

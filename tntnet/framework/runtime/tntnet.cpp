@@ -586,8 +586,6 @@ namespace tnt
 
     // configure http-message
     httpMessage::setMaxRequestSize(config.getUnsignedValue("MaxRequestSize"));
-    httpMessage::setMaxHeaderSize(config.getUnsignedValue("MaxHeaderSize"));
-    httpMessage::setMaxBodySize(config.getUnsignedValue("MaxBodySize"));
 
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");

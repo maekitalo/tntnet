@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #define TNT_HTTPPARSER_H
 
 #include <tnt/httpmessage.h>
+#include <tnt/http.h>
 #include <tnt/parser.h>
 #include <tnt/messageheaderparser.h>
 
@@ -32,7 +33,11 @@ namespace tnt
   {
       httpMessage& message;
       messageheader::parser headerParser;
-      size_t content_size;
+
+      unsigned httpCode;
+
+      size_t requestSize;
+      size_t bodySize;
 
       bool state_cmd0(char ch);
       bool state_cmd(char ch);
@@ -46,11 +51,14 @@ namespace tnt
       bool state_header(char ch);
       bool state_body(char ch);
 
+      bool post(bool ret);
+
     public:
       parser(tnt::httpMessage& message_)
         : tnt::parser<parser>(&parser::state_cmd0),
           headerParser(message_.header),
-          message(message_)
+          message(message_),
+          httpCode(HTTP_OK)
         { }
 
       void clear();

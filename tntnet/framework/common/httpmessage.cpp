@@ -47,8 +47,6 @@ namespace tnt
   const std::string httpMessage::Cookie = "Cookie:";
 
   size_t httpMessage::maxRequestSize = 0;
-  size_t httpMessage::maxHeaderSize = 0;
-  size_t httpMessage::maxBodySize = 0;
 
   ////////////////////////////////////////////////////////////////////////
   // httpMessage
