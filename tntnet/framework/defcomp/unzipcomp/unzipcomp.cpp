@@ -96,6 +96,10 @@ unsigned unzipcomp::operator() (tnt::httpRequest& request,
   unzipFile f(request.getArg(0));
   unzipFileStream in(f, pi, false);
 
+  // set Content-Type
+  if (request.getArgs().size() > 1)
+    reply.setContentType(request.getArg(1));
+
   std::copy(std::istreambuf_iterator<char>(in),
             std::istreambuf_iterator<char>(),
             std::ostreambuf_iterator<char>(reply.out()));
