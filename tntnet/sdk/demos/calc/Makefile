@@ -14,7 +14,7 @@ CXXFLAGS = -fPIC -Wall -pedantic -I$(BASEDIR)/framework/common -I$(BASEDIR)/fram
 
 LDFLAGS= -L$(BASEDIR)/framework/ecpp -lecpp
 
-calc.so: calc.o hallo.o
+calc.so: calc.o
 	$(CXX) -shared -o $@ $(LDFLAGS) $^
 
 run: calc.so
