@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#include <tnt/ecppParser.h>
+#include <tnt/ecpp/parser.h>
 #include <tnt/stringescaper.h>
 
 #include <cxxtools/arg.h>
@@ -36,7 +36,7 @@ Boston, MA  02111-1307  USA
 ////////////////////////////////////////////////////////////////////////
 // ecppll - Applikationsklasse - Basisklasse
 //
-class ecppll : public tnt::ecppParser
+class ecppll : public tnt::ecpp::parser
 {
     int ret;
 

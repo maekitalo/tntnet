@@ -24,9 +24,9 @@ Boston, MA  02111-1307  USA
 
 #include <map>
 #include <iosfwd>
-#include <tnt/ecppParser.h>
+#include <tnt/ecpp/parser.h>
 
-class ecpplang : public tnt::ecppParser
+class ecpplang : public tnt::ecpp::parser
 {
     bool inLang;
     unsigned count;
