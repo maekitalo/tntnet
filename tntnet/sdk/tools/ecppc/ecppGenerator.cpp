@@ -733,8 +733,8 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   if (externData && !data.empty())
     code << "  const component* dataComponent = main().getDataComponent(request);\n\n";
   else
-    code << "  const component* dataComponent = this;\n\n";
-  code << "  use(dataComponent);\n";
+    code << "  const component* dataComponent = this;\n";
+  code << "  ::use(dataComponent);\n";
 
   if (!mimetype.empty())
     code << "  reply.setContentType(\"" << mimetype << "\");\n";
@@ -851,7 +851,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 
     if (externData && !data.empty())
       code << "  const component* dataComponent = main().getDataComponent(request);\n"
-              "  use(dataComponent);\n";
+              "  ::use(dataComponent);\n\n";
 
     code << i->getBody()
          << "}\n\n";
