@@ -30,4 +30,4 @@ libtntnet_la_SOURCES = \
 	tnt/urlmapper.h \
 	tnt/zdata.h
 
-libtntnet_la_LDFLAGS = -version-info @sonumber@ -lcxxtools
+libtntnet_la_LDFLAGS = -version-info @sonumber@ -lcxxtools -lz

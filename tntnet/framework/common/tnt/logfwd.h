@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/config.h>
 
-#ifdef HAVE_LOG4CXX
+#ifdef TNTNET_USE_LOG4CXX
 ////////////////////////////////////////////////////////////////////////
 // log4cxx
 //
@@ -37,10 +37,18 @@ Boston, MA  02111-1307  USA
 #define log_declare_class()  \
   static log4cxx::LoggerPtr getLogger()
 
-#elif HAVE_LOG4CPP
+#endif
+
+#ifdef TNTNET_USE_LOG4CPLUS
+
 ////////////////////////////////////////////////////////////////////////
 // log4cplus
 //
+namespace log4cplus
+{
+  class Logger;
+  Logger getLogger();
+};
 
 #define log_declare_namespace(ns)   \
   namespace ns { log4cplus::Logger getLogger(); }
@@ -48,7 +56,9 @@ Boston, MA  02111-1307  USA
 #define log_declare_class()   \
   static log4cplus::Logger getLogger()
 
-#else
+#endif
+
+#ifdef TNTNET_USE_LOGSTDOUT
 ////////////////////////////////////////////////////////////////////////
 // logging to stdout
 //

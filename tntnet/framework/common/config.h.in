@@ -9,18 +9,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* check for log4cplus loggertype=log4cplus LDFLAGS=-llog4cplus */
-#undef HAVE_LOG4CPLUS
-
-/* Define to 1 if you have the <log4cplus/logger.h> header file. */
-#undef HAVE_LOG4CPLUS_LOGGER_H
-
-/* check for log4cxx */
-#undef HAVE_LOG4CXX
-
-/* Define to 1 if you have the <log4cxx/logger.h> header file. */
-#undef HAVE_LOG4CXX_LOGGER_H
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -65,6 +53,15 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* check for log4cplus */
+#undef TNTNET_USE_LOG4CPLUS
+
+/* check for log4cxx */
+#undef TNTNET_USE_LOG4CXX
+
+/* use logging to stdout */
+#undef TNTNET_USE_LOGSTDOUT
 
 /* Version number of package */
 #undef VERSION

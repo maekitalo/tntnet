@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/config.h>
 
-#ifdef HAVE_LOG4CXX
+#ifdef TNTNET_USE_LOG4CXX
 
 #include <log4cxx/logger.h>
 
@@ -41,7 +41,9 @@ void log_init(const std::string& filename);
 void log_init(const char* filename)
 { log_init(std::string(filename)); }
 
-#elif HAVE_LOG4CPP
+#endif
+
+#ifdef TNTNET_USE_LOG4CPLUS
 
 #include <log4cplus/loglevel.h>
 
@@ -55,7 +57,9 @@ void log_init(const char* filename)
 void log_init(log4cplus::LogLevel level = log4cplus::ERROR_LOG_LEVEL);
 void log_init(const std::string& propertyfilename);
 
-#else
+#endif
+
+#ifdef TNTNET_USE_LOGSTDOUT
 
 enum log_level_type {
   FATAL_LOG_LEVEL = 0,

@@ -26,7 +26,7 @@ log_define_namespace(tntcomp, "tntcomp");
 log_define_namespace(ecpp_component, "component");
 log_define_namespace(compcall, "compcall");
 
-#ifdef HAVE_LOG4CXX
+#ifdef TNTNET_USE_LOG4CXX
 
 #include <log4cxx/basicconfigurator.h>
 #include <log4cxx/helpers/stringhelper.h>
@@ -59,7 +59,9 @@ void log_init(const std::string& configFileName)
   }
 }
 
-#elif HAVE_LOG4CPP
+#endif
+
+#ifdef TNTNET_USE_LOG4CPLUS
 
 #include <log4cplus/configurator.h>
 #include <log4cplus/consoleappender.h>
@@ -80,7 +82,9 @@ void log_init(const std::string& propertyfilename)
   logconfig.configure();
 }
 
-#else
+#endif
+
+#ifdef TNTNET_USE_LOGSTDOUT
 
 static log_level_type log_level = INFO_LOG_LEVEL;
 

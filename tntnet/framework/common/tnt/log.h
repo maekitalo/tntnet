@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/logfwd.h>
 
-#ifdef HAVE_LOG4CXX
+#ifdef TNTNET_USE_LOG4CXX
 
 #include <log4cxx/logger.h>
 
@@ -85,26 +85,28 @@ namespace tnt
     return ::log4cxx::Logger::getLogger(log_category); \
   }
 
-#elif HAVE_LOG4CPP
+#endif
+
+#ifdef TNTNET_USE_LOG4CPLUS
 
 #include <log4cplus/logger.h>
 
 /// logging-Makros
-#define log_fatal(expr)  LOG4CPLUS_FATAL(getLogger(), expr)
-#define log_error(expr)  LOG4CPLUS_ERROR(getLogger(), expr)
-#define log_warn(expr)   LOG4CPLUS_WARN(getLogger(), expr)
-#define log_info(expr)   LOG4CPLUS_INFO(getLogger(), expr)
-#define log_debug(expr)  LOG4CPLUS_DEBUG(getLogger(), expr)
+#define log_fatal(expr)  do { LOG4CPLUS_FATAL(getLogger(), expr) } while(false)
+#define log_error(expr)  do { LOG4CPLUS_ERROR(getLogger(), expr) } while(false)
+#define log_warn(expr)   do { LOG4CPLUS_WARN(getLogger(), expr) } while(false)
+#define log_info(expr)   do { LOG4CPLUS_INFO(getLogger(), expr) } while(false)
+#define log_debug(expr)  do { LOG4CPLUS_DEBUG(getLogger(), expr) } while(false)
 
-#define log_trace(event)  LOG4CPLUS_TRACE_METHOD(getLogger(), event)
+#define log_trace(event)  do { LOG4CPLUS_TRACE_METHOD(getLogger(), event) } while(false)
 
-#define log_fatal_ns(ns, expr)  LOG4CPLUS_FATAL(ns::getLogger(), expr)
-#define log_error_ns(ns, expr)  LOG4CPLUS_ERROR(ns::getLogger(), expr)
-#define log_warn_ns(ns, expr)   LOG4CPLUS_WARN(ns::getLogger(), expr)
-#define log_info_ns(ns, expr)   LOG4CPLUS_INFO(ns::getLogger(), expr)
-#define log_debug_ns(ns, expr)  LOG4CPLUS_DEBUG(ns::getLogger(), expr)
+#define log_fatal_ns(ns, expr)  do { LOG4CPLUS_FATAL(ns::getLogger(), expr) } while(false)
+#define log_error_ns(ns, expr)  do { LOG4CPLUS_ERROR(ns::getLogger(), expr) } while(false)
+#define log_warn_ns(ns, expr)   do { LOG4CPLUS_WARN(ns::getLogger(), expr) } while(false)
+#define log_info_ns(ns, expr)   do { LOG4CPLUS_INFO(ns::getLogger(), expr) } while(false)
+#define log_debug_ns(ns, expr)  do { LOG4CPLUS_DEBUG(ns::getLogger(), expr) } while(false)
 
-#define log_trace_ns(ns, event)  LOG4CPLUS_TRACE_METHOD(ns::getLogger(), event)
+#define log_trace_ns(ns, event)  do { LOG4CPLUS_TRACE_METHOD(ns::getLogger(), event) } while(false)
 
 /// Makros zum definieren von Loggingkategorien pro Namespace
 
@@ -135,7 +137,9 @@ namespace tnt
     return tntlogger;  \
   }
 
-#else
+#endif
+
+#ifdef TNTNET_USE_LOGSTDOUT
 
 #define log_fatal(expr)   do { std::cout << expr; } while (false)
 #define log_error(expr)   do { std::cout << expr; } while (false)
