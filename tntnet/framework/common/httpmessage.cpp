@@ -34,9 +34,11 @@ namespace tnt
   const std::string httpMessage::Connection_Keep_Alive = "Keep-Alive";
   const std::string httpMessage::Last_Modified = "Last-Modified:";
   const std::string httpMessage::Server = "Server:";
-  const std::string httpMessage::ServerName = "Tntnet " VERSION;
+  const std::string httpMessage::ServerName = "Tntnet/" VERSION;
   const std::string httpMessage::Location = "Location:";
   const std::string httpMessage::AcceptLanguage = "Accept-Language:";
+  const std::string httpMessage::AcceptEncoding = "Accept-Encoding:";
+  const std::string httpMessage::ContentEncoding = "Content-Encoding:";
   const std::string httpMessage::Date = "Date:";
   const std::string httpMessage::KeepAlive = "Keep-Alive:";
   const std::string httpMessage::IfModifiedSince = "If-Modified-Since:";

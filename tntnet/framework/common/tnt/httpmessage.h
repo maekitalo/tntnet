@@ -46,6 +46,8 @@ namespace tnt
       static const std::string ServerName;
       static const std::string Location;
       static const std::string AcceptLanguage;
+      static const std::string AcceptEncoding;
+      static const std::string ContentEncoding;
       static const std::string Date;
       static const std::string KeepAlive;
       static const std::string IfModifiedSince;
