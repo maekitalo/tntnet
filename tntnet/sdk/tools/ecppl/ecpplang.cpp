@@ -44,8 +44,6 @@ void ecpplang::print(std::ostream& out) const
   for (data_type::const_iterator it = data.begin();
        it != data.end(); ++it)
   {
-    if (!textformat)
-      out << it->first << '\t';
     std::transform(
       it->second.begin(),
       it->second.end(),

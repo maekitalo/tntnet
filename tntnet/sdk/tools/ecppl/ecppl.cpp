@@ -35,7 +35,6 @@ int main(int argc, char* argv[])
     arg<bool> lang(argc, argv, 'l');
     arg<bool> nolang(argc, argv, 'n');
     arg<const char*> ofile(argc, argv, 'o');
-    arg<bool> textformat(argc, argv, 't');
     arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 2)
@@ -44,7 +43,6 @@ int main(int argc, char* argv[])
         << "Aufruf: " << argv[0] << " {Optionen} Quelldatei\n\n"
            "Generiert aus ecpp-Komponenten eine Tabulator-separierte Textdatei mit\n"
            "Texten, die zu übersetzen sind.\n\n"
-           "  -t             Textformat\n"
            "  -o Dateiname   Ausgabedatei\n"
            "  -n             nolang\n"
            "  -l             lang (default)\n"
@@ -70,7 +68,6 @@ int main(int argc, char* argv[])
     }
     generator.setLang(lang || !nolang);
     generator.setNoLang(nolang);
-    generator.setTextformat(textformat);
     generator.parse(in);
 
     if (ofile.isSet())

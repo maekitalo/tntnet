@@ -36,15 +36,13 @@ class ecpplang : public tnt::ecppParser
 
     bool lang;
     bool nolang;
-    bool textformat;
 
   public:
     ecpplang()
       : inLang(false),
         count(0),
         lang(true),
-        nolang(false),
-        textformat(false)
+        nolang(false)
       { }
 
     virtual void processHtml(const std::string& html);
@@ -54,9 +52,6 @@ class ecpplang : public tnt::ecppParser
       { lang = sw; }
     void setNoLang(bool sw = true)
       { nolang = sw; }
-
-    void setTextformat(bool sw = true)
-      { textformat = sw; }
 
     void print(std::ostream& out) const;
 };

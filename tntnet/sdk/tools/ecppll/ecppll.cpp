@@ -48,6 +48,11 @@ class ecppll : public tnt::ecppParser
     void fail(int _ret = 1)  { ret = _ret; }
     void warn(int _ret = 1)  { if (failOnWarn) ret = _ret; };
 
+    typedef std::list<std::pair<std::string, std::string> > replacetokens_type;
+
+    replacetokens_type replacetokens;
+    replacetokens_type::const_iterator next;
+
   public:
     ecppll()
       : ret(0),
@@ -55,7 +60,8 @@ class ecppll : public tnt::ecppParser
         failOnWarn(false)
       { }
 
-    virtual void readReplaceTokens(std::istream& in) = 0;
+    virtual void readReplaceTokens(std::istream& in);
+    virtual void processHtml(const std::string& html);
     virtual void tokenSplit(bool start);
 
     void setFailOnWarn(bool sw = true)
@@ -63,37 +69,6 @@ class ecppll : public tnt::ecppParser
 
     void print(std::ostream& out, const std::string& compname);
     int getRet() const  { return ret; }
-};
-
-////////////////////////////////////////////////////////////////////////
-// ecppll_num - Applikationsklasse - nummerisches Format
-//
-class ecppll_num : public ecppll
-{
-    typedef std::map<unsigned, std::string> replacetokens_type;
-    replacetokens_type replacetokens;
-
-  public:
-    virtual void readReplaceTokens(std::istream& in);
-    virtual void processHtml(const std::string& html);
-};
-
-////////////////////////////////////////////////////////////////////////
-// ecppll_text - Applikationsklasse
-//
-class ecppll_text : public ecppll
-{
-    typedef std::list<std::pair<std::string, std::string> > replacetokens_type;
-
-    replacetokens_type replacetokens;
-    replacetokens_type::const_iterator next;
-
-  public:
-    ecppll_text()
-      { }
-
-    virtual void readReplaceTokens(std::istream& in);
-    virtual void processHtml(const std::string& html);
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -122,132 +97,7 @@ void ecppll::print(std::ostream& out, const std::string& compname)
   }
 }
 
-////////////////////////////////////////////////////////////////////////
-// Funktionen zur Applikationsklasse - nummerisches Format
-//
-void ecppll_num::readReplaceTokens(std::istream& in)
-{
-  enum state_type
-  {
-    state_num0,
-    state_num,
-    state_token,
-    state_esc
-  };
-
-  int max = -1;
-  int n = 0;
-  std::string token;
-
-  state_type state = state_num0;
-  char ch;
-  unsigned curline = 1;
-  while (in.get(ch))
-  {
-    if (ch == '\n')
-      ++curline;
-
-    switch (state)
-    {
-      case state_num0:
-        if (std::isdigit(ch))
-        {
-          n = (ch - '0');
-          state = state_num;
-        }
-        else if (!std::isspace(ch))
-        {
-          std::ostringstream msg;
-          msg << "digit expected in line " << curline;
-          throw std::runtime_error(msg.str());
-        }
-        break;
-
-      case state_num:
-        if (std::isdigit(ch))
-          n = n * 10 + (ch - '0');
-        else if (ch == '\t')
-        {
-          if (n <= max)
-          {
-            std::ostringstream msg;
-            msg << n << " <= " << max << " in line " << curline;
-            throw std::runtime_error(msg.str());
-          }
-
-          max = n;
-          state = state_token;
-        }
-        else
-        {
-          std::ostringstream msg;
-          msg << "parse error in line " << curline;
-          throw std::runtime_error(msg.str());
-        }
-        break;
-
-      case state_token:
-        if (ch == '\n')
-        {
-          replacetokens[n] = token;
-          token.clear();
-          state = state_num0;
-        }
-        else if (ch == '\\')
-          state = state_esc;
-        else
-          token += ch;
-        break;
-
-      case state_esc:
-        switch (ch)
-        {
-          case 't': token += '\t'; break;
-          case 'n': token += '\n'; break;
-          case 'r': token += '\r'; break;
-          case 'f': token += '\f'; break;
-          default : token += ch;
-        }
-        state = state_token;
-        break;
-    }
-  }
-
-  if (state == state_token)
-    replacetokens[n] = token;
-}
-
-void ecppll_num::processHtml(const std::string& html)
-{
-  replacetokens_type::const_iterator it;
-  it = replacetokens.find(data.size());
-
-  if (it == replacetokens.end())
-  {
-    if (inLang)
-    {
-      std::cerr << "Warnung: Token " << data.size() << " nicht gefunden"
-        << std::endl;
-      warn();
-    }
-    data.push_back(html);
-  }
-  else
-  {
-    if (!inLang)
-    {
-      std::cerr << "Fehler: Token " << data.size() << " wird durch \""
-        << it->second << "\" ersetzt" << std::endl;
-      fail();
-    }
-    data.push_back(it->second);
-  }
-}
-
-////////////////////////////////////////////////////////////////////////
-// Funktionen zur Applikationsklasse - Textformat
-//
-void ecppll_text::readReplaceTokens(std::istream& in)
+void ecppll::readReplaceTokens(std::istream& in)
 {
   enum state_type
   {
@@ -316,7 +166,7 @@ void ecppll_text::readReplaceTokens(std::istream& in)
   next = replacetokens.begin();
 }
 
-void ecppll_text::processHtml(const std::string& html)
+void ecppll::processHtml(const std::string& html)
 {
   if (inLang)
   {
@@ -385,14 +235,12 @@ int main(int argc, char* argv[])
   {
     arg<const char*> ofile(argc, argv, 'o');
     arg<const char*> compname(argc, argv, 'n', "component");
-    arg<bool> textformat(argc, argv, 't');
     arg<bool> fail_on_warn(argc, argv, 'F');
     arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 3)
     {
       std::cerr << "Aufruf " << argv[0] << " {Optionen} <ecpp-Komponente> <übersetzte Texte>\n\n"
-                   " -t           Textformat\n"
                    " -o outfile   Ausagedatei\n"
                    " -n compname  Komponentenname\n"
                    " -F           Warnungen als Fehler\n"
@@ -419,16 +267,11 @@ int main(int argc, char* argv[])
     }
 
     // create and initialize applicationobject
-    std::auto_ptr<ecppll> app;
+    ecppll app;
 
-    if (textformat)
-      app = std::auto_ptr<ecppll>(new ecppll_text);
-    else
-      app = std::auto_ptr<ecppll>(new ecppll_num);
-
-    app->setFailOnWarn(fail_on_warn);
-    app->readReplaceTokens(txt);
-    app->setSplitBar();
+    app.setFailOnWarn(fail_on_warn);
+    app.readReplaceTokens(txt);
+    app.setSplitBar();
 
     if (splitChars.isSet())
     {
@@ -437,23 +280,23 @@ int main(int argc, char* argv[])
        || splitChars.getValue()[2] != '\0')
         throw std::runtime_error("--split-chars needs exactly 2 characters");
 
-      app->setSplitChars(splitChars.getValue()[0],
-                         splitChars.getValue()[1]);
+      app.setSplitChars(splitChars.getValue()[0],
+                        splitChars.getValue()[1]);
     }
 
     // parse
-    app->parse(ecpp);
+    app.parse(ecpp);
 
     // process
     if (ofile.isSet())
     {
       std::ofstream out(ofile);
-      app->print(out, compname.getValue());
+      app.print(out, compname.getValue());
     }
     else
-      app->print(std::cout, compname.getValue());
+      app.print(std::cout, compname.getValue());
 
-    return app->getRet();
+    return app.getRet();
   }
   catch (const std::exception& e)
   {
