@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
     arg<bool> verbose(argc, argv, 'v');
     arg<bool> debug(argc, argv, 'd');
     arg<bool> splitBar(argc, argv, 'S');
+    arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 2 || argv[1][0] == '-')
     {
@@ -64,14 +65,15 @@ int main(int argc, char* argv[])
            "  -b               binär\n"
            "  -B klasse        zusätzliche Basisklasse\n"
            "  -C klasse        alternative Basisklasse (muß von ecppComponent abgeleitet sein)\n"
-           "  -compress-html   entferne überflüssige Zeichen aus HTML-code\n"
-           "  -compress-css    entferne überflüssige Zeichen aus CSS-code\n"
-           "  -compress-js     entferne überflüssige Zeichen aus JavaScript-code\n"
+           "  --compress-html  entferne überflüssige Zeichen aus HTML-code\n"
+           "  --compress-css   entferne überflüssige Zeichen aus CSS-code\n"
+           "  --compress-js    entferne überflüssige Zeichen aus JavaScript-code\n"
            "  -z               komprimiere konstanten Text\n"
            "  -x               speichere konstanten Text extern\n"
            "  -v               verbose\n"
            "  -d               debug\n"
            "  -S               teile Chunks bei '{' und '}'\n"
+           "  --split-chars zz setze alternative Teilungszeichen\n"
         << std::endl;
       return -1;
     }
@@ -140,6 +142,16 @@ int main(int argc, char* argv[])
     generator.setCompress(compress);
     generator.setExternData(externData);
     generator.setSplitBar(splitBar);
+    if (splitChars.isSet())
+    {
+      if (splitChars.getValue()[0] == '\0'
+       || splitChars.getValue()[1] == '\0'
+       || splitChars.getValue()[2] != '\0')
+        throw std::runtime_error("--split-chars needs exactly 2 characters");
+
+      generator.setSplitChars(splitChars.getValue()[0],
+                              splitChars.getValue()[1]);
+    }
 
     //
     // parse Quelldatei

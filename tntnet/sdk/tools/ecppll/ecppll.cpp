@@ -108,7 +108,7 @@ void ecppll::print(std::ostream& out, const std::string& compname)
 {
   for (data_type::const_iterator it = data.begin();
        it != data.end(); ++it)
-    out << '«' << *it << '»';
+    out << '{' << *it << '}';
 }
 
 ////////////////////////////////////////////////////////////////////////

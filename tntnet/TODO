@@ -6,7 +6,7 @@
 
 doc:
 - ingnorieren von Zeilenschaltungen nach %-Tags
-- '«»' (split)
+- '{}' (split)
 - '\' (escape)
 - multipart
 - <%attr>
