@@ -1,4 +1,4 @@
-VERSION=1.0.0
+VERSION=1.1.0
 CXXFLAGS = -Wall -O2 -I. -fPIC $(LOCAL_CXXFLAGS)
 LDFLAGS = -lcxxtools -llog4cplus -lz -Wl,-E $(LOCAL_LDFLAGS)
 DESTDIR = $(ROOTDIR)/usr/local

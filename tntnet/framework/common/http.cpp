@@ -423,6 +423,31 @@ std::string httpRequest::getServerIp() const
   return std::string(p);
 }
 
+std::string httpRequest::getLang() const
+{
+  if (!lang_init)
+  {
+    static const std::string LANG = "LANG";
+    log_debug("httpRequest::getLang() " << qparam.dump());
+    if (qparam.has(LANG))
+    {
+      log_debug("LANG from query-parameter");
+      lang = qparam[LANG];
+    }
+    else
+    {
+      const char* LANG = ::getenv("LANG");
+      if (LANG)
+        lang = LANG;
+    }
+
+    log_info("LANG=" << lang);
+    lang_init = true;
+  }
+
+  return lang;
+}
+
 ////////////////////////////////////////////////////////////////////////
 // httpReply
 //

@@ -165,9 +165,14 @@ namespace tnt
       bool ssl;
       unsigned serial;
       static unsigned serial_;
+      mutable bool lang_init;
+      mutable std::string lang;
 
     public:
-      httpRequest() : ssl(false) { }
+      httpRequest()
+        : ssl(false),
+          lang_init(false)
+        { }
 
       void setPathInfo(const std::string& p)       { pathinfo = p; }
       const std::string& getPathInfo() const       { return pathinfo; }
@@ -206,6 +211,8 @@ namespace tnt
       const multipart& getMultipart() const  { return mp; }
 
       unsigned getSerial() const             { return serial; }
+
+      std::string getLang() const;
   };
 
   /// eine HTTP-Reply-message

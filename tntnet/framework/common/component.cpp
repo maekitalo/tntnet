@@ -31,12 +31,12 @@ namespace tnt
     return def;
   }
 
-  unsigned component::getDataCount() const
+  unsigned component::getDataCount(const httpRequest& request) const
   { return 0; }
 
-  unsigned component::getDataLen(unsigned n) const
+  unsigned component::getDataLen(const httpRequest& request, unsigned n) const
   { return 0; }
 
-  const char* component::getDataPtr(unsigned n) const
+  const char* component::getDataPtr(const httpRequest& request, unsigned n) const
   { return 0; }
 }

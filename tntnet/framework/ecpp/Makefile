@@ -1,4 +1,4 @@
-VERSION=1.0.0
+VERSION=1.1.0
 CXXFLAGS = -Wall -O2 -I. -I../common -fPIC $(LOCAL_CXXFLAGS)
 LDFLAGS = -L../common -ltntnet -Wl,-E $(LOCAL_LDFLAGS)
 DESTDIR = $(ROOTDIR)/usr/local

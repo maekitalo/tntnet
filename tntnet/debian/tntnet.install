@@ -1,4 +1,2 @@
-debian/tmp/usr/lib/tntnet.so
-debian/tmp/usr/bin/tntnet
 debian/tmp/etc/tntnet/*
 debian/tmp/etc/init.d/tntnet

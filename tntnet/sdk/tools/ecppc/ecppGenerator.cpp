@@ -289,7 +289,7 @@ void ecppGenerator::processHtml(const std::string& html)
   {
     std::ostringstream m;
 
-    m << "  reply.out() << DATA(" << (data.count() - 1) << "); // ";
+    m << "  reply.out() << DATA(dataComponent, request, " << (data.count() - 1) << "); // ";
 
     std::transform(
       chunk.begin(),
@@ -506,20 +506,16 @@ std::string ecppGenerator::getHeader(const std::string& basename,
             "    log_declare_class();\n\n" 
             "    // <%declare>\n"
          << declare
-         << "    // </%declare>\n\n";
-  if (externData)
-    header << "  private:\n"
-              "    mutable compident dataCompident;\n\n";
-  header << "  protected:\n"
+         << "    // </%declare>\n\n"
+            "  protected:\n"
             "    " << classname << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
             "    ~" << classname << "();\n\n"
             "  public:\n"
-            "    const component* getDataComponent() const;\n\n"
             "    unsigned operator() (httpRequest& request, httpReply& reply, query_params& qparam);\n"
             "    bool drop();\n"
-            "    unsigned    getDataCount() const;\n"
-            "    unsigned    getDataLen(unsigned n) const;\n"
-            "    const char* getDataPtr(unsigned n) const;\n";
+            "    unsigned    getDataCount(const httpRequest& request) const;\n"
+            "    unsigned    getDataLen(const httpRequest& request, unsigned n) const;\n"
+            "    const char* getDataPtr(const httpRequest& request, unsigned n) const;\n";
   if (!attr.empty())
     header << "    std::string getAttribute(const std::string& name,\n"
               "      const std::string& def = std::string()) const;\n";
@@ -632,16 +628,14 @@ std::string ecppGenerator::getCpp(const std::string& basename,
 
   if (externData)
   {
-    code << "#define DATA(n) tnt::data_chunk(dataComponent->getDataPtr(n), dataComponent->getDataLen(n))\n"
-            "#define DATA_COUNT() dataComponent->getDataCount()\n"
-            "#define DATA_SIZE(n) dataComponent->getDataLen(n)\n\n";
+    code << "#define DATA(dc, r, n) (tnt::data_chunk(dc->getDataPtr(r, n), dc->getDataLen(r, n)))\n"
+            "#define DATA_SIZE(dc, r, n) (dc->getDataLen(r, n))\n\n";
      
   }
   else
   {
-    code << "#define DATA(n) data[n]\n"
-            "#define DATA_COUNT() data.size()\n"
-            "#define DATA_SIZE(n) data.size(n)\n\n";
+    code << "#define DATA(dc, r, n) data[n]\n"
+            "#define DATA_SIZE(dc, r, n) data.size(n)\n\n";
   }
 
   // creator
@@ -703,46 +697,17 @@ std::string ecppGenerator::getCpp(const std::string& basename,
           "  // <%cleanup>\n"
        << cleanup
        << "  // </%cleanup>\n"
-          "}\n\n";
-
-  if (externData)
-    code << "const component* " << classname << "::getDataComponent() const\n"
-            "{\n"
-            "  if (dataCompident.empty())\n"
-            "  {\n"
-            "    MutexLock lock(mutex);\n"
-            "    if (dataCompident.empty())\n"
-            "    {\n"
-            "      const char* LANG = ::getenv(\"LANG\");\n"
-            "      if (LANG)\n"
-            "      {\n"
-            "        try\n"
-            "        {\n"
-            "          dataCompident = compident(getCompident().libname + '.' + LANG,\n"
-            "                                    getCompident().compname);\n"
-            "          return &fetchComp(dataCompident);\n"
-            "        }\n"
-            "        catch (const dl::error&)\n"
-            "        {\n"
-            "          dataCompident = getCompident();\n"
-            "        }\n"
-            "      }\n"
-            "      else\n"
-            "        dataCompident = getCompident();\n"
-            "    }\n"
-            "  }\n"
-            "\n"
-            "  return &fetchComp(dataCompident);\n"
-            "}\n\n";
-
-  code << "unsigned " << classname << "::operator() (httpRequest& request, httpReply& reply, query_params& qparam)\n"
+          "}\n\n"
+          "unsigned " << classname << "::operator() (httpRequest& request, httpReply& reply, query_params& qparam)\n"
        << "{\n";
 
   if (isDebug())
     code << "  log_trace_ns(compcall, \"" << classname << " \" + qparam.getUrl());\n";
 
   if (externData && !data.empty())
-    code << "  const component* dataComponent = main().getDataComponent();\n";
+    code << "  const component* dataComponent = main().getDataComponent(request);\n";
+  else
+    code << "  const component* dataComponent = this;\n";
 
   if (!mimetype.empty())
     code << "  reply.setContentType(\"" << mimetype << "\");\n";
@@ -753,7 +718,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
     code << "  if (request.keepAlive())\n"
             "  {\n"
             "    reply.setHeader(tnt::httpMessage::Connection, tnt::httpMessage::Connection_Keep_Alive);\n"
-            "    reply.setContentLengthHeader(DATA_SIZE(0));\n"
+            "    reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
             "  }\n\n"
             "  reply.setDirectMode();\n\n";
 
@@ -785,14 +750,14 @@ std::string ecppGenerator::getCpp(const std::string& basename,
   }
 
   code << "}\n\n"
-          "unsigned " << classname << "::getDataCount() const\n"
+          "unsigned " << classname << "::getDataCount(const httpRequest& request) const\n"
           "{ return data.size(); }\n\n";
 
   if (externData)
   {
-    code << "unsigned " << classname << "::getDataLen(unsigned n) const\n"
+    code << "unsigned " << classname << "::getDataLen(const httpRequest& request, unsigned n) const\n"
             "{\n"
-            "  const component* dataComponent = getDataComponent();\n"
+            "  const component* dataComponent = getDataComponent(request);\n"
             "  if (dataComponent == this)\n"
             "  {\n"
             "    if (n >= data.size())\n"
@@ -800,11 +765,11 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "    return data[n].getLength();\n"
             "  }\n"
             "  else\n"
-            "    return dataComponent->getDataLen(n);\n"
+            "    return dataComponent->getDataLen(request, n);\n"
             "}\n\n"
-            "const char* " << classname << "::getDataPtr(unsigned n) const\n"
+            "const char* " << classname << "::getDataPtr(const httpRequest& request, unsigned n) const\n"
             "{\n"
-            "  const component* dataComponent = getDataComponent();\n"
+            "  const component* dataComponent = getDataComponent(request);\n"
             "  if (dataComponent == this)\n"
             "  {\n"
             "    if (n >= data.size())\n"
@@ -812,18 +777,18 @@ std::string ecppGenerator::getCpp(const std::string& basename,
             "    return data[n].getData();\n"
             "  }\n"
             "  else\n"
-            "    return dataComponent->getDataPtr(n);\n"
+            "    return dataComponent->getDataPtr(request, n);\n"
             "}\n\n";
   }
   else
   {
-    code << "unsigned " << classname << "::getDataLen(unsigned n) const\n"
+    code << "unsigned " << classname << "::getDataLen(const httpRequest& request, unsigned n) const\n"
             "{\n"
             "  if (n >= data.size())\n"
             "    throw std::range_error(\"range_error in " << classname << "::getDataLen\");\n"
             "  return data[n].getLength();\n"
             "}\n\n"
-            "const char* " << classname << "::getDataPtr(unsigned n) const\n"
+            "const char* " << classname << "::getDataPtr(const httpRequest& request, unsigned n) const\n"
             "{\n"
             "  if (n >= data.size())\n"
             "    throw std::range_error(\"range_error in " << classname << "::getDataPtr\");\n"
@@ -861,7 +826,7 @@ std::string ecppGenerator::getCpp(const std::string& basename,
       code << "  log_trace_ns(compcall, \"" << classname << "::" << i->name << " \" + qparam.getUrl());\n";
 
     if (externData && !data.empty())
-      code << "  const component* dataComponent = main().getDataComponent();\n";
+      code << "  const component* dataComponent = main().getDataComponent(request);\n";
 
     code << i->getBody()
          << "}\n\n";

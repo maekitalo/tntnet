@@ -1,3 +1,9 @@
+tntnet (1.1-1) unstable; urgency=low
+
+  * ecpp-components read LANG from request first.
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 31 Aug 2004 14:32:28 +0200
+
 tntnet (1.0-1) unstable; urgency=low
 
   * Initial Release.

@@ -7,6 +7,7 @@
 
 #include <tnt/component.h>
 #include <map>
+#include <set>
 
 namespace tnt
 {
@@ -47,6 +48,15 @@ namespace tnt
       virtual subcomps_type& getSubcomps()               { return subcomps; }
       virtual const subcomps_type& getSubcomps() const   { return subcomps; }
 
+      typedef std::set<std::string> libnotfound_type;
+      typedef std::set<compident> compnotfound_type;
+
+      static libnotfound_type libnotfound;
+      static compnotfound_type compnotfound;
+
+      static void rememberLibNotFound(const std::string& lib);
+      static void rememberCompNotFound(const compident& ci);
+
     protected:
       virtual ~ecppComponent();
       void registerSubComp(const std::string& name, ecppSubComponent* comp);
@@ -63,6 +73,8 @@ namespace tnt
         httpReply& reply, query_params& qparam);
 
       const compident& getCompident() const  { return myident; }
+
+      const component* getDataComponent(const httpRequest& request) const;
   };
 
   //////////////////////////////////////////////////////////////////////

@@ -71,11 +71,11 @@ class component
     virtual std::string getAttribute(const std::string& name,
       const std::string& def = std::string()) const;
 
-    virtual unsigned getDataCount() const;
-    virtual unsigned getDataLen(unsigned n) const;
-    virtual const char* getDataPtr(unsigned n) const;
-    std::string getData(unsigned n) const
-      { return std::string(getDataPtr(n), getDataLen(n)); }
+    virtual unsigned getDataCount(const httpRequest& request) const;
+    virtual unsigned getDataLen(const httpRequest& request, unsigned n) const;
+    virtual const char* getDataPtr(const httpRequest& request, unsigned n) const;
+    std::string getData(const httpRequest& r, unsigned n) const
+      { return std::string(getDataPtr(r, n), getDataLen(r, n)); }
 };
 
 }

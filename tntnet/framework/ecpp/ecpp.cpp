@@ -41,6 +41,10 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // ecppComponent
   //
+  RWLock equivMonitor;
+  ecppComponent::libnotfound_type ecppComponent::libnotfound;
+  ecppComponent::compnotfound_type ecppComponent::compnotfound;
+
   ecppComponent::ecppComponent(const compident& ci, const urlmapper& um,
     comploader& cl)
     : myident(ci),
@@ -123,6 +127,61 @@ namespace tnt
     if (it == getSubcomps().end())
       throw notFoundException(subcompident(getCompident(), sub).toString());
     return *it->second;
+  }
+
+  const component* ecppComponent::getDataComponent(const httpRequest& request) const
+  {
+    std::string LANG = request.getLang();
+
+    if (!LANG.empty())
+    {
+      compident ci = compident(getCompident().libname + '.' + LANG,
+                                    getCompident().compname);
+
+      // check compidentmap
+      {
+        RdLock lock(equivMonitor);
+
+        libnotfound_type::const_iterator lit = libnotfound.find(ci.libname);
+        if (lit != libnotfound.end())
+          return this;
+
+        compnotfound_type::const_iterator cit = compnotfound.find(ci);
+        if (cit != compnotfound.end())
+          return this;
+      }
+
+      try
+      {
+        return &fetchComp(ci);
+      }
+      catch (const dl::symbol_not_found&)
+      {
+        // symbol with lang not found - remember this
+        rememberCompNotFound(ci);
+      }
+      catch (const dl::dlopen_error&)
+      {
+        // library with lang not found - remember this
+        rememberLibNotFound(ci.libname);
+      }
+    }
+
+    return this;
+  }
+
+  void ecppComponent::rememberLibNotFound(const std::string& lib)
+  {
+    log_debug("remember lib not found " << lib);
+    WrLock wrlock(equivMonitor);
+    libnotfound.insert(lib);
+  }
+
+  void ecppComponent::rememberCompNotFound(const compident& ci)
+  {
+    log_debug("remember comp not found " << ci);
+    WrLock wrlock(equivMonitor);
+    compnotfound.insert(ci);
   }
 
   ///////////////////////////////////////////////////////////////////////
