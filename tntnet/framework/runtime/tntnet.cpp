@@ -25,7 +25,6 @@ Boston, MA  02111-1307  USA
 #include "tnt/listener.h"
 #include "tnt/log.h"
 #include "tnt/loginit.h"
-#include "config.h"
 
 #include <iostream>
 #include <fstream>
