@@ -81,10 +81,12 @@ namespace tnt
             httpRequest request;
             socket >> request;
 
-            if (socket.eof())
+            if (!socket.good())
             {
               if (socket.fail())
                 log_warn("stream error");
+              else if (socket.eof())
+                log_debug("eof");
               break;
             }
 
