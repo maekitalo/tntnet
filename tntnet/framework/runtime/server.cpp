@@ -115,9 +115,10 @@ namespace tnt
       {
         component& comp = mycomploader.fetchComp(ci, ourdispatcher);
         component_unload_lock unload_lock(comp);
-        request.setPathInfo(ci.pathinfo);
-        request.setArgs(ci.args);
-        log_debug("call component " << ci << " path \"" << ci.pathinfo << '"');
+        request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
+        request.setArgs(ci.getArgs());
+        log_debug("call component " << ci
+          << " path \"" << ci.getPathInfo() << '"');
         unsigned http_return = comp(request, reply, request.getQueryParams());
         if (http_return != DECLINED)
         {

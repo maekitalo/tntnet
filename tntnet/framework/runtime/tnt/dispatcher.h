@@ -20,20 +20,34 @@ namespace tnt
       {
         public:
           typedef std::vector<std::string> args_type;
+
+        private:
           std::string pathinfo;
           args_type args;
+          bool pathinfo_set;
 
-          compident_type()  { }
-          compident_type(const std::string& l, const::std::string& n,
-            const std::string& p, const args_type& a)
-            : compident(l, n),
-              pathinfo(p),
-              args(a)
-          { }
+        public:
+          compident_type()
+            : pathinfo_set(false)
+            { }
 
           explicit compident_type(const std::string& ident)
-            : compident(ident)
-          { }
+            : compident(ident),
+              pathinfo_set(false)
+            { }
+
+          bool hasPathInfo() const
+            { return pathinfo_set; }
+          void setPathInfo(const std::string& p)
+            { pathinfo = p; pathinfo_set = true; }
+          void setArgs(const args_type& a)
+            { args = a; }
+          const std::string& getPathInfo() const
+            { return pathinfo; }
+          const args_type& getArgs() const
+            { return args; }
+          args_type& getArgsRef()
+            { return args; }
       };
 
     private:

@@ -51,8 +51,10 @@ dispatcher::compident_type dispatcher::mapCompNext(const std::string& compUrl,
       compident_type ci;
       ci.libname = formatter(src.libname);
       ci.compname = formatter(src.compname);
-      ci.pathinfo = formatter(src.pathinfo);
-      transform(src.args.begin(), src.args.end(), back_inserter(ci.args), formatter);
+      if (src.hasPathInfo())
+        ci.setPathInfo(formatter(src.getPathInfo()));
+      transform(src.getArgs().begin(), src.getArgs().end(),
+        back_inserter(ci.getArgsRef()), formatter);
 
       return ci;
     }
