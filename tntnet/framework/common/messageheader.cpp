@@ -35,6 +35,7 @@ namespace tnt
     enum state_type
     {
       state_0,
+      state_cr,
       state_fieldname,
       state_fieldnamespace,
       state_fieldbody0,
@@ -62,11 +63,21 @@ namespace tnt
             fieldname = ch;
             state = state_fieldname;
           }
+          else if (ch == '\n')
+            state = state_end;
+          else if (ch == '\r')
+            state = state_cr;
           else if (!std::isspace(ch))
           {
             in.setstate(std::ios::failbit);
             state = state_end;
           }
+          break;
+
+        case state_cr:
+          if (ch != '\n')
+            in.setstate(std::ios::failbit);
+          state = state_end;
           break;
 
         case state_fieldname:
@@ -145,6 +156,7 @@ namespace tnt
             }
             fieldname.clear();
             fieldbody.clear();
+            state = state_end;
           }
           else if (std::isspace(ch))
           {

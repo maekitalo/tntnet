@@ -233,7 +233,9 @@ void httpMessage::parseStartline(std::istream& in)
         break;
 
       case state_version_minor:
-        if (std::isspace(ch))
+        if (ch == '\n')
+          state = state_end;
+        else if (std::isspace(ch))
           state = state_end0;
         else if (std::isdigit(ch))
           minor_version = minor_version * 10 + (ch - '0');
