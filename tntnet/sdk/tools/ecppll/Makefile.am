@@ -3,6 +3,6 @@ bin_PROGRAMS = ecppll
 ecppll_SOURCES = \
 	ecppll.cpp
 
-ecppll_LDFLAGS = -L../common -ltntnet_sdk
+ecppll_LDADD = $(top_builddir)/framework/common/libtntnet.la $(top_builddir)/sdk/tools/common/libtntnet_sdk.la
 
 INCLUDES = -I../common
