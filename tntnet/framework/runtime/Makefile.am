@@ -16,5 +16,5 @@ tntnet_SOURCES = \
 	tnt/ssl.h \
 	tnt/tntnet.h
 
-tntnet_LDFLAGS = -lssl -lboost_regex
+tntnet_LDFLAGS = -lssl -lboost_regex -lpthread
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
