@@ -22,9 +22,13 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_LISTENER_H
 #define TNT_LISTENER_H
 
+#include <config.h>
 #include <cxxtools/thread.h>
 #include "tnt/job.h"
-#include "tnt/ssl.h"
+
+#ifdef USE_SSL
+#  include "tnt/ssl.h"
+#endif
 
 namespace tnt
 {
@@ -38,6 +42,7 @@ namespace tnt
       virtual void Run();
   };
 
+#ifdef USE_SSL
   class ssllistener : public cxxtools::Thread
   {
       SslServer server;
@@ -48,6 +53,8 @@ namespace tnt
           const std::string& ipaddr, unsigned short int port, jobqueue& q);
       virtual void Run();
   };
+#endif // USE_SSL
+
 }
 
 #endif // TNT_LISTENER_H

@@ -1,4 +1,4 @@
-AC_INIT([tntnet],[1.2.3],[Tommi Maekitalo <t.maekitalo@epgmbh.de>])
+AC_INIT([tntnet],[1.2.3],[Tommi Maekitalo <tommi@tntnet.org>])
 AM_INIT_AUTOMAKE(tntnet, 1.2.3)
 
 abi_current=3
@@ -17,6 +17,9 @@ AC_PROG_LIBTOOL
 
 AC_LANG(C++)
 
+#
+# Cxxtools
+#
 AC_ARG_WITH([cxxtools],
   AS_HELP_STRING([--with-cxxtools], [specify installation-path of cxxtools]),
   [ cxxtools_dir=$withval ],
@@ -28,6 +31,8 @@ AC_ARG_WITH([cxxtools],
       fi
     done
   ])
+AC_CHECK_HEADER([cxxtools/tcpstream.h])
+AC_CHECK_HEADER([cxxtools/log.h])
 
 AC_CHECK_FILE(
   [$cxxtools_dir/share/cxxtools/cxxtools-cxxflags],
@@ -42,9 +47,34 @@ AC_CHECK_FILE(
   [ LDFLAGS="$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-log-ldflags`" ],
   AC_MSG_WARN("$LDFLAGS `cat $cxxtools_dir/share/cxxtools/cxxtools-log-ldflags`") )
 
-AC_CHECK_HEADERS([cxxtools/tcpstream.h])
-AC_CHECK_HEADERS([cxxtools/log.h])
+#
+# OpenSSL
+#
+AC_ARG_WITH([openssl],
+  AS_HELP_STRING([--with-openssl], [build with OpenSSL support]),
+  [openssl_prefix=$withval],
+  [
+    AC_MSG_RESULT([building with OpenSSL support])
+    AC_DEFINE([USE_SSL], 1, [Define to build with (Open)SSL support. (--with-openssl)])
+    openssl=1
+
+    if test -d "${openssl_prefix}/include" ; then
+      INCLUDES="$INCLUDES -I${openssl_prefix}/include"
+    fi
+    if test -d "${openssl_prefix}/lib" ; then
+      LIBDIRS="$LIBDIRS -L${openssl_prefix}/lib"
+    fi
+    AC_CHECK_HEADER([openssl/ssl.h])
+
+  ])
+
+AM_CONDITIONAL(MAKE_OPENSSL, test x$openssl == x1)
+
+#
+# others
+#
 AC_CHECK_HEADER([boost/regex.hpp])
+AC_CHECK_FUNCS([setenv])
 
 AC_CONFIG_FILES([
     Makefile

@@ -1,5 +1,5 @@
 /* listener.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -20,9 +20,12 @@ Boston, MA  02111-1307  USA
 */
 
 #include "tnt/listener.h"
-#include "tnt/ssl.h"
 #include "tnt/tntnet.h"
 #include <cxxtools/log.h>
+
+#ifdef USE_SSL
+#  include "tnt/ssl.h"
+#endif
 
 log_define("tntnet.listener");
 
@@ -55,6 +58,7 @@ namespace tnt
     }
   }
 
+#ifdef USE_SSL
   ssllistener::ssllistener(const char* certificateFile,
       const char* keyFile,
       const std::string& ipaddr, unsigned short int port,
@@ -85,4 +89,6 @@ namespace tnt
       }
     }
   }
+#endif // USE_SSL
+
 }

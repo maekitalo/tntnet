@@ -242,8 +242,22 @@ namespace tnt
     {
       if (it->params.size() >= 2)
       {
+#ifdef HAVE_SETENV
         log_debug("setenv " << it->params[0] << "=\"" << it->params[1] << '"');
         ::setenv(it->params[0].c_str(), it->params[1].c_str(), 1);
+#else
+        std::string name  = it->params[0];
+        std::string value = it->params[1];
+
+        char* env = new char[name.size() + value.size() + 2];
+        name.copy(env, name.size());
+        env[name.size()] = '=';
+        value.copy(env + name.size() + 1, value.size());
+        env[name.size() + value.size() + 1] = '\0';
+
+        log_debug("putenv(" << env);
+        ::putenv(env);
+#endif
       }
     }
   }
@@ -516,6 +530,7 @@ namespace tnt
       }
     }
 
+#ifdef USE_SSL
     // create ssl-listener-threads
     std::string certificateFile = config.getSingleValue("SslCertificate");
     std::string certificateKey = config.getSingleValue("SslKey", certificateFile);
@@ -550,6 +565,7 @@ namespace tnt
           certificateKey.c_str(), ip, port, queue);
       listeners.insert(s);
     }
+#endif // USE_SSL
 
     // change group and user
     setGroup();

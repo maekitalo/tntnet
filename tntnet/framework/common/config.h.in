@@ -1,11 +1,5 @@
 /* framework/common/config.h.in.  Generated from configure.in by autoheader.  */
 
-/* Define to 1 if you have the <cxxtools/log.h> header file. */
-#undef HAVE_CXXTOOLS_LOG_H
-
-/* Define to 1 if you have the <cxxtools/tcpstream.h> header file. */
-#undef HAVE_CXXTOOLS_TCPSTREAM_H
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -14,6 +8,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `setenv' function. */
+#undef HAVE_SETENV
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -56,6 +53,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Define to build with (Open)SSL support. (--with-openssl) */
+#undef USE_SSL
 
 /* Version number of package */
 #undef VERSION

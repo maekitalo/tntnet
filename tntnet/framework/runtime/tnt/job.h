@@ -22,11 +22,15 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_JOB_H
 #define TNT_JOB_H
 
+#include <config.h>
 #include <boost/shared_ptr.hpp>
 #include <deque>
 #include <cxxtools/thread.h>
 #include <cxxtools/tcpstream.h>
-#include "tnt/ssl.h"
+
+#ifdef USE_SSL
+#  include "tnt/ssl.h"
+#endif
 
 /**
 // in tntnet (mainthread):
@@ -84,6 +88,7 @@ namespace tnt
       bool isSsl() const     { return false; }
   };
 
+#ifdef USE_SSL
   class ssl_tcpjob : public job
   {
       ssl_iostream socket;
@@ -101,6 +106,7 @@ namespace tnt
       const struct sockaddr_in& getServeraddr_in() const;
       bool isSsl() const     { return true; }
   };
+#endif // USE_SSL
 
   /** jobqueue - one per process */
   class jobqueue
