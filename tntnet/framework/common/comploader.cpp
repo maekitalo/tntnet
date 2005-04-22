@@ -44,7 +44,7 @@ component* component_library::create(
   if (i == creatormap.end())
   {
     // creatorsymbol not known - load it
-    log_info("lookup symbol \"create_" << component_name << '"');
+    log_debug("lookup symbol \"create_" << component_name << '"');
 
     creator = (creator_type)sym(("create_" + component_name).c_str()).getSym();
     creatormap.insert(creatormap_type::value_type(component_name, creator));
