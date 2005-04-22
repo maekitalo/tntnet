@@ -596,6 +596,7 @@ namespace tnt
 int main(int argc, char* argv[])
 {
   signal(SIGPIPE, SIG_IGN);
+  signal(SIGABRT, SIG_IGN);
   std::ios::sync_with_stdio(false);
   //setlocale(LC_ALL, "");
 
