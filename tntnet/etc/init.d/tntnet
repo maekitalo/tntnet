@@ -62,7 +62,9 @@ case "$1" in
 
 	restart)
 		echo -n "Restart tntnet - "
-		if stop && sleep 1 && start
+        stop
+        sleep 1
+		if start || sleep 1 && start
 		then
 			echo "ok"
 		else
@@ -83,6 +85,6 @@ case "$1" in
 		;;
 
 	*)
-		echo "Usage: $0 start|stop|status"
+		echo "Usage: $0 start|stop|restart|status"
 		;;
 esac
