@@ -173,6 +173,7 @@ namespace tnt
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
     worker::setMinThreads(minthreads);
+    worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", worker::getCompLifetime()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
 
     tntconfig::config_entries_type configSetEnv;

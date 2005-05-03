@@ -73,6 +73,8 @@ namespace tnt
       static void CleanerThread();
       static void setCompLifetime(unsigned sec)
       { compLifetime = sec; }
+      static unsigned getCompLifetime()
+      { return compLifetime; }
 
       static workers_type::size_type getCountThreads();
       static void setMinThreads(unsigned n)

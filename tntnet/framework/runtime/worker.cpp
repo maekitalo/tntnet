@@ -53,8 +53,8 @@ namespace tnt
   cxxtools::Mutex worker::mutex;
   unsigned worker::nextThreadNumber = 0;
   worker::workers_type worker::workers;
-  unsigned worker::compLifetime = 60;
-  unsigned worker::minThreads = 2;
+  unsigned worker::compLifetime = 600;
+  unsigned worker::minThreads = 5;
 
   worker::worker(jobqueue& q, const dispatcher& d,
     poller& p, const tntconfig& config)
