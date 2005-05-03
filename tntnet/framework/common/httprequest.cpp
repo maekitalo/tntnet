@@ -144,7 +144,7 @@ namespace tnt
         log_debug("LANG from query-parameter");
       }
 
-      log_info("LANG=" << lang);
+      log_debug("LANG=" << lang);
       lang_init = true;
     }
 

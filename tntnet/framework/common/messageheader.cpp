@@ -41,7 +41,7 @@ namespace tnt
 
   messageheader::return_type messageheader::onField(const std::string& name, const std::string& value)
   {
-    log_debug(name << ": " << value);
+    log_debug(name << ' ' << value);
     insert(value_type(name, value));
     return OK;
   }
