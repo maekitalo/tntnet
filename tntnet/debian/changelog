@@ -1,13 +1,20 @@
+tntnet (1.3.1pre1-1) unstable; urgency=medium
+
+  * better startup-handling: parent-process wait for child to start
+    successfully and listen to ports
+
+ -- Tommi Maekitalo <tommi@tntnet.org>  Tue May  3 22:25:17 CEST 2005
+
 tntnet (1.3.0.1-1) unstable; urgency=low
 
   * Bug: peeraddress was cleared at keep-alive
   * init-scripts starts tntnet on restart even when not running
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Fri, 22 Apr 2005 09:35:59 +0200
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Wed,  9 Mar 2005 20:46:27 +0100
 
 tntnet (1.3.0-3) unstable; urgency=low
 
-  *  logs remote ip-address in category debug
+  * logs remote ip-address in category debug
 
  -- Tommi Maekitalo <tommi@epgmbh.de>  Thu,  3 Mar 2005 21:10:27 +0100
 

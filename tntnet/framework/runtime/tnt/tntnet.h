@@ -55,7 +55,7 @@ namespace tnt
       void setUser() const;
       void setGroup() const;
       void setDir(const char* def) const;
-      void mkDaemon() const;
+      int mkDaemon() const;  // returns pipe
       void closeStdHandles() const;
 
       // noncopyable
@@ -64,7 +64,7 @@ namespace tnt
 
       void writePidfile(int pid);
       void monitorProcess(int workerPid);
-      void workerProcess();
+      void workerProcess(int filedes);
 
     public:
       tntnet(int argc, char* argv[]);

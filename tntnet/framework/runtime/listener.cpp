@@ -29,13 +29,38 @@ Boston, MA  02111-1307  USA
 
 log_define("tntnet.listener");
 
+static void listenRetry(cxxtools::tcp::Server& server,
+  const char* ipaddr, unsigned short int port, unsigned retry)
+{
+  for (unsigned n = 1; true; ++n)
+  {
+    try
+    {
+      log_debug("listen " << ipaddr << ':' << port);
+      server.Listen(ipaddr, port);
+      return;
+    }
+    catch (const cxxtools::tcp::Exception& e)
+    {
+      log_debug("cxxtools::tcp::Exception catched: errno=" << e.getErrno() << " msg=" << e.what());
+      if (e.getErrno() != EADDRINUSE || n > retry)
+      {
+        log_debug("rethrow exception");
+        throw;
+      }
+      log_warn("address " << ipaddr << ':' << port << " in use - retry; n = " << n);
+      ::sleep(1);
+    }
+  }
+}
+
 namespace tnt
 {
   listener::listener(const std::string& ipaddr, unsigned short int port, jobqueue& q)
-    : server(ipaddr, port),
-      queue(q)
+    : queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port);
+    listenRetry(server, ipaddr.c_str(), port, 5);
   }
 
   void listener::Run()
@@ -67,7 +92,7 @@ namespace tnt
       queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port << " (ssl)");
-    server.Listen(ipaddr.c_str(), port);
+    listenRetry(server, ipaddr.c_str(), port, 5);
   }
 
   void ssllistener::Run()

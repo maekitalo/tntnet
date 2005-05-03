@@ -1,0 +1,98 @@
+case: daemon with monitor
+=========================
+
+main       monitor    worker
+ |
+ |-fork------
+ |           \
+ |           |
+ |-read----->|
+ |           |
+ |           |--fork-----
+ |           |           \
+ |           |           |
+ |           |-read----->|
+ |           |           |
+ |           |         listen
+ |           |           |
+ |           |<----write-|
+ |           |           |
+ |        read-ok        |
+ |           |           |
+ |           |         accept
+ |           |           |
+ |<----write-|           |
+ |           |           |
+read-ok      |-waitpid-->|
+ |                       |
+exit(0)                  v
+
+
+case: daemon with monitor with listen-error
+===========================================
+
+main       monitor    worker
+ |
+ |-fork------
+ |           \
+ |           |
+ |-read----->|
+ |           |
+ |           |--fork-----
+ |           |           \
+ |           |           |
+ |           |-read----->|
+ |           |           |
+ |           |         listen => error
+ |           |           |
+ |           |        exit(1)
+ |           |
+ |        read-fail
+ |           |
+ |        exit(1)
+ |
+read-fail
+ |
+exit(1)
+
+
+case: daemon without monitor
+============================
+
+main       worker
+ |
+ |-fork------
+ |           \
+ |           |
+ |-read----->|
+ |           |
+ |        listen
+ |           |
+ |<----write-|
+ |           |
+ |         accept
+ |           |
+ |           v
+read-ok
+ |
+exit(0)
+
+
+case: daemon without monitor with listen-error
+==============================================
+
+main       worker
+ |
+ |-fork------
+ |           \
+ |           |
+ |-read----->|
+ |           |
+ |        listen => error
+ |           |
+ |        exit(1)
+ |
+read-fail
+ |
+exit(1)
+

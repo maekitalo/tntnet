@@ -93,6 +93,30 @@ namespace
   }
 }
 
+static bool checkChildSuccess(int fd)
+{
+  log_debug("checkChildSuccess");
+
+  char buffer[1];
+  int ret = ::read(fd, &buffer, 1);
+  if (ret < 0)
+    throw std::runtime_error(
+      std::string("error in read(): ") + strerror(errno));
+  close(fd);
+  return ret > 0;
+}
+
+static bool signalParentSuccess(int fd)
+{
+  log_debug("signalParentSuccess");
+
+  ssize_t s = write(fd, "1", 1);
+  if (s < 0)
+    throw std::runtime_error(
+      std::string("error in write(): ") + strerror(errno));
+  close(fd);
+}
+
 namespace tnt
 {
   ////////////////////////////////////////////////////////////////////////
@@ -237,15 +261,25 @@ namespace tnt
     }
   }
 
-  void tntnet::mkDaemon() const
+  int tntnet::mkDaemon() const
   {
     log_info("start daemon-mode");
+
+    int filedes[2];
+
+    if (pipe(filedes) != 0)
+      throw std::runtime_error(
+        std::string("error in pipe(int[2]): ") + strerror(errno));
 
     int pid = fork();
     if (pid > 0)
     {
       // parent
-      exit(0);
+
+      close(filedes[1]); // close write-fd
+
+      // exit with error, when nothing read
+      ::exit (checkChildSuccess(filedes[0]) ? 0 : 1);
     }
     else if (pid < 0)
       throw std::runtime_error(
@@ -253,19 +287,16 @@ namespace tnt
 
     // child
 
+    close(filedes[0]); // close read-fd
+
     // setsid
     if (setsid() == -1)
       throw std::runtime_error(
         std::string("error in setsid(): ")
           + strerror(errno));
 
-    // setpgrp
-    /*
-    if (geteuid() == 0 && setpgrp() == -1)
-      throw std::runtime_error(
-        std::string("error in setpgrp(): ")
-          + strerror(errno));
-      */
+    // return write-fd
+    return filedes[1];
   }
 
   void tntnet::closeStdHandles() const
@@ -304,7 +335,7 @@ namespace tnt
     std::string daemon = config.getValue("Daemon");
     if (!debug && isTrue(daemon))
     {
-      mkDaemon();
+      int filedes = mkDaemon();
 
       // close stdin, stdout and stderr
       std::string noclosestd = config.getValue("NoCloseStdout");
@@ -319,12 +350,18 @@ namespace tnt
         log_debug("start worker-process without monitor");
         writePidfile(getpid());
         setDir("/");
-        workerProcess();
+        workerProcess(filedes);
       }
       else
       {
         do
         {
+          int filedes_monitor[2];
+
+          if (pipe(filedes_monitor) != 0)
+            throw std::runtime_error(
+              std::string("error in pipe(int[2]): ") + strerror(errno));
+
           // fork workerprocess
           int pid = fork();
           if (pid < 0)
@@ -335,14 +372,26 @@ namespace tnt
           if (pid == 0)
           {
             // workerprocess
+
+            close(filedes_monitor[0]);  // close read-fd
+
             setDir("/");
-            workerProcess();
+            workerProcess(filedes_monitor[1]);
             return -1;
           }
           else
           {
             // write child-pid
+
+            close(filedes_monitor[1]);  // close write-fd
+
             writePidfile(pid);
+
+            // wait for worker to signal success
+            if (!checkChildSuccess(filedes_monitor[0]))
+              ::exit(1);
+            signalParentSuccess(filedes);
+
             monitorProcess(pid);
             if (!stop)
               sleep(1);
@@ -355,7 +404,7 @@ namespace tnt
     {
       log_info("no daemon-mode");
       setDir("");
-      workerProcess();
+      workerProcess(-1);
     }
 
     return 0;
@@ -406,13 +455,14 @@ namespace tnt
     else
     {
       log_info("child exited with exitcode " << WEXITSTATUS(status));
+      stop = true;
     }
 
     if (unlink(pidFileName.c_str()) != 0)
       log_warn("failed to remove pidfile \"" << pidFileName << "\" error " << errno);
   }
 
-  void tntnet::workerProcess()
+  void tntnet::workerProcess(int filedes)
   {
     dispatcher dispatcher;
     configureDispatcher(dispatcher, config);
@@ -498,6 +548,10 @@ namespace tnt
       listeners.insert(s);
     }
 #endif // USE_SSL
+
+    // listeners successfully created - signal to parent
+    if (filedes >= 0)
+      signalParentSuccess(filedes);
 
     // change group and user
     setGroup();
