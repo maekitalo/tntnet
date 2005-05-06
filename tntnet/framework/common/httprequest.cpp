@@ -51,6 +51,7 @@ namespace tnt
     args.clear();
     qparam.clear();
     ct = contenttype();
+    mp = multipart();
     lang_init = false;
   }
 
