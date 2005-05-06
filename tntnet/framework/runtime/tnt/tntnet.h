@@ -26,6 +26,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/tntconfig.h"
 #include "tnt/job.h"
 #include "tnt/poller.h"
+#include "tnt/dispatcher.h"
 #include <set>
 
 namespace tnt
@@ -48,6 +49,7 @@ namespace tnt
       listeners_type listeners;
 
       poller pollerthread;
+      dispatcher d_dispatcher;
 
       static std::string pidFileName;
 
@@ -64,7 +66,8 @@ namespace tnt
 
       void writePidfile(int pid);
       void monitorProcess(int workerPid);
-      void workerProcess(int filedes);
+      void initWorkerProcess();
+      void workerProcess(int filedes = -1);
 
     public:
       tntnet(int argc, char* argv[]);

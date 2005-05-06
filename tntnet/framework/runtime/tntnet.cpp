@@ -21,7 +21,6 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/worker.h"
 #include "tnt/tntnet.h"
-#include "tnt/dispatcher.h"
 #include "tnt/listener.h"
 #include "tnt/http.h"
 
@@ -228,10 +227,17 @@ namespace tnt
   void tntnet::setDir(const char* def) const
   {
     std::string dir = config.getValue("Dir", def);
-    if (!dir.empty() && chdir(dir.c_str()) == -1)
-      throw std::runtime_error(
-        std::string("error in chdir(): ")
-          + strerror(errno));
+
+    if (!dir.empty())
+    {
+      log_debug("chdir(" << dir << ')');
+      if (chdir(dir.c_str()) == -1)
+      {
+        throw std::runtime_error(
+          std::string("error in chdir(): ")
+            + strerror(errno));
+      }
+    }
 
     std::string chrootdir = config.getValue("Chroot");
     if (!chrootdir.empty() && chroot(chrootdir.c_str()) == -1)
@@ -345,16 +351,24 @@ namespace tnt
       else
         log_debug("not closing stdout");
 
+      setDir("");
+
       std::string nomonitor = config.getValue("NoMonitor");
       if (isTrue(nomonitor))
       {
         log_debug("start worker-process without monitor");
         writePidfile(getpid());
-        setDir("/");
+        initWorkerProcess();
+
+        // change group and user
+        setGroup();
+        setUser();
+
         workerProcess(filedes);
       }
       else
       {
+        initWorkerProcess();
         do
         {
           int filedes_monitor[2];
@@ -376,22 +390,28 @@ namespace tnt
 
             close(filedes_monitor[0]);  // close read-fd
 
-            setDir("/");
+            // change group and user
+            setGroup();
+            setUser();
+
             workerProcess(filedes_monitor[1]);
             return -1;
           }
           else
           {
-            // write child-pid
-
             close(filedes_monitor[1]);  // close write-fd
 
+            // write child-pid
             writePidfile(pid);
 
             // wait for worker to signal success
             if (!checkChildSuccess(filedes_monitor[0]))
               ::exit(1);
-            signalParentSuccess(filedes);
+            if (filedes >= 0)
+            {
+              signalParentSuccess(filedes);
+              filedes = -1;
+            }
 
             monitorProcess(pid);
             if (!stop)
@@ -404,8 +424,8 @@ namespace tnt
     else
     {
       log_info("no daemon-mode");
-      setDir("");
-      workerProcess(-1);
+      initWorkerProcess();
+      workerProcess();
     }
 
     return 0;
@@ -428,10 +448,7 @@ namespace tnt
 
   void tntnet::monitorProcess(int workerPid)
   {
-    if (chdir("/") == -1)
-      throw std::runtime_error(
-        std::string("error in chdir(): ")
-          + strerror(errno));
+    setDir("");
 
     // close stdin, stdout and stderr
     closeStdHandles();
@@ -463,10 +480,10 @@ namespace tnt
       log_warn("failed to remove pidfile \"" << pidFileName << "\" error " << errno);
   }
 
-  void tntnet::workerProcess(int filedes)
+  void tntnet::initWorkerProcess()
   {
-    dispatcher dispatcher;
-    configureDispatcher(dispatcher, config);
+    log_debug("init workerprocess");
+    configureDispatcher(d_dispatcher, config);
 
     // create listener-threads
     tntconfig::config_entries_type configListen;
@@ -550,14 +567,6 @@ namespace tnt
     }
 #endif // USE_SSL
 
-    // listeners successfully created - signal to parent
-    if (filedes >= 0)
-      signalParentSuccess(filedes);
-
-    // change group and user
-    setGroup();
-    setUser();
-
     // configure worker (static)
     {
       tntconfig::config_entries_type compPath;
@@ -577,6 +586,15 @@ namespace tnt
     job::setKeepAliveTimeout(config.getValue("KeepAliveTimeout", static_cast<unsigned>(15000)));
     job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(100)));
     job::setSocketBufferSize(config.getValue("BufferSize", static_cast<unsigned>(16384)));
+  }
+
+  void tntnet::workerProcess(int filedes)
+  {
+    log_debug("worker-process");
+
+    // change group and user
+    setGroup();
+    setUser();
 
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");
@@ -589,7 +607,7 @@ namespace tnt
     for (unsigned i = 0; i < minthreads; ++i)
     {
       log_debug("create worker " << i);
-      worker* s = new worker(queue, dispatcher, pollerthread, config);
+      worker* s = new worker(queue, d_dispatcher, pollerthread, config);
       s->Create();
     }
 
@@ -601,6 +619,10 @@ namespace tnt
     cxxtools::FunctionThread<void ()> cleaner_thread(worker::CleanerThread);
     cleaner_thread.Create();
 
+    if (filedes >= 0)
+      signalParentSuccess(filedes);
+
+    // mainloop
     cxxtools::Mutex mutex;
     while (1)
     {
@@ -612,7 +634,7 @@ namespace tnt
       if (worker::getCountThreads() < maxthreads)
       {
         log_info("create workerthread");
-        worker* s = new worker(queue, dispatcher, pollerthread, config);
+        worker* s = new worker(queue, d_dispatcher, pollerthread, config);
         s->Create();
       }
       else
