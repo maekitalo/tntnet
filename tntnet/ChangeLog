@@ -1,8 +1,14 @@
+tntnet (1.3.1-1) stable; urgency=low
+
+  * released unchanged
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 17 May 2005 09:20:45 +0200
+
 tntnet (1.3.1pre1-2) unstable; urgency=low
 
   * monitor-process calls listen before fork of worker instead of worker.
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Fri,  6 May 2005 13:30:07 +0200
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 17 May 2005 09:20:42 +0200
 
 tntnet (1.3.1pre1-1) unstable; urgency=medium
 
