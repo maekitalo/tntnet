@@ -68,7 +68,7 @@ namespace tnt
       static void addSearchPath(const std::string& path)
       { comploader::addSearchPath(path); }
 
-      static void CleanerThread();
+      static void dropOldComponents();
       static void setCompLifetime(unsigned sec)
       { compLifetime = sec; }
       static unsigned getCompLifetime()

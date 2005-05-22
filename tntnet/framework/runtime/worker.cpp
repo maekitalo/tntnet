@@ -263,12 +263,6 @@ namespace tnt
               {
                 // client has no or unknown cookie
 
-                if (!cookie.empty())
-                {
-                  log_debug("clear cookie " << currentSessionCookieName);
-                  reply.clearCookie(currentSessionCookieName);
-                }
-
                 cxxtools::md5stream c;
                 c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
                 cookie = c.getHexDigest();
@@ -305,21 +299,12 @@ namespace tnt
     throw notFoundException(request.getUrl());
   }
 
-  void worker::CleanerThread()
+  void worker::dropOldComponents()
   {
-    while (1)
-    {
-      sleep(10);
-
-      log_debug("cleanup");
-
-      {
-        cxxtools::MutexLock lock(mutex);
-        for (workers_type::iterator it = workers.begin();
-             it != workers.end(); ++it)
-          (*it)->cleanup(compLifetime);
-      }
-    }
+    cxxtools::MutexLock lock(mutex);
+    for (workers_type::iterator it = workers.begin();
+         it != workers.end(); ++it)
+      (*it)->cleanup(compLifetime);
   }
 
   worker::workers_type::size_type worker::getCountThreads()

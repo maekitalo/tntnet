@@ -49,6 +49,7 @@ namespace tnt
       unsigned minthreads;
       unsigned maxthreads;
       unsigned long threadstartdelay;
+      unsigned sessionTimeout;
 
       jobqueue queue;
 
@@ -81,6 +82,8 @@ namespace tnt
       void monitorProcess(int workerPid);
       void initWorkerProcess();
       void workerProcess(int filedes = -1);
+
+      void timerThread();
 
     public:
       tntnet(int argc, char* argv[]);

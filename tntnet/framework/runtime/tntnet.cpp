@@ -175,6 +175,7 @@ namespace tnt
     worker::setMinThreads(minthreads);
     worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", worker::getCompLifetime()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
+    sessionTimeout = config.getValue<unsigned>("SessionTimeout", 300);
 
     tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -616,9 +617,9 @@ namespace tnt
     log_debug("start poller thread");
     pollerthread.Create();
 
-    log_debug("start cleaner thread");
-    cxxtools::FunctionThread<void ()> cleaner_thread(worker::CleanerThread);
-    cleaner_thread.Create();
+    log_debug("start timer thread");
+    cxxtools::MethodThread<tntnet> sessionTimeout_thread(*this, &tntnet::timerThread);
+    sessionTimeout_thread.Create();
 
     if (filedes >= 0)
       signalParentSuccess(filedes);
@@ -655,6 +656,38 @@ namespace tnt
     }
   }
 
+  void tntnet::timerThread()
+  {
+    log_debug("timer thread");
+
+    while (1)
+    {
+      sleep(5);
+
+      log_debug("check sessiontimeout");
+
+      time_t currentTime;
+      time(&currentTime);
+      cxxtools::MutexLock lock(sessionScopesMutex);
+      sessionscopes_type::iterator it = sessionScopes.begin();
+      while (it != sessionScopes.end())
+      {
+        if (currentTime - it->second->getAtime() > sessionTimeout)
+        {
+          log_debug("sessiontimeout for session " << it->first << " reached");
+          it->second->release();
+          sessionScopes.erase(it);
+          it = sessionScopes.begin();
+        }
+        else
+          ++it;
+      }
+
+      log_debug("drop old components");
+      worker::dropOldComponents();
+    }
+  }
+
   void tntnet::shutdown()
   {
     if (!pidFileName.empty())
@@ -680,6 +713,8 @@ namespace tnt
       it = applicationScopes.insert(scopes_type::value_type(appname, s)).first;
       return s;
     }
+    else
+      log_debug("applicationscope found");
 
     return it->second;
   }
@@ -692,11 +727,15 @@ namespace tnt
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
     if (it == sessionScopes.end())
     {
-      log_debug("sessionscope not found - return 0");
+      log_debug("session " << sessioncookie << " not found");
       return 0;
     }
     else
+    {
+      log_debug("session " << sessioncookie << " found");
+      it->second->touch();
       return it->second;
+    }
   }
 
   bool tntnet::hasSessionScope(const std::string& sessioncookie)
