@@ -183,7 +183,7 @@ namespace tnt
 
     --waitThreads;
 
-    log_debug("jobqueue: fetch job " << waitThreads << " waiting Threads left");
+    log_debug("jobqueue: fetch job " << waitThreads << " waiting threads left");
 
     // nehme nächste Job (lock ist noch aktiv)
     job_ptr j = jobs.front();
