@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/ecppc/body.h"
 #include "tnt/ecppc/variable.h"
+#include "tnt/ecppc/scopevar.h"
 
 namespace tnt
 {
@@ -35,8 +36,10 @@ namespace tnt
         std::string ns;
         typedef ecpp::parser::comp_args_type comp_args_type;
         typedef std::list<variable> variables_type;
+        typedef std::list<scopevar> scopevars_type;
 
         variables_type args;
+        scopevars_type scopevars;
         body compbody;
 
       protected:
@@ -72,8 +75,40 @@ namespace tnt
         void addSubcomp(const std::string& comp)
           { compbody.addSubcomp(comp); }
 
+        void addApplicationScope(const std::string& type_,
+          const std::string& var_, const std::string& init_)
+        {
+          scopevars.push_back(scopevar("Application", type_, var_, init_));
+        }
+
+        void addSessionScope(const std::string& type_,
+          const std::string& var_, const std::string& init_)
+        {
+          scopevars.push_back(scopevar("Session", type_, var_, init_));
+        }
+
+        void addRequestScope(const std::string& type_,
+          const std::string& var_, const std::string& init_)
+        {
+          scopevars.push_back(scopevar("Request", type_, var_, init_));
+        }
+
+        void addPageScope(const std::string& type_,
+          const std::string& var_, const std::string& init_)
+        {
+          scopevars.push_back(scopevar("Page", type_, var_, init_));
+        }
+
+        void addComponentScope(const std::string& type_,
+          const std::string& var_, const std::string& init_)
+        {
+          scopevars.push_back(scopevar("Component", type_, var_, init_));
+        }
+
         void getBody(std::ostream& o) const;
         void getArgs(std::ostream& o) const;
+        void getScopevars(std::ostream& o) const;
+        bool hasScopevars() const  { return !scopevars.empty(); }
     };
   }
 }

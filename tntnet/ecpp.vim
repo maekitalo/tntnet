@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:    ECPP
 " Maintainer:  Tommi Maekitalo <tommi@tntnet.org>
-" Last change: 2005 Jan 30
+" Last change: 2003 Sep 10
 " URL:         http://www.maekitalo.de/vim/ecpp.vim
 "
 "
@@ -54,6 +54,11 @@ syn region ecppArgs matchgroup=Delimiter start="<%args>" end="</%args>" contains
 syn region ecppConfig matchgroup=Delimiter start="<%config>" end="</%config>" contains=@cppTop
 syn region ecppAttr matchgroup=Delimiter start="<%attr>" end="</%attr>" contains=@cppTop
 syn region ecppVar matchgroup=Delimiter start="<%var>" end="</%var>" contains=@cppTop
+syn region ecppVar matchgroup=Delimiter start="<%applicationScope>" end="</%applicationScope>" contains=@cppTop
+syn region ecppVar matchgroup=Delimiter start="<%sessionScope>" end="</%sessionScope>" contains=@cppTop
+syn region ecppVar matchgroup=Delimiter start="<%requestScope>" end="</%requestScope>" contains=@cppTop
+syn region ecppVar matchgroup=Delimiter start="<%pageScope>" end="</%pageScope>" contains=@cppTop
+syn region ecppVar matchgroup=Delimiter start="<%componentScope>" end="</%componentScope>" contains=@cppTop
 
 syn region ecppInit matchgroup=Delimiter start="<%init>" end="</%init>" contains=@cppTop
 syn region ecppPre matchgroup=Delimiter start="<%pre>" end="</%pre>" contains=@cppTop
@@ -64,14 +69,12 @@ syn region ecppDefine matchgroup=Delimiter start="<%define>" end="</%define>" co
 syn region ecppCleanup matchgroup=Delimiter start="<%cleanup>" end="</%cleanup>" contains=@cppTop
 " syn region ecppOnce matchgroup=Delimiter start="<%once>" end="</%once>" contains=@cppTop
 syn region ecppShared matchgroup=Delimiter start="<%shared>" end="</%shared>" contains=@cppTop
+" syn region	ecppIncluded	display contained start=+"+ skip=+\\\\\|\\"+ end=+"+
+syn match	ecppIncluded	display contained "<[^>]*>"
+syn region ecppInclude matchgroup=Delimiter start="<%include>" end="</%include>" contains=@ecppIncluded
 
 syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contains=@htmlTop
 " syn region ecppMethod matchgroup=Delimiter start="<%method[^>]*>" end="</%method>" contains=@htmlTop
-
-" syn region ecppFlags matchgroup=Delimiter start="<%flags>" end="</%flags>" contains=@cppTop
-" syn region ecppAttr matchgroup=Delimiter start="<%attr>" end="</%attr>" contains=@cppTop
-
-" syn region ecppFilter matchgroup=Delimiter start="<%filter>" end="</%filter>" contains=@cppTop
 
 syn region ecppDoc matchgroup=Delimiter start="<%doc>" end="</%doc>"
 syn region ecppComment matchgroup=Delimiter start="<#" end="#>" contains=@cCommentGroup

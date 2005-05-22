@@ -29,9 +29,12 @@ Boston, MA  02111-1307  USA
 #include <tnt/multipart.h>
 #include <tnt/cookie.h>
 #include <cxxtools/query_params.h>
+#include <tnt/scope.h>
 
 namespace tnt
 {
+  class sessionscope;
+
   /// HTTP-Request-message
   class httpRequest : public httpMessage
   {
@@ -52,12 +55,19 @@ namespace tnt
       mutable bool lang_init;
       mutable std::string lang;
 
+      scope requestScope;
+      scope* applicationScope;
+      sessionscope* sessionScope;
+
     public:
       httpRequest()
         : ssl(false),
-          lang_init(false)
+          lang_init(false),
+          applicationScope(0),
+          sessionScope(0)
         { }
       httpRequest(const std::string& url);
+      ~httpRequest();
 
       void clear();
 
@@ -116,6 +126,18 @@ namespace tnt
         { return getCookies().getCookie(name); }
 
       bool keepAlive() const;
+
+      void setApplicationScope(scope* s);
+      void setApplicationScope(scope& s)  { setApplicationScope(&s); }
+
+      void setSessionScope(sessionscope* s);
+      void setSessionScope(sessionscope& s)      { setSessionScope(&s); }
+      void clearSession();
+
+      scope& getRequestScope()            { return requestScope; }
+      scope& getApplicationScope()        { return *applicationScope; }
+      sessionscope& getSessionScope();
+      bool   hasSessionScope() const;
   };
 
   inline std::istream& operator>> (std::istream& in, httpRequest& msg)

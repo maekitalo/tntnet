@@ -26,10 +26,12 @@ Boston, MA  02111-1307  USA
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <tnt/poller.h>
+#include <tnt/sessionscope.h>
 #include <cxxtools/log.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <cxxtools/md5stream.h>
 
 log_define("tntnet.worker");
 
@@ -55,13 +57,11 @@ namespace tnt
   worker::workers_type worker::workers;
   unsigned worker::compLifetime = 600;
   unsigned worker::minThreads = 5;
+  static const std::string& sessionCookiePrefix = "tntnet.";
 
-  worker::worker(jobqueue& q, const dispatcher& d,
-    poller& p, const tntconfig& config)
-    : queue(q),
-      mypoller(p),
-      ourdispatcher(d),
-      mycomploader(config),
+  worker::worker(tntnet& app)
+    : application(app),
+      mycomploader(app.getConfig()),
       threadNumber(++nextThreadNumber)
   {
     log_debug("initialize thread " << threadNumber);
@@ -78,6 +78,7 @@ namespace tnt
 
   void worker::Run()
   {
+    jobqueue& queue = application.getQueue();
     log_debug("start thread " << threadNumber);
     while (queue.getWaitThreadCount() < minThreads)
     {
@@ -121,7 +122,7 @@ namespace tnt
       catch (const cxxtools::tcp::Timeout& e)
       {
         log_debug("timeout - put job in poller");
-        mypoller.addIdleJob(j);
+        application.getPoller().addIdleJob(j);
       }
     }
 
@@ -204,17 +205,42 @@ namespace tnt
     if (!httpRequest::checkUrl(url))
       throw httpError(HTTP_BAD_REQUEST, "illegal url");
 
-    dispatcher::pos_type pos(ourdispatcher, request.getUrl());
+    std::string currentSessionCookieName;
+
+    dispatcher::pos_type pos(application.getDispatcher(), request.getUrl());
     while (1)
     {
       // pos.getNext() throws notFoundException at end
       dispatcher::compident_type ci = pos.getNext();
       try
       {
-        component& comp = mycomploader.fetchComp(ci, ourdispatcher);
+        component& comp = mycomploader.fetchComp(ci, application.getDispatcher());
         component_unload_lock unload_lock(comp);
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
+
+        // check session-cookie
+        currentSessionCookieName = sessionCookiePrefix + ci.libname;
+        cookie c = request.getCookie(currentSessionCookieName);
+        if (c.getValue().empty())
+        {
+          log_debug("session-cookie " << currentSessionCookieName << " not found");
+          request.setSessionScope(0);
+        }
+        else
+        {
+          log_debug("session-cookie " << currentSessionCookieName << " found: " << c.getValue());
+          sessionscope* sessionScope = application.getSessionScope(c.getValue());
+          if (sessionScope != 0)
+          {
+            log_debug("session found");
+            request.setSessionScope(sessionScope);
+          }
+        }
+
+        // set application-scope
+        request.setApplicationScope(application.getApplicationScope(ci.libname));
+
         log_debug("call component " << ci
           << " path \"" << ci.getPathInfo() << '"');
         unsigned http_return = comp(request, reply, request.getQueryParams());
@@ -228,6 +254,40 @@ namespace tnt
           else
           {
             log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
+
+            if (request.hasSessionScope())
+            {
+              // request has session-scope
+              std::string cookie = request.getCookie(currentSessionCookieName);
+              if (cookie.empty() || !application.hasSessionScope(cookie))
+              {
+                // client has no or unknown cookie
+
+                if (!cookie.empty())
+                {
+                  log_debug("clear cookie " << currentSessionCookieName);
+                  reply.clearCookie(currentSessionCookieName);
+                }
+
+                cxxtools::md5stream c;
+                c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
+                cookie = c.getHexDigest();
+                log_debug("set Cookie " << cookie);
+                reply.setCookie(currentSessionCookieName, cookie);
+                application.putSessionScope(cookie, &request.getSessionScope());
+              }
+            }
+            else
+            {
+              std::string cookie = request.getCookie(currentSessionCookieName);
+              if (!cookie.empty())
+              {
+                // client has cookie
+                log_debug("clear Cookie " << currentSessionCookieName);
+                reply.clearCookie(currentSessionCookieName);
+                application.removeSessionScope(cookie);
+              }
+            }
 
             reply.sendReply(http_return);
             log_debug("reply sent");

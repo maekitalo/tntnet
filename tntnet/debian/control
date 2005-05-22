@@ -7,7 +7,7 @@ Standards-Version: 3.6.1
 Package: tntnet-base
 Section: web
 Architecture: any
-Depends: ${shlibs:Depends}, libcxxtools (>= 1.2.1)
+Depends: ${shlibs:Depends}, libcxxtools (>= 1.3.0)
 Description: Web-application-server
  tntnet is a webapplication-server for webapplications written in c++.
  It uses a template-language, where you can embed c++-code inside

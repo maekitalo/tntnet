@@ -95,7 +95,6 @@ namespace tnt
         subcomps_type mysubcomps;
         const subcomps_type& subcomps;
 
-      protected:
       public:
         body()
           : subcomps(mysubcomps)  { }

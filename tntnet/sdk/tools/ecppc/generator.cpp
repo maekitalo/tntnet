@@ -50,6 +50,16 @@ namespace tnt
       gentime = asctime(localtime(&cur));
     }
 
+    bool generator::hasScopevars() const
+    {
+      if (maincomp.hasScopevars())
+        return true;
+      for (subcomps_type::const_iterator it = subcomps.begin(); it != subcomps.end(); ++it)
+        if (it->hasScopevars())
+          return true;
+      return false;
+    }
+
     void generator::processHtml(const std::string& html)
     {
       std::ostringstream d;
@@ -156,6 +166,11 @@ namespace tnt
       shared += code;
     }
 
+    void generator::processInclude(const std::string& file)
+    {
+      pre += "#include " + file + '\n';
+    }
+
     void generator::startComp(const std::string& name,
       const cppargs_type& cppargs)
     {
@@ -181,6 +196,36 @@ namespace tnt
     void generator::processConfig(const std::string& name, const std::string& value)
     {
       configs.push_back(tnt::ecppc::variable(name, value));
+    }
+
+    void generator::processApplicationScope(const std::string& type,
+      const std::string& var, const std::string& init)
+    {
+      currentComp->addApplicationScope(type, var, init);
+    }
+
+    void generator::processSessionScope(const std::string& type,
+      const std::string& var, const std::string& init)
+    {
+      currentComp->addSessionScope(type, var, init);
+    }
+
+    void generator::processRequestScope(const std::string& type,
+      const std::string& var, const std::string& init)
+    {
+      currentComp->addRequestScope(type, var, init);
+    }
+
+    void generator::processPageScope(const std::string& type,
+      const std::string& var, const std::string& init)
+    {
+      currentComp->addPageScope(type, var, init);
+    }
+
+    void generator::processComponentScope(const std::string& type,
+      const std::string& var, const std::string& init)
+    {
+      currentComp->addComponentScope(type, var, init);
     }
 
     std::string generator::getHeader(const std::string& basename) const
@@ -306,6 +351,9 @@ namespace tnt
               "#include <tnt/httpreply.h>\n"
               "#include <tnt/http.h>\n"
               "#include <tnt/data.h>\n";
+      if (hasScopevars())
+        code << "#include <tnt/objecttemplate.h>\n"
+                "#include <tnt/objectptr.h>\n";
       if (!configs.empty())
         code << "#include <tnt/comploader.h>\n"
                 "#include <tnt/tntconfig.h>\n";

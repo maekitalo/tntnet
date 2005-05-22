@@ -1,5 +1,5 @@
 /* tnt/ecpp.h
-   Copyright (C) 2003 Tommi Maekitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -23,6 +23,9 @@ Boston, MA  02111-1307  USA
 #define TNT_ECPP_H
 
 #include <tnt/component.h>
+#include <tnt/scope.h>
+#include <tnt/sessionscope.h>
+#include <tnt/httprequest.h>
 #include <map>
 #include <set>
 
@@ -78,7 +81,21 @@ namespace tnt
       static void rememberLibNotFound(const std::string& lib);
       static void rememberCompNotFound(const compident& ci);
 
+      scope pageScope;
+      scope componentScope;
+
     protected:
+      static scope& getSessionScope(httpRequest& request)
+      { return request.getSessionScope(); }
+      static scope& getApplicationScope(httpRequest& request)
+      { return request.getApplicationScope(); }
+      static scope& getRequestScope(httpRequest& request)
+      { return request.getRequestScope(); }
+      scope& getPageScope(httpRequest& request)
+      { return pageScope; }
+      scope& getComponentScope(httpRequest& request)
+      { return componentScope; }
+
       virtual ~ecppComponent();
       void registerSubComp(const std::string& name, ecppSubComponent* comp);
 
@@ -121,6 +138,10 @@ namespace tnt
         { return main.getSubcomps(); }
       virtual const subcomps_type& getSubcomps() const
         { return main.getSubcomps(); }
+
+    protected:
+      scope& getPageScope(httpRequest& request)
+      { return main.pageScope; }
 
     public:
       ecppSubComponent(ecppComponent& p, const std::string& name)

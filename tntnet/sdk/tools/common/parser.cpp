@@ -92,7 +92,18 @@ namespace tnt
         state_compe,
         state_cond,  // 60
         state_condexpr,
-        state_condexpre };
+        state_condexpre,
+        state_include0,
+        state_include1,
+        state_include,
+        state_scope0,
+        state_scope,
+        state_scopeinit,
+        state_scopee,
+        state_scopee0,
+        state_scopecomment0,
+        state_scopecomment,
+        };
 
       state_type state = state_nl;
       std::string etag, tagarg;
@@ -105,6 +116,7 @@ namespace tnt
       std::string defarg, defval;
       cppargs_type cppargs;
       unsigned bracket_count = 0;
+      std::string scopetype, scopevar, scopeinit;
 
       start();
 
@@ -258,6 +270,14 @@ namespace tnt
                 state = state_args0;
               else if (tag == "attr")
                 state = state_attr0;
+              else if (tag == "include")
+                state = state_include0;
+              else if (tag == "sessionScope"
+                    || tag == "applicationScope"
+                    || tag == "requestScope"
+                    || tag == "pageScope"
+                    || tag == "componentScope")
+                state = state_scope0;
               else
                 state = state_cpp;
             }
@@ -467,7 +487,11 @@ namespace tnt
                 processShared(code);
               else if (tag == "cpp")
                 processCpp(code);
-              else if (tag == "args" || tag == "attr" || tag == "config")
+              else if (tag == "args" || tag == "attr" || tag == "config"
+                || tag == "include"
+                || tag == "sessionScope" || tag == "applicationScope"
+                || tag == "requestScope" || tag == "pageScope"
+                || tag == "componentScope")
                 ;
               else
                 throw parse_error("unknown tag " + tag, state, curline);
@@ -1087,6 +1111,136 @@ namespace tnt
             }
             break;
 
+          case state_include0:
+            if (ch == '<')
+            {
+              expr = ch;
+              state = state_include1;
+            }
+            else if (ch == '"')
+            {
+              expr = ch;
+              state = state_include;
+            }
+            else if (!std::isspace(ch))
+            {
+              throw parse_error(std::string("invalid character '") + ch
+                + "' in include-directive", state, curline);
+            }
+            break;
+
+          case state_include1:
+            if (ch == '/')
+            {
+              etag.clear();
+              state = state_cppe1;
+              break;
+            }
+            state = state_include;
+            // no break;
+
+          case state_include:
+            expr += ch;
+            if (expr.at(0) == '"' && ch == '"'
+              || expr.at(0) == '<' && ch == '>')
+            {
+              processInclude(expr);
+              state = state_include0;
+            }
+            break;
+
+          case state_scope0:
+            if (ch == '<')
+              state = state_scopee;
+            else if (ch == '/')
+              state = state_scopecomment0;
+            else if (!std::isspace(ch))
+            {
+              scopevar = ch;
+              state = state_scope;
+            }
+            break;
+
+          case state_scope:
+            if (ch == ';')
+            {
+              // scopetype contains type-definition
+              // scopevar contains variable-definition
+              // scopeinit is empty
+              if (scopetype.size() > 0
+                && std::isspace(scopetype.at(scopetype.size() - 1)))
+                  scopetype.erase(scopetype.size() - 1);
+              processScope(tag, scopetype, scopevar, scopeinit);
+
+              scopetype.clear();
+              scopevar.clear();
+              state = state_scope0;
+            }
+            else if (ch == '(')
+              state = state_scopeinit;
+            else if (std::isspace(ch))
+              scopevar += ch;
+            else if (std::isspace(scopevar.at(scopevar.size() - 1)))
+            {
+              scopetype += scopevar;
+              scopevar = ch;
+            }
+            else
+              scopevar += ch;
+            break;
+
+          case state_scopee:
+            if (ch == '/')
+            {
+              etag.clear();
+              state = state_cppe1;
+            }
+            else
+            {
+              scopevar += '<';
+              scopevar += ch;
+              state = state_scope;
+            }
+            break;
+
+          case state_scopeinit:
+            if (ch == ')')
+            {
+              // scopevar contains variable-definition
+              // scopeinit contains constructorparameter
+              if (scopetype.size() > 0
+                && std::isspace(scopetype.at(scopetype.size() - 1)))
+                  scopetype.erase(scopetype.size() - 1);
+              processScope(tag, scopetype, scopevar, scopeinit);
+
+              scopetype.clear();
+              scopevar.clear();
+              scopeinit.clear();
+              state = state_scopee0;
+            }
+            else
+              scopeinit += ch;
+            break;
+
+          case state_scopee0:
+            if (ch == ';')
+              state = state_scope0;
+            else if (!std::isspace(ch))
+              throw parse_error("invalid scopedefinition", state, curline);
+            break;
+
+          case state_scopecomment0:
+            if (ch == '/')
+              state = state_scopecomment;
+            else
+              throw parse_error("invalid scopedefinition - '/' expexted", state, curline);
+            break;
+
+          case state_scopecomment:
+            if (ch == '\n')
+              state = state_scope0;
+            break;
+
         }  // switch(state)
 
       }  // while(in.get(ch))
@@ -1157,6 +1311,46 @@ namespace tnt
     }
 
     void parser::processShared(const std::string& code)
+    {
+    }
+
+    void parser::processInclude(const std::string& file)
+    {
+    }
+
+    void parser::processScope(const std::string& scope, const std::string& type, const std::string& var, const std::string& init)
+    {
+      if (scope == "sessionScope")
+        processSessionScope(type, var, init);
+      else if (scope == "applicationScope")
+        processApplicationScope(type, var, init);
+      else if (scope == "requestScope")
+        processRequestScope(type, var, init);
+      else if (scope == "pageScope")
+        processPageScope(type, var, init);
+      else if (scope == "componentScope")
+        processComponentScope(type, var, init);
+      else
+        throw std::runtime_error("invalid scope " + scope);
+    }
+
+    void parser::processApplicationScope(const std::string& type, const std::string& var, const std::string& init)
+    {
+    }
+
+    void parser::processSessionScope(const std::string& type, const std::string& var, const std::string& init)
+    {
+    }
+
+    void parser::processRequestScope(const std::string& type, const std::string& var, const std::string& init)
+    {
+    }
+
+    void parser::processPageScope(const std::string& type, const std::string& var, const std::string& init)
+    {
+    }
+
+    void parser::processComponentScope(const std::string& type, const std::string& var, const std::string& init)
     {
     }
 

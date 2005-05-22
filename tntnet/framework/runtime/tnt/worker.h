@@ -26,6 +26,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/thread.h>
 #include <tnt/comploader.h>
+#include <tnt/tntnet.h>
 
 namespace tnt
 {
@@ -40,10 +41,8 @@ namespace tnt
       static cxxtools::Mutex mutex;
       static unsigned nextThreadNumber;
 
-      jobqueue& queue;
-      poller& mypoller;
+      tntnet& application;
 
-      const dispatcher& ourdispatcher;
       comploader mycomploader;
 
       unsigned threadNumber;
@@ -58,8 +57,7 @@ namespace tnt
         unsigned keepAliveCount);
 
     public:
-      worker(jobqueue& queue, const dispatcher& dispatcher,
-        poller& poller, const tntconfig& config);
+      worker(tntnet& app);
       ~worker();
 
       virtual void Run();

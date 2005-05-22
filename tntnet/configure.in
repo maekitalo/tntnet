@@ -1,5 +1,5 @@
-AC_INIT([tntnet],[1.3.1],[Tommi Maekitalo <tommi@tntnet.org>])
-AM_INIT_AUTOMAKE(tntnet, 1.3.1)
+AC_INIT([tntnet],[1.4.0pre1],[Tommi Maekitalo <tommi@tntnet.org>])
+AM_INIT_AUTOMAKE(tntnet, 1.4.0pre1)
 
 abi_current=3
 abi_revision=1
@@ -76,14 +76,15 @@ AC_CONFIG_FILES([
     sdk/tools/ecppc/Makefile
     sdk/tools/ecppl/Makefile
     sdk/tools/ecppll/Makefile
-    sdk/demos/hello/Makefile
-    sdk/demos/cookie/Makefile
     sdk/demos/calc/Makefile
+    sdk/demos/config/Makefile
+    sdk/demos/cookie/Makefile
+    sdk/demos/hello/Makefile
     sdk/demos/savepoint/Makefile
+    sdk/demos/session/Makefile
+    sdk/demos/sprintf/Makefile
     sdk/demos/subcomp/Makefile
     sdk/demos/upload/Makefile
-    sdk/demos/sprintf/Makefile
-    sdk/demos/config/Makefile
     etc/Makefile
     tntnet-config
     ])

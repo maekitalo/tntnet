@@ -8,6 +8,7 @@ ecppc_SOURCES = \
 	generator.cpp \
 	htmlfilter.cpp \
 	jsfilter.cpp \
+	scopevar.cpp \
 	subcomponent.cpp \
 	variable.cpp \
 	tnt/ecppc/body.h \

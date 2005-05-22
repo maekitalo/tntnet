@@ -35,8 +35,11 @@ namespace tnt
 
       getArgs(body);
 
-      body << "  // </%args>\n\n"
-           << "  // <%cpp>\n";
+      body << "  // </%args>\n\n";
+
+      getScopevars(body);
+
+      body << "  // <%cpp>\n";
 
       compbody.getBody(body);
 
@@ -49,6 +52,16 @@ namespace tnt
       for (variables_type::const_iterator it = args.begin();
            it != args.end(); ++it)
         it->getParamCode(body);
+    }
+
+    void component::getScopevars(std::ostream& body) const
+    {
+      for (scopevars_type::const_iterator it = scopevars.begin();
+           it != scopevars.end(); ++it)
+      {
+        it->get(body);
+        body << '\n';
+      }
     }
   }
 }

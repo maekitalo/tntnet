@@ -85,6 +85,8 @@ namespace tnt
         time_t c_time;
         const char* gentime;
 
+        bool hasScopevars() const;
+
       public:
         generator(const std::string& classname, const std::string& ns);
 
@@ -137,10 +139,21 @@ namespace tnt
           const std::string& cppargs);
         virtual void processDeclareShared(const std::string& code);
         virtual void processShared(const std::string& code);
+        virtual void processInclude(const std::string& file);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
         virtual void processComp(const std::string& code);
         virtual void processCondExpr(const std::string& cond, const std::string& expr);
         virtual void processConfig(const std::string& name, const std::string& value);
+        virtual void processApplicationScope(const std::string& type,
+          const std::string& var, const std::string& init);
+        virtual void processSessionScope(const std::string& type,
+          const std::string& var, const std::string& init);
+        virtual void processRequestScope(const std::string& type,
+          const std::string& var, const std::string& init);
+        virtual void processPageScope(const std::string& type,
+          const std::string& var, const std::string& init);
+        virtual void processComponentScope(const std::string& type,
+          const std::string& var, const std::string& init);
 
         std::string getHeader(const std::string& basename) const;
         std::string getCpp(const std::string& basename) const;

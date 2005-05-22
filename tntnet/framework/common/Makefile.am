@@ -16,7 +16,9 @@ libtntnet_la_SOURCES = \
 	messageheader.cpp \
 	messageheaderparser.cpp \
 	multipart.cpp \
+	object.cpp \
 	savepoint.cpp \
+	scope.cpp \
 	sodata.cpp \
 	tntconfig.cpp \
 	zdata.cpp
@@ -38,8 +40,13 @@ nobase_include_HEADERS = \
 	tnt/messageheader.h \
 	tnt/messageheaderparser.h \
 	tnt/multipart.h \
+	tnt/object.h \
+	tnt/objectptr.h \
+	tnt/objecttemplate.h \
 	tnt/parser.h \
 	tnt/savepoint.h \
+	tnt/scope.h \
+	tnt/sessionscope.h \
 	tnt/sodata.h \
 	tnt/tntconfig.h \
 	tnt/urlmapper.h \

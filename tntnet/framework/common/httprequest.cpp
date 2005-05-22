@@ -26,6 +26,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/thread.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <tnt/sessionscope.h>
 
 namespace tnt
 {
@@ -38,10 +39,20 @@ namespace tnt
 
   httpRequest::httpRequest(const std::string& url)
   : ssl(false),
-    lang_init(false)
+    lang_init(false),
+    applicationScope(0),
+    sessionScope(0)
   {
     std::istringstream s("GET " + url + " HTTP/1.1\r\n\r\n");
     parse(s);
+  }
+
+  httpRequest::~httpRequest()
+  {
+    if (applicationScope)
+      applicationScope->release();
+    if (sessionScope)
+      sessionScope->release();
   }
 
   void httpRequest::clear()
@@ -53,6 +64,18 @@ namespace tnt
     ct = contenttype();
     mp = multipart();
     lang_init = false;
+    requestScope.clear();
+    httpcookies.clear();
+    if (applicationScope)
+    {
+      applicationScope->release();
+      applicationScope = 0;
+    }
+    if (sessionScope)
+    {
+      sessionScope->release();
+      sessionScope = 0;
+    }
   }
 
   void httpRequest::parse(std::istream& in)
@@ -177,4 +200,38 @@ namespace tnt
     return it != header.end() && it->second == Connection_Keep_Alive;
   }
 
+  void httpRequest::setApplicationScope(scope* s)
+  {
+    if (s)
+      s->addRef();
+    applicationScope = s;
+  }
+
+  void httpRequest::setSessionScope(sessionscope* s)
+  {
+    if (s)
+      s->addRef();
+    sessionScope = s;
+  }
+
+  void httpRequest::clearSession()
+  {
+    if (sessionScope)
+    {
+      sessionScope->release();
+      sessionScope = 0;
+    }
+  }
+
+  sessionscope& httpRequest::getSessionScope()
+  {
+    if (!sessionScope)
+      sessionScope = new sessionscope();
+    return *sessionScope;
+  }
+
+  bool httpRequest::hasSessionScope() const
+  {
+    return sessionScope != 0 && !sessionScope->empty();
+  }
 }

@@ -31,8 +31,16 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  class scope;
+  class sessionscope;
+
   class tntnet
   {
+    public:
+      typedef std::map<std::string, scope*> scopes_type;
+      typedef std::map<std::string, sessionscope*> sessionscopes_type;
+
+    private:
       cxxtools::arg<const char*> conf;
       tntconfig config;
       cxxtools::arg<const char*> propertyfilename;
@@ -52,6 +60,11 @@ namespace tnt
       dispatcher d_dispatcher;
 
       static std::string pidFileName;
+
+      scopes_type applicationScopes;
+      sessionscopes_type sessionScopes;
+      cxxtools::Mutex applicationScopesMutex;
+      cxxtools::Mutex sessionScopesMutex;
 
       // helper methods
       void setUser() const;
@@ -75,6 +88,18 @@ namespace tnt
 
       static void shutdown();
       static bool shouldStop()   { return stop; }
+
+      jobqueue&   getQueue()                  { return queue; }
+      poller&     getPoller()                 { return pollerthread; }
+      const dispatcher& getDispatcher() const { return d_dispatcher; }
+      const tntconfig&  getConfig() const     { return config; }
+
+      scope* getApplicationScope(const std::string& appname);
+      sessionscope* getSessionScope(const std::string& sessioncookie);
+      bool hasSessionScope(const std::string& sessioncookie);
+      void putSessionScope(const std::string& sessioncookie, sessionscope* s);
+      void removeApplicationScope(const std::string& appname);
+      void removeSessionScope(const std::string& sessioncookie);
   };
 
 }
