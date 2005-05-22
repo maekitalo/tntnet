@@ -7,27 +7,6 @@
 
 namespace tnt
 {
-  scope::scope(const scope& src)
-    : data(src.data),
-      refs(1)
-  {
-    for (container_type::iterator it = data.begin(); it != data.end(); ++it)
-      it->second->addRef();
-  }
-
-  scope& scope::operator=(const scope& src)
-  {
-    for (container_type::iterator it = data.begin(); it != data.end(); ++it)
-      it->second->release();
-
-    data = src.data;
-
-    for (container_type::iterator it = data.begin(); it != data.end(); ++it)
-      it->second->addRef();
-
-    return *this;
-  }
-
   scope::~scope()
   {
     for (container_type::iterator it = data.begin(); it != data.end(); ++it)

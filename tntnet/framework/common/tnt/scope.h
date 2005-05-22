@@ -19,18 +19,16 @@ namespace tnt
       mutable cxxtools::Mutex mutex;
       unsigned refs;
 
+      // non-copyable
+      scope(const object&);
+      scope& operator=(const object&);
+
     public:
       scope() : refs(1) {}
-      scope(const scope& src);
       ~scope();
-
-      typedef cxxtools::MutexLock lock_type;
-      cxxtools::Mutex& getMutex()  { return mutex; }
 
       unsigned addRef()  { return ++refs; }
       unsigned release();
-
-      scope& operator=(const scope& src);
 
       bool has(const std::string& key) const
         { return data.find(key) != data.end(); }
@@ -48,6 +46,14 @@ namespace tnt
       void erase(const std::string& key);
       bool empty() const  { return data.empty(); }
       void clear()        { data.clear(); }
+
+      typedef container_type::const_iterator const_iterator;
+      typedef container_type::iterator iterator;
+      typedef container_type::value_type value_type;
+      const_iterator begin() const   { return data.begin(); }
+      const_iterator end()  const    { return data.end(); }
+      iterator begin()               { return data.begin(); }
+      iterator end()                 { return data.end(); }
   };
 }
 
