@@ -209,6 +209,8 @@ namespace tnt
 
   void httpRequest::setSessionScope(sessionscope* s)
   {
+    if (sessionScope)
+      sessionScope->release();
     if (s)
       s->addRef();
     sessionScope = s;
