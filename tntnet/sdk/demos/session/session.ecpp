@@ -1,0 +1,61 @@
+<%sessionScope>
+unsigned s(0);
+</%sessionScope>
+<%applicationScope>
+unsigned a(0);
+</%applicationScope>
+<%requestScope>
+unsigned r(0);
+</%requestScope>
+<%pageScope>
+unsigned p(0);
+</%pageScope>
+<%componentScope>
+unsigned c(0);
+</%componentScope>
+<{
+  ++s;
+  ++a;
+  ++r;
+  ++p;
+  ++c;
+}>
+Sessioncounter: <$ s $><br>
+Applicationcounter: <$ a $><br>
+Requestcounter: <$ r $><br>
+Pagecounter: <$ p $><br>
+Componentcounter: <$ c $><br>
+<div style="background-color:#ffa">
+<& subcomp &>
+</div>
+
+<%def subcomp>
+<%sessionScope>
+unsigned s(0);
+</%sessionScope>
+<%applicationScope>
+unsigned a(0);
+</%applicationScope>
+<%requestScope>
+unsigned r(0);
+</%requestScope>
+<%pageScope>
+unsigned p(0);
+</%pageScope>
+<%componentScope>
+unsigned c(0);
+</%componentScope>
+<h1>Subcomponent</h1>
+<{
+  ++s;
+  ++a;
+  ++r;
+  ++p;
+  ++c;
+}>
+Sessioncounter: <$ s $><br>
+Applicationcounter: <$ a $><br>
+Requestcounter: <$ r $><br>
+Pagecounter: <$ p $><br>
+Componentcounter: <$ c $><br>
+</%def>
