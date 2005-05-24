@@ -46,8 +46,8 @@ namespace tnt
       out << "\n"
              "  tnt::objectptr " << var << "_pointer = get" << Scope << "Scope(request).get(\"" << var << "\");\n"
              "  if (" << var << "_pointer == 0)\n"
-             "    " << var << "_pointer = get" << Scope << "Scope(request).putNew(\"" << var << "\", new tnt::objectTemplate<" << type << ">(" << init << "));\n"
-             "  " << type << "& " << var << " = dynamic_cast<tnt::objectTemplate<" << type << ">&>(*" << var << "_pointer.getPtr()).getData();\n"
+             "    " << var << "_pointer = get" << Scope << "Scope(request).putNew(\"" << var << "\", new tnt::objectTemplate<" << type << " >(" << init << "));\n"
+             "  " << type << "& " << var << " = dynamic_cast<tnt::objectTemplate<" << type << " >&>(*" << var << "_pointer.getPtr()).getData();\n"
              "  // </%" << scope << "Scope>\n";
     }
 

@@ -584,11 +584,13 @@ namespace tnt
               arg.clear();
               state = state_argscomment0;
             }
-            else if (ch == '\n')
+            else if (ch == '\n' || ch == ';')
             {
               processNV(arg, std::string());
               arg.clear();
               state = state_args0;
+              if (ch == '\n')
+                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
             }
             else
               arg += ch;
@@ -600,11 +602,13 @@ namespace tnt
               value.clear();
               state = state_argsval;
             }
-            else if (ch == '\n')
+            else if (ch == '\n' || ch == ';')
             {
               processNV(arg, std::string());
               arg.clear();
               state = state_args0;
+              if (ch == '\n')
+                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
             }
             else if (!std::isspace(ch))
             {
@@ -624,12 +628,14 @@ namespace tnt
             break;
 
           case state_argsval:
-            if (ch == '\n')
+            if (ch == '\n' || ch == ';')
             {
               processNV(arg, value);
               arg.clear();
               value.clear();
               state = state_args0;
+              if (ch == '\n')
+                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
             }
             else if (ch == '"')
             {
@@ -667,13 +673,8 @@ namespace tnt
               arg.clear();
               value.clear();
               state = state_argscomment;
-            }
-            else if (ch == '\n')
-            {
-              processNV(arg, value);
-              arg.clear();
-              value.clear();
-              state = state_args0;
+              if (ch == '\n')
+                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
             }
             else
             {
@@ -727,7 +728,7 @@ namespace tnt
             break;
 
           case state_attrval:
-            if (ch == '\n')
+            if (ch == '\n' || ch == ';')
             {
               if (value.empty())
                 throw parse_error("value expected", state, curline);
@@ -735,6 +736,8 @@ namespace tnt
               arg.clear();
               value.clear();
               state = state_attr0;
+              if (ch == '\n')
+                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
             }
             else if (ch == '"')
             {
@@ -774,15 +777,6 @@ namespace tnt
               arg.clear();
               value.clear();
               state = state_attrcomment;
-            }
-            else if (ch == '\n')
-            {
-              if (value.empty())
-                throw parse_error("value expected", state, curline);
-              processAttr(arg, value);
-              arg.clear();
-              value.clear();
-              state = state_attr0;
             }
             else
             {

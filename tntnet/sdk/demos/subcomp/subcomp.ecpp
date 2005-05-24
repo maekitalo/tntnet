@@ -148,10 +148,10 @@ normal parameterlist just like in c++-functions after the defition
 
 <%def localcomp>
 <%args>
-param1
-param2
-param3[]
-int param4[]
+param1;
+param2;
+param3[];
+int param4[];
 </%args>
    This is a local subcomponent.
    We got a parameter <i>param1</i> with the value <b><$param1$></b>.

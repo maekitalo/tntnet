@@ -4,10 +4,10 @@
   It stores the name in a cookie
 #>
 <%args>
-name             // define query-parameter
+name;            // define query-parameter
                  // this defines a variable of type std::string with
                  // the name "name"
-clearcookie
+clearcookie;
 </%args>
 <%cpp>
 
