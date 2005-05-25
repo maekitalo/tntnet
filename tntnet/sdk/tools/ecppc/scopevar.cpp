@@ -26,29 +26,49 @@ namespace tnt
 {
   namespace ecppc
   {
-    scopevar::scopevar(const std::string& scope_, const std::string& type_,
-      const std::string& var_, const std::string& init_)
-      : scope(scope_),
-        Scope(scope_),
-        type(type_),
-        var(var_),
-        init(init_)
+    const char* scopevar::getterMethod() const
     {
-      scope[0] = std::tolower(scope[0]);
-      Scope[0] = std::toupper(Scope[0]);
+      switch (scope_container)
+      {
+        case ecpp::application_container:
+          return "getApplicationScope";
+        case ecpp::session_container:
+          return "getSessionScope";
+        case ecpp::request_container:
+          return "getRequestScope";
+      }
+      return 0;
+    }
+
+    std::string scopevar::key() const
+    {
+      switch (scope)
+      {
+        case ecpp::global_scope:
+          return '"' + var + '"';
+        case ecpp::page_scope:
+          return "getPageScopePrefix(getCompident()) + \":" + var + '"';
+        case ecpp::component_scope:
+          return "getComponentScopePrefix(getCompident()) + \":" + var + '"';
+      }
+      return 0;
     }
 
     void scopevar::get(std::ostream& out) const
     {
-      out << "  // <%" << scope << "Scope> " << type << ' ' << var;
+      out << "  // <%scope> " << type << ' ' << var;
       if (!init.empty())
         out << '(' << init << ')';
       out << "\n"
-             "  tnt::objectptr " << var << "_pointer = get" << Scope << "Scope(request).get(\"" << var << "\");\n"
+             "  typedef " << type << ' ' << var << "_type;\n"
+             "  tnt::objectptr " << var << "_pointer = " << getterMethod() << "(request).get("
+                << key() << ");\n"
              "  if (" << var << "_pointer == 0)\n"
-             "    " << var << "_pointer = get" << Scope << "Scope(request).putNew(\"" << var << "\", new tnt::objectTemplate<" << type << " >(" << init << "));\n"
-             "  " << type << "& " << var << " = dynamic_cast<tnt::objectTemplate<" << type << " >&>(*" << var << "_pointer.getPtr()).getData();\n"
-             "  // </%" << scope << "Scope>\n";
+             "    " << var << "_pointer = " << getterMethod() << "(request).putNew("
+                    << key() << ", new tnt::objectTemplate<" << var << "_type>(" << init << "));\n"
+             "  " << type << "& " << var << " = dynamic_cast<tnt::objectTemplate<"
+               << var << "_type>&>(*" << var << "_pointer.getPtr()).getData();\n"
+             "  // </%scope>\n";
     }
 
   }

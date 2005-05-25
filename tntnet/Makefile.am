@@ -16,6 +16,7 @@ SUBDIRS = \
     sdk/demos/savepoint \
     sdk/demos/session \
     sdk/demos/sprintf \
+    sdk/demos/strings \
     sdk/demos/subcomp \
     sdk/demos/upload \
     etc

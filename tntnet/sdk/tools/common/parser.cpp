@@ -96,6 +96,13 @@ namespace tnt
         state_include0,
         state_include1,
         state_include,
+        state_scopearg0,
+        state_scopearg,
+        state_scopeargeq,
+        state_scopeargval0,
+        state_scopeargval,
+        state_scopeargvale,
+        state_scopevale,
         state_scope0,
         state_scope,
         state_scopeinit,
@@ -117,6 +124,8 @@ namespace tnt
       cppargs_type cppargs;
       unsigned bracket_count = 0;
       std::string scopetype, scopevar, scopeinit;
+      scope_container_type scope_container;
+      scope_type scope;
 
       start();
 
@@ -272,17 +281,44 @@ namespace tnt
                 state = state_attr0;
               else if (tag == "include")
                 state = state_include0;
-              else if (tag == "sessionScope"
-                    || tag == "applicationScope"
-                    || tag == "requestScope"
-                    || tag == "pageScope"
-                    || tag == "componentScope")
+              else if (tag == "application")
+              {
+                scope_container = application_container;
+                scope = component_scope;
                 state = state_scope0;
+              }
+              else if (tag == "session")
+              {
+                scope_container = session_container;
+                scope = component_scope;
+                state = state_scope0;
+              }
+              else if (tag == "request")
+              {
+                scope_container = request_container;
+                scope = component_scope;
+                state = state_scope0;
+              }
               else
                 state = state_cpp;
             }
             else if (!inComp && tag == "def" && std::isspace(ch))
               state = state_tagarg0;
+            else if (std::isspace(ch) && tag == "application")
+            {
+              scope_container = application_container;
+              state = state_scopearg0;
+            }
+            else if (std::isspace(ch) && tag == "session")
+            {
+              scope_container = session_container;
+              state = state_scopearg0;
+            }
+            else if (std::isspace(ch) && tag == "request")
+            {
+              scope_container = request_container;
+              state = state_scopearg0;
+            }
             else
               tag += ch;
             break;
@@ -298,7 +334,7 @@ namespace tnt
             break;
 
           case state_tagarg:
-            if (ch == ' ')
+            if (std::isspace(ch))
               state = state_tagarge;
             else if (tag == "def" && ch == '(')
               state = state_defarg0;
@@ -489,9 +525,9 @@ namespace tnt
                 processCpp(code);
               else if (tag == "args" || tag == "attr" || tag == "config"
                 || tag == "include"
-                || tag == "sessionScope" || tag == "applicationScope"
-                || tag == "requestScope" || tag == "pageScope"
-                || tag == "componentScope")
+                || tag == "session"
+                || tag == "application"
+                || tag == "request")
                 ;
               else
                 throw parse_error("unknown tag " + tag, state, curline);
@@ -1143,6 +1179,80 @@ namespace tnt
             }
             break;
 
+          case state_scopearg0:
+            if (ch == '>')
+            {
+              state = state_scope0;
+              scope = component_scope;
+            }
+            else if (!std::isspace(ch))
+            {
+              tagarg = ch;
+              state = state_scopearg;
+            }
+            break;
+
+          case state_scopearg:
+            if (ch == '=')
+            {
+              state = state_scopeargval0;
+              if (tagarg != "scope")
+                throw parse_error("argument \"scope\" expected", state, curline);
+              tagarg.clear();
+            }
+            else if (std::isspace(ch))
+            {
+              state = state_scopeargeq;
+              if (tagarg != "scope")
+                throw parse_error("argument \"scope\" expected", state, curline);
+              tagarg.clear();
+            }
+            else
+              tagarg += ch;
+            break;
+
+          case state_scopeargeq:
+            if (ch == '=')
+              state = state_scopeargval0;
+            else if (!std::isspace(ch))
+              throw parse_error("\"=\" expected", state, curline);
+            break;
+
+          case state_scopeargval0:
+            if (ch == '"')
+              state = state_scopeargval;
+            else if (!std::isspace(ch))
+              throw parse_error("argument expected", state, curline);
+            break;
+
+          case state_scopeargval:
+            if (ch == '"')
+            {
+              if (value == "global")
+                scope = global_scope;
+              else if (value == "page")
+                scope = page_scope;
+              else if (value == "component")
+                scope = component_scope;
+              else
+                throw parse_error("global|page|component expected", state, curline);
+
+              value.clear();
+              state = state_scopevale;
+            }
+            else if (ch == '\n')
+              throw parse_error("'\"' expected", state, curline);
+            else
+              value += ch;
+            break;
+
+          case state_scopevale:
+            if (ch == '>')
+              state = state_scope0;
+            else if (!std::isspace(ch))
+              throw parse_error("'>' expected", state, curline);
+            break;
+
           case state_scope0:
             if (ch == '<')
               state = state_scopee;
@@ -1164,7 +1274,7 @@ namespace tnt
               if (scopetype.size() > 0
                 && std::isspace(scopetype.at(scopetype.size() - 1)))
                   scopetype.erase(scopetype.size() - 1);
-              processScope(tag, scopetype, scopevar, scopeinit);
+              processScope(scope_container, scope, scopetype, scopevar, scopeinit);
 
               scopetype.clear();
               scopevar.clear();
@@ -1205,7 +1315,7 @@ namespace tnt
               if (scopetype.size() > 0
                 && std::isspace(scopetype.at(scopetype.size() - 1)))
                   scopetype.erase(scopetype.size() - 1);
-              processScope(tag, scopetype, scopevar, scopeinit);
+              processScope(scope_container, scope, scopetype, scopevar, scopeinit);
 
               scopetype.clear();
               scopevar.clear();
@@ -1312,39 +1422,8 @@ namespace tnt
     {
     }
 
-    void parser::processScope(const std::string& scope, const std::string& type, const std::string& var, const std::string& init)
-    {
-      if (scope == "sessionScope")
-        processSessionScope(type, var, init);
-      else if (scope == "applicationScope")
-        processApplicationScope(type, var, init);
-      else if (scope == "requestScope")
-        processRequestScope(type, var, init);
-      else if (scope == "pageScope")
-        processPageScope(type, var, init);
-      else if (scope == "componentScope")
-        processComponentScope(type, var, init);
-      else
-        throw std::runtime_error("invalid scope " + scope);
-    }
-
-    void parser::processApplicationScope(const std::string& type, const std::string& var, const std::string& init)
-    {
-    }
-
-    void parser::processSessionScope(const std::string& type, const std::string& var, const std::string& init)
-    {
-    }
-
-    void parser::processRequestScope(const std::string& type, const std::string& var, const std::string& init)
-    {
-    }
-
-    void parser::processPageScope(const std::string& type, const std::string& var, const std::string& init)
-    {
-    }
-
-    void parser::processComponentScope(const std::string& type, const std::string& var, const std::string& init)
+    void parser::processScope(scope_container_type container, scope_type scope,
+      const std::string& type, const std::string& var, const std::string& init)
     {
     }
 

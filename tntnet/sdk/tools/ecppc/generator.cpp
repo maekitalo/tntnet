@@ -198,34 +198,10 @@ namespace tnt
       configs.push_back(tnt::ecppc::variable(name, value));
     }
 
-    void generator::processApplicationScope(const std::string& type,
-      const std::string& var, const std::string& init)
+    void generator::processScope(scope_container_type container, scope_type scope,
+      const std::string& type, const std::string& var, const std::string& init)
     {
-      currentComp->addApplicationScope(type, var, init);
-    }
-
-    void generator::processSessionScope(const std::string& type,
-      const std::string& var, const std::string& init)
-    {
-      currentComp->addSessionScope(type, var, init);
-    }
-
-    void generator::processRequestScope(const std::string& type,
-      const std::string& var, const std::string& init)
-    {
-      currentComp->addRequestScope(type, var, init);
-    }
-
-    void generator::processPageScope(const std::string& type,
-      const std::string& var, const std::string& init)
-    {
-      currentComp->addPageScope(type, var, init);
-    }
-
-    void generator::processComponentScope(const std::string& type,
-      const std::string& var, const std::string& init)
-    {
-      currentComp->addComponentScope(type, var, init);
+      currentComp->addScopevar(scopevar(container, scope, type, var, init));
     }
 
     std::string generator::getHeader(const std::string& basename) const

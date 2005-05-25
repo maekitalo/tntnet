@@ -27,6 +27,7 @@ Boston, MA  02111-1307  USA
 #include <stdexcept>
 #include <map>
 #include <list>
+#include <tnt/ecpp/scopetypes.h>
 
 namespace tnt
 {
@@ -95,12 +96,8 @@ namespace tnt
         virtual void processDeclareShared(const std::string& code);
         virtual void processShared(const std::string& code);
         virtual void processInclude(const std::string& file);
-        virtual void processScope(const std::string& scope, const std::string& type, const std::string& var, const std::string& init);
-        virtual void processApplicationScope(const std::string& type, const std::string& var, const std::string& init);
-        virtual void processSessionScope(const std::string& type, const std::string& var, const std::string& init);
-        virtual void processRequestScope(const std::string& type, const std::string& var, const std::string& init);
-        virtual void processPageScope(const std::string& type, const std::string& var, const std::string& init);
-        virtual void processComponentScope(const std::string& type, const std::string& var, const std::string& init);
+        virtual void processScope(scope_container_type container, scope_type scope,
+          const std::string& type, const std::string& var, const std::string& init);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
         virtual void processComp(const std::string& code);
         virtual void processCondExpr(const std::string& cond, const std::string& expr);

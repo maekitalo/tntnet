@@ -83,6 +83,7 @@ AC_CONFIG_FILES([
     sdk/demos/savepoint/Makefile
     sdk/demos/session/Makefile
     sdk/demos/sprintf/Makefile
+    sdk/demos/strings/Makefile
     sdk/demos/subcomp/Makefile
     sdk/demos/upload/Makefile
     etc/Makefile

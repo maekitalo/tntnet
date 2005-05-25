@@ -91,10 +91,6 @@ namespace tnt
       { return request.getApplicationScope(); }
       static scope& getRequestScope(httpRequest& request)
       { return request.getRequestScope(); }
-      scope& getPageScope(httpRequest& request)
-      { return pageScope; }
-      scope& getComponentScope(httpRequest& request)
-      { return componentScope; }
 
       virtual ~ecppComponent();
       void registerSubComp(const std::string& name, ecppSubComponent* comp);
@@ -138,10 +134,6 @@ namespace tnt
         { return main.getSubcomps(); }
       virtual const subcomps_type& getSubcomps() const
         { return main.getSubcomps(); }
-
-    protected:
-      scope& getPageScope(httpRequest& request)
-      { return main.pageScope; }
 
     public:
       ecppSubComponent(ecppComponent& p, const std::string& name)
@@ -200,6 +192,16 @@ namespace tnt
                .fetchSubComp(ci.subname)(request, qparam);
   }
 
+  inline std::string getPageScopePrefix(const compident& id)
+  {
+    return id.toString();
+  }
+
+  template <typename compident_type>
+  std::string getComponentScopePrefix(const compident_type& id)
+  {
+    return id.toString();
+  }
 }
 
 namespace ecpp_component

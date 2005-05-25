@@ -75,34 +75,9 @@ namespace tnt
         void addSubcomp(const std::string& comp)
           { compbody.addSubcomp(comp); }
 
-        void addApplicationScope(const std::string& type_,
-          const std::string& var_, const std::string& init_)
+        void addScopevar(const scopevar& s)
         {
-          scopevars.push_back(scopevar("Application", type_, var_, init_));
-        }
-
-        void addSessionScope(const std::string& type_,
-          const std::string& var_, const std::string& init_)
-        {
-          scopevars.push_back(scopevar("Session", type_, var_, init_));
-        }
-
-        void addRequestScope(const std::string& type_,
-          const std::string& var_, const std::string& init_)
-        {
-          scopevars.push_back(scopevar("Request", type_, var_, init_));
-        }
-
-        void addPageScope(const std::string& type_,
-          const std::string& var_, const std::string& init_)
-        {
-          scopevars.push_back(scopevar("Page", type_, var_, init_));
-        }
-
-        void addComponentScope(const std::string& type_,
-          const std::string& var_, const std::string& init_)
-        {
-          scopevars.push_back(scopevar("Component", type_, var_, init_));
+          scopevars.push_back(s);
         }
 
         void getBody(std::ostream& o) const;

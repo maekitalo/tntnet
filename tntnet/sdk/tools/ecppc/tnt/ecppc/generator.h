@@ -144,16 +144,8 @@ namespace tnt
         virtual void processComp(const std::string& code);
         virtual void processCondExpr(const std::string& cond, const std::string& expr);
         virtual void processConfig(const std::string& name, const std::string& value);
-        virtual void processApplicationScope(const std::string& type,
-          const std::string& var, const std::string& init);
-        virtual void processSessionScope(const std::string& type,
-          const std::string& var, const std::string& init);
-        virtual void processRequestScope(const std::string& type,
-          const std::string& var, const std::string& init);
-        virtual void processPageScope(const std::string& type,
-          const std::string& var, const std::string& init);
-        virtual void processComponentScope(const std::string& type,
-          const std::string& var, const std::string& init);
+        virtual void processScope(scope_container_type container, scope_type scope,
+          const std::string& type, const std::string& var, const std::string& init);
 
         std::string getHeader(const std::string& basename) const;
         std::string getCpp(const std::string& basename) const;

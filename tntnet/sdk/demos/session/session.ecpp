@@ -1,61 +1,60 @@
-<%sessionScope>
+
+<%session>
 unsigned s(0);
-</%sessionScope>
-<%applicationScope>
+</%session>
+<%session scope="page">
+unsigned sp(0);
+</%session>
+<%application>
 unsigned a(0);
-</%applicationScope>
-<%requestScope>
+</%application>
+<%application scope="page">
+unsigned ap(0);
+</%application>
+<%request>
 unsigned r(0);
-</%requestScope>
-<%pageScope>
-unsigned p(0);
-</%pageScope>
-<%componentScope>
-unsigned c(0);
-</%componentScope>
-<{
-  ++s;
-  ++a;
-  ++r;
-  ++p;
-  ++c;
-}>
-Sessioncounter: <$ s $><br>
-Applicationcounter: <$ a $><br>
-Requestcounter: <$ r $><br>
-Pagecounter: <$ p $><br>
-Componentcounter: <$ c $><br>
+</%request>
+<%request scope="page">
+unsigned rp(0);
+</%request>
+
+Sessioncounter (component): <$ ++s $><br>
+Sessioncounter (page): <$ ++sp $><br>
+Applicationcounter (component): <$ ++a $><br>
+Applicationcounter (page): <$ ++ap $><br>
+Requestcounter (component): <$ ++r $><br>
+Requestcounter (page): <$ ++rp $><br>
+
 <div style="background-color:#ffa">
 <& subcomp &>
 </div>
 
 <%def subcomp>
-<%sessionScope>
+
+<%session>
 unsigned s(0);
-</%sessionScope>
-<%applicationScope>
+</%session>
+<%session scope="page">
+unsigned sp(0);
+</%session>
+<%application>
 unsigned a(0);
-</%applicationScope>
-<%requestScope>
+</%application>
+<%application scope="page">
+unsigned ap(0);
+</%application>
+<%request>
 unsigned r(0);
-</%requestScope>
-<%pageScope>
-unsigned p(0);
-</%pageScope>
-<%componentScope>
-unsigned c(0);
-</%componentScope>
+</%request>
+<%request scope="page">
+unsigned rp(0);
+</%request>
 <h1>Subcomponent</h1>
-<{
-  ++s;
-  ++a;
-  ++r;
-  ++p;
-  ++c;
-}>
-Sessioncounter: <$ s $><br>
-Applicationcounter: <$ a $><br>
-Requestcounter: <$ r $><br>
-Pagecounter: <$ p $><br>
-Componentcounter: <$ c $><br>
+
+Sessioncounter (component): <$ ++s $><br>
+Sessioncounter (page): <$ ++sp $><br>
+Applicationcounter (component): <$ ++a $><br>
+Applicationcounter (page): <$ ++ap $><br>
+Requestcounter (component): <$ ++r $><br>
+Requestcounter (page): <$ ++rp $><br>
 </%def>

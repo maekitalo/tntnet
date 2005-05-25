@@ -24,23 +24,37 @@ Boston, MA  02111-1307  USA
 
 #include <string>
 #include <iosfwd>
+#include <tnt/ecpp/scopetypes.h>
 
 namespace tnt
 {
   namespace ecppc
   {
+    using ecpp::scope_container_type;
+    using ecpp::scope_type;
+
     class scopevar
     {
-        std::string scope;
-        std::string Scope;
+        scope_container_type scope_container;
+        scope_type scope;
         std::string type;
         std::string var;
         std::string init;
 
+        const char* getterMethod() const;
+        std::string key() const;
+
       public:
         scopevar()  { }
-        scopevar(const std::string& scope_, const std::string& type_,
-                 const std::string& var_, const std::string& init_);
+        scopevar(scope_container_type scope_container_, scope_type scope_, const std::string& type_,
+                 const std::string& var_, const std::string& init_)
+          : scope_container(scope_container_),
+            scope(scope_),
+            type(type_),
+            var(var_),
+            init(init_)
+            { }
+
         void get(std::ostream& o) const;
     };
   }
