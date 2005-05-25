@@ -11,10 +11,23 @@ This shared library is loaded by the webserver "tntnet" on request and
 executed.
 
 The ecpp-compiler can create also C++-classes from static files of any
-type, e. g. you can compile a jpeg-image into the library. So the
-complete webapplication is a single library.
+type, e.g. you can compile a jpeg-image into the library. So the
+whole webapplication is a single library.
 
 The application runs native, so they are very fast and compact.
+
+Features supported include: cookies, HTTP-upload, automatic request-parameter
+parsing and conversion, automatic sessionmanagement, scoped variables
+(application, request and session), internationalisation, keep-alive.
+
+Logging is done through cxxtools, which provides a unique API for log4cpp,
+log4cxx or simple logging to files or console.
+
+Tntnet is fully multithreaded and much work has been gone into making it
+scalable. It uses a dynamic pool of workerthreads, which answers requests
+from http-clients.
+
+Ssl is supported via the openssl-library.
 
 Installation 
 ============
@@ -35,14 +48,4 @@ This creates a directory "hello" with a simple project and prints
 out a short message, how to run the application.
 
 There are some demo-applications you can try out and play with in sdk/demos.
-
-Installation from CVS 
-=====================
-
-In the CVS-repository there is no configure-script, but configure.in,
-which is the source for configure. You need autoconf and automake to
-create configure.  There is a shellscript autogen.sh included, which
-calls the desired programs.
-
-I used automake 1.9.4 and autoconf 2.5.9 for development.
 

@@ -46,12 +46,10 @@ namespace tnt
 
   object* scope::get(const std::string& key) const
   {
-    log_debug("scope::get(\"" << key << "\") scope=" << this);
-
-    cxxtools::MutexLock lock(mutex);
     container_type::const_iterator it = data.find(key);
 
-    log_debug(" => " << (it == data.end() ? 0 : it->second));
+    log_debug("scope::get(\"" << key << "\") scope=" << this
+           << " => " << (it == data.end() ? 0 : it->second));
 
     return it == data.end() ? 0 : it->second;
   }
@@ -61,7 +59,6 @@ namespace tnt
     log_debug("scope::replace(\"" << key << ", " << o << "\") scope=" << this);
 
     o->addRef();
-    cxxtools::MutexLock lock(mutex);
     container_type::iterator it = data.find(key);
     if (it == data.end())
       data.insert(container_type::value_type(key, o));
@@ -76,7 +73,6 @@ namespace tnt
   {
     log_debug("scope::putNew(\"" << key << "\", " << o << ") scope=" << this);
 
-    cxxtools::MutexLock lock(mutex);
     container_type::iterator it = data.find(key);
     if (it == data.end())
     {
@@ -92,7 +88,6 @@ namespace tnt
 
   void scope::erase(const std::string& key)
   {
-    cxxtools::MutexLock lock(mutex);
     container_type::iterator it = data.find(key);
     if (it != data.end())
     {

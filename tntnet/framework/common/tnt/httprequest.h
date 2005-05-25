@@ -59,12 +59,25 @@ namespace tnt
       scope* applicationScope;
       sessionscope* sessionScope;
 
+      bool applicationScopeLocked;
+      bool sessionScopeLocked;
+
+      void ensureApplicationScopeLock();
+      void ensureSessionScopeLock();
+
+      void releaseApplicationScopeLock();
+      void releaseSessionScopeLock();
+
+      void releaseLocks() { releaseSessionScopeLock(); }
+
     public:
       httpRequest()
         : ssl(false),
           lang_init(false),
           applicationScope(0),
-          sessionScope(0)
+          sessionScope(0),
+          applicationScopeLocked(false),
+          sessionScopeLocked(false)
         { }
       httpRequest(const std::string& url);
       ~httpRequest();
@@ -135,7 +148,7 @@ namespace tnt
       void clearSession();
 
       scope& getRequestScope()            { return requestScope; }
-      scope& getApplicationScope()        { return *applicationScope; }
+      scope& getApplicationScope();
       sessionscope& getSessionScope();
       bool   hasSessionScope() const;
   };

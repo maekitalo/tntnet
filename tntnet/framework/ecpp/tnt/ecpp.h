@@ -81,17 +81,7 @@ namespace tnt
       static void rememberLibNotFound(const std::string& lib);
       static void rememberCompNotFound(const compident& ci);
 
-      scope pageScope;
-      scope componentScope;
-
     protected:
-      static scope& getSessionScope(httpRequest& request)
-      { return request.getSessionScope(); }
-      static scope& getApplicationScope(httpRequest& request)
-      { return request.getApplicationScope(); }
-      static scope& getRequestScope(httpRequest& request)
-      { return request.getRequestScope(); }
-
       virtual ~ecppComponent();
       void registerSubComp(const std::string& name, ecppSubComponent* comp);
 

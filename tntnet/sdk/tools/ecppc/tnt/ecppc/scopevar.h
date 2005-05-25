@@ -41,9 +41,6 @@ namespace tnt
         std::string var;
         std::string init;
 
-        const char* getterMethod() const;
-        std::string key() const;
-
       public:
         scopevar()  { }
         scopevar(scope_container_type scope_container_, scope_type scope_, const std::string& type_,

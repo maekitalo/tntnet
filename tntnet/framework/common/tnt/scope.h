@@ -40,6 +40,11 @@ namespace tnt
       scope(const object&);
       scope& operator=(const object&);
 
+      friend class httpRequest;
+
+      cxxtools::Mutex& getMutex()
+      { return mutex; }
+
     public:
       scope() : refs(1) {}
       ~scope();

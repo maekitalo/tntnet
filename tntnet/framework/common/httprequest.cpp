@@ -41,7 +41,9 @@ namespace tnt
   : ssl(false),
     lang_init(false),
     applicationScope(0),
-    sessionScope(0)
+    sessionScope(0),
+    applicationScopeLocked(false),
+    sessionScopeLocked(false)
   {
     std::istringstream s("GET " + url + " HTTP/1.1\r\n\r\n");
     parse(s);
@@ -66,11 +68,15 @@ namespace tnt
     lang_init = false;
     requestScope.clear();
     httpcookies.clear();
+
+    releaseLocks();
+
     if (applicationScope)
     {
       applicationScope->release();
       applicationScope = 0;
     }
+
     if (sessionScope)
     {
       sessionScope->release();
@@ -202,6 +208,12 @@ namespace tnt
 
   void httpRequest::setApplicationScope(scope* s)
   {
+    if (applicationScope)
+    {
+      releaseApplicationScopeLock();
+      applicationScope->release();
+    }
+
     if (s)
       s->addRef();
     applicationScope = s;
@@ -210,7 +222,11 @@ namespace tnt
   void httpRequest::setSessionScope(sessionscope* s)
   {
     if (sessionScope)
+    {
+      releaseSessionScopeLock();
       sessionScope->release();
+    }
+
     if (s)
       s->addRef();
     sessionScope = s;
@@ -220,15 +236,62 @@ namespace tnt
   {
     if (sessionScope)
     {
+      releaseSessionScopeLock();
       sessionScope->release();
       sessionScope = 0;
     }
+  }
+
+  void httpRequest::ensureApplicationScopeLock()
+  {
+    ensureSessionScopeLock();
+    if (applicationScope && !applicationScopeLocked)
+    {
+      applicationScope->getMutex().Lock();
+      applicationScopeLocked = true;
+    }
+  }
+
+  void httpRequest::ensureSessionScopeLock()
+  {
+    if (sessionScope && !sessionScopeLocked)
+    {
+      sessionScope->getMutex().Lock();
+      sessionScopeLocked = true;
+    }
+  }
+
+  void httpRequest::releaseApplicationScopeLock()
+  {
+    if (applicationScope && applicationScopeLocked)
+    {
+      applicationScopeLocked = false;
+      applicationScope->getMutex().Unlock();
+    }
+  }
+
+  void httpRequest::releaseSessionScopeLock()
+  {
+    releaseApplicationScopeLock();
+
+    if (sessionScope && sessionScopeLocked)
+    {
+      sessionScopeLocked = false;
+      sessionScope->getMutex().Unlock();
+    }
+  }
+
+  scope& httpRequest::getApplicationScope()
+  {
+    ensureApplicationScopeLock();
+    return *applicationScope;
   }
 
   sessionscope& httpRequest::getSessionScope()
   {
     if (!sessionScope)
       sessionScope = new sessionscope();
+    ensureSessionScopeLock();
     return *sessionScope;
   }
 
