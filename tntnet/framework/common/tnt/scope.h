@@ -42,14 +42,14 @@ namespace tnt
 
       friend class httpRequest;
 
-      cxxtools::Mutex& getMutex()
-      { return mutex; }
-
     public:
-      scope() : refs(1) {}
+      scope();
       ~scope();
 
-      unsigned addRef()  { return ++refs; }
+      void Lock()   { mutex.Lock(); }
+      void Unlock() { mutex.Unlock(); }
+
+      unsigned addRef();
       unsigned release();
 
       bool has(const std::string& key) const

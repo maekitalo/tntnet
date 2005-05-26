@@ -51,6 +51,7 @@ namespace tnt
 
   httpRequest::~httpRequest()
   {
+    releaseLocks();
     if (applicationScope)
       applicationScope->release();
     if (sessionScope)
@@ -244,41 +245,61 @@ namespace tnt
 
   void httpRequest::ensureApplicationScopeLock()
   {
+    log_trace("ensureApplicationScopeLock; thread " << pthread_self());
+
     ensureSessionScopeLock();
     if (applicationScope && !applicationScopeLocked)
     {
-      applicationScope->getMutex().Lock();
+      log_debug("lock application scope; thread" << pthread_self());
+      applicationScope->Lock();
       applicationScopeLocked = true;
     }
+    else
+      log_debug("applicationscope locked already");
   }
 
   void httpRequest::ensureSessionScopeLock()
   {
+    log_trace("ensureSessionScopeLock; thread " << pthread_self());
+
     if (sessionScope && !sessionScopeLocked)
     {
-      sessionScope->getMutex().Lock();
+      log_debug("lock sessionscope; thread " << pthread_self());
+      sessionScope->Lock();
       sessionScopeLocked = true;
     }
+    else
+      log_debug("sessionscope locked already");
   }
 
   void httpRequest::releaseApplicationScopeLock()
   {
+    log_trace("releaseApplicationScopeLock; thread " << pthread_self());
+
     if (applicationScope && applicationScopeLocked)
     {
+      log_debug("unlock applicationscope");
       applicationScopeLocked = false;
-      applicationScope->getMutex().Unlock();
+      applicationScope->Unlock();
     }
+    else
+      log_debug("applicationscope not locked");
   }
 
   void httpRequest::releaseSessionScopeLock()
   {
+    log_trace("releaseSessionScopeLock; thread " << pthread_self());
+
     releaseApplicationScopeLock();
 
     if (sessionScope && sessionScopeLocked)
     {
+      log_debug("unlock sessionscope");
       sessionScopeLocked = false;
-      sessionScope->getMutex().Unlock();
+      sessionScope->Unlock();
     }
+    else
+      log_debug("sessionscope not locked");
   }
 
   scope& httpRequest::getApplicationScope()

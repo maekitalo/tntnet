@@ -27,16 +27,35 @@ namespace tnt
 {
   log_define("tntnet.scope");
 
+  static unsigned scopes_total = 0;
+
+  scope::scope()
+    : refs(1)
+  {
+    ++scopes_total;
+    log_debug("new scope " << this << " total=" << scopes_total);
+  }
+
   scope::~scope()
   {
     for (container_type::iterator it = data.begin(); it != data.end(); ++it)
       it->second->release();
+    --scopes_total;
+    log_debug("scope " << this << " deleted; " << scopes_total << " left");
+  }
+
+  unsigned scope::addRef()
+  {
+    ++refs;
+    log_debug("scope::addRef(); this=" << this << " refs=" << refs);
   }
 
   unsigned scope::release()
   {
+    log_debug("scope::release(); this=" << this << " refs=" << refs);
     if (--refs == 0)
     {
+      log_debug("delete scope " << this);
       delete this;
       return 0;
     }

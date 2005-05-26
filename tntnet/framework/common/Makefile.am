@@ -19,6 +19,7 @@ libtntnet_la_SOURCES = \
 	object.cpp \
 	savepoint.cpp \
 	scope.cpp \
+	sessionscope.cpp \
 	sodata.cpp \
 	tntconfig.cpp \
 	zdata.cpp

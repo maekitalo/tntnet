@@ -1,6 +1,8 @@
-
 <%session>
 unsigned s(0);
+</%session>
+<%session scope="global">
+unsigned sa(0);
 </%session>
 <%session scope="page">
 unsigned sp(0);
@@ -19,6 +21,7 @@ unsigned rp(0);
 </%request>
 
 Sessioncounter (component): <$ ++s $><br>
+Sessioncounter (application): <$ ++sa $><br>
 Sessioncounter (page): <$ ++sp $><br>
 Applicationcounter (component): <$ ++a $><br>
 Applicationcounter (page): <$ ++ap $><br>
@@ -28,6 +31,9 @@ Requestcounter (page): <$ ++rp $><br>
 <div style="background-color:#ffa">
 <& subcomp &>
 </div>
+
+<a href="session">reload this</a>
+<a href="appsession">applicationsession only</a>
 
 <%def subcomp>
 

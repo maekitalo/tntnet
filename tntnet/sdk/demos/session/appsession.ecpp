@@ -1,0 +1,12 @@
+<%session>
+unsigned s(0);
+</%session>
+<%session scope="global">
+unsigned sa(0);
+</%session>
+
+Sessioncounter (component): <$ ++s $><br>
+Sessioncounter (application): <$ ++sa $><br>
+
+<a href="session">all vars</a>
+<a href="appsession">reload this</a>

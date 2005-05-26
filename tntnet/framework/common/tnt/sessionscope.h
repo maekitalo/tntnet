@@ -30,11 +30,21 @@ namespace tnt
   class sessionscope : public scope
   {
       time_t atime;
+      unsigned timeout;
+      static unsigned defaultTimeout;
 
     public:
-      sessionscope()           { touch(); }
-      void touch()             { time(&atime); }
-      time_t getAtime() const  { return atime; }
+      sessionscope()
+        : timeout(defaultTimeout)
+        { touch(); }
+
+      void touch()                               { time(&atime); }
+      time_t getAtime() const                    { return atime; }
+      unsigned getTimeout() const                { return timeout; }
+      void setTimeout(unsigned t)                { timeout = t; }
+
+      static void setDefaultTimeout(unsigned t)  { defaultTimeout = t; }
+      static unsigned getDefaultTimeout()        { return defaultTimeout; }
   };
 }
 

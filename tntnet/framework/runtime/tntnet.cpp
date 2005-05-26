@@ -175,7 +175,7 @@ namespace tnt
     worker::setMinThreads(minthreads);
     worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", worker::getCompLifetime()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
-    sessionTimeout = config.getValue<unsigned>("SessionTimeout", 300);
+    sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
 
     tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -618,8 +618,8 @@ namespace tnt
     pollerthread.Create();
 
     log_debug("start timer thread");
-    cxxtools::MethodThread<tntnet> sessionTimeout_thread(*this, &tntnet::timerThread);
-    sessionTimeout_thread.Create();
+    cxxtools::MethodThread<tntnet> timerThread(*this, &tntnet::timerTask);
+    timerThread.Create();
 
     if (filedes >= 0)
       signalParentSuccess(filedes);
@@ -656,13 +656,13 @@ namespace tnt
     }
   }
 
-  void tntnet::timerThread()
+  void tntnet::timerTask()
   {
     log_debug("timer thread");
 
     while (1)
     {
-      sleep(5);
+      sleep(1);
 
       log_debug("check sessiontimeout");
 
@@ -670,18 +670,23 @@ namespace tnt
       time(&currentTime);
       cxxtools::MutexLock lock(sessionScopesMutex);
       sessionscopes_type::iterator it = sessionScopes.begin();
+      unsigned count = 0;
       while (it != sessionScopes.end())
       {
-        if (currentTime - it->second->getAtime() > sessionTimeout)
+        sessionscope* s = it->second;
+        if (currentTime - s->getAtime() > s->getTimeout())
         {
-          log_debug("sessiontimeout for session " << it->first << " reached");
-          it->second->release();
-          sessionScopes.erase(it);
-          it = sessionScopes.begin();
+          log_info("sessiontimeout for session " << it->first << " reached");
+          sessionscopes_type::iterator it2 = it;
+          ++it;
+          s->release();
+          sessionScopes.erase(it2);
+          ++count;
         }
         else
           ++it;
       }
+      log_debug(count << " sessions timed out");
 
       log_debug("drop old components");
       worker::dropOldComponents();
