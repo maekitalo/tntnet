@@ -5,6 +5,7 @@ libtntnet_sdk_la_SOURCES = \
 	parser.cpp \
 	tnt/datachunks_creator.h \
 	tnt/ecpp/parser.h \
+	tnt/ecpp/scopetypes.h \
 	tnt/stringescaper.h
 
 libtntnet_sdk_la_LDFLAGS = -version-info @sonumber@ @CXXTOOLS_LDFLAGS@
