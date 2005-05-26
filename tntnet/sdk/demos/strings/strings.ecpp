@@ -1,0 +1,54 @@
+<%pre>
+
+#include <vector>
+
+</%pre>
+<%session>
+std::vector<std::string> strings;
+</%session>
+<%args>
+add;
+string;
+unsigned remove = 9999;
+</%args>
+<{
+
+  if (!add.empty())
+    strings.push_back(string);
+
+  if (remove != 9999)
+    strings.erase(strings.begin() + remove);
+
+}>
+<html>
+ <head><title>Example CSP</title></head>
+ <body> 
+  <h1>Example CSP</h1>
+
+   <p>This servlet enters strings into a table.</p>
+
+   <form method=get> 
+    <p>Enter a string:
+    <input type=text size=64 name="string"></input>
+    <input type=submit name="add" value="Go!"></input>
+    </p> 
+   </form>
+ <p>
+
+ <table border=1> 
+  <tr>
+   <th colspan=2>Strings entered so far: <$strings.size()$></th></tr>
+ <{ 
+   for (std::vector<std::string>::const_iterator i = strings.begin();
+        i != strings.end(); ++i) { 
+  }>
+ <tr> 
+  <td><$ *i $></td>
+  <td><a href="strings?remove=<$i - strings.begin()$>">remove</a></td> 
+</tr>
+ <{ 
+} 
+}> 
+</table></p> 
+</body> 
+</html>
