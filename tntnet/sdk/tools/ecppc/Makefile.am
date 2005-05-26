@@ -17,6 +17,7 @@ ecppc_SOURCES = \
 	tnt/ecppc/generator.h \
 	tnt/ecppc/htmlfilter.h \
 	tnt/ecppc/jsfilter.h \
+	tnt/ecppc/scopevar.h \
 	tnt/ecppc/subcomponent.h \
 	tnt/ecppc/variable.h
 
