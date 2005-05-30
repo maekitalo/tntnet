@@ -17,8 +17,6 @@ SUFFIXES=.ecpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 
-session.cpp: $(top_builddir)/sdk/tools/ecppc/ecppc
-
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@
 tntnet.conf:
