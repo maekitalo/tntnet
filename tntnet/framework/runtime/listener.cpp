@@ -22,6 +22,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/listener.h"
 #include "tnt/tntnet.h"
 #include <cxxtools/log.h>
+#include <errno.h>
 
 #ifdef USE_SSL
 #  include "tnt/ssl.h"
