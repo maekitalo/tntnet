@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  /// baseclass for HTTP-messages
+  /// Baseclass for HTTP-messages.
   class httpMessage
   {
     public:
@@ -36,6 +36,7 @@ namespace tnt
 
       typedef messageheader header_type;
 
+      /// constants for messageheaders
       static const std::string Content_Type;
       static const std::string Content_Length;
       static const std::string Connection;
@@ -83,49 +84,75 @@ namespace tnt
       virtual ~httpMessage()
       { }
 
+      /// Removes all request-specific content.
       virtual void clear();
 
+      /// Returns the http-method (normally GET or POST) of a request.
       const std::string& getMethod() const      { return method; }
+      /// sets the http-method of this request.
       void setMethod(const std::string& m)      { method = m; }
-      /// return url with get-parameter
+      /// returns url with get-parameters.
       std::string getQuery() const
         { return query_string.empty() ? url : url + '?' + query_string; }
+      /// returns the request-url without parameters.
       const std::string& getUrl() const         { return url; }
+      /// returns get-parameters as string.
       const std::string& getQueryString() const { return query_string; }
+      /// returns true, if the message has the specified header.
       bool hasHeader(const std::string& key)    { return header.find(key) != header.end(); }
+      /// returns the content of the specified header or the passed default
+      /// when not set.
       std::string getHeader(const std::string& key,
         const std::string& def = std::string()) const;
+      /// returns the body of the message.
       const std::string& getBody() const        { return body; }
 
+      /// returns the http-major-version-number.
       unsigned short getMajorVersion() const
         { return major_version; }
+      /// returns the http-minor-version-number.
       unsigned short getMinorVersion() const
         { return minor_version; }
+      /// sets the http-version-number
       void setVersion(unsigned short major, unsigned short minor)
         { major_version = major; minor_version = minor; }
 
+      /// returns the value of the content-size-header as read from the client.
       size_t getContentSize() const
         { return content_size; }
+      /// returns the virtual-host-header of this request.
       std::string getVirtualHost() const
         { return getHeader(Host); }
 
+      /// Returns a constant Iterator, which points to the first header.
+      /// The value of the iterator is a std::pair<std::string, std::string>.
       header_type::const_iterator header_begin() const
         { return header.begin(); }
+      /// Returns a constant Iterator, which points past the last header.
       header_type::const_iterator header_end() const
         { return header.end(); }
 
+      /// Adds the specified header to the message.
       void setHeader(const std::string& key, const std::string& value);
+      /// Removes the header with the specified name from the message.
       void removeHeader(const std::string& key)
         { header.erase(key); }
 
+      /// Returns all headers as a string.
       std::string dumpHeader() const;
+      /// Prints all headers to the specified output-stream.
       void dumpHeader(std::ostream& out) const;
 
+      /// Returns a properly formatted date-string, as needed in http.
       static std::string htdate(time_t t);
+      /// Returns a properly formatted date-string, as needed in http.
       static std::string htdate(struct tm* tm);
 
+      /// Checks for double-dot-url. Returns false, if the url used as
+      /// a filename would escape from the basedir.
       static bool checkUrl(const std::string& url);
 
+      /// Sets a limit for a maximum request size.
       static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }
   };
 }

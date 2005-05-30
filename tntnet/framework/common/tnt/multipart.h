@@ -28,7 +28,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  /// header eines Teiles in einem MIME-Multipart-Objektes
+  /// header of a MIME-multipart-object
   class partheader : public messageheader
   {
       contentdisposition cd;
@@ -41,7 +41,7 @@ namespace tnt
         { return cd; }
   };
 
-  /// Teil eines MIME-Multipart-Objectes
+  /// Part of a MIME-multipart-object
   class part
   {
     public:
@@ -56,23 +56,29 @@ namespace tnt
     public:
       part(const_iterator b, const_iterator e);
 
+      /// returns the partheader-object of this part.
       const partheader& getHeader() const      { return header; }
+      /// returns a single header-value or empty string if not set.
       std::string getHeader(const std::string& key) const;
 
+      /// returns the name of this part (name-attribute of html-input-field)
       const std::string& getName() const
         { return header.getContentDisposition().getName(); }
+      /// returns the passed filename of the part or empty string.
       const std::string& getFilename() const
         { return header.getContentDisposition().getFilename(); }
+      /// returns a const iterator to the start of data.
       const_iterator getBodyBegin() const
         { return body_begin; }
+      /// returns a const iterator past the end of data.
       const_iterator getBodyEnd() const
         { return body_end; }
-      /// ineffizient aber einfacher in der Schnittstelle:
+      /// less efficient (a temporary string is created), but easier to use:
       std::string getBody() const
         { return std::string(getBodyBegin(), getBodyEnd()); }
   };
 
-  /// ein MIME-Multipart-Objekt
+  /// a MIME-Multipart-Object
   class multipart
   {
     public:
