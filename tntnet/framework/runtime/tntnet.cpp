@@ -686,7 +686,7 @@ namespace tnt
         else
           ++it;
       }
-      log_debug(count << " sessions timed out");
+      log_debug(count << " sessions timed out " << sessionScopes.size() << " sessions left");
 
       log_debug("drop old components");
       worker::dropOldComponents();
