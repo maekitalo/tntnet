@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef DISPATCHER_H
-#define DISPATCHER_H
+#ifndef TNT_DISPATCHER_H
+#define TNT_DISPATCHER_H
 
 #include <boost/regex.hpp>
 #include <cxxtools/thread.h>
@@ -123,5 +123,5 @@ namespace tnt
 
 }
 
-#endif // DISPATCHER_H
+#endif // TNT_DISPATCHER_H
 

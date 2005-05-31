@@ -27,6 +27,9 @@ namespace tnt
 {
   namespace ecppc
   {
+    bodypart::~bodypart()
+    { }
+
     void bodypart_static::getBody(std::ostream& out) const
     {
       out << data;

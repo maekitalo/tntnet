@@ -23,12 +23,12 @@ Boston, MA  02111-1307  USA
 #define TNT_JOB_H
 
 #include <config.h>
-#include <boost/shared_ptr.hpp>
 #include <deque>
 #include <cxxtools/thread.h>
 #include <cxxtools/tcpstream.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpparser.h>
+#include <tnt/pointer.h>
 #include <time.h>
 
 #ifdef USE_SSL
@@ -42,7 +42,7 @@ void mainloop()
 {
   while (1)
   {
-    jobqueue::ptr_type j = new tcpjob();
+    jobqueue::job_ptr j = new tcpjob();
     j->Accept(poller.get());
     queue.put(j);
   }
@@ -53,7 +53,7 @@ void server::Run()
 {
   while (1)
   {
-    jobqueue::ptr_type j = queue.get();
+    jobqueue::job_ptr j = queue.get();
     std::iostream& socket = j->getStream();
     processRequest(socket);
   }
@@ -71,6 +71,8 @@ namespace tnt
       httpMessage::parser parser;
       time_t lastAccessTime;
 
+      unsigned refs;
+
       static unsigned socket_read_timeout;
       static unsigned socket_write_timeout;
       static unsigned keepalive_max;
@@ -80,9 +82,25 @@ namespace tnt
       job()
         : parser(request),
           keepAliveCounter(keepalive_max),
-          lastAccessTime(0)
+          lastAccessTime(0),
+          refs(0)
         { }
+
+    protected:
       virtual ~job();
+
+    public:
+      unsigned addRef()   { return ++refs; }
+      unsigned release()
+      {
+        if (--refs == 0)
+        {
+          delete this;
+          return 0;
+        }
+        else
+          return refs;
+      }
 
       virtual std::iostream& getStream() = 0;
       virtual int getFd() const = 0;
@@ -151,7 +169,8 @@ namespace tnt
   class jobqueue
   {
     public:
-      typedef boost::shared_ptr<job> job_ptr;
+      typedef pointer<job> job_ptr;
+
       cxxtools::Condition noWaitThreads;
 
     private:

@@ -22,7 +22,7 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_ECPPC_BODY_H
 #define TNT_ECPPC_BODY_H
 
-#include <boost/shared_ptr.hpp>
+#include <tnt/pointer.h>
 #include <string>
 #include <list>
 #include <set>
@@ -36,7 +36,15 @@ namespace tnt
 
     class bodypart
     {
+        unsigned refs;
+
       public:
+        bodypart() : refs(0)  { }
+        virtual ~bodypart();
+
+        void addRef()  { ++refs; }
+        void release() { if (--refs <= 0) delete this; }
+
         virtual void getBody(std::ostream& out) const = 0;
     };
 
@@ -88,7 +96,7 @@ namespace tnt
     class body
     {
         typedef ecpp::parser::comp_args_type comp_args_type;
-        typedef boost::shared_ptr<bodypart> body_part_pointer;
+        typedef tnt::pointer<bodypart> body_part_pointer;
         typedef std::list<body_part_pointer> body_type;
         typedef std::set<std::string> subcomps_type;
         body_type data;
