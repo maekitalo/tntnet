@@ -63,7 +63,6 @@ AM_CONDITIONAL(MAKE_OPENSSL, test x$openssl == x1)
 #
 # others
 #
-AC_CHECK_HEADER([boost/regex.hpp])
 AC_CHECK_FUNCS([setenv])
 
 AC_CONFIG_FILES([

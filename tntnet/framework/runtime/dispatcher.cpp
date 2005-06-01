@@ -1,5 +1,5 @@
 /* dispatcher.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -31,7 +31,7 @@ void dispatcher::addUrlMapEntry(const std::string& url, const compident_type& ci
 {
   cxxtools::WrLock lock(rwlock);
 
-  urlmap.push_back(urlmap_type::value_type(boost::regex(url), ci));
+  urlmap.push_back(urlmap_type::value_type(regex(url), ci));
 }
 
 compident dispatcher::mapComp(const std::string& compUrl) const
@@ -44,9 +44,9 @@ namespace {
   class regmatch_formatter : public std::unary_function<const std::string&, std::string>
   {
     public:
-      boost::smatch what;
+      regex_smatch what;
       std::string operator() (const std::string& s) const
-      { return boost::regex_format(what, s); }
+      { return what.format(s); }
   };
 }
 
@@ -61,7 +61,7 @@ dispatcher::compident_type dispatcher::mapCompNext(const std::string& compUrl,
 
   for (; pos != urlmap.end(); ++pos)
   {
-    if (boost::regex_match(compUrl, formatter.what, pos->first))
+    if (pos->first.match(compUrl, formatter.what))
     {
       const compident_type& src = pos->second;
 

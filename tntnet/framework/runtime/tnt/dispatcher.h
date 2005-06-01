@@ -1,5 +1,5 @@
 /* tnt/dispatcher.h
-   Copyright (C) 2003 Tommi Maekitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -22,13 +22,13 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_DISPATCHER_H
 #define TNT_DISPATCHER_H
 
-#include <boost/regex.hpp>
 #include <cxxtools/thread.h>
 #include <tnt/urlmapper.h>
+#include <vector>
+#include "tnt/regex.h"
 
 namespace tnt
 {
-
   // dispatcher - one per host
   class dispatcher : public urlmapper
   {
@@ -68,7 +68,7 @@ namespace tnt
       };
 
     private:
-      typedef std::vector<std::pair<boost::regex, compident_type> > urlmap_type;
+      typedef std::vector<std::pair<regex, compident_type> > urlmap_type;
       urlmap_type urlmap;   // map url to soname/compname
       mutable cxxtools::RWLock rwlock;
 

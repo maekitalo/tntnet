@@ -5,16 +5,18 @@ tntnet_SOURCES = \
 	job.cpp \
 	listener.cpp \
 	poller.cpp \
+	regex.cpp \
 	worker.cpp \
 	tntnet.cpp \
 	tnt/dispatcher.h \
 	tnt/job.h \
 	tnt/listener.h \
 	tnt/poller.h \
+	tnt/regex.h \
 	tnt/worker.h \
 	tnt/tntnet.h
 
-tntnet_LDFLAGS = -lboost_regex -lpthread
+tntnet_LDFLAGS = -lpthread
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
 
 if MAKE_OPENSSL
