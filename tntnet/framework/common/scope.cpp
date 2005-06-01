@@ -38,8 +38,6 @@ namespace tnt
 
   scope::~scope()
   {
-    for (container_type::iterator it = data.begin(); it != data.end(); ++it)
-      it->second->release();
     --scopes_total;
     log_debug("scope " << this << " deleted; " << scopes_total << " left");
   }
@@ -63,14 +61,14 @@ namespace tnt
       return refs;
   }
 
-  object* scope::get(const std::string& key) const
+  object* scope::get(const std::string& key)
   {
-    container_type::const_iterator it = data.find(key);
+    container_type::iterator it = data.find(key);
 
     log_debug("scope::get(\"" << key << "\") scope=" << this
            << " => " << (it == data.end() ? 0 : it->second));
 
-    return it == data.end() ? 0 : it->second;
+    return it == data.end() ? 0 : it->second.getPtr();
   }
 
   void scope::replace(const std::string& key, object* o)
@@ -100,8 +98,9 @@ namespace tnt
     }
     else
     {
+      o->addRef();
       o->release();
-      return it->second;
+      return it->second.getPtr();
     }
   }
 

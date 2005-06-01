@@ -21,6 +21,9 @@ Boston, MA  02111-1307  USA
 
 
 #include <tnt/object.h>
+#include <cxxtools/log.h>
+
+log_define("tntnet.object");
 
 namespace tnt
 {

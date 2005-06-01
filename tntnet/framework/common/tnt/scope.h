@@ -25,13 +25,14 @@ Boston, MA  02111-1307  USA
 #include <map>
 #include <string>
 #include <tnt/object.h>
+#include <tnt/pointer.h>
 #include <cxxtools/thread.h>
 
 namespace tnt
 {
   class scope
   {
-      typedef std::map<std::string, object*> container_type;
+      typedef std::map<std::string, pointer<object> > container_type;
       container_type data;
       mutable cxxtools::Mutex mutex;
       unsigned refs;
@@ -55,7 +56,7 @@ namespace tnt
       bool has(const std::string& key) const
         { return data.find(key) != data.end(); }
 
-      object* get(const std::string& key) const;
+      object* get(const std::string& key);
 
       /// Put new object in scope. If key already exists,
       /// it is replaced and old object released.

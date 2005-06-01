@@ -39,8 +39,8 @@ namespace tnt
 
     public:
       object()
-        : refs(1)
-        { }
+        : refs(0)
+      { }
 
       virtual unsigned addRef();
       virtual unsigned release();
