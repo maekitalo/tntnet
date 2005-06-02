@@ -75,8 +75,8 @@ namespace tnt
     memcpy(&sockaddr_in, &s, sizeof(sockaddr_in));
 
     char buffer[20];
-    log_debug("connection accepted from "
-      << inet_ntop(AF_INET, &(socket.getPeeraddr_in().sin_addr), buffer, sizeof(buffer)));
+    //log_debug("connection accepted from "
+      //<< inet_ntop(AF_INET, &(socket.getPeeraddr_in().sin_addr), buffer, sizeof(buffer)));
 
     getRequest().setPeerAddr(socket.getPeeraddr_in());
     getRequest().setServerAddr(sockaddr_in);

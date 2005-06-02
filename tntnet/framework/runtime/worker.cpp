@@ -134,9 +134,9 @@ namespace tnt
   {
     // log message
     char buffer[20];
-    log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
-      << " from client "
-      << inet_ntop(AF_INET, &(request.getPeerAddr().sin_addr), buffer, sizeof(buffer)));
+    //log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
+      //<< " from client "
+      //<< inet_ntop(AF_INET, &(request.getPeerAddr().sin_addr), buffer, sizeof(buffer)));
 
     // create reply-object
     httpReply reply(socket);
