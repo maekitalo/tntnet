@@ -139,7 +139,6 @@ namespace tnt
           const std::string& cppargs);
         virtual void processDeclareShared(const std::string& code);
         virtual void processShared(const std::string& code);
-        virtual void processInclude(const std::string& file);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
         virtual void processComp(const std::string& code);
         virtual void processCondExpr(const std::string& cond, const std::string& expr);

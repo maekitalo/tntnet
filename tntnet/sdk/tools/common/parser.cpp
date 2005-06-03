@@ -21,11 +21,33 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/ecpp/parser.h"
 #include <sstream>
+#include <fstream>
 
 namespace tnt
 {
   namespace ecpp
   {
+    void parser::doInclude(const std::string& file)
+    {
+      std::ifstream inp(file.c_str());
+      if (!inp)
+      {
+        std::ostringstream msg;
+        throw std::runtime_error("cannot open include file \"" + file + '"');
+      }
+
+      try
+      {
+        processCpp("  // <%include>" + file + '\n');
+        parse(inp);
+        processCpp("  // </%include>\n");
+      }
+      catch (const std::exception&)
+      {
+        std::cerr << "file " << file << std::endl;
+        throw;
+      }
+    }
 
     void parser::parse(std::istream& in)
     {
@@ -1142,41 +1164,19 @@ namespace tnt
             break;
 
           case state_include0:
-            if (ch == '<')
-            {
-              expr = ch;
-              state = state_include1;
-            }
-            else if (ch == '"')
-            {
-              expr = ch;
-              state = state_include;
-            }
-            else if (!std::isspace(ch))
-            {
-              throw parse_error(std::string("invalid character '") + ch
-                + "' in include-directive", state, curline);
-            }
+            expr = ch;
+            state = state_include1;
             break;
 
           case state_include1:
-            if (ch == '/')
+            if (ch == '<')
             {
-              etag.clear();
-              state = state_cppe1;
-              break;
+              doInclude(expr);
+              expr.clear(),
+              state = state_cppe0;
             }
-            state = state_include;
-            // no break;
-
-          case state_include:
-            expr += ch;
-            if (expr.at(0) == '"' && ch == '"'
-              || expr.at(0) == '<' && ch == '>')
-            {
-              processInclude(expr);
-              state = state_include0;
-            }
+            else
+              expr += ch;
             break;
 
           case state_scopearg0:
@@ -1415,10 +1415,6 @@ namespace tnt
     }
 
     void parser::processShared(const std::string& code)
-    {
-    }
-
-    void parser::processInclude(const std::string& file)
     {
     }
 

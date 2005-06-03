@@ -166,11 +166,6 @@ namespace tnt
       shared += code;
     }
 
-    void generator::processInclude(const std::string& file)
-    {
-      pre += "#include " + file + '\n';
-    }
-
     void generator::startComp(const std::string& name,
       const cppargs_type& cppargs)
     {

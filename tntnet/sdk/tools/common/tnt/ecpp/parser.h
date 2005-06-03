@@ -27,13 +27,13 @@ Boston, MA  02111-1307  USA
 #include <stdexcept>
 #include <map>
 #include <list>
+#include <iosfwd>
 #include <tnt/ecpp/scopetypes.h>
 
 namespace tnt
 {
   namespace ecpp
   {
-
     class parser
     {
         bool inComp;
@@ -44,6 +44,9 @@ namespace tnt
         char split_end;
 
         std::string tag;
+
+        std::istream& get(char& ch);
+        void doInclude(const std::string& file);
 
       public:
         parser()
@@ -95,7 +98,6 @@ namespace tnt
           const std::string& cppargs);
         virtual void processDeclareShared(const std::string& code);
         virtual void processShared(const std::string& code);
-        virtual void processInclude(const std::string& file);
         virtual void processScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
