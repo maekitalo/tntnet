@@ -23,6 +23,8 @@ SUBDIRS = \
 
 EXTRA_DIST = ecpp.vim \
     doc/tntnet_doku.doc \
+    doc/tntnet.sxw \
+    doc/tntnet-configuration.sxw \
     doc/logo-tntnet.cdr \
     doc/quick-start-guide.html \
     debian/changelog \
