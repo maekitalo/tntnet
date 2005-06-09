@@ -43,10 +43,7 @@ namespace tnt
         char split_start;
         char split_end;
 
-        std::string tag;
-
         std::istream& get(char& ch);
-        void doInclude(const std::string& file);
 
       public:
         parser()
@@ -105,8 +102,10 @@ namespace tnt
         virtual void processCondExpr(const std::string& cond, const std::string& expr);
         virtual void processConfig(const std::string& code, const std::string& value);
         virtual void tokenSplit(bool start);
+        virtual void doInclude(const std::string& file);
 
-        void processNV(const std::string& name, const std::string& value);
+        void processNV(const std::string& tag, const std::string& name,
+            const std::string& value);
     };
 
     class parse_error : public std::runtime_error

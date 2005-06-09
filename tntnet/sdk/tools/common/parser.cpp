@@ -135,7 +135,7 @@ namespace tnt
         };
 
       state_type state = state_nl;
-      std::string etag, tagarg;
+      std::string tag, etag, tagarg;
       std::string html, code, arg, argtype, value;
       std::string comp;
       std::string cond, expr;
@@ -638,13 +638,13 @@ namespace tnt
             }
             else if (ch == '/')
             {
-              processNV(arg, std::string());
+              processNV(tag, arg, std::string());
               arg.clear();
               state = state_argscomment0;
             }
             else if (ch == '\n' || ch == ';')
             {
-              processNV(arg, std::string());
+              processNV(tag, arg, std::string());
               arg.clear();
               state = state_args0;
               if (ch == '\n')
@@ -662,7 +662,7 @@ namespace tnt
             }
             else if (ch == '\n' || ch == ';')
             {
-              processNV(arg, std::string());
+              processNV(tag, arg, std::string());
               arg.clear();
               state = state_args0;
               if (ch == '\n')
@@ -670,7 +670,7 @@ namespace tnt
             }
             else if (!std::isspace(ch))
             {
-              processNV(arg, std::string());
+              processNV(tag, arg, std::string());
               arg.clear();
 
               if (ch == '<')
@@ -688,7 +688,7 @@ namespace tnt
           case state_argsval:
             if (ch == '\n' || ch == ';')
             {
-              processNV(arg, value);
+              processNV(tag, arg, value);
               arg.clear();
               value.clear();
               state = state_args0;
@@ -727,7 +727,7 @@ namespace tnt
           case state_argsvalcomment0:
             if (ch == '/')
             {
-              processNV(arg, value);
+              processNV(tag, arg, value);
               arg.clear();
               value.clear();
               state = state_argscomment;
@@ -1439,7 +1439,8 @@ namespace tnt
     {
     }
 
-    void parser::processNV(const std::string& name, const std::string& value)
+    void parser::processNV(const std::string& tag, const std::string& name,
+      const std::string& value)
     {
       if (tag == "args")
         processArg(name, value);
