@@ -22,4 +22,4 @@ SUFFIXES=.ecpp .jpg
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@
 tntnet.conf:
-	$(top_builddir)/tntnet-config --config=hello >$@
+	/bin/sh $(top_builddir)/tntnet-config --config=hello >$@
