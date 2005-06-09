@@ -22,7 +22,9 @@ Boston, MA  02111-1307  USA
 #include "tnt/component.h"
 #include "tnt/http.h"
 #include "tnt/httpreply.h"
+#include "tnt/httprequest.h"
 #include <sstream>
+#include <cxxtools/query_params.h>
 
 namespace tnt
 {
@@ -59,7 +61,7 @@ namespace tnt
   const char* component::getDataPtr(const httpRequest& request, unsigned n) const
   { return 0; }
 
-  std::string component::operator() (httpRequest& request, cxxtools::query_params& qparam)
+  std::string component::scall(httpRequest& request, cxxtools::query_params& qparam)
   {
     // set up new reply-object
     std::ostringstream result;
@@ -72,5 +74,24 @@ namespace tnt
     (*this)(request, reply, qparam);
 
     return result.str();
+  }
+
+  std::string component::scall(httpRequest& request)
+  {
+    cxxtools::query_params qparam;
+    return scall(request, qparam);
+  }
+
+  std::string component::scall(cxxtools::query_params& qparam)
+  {
+    httpRequest request;
+    return scall(request, qparam);
+  }
+
+  std::string component::scall()
+  {
+    httpRequest request;
+    cxxtools::query_params qparam;
+    return scall(request, qparam);
   }
 }
