@@ -204,6 +204,51 @@ namespace tnt
     compnotfound.insert(ci);
   }
 
+  std::string ecppComponent::scallComp(const std::string& url,
+    httpRequest& request)
+  {
+    cxxtools::query_params qparam;
+    return fetchComp(url)(request, qparam);
+  }
+
+  std::string ecppComponent::scallComp(const compident& ci,
+    httpRequest& request)
+  {
+    cxxtools::query_params qparam;
+    return fetchComp(ci)(request, qparam);
+  }
+
+  std::string ecppComponent::scallComp(const subcompident& ci,
+    httpRequest& request)
+  {
+    cxxtools::query_params qparam;
+    return dynamic_cast<ecppComponent&>(fetchComp(ci))
+               .fetchSubComp(ci.subname)(request, qparam);
+  }
+
+  std::string ecppComponent::scallComp(const std::string& url)
+  {
+    httpRequest request;
+    cxxtools::query_params qparam;
+    return fetchComp(url)(request, qparam);
+  }
+
+  std::string ecppComponent::scallComp(const compident& ci)
+  {
+    httpRequest request;
+    cxxtools::query_params qparam;
+    return fetchComp(ci)(request, qparam);
+  }
+
+  std::string ecppComponent::scallComp(const subcompident& ci)
+  {
+    httpRequest request;
+    cxxtools::query_params qparam;
+    return dynamic_cast<ecppComponent&>(fetchComp(ci))
+               .fetchSubComp(ci.subname)(request, qparam);
+  }
+
+
   ///////////////////////////////////////////////////////////////////////
   // ecppSubComponent
   //

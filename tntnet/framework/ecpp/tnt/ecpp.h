@@ -106,6 +106,12 @@ namespace tnt
         cxxtools::query_params& qparam);
       std::string scallComp(const subcompident& ci, httpRequest& request,
         cxxtools::query_params& qparam);
+      std::string scallComp(const std::string& url, httpRequest& request);
+      std::string scallComp(const compident& ci, httpRequest& request);
+      std::string scallComp(const subcompident& ci, httpRequest& request);
+      std::string scallComp(const std::string& url);
+      std::string scallComp(const compident& ci);
+      std::string scallComp(const subcompident& ci);
 
       const compident& getCompident() const  { return myident; }
 
