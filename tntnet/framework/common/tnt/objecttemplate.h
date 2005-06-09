@@ -37,21 +37,50 @@ namespace tnt
 
       objectTemplate() { }
 
-      template <typename t1>
-      objectTemplate(t1 p1)
-        : data(p1) { }
+      template <typename t0>
+      objectTemplate(t0 p0)
+        : data(p0) { }
 
-      template <typename t1, typename t2>
-      objectTemplate(t1 p1, t2 p2)
-        : data(p1, p2) { }
+      template <typename t0, typename t1>
+      objectTemplate(t0 p0, t1 p1)
+        : data(p0, p1) { }
 
-      template <typename t1, typename t2, typename t3>
-      objectTemplate(t1 p1, t2 p2, t3 p3)
-        : data(p1, p2, p3) { }
+      template <typename t0, typename t1, typename t2>
+      objectTemplate(t0 p0, t1 p1, t2 p2)
+        : data(p0, p1, p2) { }
 
-      template <typename t1, typename t2, typename t3, typename t4>
-      objectTemplate(t1 p1, t2 p2, t3 p3, t4 p4)
-        : data(p1, p2, p3, p4) { }
+      template <typename t0, typename t1, typename t2, typename t3>
+      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3)
+        : data(p0, p1, p2, p3) { }
+
+      template <typename t0, typename t1, typename t2, typename t3, typename t4>
+      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4)
+        : data(p0, p1, p2, p3, p4) { }
+
+      template <typename t0, typename t1, typename t2, typename t3, typename t4,
+                typename t5>
+      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5)
+        : data(p0, p1, p2, p3, p4, p5) { }
+
+      template <typename t0, typename t1, typename t2, typename t3, typename t4,
+                typename t5, typename t6>
+      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6)
+        : data(p0, p1, p2, p3, p4, p5, p6) { }
+
+      template <typename t0, typename t1, typename t2, typename t3, typename t4,
+                typename t5, typename t6, typename t7>
+      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7)
+        : data(p0, p1, p2, p3, p4, p5, p6, p7) { }
+
+      template <typename t0, typename t1, typename t2, typename t3, typename t4,
+                typename t5, typename t6, typename t7, typename t8>
+      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7, t8 p8)
+        : data(p0, p1, p2, p3, p4, p5, p6, p7, p8) { }
+
+      template <typename t0, typename t1, typename t2, typename t3, typename t4,
+                typename t5, typename t6, typename t7, typename t8, typename t9>
+      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7, t8 p8, t9 p9)
+        : data(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) { }
 
       // explicit accessors
       const data_type& getData() const    { return data; }
