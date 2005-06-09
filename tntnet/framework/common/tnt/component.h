@@ -98,7 +98,13 @@ class component
       { return std::string(getDataPtr(r, n), getDataLen(r, n)); }
 
     /// return output as a string rather than outputting to stream
-    std::string operator() (httpRequest& request, cxxtools::query_params& qparam);
+    std::string scall(httpRequest& request, cxxtools::query_params& qparam);
+    /// return output as a string rather than outputting to stream without query-parameters
+    std::string scall(httpRequest& request);
+    /// return output as a string rather than outputting to stream with empty request
+    std::string scall(cxxtools::query_params& qparam);
+    /// return output as a string rather than outputting to stream with empty request and without query-parameters
+    std::string scall();
 };
 
 }
