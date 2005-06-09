@@ -1,3 +1,4 @@
+- ecppc -M (automatic dependency generation)
 - cgi.so
 - sauberes Beenden
 - entladen von shared libs

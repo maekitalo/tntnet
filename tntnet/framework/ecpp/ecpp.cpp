@@ -208,14 +208,14 @@ namespace tnt
     httpRequest& request)
   {
     cxxtools::query_params qparam;
-    return fetchComp(url)(request, qparam);
+    return fetchComp(url).scall(request, qparam);
   }
 
   std::string ecppComponent::scallComp(const compident& ci,
     httpRequest& request)
   {
     cxxtools::query_params qparam;
-    return fetchComp(ci)(request, qparam);
+    return fetchComp(ci).scall(request, qparam);
   }
 
   std::string ecppComponent::scallComp(const subcompident& ci,
@@ -223,21 +223,21 @@ namespace tnt
   {
     cxxtools::query_params qparam;
     return dynamic_cast<ecppComponent&>(fetchComp(ci))
-               .fetchSubComp(ci.subname)(request, qparam);
+               .fetchSubComp(ci.subname).scall(request, qparam);
   }
 
   std::string ecppComponent::scallComp(const std::string& url)
   {
     httpRequest request;
     cxxtools::query_params qparam;
-    return fetchComp(url)(request, qparam);
+    return fetchComp(url).scall(request, qparam);
   }
 
   std::string ecppComponent::scallComp(const compident& ci)
   {
     httpRequest request;
     cxxtools::query_params qparam;
-    return fetchComp(ci)(request, qparam);
+    return fetchComp(ci).scall(request, qparam);
   }
 
   std::string ecppComponent::scallComp(const subcompident& ci)
@@ -245,7 +245,7 @@ namespace tnt
     httpRequest request;
     cxxtools::query_params qparam;
     return dynamic_cast<ecppComponent&>(fetchComp(ci))
-               .fetchSubComp(ci.subname)(request, qparam);
+               .fetchSubComp(ci.subname).scall(request, qparam);
   }
 
 
