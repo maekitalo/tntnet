@@ -64,6 +64,11 @@ namespace tnt
       reference operator*()               { return data; }
       const reference operator*() const   { return data; }
       objectTemplate& operator= (const data_type& d)  { data = d; return *this; }
+
+      static reference getRef(object* o)
+      {
+        return dynamic_cast<objectTemplate<data_type>&>(*o).data;
+      }
   };
 }
 

@@ -194,6 +194,42 @@ namespace tnt
   }
 }
 
+#define TNT_VAR(scope, type, varname, key, construct) \
+  typedef type varname##_type;          \
+  typedef tnt::objectTemplate<varname##_type> varname##_objecttype;          \
+  const std::string varname##_scopekey = key;          \
+  tnt::objectptr varname##_pointer = request.get##scope##Scope().get(varname##_scopekey);          \
+  if (varname##_pointer == 0)          \
+    varname##_pointer = request.get##scope##Scope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
+  type& varname = varname##_objecttype::getRef(varname##_pointer);
+
+#define TNT_SESSION_COMPONENT_VAR(type, varname, key, construct) \
+  TNT_VAR(Session, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_SESSION_PAGE_VAR(type, varname, key, construct) \
+  TNT_VAR(Session, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_SESSION_GLOBAL_VAR(type, varname, key, construct) \
+  TNT_VAR(Session, type, varname, key, construct)
+
+#define TNT_APPLICATION_COMPONENT_VAR(type, varname, key, construct) \
+  TNT_VAR(Application, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_APPLICATION_PAGE_VAR(type, varname, key, construct) \
+  TNT_VAR(Application, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_APPLICATION_GLOBAL_VAR(type, varname, key, construct) \
+  TNT_VAR(Application, type, varname, key, construct)
+
+#define TNT_REQUEST_COMPONENT_VAR(type, varname, key, construct) \
+  TNT_VAR(Request, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_REQUEST_PAGE_VAR(type, varname, key, construct) \
+  TNT_VAR(Request, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_REQUEST_GLOBAL_VAR(type, varname, key, construct) \
+  TNT_VAR(Request, type, varname, key, construct)
+
 namespace ecpp_component
 {
   using tnt::component;

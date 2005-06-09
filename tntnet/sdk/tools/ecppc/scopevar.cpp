@@ -28,26 +28,24 @@ namespace tnt
   {
     void scopevar::get(std::ostream& out) const
     {
-      std::string getterMethod =
-          scope_container == ecpp::application_container ? "getApplicationScope"
-        : scope_container == ecpp::session_container     ? "getSessionScope"
-        :                                                  "getRequestScope";
-      std::string key = scope == ecpp::global_scope ? ('"' + var + '"')
-                      : scope == ecpp::page_scope   ? ("getPageScopePrefix(getCompident()) + \":" + var + '"')
-                      : ("getComponentScopePrefix(getCompident()) + \":" + var + '"');
+      std::string tag =
+          scope_container == ecpp::application_container ? "application"
+        : scope_container == ecpp::session_container     ? "session"
+        :                                                  "request";
+      std::string container =
+          scope_container == ecpp::application_container ? "APPLICATION"
+        : scope_container == ecpp::session_container     ? "SESSION"
+        :                                                  "REQUEST";
+      std::string key = scope == ecpp::global_scope ? "GLOBAL"
+                      : scope == ecpp::page_scope   ? "PAGE"
+                      : "COMPONENT";
 
-      out << "  // <%scope> " << type << ' ' << var;
+      out << "  // <%" << tag << "> " << type << ' ' << var;
       if (!init.empty())
         out << '(' << init << ')';
       out << "\n"
-             "  typedef " << type << ' ' << var << "_type;\n"
-             "  tnt::objectptr " << var << "_pointer = request." << getterMethod << "().get("
-                << key << ");\n"
-             "  if (" << var << "_pointer == 0)\n"
-             "    " << var << "_pointer = request." << getterMethod << "().putNew("
-                    << key << ", new tnt::objectTemplate<" << var << "_type>(" << init << "));\n"
-             "  " << type << "& " << var << " = dynamic_cast<tnt::objectTemplate<"
-               << var << "_type>&>(*" << var << "_pointer.getPtr()).getData();\n"
+             "  TNT_" << container << '_' << key << "_VAR(" << type << ", " << var
+          << ", \"" << var << "\", (" << init << "));\n";
              "  // </%scope>\n";
     }
 

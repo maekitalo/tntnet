@@ -53,6 +53,7 @@ namespace tnt
       const object* getPtr() const      { return ptr; }
       object* getPtr()                  { return ptr; }
       operator const object* () const   { return ptr; }
+      operator object* ()               { return ptr; }
       const object* operator-> () const { return ptr; }
       object* operator-> ()             { return ptr; }
   };
