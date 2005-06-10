@@ -97,6 +97,16 @@ class component
     std::string getData(const httpRequest& r, unsigned n) const
       { return std::string(getDataPtr(r, n), getDataLen(r, n)); }
 
+    /// explicitly call operator() - sometimes more readable
+    unsigned call(httpRequest& request, httpReply& reply, cxxtools::query_params& qparam)
+      { return operator() (request, reply, qparam); }
+    /// call component without parameters
+    unsigned call(httpRequest& request, httpReply& reply);
+    /// call component dummy request
+    unsigned call(httpReply& reply, cxxtools::query_params& qparam);
+    /// call component without parameters and dummy request
+    unsigned call(httpReply& reply);
+
     /// return output as a string rather than outputting to stream
     std::string scall(httpRequest& request, cxxtools::query_params& qparam);
     /// return output as a string rather than outputting to stream without query-parameters

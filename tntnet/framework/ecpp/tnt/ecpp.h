@@ -83,39 +83,95 @@ namespace tnt
 
     protected:
       virtual ~ecppComponent();
+
       void registerSubComp(const std::string& name, ecppSubComponent* comp);
+
+    protected:
+      component& fetchComp(const std::string& url) const;
+      component& fetchComp(const compident& ci) const;
+      component& fetchComp(const subcompident& ci) const;
+
+      /// helper-methods for calling components
+      template <typename compident_type,
+                typename parameter1_type,
+                typename parameter2_type,
+                typename parameter3_type>
+        unsigned callComp(const compident_type& ci, parameter1_type& p1,
+            parameter2_type& p2, parameter3_type& p3)
+        { return fetchComp(ci).call(p1, p2, p3); }
+
+      template <typename compident_type,
+                typename parameter1_type,
+                typename parameter2_type>
+        unsigned callComp(const compident_type& ci, parameter1_type& p1,
+            parameter2_type& p2)
+        { return fetchComp(ci).call(p1, p2); }
+
+      template <typename compident_type,
+                typename parameter_type>
+        unsigned callComp(const compident_type& ci, parameter_type& p1)
+        { return fetchComp(ci).call(p1); }
+
+      template <typename compident_type>
+        unsigned callComp(const compident_type& ci)
+        { return fetchComp(ci).call(); }
+
+      /// helper-methods for fetching contents of components
+      template <typename compident_type,
+                typename parameter1_type,
+                typename parameter2_type>
+        std::string scallComp(const compident_type& ci, parameter1_type& p1,
+            parameter2_type& p2)
+        { return fetchComp(ci).scall(p1, p2); }
+
+      template <typename compident_type,
+                typename parameter1_type>
+        std::string scallComp(const compident_type& ci, parameter1_type& p1)
+        { return fetchComp(ci).scall(p1); }
+
+      template <typename compident_type>
+        std::string scallComp(const compident_type& ci)
+        { return fetchComp(ci).scall(); }
+
+      const component* getDataComponent(const httpRequest& request) const;
 
     public:
       ecppComponent(const compident& ci, const urlmapper& um, comploader& cl);
 
-      component& fetchComp(const std::string& url) const;
-      component& fetchComp(const compident& ci) const;
+      const compident& getCompident() const  { return myident; }
 
       ecppSubComponent& fetchSubComp(const std::string& sub) const;
 
-      unsigned callComp(const std::string& url, httpRequest& request,
-        httpReply& reply, cxxtools::query_params& qparam);
-      unsigned callComp(const compident& ci, httpRequest& request,
-        httpReply& reply, cxxtools::query_params& qparam);
-      unsigned callComp(const subcompident& ci, httpRequest& request,
-        httpReply& reply, cxxtools::query_params& qparam);
+      /// helper-methods for calling subcomponents
+      template <typename parameter1_type,
+                typename parameter2_type,
+                typename parameter3_type>
+        unsigned callSubComp(const std::string& sub, parameter1_type& p1,
+            parameter2_type& p2, parameter3_type& p3) const
+        { return fetchSubComp(sub).call(p1, p2, p3); }
 
-      std::string scallComp(const std::string& url, httpRequest& request,
-        cxxtools::query_params& qparam);
-      std::string scallComp(const compident& ci, httpRequest& request,
-        cxxtools::query_params& qparam);
-      std::string scallComp(const subcompident& ci, httpRequest& request,
-        cxxtools::query_params& qparam);
-      std::string scallComp(const std::string& url, httpRequest& request);
-      std::string scallComp(const compident& ci, httpRequest& request);
-      std::string scallComp(const subcompident& ci, httpRequest& request);
-      std::string scallComp(const std::string& url);
-      std::string scallComp(const compident& ci);
-      std::string scallComp(const subcompident& ci);
+      template <typename parameter1_type,
+                typename parameter2_type>
+        unsigned callSubComp(const std::string& sub, parameter1_type& p1,
+            parameter2_type& p2) const
+        { return fetchSubComp(sub).call(p1, p2); }
 
-      const compident& getCompident() const  { return myident; }
+      template <typename parameter1_type>
+        unsigned callSubComp(const std::string& sub, parameter1_type& p1) const
+        { return fetchSubComp(sub).call(p1); }
 
-      const component* getDataComponent(const httpRequest& request) const;
+      /// helper-methods for fetching contents of subcomponents
+      template <typename parameter1_type,
+                typename parameter2_type>
+        std::string scallSubComp(const std::string& sub, parameter1_type& p1,
+            parameter2_type& p2) const
+        { return fetchSubComp(sub).scall(p1, p2); }
+
+      template <typename parameter1_type>
+        std::string scallSubComp(const std::string& sub, parameter1_type& p1) const
+        { return fetchSubComp(sub).scall(p1); }
+
+      std::string scallSubComp(const std::string& sub) const;
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -147,47 +203,25 @@ namespace tnt
       ecppComponent& getMainComponent() const { return main; }
   };
 
-  inline unsigned ecppComponent::callComp(const std::string& url,
-    httpRequest& request, httpReply& reply,
-    cxxtools::query_params& qparam)
+  //////////////////////////////////////////////////////////////////////
+  // inline methods
+  //
+  inline component& ecppComponent::fetchComp(const subcompident& ci) const
   {
-    return fetchComp(url)(request, reply, qparam);
+    return dynamic_cast<ecppComponent&>(
+                        fetchComp( static_cast<const compident&>(ci) )
+                        )
+                 .fetchSubComp(ci.subname);
   }
 
-  inline unsigned ecppComponent::callComp(const compident& ci,
-    httpRequest& request, httpReply& reply,
-    cxxtools::query_params& qparam)
+  inline std::string ecppComponent::scallSubComp(const std::string& sub) const
   {
-    return fetchComp(ci)(request, reply, qparam);
+    return fetchSubComp(sub).scall();
   }
 
-  inline unsigned ecppComponent::callComp(const subcompident& ci,
-    httpRequest& request, httpReply& reply,
-    cxxtools::query_params& qparam)
-  {
-    return dynamic_cast<ecppComponent&>(fetchComp(ci))
-               .fetchSubComp(ci.subname)(request, reply, qparam);
-  }
-
-  inline std::string ecppComponent::scallComp(const std::string& url,
-    httpRequest& request, cxxtools::query_params& qparam)
-  {
-    return fetchComp(url).scall(request, qparam);
-  }
-
-  inline std::string ecppComponent::scallComp(const compident& ci,
-    httpRequest& request, cxxtools::query_params& qparam)
-  {
-    return fetchComp(ci).scall(request, qparam);
-  }
-
-  inline std::string ecppComponent::scallComp(const subcompident& ci,
-    httpRequest& request, cxxtools::query_params& qparam)
-  {
-    return dynamic_cast<ecppComponent&>(fetchComp(ci))
-               .fetchSubComp(ci.subname).scall(request, qparam);
-  }
-
+  //////////////////////////////////////////////////////////////////////
+  // scope-helper
+  //
   inline std::string getPageScopePrefix(const compident& id)
   {
     return id.toString();

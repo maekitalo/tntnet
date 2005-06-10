@@ -1,5 +1,5 @@
 /* ecpp.cpp
-   Copyright (C) 2003 Tommi Maekitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -203,51 +203,6 @@ namespace tnt
     cxxtools::WrLock wrlock(equivMonitor);
     compnotfound.insert(ci);
   }
-
-  std::string ecppComponent::scallComp(const std::string& url,
-    httpRequest& request)
-  {
-    cxxtools::query_params qparam;
-    return fetchComp(url).scall(request, qparam);
-  }
-
-  std::string ecppComponent::scallComp(const compident& ci,
-    httpRequest& request)
-  {
-    cxxtools::query_params qparam;
-    return fetchComp(ci).scall(request, qparam);
-  }
-
-  std::string ecppComponent::scallComp(const subcompident& ci,
-    httpRequest& request)
-  {
-    cxxtools::query_params qparam;
-    return dynamic_cast<ecppComponent&>(fetchComp(ci))
-               .fetchSubComp(ci.subname).scall(request, qparam);
-  }
-
-  std::string ecppComponent::scallComp(const std::string& url)
-  {
-    httpRequest request;
-    cxxtools::query_params qparam;
-    return fetchComp(url).scall(request, qparam);
-  }
-
-  std::string ecppComponent::scallComp(const compident& ci)
-  {
-    httpRequest request;
-    cxxtools::query_params qparam;
-    return fetchComp(ci).scall(request, qparam);
-  }
-
-  std::string ecppComponent::scallComp(const subcompident& ci)
-  {
-    httpRequest request;
-    cxxtools::query_params qparam;
-    return dynamic_cast<ecppComponent&>(fetchComp(ci))
-               .fetchSubComp(ci.subname).scall(request, qparam);
-  }
-
 
   ///////////////////////////////////////////////////////////////////////
   // ecppSubComponent

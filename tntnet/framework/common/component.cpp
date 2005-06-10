@@ -61,6 +61,25 @@ namespace tnt
   const char* component::getDataPtr(const httpRequest& request, unsigned n) const
   { return 0; }
 
+  unsigned component::call(httpRequest& request, httpReply& reply)
+  {
+    cxxtools::query_params qparam;
+    call(request, reply, qparam);
+  }
+
+  unsigned component::call(httpReply& reply, cxxtools::query_params& qparam)
+  {
+    httpRequest request;
+    call(request, reply, qparam);
+  }
+
+  unsigned component::call(httpReply& reply)
+  {
+    httpRequest request;
+    cxxtools::query_params qparam;
+    call(request, reply, qparam);
+  }
+
   std::string component::scall(httpRequest& request, cxxtools::query_params& qparam)
   {
     // set up new reply-object

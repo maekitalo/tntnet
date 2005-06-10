@@ -1,6 +1,6 @@
 <{
 
-  std::string s = scallComp("subcomp", request);
+  std::string s = scallComp("subcomp");
 
   // we have the output of the subcomponent "subcomp" in s
 
