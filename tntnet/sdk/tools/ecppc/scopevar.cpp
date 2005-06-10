@@ -40,13 +40,12 @@ namespace tnt
                       : scope == ecpp::page_scope   ? "PAGE"
                       : "COMPONENT";
 
-      out << "  // <%" << tag << "> " << type << ' ' << var;
+      out << "  TNT_" << container << '_' << key << "_VAR(" << type << ", " << var
+          << ", \"" << var << "\", (" << init << ")); " 
+             "  // <%" << tag << "> " << type << ' ' << var;
       if (!init.empty())
         out << '(' << init << ')';
-      out << "\n"
-             "  TNT_" << container << '_' << key << "_VAR(" << type << ", " << var
-          << ", \"" << var << "\", (" << init << "));\n";
-             "  // </%scope>\n";
+      out << '\n';
     }
 
   }

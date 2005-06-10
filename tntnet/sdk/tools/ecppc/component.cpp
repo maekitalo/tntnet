@@ -60,7 +60,6 @@ namespace tnt
            it != scopevars.end(); ++it)
       {
         it->get(body);
-        body << '\n';
       }
     }
   }
