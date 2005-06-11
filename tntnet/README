@@ -32,13 +32,17 @@ Ssl is supported via the openssl-library.
 Installation 
 ============
 
-To install tntnet, you need some libraries, which are normally not
-installed by default. These are:
-
-boost_regex - the regular-expression library of boost (http://www.boost.org)
-cxxtools - my own collection of C++-utilities (http://www.tntnet.org)
+To install tntnet, you need cxxtools (http://www.tntnet.org/).
 
 this version needs cxxtools version >=1.3.0.
+
+you can find generig installation instructions in the file INSTALL.
+
+After building you can try out tntnet by changing to a directory of a
+demo-application (e.g. cd sdk/demos/session) and running
+"../../../framework/runtime/tntnet -c tntnet.conf". Start your browser and
+navigate to "http://localhost:8000/session" (or whatever demo you choosed) and
+watch the result.
 
 Quick start
 ===========
