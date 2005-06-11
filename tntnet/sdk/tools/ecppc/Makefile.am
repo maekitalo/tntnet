@@ -16,6 +16,7 @@ ecppc_SOURCES = \
 	tnt/ecppc/component.h \
 	tnt/ecppc/cssfilter.h \
 	tnt/ecppc/dependencygenerator.h \
+	tnt/ecppc/ecppc.h \
 	tnt/ecppc/generator.h \
 	tnt/ecppc/htmlfilter.h \
 	tnt/ecppc/jsfilter.h \
