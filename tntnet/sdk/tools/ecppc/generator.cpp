@@ -60,7 +60,7 @@ namespace tnt
       return false;
     }
 
-    void generator::processHtml(const std::string& html)
+    void generator::onHtml(const std::string& html)
     {
       std::ostringstream d;
       switch (filter)
@@ -102,46 +102,46 @@ namespace tnt
       }
     }
 
-    void generator::processExpression(const std::string& expr)
+    void generator::onExpression(const std::string& expr)
     {
       std::ostringstream m;
       m << "  reply.out() << (" << expr << ");\n";
       currentComp->addHtml(m.str());
     }
 
-    void generator::processCpp(const std::string& code)
+    void generator::onCpp(const std::string& code)
     {
       currentComp->addHtml(code);
     }
 
-    void generator::processPre(const std::string& code)
+    void generator::onPre(const std::string& code)
     {
       pre += code;
     }
 
-    void generator::processDeclare(const std::string& code)
+    void generator::onDeclare(const std::string& code)
     {
       singleton = false;
       declare += code;
     }
 
-    void generator::processInit(const std::string& code)
+    void generator::onInit(const std::string& code)
     {
       init += code;
     }
 
-    void generator::processCleanup(const std::string& code)
+    void generator::onCleanup(const std::string& code)
     {
       cleanup += code;
     }
 
-    void generator::processArg(const std::string& name,
+    void generator::onArg(const std::string& name,
       const std::string& value)
     {
       currentComp->addArg(name, value);
     }
 
-    void generator::processAttr(const std::string& name,
+    void generator::onAttr(const std::string& name,
       const std::string& value)
     {
       if (attr.find(name) != attr.end())
@@ -149,19 +149,19 @@ namespace tnt
       attr.insert(attr_type::value_type(name, value));
     }
 
-    void generator::processCall(const std::string& comp,
+    void generator::onCall(const std::string& comp,
       const comp_args_type& args, const std::string& pass_cgi,
       const std::string& cppargs)
     {
       currentComp->addCall(comp, args, pass_cgi, cppargs);
     }
 
-    void generator::processDeclareShared(const std::string& code)
+    void generator::onDeclareShared(const std::string& code)
     {
       declare_shared += code;
     }
 
-    void generator::processShared(const std::string& code)
+    void generator::onShared(const std::string& code)
     {
       shared += code;
     }
@@ -175,12 +175,12 @@ namespace tnt
       maincomp.addSubcomp(name);
     }
 
-    void generator::processComp(const std::string& code)
+    void generator::onComp(const std::string& code)
     {
       currentComp = &maincomp;
     }
 
-    void generator::processCondExpr(const std::string& cond, const std::string& expr)
+    void generator::onCondExpr(const std::string& cond, const std::string& expr)
     {
       std::ostringstream m;
       m << "  if (" << cond << ")\n"
@@ -188,12 +188,12 @@ namespace tnt
       currentComp->addHtml(m.str());
     }
 
-    void generator::processConfig(const std::string& name, const std::string& value)
+    void generator::onConfig(const std::string& name, const std::string& value)
     {
       configs.push_back(tnt::ecppc::variable(name, value));
     }
 
-    void generator::processScope(scope_container_type container, scope_type scope,
+    void generator::onScope(scope_container_type container, scope_type scope,
       const std::string& type, const std::string& var, const std::string& init)
     {
       currentComp->addScopevar(scopevar(container, scope, type, var, init));

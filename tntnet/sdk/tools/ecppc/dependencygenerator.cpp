@@ -1,4 +1,4 @@
-/* ecpplang.h
+/* dependencygenerator.cpp
    Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
@@ -19,42 +19,29 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef ECPPLANG_H
-#define ECPPLANG_H
+#include "tnt/ecppc/dependencygenerator.h"
+#include <sstream>
 
-#include <map>
-#include <iosfwd>
-#include <tnt/ecpp/parsehandler.h>
-
-class ecpplang : public tnt::ecpp::parseHandler
+namespace tnt
 {
-    bool inLang;
-    unsigned count;
+  namespace ecppc
+  {
+    ////////////////////////////////////////////////////////////////////////
+    // dependencygenerator
+    //
+    void dependencygenerator::onInclude(const std::string& file)
+    {
+      dependencies.push_back(file);
+    }
 
-    typedef std::map<unsigned, std::string> data_type;
-    data_type data;
-
-    bool lang;
-    bool nolang;
-
-  public:
-    ecpplang()
-      : inLang(false),
-        count(0),
-        lang(true),
-        nolang(false)
-      { }
-
-    virtual void processHtml(const std::string& html);
-    virtual void tokenSplit(bool start);
-
-    void setLang(bool sw = true)
-      { lang = sw; }
-    void setNoLang(bool sw = true)
-      { nolang = sw; }
-
-    void print(std::ostream& out) const;
-};
-
-#endif // ECPPLANG_H
-
+    std::string dependencygenerator::getDependencies() const
+    {
+      std::ostringstream deps;
+      deps << classname << ".cpp " << classname << ".h: " << inputfile;
+      for (dependencies_type::const_iterator it = dependencies.begin();
+           it != dependencies.end(); ++it)
+        deps << " \\\n  " << *it;
+      return deps.str();
+    }
+  }
+}

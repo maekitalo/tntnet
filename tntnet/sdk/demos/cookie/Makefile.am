@@ -13,7 +13,7 @@ AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
 SUFFIXES=.ecpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -d $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@

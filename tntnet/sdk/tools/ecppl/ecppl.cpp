@@ -1,5 +1,5 @@
-/* ./ecppl.cpp
-   Copyright (C) 2003 Tommi Maekitalo
+/* ecppl.cpp
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -33,7 +33,6 @@ int main(int argc, char* argv[])
   std::ios::sync_with_stdio(false);
   try
   {
-    cxxtools::arg<bool> debug(argc, argv, 'd');
     cxxtools::arg<bool> lang(argc, argv, 'l');
     cxxtools::arg<bool> nolang(argc, argv, 'n');
     cxxtools::arg<const char*> ofile(argc, argv, 'o');
@@ -56,8 +55,9 @@ int main(int argc, char* argv[])
     std::ifstream in(argv[1]);
 
     ecpplang generator;
-    generator.setDebug(debug);
-    generator.setSplitBar();
+
+    tnt::ecpp::parser parser(generator);
+    parser.setSplitBar();
     if (splitChars.isSet())
     {
       if (splitChars.getValue()[0] == '\0'
@@ -65,12 +65,13 @@ int main(int argc, char* argv[])
        || splitChars.getValue()[2] != '\0')
         throw std::runtime_error("--split-chars needs exactly 2 characters");
 
-      generator.setSplitChars(splitChars.getValue()[0],
-                              splitChars.getValue()[1]);
+      parser.setSplitChars(splitChars.getValue()[0],
+                           splitChars.getValue()[1]);
     }
+
     generator.setLang(lang || !nolang);
     generator.setNoLang(nolang);
-    generator.parse(in);
+    parser.parse(in);
 
     if (ofile.isSet())
     {

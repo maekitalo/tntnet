@@ -4,6 +4,7 @@ ecppc_SOURCES = \
 	body.cpp \
 	component.cpp \
 	cssfilter.cpp \
+	dependencygenerator.cpp \
 	ecppc.cpp \
 	generator.cpp \
 	htmlfilter.cpp \
@@ -14,6 +15,7 @@ ecppc_SOURCES = \
 	tnt/ecppc/body.h \
 	tnt/ecppc/component.h \
 	tnt/ecppc/cssfilter.h \
+	tnt/ecppc/dependencygenerator.h \
 	tnt/ecppc/generator.h \
 	tnt/ecppc/htmlfilter.h \
 	tnt/ecppc/jsfilter.h \

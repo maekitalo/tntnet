@@ -1,5 +1,5 @@
-/* ./ecppll.cpp
-   Copyright (C) 2003 Tommi Maekitalo
+/* ecppll.cpp
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/ecpp/parser.h>
+#include <tnt/ecpp/parsehandler.h>
 #include <tnt/stringescaper.h>
 
 #include <cxxtools/arg.h>
@@ -36,8 +37,9 @@ Boston, MA  02111-1307  USA
 ////////////////////////////////////////////////////////////////////////
 // ecppll - Applikationsklasse - Basisklasse
 //
-class ecppll : public tnt::ecpp::parser
+class ecppll : public tnt::ecpp::parseHandler
 {
+    tnt::ecpp::parser parser;
     int ret;
 
   protected:
@@ -57,7 +59,8 @@ class ecppll : public tnt::ecpp::parser
 
   public:
     ecppll()
-      : ret(0),
+      : parser(*this),
+        ret(0),
         inLang(false),
         failOnWarn(false)
       { }
@@ -71,6 +74,10 @@ class ecppll : public tnt::ecpp::parser
 
     void print(std::ostream& out);
     int getRet() const  { return ret; }
+
+    void setSplitBar(bool sw = true)          { parser.setSplitBar(sw); }
+    void setSplitChars(char start, char end)  { parser.setSplitChars(start, end); }
+    void parse(std::istream& in)              { parser.parse(in); }
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -86,16 +93,16 @@ void ecppll::print(std::ostream& out)
   for (data_type::const_iterator it = data.begin();
        it != data.end(); ++it)
   {
-    out << getSplitStartChar();
+    out << parser.getSplitStartChar();
     for (data_type::const_iterator::value_type::const_iterator n = it->begin();
          n != it->end(); ++n)
     {
-      if (*n == getSplitStartChar()
-       || *n == getSplitEndChar())
+      if (*n == parser.getSplitStartChar()
+       || *n == parser.getSplitEndChar())
         out << '\\';
       out << *n;
     }
-    out << getSplitEndChar();
+    out << parser.getSplitEndChar();
   }
 }
 

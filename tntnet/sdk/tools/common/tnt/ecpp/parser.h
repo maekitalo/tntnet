@@ -22,7 +22,6 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_ECPP_PARSER_H
 #define TNT_ECPP_PARSER_H
 
-#include <iostream>
 #include <string>
 #include <stdexcept>
 #include <map>
@@ -34,32 +33,31 @@ namespace tnt
 {
   namespace ecpp
   {
+    class parseHandler;
+
     class parser
     {
+        parseHandler& handler;
+
         bool inComp;
-        bool debug;
         bool splitBar;
 
         char split_start;
         char split_end;
 
         std::istream& get(char& ch);
+        void doInclude(const std::string& file);
 
       public:
-        parser()
-          : inComp(false),
-            debug(false),
+        parser(parseHandler& handler_)
+          : handler(handler_),
+            inComp(false),
             splitBar(false),
             split_start('{'),
             split_end('}')
         { }
-        virtual ~parser()
-        { }
 
         void parse(std::istream& in);
-
-        void setDebug(bool sw = true)     { debug = sw; }
-        bool isDebug() const              { return debug; }
 
         void setSplitBar(bool sw = true)  { splitBar = sw; }
         bool isSplitBar() const           { return splitBar; }
@@ -77,33 +75,6 @@ namespace tnt
         typedef std::list<std::pair<std::string, std::string> > cppargs_type;
 
       private:
-        virtual void start();
-        virtual void end();
-        virtual void processHtml(const std::string& html);
-        virtual void processExpression(const std::string& expr);
-        virtual void processCpp(const std::string& code);
-        virtual void processPre(const std::string& code);
-        virtual void processDeclare(const std::string& code);
-        virtual void processInit(const std::string& code);
-        virtual void processCleanup(const std::string& code);
-        virtual void processArg(const std::string& name,
-          const std::string& value);
-        virtual void processAttr(const std::string& name,
-          const std::string& value);
-        virtual void processCall(const std::string& comp,
-          const comp_args_type& args, const std::string& pass_cgi,
-          const std::string& cppargs);
-        virtual void processDeclareShared(const std::string& code);
-        virtual void processShared(const std::string& code);
-        virtual void processScope(scope_container_type container, scope_type scope,
-          const std::string& type, const std::string& var, const std::string& init);
-        virtual void startComp(const std::string& name, const cppargs_type& cppargs);
-        virtual void processComp(const std::string& code);
-        virtual void processCondExpr(const std::string& cond, const std::string& expr);
-        virtual void processConfig(const std::string& code, const std::string& value);
-        virtual void tokenSplit(bool start);
-        virtual void doInclude(const std::string& file);
-
         void processNV(const std::string& tag, const std::string& name,
             const std::string& value);
     };

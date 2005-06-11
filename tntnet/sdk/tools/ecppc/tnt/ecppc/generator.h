@@ -22,7 +22,7 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_ECPP_GENERATOR_H
 #define TNT_ECPP_GENERATOR_H
 
-#include <tnt/ecpp/parser.h>
+#include <tnt/ecpp/parsehandler.h>
 #include <sstream>
 #include <list>
 #include <functional>
@@ -40,8 +40,9 @@ namespace tnt
     ////////////////////////////////////////////////////////////////////////
     // generator
     //
-    class generator : public tnt::ecpp::parser
+    class generator : public tnt::ecpp::parseHandler
     {
+        bool debug;
         bool singleton;
         bool raw;
         std::string mimetype;
@@ -90,6 +91,9 @@ namespace tnt
       public:
         generator(const std::string& classname, const std::string& ns);
 
+        void setDebug(bool sw)                       { debug = sw; }
+        bool isDebug() const                         { return debug; }
+
         void setSingleton(bool sw)                   { singleton = sw; }
         bool isSingleton() const                     { return singleton; }
 
@@ -123,27 +127,27 @@ namespace tnt
         void setLastModifiedTime(time_t t)           { c_time = t; }
         time_t getLastModifiedTime() const           { return c_time; }
 
-        virtual void processHtml(const std::string& html);
-        virtual void processExpression(const std::string& expr);
-        virtual void processCpp(const std::string& cpp);
-        virtual void processPre(const std::string& code);
-        virtual void processDeclare(const std::string& code);
-        virtual void processInit(const std::string& code);
-        virtual void processCleanup(const std::string& code);
-        virtual void processArg(const std::string& name,
+        virtual void onHtml(const std::string& html);
+        virtual void onExpression(const std::string& expr);
+        virtual void onCpp(const std::string& cpp);
+        virtual void onPre(const std::string& code);
+        virtual void onDeclare(const std::string& code);
+        virtual void onInit(const std::string& code);
+        virtual void onCleanup(const std::string& code);
+        virtual void onArg(const std::string& name,
           const std::string& value);
-        virtual void processAttr(const std::string& name,
+        virtual void onAttr(const std::string& name,
           const std::string& value);
-        virtual void processCall(const std::string& comp,
+        virtual void onCall(const std::string& comp,
           const comp_args_type& args, const std::string&  pass_cgi,
           const std::string& cppargs);
-        virtual void processDeclareShared(const std::string& code);
-        virtual void processShared(const std::string& code);
+        virtual void onDeclareShared(const std::string& code);
+        virtual void onShared(const std::string& code);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
-        virtual void processComp(const std::string& code);
-        virtual void processCondExpr(const std::string& cond, const std::string& expr);
-        virtual void processConfig(const std::string& name, const std::string& value);
-        virtual void processScope(scope_container_type container, scope_type scope,
+        virtual void onComp(const std::string& code);
+        virtual void onCondExpr(const std::string& cond, const std::string& expr);
+        virtual void onConfig(const std::string& name, const std::string& value);
+        virtual void onScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);
 
         std::string getHeader(const std::string& basename) const;

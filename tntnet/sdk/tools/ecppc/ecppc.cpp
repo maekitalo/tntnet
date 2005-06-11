@@ -19,47 +19,232 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
+#include "tnt/ecppc/ecppc.h"
 #include "tnt/ecppc/generator.h"
+#include "tnt/ecppc/dependencygenerator.h"
 #include <fstream>
 #include <sstream>
-#include <cxxtools/arg.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
 #include "config.h"
 
-int main(int argc, char* argv[])
+namespace tnt
 {
-  std::ios::sync_with_stdio(false);
-
-  try
+  namespace ecppc
   {
-    std::string requestname = cxxtools::arg<std::string>(argc, argv, 'n');
-    std::string ns = cxxtools::arg<std::string>(argc, argv, 'N');
-    std::string ofile = cxxtools::arg<std::string>(argc, argv, 'o');
-    std::string odir = cxxtools::arg<std::string>(argc, argv, 'O');
-    cxxtools::arg<std::string> mimetype(argc, argv, 'm');
-    cxxtools::arg<bool> binary(argc, argv, 'b');
-    cxxtools::arg<bool> singleton(argc, argv, 's');
-    cxxtools::arg<std::string> componentclass(argc, argv, 'C');
-    cxxtools::arg<std::string> baseclass(argc, argv, 'B');
-    cxxtools::arg<bool> htmlcompress(argc, argv, "--compress-html");
-    cxxtools::arg<bool> csscompress(argc, argv, "--compress-css");
-    cxxtools::arg<bool> jscompress(argc, argv, "--compress-js");
-    cxxtools::arg<bool> compress(argc, argv, 'z');
-    cxxtools::arg<bool> externData(argc, argv, 'x');
-    cxxtools::arg<bool> verbose(argc, argv, 'v');
-    cxxtools::arg<bool> debug(argc, argv, 'd');
-    cxxtools::arg<bool> splitBar(argc, argv, 'S');
-    cxxtools::arg<const char*> splitChars(argc, argv, "--split-chars");
-
-    if (argc != 2 || argv[1][0] == '-')
+    ecppc::ecppc(int& argc, char* argv[])
+      : requestname(cxxtools::arg<std::string>(argc, argv, 'n')),
+        ns(cxxtools::arg<std::string>(argc, argv, 'N')),
+        ofile(cxxtools::arg<std::string>(argc, argv, 'o')),
+        odir(cxxtools::arg<std::string>(argc, argv, 'O')),
+        mimetype(argc, argv, 'm'),
+        binary(argc, argv, 'b'),
+        singleton(argc, argv, 's'),
+        componentclass(argc, argv, 'C'),
+        baseclass(argc, argv, 'B'),
+        htmlcompress(argc, argv, "--compress-html"),
+        csscompress(argc, argv, "--compress-css"),
+        jscompress(argc, argv, "--compress-js"),
+        compress(argc, argv, 'z'),
+        externData(argc, argv, 'x'),
+        verbose(argc, argv, 'v'),
+        debug(argc, argv, 'd'),
+        splitBar(argc, argv, 'S'),
+        splitChars(argc, argv, "--split-chars"),
+        generateDependencies(argc, argv, 'M')
     {
-      std::cerr
-        << PACKAGE_STRING "\n\n"
+      if (argc != 2 || argv[1][0] == '-')
+        throw usage(argv[0]);
+      inputfile = argv[1];
+    }
+
+    int ecppc::run()
+    {
+      // requestname aus Inputdatei
+      if (requestname.empty())
+      {
+        std::string input = inputfile;
+        std::string::size_type pos_dot = input.find_last_of(".");
+        std::string::size_type pos_slash = input.find_last_of("\\/");
+        if (pos_dot != std::string::npos)
+        {
+          if (pos_slash == std::string::npos)
+            requestname = input.substr(0, pos_dot);
+          else if (pos_slash < pos_dot)
+          {
+            requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
+
+            if (ns.empty())
+            {
+              std::string::size_type pos_slash2 = input.find_last_of("\\/", pos_slash - 1);
+              if (pos_slash2 == std::string::npos)
+                ns = input.substr(0, pos_slash);
+              else
+                ns = input.substr(pos_slash2 + 1, pos_slash - pos_slash2 - 1);
+            }
+          }
+        }
+        else
+        {
+          requestname = input;
+        }
+
+        if (requestname.empty())
+        {
+          std::cerr << "cannot derive classname from filename. Use -n" << std::endl;
+          return -1;
+        }
+
+      }
+      else if (ns.empty())
+      {
+        std::string::size_type p = requestname.find("::");
+        if (p != std::string::npos)
+        {
+          ns = requestname.substr(0, p);
+          requestname.erase(0, p + 2);
+        }
+      }
+
+      if (generateDependencies)
+        return runDepencencies();
+      else
+        return runGenerator();
+    }
+
+    int ecppc::runGenerator()
+    {
+      if (ofile.empty())
+      {
+        if (ns.empty())
+          ofile = requestname;
+        else
+          ofile = ns + '/' + requestname;
+      }
+
+      // Output auf ".h" and ".cpp" pruefen
+      if (ofile.size() == ofile.rfind(".h") + 2)
+        ofile = ofile.substr(0, ofile.size() - 2);
+      else if (ofile.size() == ofile.rfind(".cpp") + 4)
+        ofile = ofile.substr(0, ofile.size() - 4);
+
+      // create generator
+      tnt::ecppc::generator generator(requestname, ns);
+
+      // initialize
+      generator.setDebug(debug);
+
+      if (mimetype.isSet())
+        generator.setMimetype(mimetype);
+
+      if (htmlcompress)
+        generator.setHtmlCompress();
+      else if (csscompress)
+        generator.setCssCompress();
+      else if (jscompress)
+        generator.setJsCompress();
+
+      generator.setCompress(compress);
+      generator.setExternData(externData);
+
+      //
+      // parse sourcefile
+      //
+
+      std::ifstream in(inputfile);
+      if (binary)
+      {
+        std::ostringstream html;
+        html << in.rdbuf();
+        generator.onHtml(html.str());
+        generator.setRawMode();
+
+        struct stat st;
+        if (stat(inputfile, &st) == 0)
+          generator.setLastModifiedTime(st.st_ctime);
+      }
+      else
+        runParser(in, generator);
+
+      // wenn Kommandozeilenparameter -s explizit angegeben ist, übergebe diesen an den
+      // Generator
+      if (singleton.isSet())
+        generator.setSingleton(singleton);
+      if (componentclass.isSet())
+        generator.setComponentclass(componentclass);
+      if (baseclass.isSet())
+        generator.setBaseclass(baseclass);
+
+      std::string obase = odir;
+      if (!obase.empty())
+        obase += '/';
+      obase += ofile;
+      
+      //
+      // generiere Code
+      //
+
+      if (verbose)
+        std::cout << "generate " << obase << ".h" << std::endl;
+      std::ofstream hout((obase + ".h").c_str());
+      hout << generator.getHeader(ofile + ".h");
+      hout.close();
+
+      if (verbose)
+        std::cout << "generate " << obase << ".cpp" << std::endl;
+      std::ofstream sout((obase + ".cpp").c_str());
+      sout << generator.getCpp(ofile + ".cpp");
+      sout.close();
+
+      return 0;
+    }
+
+    int ecppc::runDepencencies()
+    {
+      tnt::ecppc::dependencygenerator generator(requestname, inputfile);
+      std::ifstream in(inputfile);
+      if (!binary)
+        runParser(in, generator);
+
+      std::string deps = generator.getDependencies();
+      if (ofile.empty())
+        std::cout << deps;
+      else
+      {
+        std::ofstream out(ofile.c_str());
+        out << deps;
+      }
+
+      return 0;
+    }
+
+    void ecppc::runParser(std::istream& in, tnt::ecpp::parseHandler& handler)
+    {
+      // create parser
+      tnt::ecpp::parser parser(handler);
+
+      parser.setSplitBar(splitBar);
+      if (splitChars.isSet())
+      {
+        if (splitChars.getValue()[0] == '\0'
+         || splitChars.getValue()[1] == '\0'
+         || splitChars.getValue()[2] != '\0')
+          throw std::runtime_error("--split-chars needs exactly 2 characters");
+
+        parser.setSplitChars(splitChars.getValue()[0],
+                             splitChars.getValue()[1]);
+      }
+
+      parser.parse(in);
+    }
+
+    usage::usage(const char* progname)
+    {
+      std::ostringstream o;
+      o << PACKAGE_STRING "\n\n"
            "ecppc-compiler\n\n"
-           "usage: " << argv[0] << " [options] ecpp-source\n\n"
+           "usage: " << progname << " [options] ecpp-source\n\n"
            "  -o filename      outputfile\n"
            "  -n name          classname\n"
            "  -m type          Mimetype\n"
@@ -77,149 +262,20 @@ int main(int argc, char* argv[])
            "  -d               debug\n"
            "  -S               split chunks at '{' und '}'\n"
            "  --split-chars zz select alternative split-chars\n"
-        << std::endl;
-      return -1;
+           "  -M               generate dependency form Makefile\n";
+      msg = o.str();
     }
-    
-    // requestname aus Inputdatei
-    if (requestname.empty())
-    {
-      std::string input = argv[1];
-      std::string::size_type pos_dot = input.find_last_of(".");
-      std::string::size_type pos_slash = input.find_last_of("\\/");
-      if (pos_dot != std::string::npos)
-      {
-        if (pos_slash == std::string::npos)
-          requestname = input.substr(0, pos_dot);
-        else if (pos_slash < pos_dot)
-        {
-          requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
+  }
+}
 
-          if (ns.empty())
-          {
-            std::string::size_type pos_slash2 = input.find_last_of("\\/", pos_slash - 1);
-            if (pos_slash2 == std::string::npos)
-              ns = input.substr(0, pos_slash);
-            else
-              ns = input.substr(pos_slash2 + 1, pos_slash - pos_slash2 - 1);
-          }
-        }
-      }
-      else
-      {
-        requestname = input;
-      }
+int main(int argc, char* argv[])
+{
+  std::ios::sync_with_stdio(false);
 
-      if (requestname.empty())
-      {
-        std::cerr << "cannot derive classname from filename. Use -n" << std::endl;
-        return -1;
-      }
-
-    }
-    else if (ns.empty())
-    {
-      std::string::size_type p = requestname.find("::");
-      if (p != std::string::npos)
-      {
-        ns = requestname.substr(0, p);
-        requestname.erase(0, p + 2);
-      }
-    }
-
-    if (ofile.empty())
-    {
-      if (ns.empty())
-        ofile = requestname;
-      else
-        ofile = ns + '/' + requestname;
-    }
-
-    // Output auf ".h" and ".cpp" pruefen
-    if (ofile.size() == ofile.rfind(".h") + 2)
-      ofile = ofile.substr(0, ofile.size() - 2);
-    else if (ofile.size() == ofile.rfind(".cpp") + 4)
-      ofile = ofile.substr(0, ofile.size() - 4);
-
-    //
-    // initialisiere Generator
-    //
-
-    tnt::ecppc::generator generator(requestname, ns);
-    generator.setDebug(debug);
-
-    if (mimetype.isSet())
-      generator.setMimetype(mimetype);
-
-    if (htmlcompress)
-      generator.setHtmlCompress();
-    else if (csscompress)
-      generator.setCssCompress();
-    else if (jscompress)
-      generator.setJsCompress();
-
-    generator.setCompress(compress);
-    generator.setExternData(externData);
-    generator.setSplitBar(splitBar);
-    if (splitChars.isSet())
-    {
-      if (splitChars.getValue()[0] == '\0'
-       || splitChars.getValue()[1] == '\0'
-       || splitChars.getValue()[2] != '\0')
-        throw std::runtime_error("--split-chars needs exactly 2 characters");
-
-      generator.setSplitChars(splitChars.getValue()[0],
-                              splitChars.getValue()[1]);
-    }
-
-    //
-    // parse Quelldatei
-    //
-
-    std::ifstream in(argv[1]);
-    if (binary)
-    {
-      std::ostringstream html;
-      html << in.rdbuf();
-      generator.processHtml(html.str());
-      generator.setRawMode();
-
-      struct stat st;
-      if (stat(argv[1], &st) == 0)
-        generator.setLastModifiedTime(st.st_ctime);
-    }
-    else
-      generator.parse(in);
-
-    // wenn Kommandozeilenparameter -s explizit angegeben ist, übergebe diesen an den
-    // Generator
-    if (singleton.isSet())
-      generator.setSingleton(singleton);
-    if (componentclass.isSet())
-      generator.setComponentclass(componentclass);
-    if (baseclass.isSet())
-      generator.setBaseclass(baseclass);
-
-    std::string obase = odir;
-    if (!obase.empty())
-      obase += '/';
-    obase += ofile;
-    
-    //
-    // generiere Code
-    //
-
-    if (verbose)
-      std::cout << "generate " << obase << ".h" << std::endl;
-    std::ofstream hout((obase + ".h").c_str());
-    hout << generator.getHeader(ofile + ".h");
-    hout.close();
-
-    if (verbose)
-      std::cout << "generate " << obase << ".cpp" << std::endl;
-    std::ofstream sout((obase + ".cpp").c_str());
-    sout << generator.getCpp(ofile + ".cpp");
-    sout.close();
+  try
+  {
+    tnt::ecppc::ecppc app(argc, argv);
+    return app.run();
   }
   catch(const std::exception& e)
   {
