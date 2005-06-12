@@ -52,7 +52,8 @@ namespace tnt
         debug(argc, argv, 'd'),
         splitBar(argc, argv, 'S'),
         splitChars(argc, argv, "--split-chars"),
-        generateDependencies(argc, argv, 'M')
+        generateDependencies(argc, argv, 'M'),
+        generateHeader(argc, argv, 'h')
     {
       if (argc != 2 || argv[1][0] == '-')
         throw usage(argv[0]);
@@ -185,17 +186,28 @@ namespace tnt
       // generiere Code
       //
 
-      if (verbose)
-        std::cout << "generate " << obase << ".h" << std::endl;
-      std::ofstream hout((obase + ".h").c_str());
-      hout << generator.getHeader(ofile + ".h");
-      hout.close();
+      if (generateHeader)
+      {
+        if (verbose)
+          std::cout << "generate " << obase << ".h" << std::endl;
+        std::ofstream hout((obase + ".h").c_str());
+        hout << generator.getHeader(ofile + ".h");
+        hout.close();
 
-      if (verbose)
-        std::cout << "generate " << obase << ".cpp" << std::endl;
-      std::ofstream sout((obase + ".cpp").c_str());
-      sout << generator.getCpp(ofile + ".cpp");
-      sout.close();
+        if (verbose)
+          std::cout << "generate " << obase << ".cpp" << std::endl;
+        std::ofstream sout((obase + ".cpp").c_str());
+        sout << generator.getCpp(ofile + ".cpp");
+        sout.close();
+      }
+      else
+      {
+        if (verbose)
+          std::cout << "generate " << obase << ".cpp" << std::endl;
+        std::ofstream sout((obase + ".cpp").c_str());
+        sout << generator.getCppWoHeader(ofile + ".cpp");
+        sout.close();
+      }
 
       return 0;
     }
@@ -262,7 +274,8 @@ namespace tnt
            "  -d               debug\n"
            "  -S               split chunks at '{' und '}'\n"
            "  --split-chars zz select alternative split-chars\n"
-           "  -M               generate dependency form Makefile\n";
+           "  -M               generate dependency form Makefile\n"
+           "  -h               generate separate header-file\n";
       msg = o.str();
     }
   }

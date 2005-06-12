@@ -7,7 +7,7 @@ config_la_LDFLAGS = -module
 config_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
 data_DATA = tntnet.conf tntnet.properties
-CLEANFILES = config.h config.cpp tntnet.conf tntnet.properties
+CLEANFILES = config.cpp tntnet.conf tntnet.properties
 
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 

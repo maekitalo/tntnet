@@ -199,155 +199,153 @@ namespace tnt
       currentComp->addScopevar(scopevar(container, scope, type, var, init));
     }
 
-    std::string generator::getHeader(const std::string& basename) const
+    void generator::getIntro(std::ostream& out, const std::string& filename) const
     {
-      std::string ns_classname_;
-      const std::string classname = maincomp.getName();
-      const std::string ns = maincomp.getNs();
-      if (ns.empty())
-        ns_classname_ = classname;
-      else
-        ns_classname_ = ns + '_' + classname;
+      out << "////////////////////////////////////////////////////////////////////////\n"
+             "// " << filename << "\n"
+             "// generated with ecppc\n"
+             "// date: " << gentime <<
+             "//\n\n";
+    }
 
-      std::ostringstream header;
-      header << "////////////////////////////////////////////////////////////////////////\n"
-                "// " << basename << "\n"
-                "// generated with ecppc\n"
-                "// date: " << gentime <<
-                "//\n\n"
-                "#ifndef ECPP_COMPONENT_" << ns_classname_ << "_H\n"
-                "#define ECPP_COMPONENT_" << ns_classname_ << "_H\n\n"
-                "#include <tnt/ecpp.h>\n"
-                "#include <tnt/convert.h>\n";
-
+    void generator::getHeaderIncludes(std::ostream& out) const
+    {
+      out << "#include <tnt/ecpp.h>\n"
+             "#include <tnt/convert.h>\n";
       if (!componentclass.empty())
-        header << "#include \"" << componentclass << ".h\"\n";
+        out << "#include \"" << componentclass << ".h\"\n";
       if (!baseclass.empty())
-        header << "#include \"" << baseclass << ".h\"\n";
+        out << "#include \"" << baseclass << ".h\"\n";
+    }
 
-      header << "\n"
-                "// <%pre>\n"
-             << pre
-             << "// </%pre>\n\n"
-                "namespace ecpp_component\n"
-                "{\n\n";
-      if (!ns.empty())
-        header << "namespace " << ns << "\n"
-                  "{\n\n";
-      header << "extern \"C\"\n"
-                "{\n"
-                "  component* create_" << classname << "(const compident& ci, const urlmapper& um,\n"
-                "    comploader& cl);\n"
-                "}\n\n"
-                "// <%declare_shared>\n"
-             << declare_shared
-             << "// </%declare_shared>\n"
-                "class " << classname << " : public ";
+    void generator::getPre(std::ostream& out) const
+    {
+      out << "// <%pre>\n"
+          << pre
+          << "// </%pre>\n";
+    }
+
+    void generator::getNamespaceStart(std::ostream& out) const
+    {
+      out << "namespace ecpp_component\n"
+             "{\n";
+
+      if (!maincomp.getNs().empty())
+        out << "namespace " << maincomp.getNs() << "\n"
+               "{\n";
+
+      out << '\n';
+    }
+
+    void generator::getNamespaceEnd(std::ostream& out) const
+    {
+      if (!maincomp.getNs().empty())
+        out << "} // namespace " << maincomp.getNs() << '\n';
+      out << "} // namespace ecpp_component\n";
+    }
+
+    void generator::getCreatorDeclaration(std::ostream& out) const
+    {
+      out << "extern \"C\"\n"
+             "{\n"
+             "  component* create_" << maincomp.getName() << "(const compident& ci, const urlmapper& um,\n"
+             "    comploader& cl);\n"
+             "}\n\n";
+    }
+
+    void generator::getDeclareShared(std::ostream& out) const
+    {
+      out << "// <%declare_shared>\n"
+          << declare_shared 
+          << "// </%declare_shared>\n";
+    }
+
+    void generator::getClassDeclaration(std::ostream& out) const
+    {
+      out << "class " << maincomp.getName() << " : public ";
       if (componentclass.empty())
-        header << "ecppComponent";
+        out << "ecppComponent";
       else
-        header << componentclass;
+        out << componentclass;
       if (!baseclass.empty())
-        header << ", public " << baseclass;
-      header << "\n"
-                "{\n"
-                "    friend component* create_" << classname << "(const compident& ci,\n"
-                "      const urlmapper& um, comploader& cl);\n\n"
-                "    " << classname << "& main()  { return *this; }\n\n" 
-                "    // <%declare>\n"
-             << declare
-             << "    // </%declare>\n\n"
-             << "    // <%config>\n";
+        out << ", public " << baseclass;
+      out << "\n"
+             "{\n"
+             "    friend component* create_" << maincomp.getName() << "(const compident& ci,\n"
+             "      const urlmapper& um, comploader& cl);\n\n"
+             "    " << maincomp.getName() << "& main()  { return *this; }\n\n" 
+             "    // <%declare>\n"
+          << declare
+          << "    // </%declare>\n\n"
+          << "    // <%config>\n";
       for (variable_declarations::const_iterator it = configs.begin();
            it != configs.end(); ++it)
-        it->getConfigHDecl(header);
-      header << "    // </%config>\n\n"
-                "  protected:\n"
-                "    " << classname << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
-                "    ~" << classname << "();\n\n"
-                "  public:\n"
-                "    unsigned operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam);\n"
-                "    bool drop();\n"
-                "    unsigned    getDataCount(const httpRequest& request) const;\n"
-                "    unsigned    getDataLen(const httpRequest& request, unsigned n) const;\n"
-                "    const char* getDataPtr(const httpRequest& request, unsigned n) const;\n";
+        it->getConfigHDecl(out);
+      out << "    // </%config>\n\n"
+             "  protected:\n"
+             "    " << maincomp.getName() << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
+             "    ~" << maincomp.getName() << "();\n\n"
+             "  public:\n"
+             "    unsigned operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam);\n"
+             "    bool drop();\n"
+             "    unsigned    getDataCount(const httpRequest& request) const;\n"
+             "    unsigned    getDataLen(const httpRequest& request, unsigned n) const;\n"
+             "    const char* getDataPtr(const httpRequest& request, unsigned n) const;\n";
       if (!attr.empty())
-        header << "    std::string getAttribute(const std::string& name,\n"
-                  "      const std::string& def = std::string()) const;\n";
+        out << "    std::string getAttribute(const std::string& name,\n"
+               "      const std::string& def = std::string()) const;\n";
 
-      header << '\n';
+      out << '\n';
 
       // Deklaration der Subcomponenten
       for (subcomps_type::const_iterator i = subcomps.begin(); i != subcomps.end(); ++i)
-        i->getHeader(header);
+        i->getHeader(out);
 
       // Instanzen der Subcomponenten
       for (subcomps_type::const_iterator i = subcomps.begin(); i != subcomps.end(); ++i)
-        header << "    " << i->getName() << "_type " << i->getName() << ";\n";
+        out << "    " << i->getName() << "_type " << i->getName() << ";\n";
 
-      header << "};\n\n";
-      if (!ns.empty())
-        header << "} // namespace " << ns << "\n\n";
-      header << "} // namespace ecpp_component\n\n"
-             << "#endif\n";
-      return header.str();
+      out << "};\n\n";
     }
 
-    std::string generator::getCpp(const std::string& basename) const
+    void generator::getCppIncludes(std::ostream& out) const
     {
-      std::string ns_classname;
-      std::string ns_classname_dot;
-      std::string ns_classname_slash;
-      std::string classname = maincomp.getName();
-      std::string ns = maincomp.getNs();
-      if (ns.empty())
-      {
-        ns_classname = classname;
-        ns_classname_dot = classname;
-        ns_classname_slash = classname;
-      }
-      else
-      {
-        ns_classname = ns + "::" + classname;
-        ns_classname_dot = ns + '.' + classname;
-        ns_classname_slash = ns + '/' + classname;
-      }
-      std::ostringstream code;
-      code << "////////////////////////////////////////////////////////////////////////\n"
-              "// " << basename << "\n"
-              "// generated with ecppc\n"
-              "// date: " << gentime <<
-              "//\n\n"
-              "#include <tnt/httprequest.h>\n"
-              "#include <tnt/httpreply.h>\n"
-              "#include <tnt/http.h>\n"
-              "#include <tnt/data.h>\n";
+      out << "#include <tnt/httprequest.h>\n"
+             "#include <tnt/httpreply.h>\n"
+             "#include <tnt/http.h>\n"
+             "#include <tnt/data.h>\n";
       if (hasScopevars())
-        code << "#include <tnt/objecttemplate.h>\n"
-                "#include <tnt/objectptr.h>\n";
+        out << "#include <tnt/objecttemplate.h>\n"
+               "#include <tnt/objectptr.h>\n";
       if (!configs.empty())
-        code << "#include <tnt/comploader.h>\n"
-                "#include <tnt/tntconfig.h>\n";
+        out << "#include <tnt/comploader.h>\n"
+               "#include <tnt/tntconfig.h>\n";
 
       if (compress)
-        code << "#include <tnt/zdata.h>\n";
+        out << "#include <tnt/zdata.h>\n";
 
-      code << "#include <cxxtools/thread.h>\n"
-              "#include <cxxtools/log.h>\n"
-              "#include <stdexcept>\n\n";
+      out << "#include <cxxtools/thread.h>\n"
+             "#include <cxxtools/log.h>\n"
+             "#include <stdexcept>\n\n";
 
       if (externData)
-        code << "#include <tnt/comploader.h>\n"
-                "#include <stdlib.h>\n";
+        out << "#include <tnt/comploader.h>\n"
+               "#include <stdlib.h>\n";
+    }
 
-      code << "#include \"" << ns_classname_slash << ".h\"\n\n"
-              "template <typename T> inline void use(const T&) { };\n\n"
-              "namespace ecpp_component\n"
-              "{\n\n";
+    void generator::getCppBody(std::ostream& code) const
+    {
+      std::string classname = maincomp.getName();
+      std::string ns_classname;
+      std::string ns_classname_dot;
 
-      if (!ns.empty())
-        code << "namespace " << ns << "\n"
-                "{\n\n";
+      if (!maincomp.getNs().empty())
+      {
+        ns_classname = maincomp.getNs() + "::";
+        ns_classname_dot = maincomp.getNs() + '.';
+      }
+      ns_classname += classname;
+      ns_classname_dot += classname;
 
       code << "static cxxtools::Mutex mutex;\n\n"
               "log_define(\"component." << ns_classname_dot << "\");\n\n";
@@ -608,65 +606,89 @@ namespace tnt
                   "    return " << it->second << ";\n";
         code << "  return def;\n"
                 "} // </%attr>\n\n";
-
       }
 
       for (subcomps_type::const_iterator i = subcomps.begin();
            i != subcomps.end(); ++i)
         i->getDefinition(code, isDebug(), externData);
+    }
 
-      if (!ns.empty())
-        code << "} // namespace " << ns << "\n\n";
-      code << "} // namespace ecpp_component\n";
+    std::string generator::getHeader(const std::string& filename) const
+    {
+      std::string ns_classname_;
+      const std::string classname = maincomp.getName();
+      const std::string ns = maincomp.getNs();
+      if (ns.empty())
+        ns_classname_ = classname;
+      else
+        ns_classname_ = ns + '_' + classname;
+
+      std::ostringstream header;
+      getIntro(header, filename);
+      header << "#ifndef ECPP_COMPONENT_" << ns_classname_ << "_H\n"
+                "#define ECPP_COMPONENT_" << ns_classname_ << "_H\n\n";
+
+      getHeaderIncludes(header);
+      header << '\n';
+      getPre(header);
+      header << '\n';
+      getNamespaceStart(header);
+      getCreatorDeclaration(header);
+      getDeclareShared(header);
+      getClassDeclaration(header);
+      getNamespaceEnd(header);
+
+      header << "\n"
+                "#endif\n";
+
+      return header.str();
+    }
+
+    std::string generator::getCpp(const std::string& filename) const
+    {
+      std::string ns_classname_slash;
+      if (!maincomp.getNs().empty())
+        ns_classname_slash = maincomp.getNs() + '/';
+      ns_classname_slash += maincomp.getName();
+
+      std::ostringstream code;
+      getIntro(code, filename);
+      getCppIncludes(code);
+
+      code << "#include \"" << ns_classname_slash << ".h\"\n\n"
+              "template <typename T> inline void use(const T&) { };\n\n";
+
+      getNamespaceStart(code);
+      getCppBody(code);
+      getNamespaceEnd(code);
 
       return code.str();
     }
 
-    std::string generator::getDataCpp(const std::string& basename) const
+    std::string generator::getCppWoHeader(const std::string& filename) const
     {
       std::ostringstream code;
-      code << "////////////////////////////////////////////////////////////////////////\n"
-              "// " << basename << "\n"
-              "// generated with ecppc\n"
-              "// date: " << gentime <<
-              "//\n\n";
 
-      if (compress)
-      {
-        code << "const char* " << maincomp.getName() << "_zdata = \n\"";
+      getIntro(code, filename);
 
-        uLongf s = data.size() * data.size() / 100 + 100;
-        Bytef* p = new Bytef[s];
-        std::auto_ptr<Bytef> ap(p);
+      getHeaderIncludes(code);
+      getCppIncludes(code);
 
-        int z_ret = ::compress(p, &s, (const Bytef*)data.ptr(), data.size());
-        if (z_ret != Z_OK)
-        {
-          throw std::runtime_error(std::string("error compressing data: ") +
-            (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
-             z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
-             z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
-        }
+      code << "\n" 
+              "template <typename T> inline void use(const T&) { };\n\n";
 
-        std::transform(
-          p, p + s,
-          std::ostream_iterator<const char*>(code),
-          stringescaper());
-        code << "\"\n"
-                "unsigned " << maincomp.getName() << "_zdatalen = " << s << ";\n";
-      }
-      else
-      {
-        code << "const char* " << maincomp.getName() << "_data = \n\"";
-        std::transform(
-          data.ptr(),
-          data.ptr() + data.size(),
-          std::ostream_iterator<const char*>(code),
-          stringescaper());
+      getPre(code);
+      code << '\n';
 
-        code << "\";\n";
-      }
-      code << "unsigned " << maincomp.getName() << "_datalen = " << data.size() << ";\n";
+      getNamespaceStart(code);
+
+      getCreatorDeclaration(code);
+      getDeclareShared(code);
+      getClassDeclaration(code);
+
+      getCppBody(code);
+
+      getNamespaceEnd(code);
 
       return code.str();
     }

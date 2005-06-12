@@ -7,7 +7,7 @@ savepoint_la_LDFLAGS = -module
 savepoint_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
 data_DATA = tntnet.conf tntnet.properties
-CLEANFILES = savepoint.h savepoint.cpp tntnet.conf tntnet.properties
+CLEANFILES = savepoint.cpp tntnet.conf tntnet.properties
 
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 

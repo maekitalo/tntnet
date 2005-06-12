@@ -8,7 +8,7 @@ sprintf_la_LDFLAGS = -module
 sprintf_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
 data_DATA = tntnet.conf tntnet.properties
-CLEANFILES = sprintf.h sprintf.cpp tntnet.conf tntnet.properties
+CLEANFILES = sprintf.cpp subcomp.cpp tntnet.conf tntnet.properties
 
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 

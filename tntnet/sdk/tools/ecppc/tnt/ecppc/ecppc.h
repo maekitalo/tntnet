@@ -53,6 +53,7 @@ namespace tnt
         cxxtools::arg<bool> splitBar;
         cxxtools::arg<const char*> splitChars;
         cxxtools::arg<bool> generateDependencies;
+        cxxtools::arg<bool> generateHeader;
 
         int runDepencencies();
         int runGenerator();

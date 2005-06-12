@@ -7,8 +7,7 @@ session_la_LDFLAGS = -module
 session_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
 data_DATA = tntnet.conf tntnet.properties
-CLEANFILES = session.h session.cpp \
-	appsession.h appsession.cpp \
+CLEANFILES = session.cpp appsession.cpp \
 	tntnet.conf tntnet.properties
 
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp

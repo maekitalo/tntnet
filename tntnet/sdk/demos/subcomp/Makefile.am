@@ -13,7 +13,7 @@ extlib_la_LDFLAGS = -module
 extlib_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
 data_DATA = tntnet.conf tntnet.properties
-CLEANFILES = subcomp.h subcomp.cpp extcomp.h extcomp.cpp tntnet.conf tntnet.properties
+CLEANFILES = subcomp.cpp extcomp.cpp tntnet.conf tntnet.properties
 
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 

@@ -7,7 +7,7 @@ cookie_la_LDFLAGS = -module
 cookie_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
 
 data_DATA = tntnet.conf tntnet.properties
-CLEANFILES = cookie.h cookie.cpp tntnet.conf tntnet.properties
+CLEANFILES = cookie.cpp tntnet.conf tntnet.properties
 
 AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 

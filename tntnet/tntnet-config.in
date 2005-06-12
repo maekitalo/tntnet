@@ -92,11 +92,11 @@ ECPPC=@bindir@/ecppc
 CXXFLAGS+=`tntnet-config --cxxflags` -fPIC -O2
 LDFLAGS+=--shared `tntnet-config --libs`
 
-%.cpp %.h: %.ecpp
+%.cpp: %.ecpp
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_CPP) \$<
-%.cpp %.h: %.gif
+%.cpp: %.gif
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_GIF) -b -m image/gif \$<
-%.cpp %.h: %.jpg
+%.cpp: %.jpg
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_JPG) -b -m image/jpg \$<
 EOF
 }
