@@ -1,4 +1,4 @@
-- ecppc -M (automatic dependency generation)
+- html-encoder
 - cgi.so
 - sauberes Beenden
 - entladen von shared libs
