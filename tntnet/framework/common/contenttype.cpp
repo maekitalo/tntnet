@@ -1,5 +1,5 @@
 /* contenttype.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -25,11 +25,16 @@ Boston, MA  02111-1307  USA
 #include <stdexcept>
 #include <ctype.h>
 #include <functional>
+#include <cxxtools/log.h>
+
+log_define("tntnet.contenttype");
 
 namespace tnt
 {
   contenttype::contenttype(const std::string& ct)
   {
+    log_debug("contenttype <= " << ct);
+
     std::istringstream in(ct);
 
     in >> *this;
@@ -57,6 +62,7 @@ namespace tnt
   contenttype::return_type contenttype::onType(
     const std::string& t, const std::string& s)
   {
+    log_debug("contenttype::onType " << t << ", " << s);
     if (s.empty())
       return FAIL;
 
@@ -74,6 +80,7 @@ namespace tnt
   contenttype::return_type contenttype::onParameter(
     const std::string& attribute, const std::string& value)
   {
+    log_debug("contenttype::onParameter " << attribute << ", " << value);
     std::string att = attribute;
     std::transform(att.begin(), att.end(), att.begin(),
       std::ptr_fun(tolower));

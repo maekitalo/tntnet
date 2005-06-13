@@ -1,5 +1,5 @@
 /* tnt/contenttype.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 

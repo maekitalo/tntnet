@@ -104,6 +104,7 @@ namespace tnt
       if (in)
       {
         log_debug(Content_Type << ' ' << in.str());
+        log_debug("type=" << ct.getType() << " subtype=" << ct.getSubtype());
         if (ct.isMultipart())
         {
           log_debug("multipart-boundary=" << ct.getBoundary());
@@ -126,7 +127,8 @@ namespace tnt
           qparam.parse_url(getBody());
         }
       }
-      else
+      else if (ct.getType() == "application"
+            && ct.getSubtype() == "x-www-form-urlencoded")
         qparam.parse_url(getBody());
     }
 

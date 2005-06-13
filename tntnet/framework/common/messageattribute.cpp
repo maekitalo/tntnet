@@ -250,10 +250,41 @@ namespace tnt
     }
 
     // process last parameter
-    if (state == state_value
-      && !in.fail()
-      && onParameter(attribute, value) == FAIL)
+    if (in.fail())
+      return;
+
+    switch (state)
+    {
+      case state_0:
+      case state_type0:
+        break;
+
+      case state_type_sp:
+      case state_subtype0:
+      case state_subtype:
+        if (onType(type, subtype) == FAIL)
+          in.setstate(std::ios::failbit);
+        break;
+
+      case state_subtype_sp:
+      case state_attribute0:
+        break;
+
+      case state_attribute:
+      case state_attribute_sp:
+      case state_value0:
+      case state_qvalue:
         in.setstate(std::ios::failbit);
+        break;
+
+      case state_value:
+        if(onParameter(attribute, value) == FAIL)
+          in.setstate(std::ios::failbit);
+        break;
+
+      case state_end:
+        break;
+    };
 
     if (buf->sgetc() == std::ios::traits_type::eof())
       in.setstate(std::ios::eofbit);
