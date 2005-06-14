@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #define TNT_HTTPREPLY_H
 
 #include <tnt/httpmessage.h>
+#include <tnt/htmlescostream.h>
 #include <sstream>
 
 namespace tnt
@@ -38,6 +39,7 @@ namespace tnt
       std::ostream& socket;
       std::ostringstream outstream;
       std::ostream* current_outstream;
+      HtmlEscOstream save_outstream;
 
       unsigned keepAliveCounter;
       static unsigned keepAliveTimeout;
@@ -57,7 +59,10 @@ namespace tnt
 
       void sendReply(unsigned ret);
 
+      /// returns outputstream
       std::ostream& out()   { return *current_outstream; }
+      /// returns save outputstream (unsave html-chars are escaped)
+      std::ostream& sout()  { return save_outstream; }
 
       void setContentLengthHeader(size_t size);
       void setKeepAliveHeader(unsigned timeout = 15);

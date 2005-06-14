@@ -105,7 +105,7 @@ namespace tnt
     void generator::onExpression(const std::string& expr)
     {
       std::ostringstream m;
-      m << "  reply.out() << (" << expr << ");\n";
+      m << "  reply.sout() << (" << expr << ");\n";
       currentComp->addHtml(m.str());
     }
 

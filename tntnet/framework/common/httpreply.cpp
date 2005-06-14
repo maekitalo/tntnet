@@ -92,6 +92,7 @@ namespace tnt
     : contentType("text/html"),
       socket(s),
       current_outstream(&outstream),
+      save_outstream(outstream),
       keepAliveCounter(0)
   { }
 
@@ -162,12 +163,14 @@ namespace tnt
     {
       send(HTTP_OK);
       current_outstream = &socket;
+      save_outstream.setSink(socket);
     }
   }
 
   void httpReply::setDirectModeNoFlush()
   {
     current_outstream = &socket;
+    save_outstream.setSink(socket);
   }
 
   void httpReply::setCookie(const std::string& name, const cookie& value)
