@@ -184,7 +184,7 @@ namespace tnt
     {
       std::ostringstream m;
       m << "  if (" << cond << ")\n"
-           "    reply.out() << " << expr << ";\n";
+           "    reply.sout() << " << expr << ";\n";
       currentComp->addHtml(m.str());
     }
 
