@@ -142,9 +142,12 @@ namespace tnt
     // replace job with last job in poller-list
     jobs_type::size_type last = current_jobs.size() - 1;
 
-    pollfds[i + 1] = pollfds[last + 1];
+    if (i != last)
+    {
+      pollfds[i + 1] = pollfds[last + 1];
+      current_jobs[i] = current_jobs[last];
+    }
 
-    current_jobs[i] = current_jobs[last];
     current_jobs.pop_back();
   }
 

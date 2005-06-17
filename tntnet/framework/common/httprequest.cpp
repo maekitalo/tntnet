@@ -40,6 +40,7 @@ namespace tnt
   httpRequest::httpRequest(const std::string& url)
   : ssl(false),
     lang_init(false),
+    requestScope(0),
     applicationScope(0),
     sessionScope(0),
     applicationScopeLocked(false),
@@ -49,13 +50,69 @@ namespace tnt
     parse(s);
   }
 
+  httpRequest::httpRequest(const httpRequest& r)
+    : pathinfo(r.pathinfo),
+      args(r.args),
+      qparam(r.qparam),
+      peerAddr(r.peerAddr),
+      serverAddr(r.serverAddr),
+      ct(r.ct),
+      mp(r.mp),
+      ssl(r.ssl),
+      serial(r.serial),
+      lang_init(r.lang_init),
+      lang(r.lang),
+      requestScope(r.requestScope),
+      applicationScope(r.applicationScope),
+      sessionScope(r.sessionScope),
+      applicationScopeLocked(false),
+      sessionScopeLocked(false)
+  {
+    if (requestScope)
+      requestScope->addRef();
+    if (applicationScope)
+      applicationScope->addRef();
+    if (sessionScope)
+      sessionScope->addRef();
+  }
+
   httpRequest::~httpRequest()
   {
     releaseLocks();
+
+    if (requestScope)
+      requestScope->release();
     if (applicationScope)
       applicationScope->release();
     if (sessionScope)
       sessionScope->release();
+  }
+
+  httpRequest& httpRequest::operator= (const httpRequest& r)
+  {
+    pathinfo = r.pathinfo;
+    args = r.args;
+    qparam = r.qparam;
+    peerAddr = r.peerAddr;
+    serverAddr = r.serverAddr;
+    ct = r.ct;
+    mp = r.mp;
+    ssl = r.ssl;
+    serial = r.serial;
+    lang_init = r.lang_init;
+    lang = r.lang;
+    requestScope = r.requestScope;
+    applicationScope = r.applicationScope;
+    sessionScope = r.sessionScope;
+    applicationScopeLocked = false;
+    sessionScopeLocked = false;
+
+    if (requestScope)
+      requestScope->addRef();
+    if (applicationScope)
+      applicationScope->addRef();
+    if (sessionScope)
+      sessionScope->addRef();
   }
 
   void httpRequest::clear()
@@ -67,7 +124,11 @@ namespace tnt
     ct = contenttype();
     mp = multipart();
     lang_init = false;
-    requestScope.clear();
+    if (requestScope)
+    {
+      requestScope->release();
+      requestScope = 0;
+    }
     httpcookies.clear();
 
     releaseLocks();
@@ -302,6 +363,13 @@ namespace tnt
     }
     else
       log_debug("sessionscope not locked");
+  }
+
+  scope& httpRequest::getRequestScope()
+  {
+    if (requestScope == 0)
+      requestScope = new scope();
+    return *requestScope;
   }
 
   scope& httpRequest::getApplicationScope()

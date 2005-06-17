@@ -55,7 +55,7 @@ namespace tnt
       mutable bool lang_init;
       mutable std::string lang;
 
-      scope requestScope;
+      scope* requestScope;
       scope* applicationScope;
       sessionscope* sessionScope;
 
@@ -74,13 +74,17 @@ namespace tnt
       httpRequest()
         : ssl(false),
           lang_init(false),
+          requestScope(0),
           applicationScope(0),
           sessionScope(0),
           applicationScopeLocked(false),
           sessionScopeLocked(false)
         { }
       httpRequest(const std::string& url);
+      httpRequest(const httpRequest& r);
       ~httpRequest();
+
+      httpRequest& operator= (const httpRequest& r);
 
       void clear();
 
@@ -147,7 +151,7 @@ namespace tnt
       void setSessionScope(sessionscope& s)      { setSessionScope(&s); }
       void clearSession();
 
-      scope& getRequestScope()            { return requestScope; }
+      scope& getRequestScope();
       scope& getApplicationScope();
       sessionscope& getSessionScope();
       bool   hasSessionScope() const;
