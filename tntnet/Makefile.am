@@ -23,7 +23,9 @@ SUBDIRS = \
 
 EXTRA_DIST = ecpp.vim \
     doc/tntnet_doku.doc \
+    doc/tntnet.pdf \
     doc/tntnet.sxw \
+    doc/tntnet-configuration.pdf \
     doc/tntnet-configuration.sxw \
     doc/logo-tntnet.cdr \
     doc/quick-start-guide.html \

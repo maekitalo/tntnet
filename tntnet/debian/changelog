@@ -1,9 +1,10 @@
-tntnet (1.4.0pre4-1) stable; urgency=low
+tntnet (1.4.0-1) stable; urgency=low
 
   * components are generated in .cpp-files only by default (no .h-files)
   * bugfix: component-type was not filled
+  * unsave html-character-output in <$...$> and <?...?...?> is escaped
 
- -- Tommi Maekitalo <tommi@epgmhb.de>  Mon, 13 Jun 2005 22:36:07 +0200
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Mon, 13 Jun 2005 22:36:07 +0200
 
 tntnet (1.4.0pre3-1) stable; urgency=low
 
