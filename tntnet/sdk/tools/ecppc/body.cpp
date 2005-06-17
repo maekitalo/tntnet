@@ -143,7 +143,7 @@ namespace tnt
         if (pass_cgi.empty())
           out << "    cxxtools::query_params cq(qparam, false);\n";
         else
-          out << "    cxxtools::query_params cq(" << pass_cgi << ");\n";
+          out << "    cxxtools::query_params cq(" << pass_cgi << ", true);\n";
 
         for (comp_args_type::const_iterator i = args.begin();
              i != args.end(); ++i)
