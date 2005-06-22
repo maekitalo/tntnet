@@ -66,7 +66,7 @@ class ecppll : public tnt::ecpp::parseHandler
       { }
 
     virtual void readReplaceTokens(std::istream& in);
-    virtual void processHtml(const std::string& html);
+    virtual void onHtml(const std::string& html);
     virtual void tokenSplit(bool start);
 
     void setFailOnWarn(bool sw = true)
@@ -175,7 +175,7 @@ void ecppll::readReplaceTokens(std::istream& in)
   next = replacetokens.begin();
 }
 
-void ecppll::processHtml(const std::string& html)
+void ecppll::onHtml(const std::string& html)
 {
   if (inLang)
   {

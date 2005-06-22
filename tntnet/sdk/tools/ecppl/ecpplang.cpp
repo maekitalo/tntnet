@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 #include <iostream>
 #include <iterator>
 
-void ecpplang::processHtml(const std::string& html)
+void ecpplang::onHtml(const std::string& html)
 {
   if (inLang && lang
     || !inLang && nolang)

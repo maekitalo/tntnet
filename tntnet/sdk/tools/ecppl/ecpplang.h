@@ -45,7 +45,7 @@ class ecpplang : public tnt::ecpp::parseHandler
         nolang(false)
       { }
 
-    virtual void processHtml(const std::string& html);
+    virtual void onHtml(const std::string& html);
     virtual void tokenSplit(bool start);
 
     void setLang(bool sw = true)
