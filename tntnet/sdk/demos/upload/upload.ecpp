@@ -5,7 +5,7 @@
  <body>
 
   <# for upload we need to use this enctype-attribute #>
-  <form enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
 
    <input type="file" name="upload">
    <input type="submit">
@@ -36,7 +36,7 @@
   // and prints it to a target-ostream. "reply.out()" gives us a ostream
   // to our client.
 
-  cxxtools::hdostream hd(reply.out());
+  cxxtools::hdostream hd(reply.sout());
 
   // hexdump first 1k of uploaded file
   if (std::distance(it->getBodyBegin(), it->getBodyEnd()) > 1024)
