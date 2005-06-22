@@ -191,13 +191,13 @@ namespace tnt
         if (verbose)
           std::cout << "generate " << obase << ".h" << std::endl;
         std::ofstream hout((obase + ".h").c_str());
-        hout << generator.getHeader(ofile + ".h");
+        generator.getHeader(hout, ofile + ".h");
         hout.close();
 
         if (verbose)
           std::cout << "generate " << obase << ".cpp" << std::endl;
         std::ofstream sout((obase + ".cpp").c_str());
-        sout << generator.getCpp(ofile + ".cpp");
+        generator.getCpp(sout, ofile + ".cpp");
         sout.close();
       }
       else
@@ -205,7 +205,7 @@ namespace tnt
         if (verbose)
           std::cout << "generate " << obase << ".cpp" << std::endl;
         std::ofstream sout((obase + ".cpp").c_str());
-        sout << generator.getCppWoHeader(ofile + ".cpp");
+        generator.getCppWoHeader(sout, ofile + ".cpp");
         sout.close();
       }
 
@@ -219,13 +219,12 @@ namespace tnt
       if (!binary)
         runParser(in, generator);
 
-      std::string deps = generator.getDependencies();
       if (ofile.empty())
-        std::cout << deps;
+        generator.getDependencies(std::cout, generateHeader);
       else
       {
         std::ofstream out(ofile.c_str());
-        out << deps;
+        generator.getDependencies(out, generateHeader);
       }
 
       return 0;

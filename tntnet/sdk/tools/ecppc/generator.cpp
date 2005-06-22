@@ -613,7 +613,7 @@ namespace tnt
         i->getDefinition(code, isDebug(), externData);
     }
 
-    std::string generator::getHeader(const std::string& filename) const
+    void generator::getHeader(std::ostream& header, const std::string& filename) const
     {
       std::string ns_classname_;
       const std::string classname = maincomp.getName();
@@ -623,7 +623,6 @@ namespace tnt
       else
         ns_classname_ = ns + '_' + classname;
 
-      std::ostringstream header;
       getIntro(header, filename);
       header << "#ifndef ECPP_COMPONENT_" << ns_classname_ << "_H\n"
                 "#define ECPP_COMPONENT_" << ns_classname_ << "_H\n\n";
@@ -640,18 +639,15 @@ namespace tnt
 
       header << "\n"
                 "#endif\n";
-
-      return header.str();
     }
 
-    std::string generator::getCpp(const std::string& filename) const
+    void generator::getCpp(std::ostream& code, const std::string& filename) const
     {
       std::string ns_classname_slash;
       if (!maincomp.getNs().empty())
         ns_classname_slash = maincomp.getNs() + '/';
       ns_classname_slash += maincomp.getName();
 
-      std::ostringstream code;
       getIntro(code, filename);
       getCppIncludes(code);
 
@@ -661,14 +657,10 @@ namespace tnt
       getNamespaceStart(code);
       getCppBody(code);
       getNamespaceEnd(code);
-
-      return code.str();
     }
 
-    std::string generator::getCppWoHeader(const std::string& filename) const
+    void generator::getCppWoHeader(std::ostream& code, const std::string& filename) const
     {
-      std::ostringstream code;
-
       getIntro(code, filename);
 
       getHeaderIncludes(code);
@@ -689,8 +681,6 @@ namespace tnt
       getCppBody(code);
 
       getNamespaceEnd(code);
-
-      return code.str();
     }
   }
 }

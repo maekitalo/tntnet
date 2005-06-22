@@ -164,9 +164,9 @@ namespace tnt
         virtual void onScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);
 
-        std::string getHeader(const std::string& filename) const;
-        std::string getCpp(const std::string& filename) const;
-        std::string getCppWoHeader(const std::string& filename) const;
+        void getHeader(std::ostream& out, const std::string& filename) const;
+        void getCpp(std::ostream& out, const std::string& filename) const;
+        void getCppWoHeader(std::ostream& out, const std::string& filename) const;
     };
 
   }
