@@ -8,7 +8,6 @@ namespace tnt
     {
       case '<': return sink->sputn("&lt;", 4);
       case '>': return sink->sputn("&gt;", 4);
-      case '&': return sink->sputn("&amp;", 5);
       case '"': return sink->sputn("&quot;", 6);
       case '\'': return sink->sputn("&#39;", 5);
       default: return sink->sputc(ch);
