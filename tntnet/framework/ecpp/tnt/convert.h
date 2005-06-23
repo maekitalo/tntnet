@@ -53,8 +53,23 @@ namespace tnt
     return ret;
   }
 
+  template <typename T>
+  inline T string_to_with_default(const std::string& value, const T& def)
+  {
+    T ret;
+    std::istringstream s(value);
+    s >> ret;
+    if (!s)
+      return def;
+    return ret;
+  }
+
   template <>
   inline std::string string_to<std::string>(const std::string& value)
+  { return value; }
+
+  template <>
+  inline std::string string_to_with_default<std::string>(const std::string& value, const std::string&)
   { return value; }
 }
 
