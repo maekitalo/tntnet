@@ -30,14 +30,13 @@ namespace tnt
     //
     void component::getBody(std::ostream& body) const
     {
-      
+      getScopevars(body);
+
       body << "  // <%args>\n";
 
       getArgs(body);
 
       body << "  // </%args>\n\n";
-
-      getScopevars(body);
 
       body << "  // <%cpp>\n";
 
