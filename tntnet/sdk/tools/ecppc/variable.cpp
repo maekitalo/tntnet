@@ -108,9 +108,9 @@ namespace tnt
         else
         {
           // with default-value
-          o << "qparam.has(\"" << name << "\") ? tnt::string_to<"
+          o << "qparam.has(\"" << name << "\") ? tnt::string_to_with_default<"
             << type << ">(qparam.param(\"" << name
-            << "\")) : " << value << ";\n";
+            << "\"), " << value << ") : " << value << ";\n";
         }
       }
       else
