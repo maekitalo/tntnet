@@ -44,10 +44,39 @@ namespace tnt
     }
   }
 
+  static cxxtools::Mutex *ssl_mutex;
+
+  static unsigned long pthreads_thread_id()
+  {
+    return static_cast<unsigned long>(pthread_self());
+  }
+
+  static void pthreads_locking_callback(int mode, int n, const char *file,
+    int line)
+  {
+    log_debug("pthreads_locking_callback " << CRYPTO_thread_id()
+      << " n=" << n
+      << " mode=" << ((mode & CRYPTO_LOCK) ? 'l' : 'u')
+      << ' ' << file << ':' << line);
+
+    if (mode & CRYPTO_LOCK)
+      ssl_mutex[n].Lock();
+    else
+      ssl_mutex[n].Unlock();
+  }
+
+  static void thread_setup(void)
+  {
+    ssl_mutex = new cxxtools::Mutex[CRYPTO_num_locks()];
+
+    CRYPTO_set_id_callback(pthreads_thread_id);
+    CRYPTO_set_locking_callback(pthreads_locking_callback);
+  }
+
+  static cxxtools::Mutex mutex;
   static void ssl_init()
   {
     static bool initialized = false;
-    static cxxtools::Mutex mutex;
 
     if (!initialized)
     {
@@ -57,6 +86,7 @@ namespace tnt
         SSL_load_error_strings();
         SSL_library_init();
         checkSslError();
+        thread_setup();
         initialized = true;
       }
     }
@@ -157,6 +187,11 @@ namespace tnt
 
   int SslStream::SslRead(char* buffer, int bufsize) const
   {
+    // I had crashes without this (and the lock in SslWrite) lock:
+    // openssl should be thread-safe, with the installed callbacks, but I did not
+    // get it working
+    cxxtools::MutexLock lock(mutex);
+
     log_debug("read");
 
     int n;
@@ -205,6 +240,7 @@ namespace tnt
           (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
             ? POLLIN|POLLOUT
             : POLLIN;
+        lock.Unlock();
         int p = ::poll(&fds, 1, getTimeout());
 
         log_debug("poll => " << p << " revents=" << fds.revents);
@@ -221,6 +257,7 @@ namespace tnt
           throw cxxtools::tcp::Timeout();
         }
 
+        lock.Lock();
         n = ::SSL_read(ssl, buffer, bufsize);
         log_debug("SSL_read returns " << n);
         checkSslError();
@@ -236,6 +273,11 @@ namespace tnt
 
   int SslStream::SslWrite(const char* buffer, int bufsize) const
   {
+    // I had crashes without this (and the lock in SslRead) lock:
+    // openssl should be thread-safe, with the installed callbacks, but I did not
+    // get it working
+    cxxtools::MutexLock lock(mutex);
+
     int n = 0;
     int s = bufsize;
 
@@ -258,7 +300,9 @@ namespace tnt
       fds.events =
         (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ)
           ? POLLIN|POLLOUT : POLLOUT;
+      lock.Unlock();
       int p = ::poll(&fds, 1, getTimeout());
+      lock.Lock();
 
       if (p < 0)
       {
