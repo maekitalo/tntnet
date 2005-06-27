@@ -1,10 +1,15 @@
+tntnet (1.4.1pre1-2) stable; urgency=low
+
+  * fixed ssl-threading problem
+
+ -- Tommi Maekitalo <tommi@tntnet.org>  Mon, 27 Jun 2005 21:57:54 +0200
+
 tntnet (1.4.1pre1-1) stable; urgency=low
 
   * dependencygeneration fixed (no *.h-dependency any more unless requested)
   * no escape of '&' in sout()
   * fixed upload.ecpp-demo
   * fixed ecppl/ecppll
-  * fixed ssl-threading problem
 
  -- Tommi Maekitalo <tommi@tntnet.org>  Wed, 22 Jun 2005 22:06:31 +0200
 
