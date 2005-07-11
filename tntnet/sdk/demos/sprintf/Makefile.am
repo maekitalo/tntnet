@@ -5,12 +5,10 @@ sprintf_la_SOURCES = \
 	subcomp.ecpp
 
 sprintf_la_LDFLAGS = -module
-sprintf_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+sprintf_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 data_DATA = tntnet.conf tntnet.properties
 CLEANFILES = sprintf.cpp subcomp.cpp tntnet.conf tntnet.properties
-
-AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
 SUFFIXES=.ecpp
 .ecpp.cpp:

@@ -348,7 +348,7 @@ namespace tnt
       ns_classname_dot += classname;
 
       code << "static cxxtools::Mutex mutex;\n\n"
-              "log_define(\"component." << ns_classname_dot << "\");\n\n";
+              "log_define(\"component." << ns_classname_dot << "\")\n\n";
 
       if (compress)
       {
@@ -652,7 +652,7 @@ namespace tnt
       getCppIncludes(code);
 
       code << "#include \"" << ns_classname_slash << ".h\"\n\n"
-              "template <typename T> inline void use(const T&) { };\n\n";
+              "template <typename T> inline void use(const T&) { }\n\n";
 
       getNamespaceStart(code);
       getCppBody(code);
@@ -667,7 +667,7 @@ namespace tnt
       getCppIncludes(code);
 
       code << "\n" 
-              "template <typename T> inline void use(const T&) { };\n\n";
+              "template <typename T> inline void use(const T&) { }\n\n";
 
       getPre(code);
       code << '\n';

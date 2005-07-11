@@ -24,6 +24,6 @@ ecppc_SOURCES = \
 	tnt/ecppc/subcomponent.h \
 	tnt/ecppc/variable.h
 
-ecppc_LDADD = $(top_builddir)/framework/common/libtntnet.la $(top_builddir)/sdk/tools/common/libtntnet_sdk.la $(top_builddir)/framework/ecpp/libecpp.la
+ecppc_LDADD = $(top_builddir)/framework/common/libtntnet.la $(top_builddir)/sdk/tools/common/libtntnet_sdk.la
 
-AM_CPPFLAGS = -I$(top_builddir)/sdk/tools/common -I$(top_builddir)/framework/ecpp @CXXTOOLS_CXXFLAGS@
+AM_CPPFLAGS = -I$(top_builddir)/sdk/tools/common @CXXTOOLS_CXXFLAGS@

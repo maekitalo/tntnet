@@ -5,12 +5,11 @@ hello_la_SOURCES = \
 	tntnet.jpg
 
 hello_la_LDFLAGS = -module
-hello_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 data_DATA = tntnet.conf tntnet.properties
 CLEANFILES = hello.cpp tntnet.cpp tntnet.conf tntnet.properties
 
-AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
 SUFFIXES=.ecpp .jpg

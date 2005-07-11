@@ -4,13 +4,11 @@ session_la_SOURCES = \
 	session.ecpp appsession.ecpp
 
 session_la_LDFLAGS = -module
-session_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+session_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 data_DATA = tntnet.conf tntnet.properties
 CLEANFILES = session.cpp appsession.cpp \
 	tntnet.conf tntnet.properties
-
-AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
 SUFFIXES=.ecpp
 .ecpp.cpp:

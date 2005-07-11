@@ -37,7 +37,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 /usr/%{_lib}/libtntnet.so*
-/usr/%{_lib}/libecpp.so*
 /usr/%{_lib}/tntnet.so
 /usr/bin/tntnet
 /etc/init.d/tntnet

@@ -4,12 +4,10 @@ calc_la_SOURCES = \
 	calc.ecpp
 
 calc_la_LDFLAGS = -module
-calc_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+calc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 data_DATA = tntnet.conf tntnet.properties
 CLEANFILES = calc.cpp tntnet.conf tntnet.properties
-
-AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
 SUFFIXES=.ecpp
 .ecpp.cpp:

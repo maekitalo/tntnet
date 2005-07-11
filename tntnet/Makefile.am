@@ -3,7 +3,6 @@ bin_SCRIPTS = tntnet-config
 SUBDIRS = \
     framework/common \
     framework/runtime \
-    framework/ecpp \
     framework/defcomp \
     sdk/tools/common \
     sdk/tools/ecppc \

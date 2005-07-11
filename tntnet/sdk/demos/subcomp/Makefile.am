@@ -8,14 +8,12 @@ extlib_la_SOURCES = \
 	extcomp.ecpp
 
 lib_la_LDFLAGS = -module
-lib_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+lib_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 extlib_la_LDFLAGS = -module
-extlib_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+extlib_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 data_DATA = tntnet.conf tntnet.properties
 CLEANFILES = subcomp.cpp extcomp.cpp tntnet.conf tntnet.properties
-
-AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
 EXTRA_DIST = tntnet.conf tntnet.properties
 

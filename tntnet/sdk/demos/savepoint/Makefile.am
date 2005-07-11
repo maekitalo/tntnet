@@ -4,12 +4,10 @@ savepoint_la_SOURCES = \
 	savepoint.ecpp
 
 savepoint_la_LDFLAGS = -module
-savepoint_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+savepoint_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 data_DATA = tntnet.conf tntnet.properties
 CLEANFILES = savepoint.cpp tntnet.conf tntnet.properties
-
-AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
 SUFFIXES=.ecpp
 .ecpp.cpp:

@@ -6,6 +6,7 @@ libtntnet_la_SOURCES = \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	cookie.cpp \
+	ecpp.cpp \
 	htmlescostream.cpp \
 	http.cpp \
 	httperror.cpp \
@@ -30,8 +31,10 @@ nobase_include_HEADERS = \
 	tnt/component.h \
 	tnt/contentdisposition.h \
 	tnt/contenttype.h \
+	tnt/convert.h \
 	tnt/cookie.h \
 	tnt/data.h \
+	tnt/ecpp.h \
 	tnt/htmlescostream.h \
 	tnt/http.h \
 	tnt/httperror.h \

@@ -4,12 +4,10 @@ cookie_la_SOURCES = \
 	cookie.ecpp
 
 cookie_la_LDFLAGS = -module
-cookie_la_LIBADD = $(top_builddir)/framework/ecpp/libecpp.la
+cookie_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 data_DATA = tntnet.conf tntnet.properties
 CLEANFILES = cookie.cpp tntnet.conf tntnet.properties
-
-AM_CPPFLAGS = -I$(top_builddir)/framework/ecpp
 
 SUFFIXES=.ecpp
 .ecpp.cpp:

@@ -1,4 +1,3 @@
 usr/bin/tntnet
-usr/lib/libtntnet.so.*
-usr/lib/libecpp.so.*
+usr/lib/libtntnet.so*
 usr/lib/tntnet/tntnet.so*
