@@ -30,7 +30,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  log_define("tntnet.http");
+  log_define("tntnet.http")
 
   ////////////////////////////////////////////////////////////////////////
   // httpRequest

@@ -29,15 +29,13 @@ namespace tnt
 
   static std::string httpErrorFormat(unsigned errcode, const std::string& msg)
   {
-    std::string ret;
-    ret.reserve(4 + msg.size());
     char d[3];
     d[2] = '0' + errcode % 10;
     errcode /= 10;
     d[1] = '0' + errcode % 10;
     errcode /= 10;
     d[0] = '0' + errcode % 10;
-    ret.assign(d, d+3);
+    std::string ret(d, 3);
     ret += ' ';
     ret += msg;
     return ret;

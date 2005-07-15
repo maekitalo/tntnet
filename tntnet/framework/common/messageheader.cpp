@@ -25,7 +25,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  log_define("tntnet.messageheader");
+  log_define("tntnet.messageheader")
 
   std::istream& operator>> (std::istream& in, messageheader& data)
   {

@@ -29,7 +29,7 @@ namespace tnt
 ////////////////////////////////////////////////////////////////////////
 // component_library
 //
-log_define("tntnet.comploader");
+log_define("tntnet.comploader")
 
 component* component_library::create(
   const std::string& component_name, comploader& cl,

@@ -40,7 +40,7 @@ namespace tnt
     }
   }
 
-  log_define("tntnet.httpmessage.parser");
+  log_define("tntnet.httpmessage.parser")
 
   void httpMessage::parser::reset()
   {

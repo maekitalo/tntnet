@@ -15,7 +15,7 @@ namespace tnt
 
       std::streambuf::int_type overflow(std::streambuf::int_type ch);
       std::streambuf::int_type underflow();
-      std::streambuf::int_type sync();
+      int sync();
 
     public:
       HtmlEscStreamBuf(std::streambuf* sink_)

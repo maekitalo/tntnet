@@ -25,6 +25,11 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  static inline bool isdigit(char ch)
+  {
+    return ch >= '0' && ch <= '9';
+  }
+
   unsigned regex_smatch::size() const
   {
     unsigned n;
@@ -75,7 +80,7 @@ namespace tnt
           break;
 
         case state_var0:
-          if (std::isdigit(ch))
+          if (isdigit(ch))
           {
             ret = std::string(s.begin(), it - 1);
             regoff_t s = matchbuf[ch - '0'].rm_so;
@@ -98,7 +103,7 @@ namespace tnt
           break;
 
         case state_var1:
-          if (std::isdigit(ch))
+          if (isdigit(ch))
           {
             unsigned s = matchbuf[ch - '0'].rm_so;
             unsigned e = matchbuf[ch - '0'].rm_eo;

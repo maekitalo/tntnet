@@ -37,6 +37,7 @@ AC_SUBST(CXXTOOLS_LOG_LDFLAGS)
 AC_CHECK_HEADER([cxxtools/tcpstream.h])
 AC_CHECK_HEADER([cxxtools/log.h])
 AC_CHECK_HEADER([zlib.h])
+AC_CHECK_HEADERS([limits])
 
 #
 # OpenSSL

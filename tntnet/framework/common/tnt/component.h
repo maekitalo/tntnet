@@ -25,7 +25,12 @@ Boston, MA  02111-1307  USA
 #include <string>
 #include <time.h>
 #include <iostream>
+
+#include "config.h"
+
+#ifdef HAVE_LIMITS
 #include <limits>
+#endif
 
 namespace cxxtools
 {
@@ -81,7 +86,11 @@ class component
 
     void touch(time_t plus = 0)      { time(&atime); atime += plus; }
     time_t getLastAccesstime() const { return atime; }
+#ifdef HAVE_LIMITS
     void lock()                      { atime = std::numeric_limits<time_t>::max(); }
+#else
+    void lock()                      { touch(3600); }
+#endif
     void unlock()                    { touch(); }
 
     virtual unsigned operator() (httpRequest& request,

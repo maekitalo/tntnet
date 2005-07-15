@@ -29,7 +29,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  log_define("tntnet.tntconfig");
+  log_define("tntnet.tntconfig")
 
   //////////////////////////////////////////////////////////////////////
   // config_parser

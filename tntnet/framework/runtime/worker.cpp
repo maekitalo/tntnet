@@ -33,7 +33,7 @@ Boston, MA  02111-1307  USA
 #include <arpa/inet.h>
 #include <cxxtools/md5stream.h>
 
-log_define("tntnet.worker");
+log_define("tntnet.worker")
 
 namespace
 {

@@ -29,7 +29,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/thread.h>
 #include <cxxtools/log.h>
 
-log_define("tntnet.mime");
+log_define("tntnet.mime")
 
 namespace tnt
 {

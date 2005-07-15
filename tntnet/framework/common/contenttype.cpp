@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 #include <functional>
 #include <cxxtools/log.h>
 
-log_define("tntnet.contenttype");
+log_define("tntnet.contenttype")
 
 namespace tnt
 {

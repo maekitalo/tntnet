@@ -53,7 +53,7 @@ Boston, MA  02111-1307  USA
 # define TNTNET_PID "/var/run/tntnet.pid"
 #endif
 
-log_define("tntnet.tntnet");
+log_define("tntnet.tntnet")
 
 namespace
 {

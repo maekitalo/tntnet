@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 #include <fcntl.h>
 #include <sys/poll.h>
 
-log_define("tntnet.ssl");
+log_define("tntnet.ssl")
 
 namespace tnt
 {

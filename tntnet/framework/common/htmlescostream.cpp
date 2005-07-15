@@ -20,7 +20,7 @@ namespace tnt
     return traits_type::eof();
   }
 
-  std::streambuf::int_type HtmlEscStreamBuf::sync()
+  int HtmlEscStreamBuf::sync()
   {
     return sink->pubsync();
   }

@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/messageheader.h>
 #include <tnt/cookie.h>
+#include <time.h>
 
 namespace tnt
 {
@@ -146,7 +147,7 @@ namespace tnt
       /// Returns a properly formatted date-string, as needed in http.
       static std::string htdate(time_t t);
       /// Returns a properly formatted date-string, as needed in http.
-      static std::string htdate(struct tm* tm);
+      static std::string htdate(struct ::tm* tm);
 
       /// Checks for double-dot-url. Returns false, if the url used as
       /// a filename would escape from the basedir.

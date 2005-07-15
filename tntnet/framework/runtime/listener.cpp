@@ -29,7 +29,7 @@ Boston, MA  02111-1307  USA
 #  include "tnt/ssl.h"
 #endif
 
-log_define("tntnet.listener");
+log_define("tntnet.listener")
 
 static void listenRetry(cxxtools::tcp::Server& server,
   const char* ipaddr, unsigned short int port, unsigned retry)

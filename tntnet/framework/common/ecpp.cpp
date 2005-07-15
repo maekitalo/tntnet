@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httprequest.h>
 #include <cxxtools/log.h>
 
-log_define("tntnet.ecpp");
+log_define("tntnet.ecpp")
 
 namespace tnt
 {
@@ -110,7 +110,7 @@ namespace tnt
           ecppComponent& e = dynamic_cast<ecppComponent&>(*comp);
           comp = &e.fetchSubComp(ci.subname);
         }
-        catch (const std::bad_cast&)
+        catch (const std::exception&)
         {
           throw notFoundException(ci.toString());
         }

@@ -36,7 +36,7 @@ namespace tnt
     }
   }
 
-  log_define("tntnet.messageheader.parser");
+  log_define("tntnet.messageheader.parser")
 
   #define SET_STATE(new_state)  state = &parser::new_state
 

@@ -28,8 +28,9 @@ Boston, MA  02111-1307  USA
 
 #include <zlib.h>
 #include <stdlib.h>
+#include <string.h>
 
-log_define("tntnet.data");
+log_define("tntnet.data")
 
 namespace tnt
 {
@@ -91,7 +92,7 @@ namespace tnt
 
         // ... and copy it
         data = new char[datalen];
-        std::memcpy(data, *srcdata, datalen);
+        memcpy(data, *srcdata, datalen);
       }
     }
   }

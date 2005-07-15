@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-log_define("tntnet.job");
+log_define("tntnet.job")
 
 namespace tnt
 {

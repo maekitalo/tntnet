@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  log_define("tntnet.savepoint");
+  log_define("tntnet.savepoint")
 
   void savepoint::save()
   {

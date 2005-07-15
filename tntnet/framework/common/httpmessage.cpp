@@ -55,7 +55,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // httpMessage
   //
-  log_define("tntnet.http");
+  log_define("tntnet.http")
 
   void httpMessage::clear()
   {
@@ -97,12 +97,12 @@ namespace tnt
 
   std::string httpMessage::htdate(time_t t)
   {
-    struct tm tm;
+    struct ::tm tm;
     localtime_r(&t, &tm);
     return htdate(&tm);
   }
 
-  std::string httpMessage::htdate(struct tm* tm)
+  std::string httpMessage::htdate(struct ::tm* tm)
   {
     const char* wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     const char* monthn[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
