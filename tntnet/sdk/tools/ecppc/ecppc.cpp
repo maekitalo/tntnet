@@ -22,12 +22,14 @@ Boston, MA  02111-1307  USA
 #include "tnt/ecppc/ecppc.h"
 #include "tnt/ecppc/generator.h"
 #include "tnt/ecppc/dependencygenerator.h"
+#include <tnt/mimedb.h>
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "config.h"
+#include <cxxtools/loginit.h>
 
 namespace tnt
 {
@@ -39,6 +41,7 @@ namespace tnt
         ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         mimetype(argc, argv, 'm'),
+        mimedb(argc, argv, "--mimetypes", "/etc/mime.types"),
         binary(argc, argv, 'b'),
         singleton(argc, argv, 's'),
         componentclass(argc, argv, 'C'),
@@ -58,6 +61,11 @@ namespace tnt
       if (argc != 2 || argv[1][0] == '-')
         throw Usage(argv[0]);
       inputfile = argv[1];
+
+      if (debug)
+        log_init_debug();
+      else
+        log_init();
     }
 
     int Ecppc::run()
@@ -71,7 +79,9 @@ namespace tnt
         if (pos_dot != std::string::npos)
         {
           if (pos_slash == std::string::npos)
+          {
             requestname = input.substr(0, pos_dot);
+          }
           else if (pos_slash < pos_dot)
           {
             requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
@@ -85,6 +95,8 @@ namespace tnt
                 ns = input.substr(pos_slash2 + 1, pos_slash - pos_slash2 - 1);
             }
           }
+
+          extname = input.substr(pos_dot + 1);
         }
         else
         {
@@ -138,6 +150,13 @@ namespace tnt
 
       if (mimetype.isSet())
         generator.setMimetype(mimetype);
+      else if (!extname.empty())
+      {
+        tnt::MimeDb db(mimedb);
+        tnt::MimeDb::const_iterator it = db.find(extname);
+        if (it != db.end())
+          generator.setMimetype(it->second);
+      }
 
       if (htmlcompress)
         generator.setHtmlCompress();

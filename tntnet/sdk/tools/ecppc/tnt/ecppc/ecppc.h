@@ -34,11 +34,13 @@ namespace tnt
     class Ecppc
     {
         std::string requestname;
+        std::string extname;
         const char* inputfile;
         std::string ns;
         std::string ofile;
         std::string odir;
         cxxtools::Arg<std::string> mimetype;
+        cxxtools::Arg<std::string> mimedb;
         cxxtools::Arg<bool> binary;
         cxxtools::Arg<bool> singleton;
         cxxtools::Arg<std::string> componentclass;

@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/http.h>
 #include <tnt/tntconfig.h>
 #include <tnt/comploader.h>
+#include <tnt/mimedb.h>
 #include <fstream>
 #include <cxxtools/thread.h>
 #include <cxxtools/log.h>
@@ -62,7 +63,7 @@ namespace tntcomp
       static const std::string ConfigAddType;
 
     private:
-      typedef std::map<std::string, std::string> mime_map_type;
+      typedef tnt::MimeDb mime_map_type;
       static mime_map_type mime_map;
       static std::string default_type;
 
@@ -80,6 +81,8 @@ namespace tntcomp
         { return default_type; }
       static void addType(const std::string& type, const std::string& ext)
         { mime_map.insert(mime_map_type::value_type(ext, type)); }
+      static void readMimeDb(const std::string& file)
+        { mime_map.read(file); }
   };
 }
 
@@ -141,6 +144,8 @@ tnt::Component* create_mime(const tnt::Compident& ci,
     if (!configured)
     {
       const tnt::Tntconfig& config = cl.getConfig();
+      std::string mimeDb = config.getValue("MimeDb", "/etc/mime.types");
+      tntcomp::Mime::readMimeDb(mimeDb);
       std::for_each(config.getConfigValues().begin(),
                     config.getConfigValues().end(),
                     MimeConfigurator());
@@ -162,7 +167,7 @@ namespace tntcomp
   const std::string Mime::ConfigDefaultType = "DefaultType";
   const std::string Mime::ConfigAddType = "AddType";
   Mime::mime_map_type Mime::mime_map;
-  std::string Mime::default_type;
+  std::string Mime::default_type = "text/html";
 
   unsigned Mime::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
@@ -177,7 +182,9 @@ namespace tntcomp
            it != mime_map.end(); ++it)
       {
         std::string ext = it->first;
-        if (path.size() >= ext.size()
+        if (path.size() > ext.size()
+            && (path.at(path.size() - ext.size() - 1) == '.'
+              || ext.size() > 0 && ext.at(0) == '.')
             && path.compare(path.size() - ext.size(), ext.size(), ext) == 0)
         {
           log_debug("url-path=\"" << path << "\" type=" << it->second);
@@ -209,6 +216,5 @@ namespace tntcomp
     else
       return false;
   }
-
 }
 

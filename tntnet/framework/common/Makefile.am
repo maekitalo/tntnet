@@ -18,6 +18,7 @@ libtntnet_la_SOURCES = \
 	messageattribute.cpp \
 	messageheader.cpp \
 	messageheaderparser.cpp \
+	mimedb.cpp \
 	multipart.cpp \
 	object.cpp \
 	savepoint.cpp \
@@ -39,6 +40,7 @@ nobase_include_HEADERS = \
 	tnt/htmlescostream.h \
 	tnt/http.h \
 	tnt/httperror.h \
+	tnt/httpheader.h \
 	tnt/httpmessage.h \
 	tnt/httpparser.h \
 	tnt/httprequest.h \
@@ -46,6 +48,7 @@ nobase_include_HEADERS = \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/messageheaderparser.h \
+	tnt/mimedb.h \
 	tnt/multipart.h \
 	tnt/object.h \
 	tnt/objectptr.h \
