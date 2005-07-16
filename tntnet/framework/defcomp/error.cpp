@@ -1,5 +1,5 @@
 /* error.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -28,12 +28,12 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class urlmapper;
-  class comploader;
+  class Urlmapper;
+  class Comploader;
 }
 
 static cxxtools::Mutex mutex;
-static tnt::component* theComponent = 0;
+static tnt::Component* theComponent = 0;
 static unsigned refs = 0;
 
 ////////////////////////////////////////////////////////////////////////
@@ -41,21 +41,21 @@ static unsigned refs = 0;
 //
 extern "C"
 {
-  tnt::component* create_error(const tnt::compident& ci, const tnt::urlmapper& um,
-    tnt::comploader& cl);
+  tnt::Component* create_error(const tnt::Compident& ci, const tnt::Urlmapper& um,
+    tnt::Comploader& cl);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // componentdeclaration
 //
-class errorcomp : public tnt::component
+class Errorcomp : public tnt::Component
 {
   protected:
-    virtual ~errorcomp() { };
+    virtual ~Errorcomp() { };
 
   public:
-    virtual unsigned operator() (tnt::httpRequest& request,
-      tnt::httpReply& reply, cxxtools::query_params& qparam);
+    virtual unsigned operator() (tnt::HttpRequest& request,
+      tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
     virtual bool drop();
 };
 
@@ -63,13 +63,13 @@ class errorcomp : public tnt::component
 // external functions
 //
 
-tnt::component* create_error(const tnt::compident& ci, const tnt::urlmapper& um,
-  tnt::comploader& cl)
+tnt::Component* create_error(const tnt::Compident& ci, const tnt::Urlmapper& um,
+  tnt::Comploader& cl)
 {
   cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
-    theComponent = new errorcomp();
+    theComponent = new Errorcomp();
     refs = 1;
   }
 
@@ -79,14 +79,14 @@ tnt::component* create_error(const tnt::compident& ci, const tnt::urlmapper& um,
 ////////////////////////////////////////////////////////////////////////
 // componentdefinition
 //
-unsigned errorcomp::operator() (tnt::httpRequest& request,
-  tnt::httpReply& reply, cxxtools::query_params&)
+unsigned Errorcomp::operator() (tnt::HttpRequest& request,
+  tnt::HttpReply& reply, cxxtools::QueryParams&)
 {
   std::string msg;
 
-  const tnt::httpRequest::args_type& args = request.getArgs();
+  const tnt::HttpRequest::args_type& args = request.getArgs();
 
-  tnt::httpRequest::args_type::const_iterator i = args.begin();
+  tnt::HttpRequest::args_type::const_iterator i = args.begin();
   if (i == args.end())
     reply.throwError("400 internal error");
 
@@ -102,7 +102,7 @@ unsigned errorcomp::operator() (tnt::httpRequest& request,
   return DECLINED;
 }
 
-bool errorcomp::drop()
+bool Errorcomp::drop()
 {
   cxxtools::MutexLock lock(mutex);
   if (--refs == 0)

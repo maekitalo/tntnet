@@ -35,11 +35,11 @@ Boston, MA  02111-1307  USA
 #include "config.h"
 
 ////////////////////////////////////////////////////////////////////////
-// ecppll - Applikationsklasse - Basisklasse
+// Ecppll - Applikationsklasse - Basisklasse
 //
-class ecppll : public tnt::ecpp::parseHandler
+class Ecppll : public tnt::ecpp::ParseHandler
 {
-    tnt::ecpp::parser parser;
+    tnt::ecpp::Parser parser;
     int ret;
 
   protected:
@@ -58,7 +58,7 @@ class ecppll : public tnt::ecpp::parseHandler
     replacetokens_type::const_iterator next;
 
   public:
-    ecppll()
+    Ecppll()
       : parser(*this),
         ret(0),
         inLang(false),
@@ -83,12 +83,12 @@ class ecppll : public tnt::ecpp::parseHandler
 ////////////////////////////////////////////////////////////////////////
 // Funktionen zur Applikationsklasse
 //
-void ecppll::tokenSplit(bool start)
+void Ecppll::tokenSplit(bool start)
 {
   inLang = start;
 }
 
-void ecppll::print(std::ostream& out)
+void Ecppll::print(std::ostream& out)
 {
   for (data_type::const_iterator it = data.begin();
        it != data.end(); ++it)
@@ -106,7 +106,7 @@ void ecppll::print(std::ostream& out)
   }
 }
 
-void ecppll::readReplaceTokens(std::istream& in)
+void Ecppll::readReplaceTokens(std::istream& in)
 {
   enum state_type
   {
@@ -175,7 +175,7 @@ void ecppll::readReplaceTokens(std::istream& in)
   next = replacetokens.begin();
 }
 
-void ecppll::onHtml(const std::string& html)
+void Ecppll::onHtml(const std::string& html)
 {
   if (inLang)
   {
@@ -242,9 +242,9 @@ int main(int argc, char* argv[])
 
   try
   {
-    cxxtools::arg<const char*> ofile(argc, argv, 'o');
-    cxxtools::arg<bool> fail_on_warn(argc, argv, 'F');
-    cxxtools::arg<const char*> splitChars(argc, argv, "--split-chars");
+    cxxtools::Arg<const char*> ofile(argc, argv, 'o');
+    cxxtools::Arg<bool> fail_on_warn(argc, argv, 'F');
+    cxxtools::Arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 3)
     {
@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
     }
 
     // create and initialize applicationobject
-    ecppll app;
+    Ecppll app;
 
     app.setFailOnWarn(fail_on_warn);
     app.readReplaceTokens(txt);

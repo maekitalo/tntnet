@@ -28,9 +28,9 @@ namespace tnt
   {
 
     ////////////////////////////////////////////////////////////////////////
-    // htmlfilter
+    // Htmlfilter
     //
-    void htmlfilter::operator() (char ch)
+    void Htmlfilter::operator() (char ch)
     {
       switch (state)
       {
@@ -112,7 +112,7 @@ namespace tnt
       }
     }
 
-    void htmlfilter::flush()
+    void Htmlfilter::flush()
     {
       out << html;
       html.clear();

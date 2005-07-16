@@ -37,23 +37,23 @@ Boston, MA  02111-1307  USA
 
 /**
 // in tntnet (mainthread):
-jobqueue queue;
+Jobqueue queue;
 void mainloop()
 {
   while (1)
   {
-    jobqueue::job_ptr j = new tcpjob();
-    j->Accept(poller.get());
+    Jobqueue::JobPtr j = new Tcpjob();
+    j->accept(poller.get());
     queue.put(j);
   }
 }
 
 // in server (workerthread):
-void server::Run()
+void Server::run()
 {
   while (1)
   {
-    jobqueue::job_ptr j = queue.get();
+    Jobqueue::JobPtr j = queue.get();
     std::iostream& socket = j->getStream();
     processRequest(socket);
   }
@@ -62,13 +62,13 @@ void server::Run()
 
 namespace tnt
 {
-  /** job - one per request */
-  class job
+  /** Job - one per request */
+  class Job
   {
       unsigned keepAliveCounter;
 
-      httpRequest request;
-      httpMessage::parser parser;
+      HttpRequest request;
+      HttpMessage::Parser parser;
       time_t lastAccessTime;
 
       unsigned refs;
@@ -79,15 +79,15 @@ namespace tnt
       static unsigned socket_buffer_size;
 
     public:
-      job()
-        : parser(request),
-          keepAliveCounter(keepalive_max),
+      Job()
+        : keepAliveCounter(keepalive_max),
+          parser(request),
           lastAccessTime(0),
           refs(0)
         { }
 
     protected:
-      virtual ~job();
+      virtual ~Job();
 
     public:
       unsigned addRef()   { return ++refs; }
@@ -107,8 +107,8 @@ namespace tnt
       virtual void setRead() = 0;
       virtual void setWrite() = 0;
 
-      httpRequest& getRequest()         { return request; }
-      httpMessage::parser& getParser()  { return parser; }
+      HttpRequest& getRequest()         { return request; }
+      HttpMessage::Parser& getParser()  { return parser; }
 
       unsigned decrementKeepAliveCounter()
         { return keepAliveCounter > 0 ? --keepAliveCounter : 0; }
@@ -129,16 +129,16 @@ namespace tnt
       static unsigned getSocketBufferSize()   { return socket_buffer_size; }
   };
 
-  class tcpjob : public job
+  class Tcpjob : public Job
   {
-      cxxtools::tcp::iostream socket;
+      cxxtools::net::iostream socket;
 
     public:
-      tcpjob()
+      Tcpjob()
         : socket(getSocketBufferSize(), getSocketReadTimeout())
         { }
 
-      void Accept(const cxxtools::tcp::Server& listener);
+      void accept(const cxxtools::net::Server& listener);
 
       std::iostream& getStream();
       int getFd() const;
@@ -147,16 +147,16 @@ namespace tnt
   };
 
 #ifdef USE_SSL
-  class ssl_tcpjob : public job
+  class SslTcpjob : public Job
   {
       ssl_iostream socket;
 
     public:
-      ssl_tcpjob()
+      SslTcpjob()
         : socket(getSocketBufferSize(), getSocketReadTimeout())
         { }
 
-      void Accept(const SslServer& listener);
+      void accept(const SslServer& listener);
 
       std::iostream& getStream();
       int getFd() const;
@@ -165,16 +165,16 @@ namespace tnt
   };
 #endif // USE_SSL
 
-  /** jobqueue - one per process */
-  class jobqueue
+  /** Jobqueue - one per process */
+  class Jobqueue
   {
     public:
-      typedef pointer<job> job_ptr;
+      typedef Pointer<Job> JobPtr;
 
       cxxtools::Condition noWaitThreads;
 
     private:
-      std::deque<job_ptr> jobs;
+      std::deque<JobPtr> jobs;
       cxxtools::Mutex mutex;
       cxxtools::Condition notEmpty;
       cxxtools::Condition notFull;
@@ -182,13 +182,13 @@ namespace tnt
       unsigned capacity;
 
     public:
-      explicit jobqueue(unsigned capacity_)
+      explicit Jobqueue(unsigned capacity_)
         : waitThreads(0),
           capacity(capacity_)
         { }
 
-      void put(job_ptr j);
-      job_ptr get();
+      void put(JobPtr j);
+      JobPtr get();
 
       void setCapacity(unsigned c)
         { capacity = c; }

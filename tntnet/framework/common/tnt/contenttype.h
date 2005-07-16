@@ -28,7 +28,7 @@ Boston, MA  02111-1307  USA
 /// Content-type-field like rfc2045
 namespace tnt
 {
-  class contenttype : public messageattribute_parser
+  class Contenttype : public MessageattributeParser
   {
     public:
       typedef std::multimap<std::string, std::string> parameter_type;
@@ -44,10 +44,10 @@ namespace tnt
       std::string boundary;
 
     public:
-      contenttype()
+      Contenttype()
       { }
 
-      explicit contenttype(const std::string& ct);
+      explicit Contenttype(const std::string& ct);
 
       const std::string& getType() const     { return type; }
       const std::string& getSubtype() const  { return subtype; }
@@ -65,7 +65,7 @@ namespace tnt
         { return parameter.upper_bound(key); }
   };
 
-  inline std::istream& operator>> (std::istream& in, contenttype& ct)
+  inline std::istream& operator>> (std::istream& in, Contenttype& ct)
   {
     ct.parse(in);
     return in;

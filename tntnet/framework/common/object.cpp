@@ -27,15 +27,12 @@ log_define("tntnet.object")
 
 namespace tnt
 {
-  object::~object()
-  { }
-
-  unsigned object::addRef()
+  unsigned Object::addRef()
   {
     return ++refs;
   }
 
-  unsigned object::release()
+  unsigned Object::release()
   {
     if (--refs == 0)
     {

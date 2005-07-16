@@ -26,9 +26,9 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // component
+    // Component
     //
-    void component::getBody(std::ostream& body) const
+    void Component::getBody(std::ostream& body) const
     {
       getScopevars(body);
 
@@ -46,14 +46,14 @@ namespace tnt
            << "  return HTTP_OK;\n";
     }
 
-    void component::getArgs(std::ostream& body) const
+    void Component::getArgs(std::ostream& body) const
     {
       for (variables_type::const_iterator it = args.begin();
            it != args.end(); ++it)
         it->getParamCode(body);
     }
 
-    void component::getScopevars(std::ostream& body) const
+    void Component::getScopevars(std::ostream& body) const
     {
       for (scopevars_type::const_iterator it = scopevars.begin();
            it != scopevars.end(); ++it)

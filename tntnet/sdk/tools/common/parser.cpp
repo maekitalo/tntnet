@@ -28,7 +28,7 @@ namespace tnt
 {
   namespace ecpp
   {
-    void parser::doInclude(const std::string& file)
+    void Parser::doInclude(const std::string& file)
     {
       handler.onInclude(file);
 
@@ -52,7 +52,7 @@ namespace tnt
       }
     }
 
-    void parser::parse(std::istream& in)
+    void Parser::parse(std::istream& in)
     {
       enum state_type {
         state_html0,  // 0
@@ -120,13 +120,11 @@ namespace tnt
         state_condexpre,
         state_include0,
         state_include1,
-        state_include,
         state_scopearg0,
         state_scopearg,
         state_scopeargeq,
         state_scopeargval0,
         state_scopeargval,
-        state_scopeargvale,
         state_scopevale,
         state_scope0,
         state_scope,
@@ -134,7 +132,7 @@ namespace tnt
         state_scopee,
         state_scopee0,
         state_scopecomment0,
-        state_scopecomment,
+        state_scopecomment
         };
 
       state_type state = state_nl;
@@ -1361,7 +1359,7 @@ namespace tnt
       handler.end();
     }
 
-    void parser::processNV(const std::string& tag, const std::string& name,
+    void Parser::processNV(const std::string& tag, const std::string& name,
       const std::string& value)
     {
       if (tag == "args")

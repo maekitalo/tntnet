@@ -33,11 +33,11 @@ namespace tnt
 {
   namespace ecppc
   {
-    ecppc::ecppc(int& argc, char* argv[])
-      : requestname(cxxtools::arg<std::string>(argc, argv, 'n')),
-        ns(cxxtools::arg<std::string>(argc, argv, 'N')),
-        ofile(cxxtools::arg<std::string>(argc, argv, 'o')),
-        odir(cxxtools::arg<std::string>(argc, argv, 'O')),
+    Ecppc::Ecppc(int& argc, char* argv[])
+      : requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
+        ns(cxxtools::Arg<std::string>(argc, argv, 'N')),
+        ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
+        odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         mimetype(argc, argv, 'm'),
         binary(argc, argv, 'b'),
         singleton(argc, argv, 's'),
@@ -56,11 +56,11 @@ namespace tnt
         generateHeader(argc, argv, 'h')
     {
       if (argc != 2 || argv[1][0] == '-')
-        throw usage(argv[0]);
+        throw Usage(argv[0]);
       inputfile = argv[1];
     }
 
-    int ecppc::run()
+    int Ecppc::run()
     {
       // requestname aus Inputdatei
       if (requestname.empty())
@@ -114,7 +114,7 @@ namespace tnt
         return runGenerator();
     }
 
-    int ecppc::runGenerator()
+    int Ecppc::runGenerator()
     {
       if (ofile.empty())
       {
@@ -131,7 +131,7 @@ namespace tnt
         ofile = ofile.substr(0, ofile.size() - 4);
 
       // create generator
-      tnt::ecppc::generator generator(requestname, ns);
+      tnt::ecppc::Generator generator(requestname, ns);
 
       // initialize
       generator.setDebug(debug);
@@ -212,9 +212,9 @@ namespace tnt
       return 0;
     }
 
-    int ecppc::runDepencencies()
+    int Ecppc::runDepencencies()
     {
-      tnt::ecppc::dependencygenerator generator(requestname, inputfile);
+      tnt::ecppc::Dependencygenerator generator(requestname, inputfile);
       std::ifstream in(inputfile);
       if (!binary)
         runParser(in, generator);
@@ -230,10 +230,10 @@ namespace tnt
       return 0;
     }
 
-    void ecppc::runParser(std::istream& in, tnt::ecpp::parseHandler& handler)
+    void Ecppc::runParser(std::istream& in, tnt::ecpp::ParseHandler& handler)
     {
       // create parser
-      tnt::ecpp::parser parser(handler);
+      tnt::ecpp::Parser parser(handler);
 
       parser.setSplitBar(splitBar);
       if (splitChars.isSet())
@@ -250,7 +250,7 @@ namespace tnt
       parser.parse(in);
     }
 
-    usage::usage(const char* progname)
+    Usage::Usage(const char* progname)
     {
       std::ostringstream o;
       o << PACKAGE_STRING "\n\n"
@@ -286,7 +286,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    tnt::ecppc::ecppc app(argc, argv);
+    tnt::ecppc::Ecppc app(argc, argv);
     return app.run();
   }
   catch(const std::exception& e)

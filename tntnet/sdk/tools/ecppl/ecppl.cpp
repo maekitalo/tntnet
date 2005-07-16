@@ -33,10 +33,10 @@ int main(int argc, char* argv[])
   std::ios::sync_with_stdio(false);
   try
   {
-    cxxtools::arg<bool> lang(argc, argv, 'l');
-    cxxtools::arg<bool> nolang(argc, argv, 'n');
-    cxxtools::arg<const char*> ofile(argc, argv, 'o');
-    cxxtools::arg<const char*> splitChars(argc, argv, "--split-chars");
+    cxxtools::Arg<bool> lang(argc, argv, 'l');
+    cxxtools::Arg<bool> nolang(argc, argv, 'n');
+    cxxtools::Arg<const char*> ofile(argc, argv, 'o');
+    cxxtools::Arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 2)
     {
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
 
     std::ifstream in(argv[1]);
 
-    ecpplang generator;
+    Ecpplang generator;
 
-    tnt::ecpp::parser parser(generator);
+    tnt::ecpp::Parser parser(generator);
     parser.setSplitBar();
     if (splitChars.isSet())
     {

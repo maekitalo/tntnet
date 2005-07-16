@@ -1,5 +1,5 @@
 /* zdata.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -31,7 +31,7 @@ namespace tnt
 {
   static cxxtools::Mutex mutex;
 
-  void zdata::addRef()
+  void Zdata::addRef()
   {
     cxxtools::MutexLock lock(mutex);
     if (refs++ == 0)
@@ -39,7 +39,7 @@ namespace tnt
       // allocate uncompressed data
       data = new char[data_len];
 
-      // uncompress zdata => data
+      // uncompress Zdata => data
       log_debug("uncompress " << zdata_len << " to " << data_len << " bytes");
       uLong dest_len = data_len;
       int z_ret = uncompress((Bytef*)data, &dest_len, (const Bytef*)zptr, zdata_len);
@@ -54,7 +54,7 @@ namespace tnt
     }
   }
 
-  void zdata::release()
+  void Zdata::release()
   {
     cxxtools::MutexLock lock(mutex);
     if (--refs <= 0)

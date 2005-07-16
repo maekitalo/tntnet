@@ -30,19 +30,19 @@ namespace tnt
 {
   log_define("tntnet.cookie")
 
-  const cookie cookies::empty_cookie;
+  const Cookie Cookies::emptyCookie;
 
-  const std::string cookie::MaxAge  = "max-age";
-  const std::string cookie::Comment = "comment";
-  const std::string cookie::Domain  = "domain";
-  const std::string cookie::Path    = "path";
-  const std::string cookie::Secure  = "secure";
-  const std::string cookie::Version = "version";
-  const std::string cookie::Expires = "expires";
+  const std::string Cookie::maxAge  = "max-age";
+  const std::string Cookie::comment = "comment";
+  const std::string Cookie::domain  = "domain";
+  const std::string Cookie::path    = "path";
+  const std::string Cookie::secure  = "secure";
+  const std::string Cookie::version = "version";
+  const std::string Cookie::expires = "expires";
 
-  unsigned cookie::getMaxAge() const
+  unsigned Cookie::getMaxAge() const
   {
-    std::string a = getAttr(MaxAge);
+    std::string a = getAttr(maxAge);
     if (!a.empty())
     {
       std::istringstream s(a);
@@ -54,52 +54,52 @@ namespace tnt
     return 0;
   }
 
-  void cookie::setMaxAge(unsigned value)
+  void Cookie::setMaxAge(unsigned value)
   {
     std::ostringstream s;
     s << value;
-    setAttr(MaxAge, s.str());
+    setAttr(maxAge, s.str());
   }
 
-  void cookies::clearCookie(const std::string& name)
+  void Cookies::clearCookie(const std::string& name)
   {
     cookies_type::iterator it = data.find(name);
     if (it != data.end())
-      it->second.setAttr(cookie::MaxAge, "0");
+      it->second.setAttr(Cookie::maxAge, "0");
     else
     {
-      cookie c;
-      c.setAttr(cookie::MaxAge, "0");
+      Cookie c;
+      c.setAttr(Cookie::maxAge, "0");
       setCookie(name, c);
     }
   }
 
-  void cookies::clearCookie(const std::string& name, const cookie& c)
+  void Cookies::clearCookie(const std::string& name, const Cookie& c)
   {
-    cookie cc(c);
-    cc.setAttr(cookie::MaxAge, "0");
+    Cookie cc(c);
+    cc.setAttr(Cookie::maxAge, "0");
     setCookie(name, cc);
   }
 
-  class cookie_parser
+  class CookieParser
   {
       // Cookie: $Version="1"; Customer="WILE_E_COYOTE"; $Path="/acme"
-      cookie::attrs_type common_attrs;
-      cookie::attrs_type* current_attrs;
-      cookie current_cookie;
+      Cookie::attrs_type common_attrs;
+      Cookie::attrs_type* current_attrs;
+      Cookie current_cookie;
       bool attr;
       std::string current_cookie_name;
 
       std::string name;
       std::string value;
 
-      cookies& mycookies;
+      Cookies& mycookies;
 
       void store_cookie();
       void process_nv();
 
     public:
-      cookie_parser(cookies& c)
+      CookieParser(Cookies& c)
         : current_attrs(&common_attrs),
           mycookies(c)
         { }
@@ -107,33 +107,33 @@ namespace tnt
       void parse(const std::string& header);
   };
 
-  void cookies::set(const std::string& header)
+  void Cookies::set(const std::string& header)
   {
-    cookie_parser parser(*this);
+    CookieParser parser(*this);
     parser.parse(header);
   }
 
-  void cookie_parser::store_cookie()
+  void CookieParser::store_cookie()
   {
     if (!mycookies.hasCookie(current_cookie_name))
       mycookies.setCookie(current_cookie_name, current_cookie);
     current_cookie.value.clear();
   }
 
-  void cookie_parser::process_nv()
+  void CookieParser::process_nv()
   {
     if (attr)
     {
-      if (name == cookie::Secure)
+      if (name == Cookie::secure)
       {
         log_debug("attribute: secure");
-        current_cookie.secure = true;
+        current_cookie.secureFlag = true;
       }
       else
       {
         log_debug("attribute: " << name << '=' << value);
         current_attrs->insert(
-          cookie::attrs_type::value_type(name, value));
+          Cookie::attrs_type::value_type(name, value));
       }
     }
     else
@@ -141,18 +141,18 @@ namespace tnt
       if (!current_cookie_name.empty())
         store_cookie();
 
-      log_debug("cookie: " << name << '=' << value);
+      log_debug("Cookie: " << name << '=' << value);
 
       current_cookie_name = name;
       current_cookie.value = value;
-      current_cookie.secure = false;
+      current_cookie.secureFlag = false;
       name.clear();
       current_attrs = &current_cookie.attrs;
       current_cookie.attrs = common_attrs;
     }
   }
 
-  void cookie_parser::parse(const std::string& header)
+  void CookieParser::parse(const std::string& header)
   {
     // Cookie: $Version="1"; Customer="WILE_E_COYOTE"; $Path="/acme"
 
@@ -193,10 +193,10 @@ namespace tnt
 
         case state_name:
           if (std::isspace(ch))
-            state = (name == cookie::Secure ? state_valuee : state_eq);
+            state = (name == Cookie::secure ? state_valuee : state_eq);
           else if (ch == '=')
-            state = (name == cookie::Secure ? state_valuee : state_value0);
-          else if ((ch == ',' || ch == ';') && name == cookie::Secure)
+            state = (name == Cookie::secure ? state_valuee : state_value0);
+          else if ((ch == ',' || ch == ';') && name == Cookie::secure)
             state = state_valuee;
           else
             name += std::tolower(ch);
@@ -206,7 +206,7 @@ namespace tnt
           if (ch == '=')
             state = state_value0;
           else if (!std::isspace(ch))
-            throw httpError("400 invalid cookie: " + header);
+            throw HttpError("400 invalid cookie: " + header);
           break;
 
         case state_value0:
@@ -243,7 +243,7 @@ namespace tnt
           else if (std::isspace(ch))
             state = state_valuee;
           else
-            throw httpError("400 invalid cookie: " + header);
+            throw HttpError("400 invalid cookie: " + header);
           break;
 
         case state_qvalue:
@@ -260,7 +260,7 @@ namespace tnt
             state = state_0;
           }
           else if (!std::isspace(ch))
-            throw httpError("400 invalid cookie: " + header);
+            throw HttpError("400 invalid cookie: " + header);
           break;
       }
     }
@@ -268,18 +268,18 @@ namespace tnt
     if (state == state_qvaluee || state == state_value)
       process_nv();
     else if (state != state_0)
-      throw httpError("400 invalid cookie: " + header);
+      throw HttpError("400 invalid cookie: " + header);
 
     if (!current_cookie.value.empty())
       store_cookie();
   }
 
-  std::ostream& operator<< (std::ostream& out, const cookies& c)
+  std::ostream& operator<< (std::ostream& out, const Cookies& c)
   {
     // Set-Cookie: Customer="WILE_E_COYOTE"; Version="1"; Path="/acme"
 
     bool first = true;
-    for (cookies::cookies_type::const_iterator it = c.data.begin();
+    for (Cookies::cookies_type::const_iterator it = c.data.begin();
          it != c.data.end(); ++it)
     {
       if (first)
@@ -287,17 +287,17 @@ namespace tnt
       else
         out << ", ";
 
-      const cookie& cookie = it->second;
+      const Cookie& cookie = it->second;
 
       // print name (Customer="WILE_E_COYOTE")
       out << it->first << "=\"" << cookie.getValue() << '"';
 
       // print secure-attribute
-      if (cookie.secure)
-        out << "; " << cookie::Secure;
+      if (cookie.secureFlag)
+        out << "; " << Cookie::secure;
 
       // print attributes
-      for (cookie::attrs_type::const_iterator a = cookie.attrs.begin();
+      for (Cookie::attrs_type::const_iterator a = cookie.attrs.begin();
            a != cookie.attrs.end(); ++a)
         out << "; " << a->first << "=\"" << a->second << '"';
     }

@@ -29,32 +29,32 @@ namespace tnt
   /// smart pointer for objects with own reference-counting through
   /// addRef() and release()-methods.
   template <typename data_type>
-  class pointer
+  class Pointer
   {
       data_type* ptr;
 
     public:
-      pointer(data_type* p = 0)
+      Pointer(data_type* p = 0)
         : ptr(p)
       {
         if (ptr)
           ptr->addRef();
       }
 
-      pointer(const pointer& p)
+      Pointer(const Pointer& p)
         : ptr(p.ptr)
       {
         if (ptr)
           ptr->addRef();
       }
 
-      ~pointer()
+      ~Pointer()
       {
         if (ptr)
           ptr->release();
       }
 
-      pointer& operator= (const pointer& s)
+      Pointer& operator= (const Pointer& s)
       {
         if (ptr)
           ptr->release();

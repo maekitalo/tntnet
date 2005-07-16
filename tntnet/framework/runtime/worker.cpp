@@ -37,29 +37,29 @@ log_define("tntnet.worker")
 
 namespace
 {
-  class component_unload_lock
+  class ComponentUnloadLock
   {
-      tnt::component& comp;
+      tnt::Component& comp;
 
     public:
-      component_unload_lock(tnt::component& c)
+      ComponentUnloadLock(tnt::Component& c)
         : comp(c)
       { comp.lock(); }
-      ~component_unload_lock()
+      ~ComponentUnloadLock()
       { comp.unlock(); }
   };
 }
 
 namespace tnt
 {
-  cxxtools::Mutex worker::mutex;
-  unsigned worker::nextThreadNumber = 0;
-  worker::workers_type worker::workers;
-  unsigned worker::compLifetime = 600;
-  unsigned worker::minThreads = 5;
+  cxxtools::Mutex Worker::mutex;
+  unsigned Worker::nextThreadNumber = 0;
+  Worker::workers_type Worker::workers;
+  unsigned Worker::compLifetime = 600;
+  unsigned Worker::minThreads = 5;
   static const std::string& sessionCookiePrefix = "tntnet.";
 
-  worker::worker(tntnet& app)
+  Worker::Worker(Tntnet& app)
     : application(app),
       mycomploader(app.getConfig()),
       threadNumber(++nextThreadNumber)
@@ -70,20 +70,20 @@ namespace tnt
     workers.insert(this);
   }
 
-  worker::~worker()
+  Worker::~Worker()
   {
     cxxtools::MutexLock lock(mutex);
     workers.erase(this);
   }
 
-  void worker::Run()
+  void Worker::run()
   {
-    jobqueue& queue = application.getQueue();
+    Jobqueue& queue = application.getQueue();
     log_debug("start thread " << threadNumber);
     while (queue.getWaitThreadCount() < minThreads)
     {
       log_debug("waiting for job");
-      jobqueue::job_ptr j = queue.get();
+      Jobqueue::JobPtr j = queue.get();
       log_debug("got job - fd=" << j->getFd());
 
       std::iostream& socket = j->getStream();
@@ -119,7 +119,7 @@ namespace tnt
           }
         } while (keepAlive);
       }
-      catch (const cxxtools::tcp::Timeout& e)
+      catch (const cxxtools::net::Timeout& e)
       {
         log_debug("timeout - put job in poller");
         application.getPoller().addIdleJob(j);
@@ -129,17 +129,17 @@ namespace tnt
     log_info("end worker-thread " << threadNumber);
   }
 
-  bool worker::processRequest(httpRequest& request, std::iostream& socket,
+  bool Worker::processRequest(HttpRequest& request, std::iostream& socket,
          unsigned keepAliveCount)
   {
     // log message
     char buffer[20];
-    //log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
-      //<< " from client "
-      //<< inet_ntop(AF_INET, &(request.getPeerAddr().sin_addr), buffer, sizeof(buffer)));
+    log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
+      << " from client "
+      << inet_ntop(AF_INET, &(request.getPeerAddr().sin_addr), buffer, sizeof(buffer)));
 
     // create reply-object
-    httpReply reply(socket);
+    HttpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
     reply.setMethod(request.getMethod());
 
@@ -151,7 +151,7 @@ namespace tnt
     {
       try
       {
-        Dispatch(request, reply);
+        dispatch(request, reply);
 
         if (!request.keepAlive() || !reply.keepAlive())
           keepAliveCount = 0;
@@ -164,26 +164,26 @@ namespace tnt
               << request.keepAlive() << '/' << reply.keepAlive());
         }
       }
-      catch (const cxxtools::dl::dlopen_error& e)
+      catch (const cxxtools::dl::DlopenError& e)
       {
-        log_warn("dl::dlopen_error catched - libname " << e.getLibname());
-        throw notFoundException(e.getLibname());
+        log_warn("dl::DlopenError catched - libname " << e.getLibname());
+        throw NotFoundException(e.getLibname());
       }
-      catch (const cxxtools::dl::symbol_not_found& e)
+      catch (const cxxtools::dl::SymbolNotFound& e)
       {
-        log_warn("dl::symbol_not_found catched - symbol " << e.getSymbol());
-        throw notFoundException(e.getSymbol());
+        log_warn("dl::SymbolNotFound catched - symbol " << e.getSymbol());
+        throw NotFoundException(e.getSymbol());
       }
-      catch (const httpError& e)
+      catch (const HttpError& e)
       {
         throw;
       }
       catch (const std::exception& e)
       {
-        throw httpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
+        throw HttpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
       }
     }
-    catch (const httpError& e)
+    catch (const HttpError& e)
     {
       log_warn("http-Error: " << e.what());
       socket << "HTTP/1.0 " << e.what()
@@ -196,32 +196,32 @@ namespace tnt
     return keepAliveCount > 0;
   }
 
-  void worker::Dispatch(httpRequest& request, httpReply& reply)
+  void Worker::dispatch(HttpRequest& request, HttpReply& reply)
   {
     const std::string& url = request.getUrl();
 
     log_info("dispatch " << request.getQuery());
 
-    if (!httpRequest::checkUrl(url))
-      throw httpError(HTTP_BAD_REQUEST, "illegal url");
+    if (!HttpRequest::checkUrl(url))
+      throw HttpError(HTTP_BAD_REQUEST, "illegal url");
 
     std::string currentSessionCookieName;
 
-    dispatcher::pos_type pos(application.getDispatcher(), request.getUrl());
+    Dispatcher::PosType pos(application.getDispatcher(), request.getUrl());
     while (1)
     {
-      // pos.getNext() throws notFoundException at end
-      dispatcher::compident_type ci = pos.getNext();
+      // pos.getNext() throws NotFoundException at end
+      Dispatcher::CompidentType ci = pos.getNext();
       try
       {
-        component& comp = mycomploader.fetchComp(ci, application.getDispatcher());
-        component_unload_lock unload_lock(comp);
+        Component& comp = mycomploader.fetchComp(ci, application.getDispatcher());
+        ComponentUnloadLock unload_lock(comp);
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
         // check session-cookie
         currentSessionCookieName = sessionCookiePrefix + ci.libname;
-        cookie c = request.getCookie(currentSessionCookieName);
+        Cookie c = request.getCookie(currentSessionCookieName);
         if (c.getValue().empty())
         {
           log_debug("session-cookie " << currentSessionCookieName << " not found");
@@ -230,7 +230,7 @@ namespace tnt
         else
         {
           log_debug("session-cookie " << currentSessionCookieName << " found: " << c.getValue());
-          sessionscope* sessionScope = application.getSessionScope(c.getValue());
+          Sessionscope* sessionScope = application.getSessionScope(c.getValue());
           if (sessionScope != 0)
           {
             log_debug("session found");
@@ -263,7 +263,7 @@ namespace tnt
               {
                 // client has no or unknown cookie
 
-                cxxtools::md5stream c;
+                cxxtools::Md5stream c;
                 c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
                 cookie = c.getHexDigest();
                 log_debug("set Cookie " << cookie);
@@ -291,15 +291,15 @@ namespace tnt
         else
           log_debug("component " << ci << " returned DECLINED");
       }
-      catch (const notFoundException&)
+      catch (const NotFoundException&)
       {
       }
     }
 
-    throw notFoundException(request.getUrl());
+    throw NotFoundException(request.getUrl());
   }
 
-  void worker::dropOldComponents()
+  void Worker::dropOldComponents()
   {
     cxxtools::MutexLock lock(mutex);
     for (workers_type::iterator it = workers.begin();
@@ -307,7 +307,7 @@ namespace tnt
       (*it)->cleanup(compLifetime);
   }
 
-  worker::workers_type::size_type worker::getCountThreads()
+  Worker::workers_type::size_type Worker::getCountThreads()
   {
     cxxtools::MutexLock lock(mutex);
     return workers.size();

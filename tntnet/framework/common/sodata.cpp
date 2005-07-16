@@ -1,5 +1,5 @@
 /* sodata.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -36,7 +36,7 @@ namespace tnt
 {
   static cxxtools::Mutex mutex;
 
-  void sodata::setLangSuffix()
+  void Sodata::setLangSuffix()
   {
     const char* LANG = getenv("LANG");
     std::string sosuffix = std::string(1, '.');
@@ -45,22 +45,22 @@ namespace tnt
     setSoSuffix(sosuffix);
   }
 
-  void sodata::addRef(const compident& ci)
+  void Sodata::addRef(const Compident& ci)
   {
     cxxtools::MutexLock lock(mutex);
     if (refs++ == 0)
     {
       // read data from shared library
       log_debug("load library " << ci.libname << sosuffix);
-      cxxtools::dl::library so((ci.libname + sosuffix).c_str());
+      cxxtools::dl::Library so((ci.libname + sosuffix).c_str());
 
-      cxxtools::dl::symbol datalen_sym = so.sym((ci.compname + "_datalen").c_str());
+      cxxtools::dl::Symbol datalen_sym = so.sym((ci.compname + "_datalen").c_str());
       unsigned datalen = *reinterpret_cast<unsigned*>(datalen_sym.getSym());
       try
       {
         // try to read compressed data
-        cxxtools::dl::symbol zdata_sym = so.sym((ci.compname + "_zdata").c_str());
-        cxxtools::dl::symbol zdatalen_sym = so.sym((ci.compname + "_zdatalen").c_str());
+        cxxtools::dl::Symbol zdata_sym = so.sym((ci.compname + "_zdata").c_str());
+        cxxtools::dl::Symbol zdatalen_sym = so.sym((ci.compname + "_zdatalen").c_str());
 
         const char** zdata = reinterpret_cast<const char**>(zdata_sym.getSym());
         unsigned zdatalen = *reinterpret_cast<unsigned*>(zdatalen_sym.getSym());
@@ -82,10 +82,10 @@ namespace tnt
 
         log_debug("uncompress ready");
       }
-      catch(const cxxtools::dl::symbol_not_found&)
+      catch(const cxxtools::dl::SymbolNotFound&)
       {
         // compressed data not found - try uncompressed
-        cxxtools::dl::symbol data_sym = so.sym((ci.compname + "_data").c_str());
+        cxxtools::dl::Symbol data_sym = so.sym((ci.compname + "_data").c_str());
         const char** srcdata = reinterpret_cast<const char**>(data_sym.getSym());
 
         log_debug(datalen << " bytes data");
@@ -97,7 +97,7 @@ namespace tnt
     }
   }
 
-  void sodata::release()
+  void Sodata::release()
   {
     cxxtools::MutexLock lock(mutex);
     if (--refs <= 0)

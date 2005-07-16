@@ -32,26 +32,26 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class listener : public cxxtools::Thread
+  class Listener : public cxxtools::Thread
   {
-      cxxtools::tcp::Server server;
-      jobqueue& queue;
+      cxxtools::net::Server server;
+      Jobqueue& queue;
 
     public:
-      listener(const std::string& ipaddr, unsigned short int port, jobqueue& q);
-      virtual void Run();
+      Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q);
+      virtual void run();
   };
 
 #ifdef USE_SSL
-  class ssllistener : public cxxtools::Thread
+  class Ssllistener : public cxxtools::Thread
   {
       SslServer server;
-      jobqueue& queue;
+      Jobqueue& queue;
 
     public:
-      ssllistener(const char* certificateFile, const char* keyFile,
-          const std::string& ipaddr, unsigned short int port, jobqueue& q);
-      virtual void Run();
+      Ssllistener(const char* certificateFile, const char* keyFile,
+          const std::string& ipaddr, unsigned short int port, Jobqueue& q);
+      virtual void run();
   };
 #endif // USE_SSL
 

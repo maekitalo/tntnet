@@ -1,5 +1,5 @@
 /* tnt/messageheaderparser.h
-   Copyright (C) 2003 Tommi Mae¤kitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -27,9 +27,9 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class messageheader::parser : public tnt::parser<messageheader::parser>
+  class Messageheader::Parser : public tnt::Parser<Messageheader::Parser>
   {
-      messageheader& header;
+      Messageheader& header;
       std::string fieldname;
       std::string fieldbody;
 
@@ -44,8 +44,8 @@ namespace tnt
       bool state_end_cr(char ch);
 
     public:
-      parser(messageheader& header_)
-        : tnt::parser<parser>(&parser::state_0),
+      Parser(Messageheader& header_)
+        : tnt::Parser<Parser>(&Parser::state_0),
           header(header_)
           { }
 

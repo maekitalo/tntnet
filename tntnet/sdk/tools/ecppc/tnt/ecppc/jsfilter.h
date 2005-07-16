@@ -30,9 +30,9 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // jsfilter
+    // Jsfilter
     //
-    class jsfilter : public std::unary_function<void, char>
+    class Jsfilter : public std::unary_function<void, char>
     {
         std::ostream& out;
 
@@ -52,7 +52,7 @@ namespace tnt
         char delim;
 
       public:
-        jsfilter(std::ostream& out_)
+        Jsfilter(std::ostream& out_)
           : out(out_),
             state(state_start)
           { }

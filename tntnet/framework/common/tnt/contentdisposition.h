@@ -1,5 +1,5 @@
 /* tnt/contentdisposition.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -28,7 +28,7 @@ namespace tnt
 {
   /// Content-Disposition-Header.
   /// (Content-Disposition: form-data; name="mein-upload-feld"; filename="ttt.sh")
-  class contentdisposition : public messageattribute_parser
+  class Contentdisposition : public MessageattributeParser
   {
       std::string type;
       std::string name;
@@ -45,7 +45,7 @@ namespace tnt
       const std::string& getFilename() const  { return filename; }
   };
 
-  inline std::istream& operator>> (std::istream& in, contentdisposition& ct)
+  inline std::istream& operator>> (std::istream& in, Contentdisposition& ct)
   {
     ct.parse(in);
     return in;

@@ -31,7 +31,7 @@ Boston, MA  02111-1307  USA
 
 log_define("tntnet.listener")
 
-static void listenRetry(cxxtools::tcp::Server& server,
+static void listenRetry(cxxtools::net::Server& server,
   const char* ipaddr, unsigned short int port, unsigned retry)
 {
   for (unsigned n = 1; true; ++n)
@@ -39,12 +39,12 @@ static void listenRetry(cxxtools::tcp::Server& server,
     try
     {
       log_debug("listen " << ipaddr << ':' << port);
-      server.Listen(ipaddr, port);
+      server.listen(ipaddr, port);
       return;
     }
-    catch (const cxxtools::tcp::Exception& e)
+    catch (const cxxtools::net::Exception& e)
     {
-      log_debug("cxxtools::tcp::Exception catched: errno=" << e.getErrno() << " msg=" << e.what());
+      log_debug("cxxtools::net::Exception catched: errno=" << e.getErrno() << " msg=" << e.what());
       if (e.getErrno() != EADDRINUSE || n > retry)
       {
         log_debug("rethrow exception");
@@ -58,24 +58,24 @@ static void listenRetry(cxxtools::tcp::Server& server,
 
 namespace tnt
 {
-  listener::listener(const std::string& ipaddr, unsigned short int port, jobqueue& q)
+  Listener::Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q)
     : queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port);
     listenRetry(server, ipaddr.c_str(), port, 5);
   }
 
-  void listener::Run()
+  void Listener::run()
   {
     // accept-loop
     log_debug("enter accept-loop");
-    while (!tntnet::shouldStop())
+    while (!Tntnet::shouldStop())
     {
       try
       {
-        tcpjob* j = new tcpjob;
-        jobqueue::job_ptr p(j);
-        j->Accept(server);
+        Tcpjob* j = new Tcpjob;
+        Jobqueue::JobPtr p(j);
+        j->accept(server);
         queue.put(p);
       }
       catch (const std::exception& e)
@@ -86,10 +86,10 @@ namespace tnt
   }
 
 #ifdef USE_SSL
-  ssllistener::ssllistener(const char* certificateFile,
+  Ssllistener::Ssllistener(const char* certificateFile,
       const char* keyFile,
       const std::string& ipaddr, unsigned short int port,
-      jobqueue& q)
+      Jobqueue& q)
     : server(certificateFile, keyFile),
       queue(q)
   {
@@ -97,17 +97,17 @@ namespace tnt
     listenRetry(server, ipaddr.c_str(), port, 5);
   }
 
-  void ssllistener::Run()
+  void Ssllistener::run()
   {
     // accept-loop
     log_debug("enter accept-loop (ssl)");
-    while (!tntnet::shouldStop())
+    while (!Tntnet::shouldStop())
     {
       try
       {
-        ssl_tcpjob* j = new ssl_tcpjob;
-        jobqueue::job_ptr p(j);
-        j->Accept(server);
+        SslTcpjob* j = new SslTcpjob;
+        Jobqueue::JobPtr p(j);
+        j->accept(server);
         queue.put(p);
       }
       catch (const std::exception& e)

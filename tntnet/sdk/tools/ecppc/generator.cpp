@@ -34,9 +34,9 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // generator
+    // Generator
     //
-    generator::generator(const std::string& classname, const std::string& ns)
+    Generator::Generator(const std::string& classname, const std::string& ns)
       : singleton(true),
         raw(false),
         maincomp(classname, ns),
@@ -50,7 +50,7 @@ namespace tnt
       gentime = asctime(localtime(&cur));
     }
 
-    bool generator::hasScopevars() const
+    bool Generator::hasScopevars() const
     {
       if (maincomp.hasScopevars())
         return true;
@@ -60,7 +60,7 @@ namespace tnt
       return false;
     }
 
-    void generator::onHtml(const std::string& html)
+    void Generator::onHtml(const std::string& html)
     {
       std::ostringstream d;
       switch (filter)
@@ -70,15 +70,15 @@ namespace tnt
           break;
 
         case filter_html:
-          for_each(html.begin(), html.end(), tnt::ecppc::htmlfilter(d)).flush();
+          for_each(html.begin(), html.end(), tnt::ecppc::Htmlfilter(d)).flush();
           break;
 
         case filter_css:
-          for_each(html.begin(), html.end(), tnt::ecppc::cssfilter(d));
+          for_each(html.begin(), html.end(), tnt::ecppc::Cssfilter(d));
           break;
 
         case filter_js:
-          for_each(html.begin(), html.end(), tnt::ecppc::jsfilter(d));
+          for_each(html.begin(), html.end(), tnt::ecppc::Jsfilter(d));
           break;
 
       }
@@ -102,46 +102,46 @@ namespace tnt
       }
     }
 
-    void generator::onExpression(const std::string& expr)
+    void Generator::onExpression(const std::string& expr)
     {
       std::ostringstream m;
       m << "  reply.sout() << (" << expr << ");\n";
       currentComp->addHtml(m.str());
     }
 
-    void generator::onCpp(const std::string& code)
+    void Generator::onCpp(const std::string& code)
     {
       currentComp->addHtml(code);
     }
 
-    void generator::onPre(const std::string& code)
+    void Generator::onPre(const std::string& code)
     {
       pre += code;
     }
 
-    void generator::onDeclare(const std::string& code)
+    void Generator::onDeclare(const std::string& code)
     {
       singleton = false;
       declare += code;
     }
 
-    void generator::onInit(const std::string& code)
+    void Generator::onInit(const std::string& code)
     {
       init += code;
     }
 
-    void generator::onCleanup(const std::string& code)
+    void Generator::onCleanup(const std::string& code)
     {
       cleanup += code;
     }
 
-    void generator::onArg(const std::string& name,
+    void Generator::onArg(const std::string& name,
       const std::string& value)
     {
       currentComp->addArg(name, value);
     }
 
-    void generator::onAttr(const std::string& name,
+    void Generator::onAttr(const std::string& name,
       const std::string& value)
     {
       if (attr.find(name) != attr.end())
@@ -149,38 +149,38 @@ namespace tnt
       attr.insert(attr_type::value_type(name, value));
     }
 
-    void generator::onCall(const std::string& comp,
+    void Generator::onCall(const std::string& comp,
       const comp_args_type& args, const std::string& pass_cgi,
       const std::string& cppargs)
     {
       currentComp->addCall(comp, args, pass_cgi, cppargs);
     }
 
-    void generator::onDeclareShared(const std::string& code)
+    void Generator::onDeclareShared(const std::string& code)
     {
       declare_shared += code;
     }
 
-    void generator::onShared(const std::string& code)
+    void Generator::onShared(const std::string& code)
     {
       shared += code;
     }
 
-    void generator::startComp(const std::string& name,
+    void Generator::startComp(const std::string& name,
       const cppargs_type& cppargs)
     {
-      subcomps.push_back(subcomponent(name, maincomp, cppargs));
-      subcomponent& s = subcomps.back();
+      subcomps.push_back(Subcomponent(name, maincomp, cppargs));
+      Subcomponent& s = subcomps.back();
       currentComp = &s;
       maincomp.addSubcomp(name);
     }
 
-    void generator::onComp(const std::string& code)
+    void Generator::onComp(const std::string& code)
     {
       currentComp = &maincomp;
     }
 
-    void generator::onCondExpr(const std::string& cond, const std::string& expr)
+    void Generator::onCondExpr(const std::string& cond, const std::string& expr)
     {
       std::ostringstream m;
       m << "  if (" << cond << ")\n"
@@ -188,18 +188,18 @@ namespace tnt
       currentComp->addHtml(m.str());
     }
 
-    void generator::onConfig(const std::string& name, const std::string& value)
+    void Generator::onConfig(const std::string& name, const std::string& value)
     {
-      configs.push_back(tnt::ecppc::variable(name, value));
+      configs.push_back(tnt::ecppc::Variable(name, value));
     }
 
-    void generator::onScope(scope_container_type container, scope_type scope,
+    void Generator::onScope(scope_container_type container, scope_type scope,
       const std::string& type, const std::string& var, const std::string& init)
     {
-      currentComp->addScopevar(scopevar(container, scope, type, var, init));
+      currentComp->addScopevar(Scopevar(container, scope, type, var, init));
     }
 
-    void generator::getIntro(std::ostream& out, const std::string& filename) const
+    void Generator::getIntro(std::ostream& out, const std::string& filename) const
     {
       out << "////////////////////////////////////////////////////////////////////////\n"
              "// " << filename << "\n"
@@ -208,7 +208,7 @@ namespace tnt
              "//\n\n";
     }
 
-    void generator::getHeaderIncludes(std::ostream& out) const
+    void Generator::getHeaderIncludes(std::ostream& out) const
     {
       out << "#include <tnt/ecpp.h>\n"
              "#include <tnt/convert.h>\n";
@@ -218,14 +218,14 @@ namespace tnt
         out << "#include \"" << baseclass << ".h\"\n";
     }
 
-    void generator::getPre(std::ostream& out) const
+    void Generator::getPre(std::ostream& out) const
     {
       out << "// <%pre>\n"
           << pre
           << "// </%pre>\n";
     }
 
-    void generator::getNamespaceStart(std::ostream& out) const
+    void Generator::getNamespaceStart(std::ostream& out) const
     {
       out << "namespace ecpp_component\n"
              "{\n";
@@ -237,42 +237,42 @@ namespace tnt
       out << '\n';
     }
 
-    void generator::getNamespaceEnd(std::ostream& out) const
+    void Generator::getNamespaceEnd(std::ostream& out) const
     {
       if (!maincomp.getNs().empty())
         out << "} // namespace " << maincomp.getNs() << '\n';
       out << "} // namespace ecpp_component\n";
     }
 
-    void generator::getCreatorDeclaration(std::ostream& out) const
+    void Generator::getCreatorDeclaration(std::ostream& out) const
     {
       out << "extern \"C\"\n"
              "{\n"
-             "  component* create_" << maincomp.getName() << "(const compident& ci, const urlmapper& um,\n"
-             "    comploader& cl);\n"
+             "  Component* create_" << maincomp.getName() << "(const Compident& ci, const Urlmapper& um,\n"
+             "    Comploader& cl);\n"
              "}\n\n";
     }
 
-    void generator::getDeclareShared(std::ostream& out) const
+    void Generator::getDeclareShared(std::ostream& out) const
     {
       out << "// <%declare_shared>\n"
           << declare_shared 
           << "// </%declare_shared>\n";
     }
 
-    void generator::getClassDeclaration(std::ostream& out) const
+    void Generator::getClassDeclaration(std::ostream& out) const
     {
       out << "class " << maincomp.getName() << " : public ";
       if (componentclass.empty())
-        out << "ecppComponent";
+        out << "EcppComponent";
       else
         out << componentclass;
       if (!baseclass.empty())
         out << ", public " << baseclass;
       out << "\n"
              "{\n"
-             "    friend component* create_" << maincomp.getName() << "(const compident& ci,\n"
-             "      const urlmapper& um, comploader& cl);\n\n"
+             "    friend Component* create_" << maincomp.getName() << "(const Compident& ci,\n"
+             "      const Urlmapper& um, Comploader& cl);\n\n"
              "    " << maincomp.getName() << "& main()  { return *this; }\n\n" 
              "    // <%declare>\n"
           << declare
@@ -283,14 +283,14 @@ namespace tnt
         it->getConfigHDecl(out);
       out << "    // </%config>\n\n"
              "  protected:\n"
-             "    " << maincomp.getName() << "(const compident& ci, const urlmapper& um, comploader& cl);\n"
+             "    " << maincomp.getName() << "(const Compident& ci, const Urlmapper& um, Comploader& cl);\n"
              "    ~" << maincomp.getName() << "();\n\n"
              "  public:\n"
-             "    unsigned operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam);\n"
+             "    unsigned operator() (HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam);\n"
              "    bool drop();\n"
-             "    unsigned    getDataCount(const httpRequest& request) const;\n"
-             "    unsigned    getDataLen(const httpRequest& request, unsigned n) const;\n"
-             "    const char* getDataPtr(const httpRequest& request, unsigned n) const;\n";
+             "    unsigned    getDataCount(const HttpRequest& request) const;\n"
+             "    unsigned    getDataLen(const HttpRequest& request, unsigned n) const;\n"
+             "    const char* getDataPtr(const HttpRequest& request, unsigned n) const;\n";
       if (!attr.empty())
         out << "    std::string getAttribute(const std::string& name,\n"
                "      const std::string& def = std::string()) const;\n";
@@ -308,10 +308,11 @@ namespace tnt
       out << "};\n\n";
     }
 
-    void generator::getCppIncludes(std::ostream& out) const
+    void Generator::getCppIncludes(std::ostream& out) const
     {
       out << "#include <tnt/httprequest.h>\n"
              "#include <tnt/httpreply.h>\n"
+             "#include <tnt/httpheader.h>\n"
              "#include <tnt/http.h>\n"
              "#include <tnt/data.h>\n";
       if (hasScopevars())
@@ -333,7 +334,7 @@ namespace tnt
                "#include <stdlib.h>\n";
     }
 
-    void generator::getCppBody(std::ostream& code) const
+    void Generator::getCppBody(std::ostream& code) const
     {
       std::string classname = maincomp.getName();
       std::string ns_classname;
@@ -352,10 +353,10 @@ namespace tnt
 
       if (compress)
       {
-        code << "static tnt::zdata raw_data(\n\"";
+        code << "static tnt::zdata rawData(\n\"";
 
         uLongf s = data.size() * data.size() / 100 + 100;
-        cxxtools::dynbuffer<Bytef> p;
+        cxxtools::Dynbuffer<Bytef> p;
         p.reserve(s);
 
         int z_ret = ::compress(p.data(), &s, (const Bytef*)data.ptr(), data.size());
@@ -373,11 +374,11 @@ namespace tnt
           stringescaper());
 
         code << "\",\n  " << s << ", " << data.size() << ");\n"
-             << "static tnt::data_chunks<tnt::zdata> data(raw_data);\n\n";
+             << "static tnt::DataChunks<tnt::zdata> data(rawData);\n\n";
       }
       else
       {
-        code << "static tnt::raw_data raw_data(\n\"";
+        code << "static tnt::RawData rawData(\n\"";
 
         std::transform(
           data.ptr(),
@@ -386,12 +387,12 @@ namespace tnt
           stringescaper());
 
         code << "\",\n  " << data.size() << ");\n"
-             << "static tnt::data_chunks<tnt::raw_data> data(raw_data);\n\n";
+             << "static tnt::DataChunks<tnt::RawData> data(rawData);\n\n";
       }
 
       if (externData)
       {
-        code << "#define DATA(dc, r, n) (tnt::data_chunk(dc->getDataPtr(r, n), dc->getDataLen(r, n)))\n"
+        code << "#define DATA(dc, r, n) (tnt::DataChunk(dc->getDataPtr(r, n), dc->getDataLen(r, n)))\n"
                 "#define DATA_SIZE(dc, r, n) (dc->getDataLen(r, n))\n\n";
          
       }
@@ -404,9 +405,9 @@ namespace tnt
       // creator
       if (singleton)
       {
-        code << "static component* theComponent = 0;\n"
+        code << "static Component* theComponent = 0;\n"
                 "static unsigned refs = 0;\n\n"
-                "component* create_" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
+                "Component* create_" << classname << "(const Compident& ci, const Urlmapper& um, Comploader& cl)\n"
                 "{\n"
                 "  cxxtools::MutexLock lock(mutex);\n"
                 "  if (theComponent == 0)\n"
@@ -415,7 +416,7 @@ namespace tnt
                 "    theComponent = new ::ecpp_component::" << ns_classname << "(ci, um, cl);\n";
 
         if (compress)
-          code << "    raw_data.addRef();\n";
+          code << "    rawData.addRef();\n";
 
         code << "    refs = 1;\n\n"
                 "    // <%config>\n";
@@ -431,26 +432,26 @@ namespace tnt
       }
       else
       {
-        code << "component* create_" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
+        code << "Component* create_" << classname << "(const Compident& ci, const Urlmapper& um, Comploader& cl)\n"
                 "{\n";
 
         if (compress)
-          code << "  raw_data.addRef();\n";
+          code << "  rawData.addRef();\n";
 
         code << "  // <%config>\n";
         if (!configs.empty())
         {
-                "  if (!config_init)\n"
-                "  {\n"
-                "    cxxtools::MutexLock lock(mutex);\n"
-                "    if (!config_init)\n"
-                "    {\n";
-        for (variable_declarations::const_iterator it = configs.begin();
-             it != configs.end(); ++it)
-          it->getConfigInit(code, classname);
-        code << "      config_init = true;\n"
-                "    }\n"
-                "  }\n";
+          code << "  if (!config_init)\n"
+                  "  {\n"
+                  "    cxxtools::MutexLock lock(mutex);\n"
+                  "    if (!config_init)\n"
+                  "    {\n";
+          for (variable_declarations::const_iterator it = configs.begin();
+               it != configs.end(); ++it)
+            it->getConfigInit(code, classname);
+          code << "      config_init = true;\n"
+                  "    }\n"
+                  "  }\n";
         }
         code << "  // </%config>\n\n"
                 "  return new ::ecpp_component::" << classname << "(ci, um, cl);\n"
@@ -469,8 +470,8 @@ namespace tnt
            it != configs.end(); ++it)
         it->getConfigDecl(code, classname);
       code << "// </%config>\n\n"
-           << classname << "::" << classname << "(const compident& ci, const urlmapper& um, comploader& cl)\n"
-              "  : ecppComponent(ci, um, cl)";
+           << classname << "::" << classname << "(const Compident& ci, const Urlmapper& um, Comploader& cl)\n"
+              "  : EcppComponent(ci, um, cl)";
 
       // initialize subcomponents
       for (subcomps_type::const_iterator i = subcomps.begin(); i != subcomps.end(); ++i)
@@ -489,7 +490,7 @@ namespace tnt
            << cleanup
            << "  // </%cleanup>\n"
               "}\n\n"
-              "unsigned " << classname << "::operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam)\n"
+              "unsigned " << classname << "::operator() (HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam)\n"
            << "{\n";
 
       if (isDebug())
@@ -502,20 +503,20 @@ namespace tnt
 
       if (c_time)
         code << "  {\n"
-                "    std::string s = request.getHeader(tnt::httpMessage::IfModifiedSince);\n"
-                "    if (s == \"" << tnt::httpMessage::htdate(c_time) << "\")\n"
+                "    std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);\n"
+                "    if (s == \"" << tnt::HttpMessage::htdate(c_time) << "\")\n"
                 "      return HTTP_NOT_MODIFIED;\n"
                 "  }\n";
 
       if (externData && !data.empty())
-        code << "  const component* dataComponent = main().getDataComponent(request);\n\n";
+        code << "  const Component* dataComponent = main().getDataComponent(request);\n\n";
       else
-        code << "  const component* dataComponent = this;\n";
+        code << "  const Component* dataComponent = this;\n";
       code << "  ::use(dataComponent);\n";
 
       if (c_time)
-        code << "  reply.setHeader(tnt::httpMessage::Last_Modified, \""
-             << tnt::httpMessage::htdate(c_time) << "\");\n";
+        code << "  reply.setHeader(tnt::httpheader::lastModified, \""
+             << tnt::HttpMessage::htdate(c_time) << "\");\n";
       if (raw)
         code << "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
                 "  reply.setDirectMode();\n";
@@ -534,7 +535,7 @@ namespace tnt
              << "    delete this;\n"
              << "    theComponent = 0;\n";
         if (compress)
-          code << "    raw_data.release();\n";
+          code << "    rawData.release();\n";
         code << "    return true;\n"
              << "  }\n"
              << "  else\n"
@@ -544,19 +545,19 @@ namespace tnt
       {
         code << "  delete this;\n";
         if (!externData && compress)
-          code << "  raw_data.release();\n";
+          code << "  rawData.release();\n";
         code << "  return true;\n";
       }
 
       code << "}\n\n"
-              "unsigned " << classname << "::getDataCount(const httpRequest& request) const\n"
+              "unsigned " << classname << "::getDataCount(const HttpRequest& request) const\n"
               "{ return data.size(); }\n\n";
 
       if (externData)
       {
-        code << "unsigned " << classname << "::getDataLen(const httpRequest& request, unsigned n) const\n"
+        code << "unsigned " << classname << "::getDataLen(const HttpRequest& request, unsigned n) const\n"
                 "{\n"
-                "  const component* dataComponent = getDataComponent(request);\n"
+                "  const Component* dataComponent = getDataComponent(request);\n"
                 "  if (dataComponent == this)\n"
                 "  {\n"
                 "    if (n >= data.size())\n"
@@ -566,9 +567,9 @@ namespace tnt
                 "  else\n"
                 "    return dataComponent->getDataLen(request, n);\n"
                 "}\n\n"
-                "const char* " << classname << "::getDataPtr(const httpRequest& request, unsigned n) const\n"
+                "const char* " << classname << "::getDataPtr(const HttpRequest& request, unsigned n) const\n"
                 "{\n"
-                "  const component* dataComponent = getDataComponent(request);\n"
+                "  const Component* dataComponent = getDataComponent(request);\n"
                 "  if (dataComponent == this)\n"
                 "  {\n"
                 "    if (n >= data.size())\n"
@@ -581,13 +582,13 @@ namespace tnt
       }
       else
       {
-        code << "unsigned " << classname << "::getDataLen(const httpRequest& request, unsigned n) const\n"
+        code << "unsigned " << classname << "::getDataLen(const HttpRequest& request, unsigned n) const\n"
                 "{\n"
                 "  if (n >= data.size())\n"
                 "    throw std::range_error(\"range_error in " << classname << "::getDataLen\");\n"
                 "  return data[n].getLength();\n"
                 "}\n\n"
-                "const char* " << classname << "::getDataPtr(const httpRequest& request, unsigned n) const\n"
+                "const char* " << classname << "::getDataPtr(const HttpRequest& request, unsigned n) const\n"
                 "{\n"
                 "  if (n >= data.size())\n"
                 "    throw std::range_error(\"range_error in " << classname << "::getDataPtr\");\n"
@@ -613,7 +614,7 @@ namespace tnt
         i->getDefinition(code, isDebug(), externData);
     }
 
-    void generator::getHeader(std::ostream& header, const std::string& filename) const
+    void Generator::getHeader(std::ostream& header, const std::string& filename) const
     {
       std::string ns_classname_;
       const std::string classname = maincomp.getName();
@@ -641,7 +642,7 @@ namespace tnt
                 "#endif\n";
     }
 
-    void generator::getCpp(std::ostream& code, const std::string& filename) const
+    void Generator::getCpp(std::ostream& code, const std::string& filename) const
     {
       std::string ns_classname_slash;
       if (!maincomp.getNs().empty())
@@ -659,7 +660,7 @@ namespace tnt
       getNamespaceEnd(code);
     }
 
-    void generator::getCppWoHeader(std::ostream& code, const std::string& filename) const
+    void Generator::getCppWoHeader(std::ostream& code, const std::string& filename) const
     {
       getIntro(code, filename);
 

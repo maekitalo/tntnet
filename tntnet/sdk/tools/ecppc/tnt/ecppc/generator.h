@@ -38,9 +38,9 @@ namespace tnt
   {
 
     ////////////////////////////////////////////////////////////////////////
-    // generator
+    // Generator
     //
-    class generator : public tnt::ecpp::parseHandler
+    class Generator : public tnt::ecpp::ParseHandler
     {
         bool debug;
         bool singleton;
@@ -49,7 +49,7 @@ namespace tnt
         std::string componentclass;
         std::string baseclass;
 
-        typedef std::list<tnt::ecppc::variable> variable_declarations;
+        typedef std::list<tnt::ecppc::Variable> variable_declarations;
 
         variable_declarations configs;
 
@@ -60,17 +60,17 @@ namespace tnt
         std::string shared;
         std::string declare_shared;
 
-        tnt::ecppc::component maincomp;
+        tnt::ecppc::Component maincomp;
 
-        typedef std::list<tnt::ecppc::subcomponent> subcomps_type;
+        typedef std::list<tnt::ecppc::Subcomponent> subcomps_type;
         subcomps_type subcomps;
 
-        tnt::ecppc::component* currentComp;
+        tnt::ecppc::Component* currentComp;
 
         typedef std::map<std::string, std::string> attr_type;
         attr_type attr;
 
-        tnt::datachunks_creator data;
+        tnt::DatachunksCreator data;
 
         enum filter_enum
         {
@@ -103,7 +103,7 @@ namespace tnt
         void getCppBody(std::ostream& out) const;
 
       public:
-        generator(const std::string& classname, const std::string& ns);
+        Generator(const std::string& classname, const std::string& ns);
 
         void setDebug(bool sw)                       { debug = sw; }
         bool isDebug() const                         { return debug; }

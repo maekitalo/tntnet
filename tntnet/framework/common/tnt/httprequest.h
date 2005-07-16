@@ -33,10 +33,10 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class sessionscope;
+  class Sessionscope;
 
   /// HTTP-Request-message
-  class httpRequest : public httpMessage
+  class HttpRequest : public HttpMessage
   {
     public:
       typedef std::vector<std::string> args_type;
@@ -44,20 +44,20 @@ namespace tnt
     private:
       std::string pathinfo;
       args_type args;
-      cxxtools::query_params qparam;
+      cxxtools::QueryParams qparam;
       struct sockaddr_in peerAddr;
       struct sockaddr_in serverAddr;
-      contenttype ct;
-      multipart mp;
+      Contenttype ct;
+      Multipart mp;
       bool ssl;
       unsigned serial;
       static unsigned serial_;
       mutable bool lang_init;
       mutable std::string lang;
 
-      scope* requestScope;
-      scope* applicationScope;
-      sessionscope* sessionScope;
+      Scope* requestScope;
+      Scope* applicationScope;
+      Sessionscope* sessionScope;
 
       bool applicationScopeLocked;
       bool sessionScopeLocked;
@@ -71,7 +71,7 @@ namespace tnt
       void releaseLocks() { releaseSessionScopeLock(); }
 
     public:
-      httpRequest()
+      HttpRequest()
         : ssl(false),
           lang_init(false),
           requestScope(0),
@@ -80,11 +80,11 @@ namespace tnt
           applicationScopeLocked(false),
           sessionScopeLocked(false)
         { }
-      httpRequest(const std::string& url);
-      httpRequest(const httpRequest& r);
-      ~httpRequest();
+      HttpRequest(const std::string& url);
+      HttpRequest(const HttpRequest& r);
+      ~HttpRequest();
 
-      httpRequest& operator= (const httpRequest& r);
+      HttpRequest& operator= (const HttpRequest& r);
 
       void clear();
 
@@ -104,8 +104,8 @@ namespace tnt
       void parse(std::istream& in);
       void doPostParse();
 
-      cxxtools::query_params& getQueryParams()              { return qparam; }
-      const cxxtools::query_params& getQueryParams() const  { return qparam; }
+      cxxtools::QueryParams& getQueryParams()               { return qparam; }
+      const cxxtools::QueryParams& getQueryParams() const   { return qparam; }
 
       void setPeerAddr(const struct sockaddr_in& p)
         { memcpy(&peerAddr, &p, sizeof(struct sockaddr_in)); }
@@ -125,39 +125,39 @@ namespace tnt
         { ssl = sw; }
       bool isSsl() const
         { return ssl;  }
-      const contenttype& getContentType() const  { return ct; }
+      const Contenttype& getContentType() const  { return ct; }
       bool isMultipart() const               { return ct.isMultipart(); }
-      const multipart& getMultipart() const  { return mp; }
+      const Multipart& getMultipart() const  { return mp; }
 
       unsigned getSerial() const             { return serial; }
 
       std::string getLang() const;
 
-      const cookies& getCookies() const;
+      const Cookies& getCookies() const;
 
       bool hasCookie(const std::string& name) const
         { return getCookies().hasCookie(name); }
       bool hasCookies() const
         { return getCookies().hasCookies(); }
-      cookie getCookie(const std::string& name) const
+      Cookie getCookie(const std::string& name) const
         { return getCookies().getCookie(name); }
 
       bool keepAlive() const;
 
-      void setApplicationScope(scope* s);
-      void setApplicationScope(scope& s)  { setApplicationScope(&s); }
+      void setApplicationScope(Scope* s);
+      void setApplicationScope(Scope& s)  { setApplicationScope(&s); }
 
-      void setSessionScope(sessionscope* s);
-      void setSessionScope(sessionscope& s)      { setSessionScope(&s); }
+      void setSessionScope(Sessionscope* s);
+      void setSessionScope(Sessionscope& s)      { setSessionScope(&s); }
       void clearSession();
 
-      scope& getRequestScope();
-      scope& getApplicationScope();
-      sessionscope& getSessionScope();
+      Scope& getRequestScope();
+      Scope& getApplicationScope();
+      Sessionscope& getSessionScope();
       bool   hasSessionScope() const;
   };
 
-  inline std::istream& operator>> (std::istream& in, httpRequest& msg)
+  inline std::istream& operator>> (std::istream& in, HttpRequest& msg)
   { msg.parse(in); return in; }
 
 }

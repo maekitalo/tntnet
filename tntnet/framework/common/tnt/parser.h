@@ -27,23 +27,24 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   template <typename this_type>
-  class parser
+  class Parser
   {
     protected:
 
       typedef bool (this_type::*state_type)(char);
       state_type state;
 
-      bool failed_flag;
+      bool failedFlag;
 
       virtual void pre(char ch)    { }
       virtual bool post(bool ret)  { return ret; }
 
     public:
-      explicit parser(state_type initial_state)
-        : state(initial_state),
-          failed_flag(false)
+      explicit Parser(state_type initialState)
+        : state(initialState),
+          failedFlag(false)
         { }
+      virtual ~Parser() {}
 
       bool parse(char ch)
       {
@@ -67,11 +68,12 @@ namespace tnt
             return true;
 
         in.setstate(std::ios::eofbit);
+        return false;
       }
 
       bool failed() const
       {
-        return failed_flag;
+        return failedFlag;
       }
   };
 }

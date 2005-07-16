@@ -31,9 +31,9 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // htmlfilter
+    // Htmlfilter
     //
-    class htmlfilter : public std::unary_function<void, char>
+    class Htmlfilter : public std::unary_function<void, char>
     {
         std::ostream& out;
 
@@ -51,7 +51,7 @@ namespace tnt
         std::string html;
 
       public:
-        htmlfilter(std::ostream& out_)
+        Htmlfilter(std::ostream& out_)
           : out(out_),
             state(state_start)
           { }

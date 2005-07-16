@@ -26,36 +26,38 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class objectptr
+  class Objectptr
   {
-      object* ptr;
+      Object* ptr;
+
     public:
-      objectptr(object* p)
+      Objectptr(Object* p)
         : ptr(p)
         {
           if (ptr)
             ptr->addRef();
         }
-      ~objectptr()
+      ~Objectptr()
         {
           if (ptr)
             ptr->release();
         }
-      objectptr& operator= (const objectptr& p)
+      Objectptr& operator= (const Objectptr& p)
         {
           if (ptr)
             ptr->release();
           ptr = p.ptr;
           if (ptr)
             ptr->addRef();
+          return *this;
         }
 
-      const object* getPtr() const      { return ptr; }
-      object* getPtr()                  { return ptr; }
-      operator const object* () const   { return ptr; }
-      operator object* ()               { return ptr; }
-      const object* operator-> () const { return ptr; }
-      object* operator-> ()             { return ptr; }
+      const Object* getPtr() const      { return ptr; }
+      Object* getPtr()                  { return ptr; }
+      operator const Object* () const   { return ptr; }
+      operator Object* ()               { return ptr; }
+      const Object* operator-> () const { return ptr; }
+      Object* operator-> ()             { return ptr; }
   };
 }
 

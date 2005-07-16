@@ -30,20 +30,20 @@ namespace tnt
 {
   namespace ecppc
   {
-    class component
+    class Component
     {
         std::string classname;
         std::string ns;
-        typedef ecpp::parser::comp_args_type comp_args_type;
-        typedef std::list<variable> variables_type;
-        typedef std::list<scopevar> scopevars_type;
+        typedef ecpp::Parser::comp_args_type comp_args_type;
+        typedef std::list<Variable> variables_type;
+        typedef std::list<Scopevar> scopevars_type;
 
         variables_type args;
         scopevars_type scopevars;
-        body compbody;
+        Body compbody;
 
       protected:
-        component(const component& main, const std::string& classname_,
+        Component(const Component& main, const std::string& classname_,
           const std::string& ns_ = std::string())
           : classname(classname_),
             ns(ns_),
@@ -51,7 +51,7 @@ namespace tnt
           { }
 
       public:
-        explicit component(const std::string& classname_, const std::string& ns_ = std::string())
+        explicit Component(const std::string& classname_, const std::string& ns_ = std::string())
           : classname(classname_),
             ns(ns_)
           { }
@@ -69,13 +69,13 @@ namespace tnt
           { compbody.addCall(comp, args, pass_cgi, cppargs); }
         void addArg(const std::string& name, const std::string& value)
         {
-          args.push_back(variable(name, value));
+          args.push_back(Variable(name, value));
         }
 
         void addSubcomp(const std::string& comp)
           { compbody.addSubcomp(comp); }
 
-        void addScopevar(const scopevar& s)
+        void addScopevar(const Scopevar& s)
         {
           scopevars.push_back(s);
         }

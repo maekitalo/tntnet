@@ -16,10 +16,10 @@
 
   // request.getMultipart() gives us access to all parts of
   // the multipart-encoded request
-  const tnt::multipart& mp = request.getMultipart();
+  const tnt::Multipart& mp = request.getMultipart();
 
   // we look for a part named like our name-attribute of the upload-field
-  tnt::multipart::const_iterator it = mp.find("upload");
+  tnt::Multipart::const_iterator it = mp.find("upload");
 
   if (it != mp.end())
   {
@@ -32,11 +32,11 @@
 <pre>
 <{
 
-  // cxxtools::hdostream is a outstream, which converts the data to a hexdump
+  // cxxtools::Hdostream is a outstream, which converts the data to a hexdump
   // and prints it to a target-ostream. "reply.out()" gives us a ostream
   // to our client.
 
-  cxxtools::hdostream hd(reply.sout());
+  cxxtools::Hdostream hd(reply.sout());
 
   // hexdump first 1k of uploaded file
   if (std::distance(it->getBodyBegin(), it->getBodyEnd()) > 1024)

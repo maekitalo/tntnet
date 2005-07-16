@@ -27,15 +27,15 @@ namespace tnt
 {
   namespace ecppc
   {
-    bodypart::~bodypart()
+    Bodypart::~Bodypart()
     { }
 
-    void bodypart_static::getBody(std::ostream& out) const
+    void BodypartStatic::getBody(std::ostream& out) const
     {
       out << data;
     }
 
-    void bodypart_call::call(std::ostream& out, const std::string& qparam) const
+    void BodypartCall::call(std::ostream& out, const std::string& qparam) const
     {
       if (std::isalpha(comp[0]))
         callByIdent(out, qparam);
@@ -43,7 +43,7 @@ namespace tnt
         callByExpr(out, qparam);
     }
 
-    void bodypart_call::callLocal(std::ostream& out, const std::string& qparam) const
+    void BodypartCall::callLocal(std::ostream& out, const std::string& qparam) const
     {
       out << "    main()." << comp << "(request, reply, " << qparam;
       if (!cppargs.empty())
@@ -51,9 +51,9 @@ namespace tnt
       out << ");\n";
     }
 
-    void bodypart_call::callByIdent(std::ostream& out, const std::string& qparam) const
+    void BodypartCall::callByIdent(std::ostream& out, const std::string& qparam) const
     {
-      tnt::subcompident id(comp);
+      tnt::Subcompident id(comp);
 
       if (id.libname.empty())
       {
@@ -69,7 +69,7 @@ namespace tnt
           {
             // case: comp
             callByIdent(out,
-                        "compident(std::string(), \"" + id.compname + "\")",
+                        "Compident(std::string(), \"" + id.compname + "\")",
                         qparam);
           }
         }
@@ -77,7 +77,7 @@ namespace tnt
         {
           // case: comp.subcomp
           callByIdent(out,
-                      "subcompident(std::string(), \""
+                      "Subcompident(std::string(), \""
                                       + id.compname + "\", \""
                                       + id.subname + "\")",
                       qparam);
@@ -87,7 +87,7 @@ namespace tnt
       {
         // case: comp@lib
         callByIdent(out,
-                    "compident(\"" + id.libname + "\", "
+                    "Compident(\"" + id.libname + "\", "
                             "\"" + id.compname + "\")",
                     qparam);
       }
@@ -95,14 +95,14 @@ namespace tnt
       {
         // case: comp.subcomp@lib
           callByIdent(out,
-                      "subcompident(\"" + id.libname + "\", "
+                      "Subcompident(\"" + id.libname + "\", "
                                    "\"" + id.compname + "\", "
                                    "\"" + id.subname + "\")",
                       qparam);
       }
     }
 
-    void bodypart_call::callByIdent(std::ostream& out, const std::string& ident,
+    void BodypartCall::callByIdent(std::ostream& out, const std::string& ident,
                                     const std::string& qparam) const
     {
       if (!cppargs.empty())
@@ -111,7 +111,7 @@ namespace tnt
       out << "    callComp(" << ident << ", request, reply, " << qparam << ");\n";
     }
 
-    void bodypart_call::callByExpr(std::ostream& out, const std::string& qparam) const
+    void BodypartCall::callByExpr(std::ostream& out, const std::string& qparam) const
     {
       if (!cppargs.empty())
         throw std::runtime_error("cppargs not allowed in call \"" + comp + '"');
@@ -119,7 +119,7 @@ namespace tnt
       out << "    callComp(" << comp << ", request, reply, " << qparam << ");\n";
     }
 
-    void bodypart_call::getBody(std::ostream& out) const
+    void BodypartCall::getBody(std::ostream& out) const
     {
       out << "  // <& " << comp << " ...\n";
 
@@ -128,7 +128,7 @@ namespace tnt
         if (pass_cgi.empty())
         {
           out << "  {\n"
-              << "    cxxtools::query_params cq(qparam, false);\n";
+              << "    cxxtools::QueryParams cq(qparam, false);\n";
           call(out, "cq");
           out << "  }\n";
         }
@@ -141,14 +141,14 @@ namespace tnt
       {
         out << "  {\n";
         if (pass_cgi.empty())
-          out << "    cxxtools::query_params cq(qparam, false);\n";
+          out << "    cxxtools::QueryParams cq(qparam, false);\n";
         else
-          out << "    cxxtools::query_params cq(" << pass_cgi << ", true);\n";
+          out << "    cxxtools::QueryParams cq(" << pass_cgi << ", true);\n";
 
         for (comp_args_type::const_iterator i = args.begin();
              i != args.end(); ++i)
         {
-          out << "    cq.add( \"" << i->first << "\", tnt::to_string";
+          out << "    cq.add( \"" << i->first << "\", tnt::toString";
           if (i->second[0] == '(' && i->second[i->second.size() - 1] == ')')
             out << i->second;
           else
@@ -163,7 +163,7 @@ namespace tnt
       out << "  // &>\n";
     }
 
-    void body::getBody(std::ostream& out) const
+    void Body::getBody(std::ostream& out) const
     {
       for (body_type::const_iterator it = data.begin();
            it != data.end(); ++it)

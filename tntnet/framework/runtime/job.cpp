@@ -30,87 +30,87 @@ log_define("tntnet.job")
 
 namespace tnt
 {
-  unsigned job::socket_read_timeout = 200;
-  unsigned job::socket_write_timeout = 10000;
-  unsigned job::keepalive_max = 100;
-  unsigned job::socket_buffer_size = 4096;
+  unsigned Job::socket_read_timeout = 200;
+  unsigned Job::socket_write_timeout = 10000;
+  unsigned Job::keepalive_max = 100;
+  unsigned Job::socket_buffer_size = 4096;
 
-  job::~job()
+  Job::~Job()
   { }
 
-  void job::clear()
+  void Job::clear()
   {
     parser.reset();
     request.clear();
     touch();
   }
 
-  int job::msecToTimeout() const
+  int Job::msecToTimeout() const
   {
     return (lastAccessTime - time(0) + 1) * 1000
          + getKeepAliveTimeout()
          - getSocketReadTimeout();
   }
 
-  void job::setKeepAliveTimeout(unsigned ms)
+  void Job::setKeepAliveTimeout(unsigned ms)
   {
-    httpReply::setKeepAliveTimeout(ms);
+    HttpReply::setKeepAliveTimeout(ms);
   }
 
-  unsigned job::getKeepAliveTimeout()
+  unsigned Job::getKeepAliveTimeout()
   {
-    return httpReply::getKeepAliveTimeout();
+    return HttpReply::getKeepAliveTimeout();
   }
 
   ////////////////////////////////////////////////////////////////////////
-  // tcpjob
+  // Tcpjob
   //
-  void tcpjob::Accept(const cxxtools::tcp::Server& listener)
+  void Tcpjob::accept(const cxxtools::net::Server& listener)
   {
     log_debug("accept");
-    socket.Accept(listener);
+    socket.accept(listener);
 
     struct sockaddr s = socket.getSockAddr();
     struct sockaddr_in sockaddr_in;
     memcpy(&sockaddr_in, &s, sizeof(sockaddr_in));
 
     char buffer[20];
-    //log_debug("connection accepted from "
-      //<< inet_ntop(AF_INET, &(socket.getPeeraddr_in().sin_addr), buffer, sizeof(buffer)));
+    log_debug("connection accepted from "
+      << inet_ntop(AF_INET, &(socket.getPeeraddr_in().sin_addr), buffer, sizeof(buffer)));
 
     getRequest().setPeerAddr(socket.getPeeraddr_in());
     getRequest().setServerAddr(sockaddr_in);
     getRequest().setSsl(false);
   }
 
-  std::iostream& tcpjob::getStream()
+  std::iostream& Tcpjob::getStream()
   {
     return socket;
   }
 
-  int tcpjob::getFd() const
+  int Tcpjob::getFd() const
   {
     return socket.getFd();
   }
 
-  void tcpjob::setRead()
+  void Tcpjob::setRead()
   {
     socket.setTimeout(getSocketReadTimeout());
   }
 
-  void tcpjob::setWrite()
+  void Tcpjob::setWrite()
   {
     socket.setTimeout(getSocketWriteTimeout());
   }
 
 #ifdef USE_SSL
   ////////////////////////////////////////////////////////////////////////
-  // ssl_tcpjob
+  // SslTcpjob
   //
-  void ssl_tcpjob::Accept(const SslServer& listener)
+  void SslTcpjob::accept(const SslServer& listener)
   {
     log_debug("accept (ssl)");
-    socket.Accept(listener);
+    socket.accept(listener);
     log_debug("connection accepted (ssl)");
 
     struct sockaddr s = socket.getSockAddr();
@@ -122,22 +122,22 @@ namespace tnt
     getRequest().setSsl(true);
   }
 
-  std::iostream& ssl_tcpjob::getStream()
+  std::iostream& SslTcpjob::getStream()
   {
     return socket;
   }
 
-  int ssl_tcpjob::getFd() const
+  int SslTcpjob::getFd() const
   {
     return socket.getFd();
   }
 
-  void ssl_tcpjob::setRead()
+  void SslTcpjob::setRead()
   {
     socket.setTimeout(getSocketReadTimeout());
   }
 
-  void ssl_tcpjob::setWrite()
+  void SslTcpjob::setWrite()
   {
     socket.setTimeout(getSocketWriteTimeout());
   }
@@ -145,11 +145,11 @@ namespace tnt
 #endif // USE_SSL
 
   //////////////////////////////////////////////////////////////////////
-  // jobqueue
+  // Jobqueue
   //
-  void jobqueue::put(job_ptr j)
+  void Jobqueue::put(JobPtr j)
   {
-    log_debug("jobqueue::put");
+    log_debug("Jobqueue::put");
     j->touch();
 
     cxxtools::MutexLock lock(mutex);
@@ -158,42 +158,42 @@ namespace tnt
       jobs.push_back(j);
     else
     {
-      log_warn("jobqueue full");
-      notFull.Wait(lock);
+      log_warn("Jobqueue full");
+      notFull.wait(lock);
       jobs.push_back(j);
     }
 
     if (waitThreads == 0)
     {
       log_info("no waiting threads left");
-      noWaitThreads.Signal();
+      noWaitThreads.signal();
     }
 
-    notEmpty.Signal();
+    notEmpty.signal();
   }
 
-  jobqueue::job_ptr jobqueue::get()
+  Jobqueue::JobPtr Jobqueue::get()
   {
     // warten, bis ein Job vohanden ist
     ++waitThreads;
 
     cxxtools::MutexLock lock(mutex);
     while (jobs.empty())
-      notEmpty.Wait(lock);
+      notEmpty.wait(lock);
 
     --waitThreads;
 
-    log_debug("jobqueue: fetch job " << waitThreads << " waiting threads left");
+    log_debug("Jobqueue: fetch job " << waitThreads << " waiting threads left");
 
     // nehme nächste Job (lock ist noch aktiv)
-    job_ptr j = jobs.front();
+    JobPtr j = jobs.front();
     jobs.pop_front();
 
     // wenn weitere Jobs vorhanden sind, dann wecken wir
     // einen weitern Thread
     if (!jobs.empty())
-      notEmpty.Signal();
-    notFull.Signal();
+      notEmpty.signal();
+    notFull.signal();
 
     return j;
   }

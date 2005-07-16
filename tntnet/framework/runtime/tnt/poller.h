@@ -29,15 +29,15 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class poller : public cxxtools::Thread
+  class Poller : public cxxtools::Thread
   {
-      jobqueue& queue;
+      Jobqueue& queue;
       int notify_pipe[2];
 
-      typedef std::deque<jobqueue::job_ptr> jobs_type;
+      typedef std::deque<Jobqueue::JobPtr> jobs_type;
 
       jobs_type current_jobs;
-      cxxtools::dynbuffer<pollfd> pollfds;
+      cxxtools::Dynbuffer<pollfd> pollfds;
 
       jobs_type new_jobs;
 
@@ -45,15 +45,15 @@ namespace tnt
       int poll_timeout;
 
       void append_new_jobs();
-      void append(jobqueue::job_ptr& job);
+      void append(Jobqueue::JobPtr& job);
       void dispatch();
-      void remove(int i);
+      void remove(jobs_type::size_type n);
 
     public:
-      poller(jobqueue& q);
+      Poller(Jobqueue& q);
 
-      virtual void Run();
-      void addIdleJob(jobqueue::job_ptr job);
+      virtual void run();
+      void addIdleJob(Jobqueue::JobPtr job);
   };
 
 }

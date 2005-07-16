@@ -1,5 +1,5 @@
 /* tnt/sodata.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class compident;
+  class Compident;
 
   //////////////////////////////////////////////////////////////////////
   // sodata stellt eine Klasse dar, die Komponentendaten aus einer
@@ -42,19 +42,19 @@ namespace tnt
   //     - unsigned (compname)_zdatalen
   //     - unsigned (compname)_datalen
   //
-  class sodata
+  class Sodata
   {
       std::string sosuffix;
       unsigned refs;
       char* data;
 
     public:
-      sodata(const std::string& sosuffix_ = std::string())
+      Sodata(const std::string& sosuffix_ = std::string())
         : sosuffix(sosuffix_),
           refs(0),
           data(0)
       { }
-      ~sodata()
+      ~Sodata()
       { delete data; }
 
       void setSoSuffix(const std::string& sosuffix_)
@@ -63,7 +63,7 @@ namespace tnt
       const std::string& getSoSuffix() const
       { return sosuffix; }
 
-      void addRef(const compident& ci);
+      void addRef(const Compident& ci);
       void release();
 
       operator const char* () const      { return data; }

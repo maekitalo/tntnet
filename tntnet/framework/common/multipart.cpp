@@ -1,5 +1,5 @@
 /* multipart.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -71,7 +71,7 @@ namespace
 
 namespace tnt
 {
-  partheader::return_type partheader::onField(const std::string& name,
+  Partheader::return_type Partheader::onField(const std::string& name,
     const std::string& value)
   {
     if (name == "Content-Disposition:")
@@ -82,10 +82,10 @@ namespace tnt
         return FAIL;
     }
 
-    return messageheader::onField(name, value);
+    return Messageheader::onField(name, value);
   }
 
-  part::part(const_iterator b, const_iterator e)
+  Part::Part(const_iterator b, const_iterator e)
   {
     iterator_streambuf<const_iterator> buf(b, e);
     std::istream in(&buf);
@@ -94,19 +94,19 @@ namespace tnt
       throw std::runtime_error("error in parsing message-header");
     in.sync();
 
-    body_begin = b;
-    body_end = e;
+    bodyBegin = b;
+    bodyEnd = e;
   }
 
-  std::string part::getHeader(const std::string& key) const
+  std::string Part::getHeader(const std::string& key) const
   {
-    messageheader::const_iterator it = header.find(key);
+    Messageheader::const_iterator it = header.find(key);
     if (it != header.end())
       return it->second;
     return std::string();
   }
 
-  void multipart::set(const std::string& boundary, const std::string& b)
+  void Multipart::set(const std::string& boundary, const std::string& b)
   {
     body = b;
 
@@ -139,8 +139,8 @@ namespace tnt
     }
   }
 
-  multipart::const_iterator multipart::find(const std::string& part_name,
-        multipart::const_iterator start) const
+  Multipart::const_iterator Multipart::find(const std::string& part_name,
+        Multipart::const_iterator start) const
   {
     for (const_iterator it = start; it != end(); ++it)
       if (it->getName() == part_name)

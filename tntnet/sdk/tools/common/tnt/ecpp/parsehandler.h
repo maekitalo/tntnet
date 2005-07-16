@@ -28,11 +28,13 @@ namespace tnt
 {
   namespace ecpp
   {
-    class parseHandler
+    class ParseHandler
     {
       public:
-        typedef parser::comp_args_type comp_args_type;
-        typedef parser::cppargs_type cppargs_type;
+        typedef Parser::comp_args_type comp_args_type;
+        typedef Parser::cppargs_type cppargs_type;
+
+        virtual ~ParseHandler() {}
 
         virtual void start();
         virtual void end();

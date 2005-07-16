@@ -26,32 +26,32 @@ namespace tnt
 {
   log_define("tntnet.savepoint")
 
-  void savepoint::save()
+  void Savepoint::save()
   {
     pos = reply.outstream.str().size();
     active = true;
 
-    log_debug("set savepoint " << pos);
+    log_debug("set Savepoint " << pos);
   }
 
-  void savepoint::commit()
+  void Savepoint::commit()
   {
-    log_debug("commit savepoint " << pos);
+    log_debug("commit Savepoint " << pos);
     active = false;
   }
 
-  void savepoint::rollback()
+  void Savepoint::rollback()
   {
     if (active)
     {
-      log_info("rollback to savepoint " << pos);
+      log_info("rollback to Savepoint " << pos);
 
       reply.outstream.str( reply.outstream.str().substr(0, pos) );
       reply.outstream.seekp(pos);
       active = false;
     }
     else
-      log_error("not rolling back not active savepoint");
+      log_error("not rolling back not active Savepoint");
   }
 
 }

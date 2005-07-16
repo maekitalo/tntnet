@@ -21,10 +21,11 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/httpparser.h>
 #include <tnt/httperror.h>
+#include <tnt/httpheader.h>
 #include <cxxtools/log.h>
 #include <sstream>
 
-#define SET_STATE(new_state)  state = &parser::new_state
+#define SET_STATE(new_state)  state = &Parser::new_state
 
 namespace tnt
 {
@@ -40,19 +41,19 @@ namespace tnt
     }
   }
 
-  log_define("tntnet.httpmessage.parser")
+  log_define("tntnet.httpmessage.Parser")
 
-  void httpMessage::parser::reset()
+  void HttpMessage::Parser::reset()
   {
     message.clear();
     SET_STATE(state_cmd0);
     httpCode = HTTP_OK;
-    failed_flag = false;
+    failedFlag = false;
     requestSize = 0;
     headerParser.reset();
   }
 
-  bool httpMessage::parser::state_cmd0(char ch)
+  bool HttpMessage::Parser::state_cmd0(char ch)
   {
     if (!std::isspace(ch))
     {
@@ -62,7 +63,7 @@ namespace tnt
     return false;
   }
 
-  bool httpMessage::parser::state_cmd(char ch)
+  bool HttpMessage::Parser::state_cmd(char ch)
   {
     if (std::isspace(ch))
     {
@@ -74,7 +75,7 @@ namespace tnt
     return false;
   }
 
-  bool httpMessage::parser::state_url0(char ch)
+  bool HttpMessage::Parser::state_url0(char ch)
   {
     if (!std::isspace(ch))
     {
@@ -87,13 +88,13 @@ namespace tnt
       {
         log_warn("invalid character " << chartoprint(ch) << " in url");
         httpCode = HTTP_BAD_REQUEST;
-        failed_flag = true;
+        failedFlag = true;
       }
     }
-    return failed_flag;
+    return failedFlag;
   }
 
-  bool httpMessage::parser::state_url(char ch)
+  bool HttpMessage::Parser::state_url(char ch)
   {
     if (ch == '?')
     {
@@ -111,24 +112,24 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       httpCode = HTTP_BAD_REQUEST;
-      failed_flag = true;
+      failedFlag = true;
     }
-    return failed_flag;
+    return failedFlag;
   }
 
-  bool httpMessage::parser::state_qparam(char ch)
+  bool HttpMessage::Parser::state_qparam(char ch)
   {
     if (std::isspace(ch))
     {
-      log_debug("query_string=" << message.query_string);
+      log_debug("queryString=" << message.queryString);
       SET_STATE(state_version);
     }
     else
-      message.query_string += ch;
+      message.queryString += ch;
     return false;
   }
 
-  bool httpMessage::parser::state_version(char ch)
+  bool HttpMessage::Parser::state_version(char ch)
   {
     if (ch == '/')
       SET_STATE(state_version_major);
@@ -136,44 +137,44 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in version");
       httpCode = HTTP_BAD_REQUEST;
-      failed_flag = true;
+      failedFlag = true;
     }
-    return failed_flag;
+    return failedFlag;
   }
 
-  bool httpMessage::parser::state_version_major(char ch)
+  bool HttpMessage::Parser::state_version_major(char ch)
   {
     if (ch == '.')
       SET_STATE(state_version_minor);
     else if (std::isdigit(ch))
-      message.major_version = message.major_version * 10 + (ch - '0');
+      message.majorVersion = message.majorVersion * 10 + (ch - '0');
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in version-major");
       httpCode = HTTP_BAD_REQUEST;
-      failed_flag = true;
+      failedFlag = true;
     }
-    return failed_flag;
+    return failedFlag;
   }
 
-  bool httpMessage::parser::state_version_minor(char ch)
+  bool HttpMessage::Parser::state_version_minor(char ch)
   {
     if (ch == '\n')
       SET_STATE(state_header);
     else if (std::isspace(ch))
       SET_STATE(state_end0);
     else if (std::isdigit(ch))
-      message.minor_version = message.minor_version * 10 + (ch - '0');
+      message.minorVersion = message.minorVersion * 10 + (ch - '0');
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in version-minor");
       httpCode = HTTP_BAD_REQUEST;
-      failed_flag = true;
+      failedFlag = true;
     }
-    return failed_flag;
+    return failedFlag;
   }
 
-  bool httpMessage::parser::state_end0(char ch)
+  bool HttpMessage::Parser::state_end0(char ch)
   {
     if (ch == '\n')
       SET_STATE(state_header);
@@ -181,31 +182,31 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in end");
       httpCode = HTTP_BAD_REQUEST;
-      failed_flag = true;
+      failedFlag = true;
     }
-    return failed_flag;
+    return failedFlag;
   }
 
-  bool httpMessage::parser::state_header(char ch)
+  bool HttpMessage::Parser::state_header(char ch)
   {
     if (headerParser.parse(ch))
     {
       if (headerParser.failed())
       {
         httpCode = HTTP_BAD_REQUEST;
-        failed_flag = true;
+        failedFlag = true;
         return true;
       }
 
-      std::string content_length_header = message.getHeader(Content_Length);
+      std::string content_length_header = message.getHeader(httpheader::contentLength);
       if (!content_length_header.empty())
       {
         std::istringstream valuestream(content_length_header);
         valuestream >> bodySize;
         if (!valuestream)
-          throw httpError("400 missing Content-Length");
+          throw HttpError("400 missing Content-Length");
 
-        message.content_size = bodySize;
+        message.contentSize = bodySize;
         if (bodySize == 0)
           return true;
         else
@@ -221,19 +222,19 @@ namespace tnt
     return false;
   }
 
-  bool httpMessage::parser::state_body(char ch)
+  bool HttpMessage::Parser::state_body(char ch)
   {
     message.body += ch;
     return --bodySize == 0;
   }
 
-  bool httpMessage::parser::post(bool ret)
+  bool HttpMessage::Parser::post(bool ret)
   {
     if (++requestSize > maxRequestSize && maxRequestSize > 0)
     {
       log_warn("max request size " << maxRequestSize << " exceeded");
       httpCode = HTTP_REQUEST_ENTITY_TOO_LARGE;
-      failed_flag = true;
+      failedFlag = true;
       return true;
     }
 

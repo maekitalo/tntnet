@@ -1,5 +1,5 @@
 /* messageheaderparser.cpp
-   Copyright (C) 2003-2005 Tommi Mäkitalo
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -38,9 +38,9 @@ namespace tnt
 
   log_define("tntnet.messageheader.parser")
 
-  #define SET_STATE(new_state)  state = &parser::new_state
+  #define SET_STATE(new_state)  state = &Parser::new_state
 
-  bool messageheader::parser::state_0(char ch)
+  bool Messageheader::Parser::state_0(char ch)
   {
     if (ch >= 33 && ch <= 126 && ch != ':')
     {
@@ -54,24 +54,24 @@ namespace tnt
     else if (!std::isspace(ch))
     {
       log_warn("invalid character " << chartoprint(ch));
-      failed_flag = true;
+      failedFlag = true;
       return true;
     }
 
     return false;
   }
 
-  bool messageheader::parser::state_cr(char ch)
+  bool Messageheader::Parser::state_cr(char ch)
   {
     if (ch != '\n')
     {
       log_warn("invalid character " << chartoprint(ch) << " in state-cr");
-      failed_flag = true;
+      failedFlag = true;
     }
     return true;
   }
 
-  bool messageheader::parser::state_fieldname(char ch)
+  bool Messageheader::Parser::state_fieldname(char ch)
   {
     if (ch == ':')            // Field-name:
     {
@@ -85,13 +85,13 @@ namespace tnt
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in fieldname");
-      failed_flag = true;
+      failedFlag = true;
       return true;
     }
     return false;
   }
 
-  bool messageheader::parser::state_fieldnamespace(char ch)
+  bool Messageheader::Parser::state_fieldnamespace(char ch)
   {
     if (ch == ':')                   // "Field-name :"
       SET_STATE(state_fieldbody0);
@@ -103,13 +103,13 @@ namespace tnt
     else if (!std::isspace(ch))
     {
       log_warn("invalid character " << chartoprint(ch) << " in fieldname-space");
-      failed_flag = true;
+      failedFlag = true;
       return true;
     }
     return false;
   }
 
-  bool messageheader::parser::state_fieldbody0(char ch)
+  bool Messageheader::Parser::state_fieldbody0(char ch)
   {
     if (ch == '\r')
       SET_STATE(state_fieldbody_cr);
@@ -123,7 +123,7 @@ namespace tnt
     return false;
   }
 
-  bool messageheader::parser::state_fieldbody(char ch)
+  bool Messageheader::Parser::state_fieldbody(char ch)
   {
     if (ch == '\r')
       SET_STATE(state_fieldbody_cr);
@@ -134,20 +134,20 @@ namespace tnt
     return false;
   }
 
-  bool messageheader::parser::state_fieldbody_cr(char ch)
+  bool Messageheader::Parser::state_fieldbody_cr(char ch)
   {
     if (ch == '\n')
       SET_STATE(state_fieldbody_crlf);
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in fieldbody-cr");
-      failed_flag = true;
+      failedFlag = true;
       return true;
     }
     return false;
   }
 
-  bool messageheader::parser::state_fieldbody_crlf(char ch)
+  bool Messageheader::Parser::state_fieldbody_crlf(char ch)
   {
     if (ch == '\r')
       SET_STATE(state_end_cr);
@@ -159,7 +159,7 @@ namespace tnt
         case OK:
         case END:  return true;
                    break;
-        case FAIL: failed_flag = true;
+        case FAIL: failedFlag = true;
                    log_warn("invalid character " << chartoprint(ch) << " in fieldbody");
                    break;
       }
@@ -178,7 +178,7 @@ namespace tnt
       {
         case OK:   SET_STATE(state_fieldname);
                    break;
-        case FAIL: failed_flag = true;
+        case FAIL: failedFlag = true;
                    log_warn("invalid character " << chartoprint(ch) << " in fieldbody");
                    break;
         case END:  return true;
@@ -190,14 +190,14 @@ namespace tnt
     return false;
   }
 
-  bool messageheader::parser::state_end_cr(char ch)
+  bool Messageheader::Parser::state_end_cr(char ch)
   {
     if (ch == '\n')
     {
       if (header.onField(fieldname, fieldbody) == FAIL)
       {
         log_warn("invalid header " << fieldname << ' ' << fieldbody);
-        failed_flag = true;
+        failedFlag = true;
       }
 
       fieldname.clear();
@@ -207,15 +207,15 @@ namespace tnt
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in end-cr");
-      failed_flag = true;
+      failedFlag = true;
       return true;
     }
     return false;
   }
 
-  void messageheader::parser::reset()
+  void Messageheader::Parser::reset()
   {
-    failed_flag = false;
+    failedFlag = false;
     SET_STATE(state_0);
   }
 }

@@ -31,45 +31,45 @@ namespace tnt
 {
   namespace ecppc
   {
-    class ecppc
+    class Ecppc
     {
         std::string requestname;
         const char* inputfile;
         std::string ns;
         std::string ofile;
         std::string odir;
-        cxxtools::arg<std::string> mimetype;
-        cxxtools::arg<bool> binary;
-        cxxtools::arg<bool> singleton;
-        cxxtools::arg<std::string> componentclass;
-        cxxtools::arg<std::string> baseclass;
-        cxxtools::arg<bool> htmlcompress;
-        cxxtools::arg<bool> csscompress;
-        cxxtools::arg<bool> jscompress;
-        cxxtools::arg<bool> compress;
-        cxxtools::arg<bool> externData;
-        cxxtools::arg<bool> verbose;
-        cxxtools::arg<bool> debug;
-        cxxtools::arg<bool> splitBar;
-        cxxtools::arg<const char*> splitChars;
-        cxxtools::arg<bool> generateDependencies;
-        cxxtools::arg<bool> generateHeader;
+        cxxtools::Arg<std::string> mimetype;
+        cxxtools::Arg<bool> binary;
+        cxxtools::Arg<bool> singleton;
+        cxxtools::Arg<std::string> componentclass;
+        cxxtools::Arg<std::string> baseclass;
+        cxxtools::Arg<bool> htmlcompress;
+        cxxtools::Arg<bool> csscompress;
+        cxxtools::Arg<bool> jscompress;
+        cxxtools::Arg<bool> compress;
+        cxxtools::Arg<bool> externData;
+        cxxtools::Arg<bool> verbose;
+        cxxtools::Arg<bool> debug;
+        cxxtools::Arg<bool> splitBar;
+        cxxtools::Arg<const char*> splitChars;
+        cxxtools::Arg<bool> generateDependencies;
+        cxxtools::Arg<bool> generateHeader;
 
         int runDepencencies();
         int runGenerator();
-        void runParser(std::istream& in, tnt::ecpp::parseHandler& handler);
+        void runParser(std::istream& in, tnt::ecpp::ParseHandler& handler);
 
       public:
-        ecppc(int& argc, char* argv[]);
+        Ecppc(int& argc, char* argv[]);
         int run();
     };
 
-    class usage : public std::exception
+    class Usage : public std::exception
     {
         std::string msg;
       public:
-        usage(const char* progname);
-        ~usage() throw()  { }
+        Usage(const char* progname);
+        ~Usage() throw()  { }
 
         const char* what() const throw()
         { return msg.c_str(); }

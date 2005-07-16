@@ -1,5 +1,5 @@
 /* messageattribute.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -24,21 +24,24 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  static inline bool istokenchar(char ch)
+  namespace
   {
-    return ch >= 33
-        && ch <= 126
-        && ch != '(' && ch != ')' && ch != '<' && ch != '>'  && ch != '@'
-        && ch != ',' && ch != ';' && ch != ':' && ch != '\\' && ch != '"'
-        && ch != '/' && ch != '[' && ch != ']' && ch != '?'  && ch != '=';
+    static inline bool istokenchar(char ch)
+    {
+      return ch >= 33
+          && ch <= 126
+          && ch != '(' && ch != ')' && ch != '<' && ch != '>'  && ch != '@'
+          && ch != ',' && ch != ';' && ch != ':' && ch != '\\' && ch != '"'
+          && ch != '/' && ch != '[' && ch != ']' && ch != '?'  && ch != '=';
+    }
+
+    static inline bool tnt_isblank(char ch)
+    {
+      return ch == ' ' || ch == '\t';
+    }
   }
 
-  static inline bool tnt_isblank(char ch)
-  {
-    return ch == ' ' || ch == '\t';
-  }
-
-  void messageattribute_parser::parse(std::istream& in)
+  void MessageattributeParser::parse(std::istream& in)
   {
     enum state_type
     {

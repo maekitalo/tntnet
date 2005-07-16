@@ -31,65 +31,65 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class urlmapper;
-  class comploader;
-  class ecppSubComponent;
+  class Urlmapper;
+  class Comploader;
+  class EcppSubComponent;
 
   //////////////////////////////////////////////////////////////////////
-  // subcompident
+  // Subcompident
   //
-  struct subcompident : public tnt::compident
+  struct Subcompident : public tnt::Compident
   {
       std::string subname;
 
-      subcompident(const tnt::compident& ci, const std::string& sub)
-        : tnt::compident(ci),
+      Subcompident(const tnt::Compident& ci, const std::string& sub)
+        : tnt::Compident(ci),
           subname(sub)
          { }
-      subcompident(const std::string& lib, const std::string& comp, const std::string& sub)
-        : tnt::compident(lib, comp),
+      Subcompident(const std::string& lib, const std::string& comp, const std::string& sub)
+        : tnt::Compident(lib, comp),
           subname(sub)
          { }
 
-      explicit subcompident(const std::string& ident);
+      explicit Subcompident(const std::string& ident);
       std::string toString() const;
   };
 
   //////////////////////////////////////////////////////////////////////
-  // ecppComponent
+  // EcppComponent
   //
-  class ecppComponent : public component
+  class EcppComponent : public Component
   {
-      friend class ecppSubComponent;
+      friend class EcppSubComponent;
 
-      compident myident;
-      const urlmapper& rootmapper;
-      comploader& loader;
+      Compident myident;
+      const Urlmapper& rootmapper;
+      Comploader& loader;
 
-      typedef std::map<std::string, ecppSubComponent*> subcomps_type;
+      typedef std::map<std::string, EcppSubComponent*> subcomps_type;
       subcomps_type subcomps;
 
       virtual subcomps_type& getSubcomps()               { return subcomps; }
       virtual const subcomps_type& getSubcomps() const   { return subcomps; }
 
       typedef std::set<std::string> libnotfound_type;
-      typedef std::set<compident> compnotfound_type;
+      typedef std::set<Compident> compnotfound_type;
 
       static libnotfound_type libnotfound;
       static compnotfound_type compnotfound;
 
       static void rememberLibNotFound(const std::string& lib);
-      static void rememberCompNotFound(const compident& ci);
+      static void rememberCompNotFound(const Compident& ci);
 
     protected:
-      virtual ~ecppComponent();
+      virtual ~EcppComponent();
 
-      void registerSubComp(const std::string& name, ecppSubComponent* comp);
+      void registerSubComp(const std::string& name, EcppSubComponent* comp);
 
     protected:
-      component& fetchComp(const std::string& url) const;
-      component& fetchComp(const compident& ci) const;
-      component& fetchComp(const subcompident& ci) const;
+      Component& fetchComp(const std::string& url) const;
+      Component& fetchComp(const Compident& ci) const;
+      Component& fetchComp(const Subcompident& ci) const;
 
       /// helper-methods for calling components
       template <typename compident_type,
@@ -133,14 +133,14 @@ namespace tnt
         std::string scallComp(const compident_type& ci)
         { return fetchComp(ci).scall(); }
 
-      const component* getDataComponent(const httpRequest& request) const;
+      const Component* getDataComponent(const HttpRequest& request) const;
 
     public:
-      ecppComponent(const compident& ci, const urlmapper& um, comploader& cl);
+      EcppComponent(const Compident& ci, const Urlmapper& um, Comploader& cl);
 
-      const compident& getCompident() const  { return myident; }
+      const Compident& getCompident() const  { return myident; }
 
-      ecppSubComponent& fetchSubComp(const std::string& sub) const;
+      EcppSubComponent& fetchSubComp(const std::string& sub) const;
 
       /// helper-methods for calling subcomponents
       template <typename parameter1_type,
@@ -175,11 +175,11 @@ namespace tnt
   };
 
   //////////////////////////////////////////////////////////////////////
-  // ecppSubComponent
+  // EcppSubComponent
   //
-  class ecppSubComponent : public ecppComponent
+  class EcppSubComponent : public EcppComponent
   {
-      ecppComponent& main;
+      EcppComponent& main;
       std::string subcompname;
 
       virtual subcomps_type& getSubcomps()
@@ -188,8 +188,8 @@ namespace tnt
         { return main.getSubcomps(); }
 
     public:
-      ecppSubComponent(ecppComponent& p, const std::string& name)
-        : ecppComponent(p.myident, p.rootmapper, p.loader),
+      EcppSubComponent(EcppComponent& p, const std::string& name)
+        : EcppComponent(p.myident, p.rootmapper, p.loader),
           main(p),
           subcompname(name)
         {
@@ -197,24 +197,24 @@ namespace tnt
         }
 
       virtual bool drop();
-      subcompident getCompident() const
-        { return subcompident(main.getCompident(), subcompname); }
+      Subcompident getCompident() const
+        { return Subcompident(main.getCompident(), subcompname); }
 
-      ecppComponent& getMainComponent() const { return main; }
+      EcppComponent& getMainComponent() const { return main; }
   };
 
   //////////////////////////////////////////////////////////////////////
   // inline methods
   //
-  inline component& ecppComponent::fetchComp(const subcompident& ci) const
+  inline Component& EcppComponent::fetchComp(const Subcompident& ci) const
   {
-    return dynamic_cast<ecppComponent&>(
-                        fetchComp( static_cast<const compident&>(ci) )
+    return dynamic_cast<EcppComponent&>(
+                        fetchComp( static_cast<const Compident&>(ci) )
                         )
                  .fetchSubComp(ci.subname);
   }
 
-  inline std::string ecppComponent::scallSubComp(const std::string& sub) const
+  inline std::string EcppComponent::scallSubComp(const std::string& sub) const
   {
     return fetchSubComp(sub).scall();
   }
@@ -222,7 +222,7 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // scope-helper
   //
-  inline std::string getPageScopePrefix(const compident& id)
+  inline std::string getPageScopePrefix(const Compident& id)
   {
     return id.toString();
   }
@@ -236,9 +236,9 @@ namespace tnt
 
 #define TNT_VAR(scope, type, varname, key, construct) \
   typedef type varname##_type;          \
-  typedef tnt::objectTemplate<varname##_type> varname##_objecttype;          \
+  typedef tnt::ObjectTemplate<varname##_type> varname##_objecttype;          \
   const std::string varname##_scopekey = key;          \
-  tnt::objectptr varname##_pointer = request.get##scope##Scope().get(varname##_scopekey);          \
+  tnt::Objectptr varname##_pointer = request.get##scope##Scope().get(varname##_scopekey);          \
   if (varname##_pointer == 0)          \
     varname##_pointer = request.get##scope##Scope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
   type& varname = varname##_objecttype::getRef(varname##_pointer);
@@ -272,15 +272,15 @@ namespace tnt
 
 namespace ecpp_component
 {
-  using tnt::component;
-  using tnt::compident;
-  using tnt::subcompident;
-  using tnt::urlmapper;
-  using tnt::comploader;
-  using tnt::ecppComponent;
-  using tnt::ecppSubComponent;
-  using tnt::httpRequest;
-  using tnt::httpReply;
+  using tnt::Component;
+  using tnt::Compident;
+  using tnt::Subcompident;
+  using tnt::Urlmapper;
+  using tnt::Comploader;
+  using tnt::EcppComponent;
+  using tnt::EcppSubComponent;
+  using tnt::HttpRequest;
+  using tnt::HttpReply;
 }
 
 #endif // TNT_ECPP_H

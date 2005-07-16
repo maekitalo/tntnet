@@ -1,5 +1,5 @@
 /* contentdisposition.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -25,7 +25,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  contentdisposition::return_type contentdisposition::onType(
+  Contentdisposition::return_type Contentdisposition::onType(
     const std::string& t,
     const std::string& subtype)
   {
@@ -39,7 +39,7 @@ namespace tnt
     return OK;
   }
 
-  contentdisposition::return_type contentdisposition::onParameter(
+  Contentdisposition::return_type Contentdisposition::onParameter(
     const std::string& attribute,
     const std::string& value)
   {

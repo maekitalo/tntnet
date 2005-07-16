@@ -1,5 +1,5 @@
 /* tnt/messageheader.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -28,11 +28,11 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   /// Standard-message-header like rfc822
-  class messageheader : public std::multimap<std::string, std::string>
+  class Messageheader : public std::multimap<std::string, std::string>
   {
     public:
-      class parser;
-      friend class parser;
+      class Parser;
+      friend class Parser;
 
     protected:
       enum return_type
@@ -45,12 +45,12 @@ namespace tnt
       virtual return_type onField(const std::string& name, const std::string& value);
 
     public:
-      virtual ~messageheader()   { }
+      virtual ~Messageheader()   { }
 
       void parse(std::istream& in, size_t maxHeaderSize = 0);
   };
 
-  std::istream& operator>> (std::istream& in, messageheader& data);
+  std::istream& operator>> (std::istream& in, Messageheader& data);
 
 }
 

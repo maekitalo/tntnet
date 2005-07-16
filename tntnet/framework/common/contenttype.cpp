@@ -31,9 +31,9 @@ log_define("tntnet.contenttype")
 
 namespace tnt
 {
-  contenttype::contenttype(const std::string& ct)
+  Contenttype::Contenttype(const std::string& ct)
   {
-    log_debug("contenttype <= " << ct);
+    log_debug("Contenttype <= " << ct);
 
     std::istringstream in(ct);
 
@@ -59,10 +59,10 @@ namespace tnt
     }
   }
 
-  contenttype::return_type contenttype::onType(
+  Contenttype::return_type Contenttype::onType(
     const std::string& t, const std::string& s)
   {
-    log_debug("contenttype::onType " << t << ", " << s);
+    log_debug("Contenttype::onType " << t << ", " << s);
     if (s.empty())
       return FAIL;
 
@@ -77,10 +77,10 @@ namespace tnt
     return OK;
   }
 
-  contenttype::return_type contenttype::onParameter(
+  Contenttype::return_type Contenttype::onParameter(
     const std::string& attribute, const std::string& value)
   {
-    log_debug("contenttype::onParameter " << attribute << ", " << value);
+    log_debug("Contenttype::onParameter " << attribute << ", " << value);
     std::string att = attribute;
     std::transform(att.begin(), att.end(), att.begin(),
       std::ptr_fun(tolower));

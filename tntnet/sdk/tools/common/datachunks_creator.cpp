@@ -1,5 +1,5 @@
 /* datachunks_creator.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -23,7 +23,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  void datachunks_creator::create_chunks() const
+  void DatachunksCreator::createChunks() const
   {
     unsigned offset = (chunks.size() + 1) * sizeof(unsigned);
     chunks_cache.append(reinterpret_cast<char*>(&offset), sizeof(unsigned));

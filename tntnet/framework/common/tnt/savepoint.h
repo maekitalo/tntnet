@@ -26,21 +26,21 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class savepoint
+  class Savepoint
   {
       bool active;
-      httpReply& reply;
+      HttpReply& reply;
       std::string::size_type pos;
 
     public:
-      savepoint(httpReply& reply_, bool active_ = true)
-        : reply(reply_),
-          active(false)
+      Savepoint(HttpReply& reply_, bool active_ = true)
+        : active(false),
+          reply(reply_)
       {
         if (active_)
           save();
       }
-      ~savepoint()
+      ~Savepoint()
       {
         if (active)
           rollback();

@@ -31,33 +31,33 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class scope;
-  class sessionscope;
+  class Scope;
+  class Sessionscope;
 
-  class tntnet
+  class Tntnet
   {
     public:
-      typedef std::map<std::string, scope*> scopes_type;
-      typedef std::map<std::string, sessionscope*> sessionscopes_type;
+      typedef std::map<std::string, Scope*> scopes_type;
+      typedef std::map<std::string, Sessionscope*> sessionscopes_type;
 
     private:
-      cxxtools::arg<const char*> conf;
-      tntconfig config;
-      cxxtools::arg<const char*> propertyfilename;
-      cxxtools::arg<bool> debug;
+      cxxtools::Arg<const char*> conf;
+      Tntconfig config;
+      cxxtools::Arg<const char*> propertyfilename;
+      cxxtools::Arg<bool> debug;
 
       unsigned minthreads;
       unsigned maxthreads;
       unsigned long threadstartdelay;
 
-      jobqueue queue;
+      Jobqueue queue;
 
       static bool stop;
       typedef std::set<cxxtools::Thread*> listeners_type;
       listeners_type listeners;
 
-      poller pollerthread;
-      dispatcher d_dispatcher;
+      Poller pollerthread;
+      Dispatcher d_dispatcher;
 
       static std::string pidFileName;
 
@@ -74,8 +74,8 @@ namespace tnt
       void closeStdHandles() const;
 
       // noncopyable
-      tntnet(const tntnet&);
-      tntnet& operator= (const tntnet&);
+      Tntnet(const Tntnet&);
+      Tntnet& operator= (const Tntnet&);
 
       void writePidfile(int pid);
       void monitorProcess(int workerPid);
@@ -85,21 +85,21 @@ namespace tnt
       void timerTask();
 
     public:
-      tntnet(int argc, char* argv[]);
+      Tntnet(int argc, char* argv[]);
       int run();
 
       static void shutdown();
       static bool shouldStop()   { return stop; }
 
-      jobqueue&   getQueue()                  { return queue; }
-      poller&     getPoller()                 { return pollerthread; }
-      const dispatcher& getDispatcher() const { return d_dispatcher; }
-      const tntconfig&  getConfig() const     { return config; }
+      Jobqueue&   getQueue()                  { return queue; }
+      Poller&     getPoller()                 { return pollerthread; }
+      const Dispatcher& getDispatcher() const { return d_dispatcher; }
+      const Tntconfig&  getConfig() const     { return config; }
 
-      scope* getApplicationScope(const std::string& appname);
-      sessionscope* getSessionScope(const std::string& sessioncookie);
+      Scope* getApplicationScope(const std::string& appname);
+      Sessionscope* getSessionScope(const std::string& sessioncookie);
       bool hasSessionScope(const std::string& sessioncookie);
-      void putSessionScope(const std::string& sessioncookie, sessionscope* s);
+      void putSessionScope(const std::string& sessioncookie, Sessionscope* s);
       void removeApplicationScope(const std::string& appname);
       void removeSessionScope(const std::string& sessioncookie);
   };

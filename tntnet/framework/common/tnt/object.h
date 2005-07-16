@@ -26,19 +26,19 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class object
+  class Object
   {
       unsigned refs;
 
       // non-copyable
-      object(const object&);
-      object& operator=(const object&);
+      Object(const Object&);
+      Object& operator=(const Object&);
 
     protected:
-      virtual ~object();
+      virtual ~Object()  {}
 
     public:
-      object()
+      Object()
         : refs(0)
       { }
 

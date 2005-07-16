@@ -24,11 +24,10 @@ Boston, MA  02111-1307  USA
 #include "tnt/httpreply.h"
 #include "tnt/httprequest.h"
 #include <sstream>
-#include <cxxtools/query_params.h>
 
 namespace tnt
 {
-  compident::compident(const std::string& ident)
+  Compident::Compident(const std::string& ident)
   {
     std::string::size_type pos = ident.find('@');
     if (pos == std::string::npos)
@@ -40,51 +39,51 @@ namespace tnt
     }
   }
 
-  unsigned component::operator() (httpRequest& request,
-    httpReply& reply, cxxtools::query_params& qparam)
+  unsigned Component::operator() (HttpRequest& request,
+    HttpReply& reply, cxxtools::QueryParams& qparam)
   {
     return DECLINED;
   }
 
-  std::string component::getAttribute(const std::string& name,
+  std::string Component::getAttribute(const std::string& name,
     const std::string& def) const
   {
     return def;
   }
 
-  unsigned component::getDataCount(const httpRequest& request) const
+  unsigned Component::getDataCount(const HttpRequest& request) const
   { return 0; }
 
-  unsigned component::getDataLen(const httpRequest& request, unsigned n) const
+  unsigned Component::getDataLen(const HttpRequest& request, unsigned n) const
   { return 0; }
 
-  const char* component::getDataPtr(const httpRequest& request, unsigned n) const
+  const char* Component::getDataPtr(const HttpRequest& request, unsigned n) const
   { return 0; }
 
-  unsigned component::call(httpRequest& request, httpReply& reply)
+  unsigned Component::call(HttpRequest& request, HttpReply& reply)
   {
-    cxxtools::query_params qparam;
-    call(request, reply, qparam);
+    cxxtools::QueryParams qparam;
+    return call(request, reply, qparam);
   }
 
-  unsigned component::call(httpReply& reply, cxxtools::query_params& qparam)
+  unsigned Component::call(HttpReply& reply, cxxtools::QueryParams& qparam)
   {
-    httpRequest request;
-    call(request, reply, qparam);
+    HttpRequest request;
+    return call(request, reply, qparam);
   }
 
-  unsigned component::call(httpReply& reply)
+  unsigned Component::call(HttpReply& reply)
   {
-    httpRequest request;
-    cxxtools::query_params qparam;
-    call(request, reply, qparam);
+    HttpRequest request;
+    cxxtools::QueryParams qparam;
+    return call(request, reply, qparam);
   }
 
-  std::string component::scall(httpRequest& request, cxxtools::query_params& qparam)
+  std::string Component::scall(HttpRequest& request, cxxtools::QueryParams& qparam)
   {
     // set up new reply-object
     std::ostringstream result;
-    httpReply reply(result);
+    HttpReply reply(result);
 
     // don't output any http-headers
     reply.setDirectModeNoFlush();
@@ -95,22 +94,22 @@ namespace tnt
     return result.str();
   }
 
-  std::string component::scall(httpRequest& request)
+  std::string Component::scall(HttpRequest& request)
   {
-    cxxtools::query_params qparam;
+    cxxtools::QueryParams qparam;
     return scall(request, qparam);
   }
 
-  std::string component::scall(cxxtools::query_params& qparam)
+  std::string Component::scall(cxxtools::QueryParams& qparam)
   {
-    httpRequest request;
+    HttpRequest request;
     return scall(request, qparam);
   }
 
-  std::string component::scall()
+  std::string Component::scall()
   {
-    httpRequest request;
-    cxxtools::query_params qparam;
+    HttpRequest request;
+    cxxtools::QueryParams qparam;
     return scall(request, qparam);
   }
 }

@@ -60,9 +60,9 @@ namespace tnt
       << ' ' << file << ':' << line);
 
     if (mode & CRYPTO_LOCK)
-      ssl_mutex[n].Lock();
+      ssl_mutex[n].lock();
     else
-      ssl_mutex[n].Unlock();
+      ssl_mutex[n].unlock();
   }
 
   static void thread_setup(void)
@@ -168,7 +168,7 @@ namespace tnt
   void SslStream::Accept(const SslServer& server)
   {
     log_debug("accept");
-    Stream::Accept(server);
+    Stream::accept(server);
 
     log_debug("tcp-connection established - build ssltunnel");
     ssl = SSL_new( server.getSslContext() );
@@ -226,7 +226,7 @@ namespace tnt
       if (getTimeout() == 0)
       {
         log_debug("read-timeout");
-        throw cxxtools::tcp::Timeout();
+        throw cxxtools::net::Timeout();
       }
 
       // no read, timeout > 0 - poll
@@ -240,7 +240,7 @@ namespace tnt
           (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
             ? POLLIN|POLLOUT
             : POLLIN;
-        lock.Unlock();
+        lock.unlock();
         int p = ::poll(&fds, 1, getTimeout());
 
         log_debug("poll => " << p << " revents=" << fds.revents);
@@ -248,16 +248,16 @@ namespace tnt
         if (p < 0)
         {
           int errnum = errno;
-          throw cxxtools::tcp::Exception(strerror(errnum));
+          throw cxxtools::net::Exception(strerror(errnum));
         }
         else if (p == 0)
         {
           // no data
           log_debug("read-timeout");
-          throw cxxtools::tcp::Timeout();
+          throw cxxtools::net::Timeout();
         }
 
-        lock.Lock();
+        lock.lock();
         n = ::SSL_read(ssl, buffer, bufsize);
         log_debug("SSL_read returns " << n);
         checkSslError();
@@ -300,20 +300,20 @@ namespace tnt
       fds.events =
         (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ)
           ? POLLIN|POLLOUT : POLLOUT;
-      lock.Unlock();
+      lock.unlock();
       int p = ::poll(&fds, 1, getTimeout());
-      lock.Lock();
+      lock.lock();
 
       if (p < 0)
       {
         int errnum = errno;
-        throw cxxtools::tcp::Exception(strerror(errnum));
+        throw cxxtools::net::Exception(strerror(errnum));
       }
       else if (p == 0)
       {
         // no data
         log_warn("write-timeout");
-        throw cxxtools::tcp::Timeout();
+        throw cxxtools::net::Timeout();
       }
     }
 

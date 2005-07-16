@@ -29,7 +29,7 @@ log_define("tntnet.poll")
 
 namespace tnt
 {
-  poller::poller(jobqueue& q)
+  Poller::Poller(Jobqueue& q)
     : queue(q),
       poll_timeout(-1)
   {
@@ -42,7 +42,7 @@ namespace tnt
     pollfds[0].revents = 0;
   }
 
-  void poller::append_new_jobs()
+  void Poller::append_new_jobs()
   {
     cxxtools::MutexLock lock(mutex);
     if (!new_jobs.empty())
@@ -67,7 +67,7 @@ namespace tnt
     }
   }
 
-  void poller::append(jobqueue::job_ptr& job)
+  void Poller::append(Jobqueue::JobPtr& job)
   {
     current_jobs.push_back(job);
 
@@ -76,9 +76,9 @@ namespace tnt
     p.events = POLLIN;
   }
 
-  void poller::Run()
+  void Poller::run()
   {
-    while (!tntnet::shouldStop())
+    while (!Tntnet::shouldStop())
     {
       append_new_jobs();
 
@@ -106,7 +106,7 @@ namespace tnt
     }
   }
 
-  void poller::dispatch()
+  void Poller::dispatch()
   {
     log_debug("dispatch " << current_jobs.size() << " jobs");
 
@@ -137,21 +137,21 @@ namespace tnt
     }
   }
 
-  void poller::remove(int i)
+  void Poller::remove(jobs_type::size_type n)
   {
     // replace job with last job in poller-list
     jobs_type::size_type last = current_jobs.size() - 1;
 
-    if (i != last)
+    if (n != last)
     {
-      pollfds[i + 1] = pollfds[last + 1];
-      current_jobs[i] = current_jobs[last];
+      pollfds[n + 1] = pollfds[last + 1];
+      current_jobs[n] = current_jobs[last];
     }
 
     current_jobs.pop_back();
   }
 
-  void poller::addIdleJob(jobqueue::job_ptr job)
+  void Poller::addIdleJob(Jobqueue::JobPtr job)
   {
     log_debug("addIdleJob " << job->getFd());
 

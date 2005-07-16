@@ -29,11 +29,11 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  // dispatcher - one per host
-  class dispatcher : public urlmapper
+  // Dispatcher - one per host
+  class Dispatcher : public Urlmapper
   {
     public:
-      class compident_type : public compident
+      class CompidentType : public Compident
       {
         public:
           typedef std::vector<std::string> args_type;
@@ -44,12 +44,12 @@ namespace tnt
           bool pathinfo_set;
 
         public:
-          compident_type()
+          CompidentType()
             : pathinfo_set(false)
             { }
 
-          explicit compident_type(const std::string& ident)
-            : compident(ident),
+          explicit CompidentType(const std::string& ident)
+            : Compident(ident),
               pathinfo_set(false)
             { }
 
@@ -68,35 +68,35 @@ namespace tnt
       };
 
     private:
-      typedef std::vector<std::pair<regex, compident_type> > urlmap_type;
+      typedef std::vector<std::pair<regex, CompidentType> > urlmap_type;
       urlmap_type urlmap;   // map url to soname/compname
       mutable cxxtools::RWLock rwlock;
 
-      typedef std::pair<compident_type, urlmap_type::iterator> nextcomp_pair_type;
+      typedef std::pair<CompidentType, urlmap_type::iterator> nextcomp_pair_type;
 
       // don't make this public - it's not threadsafe:
-      compident_type mapCompNext(const std::string& compUrl,
+      CompidentType mapCompNext(const std::string& compUrl,
         urlmap_type::const_iterator& pos) const;
 
     public:
-      virtual ~dispatcher()  { }
+      virtual ~Dispatcher()  { }
 
-      void addUrlMapEntry(const std::string& url, const compident_type& ci);
+      void addUrlMapEntry(const std::string& url, const CompidentType& ci);
 
-      compident mapComp(const std::string& compUrl) const;
+      Compident mapComp(const std::string& compUrl) const;
 
-      friend class pos_type;
+      friend class PosType;
 
-      class pos_type
+      class PosType
       {
-          const dispatcher& dis;
+          const Dispatcher& dis;
           cxxtools::RdLock lock;
           urlmap_type::const_iterator pos;
           std::string url;
           bool first;
 
         public:
-          pos_type(const dispatcher& d, const std::string& u)
+          PosType(const Dispatcher& d, const std::string& u)
             : dis(d),
               lock(dis.rwlock),
               pos(dis.urlmap.begin()),
@@ -104,7 +104,7 @@ namespace tnt
               first(true)
           { }
 
-          compident_type getNext();
+          CompidentType getNext();
       };
 
       template <class OutputIterator>
@@ -112,7 +112,7 @@ namespace tnt
       {
         cxxtools::RdLock lock(rwlock);
         urlmap_type::const_iterator pos = urlmap.begin();
-        compident_type ci;
+        CompidentType ci;
         while (mapCompNext(compUrl, ci, pos))
         {
           *it++ = ci;

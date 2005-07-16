@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 #include <iosfwd>
 #include <tnt/ecpp/parsehandler.h>
 
-class ecpplang : public tnt::ecpp::parseHandler
+class Ecpplang : public tnt::ecpp::ParseHandler
 {
     bool inLang;
     unsigned count;
@@ -38,7 +38,7 @@ class ecpplang : public tnt::ecpp::parseHandler
     bool nolang;
 
   public:
-    ecpplang()
+    Ecpplang()
       : inLang(false),
         count(0),
         lang(true),

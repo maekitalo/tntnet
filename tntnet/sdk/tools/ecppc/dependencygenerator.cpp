@@ -27,14 +27,14 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // dependencygenerator
+    // Dependencygenerator
     //
-    void dependencygenerator::onInclude(const std::string& file)
+    void Dependencygenerator::onInclude(const std::string& file)
     {
       dependencies.push_back(file);
     }
 
-    void dependencygenerator::getDependencies(std::ostream& out, bool useHeader) const
+    void Dependencygenerator::getDependencies(std::ostream& out, bool useHeader) const
     {
       out << classname << ".cpp";
       if (useHeader)

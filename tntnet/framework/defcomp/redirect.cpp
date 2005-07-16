@@ -1,5 +1,5 @@
 /* redirect.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -28,12 +28,12 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class urlmapper;
-  class comploader;
+  class Urlmapper;
+  class Comploader;
 }
 
 static cxxtools::Mutex mutex;
-static tnt::component* theComponent = 0;
+static tnt::Component* theComponent = 0;
 static unsigned refs = 0;
 
 ////////////////////////////////////////////////////////////////////////
@@ -41,21 +41,21 @@ static unsigned refs = 0;
 //
 extern "C"
 {
-  tnt::component* create_redirect(const tnt::compident& ci, const tnt::urlmapper& um,
-    tnt::comploader& cl);
+  tnt::Component* create_redirect(const tnt::Compident& ci, const tnt::Urlmapper& um,
+    tnt::Comploader& cl);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // componentdeclaration
 //
-class redirectcomp : public tnt::component
+class Redirectcomp : public tnt::Component
 {
   protected:
-    virtual ~redirectcomp() { };
+    virtual ~Redirectcomp() { };
 
   public:
-    virtual unsigned operator() (tnt::httpRequest& request,
-      tnt::httpReply& reply, cxxtools::query_params& qparam);
+    virtual unsigned operator() (tnt::HttpRequest& request,
+      tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
     virtual bool drop();
 };
 
@@ -63,13 +63,13 @@ class redirectcomp : public tnt::component
 // external functions
 //
 
-tnt::component* create_redirect(const tnt::compident& ci, const tnt::urlmapper& um,
-  tnt::comploader& cl)
+tnt::Component* create_redirect(const tnt::Compident& ci, const tnt::Urlmapper& um,
+  tnt::Comploader& cl)
 {
   cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
-    theComponent = new redirectcomp();
+    theComponent = new Redirectcomp();
     refs = 1;
   }
 
@@ -79,13 +79,13 @@ tnt::component* create_redirect(const tnt::compident& ci, const tnt::urlmapper& 
 ////////////////////////////////////////////////////////////////////////
 // componentdefinition
 //
-unsigned redirectcomp::operator() (tnt::httpRequest& request,
-  tnt::httpReply& reply, cxxtools::query_params&)
+unsigned Redirectcomp::operator() (tnt::HttpRequest& request,
+  tnt::HttpReply& reply, cxxtools::QueryParams&)
 {
   return reply.redirect(request.getPathInfo());
 }
 
-bool redirectcomp::drop()
+bool Redirectcomp::drop()
 {
   cxxtools::MutexLock lock(mutex);
   if (--refs == 0)

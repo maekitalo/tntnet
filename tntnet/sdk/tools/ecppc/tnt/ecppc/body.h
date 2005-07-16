@@ -32,15 +32,15 @@ namespace tnt
 {
   namespace ecppc
   {
-    class body;
+    class Body;
 
-    class bodypart
+    class Bodypart
     {
         unsigned refs;
 
       public:
-        bodypart() : refs(0)  { }
-        virtual ~bodypart();
+        Bodypart() : refs(0)  { }
+        virtual ~Bodypart();
 
         void addRef()  { ++refs; }
         void release() { if (--refs <= 0) delete this; }
@@ -48,20 +48,20 @@ namespace tnt
         virtual void getBody(std::ostream& out) const = 0;
     };
 
-    class bodypart_static : public bodypart
+    class BodypartStatic : public Bodypart
     {
         std::string data;
 
       public:
-        bodypart_static(const std::string& data_)
+        BodypartStatic(const std::string& data_)
           : data(data_)
           { }
         void getBody(std::ostream& out) const;
     };
 
-    class bodypart_call : public bodypart
+    class BodypartCall : public Bodypart
     {
-        typedef ecpp::parser::comp_args_type comp_args_type;
+        typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef std::set<std::string> subcomps_type;
 
         std::string comp;
@@ -77,7 +77,7 @@ namespace tnt
         void callByExpr(std::ostream& out, const std::string& qparam) const;
 
       public:
-        bodypart_call(const std::string& comp_,
+        BodypartCall(const std::string& comp_,
                       const comp_args_type& args_,
                       const std::string& pass_cgi_,
                       const std::string& cppargs_,
@@ -93,10 +93,10 @@ namespace tnt
         void getBody(std::ostream& out) const;
     };
 
-    class body
+    class Body
     {
-        typedef ecpp::parser::comp_args_type comp_args_type;
-        typedef tnt::pointer<bodypart> body_part_pointer;
+        typedef ecpp::Parser::comp_args_type comp_args_type;
+        typedef tnt::Pointer<Bodypart> body_part_pointer;
         typedef std::list<body_part_pointer> body_type;
         typedef std::set<std::string> subcomps_type;
         body_type data;
@@ -104,16 +104,16 @@ namespace tnt
         const subcomps_type& subcomps;
 
       public:
-        body()
+        Body()
           : subcomps(mysubcomps)  { }
-        body(const body& main, int)
+        Body(const Body& main, int)
           : subcomps(main.mysubcomps)  { }
 
         void addHtml(const std::string& code)
         {
           data.push_back(
             body_part_pointer(
-              new bodypart_static(code)));
+              new BodypartStatic(code)));
         }
 
         void addCall(const std::string& comp,
@@ -123,7 +123,7 @@ namespace tnt
         {
           data.push_back(
             body_part_pointer(
-              new bodypart_call(comp, args, pass_cgi, cppargs, subcomps)));
+              new BodypartCall(comp, args, pass_cgi, cppargs, subcomps)));
         }
 
         void addSubcomp(const std::string& comp)

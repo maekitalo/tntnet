@@ -1,5 +1,5 @@
 /* tnt/multipart.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -29,60 +29,60 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   /// header of a MIME-multipart-object
-  class partheader : public messageheader
+  class Partheader : public Messageheader
   {
-      contentdisposition cd;
+      Contentdisposition cd;
 
     protected:
       return_type onField(const std::string& name, const std::string& value);
 
     public:
-      const contentdisposition& getContentDisposition() const
+      const Contentdisposition& getContentDisposition() const
         { return cd; }
   };
 
   /// Part of a MIME-multipart-object
-  class part
+  class Part
   {
     public:
       typedef std::string::const_iterator const_iterator;
       typedef std::string::const_iterator iterator;
 
     private:
-      partheader header;
-      const_iterator body_begin;
-      const_iterator body_end;
+      Partheader header;
+      const_iterator bodyBegin;
+      const_iterator bodyEnd;
 
     public:
-      part(const_iterator b, const_iterator e);
+      Part(const_iterator b, const_iterator e);
 
-      /// returns the partheader-object of this part.
-      const partheader& getHeader() const      { return header; }
+      /// returns the Partheader-object of this Part.
+      const Partheader& getHeader() const      { return header; }
       /// returns a single header-value or empty string if not set.
       std::string getHeader(const std::string& key) const;
 
-      /// returns the name of this part (name-attribute of html-input-field)
+      /// returns the name of this Part (name-attribute of html-input-field)
       const std::string& getName() const
         { return header.getContentDisposition().getName(); }
-      /// returns the passed filename of the part or empty string.
+      /// returns the passed filename of the Part or empty string.
       const std::string& getFilename() const
         { return header.getContentDisposition().getFilename(); }
       /// returns a const iterator to the start of data.
       const_iterator getBodyBegin() const
-        { return body_begin; }
+        { return bodyBegin; }
       /// returns a const iterator past the end of data.
       const_iterator getBodyEnd() const
-        { return body_end; }
+        { return bodyEnd; }
       /// less efficient (a temporary string is created), but easier to use:
       std::string getBody() const
         { return std::string(getBodyBegin(), getBodyEnd()); }
   };
 
   /// a MIME-Multipart-Object
-  class multipart
+  class Multipart
   {
     public:
-      typedef part part_type;
+      typedef Part part_type;
       typedef std::vector<part_type> parts_type;
       typedef parts_type::const_iterator const_iterator;
       typedef parts_type::value_type value_type;
@@ -92,16 +92,16 @@ namespace tnt
       parts_type parts;
 
     public:
-      multipart()
+      Multipart()
         { }
       void set(const std::string& boundary, const std::string& body);
 
       const_iterator begin() const { return parts.begin(); }
       const_iterator end() const   { return parts.end(); }
-      const_iterator find(const std::string& part_name,
+      const_iterator find(const std::string& partName,
         const_iterator start) const;
-      const_iterator find(const std::string& part_name) const
-        { return find(part_name, begin()); }
+      const_iterator find(const std::string& partName) const
+        { return find(partName, begin()); }
   };
 
 }

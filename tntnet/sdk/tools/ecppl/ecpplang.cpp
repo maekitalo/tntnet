@@ -1,5 +1,5 @@
-/* ./ecpplang.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+/* ecpplang.cpp
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 #include <iostream>
 #include <iterator>
 
-void ecpplang::onHtml(const std::string& html)
+void Ecpplang::onHtml(const std::string& html)
 {
   if (inLang && lang
     || !inLang && nolang)
@@ -34,12 +34,12 @@ void ecpplang::onHtml(const std::string& html)
   ++count;
 }
 
-void ecpplang::tokenSplit(bool start)
+void Ecpplang::tokenSplit(bool start)
 {
   inLang = start;
 }
 
-void ecpplang::print(std::ostream& out) const
+void Ecpplang::print(std::ostream& out) const
 {
   for (data_type::const_iterator it = data.begin();
        it != data.end(); ++it)

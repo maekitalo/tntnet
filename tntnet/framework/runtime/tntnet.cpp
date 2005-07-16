@@ -57,17 +57,17 @@ log_define("tntnet.tntnet")
 
 namespace
 {
-  void configureDispatcher(tnt::dispatcher& dis, const tnt::tntconfig& config)
+  void configureDispatcher(tnt::Dispatcher& dis, const tnt::Tntconfig& config)
   {
-    typedef tnt::dispatcher::compident_type compident_type;
+    typedef tnt::Dispatcher::CompidentType CompidentType;
 
-    const tnt::tntconfig::config_entries_type& params = config.getConfigValues();
+    const tnt::Tntconfig::config_entries_type& params = config.getConfigValues();
 
-    tnt::tntconfig::config_entries_type::const_iterator vi;
+    tnt::Tntconfig::config_entries_type::const_iterator vi;
     for (vi = params.begin(); vi != params.end(); ++vi)
     {
-      const tnt::tntconfig::config_entry_type& v = *vi;
-      const tnt::tntconfig::params_type& args = v.params;
+      const tnt::Tntconfig::config_entry_type& v = *vi;
+      const tnt::Tntconfig::params_type& args = v.params;
       if (v.key == "MapUrl")
       {
         if (args.size() < 2)
@@ -79,12 +79,12 @@ namespace
 
         std::string url = args[0];
 
-        compident_type ci = compident_type(args[1]);
+        CompidentType ci = CompidentType(args[1]);
         if (args.size() > 2)
         {
           ci.setPathInfo(args[2]);
           if (args.size() > 3)
-            ci.setArgs(compident_type::args_type(args.begin() + 3, args.end()));
+            ci.setArgs(CompidentType::args_type(args.begin() + 3, args.end()));
         }
 
         dis.addUrlMapEntry(url, ci);
@@ -106,31 +106,34 @@ static bool checkChildSuccess(int fd)
   return ret > 0;
 }
 
-static bool signalParentSuccess(int fd)
+namespace
 {
-  log_debug("signalParentSuccess");
+  void signalParentSuccess(int fd)
+  {
+    log_debug("signalParentSuccess");
 
-  ssize_t s = write(fd, "1", 1);
-  if (s < 0)
-    throw std::runtime_error(
-      std::string("error in write(): ") + strerror(errno));
-  close(fd);
+    ssize_t s = write(fd, "1", 1);
+    if (s < 0)
+      throw std::runtime_error(
+        std::string("error in write(): ") + strerror(errno));
+    close(fd);
+  }
 }
 
 namespace tnt
 {
   ////////////////////////////////////////////////////////////////////////
-  // tntnet
+  // Tntnet
   //
-  bool tntnet::stop = false;
-  std::string tntnet::pidFileName;
+  bool Tntnet::stop = false;
+  std::string Tntnet::pidFileName;
 
-  tntnet::tntnet(int argc, char* argv[])
+  Tntnet::Tntnet(int argc, char* argv[])
     : conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
-      pollerthread(queue),
-      queue(100)
+      queue(100),
+      pollerthread(queue)
   {
     if (argc != 1)
     {
@@ -172,14 +175,14 @@ namespace tnt
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
-    worker::setMinThreads(minthreads);
-    worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", worker::getCompLifetime()));
+    Worker::setMinThreads(minthreads);
+    Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
-    sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
+    Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
 
-    tntconfig::config_entries_type configSetEnv;
+    Tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
-    for (tntconfig::config_entries_type::const_iterator it = configSetEnv.begin();
+    for (Tntconfig::config_entries_type::const_iterator it = configSetEnv.begin();
          it != configSetEnv.end(); ++it)
     {
       if (it->params.size() >= 2)
@@ -204,9 +207,9 @@ namespace tnt
     }
   }
 
-  void tntnet::setGroup() const
+  void Tntnet::setGroup() const
   {
-    tntconfig::params_type group = config.getConfigValue("Group");
+    Tntconfig::params_type group = config.getConfigValue("Group");
     if (group.size() >= 1)
     {
       struct group * gr = getgrnam(group.begin()->c_str());
@@ -226,7 +229,7 @@ namespace tnt
     }
   }
 
-  void tntnet::setDir(const char* def) const
+  void Tntnet::setDir(const char* def) const
   {
     std::string dir = config.getValue("Dir", def);
 
@@ -248,9 +251,9 @@ namespace tnt
           + strerror(errno));
   }
 
-  void tntnet::setUser() const
+  void Tntnet::setUser() const
   {
-    tntconfig::params_type user = config.getConfigValue("User");
+    Tntconfig::params_type user = config.getConfigValue("User");
     if (user.size() >= 1)
     {
       struct passwd * pw = getpwnam(user.begin()->c_str());
@@ -270,7 +273,7 @@ namespace tnt
     }
   }
 
-  int tntnet::mkDaemon() const
+  int Tntnet::mkDaemon() const
   {
     log_info("start daemon-mode");
 
@@ -308,7 +311,7 @@ namespace tnt
     return filedes[1];
   }
 
-  void tntnet::closeStdHandles() const
+  void Tntnet::closeStdHandles() const
   {
     if (freopen("/dev/null", "r", stdin) == 0)
       throw std::runtime_error(
@@ -339,7 +342,7 @@ namespace tnt
     return s.size() > 0 && isTrue(s[0]);
   }
 
-  int tntnet::run()
+  int Tntnet::run()
   {
     std::string daemon = config.getValue("Daemon");
     if (!debug && isTrue(daemon))
@@ -433,7 +436,7 @@ namespace tnt
     return 0;
   }
 
-  void tntnet::writePidfile(int pid)
+  void Tntnet::writePidfile(int pid)
   {
     pidFileName = config.getValue("PidFile", TNTNET_PID);
 
@@ -448,7 +451,7 @@ namespace tnt
     }
   }
 
-  void tntnet::monitorProcess(int workerPid)
+  void Tntnet::monitorProcess(int workerPid)
   {
     setDir("");
 
@@ -482,24 +485,24 @@ namespace tnt
       log_warn("failed to remove pidfile \"" << pidFileName << "\" error " << errno);
   }
 
-  void tntnet::initWorkerProcess()
+  void Tntnet::initWorkerProcess()
   {
     log_debug("init workerprocess");
     configureDispatcher(d_dispatcher, config);
 
     // create listener-threads
-    tntconfig::config_entries_type configListen;
+    Tntconfig::config_entries_type configListen;
     config.getConfigValues("Listen", configListen);
 
     if (configListen.empty())
     {
       log_warn("no listeners defined - using 0.0.0.0:80");
-      cxxtools::Thread* s = new tnt::listener("0.0.0.0", 80, queue);
+      cxxtools::Thread* s = new tnt::Listener("0.0.0.0", 80, queue);
       listeners.insert(s);
     }
     else
     {
-      for (tntconfig::config_entries_type::const_iterator it = configListen.begin();
+      for (Tntconfig::config_entries_type::const_iterator it = configListen.begin();
            it != configListen.end(); ++it)
       {
         if (it->params.empty())
@@ -520,7 +523,7 @@ namespace tnt
 
         std::string ip(it->params[0]);
         log_debug("create listener ip=" << ip << " port=" << port);
-        cxxtools::Thread* s = new tnt::listener(ip, port, queue);
+        cxxtools::Thread* s = new tnt::Listener(ip, port, queue);
         listeners.insert(s);
       }
     }
@@ -532,7 +535,7 @@ namespace tnt
     configListen.clear();
     config.getConfigValues("SslListen", configListen);
 
-    for (tntconfig::config_entries_type::const_iterator it = configListen.begin();
+    for (Tntconfig::config_entries_type::const_iterator it = configListen.begin();
          it != configListen.end(); ++it)
     {
       if (it->params.empty())
@@ -563,7 +566,7 @@ namespace tnt
 
       std::string ip(it->params[0]);
       log_debug("create ssl-listener ip=" << ip << " port=" << port);
-      cxxtools::Thread* s = new ssllistener(certificateFile.c_str(),
+      cxxtools::Thread* s = new Ssllistener(certificateFile.c_str(),
           certificateKey.c_str(), ip, port, queue);
       listeners.insert(s);
     }
@@ -571,26 +574,26 @@ namespace tnt
 
     // configure worker (static)
     {
-      tntconfig::config_entries_type compPath;
+      Tntconfig::config_entries_type compPath;
       config.getConfigValues("CompPath", compPath);
-      for (tntconfig::config_entries_type::const_iterator it = compPath.begin();
+      for (Tntconfig::config_entries_type::const_iterator it = compPath.begin();
            it != compPath.end(); ++it)
       {
         if (it->params.size() > 0)
-          worker::addSearchPath(it->params[0]);
+          Worker::addSearchPath(it->params[0]);
       }
     }
 
     // configure http
-    httpMessage::setMaxRequestSize(config.getValue("MaxRequestSize", static_cast<unsigned>(0)));
-    job::setSocketReadTimeout(config.getValue("SocketReadTimeout", static_cast<unsigned>(200)));
-    job::setSocketWriteTimeout(config.getValue("SocketWriteTimeout", static_cast<unsigned>(10000)));
-    job::setKeepAliveTimeout(config.getValue("KeepAliveTimeout", static_cast<unsigned>(15000)));
-    job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(100)));
-    job::setSocketBufferSize(config.getValue("BufferSize", static_cast<unsigned>(16384)));
+    HttpMessage::setMaxRequestSize(config.getValue("MaxRequestSize", static_cast<unsigned>(0)));
+    Job::setSocketReadTimeout(config.getValue("SocketReadTimeout", static_cast<unsigned>(200)));
+    Job::setSocketWriteTimeout(config.getValue("SocketWriteTimeout", static_cast<unsigned>(10000)));
+    Job::setKeepAliveTimeout(config.getValue("KeepAliveTimeout", static_cast<unsigned>(15000)));
+    Job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(100)));
+    Job::setSocketBufferSize(config.getValue("BufferSize", static_cast<unsigned>(16384)));
   }
 
-  void tntnet::workerProcess(int filedes)
+  void Tntnet::workerProcess(int filedes)
   {
     log_debug("worker-process");
 
@@ -602,24 +605,24 @@ namespace tnt
     log_info("create " << listeners.size() << " listener threads");
     for (listeners_type::iterator it = listeners.begin();
          it != listeners.end(); ++it)
-      (*it)->Create();
+      (*it)->create();
 
     // create worker-threads
     log_info("create " << minthreads << " worker threads");
     for (unsigned i = 0; i < minthreads; ++i)
     {
       log_debug("create worker " << i);
-      worker* s = new worker(*this);
-      s->Create();
+      Worker* s = new Worker(*this);
+      s->create();
     }
 
     // create poller-thread
     log_debug("start poller thread");
-    pollerthread.Create();
+    pollerthread.create();
 
     log_debug("start timer thread");
-    cxxtools::MethodThread<tntnet> timerThread(*this, &tntnet::timerTask);
-    timerThread.Create();
+    cxxtools::MethodThread<Tntnet> timerThread(*this, &Tntnet::timerTask);
+    timerThread.create();
 
     if (filedes >= 0)
       signalParentSuccess(filedes);
@@ -630,14 +633,14 @@ namespace tnt
     {
       {
         cxxtools::MutexLock lock(mutex);
-        queue.noWaitThreads.Wait(lock);
+        queue.noWaitThreads.wait(lock);
       }
 
-      if (worker::getCountThreads() < maxthreads)
+      if (Worker::getCountThreads() < maxthreads)
       {
         log_info("create workerthread");
-        worker* s = new worker(*this);
-        s->Create();
+        Worker* s = new Worker(*this);
+        s->create();
       }
       else
         log_warn("max worker-threadcount " << maxthreads << " reached");
@@ -651,12 +654,12 @@ namespace tnt
     {
       listeners_type::value_type s = *listeners.begin();
       listeners.erase(s);
-      s->Join();
+      s->join();
       delete s;
     }
   }
 
-  void tntnet::timerTask()
+  void Tntnet::timerTask()
   {
     log_debug("timer thread");
 
@@ -673,7 +676,7 @@ namespace tnt
       unsigned count = 0;
       while (it != sessionScopes.end())
       {
-        sessionscope* s = it->second;
+        Sessionscope* s = it->second;
         if (currentTime - s->getAtime() > s->getTimeout())
         {
           log_info("sessiontimeout for session " << it->first << " reached");
@@ -689,11 +692,11 @@ namespace tnt
       log_debug(count << " sessions timed out " << sessionScopes.size() << " sessions left");
 
       log_debug("drop old components");
-      worker::dropOldComponents();
+      Worker::dropOldComponents();
     }
   }
 
-  void tntnet::shutdown()
+  void Tntnet::shutdown()
   {
     if (!pidFileName.empty())
       unlink(pidFileName.c_str());
@@ -704,9 +707,9 @@ namespace tnt
     exit(0);
   }
 
-  scope* tntnet::getApplicationScope(const std::string& appname)
+  Scope* Tntnet::getApplicationScope(const std::string& appname)
   {
-    log_debug("tntnet::getApplicationScope(\"" << appname << "\")");
+    log_debug("Tntnet::getApplicationScope(\"" << appname << "\")");
 
     cxxtools::MutexLock lock(applicationScopesMutex);
 
@@ -714,7 +717,7 @@ namespace tnt
     if (it == applicationScopes.end())
     {
       log_debug("applicationscope not found - create new");
-      scope* s = new scope();
+      Scope* s = new Scope();
       it = applicationScopes.insert(scopes_type::value_type(appname, s)).first;
       return s;
     }
@@ -724,9 +727,9 @@ namespace tnt
     return it->second;
   }
 
-  sessionscope* tntnet::getSessionScope(const std::string& sessioncookie)
+  Sessionscope* Tntnet::getSessionScope(const std::string& sessioncookie)
   {
-    log_debug("tntnet::getSessionScope(\"" << sessioncookie << "\")");
+    log_debug("Tntnet::getSessionScope(\"" << sessioncookie << "\")");
 
     cxxtools::MutexLock lock(sessionScopesMutex);
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
@@ -743,18 +746,18 @@ namespace tnt
     }
   }
 
-  bool tntnet::hasSessionScope(const std::string& sessioncookie)
+  bool Tntnet::hasSessionScope(const std::string& sessioncookie)
   {
-    log_debug("tntnet::hasSessionScope(\"" << sessioncookie << "\")");
+    log_debug("Tntnet::hasSessionScope(\"" << sessioncookie << "\")");
 
     cxxtools::MutexLock lock(sessionScopesMutex);
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
     return it != sessionScopes.end();
   }
 
-  void tntnet::putSessionScope(const std::string& sessioncookie, sessionscope* s)
+  void Tntnet::putSessionScope(const std::string& sessioncookie, Sessionscope* s)
   {
-    log_debug("tntnet::putSessionScope " << sessioncookie);
+    log_debug("Tntnet::putSessionScope " << sessioncookie);
 
     s->addRef();
 
@@ -770,7 +773,7 @@ namespace tnt
       sessionScopes[sessioncookie] = s;
   }
 
-  void tntnet::removeApplicationScope(const std::string& appname)
+  void Tntnet::removeApplicationScope(const std::string& appname)
   {
     log_debug("removeApplicationScope(\"" << appname << "\")");
 
@@ -784,7 +787,7 @@ namespace tnt
     }
   }
 
-  void tntnet::removeSessionScope(const std::string& sessioncookie)
+  void Tntnet::removeSessionScope(const std::string& sessioncookie)
   {
     log_debug("removeSessionScope(\"" << sessioncookie << "\")");
 
@@ -812,7 +815,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    tnt::tntnet app(argc, argv);
+    tnt::Tntnet app(argc, argv);
     return app.run();
   }
   catch(const std::exception& e)

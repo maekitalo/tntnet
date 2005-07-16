@@ -30,9 +30,9 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // cssfilter
+    // Cssfilter
     //
-    class cssfilter : public std::unary_function<void, char>
+    class Cssfilter : public std::unary_function<void, char>
     {
         std::ostream& out;
 
@@ -48,7 +48,7 @@ namespace tnt
         state_type state;
 
       public:
-        cssfilter(std::ostream& out_)
+        Cssfilter(std::ostream& out_)
           : out(out_),
             state(state_start)
           { }

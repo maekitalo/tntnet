@@ -1,5 +1,5 @@
 /* fstatic.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <tnt/httpheader.h>
 #include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
@@ -33,23 +34,23 @@ Boston, MA  02111-1307  USA
 log_define("tntnet.fstatic")
 
 static cxxtools::Mutex mutex;
-static tnt::component* theComponent = 0;
+static tnt::Component* theComponent = 0;
 static unsigned refs = 0;
 
 ////////////////////////////////////////////////////////////////////////
 // external functions
 //
 
-tnt::component* create_fstatic(const tnt::compident& ci,
-  const tnt::urlmapper& um, tnt::comploader& cl)
+tnt::Component* create_fstatic(const tnt::Compident& ci,
+  const tnt::Urlmapper& um, tnt::Comploader& cl)
 {
   cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
-    theComponent = new tntcomp::fstaticcomp();
+    theComponent = new tntcomp::Fstaticcomp();
     refs = 1;
 
-    tntcomp::staticcomp::setDocumentRoot(cl.getConfig().getValue("DocumentRoot"));
+    tntcomp::Staticcomp::setDocumentRoot(cl.getConfig().getValue("DocumentRoot"));
   }
   else
     ++refs;
@@ -63,11 +64,11 @@ namespace tntcomp
   // componentdefinition
   //
 
-  unsigned fstaticcomp::operator() (tnt::httpRequest& request,
-    tnt::httpReply& reply, cxxtools::query_params& qparams)
+  unsigned Fstaticcomp::operator() (tnt::HttpRequest& request,
+    tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
   {
-    if (!tnt::httpRequest::checkUrl(request.getPathInfo()))
-      throw tnt::httpError(HTTP_BAD_REQUEST, "illegal url");
+    if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
+      throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
     std::string file;
     if (!getDocumentRoot().empty())
@@ -106,8 +107,8 @@ namespace tntcomp
 
     // set Keep-Alive
     if (request.keepAlive())
-      reply.setHeader(tnt::httpMessage::Connection,
-                      tnt::httpMessage::Connection_Keep_Alive);
+      reply.setHeader(tnt::httpheader::connection,
+                      tnt::httpheader::connectionKeepAlive);
 
     // send datea
     reply.setDirectMode();
@@ -116,7 +117,7 @@ namespace tntcomp
     return HTTP_OK;
   }
 
-  bool fstaticcomp::drop()
+  bool Fstaticcomp::drop()
   {
     cxxtools::MutexLock lock(mutex);
     if (--refs == 0)

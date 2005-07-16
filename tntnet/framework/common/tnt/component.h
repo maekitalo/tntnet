@@ -34,33 +34,33 @@ Boston, MA  02111-1307  USA
 
 namespace cxxtools
 {
-  class query_params;
+  class QueryParams;
 }
 
 namespace tnt
 {
 
-class httpRequest;
-class httpReply;
+class HttpRequest;
+class HttpReply;
 
-struct compident
+struct Compident
 {
   std::string libname;
   std::string compname;
 
-  bool operator< (const compident& ci) const
+  bool operator< (const Compident& ci) const
   {
     return libname < ci.libname
       || libname == ci.libname && compname < ci.compname;
   }
 
-  compident() { }
-  compident(const std::string& l, const std::string& n)
+  Compident() { }
+  Compident(const std::string& l, const std::string& n)
     : libname(l),
       compname(n)
   { }
 
-  explicit compident(const std::string& ident);
+  explicit Compident(const std::string& ident);
 
   std::string toString() const
   { return compname + '@' + libname; }
@@ -71,18 +71,18 @@ struct compident
     { libname.clear(); compname.clear(); }
 };
 
-inline std::ostream& operator<< (std::ostream& out, const compident& comp)
+inline std::ostream& operator<< (std::ostream& out, const Compident& comp)
 { return out << comp.toString(); }
 
-class component
+class Component
 {
     time_t atime;
 
   protected:
-    virtual ~component() { }
+    virtual ~Component() { }
 
   public:
-    component()     { time(&atime); }
+    Component()     { time(&atime); }
 
     void touch(time_t plus = 0)      { time(&atime); atime += plus; }
     time_t getLastAccesstime() const { return atime; }
@@ -93,35 +93,35 @@ class component
 #endif
     void unlock()                    { touch(); }
 
-    virtual unsigned operator() (httpRequest& request,
-      httpReply& reply, cxxtools::query_params& qparam);
+    virtual unsigned operator() (HttpRequest& request,
+      HttpReply& reply, cxxtools::QueryParams& qparam);
     virtual bool drop() = 0;
 
     virtual std::string getAttribute(const std::string& name,
       const std::string& def = std::string()) const;
 
-    virtual unsigned getDataCount(const httpRequest& request) const;
-    virtual unsigned getDataLen(const httpRequest& request, unsigned n) const;
-    virtual const char* getDataPtr(const httpRequest& request, unsigned n) const;
-    std::string getData(const httpRequest& r, unsigned n) const
+    virtual unsigned getDataCount(const HttpRequest& request) const;
+    virtual unsigned getDataLen(const HttpRequest& request, unsigned n) const;
+    virtual const char* getDataPtr(const HttpRequest& request, unsigned n) const;
+    std::string getData(const HttpRequest& r, unsigned n) const
       { return std::string(getDataPtr(r, n), getDataLen(r, n)); }
 
     /// explicitly call operator() - sometimes more readable
-    unsigned call(httpRequest& request, httpReply& reply, cxxtools::query_params& qparam)
+    unsigned call(HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam)
       { return operator() (request, reply, qparam); }
     /// call component without parameters
-    unsigned call(httpRequest& request, httpReply& reply);
+    unsigned call(HttpRequest& request, HttpReply& reply);
     /// call component dummy request
-    unsigned call(httpReply& reply, cxxtools::query_params& qparam);
+    unsigned call(HttpReply& reply, cxxtools::QueryParams& qparam);
     /// call component without parameters and dummy request
-    unsigned call(httpReply& reply);
+    unsigned call(HttpReply& reply);
 
     /// return output as a string rather than outputting to stream
-    std::string scall(httpRequest& request, cxxtools::query_params& qparam);
+    std::string scall(HttpRequest& request, cxxtools::QueryParams& qparam);
     /// return output as a string rather than outputting to stream without query-parameters
-    std::string scall(httpRequest& request);
+    std::string scall(HttpRequest& request);
     /// return output as a string rather than outputting to stream with empty request
-    std::string scall(cxxtools::query_params& qparam);
+    std::string scall(cxxtools::QueryParams& qparam);
     /// return output as a string rather than outputting to stream with empty request and without query-parameters
     std::string scall();
 };

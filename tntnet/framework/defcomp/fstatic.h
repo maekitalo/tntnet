@@ -1,5 +1,5 @@
 /* fstatic.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -29,8 +29,8 @@ Boston, MA  02111-1307  USA
 //
 extern "C"
 {
-  tnt::component* create_fstatic(const tnt::compident& ci,
-    const tnt::urlmapper& um, tnt::comploader& cl);
+  tnt::Component* create_fstatic(const tnt::Compident& ci,
+    const tnt::Urlmapper& um, tnt::Comploader& cl);
 }
 
 namespace tntcomp
@@ -38,14 +38,14 @@ namespace tntcomp
   //////////////////////////////////////////////////////////////////////
   // componentdeclaration
   //
-  class fstaticcomp : public staticcomp
+  class Fstaticcomp : public Staticcomp
   {
     protected:
-      virtual ~fstaticcomp() { };
+      virtual ~Fstaticcomp() { };
 
     public:
-      virtual unsigned operator() (tnt::httpRequest& request,
-        tnt::httpReply& reply, cxxtools::query_params& qparam);
+      virtual unsigned operator() (tnt::HttpRequest& request,
+        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
       virtual bool drop();
   };
 }

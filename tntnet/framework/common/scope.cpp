@@ -29,51 +29,48 @@ namespace tnt
 
   static unsigned scopes_total = 0;
 
-  scope::scope()
+  Scope::Scope()
     : refs(1)
   {
     ++scopes_total;
-    log_debug("new scope " << this << " total=" << scopes_total);
+    log_debug("new Scope " << this << " total=" << scopes_total);
   }
 
-  scope::~scope()
+  Scope::~Scope()
   {
     --scopes_total;
-    log_debug("scope " << this << " deleted; " << scopes_total << " left");
+    log_debug("Scope " << this << " deleted; " << scopes_total << " left");
   }
 
-  unsigned scope::addRef()
+  void Scope::addRef()
   {
     ++refs;
-    log_debug("scope::addRef(); this=" << this << " refs=" << refs);
+    log_debug("Scope::addRef(); this=" << this << " refs=" << refs);
   }
 
-  unsigned scope::release()
+  void Scope::release()
   {
-    log_debug("scope::release(); this=" << this << " refs=" << refs);
+    log_debug("Scope::release(); this=" << this << " refs=" << refs);
     if (--refs == 0)
     {
-      log_debug("delete scope " << this);
+      log_debug("delete Scope " << this);
       delete this;
-      return 0;
     }
-    else
-      return refs;
   }
 
-  object* scope::get(const std::string& key)
+  Object* Scope::get(const std::string& key)
   {
     container_type::iterator it = data.find(key);
 
-    log_debug("scope::get(\"" << key << "\") scope=" << this
+    log_debug("Scope::get(\"" << key << "\") Scope=" << this
            << " => " << (it == data.end() ? 0 : it->second));
 
     return it == data.end() ? 0 : it->second.getPtr();
   }
 
-  void scope::replace(const std::string& key, object* o)
+  void Scope::replace(const std::string& key, Object* o)
   {
-    log_debug("scope::replace(\"" << key << ", " << o << "\") scope=" << this);
+    log_debug("Scope::replace(\"" << key << ", " << o << "\") Scope=" << this);
 
     o->addRef();
     container_type::iterator it = data.find(key);
@@ -86,9 +83,9 @@ namespace tnt
     }
   }
 
-  object* scope::putNew(const std::string& key, object* o)
+  Object* Scope::putNew(const std::string& key, Object* o)
   {
-    log_debug("scope::putNew(\"" << key << "\", " << o << ") scope=" << this);
+    log_debug("Scope::putNew(\"" << key << "\", " << o << ") Scope=" << this);
 
     container_type::iterator it = data.find(key);
     if (it == data.end())
@@ -104,7 +101,7 @@ namespace tnt
     }
   }
 
-  void scope::erase(const std::string& key)
+  void Scope::erase(const std::string& key)
   {
     container_type::iterator it = data.find(key);
     if (it != data.end())

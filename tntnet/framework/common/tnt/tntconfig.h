@@ -29,7 +29,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class config_parser
+  class ConfigParser
   {
     public:
       typedef std::vector<std::string> params_type;
@@ -54,19 +54,19 @@ namespace tnt
       virtual void onLine(const std::string& key, const params_type& value) = 0;
 
     public:
-      config_parser()
+      ConfigParser()
         : state(state_start)
         { }
-      virtual ~config_parser()
+      virtual ~ConfigParser()
         { }
 
       void parse(char ch);
   };
 
-  class tntconfig
+  class Tntconfig
   {
     public:
-      typedef config_parser::params_type params_type;
+      typedef ConfigParser::params_type params_type;
       typedef std::string name_type;
       struct config_entry_type {
           name_type key;
@@ -78,7 +78,7 @@ namespace tnt
       config_entries_type config_entries;
 
     public:
-      tntconfig()
+      Tntconfig()
       { }
       void load(const char* configfile);
       void load(std::istream& in);

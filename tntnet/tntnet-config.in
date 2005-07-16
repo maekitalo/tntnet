@@ -97,7 +97,7 @@ LDFLAGS+=-shared `tntnet-config --libs`
 %.cpp: %.gif
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_GIF) -b -m image/gif \$<
 %.cpp: %.jpg
-	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_JPG) -b -m image/jpg \$<
+	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_JPG) -b -m image/jpeg \$<
 EOF
 }
 

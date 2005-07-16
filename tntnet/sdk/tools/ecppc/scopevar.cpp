@@ -26,7 +26,7 @@ namespace tnt
 {
   namespace ecppc
   {
-    void scopevar::get(std::ostream& out) const
+    void Scopevar::get(std::ostream& out) const
     {
       std::string tag =
           scope_container == ecpp::application_container ? "application"

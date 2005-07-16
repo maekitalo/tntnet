@@ -16,7 +16,7 @@ SUFFIXES=.ecpp .jpg
 .ecpp.cpp:
 	$(ECPPC) $<
 .jpg.cpp:
-	$(ECPPC) -b -m image/jpg $<
+	$(ECPPC) -b -m image/jpeg $<
 
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@

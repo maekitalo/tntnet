@@ -28,23 +28,23 @@ namespace tnt
 {
   namespace ecppc
   {
-    class subcomponent : public component
+    class Subcomponent : public Component
     {
-        typedef ecpp::parser::cppargs_type cppargs_type;
+        typedef ecpp::Parser::cppargs_type cppargs_type;
         cppargs_type cppargs;
-        const component* outerclass;
+        const Component* outerclass;
 
       public:
-        subcomponent()
-          : component(std::string()),
+        Subcomponent()
+          : Component(std::string()),
             outerclass(0)
           { }
 
-        subcomponent(const std::string& classname_,
-            const component& outerclass_, const cppargs_type& cppargs_)
-          : component(outerclass_, classname_),
-            outerclass(&outerclass_),
-            cppargs(cppargs_)
+        Subcomponent(const std::string& classname_,
+            const Component& outerclass_, const cppargs_type& cppargs_)
+          : Component(outerclass_, classname_),
+            cppargs(cppargs_),
+            outerclass(&outerclass_)
           { }
 
         void getHeader(std::ostream& o) const;

@@ -27,9 +27,9 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // jsfilter
+    // Jsfilter
     //
-    void jsfilter::operator() (char ch)
+    void Jsfilter::operator() (char ch)
     {
       switch (state)
       {

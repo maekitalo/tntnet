@@ -27,9 +27,9 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // cssfilter
+    // Cssfilter
     //
-    void cssfilter::operator() (char ch)
+    void Cssfilter::operator() (char ch)
     {
       switch (state)
       {

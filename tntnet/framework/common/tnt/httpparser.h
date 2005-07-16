@@ -29,10 +29,10 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class httpMessage::parser : public tnt::parser<httpMessage::parser>
+  class HttpMessage::Parser : public tnt::Parser<HttpMessage::Parser>
   {
-      httpMessage& message;
-      messageheader::parser headerParser;
+      HttpMessage& message;
+      Messageheader::Parser headerParser;
 
       unsigned httpCode;
 
@@ -54,10 +54,10 @@ namespace tnt
       bool post(bool ret);
 
     public:
-      parser(tnt::httpMessage& message_)
-        : tnt::parser<parser>(&parser::state_cmd0),
-          headerParser(message_.header),
+      Parser(tnt::HttpMessage& message_)
+        : tnt::Parser<Parser>(&Parser::state_cmd0),
           message(message_),
+          headerParser(message_.header),
           httpCode(HTTP_OK),
           requestSize(0)
         { }

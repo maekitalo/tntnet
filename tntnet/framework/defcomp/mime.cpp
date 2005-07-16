@@ -1,5 +1,5 @@
 /* mime.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -33,11 +33,11 @@ log_define("tntnet.mime")
 
 namespace tnt
 {
-  class urlmapper;
+  class Urlmapper;
 }
 
 static cxxtools::Mutex mutex;
-static tnt::component* theComponent = 0;
+static tnt::Component* theComponent = 0;
 static unsigned refs = 0;
 static bool configured = false;
 
@@ -46,8 +46,8 @@ static bool configured = false;
 //
 extern "C"
 {
-  tnt::component* create_mime(const tnt::compident& ci,
-    const tnt::urlmapper& um, tnt::comploader& cl);
+  tnt::Component* create_mime(const tnt::Compident& ci,
+    const tnt::Urlmapper& um, tnt::Comploader& cl);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ extern "C"
 //
 namespace tntcomp
 {
-  class mime : public tnt::component
+  class Mime : public tnt::Component
   {
     public:
       static const std::string ConfigDefaultType;
@@ -67,11 +67,11 @@ namespace tntcomp
       static std::string default_type;
 
     protected:
-      virtual ~mime() { };
+      virtual ~Mime() { };
 
     public:
-      virtual unsigned operator() (tnt::httpRequest& request,
-        tnt::httpReply& reply, cxxtools::query_params& qparam);
+      virtual unsigned operator() (tnt::HttpRequest& request,
+        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
       virtual bool drop();
 
       static void setDefaultType(const std::string& type)
@@ -87,21 +87,21 @@ namespace tntcomp
 // external functions
 //
 
-class mime_configurator
+class MimeConfigurator
 {
   public:
-    void operator() (const tnt::tntconfig::config_entry_type& entry)
+    void operator() (const tnt::Tntconfig::config_entry_type& entry)
     {
-      if (entry.key == tntcomp::mime::ConfigDefaultType)
+      if (entry.key == tntcomp::Mime::ConfigDefaultType)
       {
         if (entry.params.size() >= 1)
         {
-          if (!tntcomp::mime::getDefaultType().empty())
+          if (!tntcomp::Mime::getDefaultType().empty())
             log_warn("DefaultType already set");
           else
           {
             log_debug("DefaultType " << entry.params[0]);
-            tntcomp::mime::setDefaultType(entry.params[0]);
+            tntcomp::Mime::setDefaultType(entry.params[0]);
           }
         }
         else
@@ -109,16 +109,16 @@ class mime_configurator
           log_warn("missing parameter in DefaultType");
         }
       }
-      else if (entry.key == tntcomp::mime::ConfigAddType)
+      else if (entry.key == tntcomp::Mime::ConfigAddType)
       {
         if (entry.params.size() >= 2)
         {
-          for (tnt::tntconfig::params_type::size_type i = 1;
+          for (tnt::Tntconfig::params_type::size_type i = 1;
                i < entry.params.size(); ++i)
           {
             log_debug("AddType \"" << entry.params[0]
               << "\" \"" << entry.params[i] << '"');
-            tntcomp::mime::addType(entry.params[0], entry.params[i]);
+            tntcomp::Mime::addType(entry.params[0], entry.params[i]);
           }
         }
         else
@@ -129,21 +129,21 @@ class mime_configurator
     }
 };
 
-tnt::component* create_mime(const tnt::compident& ci,
-  const tnt::urlmapper& um, tnt::comploader& cl)
+tnt::Component* create_mime(const tnt::Compident& ci,
+  const tnt::Urlmapper& um, tnt::Comploader& cl)
 {
   cxxtools::MutexLock lock(mutex);
   if (theComponent == 0)
   {
-    theComponent = new tntcomp::mime();
+    theComponent = new tntcomp::Mime();
     refs = 1;
 
     if (!configured)
     {
-      const tnt::tntconfig& config = cl.getConfig();
+      const tnt::Tntconfig& config = cl.getConfig();
       std::for_each(config.getConfigValues().begin(),
                     config.getConfigValues().end(),
-                    mime_configurator());
+                    MimeConfigurator());
       configured = true;
     }
   }
@@ -159,13 +159,13 @@ tnt::component* create_mime(const tnt::compident& ci,
 
 namespace tntcomp
 {
-  const std::string mime::ConfigDefaultType = "DefaultType";
-  const std::string mime::ConfigAddType = "AddType";
-  mime::mime_map_type mime::mime_map;
-  std::string mime::default_type;
+  const std::string Mime::ConfigDefaultType = "DefaultType";
+  const std::string Mime::ConfigAddType = "AddType";
+  Mime::mime_map_type Mime::mime_map;
+  std::string Mime::default_type;
 
-  unsigned mime::operator() (tnt::httpRequest& request,
-    tnt::httpReply& reply, cxxtools::query_params& qparams)
+  unsigned Mime::operator() (tnt::HttpRequest& request,
+    tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
   {
     std::string path = request.getPathInfo();
 
@@ -197,7 +197,7 @@ namespace tntcomp
     return DECLINED;
   }
 
-  bool mime::drop()
+  bool Mime::drop()
   {
     cxxtools::MutexLock lock(mutex);
     if (--refs == 0)

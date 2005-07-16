@@ -28,7 +28,7 @@ namespace tnt
 {
   namespace ecppc
   {
-    class variable
+    class Variable
     {
         std::string name;
         std::string type;
@@ -38,8 +38,8 @@ namespace tnt
         void getParamCodeVector(std::ostream& o) const;
 
       public:
-        variable()  { }
-        variable(const std::string& arg, const std::string& value_);
+        Variable()  { }
+        Variable(const std::string& arg, const std::string& value_);
 
         void getParamCode(std::ostream& o) const;
         void getConfigInit(std::ostream& o, const std::string& classname) const;

@@ -26,7 +26,7 @@ namespace tnt
 {
   namespace ecppc
   {
-    variable::variable(const std::string& arg, const std::string& value_)
+    Variable::Variable(const std::string& arg, const std::string& value_)
     {
       // 'name' might be prefixed by a type
       // the variablename is the last word in 'name'
@@ -69,7 +69,7 @@ namespace tnt
 
     }
 
-    void variable::getParamCodeVector(std::ostream& o) const
+    void Variable::getParamCodeVector(std::ostream& o) const
     {
       if (type.empty())
       {
@@ -83,11 +83,11 @@ namespace tnt
           << name << "_type " << name << ";\n"
           << "std::transform(qparam.begin(\"" << name
           << "\"), qparam.end(), std::back_inserter(" << name
-          << "), tnt::string_to<" << type << ">);\n";
+          << "), tnt::stringTo<" << type << ">);\n";
       }
     }
 
-    void variable::getParamCode(std::ostream& o) const
+    void Variable::getParamCode(std::ostream& o) const
     {
       if (isvector)
         getParamCodeVector(o);
@@ -102,13 +102,13 @@ namespace tnt
         {
           // no default-value
 
-          o << "tnt::string_to<" << type << ">( qparam.param(\""
+          o << "tnt::stringTo<" << type << ">( qparam.param(\""
             << name << "\") );\n";
         }
         else
         {
           // with default-value
-          o << "qparam.has(\"" << name << "\") ? tnt::string_to_with_default<"
+          o << "qparam.has(\"" << name << "\") ? tnt::stringToWithDefault<"
             << type << ">(qparam.param(\"" << name
             << "\"), " << value << ") : " << value << ";\n";
         }
@@ -125,14 +125,14 @@ namespace tnt
       }
     }
 
-    void variable::getConfigInit(std::ostream& o, const std::string& classname) const
+    void Variable::getConfigInit(std::ostream& o, const std::string& classname) const
     {
       if (!type.empty())
       {
         // we have a type
 
         o << "    if (cl.getConfig().hasValue(\"" << name << "\"))\n"
-          << "      " << classname << "::" << name << " = tnt::string_to<" << type
+          << "      " << classname << "::" << name << " = tnt::stringTo<" << type
           << ">( cl.getConfig().getValue(\"" << name << "\") );\n";
       }
       else
@@ -147,7 +147,7 @@ namespace tnt
       }
     }
 
-    void variable::getConfigDecl(std::ostream& o, const std::string& classname) const
+    void Variable::getConfigDecl(std::ostream& o, const std::string& classname) const
     {
       std::string t = type.empty() ? "std::string" : type;
 
@@ -157,7 +157,7 @@ namespace tnt
       o << ";\n";
     }
 
-    void variable::getConfigHDecl(std::ostream& o) const
+    void Variable::getConfigHDecl(std::ostream& o) const
     {
       std::string t = type.empty() ? "std::string" : type;
 

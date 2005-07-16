@@ -10,6 +10,7 @@ libtntnet_la_SOURCES = \
 	htmlescostream.cpp \
 	http.cpp \
 	httperror.cpp \
+	httpheader.cpp \
 	httpmessage.cpp \
 	httpparser.cpp \
 	httprequest.cpp \

@@ -28,44 +28,44 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class cookies;
-  class cookie_parser;
+  class Cookies;
+  class CookieParser;
 
-  class cookie
+  class Cookie
   {
-      friend std::ostream& operator<< (std::ostream& out, const cookies& c);
-      friend class cookie_parser;
+      friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
+      friend class CookieParser;
 
     public:
-      static const std::string MaxAge;
-      static const std::string Comment;
-      static const std::string Domain;
-      static const std::string Path;
-      static const std::string Secure;
-      static const std::string Version;
-      static const std::string Expires;
+      static const std::string maxAge;
+      static const std::string comment;
+      static const std::string domain;
+      static const std::string path;
+      static const std::string secure;
+      static const std::string version;
+      static const std::string expires;
 
     private:
       typedef std::map<std::string, std::string> attrs_type;
       std::string value;
       attrs_type attrs;
-      bool secure;
+      bool secureFlag;
 
     public:
-      cookie()
-        : secure(false)
+      Cookie()
+        : secureFlag(false)
       { }
 
-      cookie(const std::string& v, unsigned maxAge = 0)
+      Cookie(const std::string& v, unsigned maxAge = 0)
         : value(v),
-          secure(false)
+          secureFlag(false)
       {
         if (maxAge)
           setMaxAge(maxAge);
       }
-      cookie(const char* v, unsigned maxAge = 0)
+      Cookie(const char* v, unsigned maxAge = 0)
         : value(v),
-          secure(false)
+          secureFlag(false)
       {
         if (maxAge)
           setMaxAge(maxAge);
@@ -85,47 +85,47 @@ namespace tnt
         { attrs[name] = value; }
 
       unsigned    getMaxAge() const;
-      std::string getComment() const { return getAttr(Comment); }
-      std::string getDomain() const  { return getAttr(Domain); }
-      std::string getPath() const    { return getAttr(Path); }
-      std::string getVersion() const { return getAttr(Version); }
-      std::string getExpires() const { return getAttr(Expires); }
-      bool        isSecure() const   { return secure; }
+      std::string getComment() const { return getAttr(comment); }
+      std::string getDomain() const  { return getAttr(domain); }
+      std::string getPath() const    { return getAttr(path); }
+      std::string getVersion() const { return getAttr(version); }
+      std::string getExpires() const { return getAttr(expires); }
+      bool        isSecure() const   { return secureFlag; }
 
       void setMaxAge(unsigned seconds);
-      void setComment(const std::string& value)  { setAttr(Comment, value); }
-      void setDomain(const std::string& value)   { setAttr(Domain, value); }
-      void setPath(const std::string& value)     { setAttr(Path, value); }
-      void setVersion(const std::string& value)  { setAttr(Version, value); }
-      void setExpires(const std::string& value)  { setAttr(Expires, value); }
-      void setSecure(bool f = true)              { secure = f; }
+      void setComment(const std::string& value)  { setAttr(comment, value); }
+      void setDomain(const std::string& value)   { setAttr(domain, value); }
+      void setPath(const std::string& value)     { setAttr(path, value); }
+      void setVersion(const std::string& value)  { setAttr(version, value); }
+      void setExpires(const std::string& value)  { setAttr(expires, value); }
+      void setSecure(bool f = true)              { secureFlag = f; }
   };
 
-  class cookies
+  class Cookies
   {
-      friend std::ostream& operator<< (std::ostream& out, const cookies& c);
+      friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
       friend class cookie_parser;
 
-      typedef std::map<std::string, cookie> cookies_type;
+      typedef std::map<std::string, Cookie> cookies_type;
       cookies_type data;
 
-      static const cookie empty_cookie;
+      static const Cookie emptyCookie;
 
     public:
       void set(const std::string& header);
       void clear()  { data.clear(); }
 
-      const cookie& getCookie(const std::string& name) const
+      const Cookie& getCookie(const std::string& name) const
       {
         cookies_type::const_iterator it = data.find(name);
-        return it == data.end() ? empty_cookie : it->second;
+        return it == data.end() ? emptyCookie : it->second;
       }
 
-      void setCookie(const std::string& name, const cookie& value)
+      void setCookie(const std::string& name, const Cookie& value)
         { data[name] = value; }
 
       void clearCookie(const std::string& name);
-      void clearCookie(const std::string& name, const cookie& c);
+      void clearCookie(const std::string& name, const Cookie& c);
 
       bool hasCookie(const std::string& name) const
         { return data.find(name) != data.end(); }
@@ -133,7 +133,7 @@ namespace tnt
         { return !data.empty(); }
   };
 
-  std::ostream& operator<< (std::ostream& out, const cookies& c);
+  std::ostream& operator<< (std::ostream& out, const Cookies& c);
 }
 
 #endif // TNT_COOKIE_H

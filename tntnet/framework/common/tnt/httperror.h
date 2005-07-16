@@ -28,29 +28,28 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   /// HTTP-error-class
-  class httpError : public std::exception
+  class HttpError : public std::exception
   {
       std::string msg;
 
     public:
-      httpError(const std::string& m)
+      HttpError(const std::string& m)
         : msg(m)
         { }
+      ~HttpError() throw() { }
 
-      httpError(unsigned errcode, const std::string& msg);
-      ~httpError() throw ()
-        { }
+      HttpError(unsigned errcode, const std::string& msg);
 
       const char* what() const throw ()
       { return msg.c_str(); }
   };
 
   /// HTTP-error 404
-  class notFoundException : public httpError
+  class NotFoundException : public HttpError
   {
     public:
-      notFoundException(const std::string& url)
-        : httpError("404 Not Found (" + url + ')')
+      NotFoundException(const std::string& url)
+        : HttpError("404 Not Found (" + url + ')')
         { }
   };
 }

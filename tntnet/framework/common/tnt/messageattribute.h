@@ -1,5 +1,5 @@
 /* tnt/messageattribute.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -30,7 +30,7 @@ namespace tnt
   /// Messageattribute like form-data; name="my-upload-field"; filename="ttt.sh"
   ///                    or application/x-shellscript
   /// see also rfc2045
-  class messageattribute_parser
+  class MessageattributeParser
   {
     public:
       enum return_type
@@ -47,7 +47,7 @@ namespace tnt
         const std::string& value) = 0;
 
     public:
-      virtual ~messageattribute_parser()
+      virtual ~MessageattributeParser()
         { }
       void parse(std::istream& in);
   };

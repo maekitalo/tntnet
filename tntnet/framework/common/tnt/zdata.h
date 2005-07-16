@@ -1,5 +1,5 @@
 /* tnt/zdata.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class zdata
+  class Zdata
   {
       const char* zptr;
       const unsigned zdata_len;
@@ -34,7 +34,7 @@ namespace tnt
       char* data;
 
     public:
-      zdata(const char* zptr_, unsigned zdata_len_, unsigned data_len_)
+      Zdata(const char* zptr_, unsigned zdata_len_, unsigned data_len_)
         : zptr(zptr_),
           zdata_len(zdata_len_),
           data_len(data_len_),

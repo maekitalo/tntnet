@@ -25,92 +25,92 @@ namespace tnt
 {
   namespace ecpp
   {
-    void parseHandler::start()
+    void ParseHandler::start()
     {
     }
 
-    void parseHandler::end()
+    void ParseHandler::end()
     {
     }
 
-    void parseHandler::onHtml(const std::string& html)
+    void ParseHandler::onHtml(const std::string& html)
     {
     }
 
-    void parseHandler::onExpression(const std::string& code)
+    void ParseHandler::onExpression(const std::string& code)
     {
     }
 
-    void parseHandler::onCpp(const std::string& code)
+    void ParseHandler::onCpp(const std::string& code)
     {
     }
 
-    void parseHandler::onPre(const std::string& code)
+    void ParseHandler::onPre(const std::string& code)
     {
     }
 
-    void parseHandler::onDeclare(const std::string& code)
+    void ParseHandler::onDeclare(const std::string& code)
     {
     }
 
-    void parseHandler::onInit(const std::string& code)
+    void ParseHandler::onInit(const std::string& code)
     {
     }
 
-    void parseHandler::onCleanup(const std::string& code)
+    void ParseHandler::onCleanup(const std::string& code)
     {
     }
 
-    void parseHandler::onArg(const std::string& name,
+    void ParseHandler::onArg(const std::string& name,
       const std::string& value)
     {
     }
 
-    void parseHandler::onAttr(const std::string& name,
+    void ParseHandler::onAttr(const std::string& name,
       const std::string& value)
     {
     }
 
-    void parseHandler::onCall(const std::string& comp,
+    void ParseHandler::onCall(const std::string& comp,
       const comp_args_type& args, const std::string& pass_cgi,
       const std::string& cppargs)
     {
     }
 
-    void parseHandler::onDeclareShared(const std::string& code)
+    void ParseHandler::onDeclareShared(const std::string& code)
     {
     }
 
-    void parseHandler::onShared(const std::string& code)
+    void ParseHandler::onShared(const std::string& code)
     {
     }
 
-    void parseHandler::onScope(scope_container_type container, scope_type scope,
+    void ParseHandler::onScope(scope_container_type container, scope_type scope,
       const std::string& type, const std::string& var, const std::string& init)
     {
     }
 
-    void parseHandler::startComp(const std::string& arg, const cppargs_type& cppargs)
+    void ParseHandler::startComp(const std::string& arg, const cppargs_type& cppargs)
     {
     }
 
-    void parseHandler::onComp(const std::string& code)
+    void ParseHandler::onComp(const std::string& code)
     {
     }
 
-    void parseHandler::onCondExpr(const std::string& cond, const std::string& expr)
+    void ParseHandler::onCondExpr(const std::string& cond, const std::string& expr)
     {
     }
 
-    void parseHandler::onConfig(const std::string& cond, const std::string& value)
+    void ParseHandler::onConfig(const std::string& cond, const std::string& value)
     {
     }
 
-    void parseHandler::tokenSplit(bool start)
+    void ParseHandler::tokenSplit(bool start)
     {
     }
 
-    void parseHandler::onInclude(const std::string& file)
+    void ParseHandler::onInclude(const std::string& file)
     {
     }
   }

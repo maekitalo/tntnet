@@ -27,13 +27,13 @@ namespace tnt
 {
 
 ////////////////////////////////////////////////////////////////////////
-// component_library
+// ComponentLibrary
 //
 log_define("tntnet.comploader")
 
-component* component_library::create(
-  const std::string& component_name, comploader& cl,
-  const urlmapper& rootmapper)
+Component* ComponentLibrary::create(
+  const std::string& component_name, Comploader& cl,
+  const Urlmapper& rootmapper)
 {
   log_debug("create \"" << component_name << '"');
 
@@ -46,29 +46,29 @@ component* component_library::create(
     // creatorsymbol not known - load it
     log_debug("lookup symbol \"create_" << component_name << '"');
 
-    creator = (creator_type)sym(("create_" + component_name).c_str()).getSym();
+    creator = reinterpret_cast<creator_type>(sym(("create_" + component_name).c_str()).getSym());
     creatormap.insert(creatormap_type::value_type(component_name, creator));
   }
   else
     creator = i->second;
 
   // call the creator-function
-  compident ci = compident(libname, component_name);
+  Compident ci = Compident(libname, component_name);
   log_info("create \"" << ci << '"');
 
   return creator(ci, rootmapper, cl);
 }
 
 ////////////////////////////////////////////////////////////////////////
-// comploader
+// Comploader
 //
-comploader::comploader(const tntconfig& config_)
+Comploader::Comploader(const Tntconfig& config_)
   : config(config_)
 {
-  tntconfig::config_entries_type configLoad;
+  Tntconfig::config_entries_type configLoad;
   config.getConfigValues("Load", configLoad);
 
-  for (tntconfig::config_entries_type::const_iterator it = configLoad.begin();
+  for (Tntconfig::config_entries_type::const_iterator it = configLoad.begin();
        it != configLoad.end(); ++it)
   {
     if (it->params.empty())
@@ -77,31 +77,31 @@ comploader::comploader(const tntconfig& config_)
   }
 }
 
-comploader::~comploader()
+Comploader::~Comploader()
 {
   for (componentmap_type::iterator i = componentmap.begin();
        i != componentmap.end(); ++i)
     i->second->drop();
 }
 
-cxxtools::RWLock comploader::libraryMonitor;
-comploader::librarymap_type comploader::librarymap;
-comploader::search_path_type comploader::search_path;
+cxxtools::RWLock Comploader::libraryMonitor;
+Comploader::librarymap_type Comploader::librarymap;
+Comploader::search_path_type Comploader::search_path;
 
-component& comploader::fetchComp(const compident& ci,
-  const urlmapper& rootmapper)
+Component& Comploader::fetchComp(const Compident& ci,
+  const Urlmapper& rootmapper)
 {
   log_debug("fetchComp \"" << ci << '"');
 
   cxxtools::RdLock lock(componentMonitor);
 
-  // lookup component
+  // lookup Component
   componentmap_type::iterator it = componentmap.find(ci);
   if (it == componentmap.end())
   {
-    // component not known - lookup shared lib, fetch creator and create a new
-    // component
-    lock.Unlock();
+    // Component not known - lookup shared lib, fetch creator and create a new
+    // Component
+    lock.unlock();
 
     cxxtools::WrLock wrlock(componentMonitor);
 
@@ -109,8 +109,8 @@ component& comploader::fetchComp(const compident& ci,
     it = componentmap.find(ci);
     if (it == componentmap.end())
     {
-      component_library& lib = fetchLib(ci.libname);
-      component* comp = lib.create(ci.compname, *this, rootmapper);
+      ComponentLibrary& lib = fetchLib(ci.libname);
+      Component* comp = lib.create(ci.compname, *this, rootmapper);
 
       componentmap[ci] = comp;
       comp->touch();
@@ -129,7 +129,7 @@ component& comploader::fetchComp(const compident& ci,
   }
 }
 
-component_library& comploader::fetchLib(const std::string& libname)
+ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib " << libname);
 
@@ -137,7 +137,7 @@ component_library& comploader::fetchLib(const std::string& libname)
   librarymap_type::iterator i = librarymap.find(libname);
   if (i == librarymap.end())
   {
-    lock.Unlock();
+    lock.unlock();
 
     cxxtools::WrLock wrlock(libraryMonitor);
 
@@ -147,7 +147,7 @@ component_library& comploader::fetchLib(const std::string& libname)
     {
       // load library
       log_info("load library \"" << libname << '"');
-      component_library lib;
+      ComponentLibrary lib;
 
       bool found = false;
       for (search_path_type::const_iterator p = search_path.begin();
@@ -156,11 +156,11 @@ component_library& comploader::fetchLib(const std::string& libname)
         try
         {
           log_debug("load library \"" << libname << "\" from " << *p << " dir");
-          lib = component_library(*p, libname);
+          lib = ComponentLibrary(*p, libname);
           found = true;
           break;
         }
-        catch (const cxxtools::dl::dlopen_error&)
+        catch (const cxxtools::dl::DlopenError&)
         {
         }
       }
@@ -170,12 +170,12 @@ component_library& comploader::fetchLib(const std::string& libname)
         try
         {
           log_debug("load library \"" << libname << "\" from current dir");
-          lib = component_library(".", libname);
+          lib = ComponentLibrary(".", libname);
         }
-        catch (const cxxtools::dl::dlopen_error& e)
+        catch (const cxxtools::dl::DlopenError& e)
         {
           log_debug("library \"" << e.getLibname() << "\" in current dir not found - search lib-path");
-          lib = component_library(libname);
+          lib = ComponentLibrary(libname);
         }
       }
 
@@ -188,7 +188,7 @@ component_library& comploader::fetchLib(const std::string& libname)
     return i->second;
 }
 
-void comploader::cleanup(unsigned seconds)
+void Comploader::cleanup(unsigned seconds)
 {
   time_t t = time(0) - seconds;
 
@@ -198,8 +198,8 @@ void comploader::cleanup(unsigned seconds)
   {
     if (it->second->getLastAccesstime() < t)
     {
-      // da ist was aufzuräumen
-      rdlock.Unlock();
+      // we have something to clean
+      rdlock.unlock();
 
       cxxtools::WrLock wrlock(componentMonitor);
       while (it != componentmap.end())

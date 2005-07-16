@@ -30,41 +30,41 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class scope
+  class Scope
   {
-      typedef std::map<std::string, pointer<object> > container_type;
+      typedef std::map<std::string, Pointer<Object> > container_type;
       container_type data;
       mutable cxxtools::Mutex mutex;
       unsigned refs;
 
       // non-copyable
-      scope(const object&);
-      scope& operator=(const object&);
+      Scope(const Scope&);
+      Scope& operator=(const Scope&);
 
-      friend class httpRequest;
+      friend class HttpRequest;
 
     public:
-      scope();
-      ~scope();
+      Scope();
+      ~Scope();
 
-      void Lock()   { mutex.Lock(); }
-      void Unlock() { mutex.Unlock(); }
+      void lock()   { mutex.lock(); }
+      void unlock() { mutex.unlock(); }
 
-      unsigned addRef();
-      unsigned release();
+      void addRef();
+      void release();
 
       bool has(const std::string& key) const
         { return data.find(key) != data.end(); }
 
-      object* get(const std::string& key);
+      Object* get(const std::string& key);
 
-      /// Put new object in scope. If key already exists,
-      /// it is replaced and old object released.
-      void replace(const std::string& key, object* o);
+      /// Put new Object in scope. If key already exists,
+      /// it is replaced and old Object released.
+      void replace(const std::string& key, Object* o);
 
-      /// Put new object in scope. If key already exists,
-      /// o is released. Returns object identified by key.
-      object* putNew(const std::string& key, object* o);
+      /// Put new Object in scope. If key already exists,
+      /// o is released. Returns Object identified by key.
+      Object* putNew(const std::string& key, Object* o);
 
       void erase(const std::string& key);
       bool empty() const  { return data.empty(); }

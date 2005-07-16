@@ -33,7 +33,7 @@ namespace tnt
     using ecpp::scope_container_type;
     using ecpp::scope_type;
 
-    class scopevar
+    class Scopevar
     {
         scope_container_type scope_container;
         scope_type scope;
@@ -42,8 +42,9 @@ namespace tnt
         std::string init;
 
       public:
-        scopevar()  { }
-        scopevar(scope_container_type scope_container_, scope_type scope_, const std::string& type_,
+        Scopevar()  { }
+        Scopevar(scope_container_type scope_container_, scope_type scope_,
+                 const std::string& type_,
                  const std::string& var_, const std::string& init_)
           : scope_container(scope_container_),
             scope(scope_),

@@ -30,43 +30,40 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class httpRequest;
-  class httpReply;
-  class dispatcher;
-  class jobqueue;
-  class poller;
+  class HttpRequest;
+  class HttpReply;
 
-  class worker : public cxxtools::Thread
+  class Worker : public cxxtools::Thread
   {
       static cxxtools::Mutex mutex;
       static unsigned nextThreadNumber;
 
-      tntnet& application;
+      Tntnet& application;
 
-      comploader mycomploader;
+      Comploader mycomploader;
 
       unsigned threadNumber;
 
-      typedef std::set<worker*> workers_type;
+      typedef std::set<Worker*> workers_type;
       static workers_type workers;
 
       static unsigned compLifetime;
       static unsigned minThreads;
 
-      bool processRequest(httpRequest& request, std::iostream& socket,
+      bool processRequest(HttpRequest& request, std::iostream& socket,
         unsigned keepAliveCount);
 
     public:
-      worker(tntnet& app);
-      ~worker();
+      Worker(Tntnet& app);
+      ~Worker();
 
-      virtual void Run();
+      virtual void run();
 
-      void Dispatch(httpRequest& request, httpReply& reply);
+      void dispatch(HttpRequest& request, HttpReply& reply);
       void cleanup(unsigned seconds)
       { mycomploader.cleanup(seconds); }
       static void addSearchPath(const std::string& path)
-      { comploader::addSearchPath(path); }
+      { Comploader::addSearchPath(path); }
 
       static void dropOldComponents();
       static void setCompLifetime(unsigned sec)

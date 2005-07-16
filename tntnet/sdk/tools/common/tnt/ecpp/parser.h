@@ -33,11 +33,11 @@ namespace tnt
 {
   namespace ecpp
   {
-    class parseHandler;
+    class ParseHandler;
 
-    class parser
+    class Parser
     {
-        parseHandler& handler;
+        ParseHandler& handler;
 
         bool inComp;
         bool splitBar;
@@ -49,7 +49,7 @@ namespace tnt
         void doInclude(const std::string& file);
 
       public:
-        parser(parseHandler& handler_)
+        Parser(ParseHandler& handler_)
           : handler(handler_),
             inComp(false),
             splitBar(false),

@@ -27,11 +27,11 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   // map compUrl to compident
-  class urlmapper
+  class Urlmapper
   {
     public:
-      virtual ~urlmapper()  { }
-      virtual compident mapComp(const std::string& compUrl) const = 0;
+      virtual ~Urlmapper()  { }
+      virtual Compident mapComp(const std::string& compUrl) const = 0;
   };
 }
 

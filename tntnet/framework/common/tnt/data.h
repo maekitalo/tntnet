@@ -1,5 +1,5 @@
 /* tnt/data.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -26,31 +26,31 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class raw_data
+  class RawData
   {
       const char* data;
-      const unsigned data_len;
+      const unsigned dataLen;
 
     public:
-      raw_data(const char* data_, unsigned data_len_)
+      RawData(const char* data_, unsigned dataLen_)
         : data(data_),
-          data_len(data_len_)
+          dataLen(dataLen_)
       { }
 
       operator const char* () const      { return data; }
   };
 
-  class data_chunk
+  class DataChunk
   {
       const char* data;
       unsigned len;
 
     public:
-      data_chunk(const char* data_, const char* end_)
+      DataChunk(const char* data_, const char* end_)
         : data(data_),
           len(end_ - data_)
       { }
-      data_chunk(const char* data_, unsigned len_)
+      DataChunk(const char* data_, unsigned len_)
         : data(data_),
           len(len_)
       { }
@@ -65,20 +65,20 @@ namespace tnt
   //   count X unsigned: offsets
   //   data
   //
-  template <class data_ptr>
-  class data_chunks
+  template <typename DataPtr>
+  class DataChunks
   {
-      data_ptr& data_object;
+      DataPtr& dataObject;
 
       const unsigned* udata() const
       {
-        const char* d = data_object;
+        const char* d = dataObject;
         return reinterpret_cast<const unsigned*>(d);
       }
 
     public:
-      data_chunks(data_ptr& d)
-        : data_object(d)
+      DataChunks(DataPtr& d)
+        : dataObject(d)
       { }
 
       const char* data() const
@@ -101,15 +101,15 @@ namespace tnt
       // Zeiger auf das n-te chunk
       const char* ptr(unsigned n) const
       {
-        const char* d = data_object;
+        const char* d = dataObject;
         return d + udata()[n];
       }
 
-      data_chunk operator[] (unsigned n) const
-      { return data_chunk(ptr(n), size(n)); }
+      DataChunk operator[] (unsigned n) const
+      { return DataChunk(ptr(n), size(n)); }
   };
 
-  inline std::ostream& operator << (std::ostream& out, const data_chunk& c)
+  inline std::ostream& operator << (std::ostream& out, const DataChunk& c)
   {
     out.write(c.getData(), c.getLength());
     return out;

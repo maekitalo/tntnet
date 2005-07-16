@@ -1,5 +1,5 @@
 /* tnt/ssl.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -41,7 +41,7 @@ namespace tnt
       { return code; }
   };
 
-  class SslServer : public cxxtools::tcp::Server
+  class SslServer : public cxxtools::net::Server
   {
       SSL_CTX* ctx;
       void installCertificates(const char* certificateFile, const char* privateKeyFile);
@@ -54,7 +54,7 @@ namespace tnt
       SSL_CTX* getSslContext() const  { return ctx; }
   };
 
-  class SslStream : public cxxtools::tcp::Stream
+  class SslStream : public cxxtools::net::Stream
   {
       SSL* ssl;
 
@@ -62,7 +62,7 @@ namespace tnt
       SslStream();
 
       explicit SslStream(int fd)
-        : cxxtools::tcp::Stream(fd)
+        : cxxtools::net::Stream(fd)
         { }
 
       explicit SslStream(const SslServer& server);

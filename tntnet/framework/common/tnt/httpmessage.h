@@ -23,66 +23,43 @@ Boston, MA  02111-1307  USA
 #define TNT_HTTPMESSAGE_H
 
 #include <tnt/messageheader.h>
+#include <tnt/httpheader.h>
 #include <tnt/cookie.h>
 #include <time.h>
 
 namespace tnt
 {
   /// Baseclass for HTTP-messages.
-  class httpMessage
+  class HttpMessage
   {
     public:
-      class parser;
-      friend class parser;
+      class Parser;
+      friend class Parser;
 
-      typedef messageheader header_type;
-
-      /// constants for messageheaders
-      static const std::string Content_Type;
-      static const std::string Content_Length;
-      static const std::string Connection;
-      static const std::string Connection_close;
-      static const std::string Connection_Keep_Alive;
-      static const std::string Last_Modified;
-      static const std::string Server;
-      static const std::string ServerName;
-      static const std::string Location;
-      static const std::string AcceptLanguage;
-      static const std::string AcceptEncoding;
-      static const std::string ContentEncoding;
-      static const std::string Date;
-      static const std::string KeepAlive;
-      static const std::string IfModifiedSince;
-      static const std::string Host;
-      static const std::string CacheControl;
-      static const std::string Content_MD5;
-      static const std::string SetCookie;
-      static const std::string Cookie;
-      static const std::string Pragma;
-      static const std::string Expires;
+      typedef Messageheader header_type;
 
     private:
       std::string method;
       std::string url;
-      std::string query_string;
+      std::string queryString;
       std::string body;
-      unsigned short major_version;
-      unsigned short minor_version;
+      unsigned short majorVersion;
+      unsigned short minorVersion;
 
-      size_t content_size;
+      size_t contentSize;
 
       static size_t maxRequestSize;
 
     protected:
       header_type header;
-      cookies httpcookies;
+      Cookies httpcookies;
 
     public:
-      httpMessage()
-        : major_version(0),
-          minor_version(0)
+      HttpMessage()
+        : majorVersion(0),
+          minorVersion(0)
         { }
-      virtual ~httpMessage()
+      virtual ~HttpMessage()
       { }
 
       /// Removes all request-specific content.
@@ -94,11 +71,11 @@ namespace tnt
       void setMethod(const std::string& m)      { method = m; }
       /// returns url with get-parameters.
       std::string getQuery() const
-        { return query_string.empty() ? url : url + '?' + query_string; }
+        { return queryString.empty() ? url : url + '?' + queryString; }
       /// returns the request-url without parameters.
       const std::string& getUrl() const         { return url; }
       /// returns get-parameters as string.
-      const std::string& getQueryString() const { return query_string; }
+      const std::string& getQueryString() const { return queryString; }
       /// returns true, if the message has the specified header.
       bool hasHeader(const std::string& key)    { return header.find(key) != header.end(); }
       /// returns the content of the specified header or the passed default
@@ -110,20 +87,20 @@ namespace tnt
 
       /// returns the http-major-version-number.
       unsigned short getMajorVersion() const
-        { return major_version; }
+        { return majorVersion; }
       /// returns the http-minor-version-number.
       unsigned short getMinorVersion() const
-        { return minor_version; }
+        { return minorVersion; }
       /// sets the http-version-number
       void setVersion(unsigned short major, unsigned short minor)
-        { major_version = major; minor_version = minor; }
+        { majorVersion = major; minorVersion = minor; }
 
       /// returns the value of the content-size-header as read from the client.
       size_t getContentSize() const
-        { return content_size; }
+        { return contentSize; }
       /// returns the virtual-host-header of this request.
       std::string getVirtualHost() const
-        { return getHeader(Host); }
+        { return getHeader(httpheader::host); }
 
       /// Returns a constant Iterator, which points to the first header.
       /// The value of the iterator is a std::pair<std::string, std::string>.

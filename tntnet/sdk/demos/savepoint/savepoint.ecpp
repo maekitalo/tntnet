@@ -10,7 +10,7 @@
 
   try
   {
-    tnt::savepoint sv(reply);
+    tnt::Savepoint sv(reply);
 
     // everything from here until catch is not sent, because
     // the exception rolls back the savepoint

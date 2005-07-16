@@ -26,20 +26,20 @@ namespace tnt
   namespace ecppc
   {
     ////////////////////////////////////////////////////////////////////////
-    // subcomponent
+    // Subcomponent
     //
-    void subcomponent::getHeader(std::ostream& o) const
+    void Subcomponent::getHeader(std::ostream& o) const
     {
-      o << "    class " << getName() << "_type : public ecppSubComponent\n"
+      o << "    class " << getName() << "_type : public EcppSubComponent\n"
            "    {\n"
            "        " << outerclass->getName() << "& mainComp;\n"
            "        " << outerclass->getName() << "& main()  { return mainComp; }\n\n"
            "      public:\n"
            "        " << getName() << "_type(" << outerclass->getName() << "& m, const std::string& name)\n"
-           "          : ecppSubComponent(m, name),\n"
+           "          : EcppSubComponent(m, name),\n"
            "            mainComp(m)\n"
            "          { }\n"
-           "        unsigned operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam";
+           "        unsigned operator() (HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam";
       for (cppargs_type::const_iterator j = cppargs.begin();
            j != cppargs.end(); ++j)
       {
@@ -51,10 +51,10 @@ namespace tnt
            "    };\n\n";
     }
 
-    void subcomponent::getDefinition(std::ostream& code, bool debug, bool externData) const
+    void Subcomponent::getDefinition(std::ostream& code, bool debug, bool externData) const
     {
       code << "unsigned " << outerclass->getName() << "::" << getName()
-           << "_type::operator() (httpRequest& request, httpReply& reply, cxxtools::query_params& qparam";
+           << "_type::operator() (HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam";
       for (cppargs_type::const_iterator j = cppargs.begin();
            j != cppargs.end(); ++j)
         code << ", " << j->first;
@@ -68,7 +68,7 @@ namespace tnt
         code << "  const component* dataComponent = main().getDataComponent(request);\n"
                 "  ::use(dataComponent);\n\n";
 
-      component::getBody(code);
+      Component::getBody(code);
       code << "}\n\n";
     }
   }

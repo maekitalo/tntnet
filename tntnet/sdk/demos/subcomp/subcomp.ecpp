@@ -31,7 +31,7 @@ called if found. Otherwise it is a external componentcall.
 You can dynamically build componentnames, by putting a c++-expression inside
 brackets. This expression is evaluated on runtime and the resulting component
 is called. The expression can be of type (or convertable to)
-<b>std::string</b>, <b>tnt::compident</b> or <b>tnt::subcompident</b>.
+<b>std::string</b>, <b>tnt::Compident</b> or <b>tnt::Subcompident</b>.
 </p>
 
 <p>
@@ -111,10 +111,10 @@ normal parameterlist just like in c++-functions after the defition
 
 <h2> call component by componentidentifier </h2>
 <p class="example">
- &lt;&amp; (compident(compname, libname)) param1="value1" &amp;&gt;
+ &lt;&amp; (Compident(compname, libname)) param1="value1" &amp;&gt;
 </p>
 <p class="result">
- <& (compident(libname, compname)) param1="value1" &>
+ <& (Compident(libname, compname)) param1="value1" &>
 </p>
 
 <h2> pass a expression as parameter </h2>

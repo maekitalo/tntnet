@@ -1,5 +1,5 @@
 /* tnt/datachunks_creator.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -27,18 +27,15 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class datachunks_creator
+  class DatachunksCreator
   {
       typedef std::list<std::string> chunks_type;
       chunks_type chunks;
       mutable std::string chunks_cache;
 
-      void create_chunks() const;
+      void createChunks() const;
 
     public:
-      datachunks_creator()
-      { }
-
       void push_back(const std::string& data)
         { chunks.push_back(data); chunks_cache.clear(); }
       void push_back(const char* data, unsigned len)
@@ -47,7 +44,7 @@ namespace tnt
       const char* ptr() const
       {
         if (chunks_cache.empty())
-          create_chunks();
+          createChunks();
         return chunks_cache.data();
       }
 
@@ -57,7 +54,7 @@ namespace tnt
       unsigned size() const
       {
         if (chunks_cache.empty())
-          create_chunks();
+          createChunks();
         return chunks_cache.size();
       }
 

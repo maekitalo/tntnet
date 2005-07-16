@@ -28,7 +28,7 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   template <typename T>
-  inline std::string to_string(const T& value)
+  inline std::string toString(const T& value)
   {
     std::ostringstream s;
     s << value;
@@ -36,14 +36,14 @@ namespace tnt
   }
 
   template <>
-  inline std::string to_string(const std::string& value)
+  inline std::string toString(const std::string& value)
   { return value; }
 
-  inline std::string to_string(const char* value)
+  inline std::string toString(const char* value)
   { return std::string(value); }
 
   template <typename T>
-  inline T string_to(const std::string& value)
+  inline T stringTo(const std::string& value)
   {
     T ret;
     std::istringstream s(value);
@@ -54,7 +54,7 @@ namespace tnt
   }
 
   template <typename T>
-  inline T string_to_with_default(const std::string& value, const T& def)
+  inline T stringToWithDefault(const std::string& value, const T& def)
   {
     T ret;
     std::istringstream s(value);
@@ -65,11 +65,11 @@ namespace tnt
   }
 
   template <>
-  inline std::string string_to<std::string>(const std::string& value)
+  inline std::string stringTo<std::string>(const std::string& value)
   { return value; }
 
   template <>
-  inline std::string string_to_with_default<std::string>(const std::string& value, const std::string&)
+  inline std::string stringToWithDefault<std::string>(const std::string& value, const std::string&)
   { return value; }
 }
 

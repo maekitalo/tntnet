@@ -27,14 +27,14 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class sessionscope : public scope
+  class Sessionscope : public Scope
   {
       time_t atime;
       unsigned timeout;
       static unsigned defaultTimeout;
 
     public:
-      sessionscope()
+      Sessionscope()
         : timeout(defaultTimeout)
         { touch(); }
 

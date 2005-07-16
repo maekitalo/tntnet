@@ -32,9 +32,9 @@ namespace tnt
   log_define("tntnet.tntconfig")
 
   //////////////////////////////////////////////////////////////////////
-  // config_parser
+  // ConfigParser
   //
-  void config_parser::parse(char ch)
+  void ConfigParser::parse(char ch)
   {
     switch(state)
     {
@@ -147,14 +147,14 @@ namespace tnt
   }
 
   //////////////////////////////////////////////////////////////////////
-  // tntconfig_parser
+  // TntconfigParser
   //
-  class tntconfig_parser : public config_parser
+  class TntconfigParser : public ConfigParser
   {
       typedef std::stack<std::istream*> istreams_type;
       istreams_type istreams;
 
-      tntconfig& config;
+      Tntconfig& config;
 
       bool checkInclude(const std::string& key, const params_type& params);
 
@@ -162,14 +162,14 @@ namespace tnt
       virtual void onLine(const std::string& key, const params_type& value);
 
     public:
-      tntconfig_parser(tntconfig& config_)
+      TntconfigParser(Tntconfig& config_)
         : config(config_)
         { }
 
       void parse(std::istream& in);
   };
 
-  bool tntconfig_parser::checkInclude(const std::string& key, const params_type& params)
+  bool TntconfigParser::checkInclude(const std::string& key, const params_type& params)
   {
     if (key == "include" && params.size() == 1)
     {
@@ -190,13 +190,13 @@ namespace tnt
       return false;
   }
 
-  void tntconfig_parser::onLine(const std::string& key, const params_type& params)
+  void TntconfigParser::onLine(const std::string& key, const params_type& params)
   {
     if (!checkInclude(key, params))
       config.setConfigValue(key, params);
   }
 
-  void tntconfig_parser::parse(std::istream& in)
+  void TntconfigParser::parse(std::istream& in)
   {
     char ch;
 
@@ -207,8 +207,8 @@ namespace tnt
       while (istreams.size() > 0)
       {
         while (istreams.top()->get(ch))
-          config_parser::parse(ch);
-        config_parser::parse('\n');
+          ConfigParser::parse(ch);
+        ConfigParser::parse('\n');
 
         if (istreams.size() > 1)
           delete istreams.top();
@@ -231,9 +231,9 @@ namespace tnt
   }
 
   //////////////////////////////////////////////////////////////////////
-  // tntconfig
+  // Tntconfig
   //
-  void tntconfig::load(const char* configfile)
+  void Tntconfig::load(const char* configfile)
   {
     std::ifstream in(configfile);
     if (!in)
@@ -246,20 +246,20 @@ namespace tnt
     load(in);
   }
 
-  void tntconfig::load(std::istream& in)
+  void Tntconfig::load(std::istream& in)
   {
-    tntconfig_parser parser(*this);
+    TntconfigParser parser(*this);
     parser.parse(in);
   }
 
-  void tntconfig::setConfigValue(const std::string& key, const params_type& params)
+  void Tntconfig::setConfigValue(const std::string& key, const params_type& params)
   {
     config_entries.push_back(config_entry_type());
     config_entries[config_entries.size() - 1].key = key;
     config_entries[config_entries.size() - 1].params = params;
   }
 
-  tntconfig::params_type tntconfig::getConfigValue(
+  Tntconfig::params_type Tntconfig::getConfigValue(
        const std::string& key,
        const params_type& def) const
   {
@@ -270,7 +270,7 @@ namespace tnt
     return def;
   }
 
-  void tntconfig::getConfigValues(
+  void Tntconfig::getConfigValues(
        const std::string& key,
        config_entries_type& ret) const
   {
@@ -280,7 +280,7 @@ namespace tnt
         ret.push_back(*it);
   }
 
-  std::string tntconfig::getValue(
+  std::string Tntconfig::getValue(
        const std::string& key,
        const params_type::value_type& def) const
   {
@@ -297,7 +297,7 @@ namespace tnt
     return def;
   }
 
-  bool tntconfig::hasValue(const std::string& key) const
+  bool Tntconfig::hasValue(const std::string& key) const
   {
     log_debug("hasValue(\"" << key << "\")");
     for (config_entries_type::const_iterator it = config_entries.begin();

@@ -27,14 +27,14 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
 
-void dispatcher::addUrlMapEntry(const std::string& url, const compident_type& ci)
+void Dispatcher::addUrlMapEntry(const std::string& url, const CompidentType& ci)
 {
   cxxtools::WrLock lock(rwlock);
 
   urlmap.push_back(urlmap_type::value_type(regex(url), ci));
 }
 
-compident dispatcher::mapComp(const std::string& compUrl) const
+Compident Dispatcher::mapComp(const std::string& compUrl) const
 {
   urlmap_type::const_iterator pos = urlmap.begin();
   return mapCompNext(compUrl, pos);
@@ -50,8 +50,8 @@ namespace {
   };
 }
 
-dispatcher::compident_type dispatcher::mapCompNext(const std::string& compUrl,
-  dispatcher::urlmap_type::const_iterator& pos) const
+Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
+  Dispatcher::urlmap_type::const_iterator& pos) const
 {
   using std::transform;
   using std::back_inserter;
@@ -63,9 +63,9 @@ dispatcher::compident_type dispatcher::mapCompNext(const std::string& compUrl,
   {
     if (pos->first.match(compUrl, formatter.what))
     {
-      const compident_type& src = pos->second;
+      const CompidentType& src = pos->second;
 
-      compident_type ci;
+      CompidentType ci;
       ci.libname = formatter(src.libname);
       ci.compname = formatter(src.compname);
       if (src.hasPathInfo())
@@ -77,10 +77,10 @@ dispatcher::compident_type dispatcher::mapCompNext(const std::string& compUrl,
     }
   }
 
-  throw notFoundException(compUrl);
+  throw NotFoundException(compUrl);
 }
 
-dispatcher::compident_type dispatcher::pos_type::getNext()
+Dispatcher::CompidentType Dispatcher::PosType::getNext()
 {
   if (first)
     first = false;

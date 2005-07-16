@@ -33,11 +33,11 @@ namespace tnt
   log_define("tntnet.http")
 
   ////////////////////////////////////////////////////////////////////////
-  // httpRequest
+  // HttpRequest
   //
-  unsigned httpRequest::serial_ = 0;
+  unsigned HttpRequest::serial_ = 0;
 
-  httpRequest::httpRequest(const std::string& url)
+  HttpRequest::HttpRequest(const std::string& url)
   : ssl(false),
     lang_init(false),
     requestScope(0),
@@ -50,7 +50,7 @@ namespace tnt
     parse(s);
   }
 
-  httpRequest::httpRequest(const httpRequest& r)
+  HttpRequest::HttpRequest(const HttpRequest& r)
     : pathinfo(r.pathinfo),
       args(r.args),
       qparam(r.qparam),
@@ -76,7 +76,7 @@ namespace tnt
       sessionScope->addRef();
   }
 
-  httpRequest::~httpRequest()
+  HttpRequest::~HttpRequest()
   {
     releaseLocks();
 
@@ -88,7 +88,7 @@ namespace tnt
       sessionScope->release();
   }
 
-  httpRequest& httpRequest::operator= (const httpRequest& r)
+  HttpRequest& HttpRequest::operator= (const HttpRequest& r)
   {
     pathinfo = r.pathinfo;
     args = r.args;
@@ -113,16 +113,18 @@ namespace tnt
       applicationScope->addRef();
     if (sessionScope)
       sessionScope->addRef();
+
+    return *this;
   }
 
-  void httpRequest::clear()
+  void HttpRequest::clear()
   {
-    httpMessage::clear();
+    HttpMessage::clear();
     pathinfo.clear();
     args.clear();
     qparam.clear();
-    ct = contenttype();
-    mp = multipart();
+    ct = Contenttype();
+    mp = Multipart();
     lang_init = false;
     if (requestScope)
     {
@@ -146,31 +148,31 @@ namespace tnt
     }
   }
 
-  void httpRequest::parse(std::istream& in)
+  void HttpRequest::parse(std::istream& in)
   {
-    parser p(*this);
+    Parser p(*this);
     p.parse(in);
     if (!p.failed())
       doPostParse();
   }
 
-  void httpRequest::doPostParse()
+  void HttpRequest::doPostParse()
   {
     qparam.parse_url(getQueryString());
     if (getMethod() == "POST")
     {
-      std::istringstream in(getHeader(Content_Type));
+      std::istringstream in(getHeader(httpheader::contentType));
       in >> ct;
 
       if (in)
       {
-        log_debug(Content_Type << ' ' << in.str());
+        log_debug(httpheader::contentType << ' ' << in.str());
         log_debug("type=" << ct.getType() << " subtype=" << ct.getSubtype());
         if (ct.isMultipart())
         {
           log_debug("multipart-boundary=" << ct.getBoundary());
           mp.set(ct.getBoundary(), getBody());
-          for (multipart::const_iterator it = mp.begin();
+          for (Multipart::const_iterator it = mp.begin();
                it != mp.end(); ++it)
           {
             // hochgeladene Dateien nicht in qparam übernehmen
@@ -200,7 +202,7 @@ namespace tnt
     }
   }
 
-  std::string httpRequest::getPeerIp() const
+  std::string HttpRequest::getPeerIp() const
   {
     static cxxtools::Mutex monitor;
     cxxtools::MutexLock lock(monitor);
@@ -209,7 +211,7 @@ namespace tnt
     return std::string(p);
   }
 
-  std::string httpRequest::getServerIp() const
+  std::string HttpRequest::getServerIp() const
   {
     static cxxtools::Mutex monitor;
     cxxtools::MutexLock lock(monitor);
@@ -218,12 +220,12 @@ namespace tnt
     return std::string(p);
   }
 
-  std::string httpRequest::getLang() const
+  std::string HttpRequest::getLang() const
   {
     if (!lang_init)
     {
       static const std::string LANG = "LANG";
-      log_debug("httpRequest::getLang() " << qparam.dump());
+      log_debug("HttpRequest::getLang() " << qparam.dump());
 
       lang = qparam[LANG];
 
@@ -245,32 +247,32 @@ namespace tnt
     return lang;
   }
 
-  const cookies& httpRequest::getCookies() const
+  const Cookies& HttpRequest::getCookies() const
   {
-    log_debug("httpRequest::getCookies()");
+    log_debug("HttpRequest::getCookies()");
 
     if (!httpcookies.hasCookies())
     {
       log_debug("cookies found");
 
-      header_type::const_iterator it = header.find(Cookie);
+      header_type::const_iterator it = header.find(httpheader::cookie);
       if (it != header.end())
       {
         log_debug("parse cookie-header " << it->second);
-        const_cast<httpRequest*>(this)->httpcookies.set(it->second);
+        const_cast<HttpRequest*>(this)->httpcookies.set(it->second);
       }
     }
 
     return httpcookies;
   }
 
-  bool httpRequest::keepAlive() const
+  bool HttpRequest::keepAlive() const
   {
-    header_type::const_iterator it = header.find(Connection);
-    return it != header.end() && it->second == Connection_Keep_Alive;
+    header_type::const_iterator it = header.find(httpheader::connection);
+    return it != header.end() && it->second == httpheader::connectionKeepAlive;
   }
 
-  void httpRequest::setApplicationScope(scope* s)
+  void HttpRequest::setApplicationScope(Scope* s)
   {
     if (applicationScope)
     {
@@ -283,7 +285,7 @@ namespace tnt
     applicationScope = s;
   }
 
-  void httpRequest::setSessionScope(sessionscope* s)
+  void HttpRequest::setSessionScope(Sessionscope* s)
   {
     if (sessionScope)
     {
@@ -296,7 +298,7 @@ namespace tnt
     sessionScope = s;
   }
 
-  void httpRequest::clearSession()
+  void HttpRequest::clearSession()
   {
     if (sessionScope)
     {
@@ -306,7 +308,7 @@ namespace tnt
     }
   }
 
-  void httpRequest::ensureApplicationScopeLock()
+  void HttpRequest::ensureApplicationScopeLock()
   {
     log_trace("ensureApplicationScopeLock; thread " << pthread_self());
 
@@ -314,28 +316,28 @@ namespace tnt
     if (applicationScope && !applicationScopeLocked)
     {
       log_debug("lock application scope; thread" << pthread_self());
-      applicationScope->Lock();
+      applicationScope->lock();
       applicationScopeLocked = true;
     }
     else
       log_debug("applicationscope locked already");
   }
 
-  void httpRequest::ensureSessionScopeLock()
+  void HttpRequest::ensureSessionScopeLock()
   {
     log_trace("ensureSessionScopeLock; thread " << pthread_self());
 
     if (sessionScope && !sessionScopeLocked)
     {
       log_debug("lock sessionscope; thread " << pthread_self());
-      sessionScope->Lock();
+      sessionScope->lock();
       sessionScopeLocked = true;
     }
     else
       log_debug("sessionscope locked already");
   }
 
-  void httpRequest::releaseApplicationScopeLock()
+  void HttpRequest::releaseApplicationScopeLock()
   {
     log_trace("releaseApplicationScopeLock; thread " << pthread_self());
 
@@ -343,13 +345,13 @@ namespace tnt
     {
       log_debug("unlock applicationscope");
       applicationScopeLocked = false;
-      applicationScope->Unlock();
+      applicationScope->unlock();
     }
     else
       log_debug("applicationscope not locked");
   }
 
-  void httpRequest::releaseSessionScopeLock()
+  void HttpRequest::releaseSessionScopeLock()
   {
     log_trace("releaseSessionScopeLock; thread " << pthread_self());
 
@@ -359,35 +361,36 @@ namespace tnt
     {
       log_debug("unlock sessionscope");
       sessionScopeLocked = false;
-      sessionScope->Unlock();
+      sessionScope->unlock();
     }
     else
       log_debug("sessionscope not locked");
   }
 
-  scope& httpRequest::getRequestScope()
+  Scope& HttpRequest::getRequestScope()
   {
     if (requestScope == 0)
-      requestScope = new scope();
+      requestScope = new Scope();
     return *requestScope;
   }
 
-  scope& httpRequest::getApplicationScope()
+  Scope& HttpRequest::getApplicationScope()
   {
     ensureApplicationScopeLock();
     return *applicationScope;
   }
 
-  sessionscope& httpRequest::getSessionScope()
+  Sessionscope& HttpRequest::getSessionScope()
   {
     if (!sessionScope)
-      sessionScope = new sessionscope();
+      sessionScope = new Sessionscope();
     ensureSessionScopeLock();
     return *sessionScope;
   }
 
-  bool httpRequest::hasSessionScope() const
+  bool HttpRequest::hasSessionScope() const
   {
     return sessionScope != 0 && !sessionScope->empty();
   }
 }
+

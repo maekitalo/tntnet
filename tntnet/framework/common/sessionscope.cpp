@@ -1,5 +1,5 @@
 /* sessionscope.cpp
-   Copyright (C) 2005 Tommi Mäkitalo
+   Copyright (C) 2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -23,5 +23,5 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  unsigned sessionscope::defaultTimeout = 300;
+  unsigned Sessionscope::defaultTimeout = 300;
 }

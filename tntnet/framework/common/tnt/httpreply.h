@@ -28,12 +28,12 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class savepoint;
+  class Savepoint;
 
   /// HTTP-Reply-message
-  class httpReply : public httpMessage
+  class HttpReply : public HttpMessage
   {
-      friend class savepoint;
+      friend class Savepoint;
 
       std::string contentType;
       std::ostream& socket;
@@ -47,7 +47,7 @@ namespace tnt
       void send(unsigned ret);
 
     public:
-      explicit httpReply(std::ostream& s);
+      explicit HttpReply(std::ostream& s);
 
       void setContentType(const std::string& t)    { contentType = t; }
       const std::string& getContentType() const    { return contentType; }
@@ -76,18 +76,18 @@ namespace tnt
 
       void setMd5Sum();
 
-      void setCookie(const std::string& name, const cookie& value);
+      void setCookie(const std::string& name, const Cookie& value);
       void setCookie(const std::string& name, const std::string& value, unsigned seconds)
-        { setCookie(name, cookie(value, seconds)); }
-      void setCookies(const cookies& c)
+        { setCookie(name, Cookie(value, seconds)); }
+      void setCookies(const Cookies& c)
         { httpcookies = c; }
       void clearCookie(const std::string& name)
         { httpcookies.clearCookie(name); }
-      void clearCookie(const std::string& name, const cookie& c)
+      void clearCookie(const std::string& name, const Cookie& c)
         { httpcookies.clearCookie(name, c); }
       bool hasCookies() const
         { return httpcookies.hasCookies(); }
-      const cookies& getCookies() const
+      const Cookies& getCookies() const
         { return httpcookies; }
 
       void setKeepAliveCounter(unsigned c)  { keepAliveCounter = c; }
@@ -99,17 +99,17 @@ namespace tnt
   };
 
   /// HTTP-error-class
-  class httpError : public std::exception
+  class HttpError : public std::exception
   {
       std::string msg;
 
     public:
-      httpError(const std::string& m)
+      HttpError(const std::string& m)
         : msg(m)
         { }
 
-      httpError(unsigned errcode, const std::string& msg);
-      ~httpError() throw ()
+      HttpError(unsigned errcode, const std::string& msg);
+      ~HttpError() throw ()
         { }
 
       const char* what() const throw ()
@@ -117,11 +117,11 @@ namespace tnt
   };
 
   /// HTTP-error 404
-  class notFoundException : public httpError
+  class NotFoundException : public HttpError
   {
     public:
-      notFoundException(const std::string& url)
-        : httpError(404, "Not Found (" + url + ')')
+      NotFoundException(const std::string& url)
+        : HttpError(404, "Not Found (" + url + ')')
         { }
   };
 }

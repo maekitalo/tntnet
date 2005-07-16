@@ -31,9 +31,9 @@ namespace tnt
   {
 
     ////////////////////////////////////////////////////////////////////////
-    // dependencygenerator
+    // Dependencygenerator
     //
-    class dependencygenerator : public tnt::ecpp::parseHandler
+    class Dependencygenerator : public tnt::ecpp::ParseHandler
     {
         std::string classname;
         std::string inputfile;
@@ -41,7 +41,7 @@ namespace tnt
         dependencies_type dependencies;
 
       public:
-        dependencygenerator(const std::string& classname_, const std::string& inputfile_)
+        Dependencygenerator(const std::string& classname_, const std::string& inputfile_)
           : classname(classname_),
             inputfile(inputfile_)
         { }

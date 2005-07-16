@@ -1,5 +1,5 @@
 /* messageheader.cpp
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -27,19 +27,19 @@ namespace tnt
 {
   log_define("tntnet.messageheader")
 
-  std::istream& operator>> (std::istream& in, messageheader& data)
+  std::istream& operator>> (std::istream& in, Messageheader& data)
   {
     data.parse(in);
     return in;
   }
 
-  void messageheader::parse(std::istream& in, size_t maxHeaderSize)
+  void Messageheader::parse(std::istream& in, size_t maxHeaderSize)
   {
-    parser p(*this);
+    Parser p(*this);
     p.parse(in);
   }
 
-  messageheader::return_type messageheader::onField(const std::string& name, const std::string& value)
+  Messageheader::return_type Messageheader::onField(const std::string& name, const std::string& value)
   {
     log_debug(name << ' ' << value);
     insert(value_type(name, value));

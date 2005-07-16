@@ -1,5 +1,5 @@
 /* static.h
-   Copyright (C) 2003 Tommi Mäkitalo
+   Copyright (C) 2003 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -27,8 +27,8 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class urlmapper;
-  class comploader;
+  class Urlmapper;
+  class Comploader;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -36,8 +36,8 @@ namespace tnt
 //
 extern "C"
 {
-  tnt::component* create_static(const tnt::compident& ci,
-    const tnt::urlmapper& um, tnt::comploader& cl);
+  tnt::Component* create_static(const tnt::Compident& ci,
+    const tnt::Urlmapper& um, tnt::Comploader& cl);
 }
 
 namespace tntcomp
@@ -45,16 +45,16 @@ namespace tntcomp
   //////////////////////////////////////////////////////////////////////
   // componentdeclaration
   //
-  class staticcomp : public tnt::component
+  class Staticcomp : public tnt::Component
   {
       static std::string document_root;
 
     protected:
-      virtual ~staticcomp() { };
+      virtual ~Staticcomp() { };
 
     public:
-      virtual unsigned operator() (tnt::httpRequest& request,
-        tnt::httpReply& reply, cxxtools::query_params& qparam);
+      virtual unsigned operator() (tnt::HttpRequest& request,
+        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
       virtual bool drop();
 
       static void setDocumentRoot(const std::string& s)

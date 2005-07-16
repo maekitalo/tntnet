@@ -31,13 +31,13 @@ log_define("tntnet.ecpp")
 namespace tnt
 {
   //////////////////////////////////////////////////////////////////////
-  // subcompident
+  // Subcompident
   //
-  inline std::ostream& operator<< (std::ostream& out, const subcompident& comp)
+  inline std::ostream& operator<< (std::ostream& out, const Subcompident& comp)
   { return out << comp.toString(); }
 
-  subcompident::subcompident(const std::string& ident)
-    : tnt::compident(ident)
+  Subcompident::Subcompident(const std::string& ident)
+    : tnt::Compident(ident)
   {
     std::string::size_type pos = compname.find('.');
     if (pos != std::string::npos)
@@ -47,9 +47,9 @@ namespace tnt
     }
   }
 
-  std::string subcompident::toString() const
+  std::string Subcompident::toString() const
   {
-    std::string ret = tnt::compident::toString();
+    std::string ret = tnt::Compident::toString();
     if (!subname.empty())
     {
       ret += '.';
@@ -59,23 +59,23 @@ namespace tnt
   }
 
   //////////////////////////////////////////////////////////////////////
-  // ecppComponent
+  // EcppComponent
   //
   cxxtools::RWLock equivMonitor;
-  ecppComponent::libnotfound_type ecppComponent::libnotfound;
-  ecppComponent::compnotfound_type ecppComponent::compnotfound;
+  EcppComponent::libnotfound_type EcppComponent::libnotfound;
+  EcppComponent::compnotfound_type EcppComponent::compnotfound;
 
-  ecppComponent::ecppComponent(const compident& ci, const urlmapper& um,
-    comploader& cl)
+  EcppComponent::EcppComponent(const Compident& ci, const Urlmapper& um,
+    Comploader& cl)
     : myident(ci),
       rootmapper(um),
       loader(cl)
   { }
 
-  ecppComponent::~ecppComponent()
+  EcppComponent::~EcppComponent()
   { }
 
-  void ecppComponent::registerSubComp(const std::string& name, ecppSubComponent* comp)
+  void EcppComponent::registerSubComp(const std::string& name, EcppSubComponent* comp)
   {
     log_debug(getCompident() << ": registerSubComp " << name);
 
@@ -86,17 +86,17 @@ namespace tnt
       getSubcomps().insert(subcomps_type::value_type(name, comp));
   }
 
-  component& ecppComponent::fetchComp(const std::string& url) const
+  Component& EcppComponent::fetchComp(const std::string& url) const
   {
     log_debug("fetchComp(\"" << url << "\")");
 
-    subcompident ci(url);
+    Subcompident ci(url);
     if (ci.libname.empty())
       ci.libname = myident.libname;
     if (ci.compname.empty())
       ci.compname = myident.compname;
 
-    component* comp;
+    Component* comp;
     try
     {
       // suche Komponente nach Namen
@@ -107,19 +107,19 @@ namespace tnt
       {
         try
         {
-          ecppComponent& e = dynamic_cast<ecppComponent&>(*comp);
+          EcppComponent& e = dynamic_cast<EcppComponent&>(*comp);
           comp = &e.fetchSubComp(ci.subname);
         }
         catch (const std::exception&)
         {
-          throw notFoundException(ci.toString());
+          throw NotFoundException(ci.toString());
         }
       }
     }
-    catch (const notFoundException&)
+    catch (const NotFoundException&)
     {
       // wenn nicht gefunden, dann nach Url
-      compident ci = rootmapper.mapComp(url);
+      Compident ci = rootmapper.mapComp(url);
       comp = &loader.fetchComp(ci, rootmapper);
     }
 
@@ -127,11 +127,11 @@ namespace tnt
     return *comp;
   }
 
-  component& ecppComponent::fetchComp(const compident& ci) const
+  Component& EcppComponent::fetchComp(const Compident& ci) const
   {
     if (ci.libname.empty())
     {
-      compident cii(ci);
+      Compident cii(ci);
       cii.libname = myident.libname;
       return loader.fetchComp(cii, rootmapper);
     }
@@ -139,23 +139,23 @@ namespace tnt
       return loader.fetchComp(ci, rootmapper);
   }
 
-  ecppSubComponent& ecppComponent::fetchSubComp(const std::string& sub) const
+  EcppSubComponent& EcppComponent::fetchSubComp(const std::string& sub) const
   {
     log_debug(getCompident() << ": fetchSubComp(\"" << sub << "\")");
 
     subcomps_type::const_iterator it = getSubcomps().find(sub);
     if (it == getSubcomps().end())
-      throw notFoundException(subcompident(getCompident(), sub).toString());
+      throw NotFoundException(Subcompident(getCompident(), sub).toString());
     return *it->second;
   }
 
-  const component* ecppComponent::getDataComponent(const httpRequest& request) const
+  const Component* EcppComponent::getDataComponent(const HttpRequest& request) const
   {
     std::string LANG = request.getLang();
 
     if (!LANG.empty())
     {
-      compident ci = compident(getCompident().libname + '.' + LANG,
+      Compident ci = Compident(getCompident().libname + '.' + LANG,
                                     getCompident().compname);
 
       // check compidentmap
@@ -175,12 +175,12 @@ namespace tnt
       {
         return &fetchComp(ci);
       }
-      catch (const cxxtools::dl::symbol_not_found&)
+      catch (const cxxtools::dl::SymbolNotFound&)
       {
         // symbol with lang not found - remember this
         rememberCompNotFound(ci);
       }
-      catch (const cxxtools::dl::dlopen_error&)
+      catch (const cxxtools::dl::DlopenError&)
       {
         // library with lang not found - remember this
         rememberLibNotFound(ci.libname);
@@ -190,14 +190,14 @@ namespace tnt
     return this;
   }
 
-  void ecppComponent::rememberLibNotFound(const std::string& lib)
+  void EcppComponent::rememberLibNotFound(const std::string& lib)
   {
     log_debug("remember lib not found " << lib);
     cxxtools::WrLock wrlock(equivMonitor);
     libnotfound.insert(lib);
   }
 
-  void ecppComponent::rememberCompNotFound(const compident& ci)
+  void EcppComponent::rememberCompNotFound(const Compident& ci)
   {
     log_debug("remember comp not found " << ci);
     cxxtools::WrLock wrlock(equivMonitor);
@@ -207,7 +207,7 @@ namespace tnt
   ///////////////////////////////////////////////////////////////////////
   // ecppSubComponent
   //
-  bool ecppSubComponent::drop()
+  bool EcppSubComponent::drop()
   {
     return false;
   }

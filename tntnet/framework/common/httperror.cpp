@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   ////////////////////////////////////////////////////////////////////////
-  // httpError
+  // HttpError
   //
 
   static std::string httpErrorFormat(unsigned errcode, const std::string& msg)
@@ -41,7 +41,7 @@ namespace tnt
     return ret;
   }
 
-  httpError::httpError(unsigned errcode, const std::string& msg)
+  HttpError::HttpError(unsigned errcode, const std::string& msg)
     : msg(httpErrorFormat(errcode, msg))
   {
   }

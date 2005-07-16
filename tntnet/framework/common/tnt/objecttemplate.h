@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   template <typename data_type>
-  class objectTemplate : public object
+  class ObjectTemplate : public Object
   {
       data_type data;
 
@@ -35,51 +35,51 @@ namespace tnt
       typedef data_type& reference;
       typedef const data_type& const_reference;
 
-      objectTemplate() { }
+      ObjectTemplate() { }
 
       template <typename t0>
-      objectTemplate(t0 p0)
+      ObjectTemplate(t0 p0)
         : data(p0) { }
 
       template <typename t0, typename t1>
-      objectTemplate(t0 p0, t1 p1)
+      ObjectTemplate(t0 p0, t1 p1)
         : data(p0, p1) { }
 
       template <typename t0, typename t1, typename t2>
-      objectTemplate(t0 p0, t1 p1, t2 p2)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2)
         : data(p0, p1, p2) { }
 
       template <typename t0, typename t1, typename t2, typename t3>
-      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2, t3 p3)
         : data(p0, p1, p2, p3) { }
 
       template <typename t0, typename t1, typename t2, typename t3, typename t4>
-      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4)
         : data(p0, p1, p2, p3, p4) { }
 
       template <typename t0, typename t1, typename t2, typename t3, typename t4,
                 typename t5>
-      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5)
         : data(p0, p1, p2, p3, p4, p5) { }
 
       template <typename t0, typename t1, typename t2, typename t3, typename t4,
                 typename t5, typename t6>
-      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6)
         : data(p0, p1, p2, p3, p4, p5, p6) { }
 
       template <typename t0, typename t1, typename t2, typename t3, typename t4,
                 typename t5, typename t6, typename t7>
-      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7)
         : data(p0, p1, p2, p3, p4, p5, p6, p7) { }
 
       template <typename t0, typename t1, typename t2, typename t3, typename t4,
                 typename t5, typename t6, typename t7, typename t8>
-      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7, t8 p8)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7, t8 p8)
         : data(p0, p1, p2, p3, p4, p5, p6, p7, p8) { }
 
       template <typename t0, typename t1, typename t2, typename t3, typename t4,
                 typename t5, typename t6, typename t7, typename t8, typename t9>
-      objectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7, t8 p8, t9 p9)
+      ObjectTemplate(t0 p0, t1 p1, t2 p2, t3 p3, t4 p4, t5 p5, t6 p6, t7 p7, t8 p8, t9 p9)
         : data(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) { }
 
       // explicit accessors
@@ -92,11 +92,11 @@ namespace tnt
       operator const reference() const    { return data; }
       reference operator*()               { return data; }
       const reference operator*() const   { return data; }
-      objectTemplate& operator= (const data_type& d)  { data = d; return *this; }
+      ObjectTemplate& operator= (const data_type& d)  { data = d; return *this; }
 
-      static reference getRef(object* o)
+      static reference getRef(Object* o)
       {
-        return dynamic_cast<objectTemplate<data_type>&>(*o).data;
+        return dynamic_cast<ObjectTemplate<data_type>&>(*o).data;
       }
   };
 }

@@ -21,6 +21,7 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <tnt/httpheader.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 
@@ -29,39 +30,39 @@ namespace tnt
   log_define("tntnet.http")
 
   ////////////////////////////////////////////////////////////////////////
-  // httpReply
+  // HttpReply
   //
-  unsigned httpReply::keepAliveTimeout = 15000;
+  unsigned HttpReply::keepAliveTimeout = 15000;
 
-  void httpReply::send(unsigned ret)
+  void HttpReply::send(unsigned ret)
   {
     log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
            << ' ' << ret << " OK");
     socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
            << ' ' << ret << " OK" << "\r\n";
 
-    if (!hasHeader(Date))
-      setHeader(Date, htdate(time(0)));
+    if (!hasHeader(httpheader::date))
+      setHeader(httpheader::date, htdate(time(0)));
 
-    if (!hasHeader(Server))
-      setHeader(Server, ServerName);
+    if (!hasHeader(httpheader::server))
+      setHeader(httpheader::server, httpheader::serverName);
 
     if (keepAliveTimeout > 0 && keepAliveCounter > 0)
     {
-      if (!hasHeader(Connection))
+      if (!hasHeader(httpheader::connection))
         setKeepAliveHeader(getKeepAliveTimeout() + 999 / 1000);
 
-      if (!hasHeader(Content_Length))
+      if (!hasHeader(httpheader::contentLength))
         setContentLengthHeader(outstream.str().size());
     }
     else
     {
-      if (!hasHeader(Connection))
+      if (!hasHeader(httpheader::connection))
         setKeepAliveHeader(0);
     }
 
-    if (!hasHeader(Content_Type))
-      setHeader(Content_Type, contentType);
+    if (!hasHeader(httpheader::contentType))
+      setHeader(httpheader::contentType, contentType);
 
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
@@ -72,8 +73,8 @@ namespace tnt
 
     if (hasCookies())
     {
-      log_debug(SetCookie << ' ' << httpcookies);
-      socket << SetCookie << ' ' << httpcookies << "\r\n";
+      log_debug(httpheader::setCookie << ' ' << httpcookies);
+      socket << httpheader::setCookie << ' ' << httpcookies << "\r\n";
     }
 
     socket << "\r\n";
@@ -88,7 +89,7 @@ namespace tnt
     }
   }
 
-  httpReply::httpReply(std::ostream& s)
+  HttpReply::HttpReply(std::ostream& s)
     : contentType("text/html"),
       socket(s),
       current_outstream(&outstream),
@@ -96,7 +97,7 @@ namespace tnt
       keepAliveCounter(0)
   { }
 
-  void httpReply::sendReply(unsigned ret)
+  void HttpReply::sendReply(unsigned ret)
   {
     if (!isDirectMode())
     {
@@ -105,59 +106,59 @@ namespace tnt
     }
   }
 
-  void httpReply::setMd5Sum()
+  void HttpReply::setMd5Sum()
   {
-    cxxtools::md5stream md5;
+    cxxtools::Md5stream md5;
     md5 << outstream.str().size();
-    setHeader(Content_MD5, md5.getHexDigest());
+    setHeader(httpheader::contentMD5, md5.getHexDigest());
   }
 
-  void httpReply::throwError(unsigned errorCode, const std::string& errorMessage) const
+  void HttpReply::throwError(unsigned errorCode, const std::string& errorMessage) const
   {
-    throw httpError(errorCode, errorMessage);
+    throw HttpError(errorCode, errorMessage);
   }
 
-  void httpReply::throwError(const std::string& errorMessage) const
+  void HttpReply::throwError(const std::string& errorMessage) const
   {
-    throw httpError(errorMessage);
+    throw HttpError(errorMessage);
   }
 
-  void httpReply::throwNotFound(const std::string& errorMessage) const
+  void HttpReply::throwNotFound(const std::string& errorMessage) const
   {
-    throw notFoundException(errorMessage);
+    throw NotFoundException(errorMessage);
   }
 
-  unsigned httpReply::redirect(const std::string& newLocation)
+  unsigned HttpReply::redirect(const std::string& newLocation)
   {
-    setHeader(Location, newLocation);
+    setHeader(httpheader::location, newLocation);
     return HTTP_MOVED_TEMPORARILY;
   }
 
-  void httpReply::setContentLengthHeader(size_t size)
+  void HttpReply::setContentLengthHeader(size_t size)
   {
     std::ostringstream s;
     s << size;
-    setHeader(Content_Length, s.str());
+    setHeader(httpheader::contentLength, s.str());
   }
 
-  void httpReply::setKeepAliveHeader(unsigned timeout)
+  void HttpReply::setKeepAliveHeader(unsigned timeout)
   {
     log_debug("setKeepAliveHeader(" << timeout << ')');
-    removeHeader(Connection);
-    removeHeader(KeepAlive);
+    removeHeader(httpheader::connection);
+    removeHeader(httpheader::keepAlive);
     if (timeout > 0 && getKeepAliveCounter() > 0)
     {
       std::ostringstream s;
       s << "timeout=" << timeout << ", max=" << getKeepAliveCounter();
-      setHeader(KeepAlive, s.str());
+      setHeader(httpheader::keepAlive, s.str());
 
-      setHeader(Connection, Connection_Keep_Alive);
+      setHeader(httpheader::connection, httpheader::connectionKeepAlive);
     }
     else
-      setHeader(Connection, Connection_close);
+      setHeader(httpheader::connection, httpheader::connectionClose);
   }
 
-  void httpReply::setDirectMode()
+  void HttpReply::setDirectMode()
   {
     if (!isDirectMode())
     {
@@ -167,25 +168,25 @@ namespace tnt
     }
   }
 
-  void httpReply::setDirectModeNoFlush()
+  void HttpReply::setDirectModeNoFlush()
   {
     current_outstream = &socket;
     save_outstream.setSink(socket);
   }
 
-  void httpReply::setCookie(const std::string& name, const cookie& value)
+  void HttpReply::setCookie(const std::string& name, const Cookie& value)
   {
     log_debug("setCookie(\"" << name << "\",\"" << value.getValue() << "\")");
     httpcookies.setCookie(name, value);
   }
 
-  bool httpReply::keepAlive() const
+  bool HttpReply::keepAlive() const
   {
     if (getKeepAliveCounter() <= 0
         || getKeepAliveTimeout() <= 0)
       return false;
 
-    header_type::const_iterator it = header.find(Connection);
-    return it != header.end() && it->second == Connection_Keep_Alive;
+    header_type::const_iterator it = header.find(httpheader::connection);
+    return it != header.end() && it->second == httpheader::connectionKeepAlive;
   }
 }
