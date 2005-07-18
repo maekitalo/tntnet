@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include <iostream>
 #include <fstream>
 #include <locale>
+#include <stdexcept>
 #include <cxxtools/log.h>
 
 namespace tnt
