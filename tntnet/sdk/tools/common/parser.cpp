@@ -649,7 +649,7 @@ namespace tnt
               arg.clear();
               state = state_args0;
               if (ch == '\n')
-                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
+                std::cerr << "depricated syntax: ';' missing in line " << curline << std::endl;
             }
             else
               arg += ch;
