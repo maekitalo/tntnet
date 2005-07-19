@@ -1,0 +1,2 @@
+/* Define to 1 if you have the <limits> header file. */
+#undef HAVE_LIMITS
