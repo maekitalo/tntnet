@@ -10,6 +10,7 @@ AC_SUBST(sonumber)
 unset CDPATH
 
 AC_CONFIG_HEADERS([framework/common/config.h])
+AC_CONFIG_HEADERS([framework/common/tnt/config.h])
 AC_CONFIG_SRCDIR([framework/runtime/tntnet.cpp])
 
 AC_PROG_CXX(g++-3.0 g++ c++ CC)

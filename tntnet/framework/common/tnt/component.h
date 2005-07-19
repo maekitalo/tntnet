@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 #include <time.h>
 #include <iostream>
 
-#include "config.h"
+#include "tnt/config.h"
 
 #ifdef HAVE_LIMITS
 #include <limits>
