@@ -52,6 +52,7 @@ namespace tnt
         cxxtools::Arg<bool> externData;
         cxxtools::Arg<bool> verbose;
         cxxtools::Arg<bool> debug;
+        cxxtools::Arg<bool> trace;
         cxxtools::Arg<bool> splitBar;
         cxxtools::Arg<const char*> splitChars;
         cxxtools::Arg<bool> generateDependencies;

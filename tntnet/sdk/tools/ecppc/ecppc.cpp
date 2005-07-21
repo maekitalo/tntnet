@@ -53,6 +53,7 @@ namespace tnt
         externData(argc, argv, 'x'),
         verbose(argc, argv, 'v'),
         debug(argc, argv, 'd'),
+        trace(argc, argv, 't'),
         splitBar(argc, argv, 'S'),
         splitChars(argc, argv, "--split-chars"),
         generateDependencies(argc, argv, 'M'),
@@ -146,7 +147,7 @@ namespace tnt
       tnt::ecppc::Generator generator(requestname, ns);
 
       // initialize
-      generator.setDebug(debug);
+      generator.setDebug(trace);
 
       if (mimetype.isSet())
         generator.setMimetype(mimetype);
@@ -289,7 +290,7 @@ namespace tnt
            "  -z               compress constant data\n"
            "  -x               look for constants in language-specific library\n"
            "  -v               verbose\n"
-           "  -d               debug\n"
+           "  -t               generate traces\n"
            "  -S               split chunks at '{' und '}'\n"
            "  --split-chars zz select alternative split-chars\n"
            "  -M               generate dependency form Makefile\n"
