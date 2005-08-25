@@ -65,7 +65,7 @@ namespace tnt
         code << "  log_trace(\"" << outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n";
 
       if (externData)
-        code << "  const component* dataComponent = main().getDataComponent(request);\n"
+        code << "  const Component* dataComponent = main().getDataComponent(request);\n"
                 "  ::use(dataComponent);\n\n";
 
       Component::getBody(code);

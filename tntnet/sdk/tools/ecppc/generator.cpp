@@ -353,7 +353,7 @@ namespace tnt
 
       if (compress)
       {
-        code << "static tnt::zdata rawData(\n\"";
+        code << "static tnt::Zdata rawData(\n\"";
 
         uLongf s = data.size() * data.size() / 100 + 100;
         cxxtools::Dynbuffer<Bytef> p;
@@ -374,7 +374,7 @@ namespace tnt
           stringescaper());
 
         code << "\",\n  " << s << ", " << data.size() << ");\n"
-             << "static tnt::DataChunks<tnt::zdata> data(rawData);\n\n";
+             << "static tnt::DataChunks<tnt::Zdata> data(rawData);\n\n";
       }
       else
       {
