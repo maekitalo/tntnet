@@ -1,5 +1,5 @@
-AC_INIT([tntnet],[1.4.1pre2],[Tommi Maekitalo <tommi@tntnet.org>])
-AM_INIT_AUTOMAKE(tntnet, 1.4.1pre2)
+AC_INIT([tntnet],[1.5.0pre1],[Tommi Maekitalo <tommi@tntnet.org>])
+AM_INIT_AUTOMAKE(tntnet, 1.5.0pre1)
 
 abi_current=4
 abi_revision=1
