@@ -560,7 +560,7 @@ namespace tnt
         code << "  const Component* dataComponent = main().getDataComponent(request);\n\n";
       else
         code << "  const Component* dataComponent = this;\n";
-      code << "  ::use(dataComponent);\n";
+      code << "  ::use(dataComponent);\n\n";
 
       if (multiImages.empty())
       {
@@ -578,10 +578,14 @@ namespace tnt
       else
       {
         // multi-image-component
-        code << "  const char* url = request.getPathInfo().c_str();\n"
+        code << "  const char* url = request.getPathInfo().c_str();\n\n"
+                "  log_debug(\"search for \\\"\" << url << '\"');\n\n"
                 "  urls_iterator it = std::lower_bound(urls_begin, urls_end, url, charpLess);\n"
                 "  if (it == urls_end || strcmp(url, *it) != 0)\n"
+                "  {\n"
+                "    log_info(\"binary file \\\"\" << url << \"\\\" not found\");\n"
                 "    throw tnt::NotFoundException(request.getPathInfo());\n"
+                "  }\n"
                 "  unsigned url_idx = it - urls_begin;\n\n"
 
                 "  reply.setKeepAliveHeader();\n"
