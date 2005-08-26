@@ -86,6 +86,15 @@ namespace tnt
         time_t c_time;
         const char* gentime;
 
+        struct MultiImageType
+        {
+          std::string name;
+          std::string mime;
+          time_t c_time;
+        };
+        typedef std::list<MultiImageType> MultiImagesType;
+        MultiImagesType multiImages;
+
         bool hasScopevars() const;
 
         // codegenerator helper
@@ -140,6 +149,9 @@ namespace tnt
 
         void setLastModifiedTime(time_t t)           { c_time = t; }
         time_t getLastModifiedTime() const           { return c_time; }
+
+        void addImage(const std::string& name, const std::string& content,
+            const std::string& mime, time_t c_time);
 
         virtual void onHtml(const std::string& html);
         virtual void onExpression(const std::string& expr);

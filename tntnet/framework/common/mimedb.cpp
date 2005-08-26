@@ -112,4 +112,18 @@ void MimeDb::read(std::istream& in)
   }
 }
 
+std::string MimeDb::getMimetype(const std::string& fname) const
+{
+  std::string ext;
+
+  std::string::size_type p = fname.rfind('.');
+  if (p != std::string::npos)
+    ext = fname.substr(p + 1);
+  else
+    ext = fname;
+
+  const_iterator it = find(ext);
+  return it == end() ? std::string() : it->second;
+}
+
 }

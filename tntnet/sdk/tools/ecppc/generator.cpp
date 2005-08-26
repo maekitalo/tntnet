@@ -60,6 +60,18 @@ namespace tnt
       return false;
     }
 
+    void Generator::addImage(const std::string& name, const std::string& content,
+        const std::string& mime, time_t c_time)
+    {
+      MultiImageType mi;
+      mi.name = name;
+      mi.mime = mime;
+      mi.c_time = c_time;
+      multiImages.push_back(mi);
+
+      data.push_back(content);
+    }
+
     void Generator::onHtml(const std::string& html)
     {
       std::ostringstream d;
@@ -332,6 +344,9 @@ namespace tnt
       if (externData)
         out << "#include <tnt/comploader.h>\n"
                "#include <stdlib.h>\n";
+
+      if (!multiImages.empty())
+        out << "#include <string.h>\n";
     }
 
     void Generator::getCppBody(std::ostream& code) const
@@ -400,6 +415,39 @@ namespace tnt
       {
         code << "#define DATA(dc, r, n) data[n]\n"
                 "#define DATA_SIZE(dc, r, n) data.size(n)\n\n";
+      }
+
+      // multi-images
+      if (!multiImages.empty())
+      {
+        code << "static const char* urls[] = {\n";
+
+        for (MultiImagesType::const_iterator it = multiImages.begin();
+             it != multiImages.end(); ++it)
+          code << "  \"" << it->name << "\",\n";
+
+        code << "};\n\n"
+                "static const char* mimetypes[] = {\n";
+
+        for (MultiImagesType::const_iterator it = multiImages.begin();
+             it != multiImages.end(); ++it)
+          code << "  \"" << it->mime << "\",\n";
+
+        code << "};\n\n"
+                "const char* url_c_time[] = {\n";
+
+        for (MultiImagesType::const_iterator it = multiImages.begin();
+             it != multiImages.end(); ++it)
+          code << "  \"" << tnt::HttpMessage::htdate(it->c_time) << "\",\n";
+
+        code << "};\n\n"
+                "typedef const char** urls_iterator;\n"
+                "static urls_iterator urls_begin = urls;\n"
+                "static urls_iterator urls_end = urls_begin + " << multiImages.size() << ";\n\n"
+                "inline bool charpLess(const char* a, const char* b)\n"
+                "{\n"
+                "  return strcmp(a, b) < 0;\n"
+                "}\n\n";
       }
 
       // creator
@@ -514,16 +562,42 @@ namespace tnt
         code << "  const Component* dataComponent = this;\n";
       code << "  ::use(dataComponent);\n";
 
-      if (c_time)
-        code << "  reply.setHeader(tnt::httpheader::lastModified, \""
-             << tnt::HttpMessage::htdate(c_time) << "\");\n";
-      if (raw)
-        code << "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
-                "  reply.setDirectMode();\n";
+      if (multiImages.empty())
+      {
+        if (c_time)
+          code << "  reply.setHeader(tnt::httpheader::lastModified, \""
+               << tnt::HttpMessage::htdate(c_time) << "\");\n";
+        if (raw)
+          code << "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
+                  "  reply.setDirectMode();\n";
 
-      code << '\n';
-      maincomp.getBody(code);
-      code << "}\n\n";
+        code << '\n';
+        maincomp.getBody(code);
+        code << "}\n\n";
+      }
+      else
+      {
+        // multi-image-component
+        code << "  const char* url = request.getPathInfo().c_str();\n"
+                "  urls_iterator it = std::lower_bound(urls_begin, urls_end, url, charpLess);\n"
+                "  if (it == urls_end || strcmp(url, *it) != 0)\n"
+                "    throw tnt::NotFoundException(request.getPathInfo());\n"
+                "  unsigned url_idx = it - urls_begin;\n\n"
+
+                "  reply.setKeepAliveHeader();\n"
+                "  reply.setContentType(mimetypes[url_idx]);\n\n"
+
+                "  std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);\n"
+                "  if (s == url_c_time[url_idx])\n"
+                "    return HTTP_NOT_MODIFIED;\n\n"
+
+                "  reply.setHeader(tnt::httpheader::lastModified, url_c_time[url_idx]);\n"
+                "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, url_idx));\n"
+                "  reply.setDirectMode();\n"
+                "  reply.out() << DATA(dataComponent, request, url_idx);\n"
+                "  return HTTP_OK;\n"
+                "}\n\n";
+      }
 
       code << "bool " << classname << "::drop()\n"
            << "{\n";

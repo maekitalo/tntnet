@@ -43,6 +43,7 @@ namespace tnt
         mimetype(argc, argv, 'm'),
         mimedb(argc, argv, "--mimetypes", "/etc/mime.types"),
         binary(argc, argv, 'b'),
+        multibinary(argc, argv, 'b'),
         singleton(argc, argv, 's'),
         componentclass(argc, argv, 'C'),
         baseclass(argc, argv, 'B'),
@@ -59,9 +60,10 @@ namespace tnt
         generateDependencies(argc, argv, 'M'),
         generateHeader(argc, argv, 'h')
     {
-      if (argc != 2 || argv[1][0] == '-')
+      if (argc < 2 || argv[1][0] == '-')
         throw Usage(argv[0]);
       inputfile = argv[1];
+      std::copy(argv + 1, argv + argc, std::inserter(inputfiles, inputfiles.end()));
 
       if (debug)
         log_init_debug();
@@ -74,42 +76,49 @@ namespace tnt
       // requestname aus Inputdatei
       if (requestname.empty())
       {
-        std::string input = inputfile;
-        std::string::size_type pos_dot = input.find_last_of(".");
-        std::string::size_type pos_slash = input.find_last_of("\\/");
-        if (pos_dot != std::string::npos)
+        if (multibinary)
         {
-          if (pos_slash == std::string::npos)
-          {
-            requestname = input.substr(0, pos_dot);
-          }
-          else if (pos_slash < pos_dot)
-          {
-            requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
-
-            if (ns.empty())
-            {
-              std::string::size_type pos_slash2 = input.find_last_of("\\/", pos_slash - 1);
-              if (pos_slash2 == std::string::npos)
-                ns = input.substr(0, pos_slash);
-              else
-                ns = input.substr(pos_slash2 + 1, pos_slash - pos_slash2 - 1);
-            }
-          }
-
-          extname = input.substr(pos_dot + 1);
+          std::cerr << "warning: no requestname passed (with -n) - using \"images\"" << std::endl;
+          requestname = "images";
         }
         else
         {
-          requestname = input;
-        }
+          std::string input = inputfile;
+          std::string::size_type pos_dot = input.find_last_of(".");
+          std::string::size_type pos_slash = input.find_last_of("\\/");
+          if (pos_dot != std::string::npos)
+          {
+            if (pos_slash == std::string::npos)
+            {
+              requestname = input.substr(0, pos_dot);
+            }
+            else if (pos_slash < pos_dot)
+            {
+              requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
 
-        if (requestname.empty())
-        {
-          std::cerr << "cannot derive classname from filename. Use -n" << std::endl;
-          return -1;
-        }
+              if (ns.empty())
+              {
+                std::string::size_type pos_slash2 = input.find_last_of("\\/", pos_slash - 1);
+                if (pos_slash2 == std::string::npos)
+                  ns = input.substr(0, pos_slash);
+                else
+                  ns = input.substr(pos_slash2 + 1, pos_slash - pos_slash2 - 1);
+              }
+            }
 
+            extname = input.substr(pos_dot + 1);
+          }
+          else
+          {
+            requestname = input;
+          }
+
+          if (requestname.empty())
+          {
+            std::cerr << "cannot derive classname from filename. Use -n" << std::endl;
+            return -1;
+          }
+        }
       }
       else if (ns.empty())
       {
@@ -137,10 +146,8 @@ namespace tnt
           ofile = ns + '/' + requestname;
       }
 
-      // Output auf ".h" and ".cpp" pruefen
-      if (ofile.size() == ofile.rfind(".h") + 2)
-        ofile = ofile.substr(0, ofile.size() - 2);
-      else if (ofile.size() == ofile.rfind(".cpp") + 4)
+      // strip cpp-extension from outputfilename
+      if (ofile.size() == ofile.rfind(".cpp") + 4)
         ofile = ofile.substr(0, ofile.size() - 4);
 
       // create generator
@@ -151,7 +158,7 @@ namespace tnt
 
       if (mimetype.isSet())
         generator.setMimetype(mimetype);
-      else if (!extname.empty())
+      else if (!extname.empty() && !multibinary)
       {
         tnt::MimeDb db(mimedb);
         tnt::MimeDb::const_iterator it = db.find(extname);
@@ -169,27 +176,6 @@ namespace tnt
       generator.setCompress(compress);
       generator.setExternData(externData);
 
-      //
-      // parse sourcefile
-      //
-
-      std::ifstream in(inputfile);
-      if (binary)
-      {
-        std::ostringstream html;
-        html << in.rdbuf();
-        generator.onHtml(html.str());
-        generator.setRawMode();
-
-        struct stat st;
-        if (stat(inputfile, &st) == 0)
-          generator.setLastModifiedTime(st.st_ctime);
-      }
-      else
-        runParser(in, generator);
-
-      // wenn Kommandozeilenparameter -s explizit angegeben ist, übergebe diesen an den
-      // Generator
       if (singleton.isSet())
         generator.setSingleton(singleton);
       if (componentclass.isSet())
@@ -203,9 +189,61 @@ namespace tnt
       obase += ofile;
       
       //
-      // generiere Code
+      // parse sourcefile
       //
 
+      if (multibinary)
+      {
+        tnt::MimeDb mimeDb;
+        if (!mimetype.isSet())
+          mimeDb.read(mimedb);
+
+        for (inputfiles_type::const_iterator it = inputfiles.begin();
+             it != inputfiles.end(); ++it)
+        {
+          inputfile = it->c_str();
+
+          struct stat st;
+          if (stat(inputfile, &st) != 0)
+            throw std::runtime_error("can't stat " + std::string(inputfile));
+
+          std::ifstream in(inputfile);
+          if (!in)
+            throw std::runtime_error("can't read " + std::string(inputfile));
+
+          std::ostringstream content;
+          content << in.rdbuf();
+
+          std::string mime;
+          if (mimetype.isSet())
+            mime = mimetype;
+          else
+            mime = mimeDb.getMimetype(inputfile);
+
+          generator.addImage(inputfile, content.str(), mime, st.st_ctime);
+        }
+      }
+      else
+      {
+        std::ifstream in(inputfile);
+        if (binary)
+        {
+          std::ostringstream html;
+          html << in.rdbuf();
+          generator.onHtml(html.str());
+          generator.setRawMode();
+
+          struct stat st;
+          if (stat(inputfile, &st) == 0)
+            generator.setLastModifiedTime(st.st_ctime);
+        }
+        else
+          runParser(in, generator);
+      }
+
+      //
+      // generate Code
+      //
       if (generateHeader)
       {
         if (verbose)

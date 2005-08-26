@@ -26,6 +26,7 @@ Boston, MA  02111-1307  USA
 #include <exception>
 #include <iosfwd>
 #include <tnt/ecpp/parsehandler.h>
+#include <set>
 
 namespace tnt
 {
@@ -36,12 +37,17 @@ namespace tnt
         std::string requestname;
         std::string extname;
         const char* inputfile;
+
+        typedef std::set<std::string> inputfiles_type;
+        inputfiles_type inputfiles;
+
         std::string ns;
         std::string ofile;
         std::string odir;
         cxxtools::Arg<std::string> mimetype;
         cxxtools::Arg<std::string> mimedb;
         cxxtools::Arg<bool> binary;
+        cxxtools::Arg<bool> multibinary;
         cxxtools::Arg<bool> singleton;
         cxxtools::Arg<std::string> componentclass;
         cxxtools::Arg<std::string> baseclass;

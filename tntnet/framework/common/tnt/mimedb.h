@@ -65,6 +65,8 @@ namespace tnt
       bool empty() const                       { return mimeDb.empty(); }
       std::pair<iterator, bool> insert(const value_type& x)
                                                { return mimeDb.insert(x); }
+
+      std::string getMimetype(const std::string& fname) const;
   };
 }
 
