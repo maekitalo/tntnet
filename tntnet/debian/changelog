@@ -1,7 +1,7 @@
 tntnet (1.5.0pre1-1) stable; urgency=low
 
   * source follows now common namingconventions by starting with uppercase
-    and methods start with lowercase
+    and methods starting with lowercase
 
  -- Tommi Maekitalo <tommi@tntnet.org>  Tue, 23 Aug 2005 14:46:32 +0200
 
