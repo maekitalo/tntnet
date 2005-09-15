@@ -86,7 +86,6 @@ namespace tnt
 
       void registerSubComp(const std::string& name, EcppSubComponent* comp);
 
-    protected:
       Component& fetchComp(const std::string& url) const;
       Component& fetchComp(const Compident& ci) const;
       Component& fetchComp(const Subcompident& ci) const;
