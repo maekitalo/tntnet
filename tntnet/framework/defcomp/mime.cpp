@@ -20,14 +20,13 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/component.h>
+#include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <tnt/tntconfig.h>
 #include <tnt/comploader.h>
 #include <tnt/mimedb.h>
-#include <fstream>
-#include <cxxtools/thread.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.mime")
@@ -35,29 +34,15 @@ log_define("tntnet.mime")
 namespace tnt
 {
   class Urlmapper;
-}
-
-static cxxtools::Mutex mutex;
-static tnt::Component* theComponent = 0;
-static unsigned refs = 0;
-static bool configured = false;
-
-////////////////////////////////////////////////////////////////////////
-// prototypes for external functions
-//
-extern "C"
-{
-  tnt::Component* create_mime(const tnt::Compident& ci,
-    const tnt::Urlmapper& um, tnt::Comploader& cl);
-}
+  class Comploader;
 
 ////////////////////////////////////////////////////////////////////////
 // componentdeclaration
 //
-namespace tntcomp
-{
   class Mime : public tnt::Component
   {
+      friend class MimeFactory;
+
     public:
       static const std::string ConfigDefaultType;
       static const std::string ConfigAddType;
@@ -67,13 +52,13 @@ namespace tntcomp
       static mime_map_type mime_map;
       static std::string default_type;
 
-    protected:
-      virtual ~Mime() { };
-
     public:
+      Mime()
+      { }
+
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual bool drop();
+      virtual void drop();
 
       static void setDefaultType(const std::string& type)
         { default_type = type; }
@@ -84,86 +69,84 @@ namespace tntcomp
       static void readMimeDb(const std::string& file)
         { mime_map.read(file); }
   };
-}
 
-////////////////////////////////////////////////////////////////////////
-// external functions
-//
-
-class MimeConfigurator
-{
-  public:
-    void operator() (const tnt::Tntconfig::config_entry_type& entry)
-    {
-      if (entry.key == tntcomp::Mime::ConfigDefaultType)
+  ////////////////////////////////////////////////////////////////////////
+  // configurator-functor
+  //
+  class MimeConfigurator
+  {
+    public:
+      void operator() (const tnt::Tntconfig::config_entry_type& entry)
       {
-        if (entry.params.size() >= 1)
+        if (entry.key == Mime::ConfigDefaultType)
         {
-          if (!tntcomp::Mime::getDefaultType().empty())
-            log_warn("DefaultType already set");
+          if (entry.params.size() >= 1)
+          {
+            if (!Mime::getDefaultType().empty())
+              log_warn("DefaultType already set");
+            else
+            {
+              log_debug("DefaultType " << entry.params[0]);
+              Mime::setDefaultType(entry.params[0]);
+            }
+          }
           else
           {
-            log_debug("DefaultType " << entry.params[0]);
-            tntcomp::Mime::setDefaultType(entry.params[0]);
+            log_warn("missing parameter in DefaultType");
           }
         }
-        else
+        else if (entry.key == Mime::ConfigAddType)
         {
-          log_warn("missing parameter in DefaultType");
-        }
-      }
-      else if (entry.key == tntcomp::Mime::ConfigAddType)
-      {
-        if (entry.params.size() >= 2)
-        {
-          for (tnt::Tntconfig::params_type::size_type i = 1;
-               i < entry.params.size(); ++i)
+          if (entry.params.size() >= 2)
           {
-            log_debug("AddType \"" << entry.params[0]
-              << "\" \"" << entry.params[i] << '"');
-            tntcomp::Mime::addType(entry.params[0], entry.params[i]);
+            for (tnt::Tntconfig::params_type::size_type i = 1;
+                 i < entry.params.size(); ++i)
+            {
+              log_debug("AddType \"" << entry.params[0]
+                << "\" \"" << entry.params[i] << '"');
+              Mime::addType(entry.params[0], entry.params[i]);
+            }
+          }
+          else
+          {
+            log_warn("missing parameter in AddType");
           }
         }
-        else
-        {
-          log_warn("missing parameter in AddType");
-        }
       }
-    }
-};
+  };
 
-tnt::Component* create_mime(const tnt::Compident& ci,
-  const tnt::Urlmapper& um, tnt::Comploader& cl)
-{
-  cxxtools::MutexLock lock(mutex);
-  if (theComponent == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  class MimeFactory : public tnt::SingletonComponentFactory
   {
-    theComponent = new tntcomp::Mime();
-    refs = 1;
+    public:
+      virtual tnt::Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl);
+      virtual void doConfigure(const tnt::Tntconfig& config);
+  };
 
-    if (!configured)
-    {
-      const tnt::Tntconfig& config = cl.getConfig();
-      std::string mimeDb = config.getValue("MimeDb", "/etc/mime.types");
-      tntcomp::Mime::readMimeDb(mimeDb);
-      std::for_each(config.getConfigValues().begin(),
-                    config.getConfigValues().end(),
-                    MimeConfigurator());
-      configured = true;
-    }
+  tnt::Component* MimeFactory::doCreate(const tnt::Compident&,
+    const tnt::Urlmapper&, tnt::Comploader&)
+  {
+    return new Mime();
   }
-  else
-    ++refs;
 
-  return theComponent;
-}
+  void MimeFactory::doConfigure(const tnt::Tntconfig& config)
+  {
+    std::string mimeDb = config.getValue("MimeDb", "/etc/mime.types");
+    Mime::readMimeDb(mimeDb);
+    std::for_each(config.getConfigValues().begin(),
+                  config.getConfigValues().end(),
+                  MimeConfigurator());
+  }
 
-////////////////////////////////////////////////////////////////////////
-// componentdefinition
-//
+  TNT_COMPONENTFACTORY(Mime, MimeFactory, factory)
 
-namespace tntcomp
-{
+  ////////////////////////////////////////////////////////////////////////
+  // componentdefinition
+  //
+
   const std::string Mime::ConfigDefaultType = "DefaultType";
   const std::string Mime::ConfigAddType = "AddType";
   Mime::mime_map_type Mime::mime_map;
@@ -204,17 +187,9 @@ namespace tntcomp
     return DECLINED;
   }
 
-  bool Mime::drop()
+  void Mime::drop()
   {
-    cxxtools::MutexLock lock(mutex);
-    if (--refs == 0)
-    {
-      delete this;
-      theComponent = 0;
-      return true;
-    }
-    else
-      return false;
+    factory.drop(this);
   }
 }
 

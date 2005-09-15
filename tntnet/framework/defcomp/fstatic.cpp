@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include "fstatic.h"
+#include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
@@ -27,44 +28,35 @@ Boston, MA  02111-1307  USA
 #include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
-#include <cxxtools/thread.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 log_define("tntnet.fstatic")
 
-static cxxtools::Mutex mutex;
-static tnt::Component* theComponent = 0;
-static unsigned refs = 0;
-
-////////////////////////////////////////////////////////////////////////
-// external functions
-//
-
-tnt::Component* create_fstatic(const tnt::Compident& ci,
-  const tnt::Urlmapper& um, tnt::Comploader& cl)
+namespace tnt
 {
-  cxxtools::MutexLock lock(mutex);
-  if (theComponent == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  class FstaticFactory : public tnt::SingletonComponentFactory
   {
-    theComponent = new tntcomp::Fstaticcomp();
-    refs = 1;
+    public:
+      virtual tnt::Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl);
+  };
 
-    tntcomp::Staticcomp::setDocumentRoot(cl.getConfig().getValue("DocumentRoot"));
+  tnt::Component* FstaticFactory::doCreate(const tnt::Compident&,
+    const tnt::Urlmapper&, tnt::Comploader&)
+  {
+    return new Fstatic();
   }
-  else
-    ++refs;
 
-  return theComponent;
-}
+  TNT_COMPONENTFACTORY(Fstatic, FstaticFactory, factory)
 
-namespace tntcomp
-{
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
-
-  unsigned Fstaticcomp::operator() (tnt::HttpRequest& request,
+  unsigned Fstatic::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
   {
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
@@ -117,17 +109,9 @@ namespace tntcomp
     return HTTP_OK;
   }
 
-  bool Fstaticcomp::drop()
+  void Fstatic::drop()
   {
-    cxxtools::MutexLock lock(mutex);
-    if (--refs == 0)
-    {
-      delete this;
-      theComponent = 0;
-      return true;
-    }
-    else
-      return false;
+    factory.drop(this);
   }
 
 }

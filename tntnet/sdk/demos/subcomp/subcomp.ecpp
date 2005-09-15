@@ -111,10 +111,10 @@ normal parameterlist just like in c++-functions after the defition
 
 <h2> call component by componentidentifier </h2>
 <p class="example">
- &lt;&amp; (Compident(compname, libname)) param1="value1" &amp;&gt;
+ &lt;&amp; (tnt::Compident(compname, libname)) param1="value1" &amp;&gt;
 </p>
 <p class="result">
- <& (Compident(libname, compname)) param1="value1" &>
+ <& (tnt::Compident(libname, compname)) param1="value1" &>
 </p>
 
 <h2> pass a expression as parameter </h2>

@@ -20,81 +20,58 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/component.h>
+#include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
-#include <fstream>
-#include <cxxtools/thread.h>
 
 namespace tnt
 {
   class Urlmapper;
   class Comploader;
-}
 
-static cxxtools::Mutex mutex;
-static tnt::Component* theComponent = 0;
-static unsigned refs = 0;
-
-////////////////////////////////////////////////////////////////////////
-// prototypes for external functions
-//
-extern "C"
-{
-  tnt::Component* create_redirect(const tnt::Compident& ci, const tnt::Urlmapper& um,
-    tnt::Comploader& cl);
-}
-
-////////////////////////////////////////////////////////////////////////
-// componentdeclaration
-//
-class Redirectcomp : public tnt::Component
-{
-  protected:
-    virtual ~Redirectcomp() { };
-
-  public:
-    virtual unsigned operator() (tnt::HttpRequest& request,
-      tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-    virtual bool drop();
-};
-
-////////////////////////////////////////////////////////////////////////
-// external functions
-//
-
-tnt::Component* create_redirect(const tnt::Compident& ci, const tnt::Urlmapper& um,
-  tnt::Comploader& cl)
-{
-  cxxtools::MutexLock lock(mutex);
-  if (theComponent == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // componentdeclaration
+  //
+  class Redirect : public tnt::Component
   {
-    theComponent = new Redirectcomp();
-    refs = 1;
+      friend class RedirectFactory;
+
+    public:
+      virtual unsigned operator() (tnt::HttpRequest& request,
+        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
+      virtual void drop();
+  };
+
+  ////////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  class RedirectFactory : public tnt::SingletonComponentFactory
+  {
+    public:
+      virtual tnt::Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl);
+  };
+
+  tnt::Component* RedirectFactory::doCreate(const tnt::Compident&,
+    const tnt::Urlmapper&, tnt::Comploader&)
+  {
+    return new Redirect();
   }
 
-  return theComponent;
-}
+  TNT_COMPONENTFACTORY(Redirect, RedirectFactory, factory)
 
-////////////////////////////////////////////////////////////////////////
-// componentdefinition
-//
-unsigned Redirectcomp::operator() (tnt::HttpRequest& request,
-  tnt::HttpReply& reply, cxxtools::QueryParams&)
-{
-  return reply.redirect(request.getPathInfo());
-}
-
-bool Redirectcomp::drop()
-{
-  cxxtools::MutexLock lock(mutex);
-  if (--refs == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // componentdefinition
+  //
+  unsigned Redirect::operator() (tnt::HttpRequest& request,
+    tnt::HttpReply& reply, cxxtools::QueryParams&)
   {
-     delete this;
-     theComponent = 0;
-     return true;
+    return reply.redirect(request.getPathInfo());
   }
-  else
-    return false;
-}
 
+  void Redirect::drop()
+  {
+    factory.drop(this);
+  }
+}

@@ -56,6 +56,7 @@ namespace tnt
         cxxtools::Arg<bool> jscompress;
         cxxtools::Arg<bool> compress;
         cxxtools::Arg<bool> externData;
+        cxxtools::Arg<bool> noData;
         cxxtools::Arg<bool> verbose;
         cxxtools::Arg<bool> debug;
         cxxtools::Arg<bool> trace;

@@ -69,7 +69,7 @@ namespace tnt
           {
             // case: comp
             callByIdent(out,
-                        "Compident(std::string(), \"" + id.compname + "\")",
+                        "tnt::Compident(std::string(), \"" + id.compname + "\")",
                         qparam);
           }
         }
@@ -77,7 +77,7 @@ namespace tnt
         {
           // case: comp.subcomp
           callByIdent(out,
-                      "Subcompident(std::string(), \""
+                      "tnt::Subcompident(std::string(), \""
                                       + id.compname + "\", \""
                                       + id.subname + "\")",
                       qparam);
@@ -87,7 +87,7 @@ namespace tnt
       {
         // case: comp@lib
         callByIdent(out,
-                    "Compident(\"" + id.libname + "\", "
+                    "tnt::Compident(\"" + id.libname + "\", "
                             "\"" + id.compname + "\")",
                     qparam);
       }
@@ -95,7 +95,7 @@ namespace tnt
       {
         // case: comp.subcomp@lib
           callByIdent(out,
-                      "Subcompident(\"" + id.libname + "\", "
+                      "tnt::Subcompident(\"" + id.libname + "\", "
                                    "\"" + id.compname + "\", "
                                    "\"" + id.subname + "\")",
                       qparam);

@@ -19,36 +19,26 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef FSTATIC_H
-#define FSTATIC_H
+#ifndef TNT_FSTATIC_H
+#define TNT_FSTATIC_H
 
 #include "static.h"
 
-////////////////////////////////////////////////////////////////////////
-// prototypes for external functions
-//
-extern "C"
-{
-  tnt::Component* create_fstatic(const tnt::Compident& ci,
-    const tnt::Urlmapper& um, tnt::Comploader& cl);
-}
-
-namespace tntcomp
+namespace tnt
 {
   //////////////////////////////////////////////////////////////////////
   // componentdeclaration
   //
-  class Fstaticcomp : public Staticcomp
+  class Fstatic : public Static
   {
-    protected:
-      virtual ~Fstaticcomp() { };
+      friend class FstaticFactory;
 
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual bool drop();
+      virtual void drop();
   };
 }
 
-#endif // FSTATIC_H
+#endif // TNT_FSTATIC_H
 

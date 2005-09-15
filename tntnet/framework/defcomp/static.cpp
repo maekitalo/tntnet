@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include "static.h"
+#include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
@@ -27,54 +28,45 @@ Boston, MA  02111-1307  USA
 #include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
-#include <cxxtools/thread.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 log_define("tntnet.static")
 
-static cxxtools::Mutex mutex;
-static tnt::Component* theComponent = 0;
-static unsigned refs = 0;
-
-////////////////////////////////////////////////////////////////////////
-// external functions
-//
-
-tnt::Component* create_static(const tnt::Compident& ci,
-  const tnt::Urlmapper& um, tnt::Comploader& cl)
+namespace tnt
 {
-  cxxtools::MutexLock lock(mutex);
-  if (theComponent == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  class StaticFactory : public tnt::SingletonComponentFactory
   {
-    theComponent = new tntcomp::Staticcomp();
-    refs = 1;
+    public:
+      virtual tnt::Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl);
+  };
 
-    tntcomp::Staticcomp::setDocumentRoot(cl.getConfig().getValue("DocumentRoot"));
+  tnt::Component* StaticFactory::doCreate(const tnt::Compident&,
+    const tnt::Urlmapper&, tnt::Comploader&)
+  {
+    return new Static();
   }
-  else
-    ++refs;
 
-  return theComponent;
-}
+  TNT_COMPONENTFACTORY(Static, StaticFactory, factory)
 
-namespace tntcomp
-{
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
+  std::string Static::documentRoot;
 
-  std::string Staticcomp::document_root;
-
-  unsigned Staticcomp::operator() (tnt::HttpRequest& request,
+  unsigned Static::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
   {
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
     std::string file;
-    if (!document_root.empty())
-      file = document_root + '/';
+    if (!documentRoot.empty())
+      file = documentRoot + '/';
     file += request.getPathInfo();
 
     log_debug("file: " << file);
@@ -120,17 +112,9 @@ namespace tntcomp
     return HTTP_OK;
   }
 
-  bool Staticcomp::drop()
+  void Static::drop()
   {
-    cxxtools::MutexLock lock(mutex);
-    if (--refs == 0)
-    {
-      delete this;
-      theComponent = 0;
-      return true;
-    }
-    else
-      return false;
+    factory.drop(this);
   }
 
 }

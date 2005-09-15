@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/comploader.h>
+#include <tnt/componentfactory.h>
 #include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 
@@ -37,26 +38,28 @@ Component* ComponentLibrary::create(
 {
   log_debug("create \"" << component_name << '"');
 
-  creator_type creator;
+  ComponentFactory* factory;
 
-  // look for creator in my map
-  creatormap_type::const_iterator i = creatormap.find(component_name);
-  if (i == creatormap.end())
+  // look for factory in my map
+  factoryMapType::const_iterator i = factoryMap.find(component_name);
+  if (i == factoryMap.end())
   {
     // creatorsymbol not known - load it
-    log_debug("lookup symbol \"create_" << component_name << '"');
+    log_debug("lookup symbol \"" << component_name << "_factory\"");
 
-    creator = (creator_type)sym(("create_" + component_name).c_str()).getSym();
-    creatormap.insert(creatormap_type::value_type(component_name, creator));
+    factory = *(static_cast<ComponentFactory**>(sym((component_name + "_factory").c_str()).getSym()));
+    factoryMap.insert(factoryMapType::value_type(component_name, factory));
   }
   else
-    creator = i->second;
+    factory = i->second;
 
-  // call the creator-function
+  log_debug("factory " << factory);
+
+  // call the creator
   Compident ci = Compident(libname, component_name);
   log_info("create \"" << ci << '"');
 
-  return creator(ci, rootmapper, cl);
+  return factory->create(ci, rootmapper, cl);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -209,8 +212,7 @@ void Comploader::cleanup(unsigned seconds)
           componentmap_type::iterator it2 = it;
           ++it;
           log_debug("drop " << it2->first);
-          if (it2->second->drop())
-            log_debug("deleted " << it2->first);
+          it2->second->drop();
           componentmap.erase(it2);
         }
       else

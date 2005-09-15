@@ -196,7 +196,7 @@ namespace tnt
           p.registerSubComp(name, this);
         }
 
-      virtual bool drop();
+      virtual void drop();
       Subcompident getCompident() const
         { return Subcompident(main.getCompident(), subcompname); }
 
@@ -269,19 +269,6 @@ namespace tnt
 
 #define TNT_REQUEST_GLOBAL_VAR(type, varname, key, construct) \
   TNT_VAR(Request, type, varname, key, construct)
-
-namespace ecpp_component
-{
-  using tnt::Component;
-  using tnt::Compident;
-  using tnt::Subcompident;
-  using tnt::Urlmapper;
-  using tnt::Comploader;
-  using tnt::EcppComponent;
-  using tnt::EcppSubComponent;
-  using tnt::HttpRequest;
-  using tnt::HttpReply;
-}
 
 #endif // TNT_ECPP_H
 

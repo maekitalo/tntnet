@@ -29,38 +29,23 @@ namespace tnt
 {
   class Urlmapper;
   class Comploader;
-}
 
-////////////////////////////////////////////////////////////////////////
-// prototypes for external functions
-//
-extern "C"
-{
-  tnt::Component* create_static(const tnt::Compident& ci,
-    const tnt::Urlmapper& um, tnt::Comploader& cl);
-}
-
-namespace tntcomp
-{
   //////////////////////////////////////////////////////////////////////
   // componentdeclaration
   //
-  class Staticcomp : public tnt::Component
+  class Static : public tnt::Component
   {
-      static std::string document_root;
-
-    protected:
-      virtual ~Staticcomp() { };
+      static std::string documentRoot;
 
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual bool drop();
+      virtual void drop();
 
       static void setDocumentRoot(const std::string& s)
-      { document_root = s; }
+      { documentRoot = s; }
       static const std::string& getDocumentRoot()
-      { return document_root; }
+      { return documentRoot; }
   };
 }
 

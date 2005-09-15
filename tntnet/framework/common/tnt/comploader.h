@@ -34,16 +34,15 @@ Boston, MA  02111-1307  USA
 namespace tnt
 {
   class Comploader;
+  class ComponentFactory;
   class Tntconfig;
 
   /// Hält Symbole zum erzeugen von Komponenten.
   class ComponentLibrary : public cxxtools::dl::Library
   {
-      typedef Component* (*creator_type)(const Compident&,
-        const Urlmapper&, Comploader&);
-      typedef std::map<std::string, creator_type> creatormap_type;
+      typedef std::map<std::string, ComponentFactory*> factoryMapType;
 
-      creatormap_type creatormap;
+      factoryMapType factoryMap;
       std::string libname;
 
     public:

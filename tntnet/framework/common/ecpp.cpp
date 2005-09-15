@@ -207,9 +207,7 @@ namespace tnt
   ///////////////////////////////////////////////////////////////////////
   // ecppSubComponent
   //
-  bool EcppSubComponent::drop()
-  {
-    return false;
-  }
+  void EcppSubComponent::drop()
+  { }
 
 }

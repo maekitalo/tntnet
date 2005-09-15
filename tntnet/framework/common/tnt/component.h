@@ -78,11 +78,9 @@ class Component
 {
     time_t atime;
 
-  protected:
-    virtual ~Component() { }
-
   public:
     Component()     { time(&atime); }
+    virtual ~Component() { }
 
     void touch(time_t plus = 0)      { time(&atime); atime += plus; }
     time_t getLastAccesstime() const { return atime; }
@@ -95,7 +93,7 @@ class Component
 
     virtual unsigned operator() (HttpRequest& request,
       HttpReply& reply, cxxtools::QueryParams& qparam);
-    virtual bool drop() = 0;
+    virtual void drop() = 0;
 
     virtual std::string getAttribute(const std::string& name,
       const std::string& def = std::string()) const;

@@ -22,110 +22,81 @@ Boston, MA  02111-1307  USA
 #include "unzip.h"
 
 #include <tnt/component.h>
+#include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
-#include <fstream>
-#include <cxxtools/thread.h>
 #include "unzip_pp.h"
 
 namespace tnt
 {
-  class Urlmapper;
-  class Comploader;
-}
-
-static cxxtools::Mutex mutex;
-static tnt::Component* theComponent = 0;
-static unsigned refs = 0;
-
-////////////////////////////////////////////////////////////////////////
-// prototypes for external functions
-//
-extern "C"
-{
-  tnt::Component* create_unzip(const tnt::Compident& ci,
-    const tnt::Urlmapper& um, tnt::Comploader& cl);
-}
-
-////////////////////////////////////////////////////////////////////////
-// componentdeclaration
-//
-class Unzipcomp : public tnt::Component
-{
-    static std::string document_root;
-
-  protected:
-    virtual ~Unzipcomp() { };
-
-  public:
-    virtual unsigned operator() (tnt::HttpRequest& request,
-      tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-    virtual bool drop();
-};
-
-////////////////////////////////////////////////////////////////////////
-// external functions
-//
-
-tnt::Component* create_unzip(const tnt::Compident& ci,
-  const tnt::Urlmapper& um, tnt::Comploader& cl)
-{
-  cxxtools::MutexLock lock(mutex);
-  if (theComponent == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // componentdeclaration
+  //
+  class Unzip : public tnt::Component
   {
-    theComponent = new Unzipcomp();
-    refs = 1;
-  }
-  else
-    ++refs;
+      friend class UnzipFactory;
 
-  return theComponent;
-}
+    public:
+      virtual unsigned operator() (tnt::HttpRequest& request,
+        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
+      virtual void drop();
+  };
 
-////////////////////////////////////////////////////////////////////////
-// componentdefinition
-//
-
-unsigned Unzipcomp::operator() (tnt::HttpRequest& request,
-  tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
-{
-  std::string pi = request.getPathInfo();
-
-  if (request.getArgsCount() < 1)
-    reply.throwError(HTTP_INTERNAL_SERVER_ERROR, "missing archive name");
-
-  try
+  ////////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  class UnzipFactory : public tnt::SingletonComponentFactory
   {
-    unzipFile f(request.getArg(0));
-    unzipFileStream in(f, pi, false);
+    public:
+      virtual tnt::Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl);
+  };
 
-    // set Content-Type
-    if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
-      reply.setContentType(request.getArg(1));
-
-    std::copy(std::istreambuf_iterator<char>(in),
-              std::istreambuf_iterator<char>(),
-              std::ostreambuf_iterator<char>(reply.out()));
-  }
-  catch (const unzipEndOfListOfFile&)
+  tnt::Component* UnzipFactory::doCreate(const tnt::Compident&,
+    const tnt::Urlmapper&, tnt::Comploader&)
   {
-    reply.throwNotFound(pi);
+    return new Unzip();
   }
 
-  return HTTP_OK;
-}
+  TNT_COMPONENTFACTORY(Unzip, UnzipFactory, factory)
 
-bool Unzipcomp::drop()
-{
-  cxxtools::MutexLock lock(mutex);
-  if (--refs == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // componentdefinition
+  //
+
+  unsigned Unzip::operator() (tnt::HttpRequest& request,
+    tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
   {
-    delete this;
-    theComponent = 0;
-    return true;
-  }
-  else
-    return false;
-}
+    std::string pi = request.getPathInfo();
 
+    if (request.getArgsCount() < 1)
+      reply.throwError(HTTP_INTERNAL_SERVER_ERROR, "missing archive name");
+
+    try
+    {
+      unzipFile f(request.getArg(0));
+      unzipFileStream in(f, pi, false);
+
+      // set Content-Type
+      if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
+        reply.setContentType(request.getArg(1));
+
+      std::copy(std::istreambuf_iterator<char>(in),
+                std::istreambuf_iterator<char>(),
+                std::ostreambuf_iterator<char>(reply.out()));
+    }
+    catch (const unzipEndOfListOfFile&)
+    {
+      reply.throwNotFound(pi);
+    }
+
+    return HTTP_OK;
+  }
+
+  void Unzip::drop()
+  {
+    factory.drop(this);
+  }
+
+}

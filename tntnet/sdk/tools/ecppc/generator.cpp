@@ -239,7 +239,7 @@ namespace tnt
 
     void Generator::getNamespaceStart(std::ostream& out) const
     {
-      out << "namespace ecpp_component\n"
+      out << "namespace component\n"
              "{\n";
 
       if (!maincomp.getNs().empty())
@@ -253,16 +253,7 @@ namespace tnt
     {
       if (!maincomp.getNs().empty())
         out << "} // namespace " << maincomp.getNs() << '\n';
-      out << "} // namespace ecpp_component\n";
-    }
-
-    void Generator::getCreatorDeclaration(std::ostream& out) const
-    {
-      out << "extern \"C\"\n"
-             "{\n"
-             "  Component* create_" << maincomp.getName() << "(const Compident& ci, const Urlmapper& um,\n"
-             "    Comploader& cl);\n"
-             "}\n\n";
+      out << "} // namespace component\n";
     }
 
     void Generator::getDeclareShared(std::ostream& out) const
@@ -276,15 +267,14 @@ namespace tnt
     {
       out << "class " << maincomp.getName() << " : public ";
       if (componentclass.empty())
-        out << "EcppComponent";
+        out << "tnt::EcppComponent";
       else
         out << componentclass;
       if (!baseclass.empty())
         out << ", public " << baseclass;
       out << "\n"
              "{\n"
-             "    friend Component* create_" << maincomp.getName() << "(const Compident& ci,\n"
-             "      const Urlmapper& um, Comploader& cl);\n\n"
+             "    friend class " << maincomp.getName() << "Factory;\n"
              "    " << maincomp.getName() << "& main()  { return *this; }\n\n" 
              "    // <%declare>\n"
           << declare
@@ -295,14 +285,14 @@ namespace tnt
         it->getConfigHDecl(out);
       out << "    // </%config>\n\n"
              "  protected:\n"
-             "    " << maincomp.getName() << "(const Compident& ci, const Urlmapper& um, Comploader& cl);\n"
              "    ~" << maincomp.getName() << "();\n\n"
              "  public:\n"
-             "    unsigned operator() (HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam);\n"
-             "    bool drop();\n"
-             "    unsigned    getDataCount(const HttpRequest& request) const;\n"
-             "    unsigned    getDataLen(const HttpRequest& request, unsigned n) const;\n"
-             "    const char* getDataPtr(const HttpRequest& request, unsigned n) const;\n";
+             "    " << maincomp.getName() << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
+             "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam);\n"
+             "    void drop();\n"
+             "    unsigned    getDataCount(const tnt::HttpRequest& request) const;\n"
+             "    unsigned    getDataLen(const tnt::HttpRequest& request, unsigned n) const;\n"
+             "    const char* getDataPtr(const tnt::HttpRequest& request, unsigned n) const;\n";
       if (!attr.empty())
         out << "    std::string getAttribute(const std::string& name,\n"
                "      const std::string& def = std::string()) const;\n";
@@ -326,7 +316,8 @@ namespace tnt
              "#include <tnt/httpreply.h>\n"
              "#include <tnt/httpheader.h>\n"
              "#include <tnt/http.h>\n"
-             "#include <tnt/data.h>\n";
+             "#include <tnt/data.h>\n"
+             "#include <tnt/componentfactory.h>\n";
       if (hasScopevars())
         out << "#include <tnt/objecttemplate.h>\n"
                "#include <tnt/objectptr.h>\n";
@@ -337,8 +328,7 @@ namespace tnt
       if (compress)
         out << "#include <tnt/zdata.h>\n";
 
-      out << "#include <cxxtools/thread.h>\n"
-             "#include <cxxtools/log.h>\n"
+      out << "#include <cxxtools/log.h>\n"
              "#include <stdexcept>\n\n";
 
       if (externData)
@@ -347,6 +337,38 @@ namespace tnt
 
       if (!multiImages.empty())
         out << "#include <string.h>\n";
+    }
+
+    void Generator::getFactoryDeclaration(std::ostream& code) const
+    {
+      const char* factoryBase = singleton ? "tnt::SingletonComponentFactory" : "tnt::ComponentFactory";
+      code << "class " << maincomp.getName() << "Factory : public " << factoryBase << "\n"
+              "{\n"
+              "  public:\n"
+              "      virtual tnt::Component* doCreate(const tnt::Compident& ci,\n"
+              "        const tnt::Urlmapper& um, tnt::Comploader& cl);\n";
+      if (!configs.empty())
+        code << "      virtual void doConfigure(const tnt::Tntconfig& config);\n";
+      code << "};\n"
+              "\n"
+              "tnt::Component* " << maincomp.getName() << "Factory::doCreate(const tnt::Compident& ci,\n"
+              "  const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+              "{\n"
+              "  return new " << maincomp.getName() << "(ci, um, cl);\n"
+              "}\n\n";
+      if (!configs.empty())
+      {
+        code << "void " << maincomp.getName() << "Factory::doConfigure(const tnt::Tntconfig& config)\n"
+                "{\n"
+                "  // <%config>\n";
+        for (variable_declarations::const_iterator it = configs.begin();
+             it != configs.end(); ++it)
+          it->getConfigInit(code, maincomp.getName());
+        code << "  // </%config>\n"
+                "}\n\n";
+      }
+
+      code << "TNT_COMPONENTFACTORY(" << maincomp.getName() << ", " << maincomp.getName() << "Factory, factory)\n\n";
     }
 
     void Generator::getCppBody(std::ostream& code) const
@@ -363,46 +385,48 @@ namespace tnt
       ns_classname += classname;
       ns_classname_dot += classname;
 
-      code << "static cxxtools::Mutex mutex;\n\n"
-              "log_define(\"component." << ns_classname_dot << "\")\n\n";
+      getFactoryDeclaration(code);
 
-      if (compress)
+      if (!noData)
       {
-        code << "static tnt::Zdata rawData(\n\"";
-
-        uLongf s = data.size() * data.size() / 100 + 100;
-        cxxtools::Dynbuffer<Bytef> p;
-        p.reserve(s);
-
-        int z_ret = ::compress(p.data(), &s, (const Bytef*)data.ptr(), data.size());
-
-        if (z_ret != Z_OK)
+        if (compress)
         {
-          throw std::runtime_error(std::string("error compressing data: ") +
-            (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
-             z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
-             z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
+          code << "static tnt::Zdata rawData(\n\"";
+
+          uLongf s = data.size() * data.size() / 100 + 100;
+          cxxtools::Dynbuffer<Bytef> p;
+          p.reserve(s);
+
+          int z_ret = ::compress(p.data(), &s, (const Bytef*)data.ptr(), data.size());
+
+          if (z_ret != Z_OK)
+          {
+            throw std::runtime_error(std::string("error compressing data: ") +
+              (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
+               z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
+               z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
+          }
+
+          std::transform(p.data(), p.data() + s,
+            std::ostream_iterator<const char*>(code),
+            stringescaper());
+
+          code << "\",\n  " << s << ", " << data.size() << ");\n"
+               << "static tnt::DataChunks<tnt::Zdata> data(rawData);\n\n";
         }
+        else
+        {
+          code << "static tnt::RawData rawData(\n\"";
 
-        std::transform(p.data(), p.data() + s,
-          std::ostream_iterator<const char*>(code),
-          stringescaper());
+          std::transform(
+            data.ptr(),
+            data.ptr() + data.size(),
+            std::ostream_iterator<const char*>(code),
+            stringescaper());
 
-        code << "\",\n  " << s << ", " << data.size() << ");\n"
-             << "static tnt::DataChunks<tnt::Zdata> data(rawData);\n\n";
-      }
-      else
-      {
-        code << "static tnt::RawData rawData(\n\"";
-
-        std::transform(
-          data.ptr(),
-          data.ptr() + data.size(),
-          std::ostream_iterator<const char*>(code),
-          stringescaper());
-
-        code << "\",\n  " << data.size() << ");\n"
-             << "static tnt::DataChunks<tnt::RawData> data(rawData);\n\n";
+          code << "\",\n  " << data.size() << ");\n"
+               << "static tnt::DataChunks<tnt::RawData> data(rawData);\n\n";
+        }
       }
 
       if (externData)
@@ -450,62 +474,6 @@ namespace tnt
                 "}\n\n";
       }
 
-      // creator
-      if (singleton)
-      {
-        code << "static Component* theComponent = 0;\n"
-                "static unsigned refs = 0;\n\n"
-                "Component* create_" << classname << "(const Compident& ci, const Urlmapper& um, Comploader& cl)\n"
-                "{\n"
-                "  cxxtools::MutexLock lock(mutex);\n"
-                "  if (theComponent == 0)\n"
-                "  {\n"
-                "    log_debug(\"create new component \\\"\" << ci << '\"');\n"
-                "    theComponent = new ::ecpp_component::" << ns_classname << "(ci, um, cl);\n";
-
-        if (compress)
-          code << "    rawData.addRef();\n";
-
-        code << "    refs = 1;\n\n"
-                "    // <%config>\n";
-        for (variable_declarations::const_iterator it = configs.begin();
-             it != configs.end(); ++it)
-          it->getConfigInit(code, classname);
-        code << "    // </%config>\n"
-                "  }\n"
-                "  else\n"
-                "    ++refs;\n"
-                "  return theComponent;\n"
-                "}\n\n";
-      }
-      else
-      {
-        code << "Component* create_" << classname << "(const Compident& ci, const Urlmapper& um, Comploader& cl)\n"
-                "{\n";
-
-        if (compress)
-          code << "  rawData.addRef();\n";
-
-        code << "  // <%config>\n";
-        if (!configs.empty())
-        {
-          code << "  if (!config_init)\n"
-                  "  {\n"
-                  "    cxxtools::MutexLock lock(mutex);\n"
-                  "    if (!config_init)\n"
-                  "    {\n";
-          for (variable_declarations::const_iterator it = configs.begin();
-               it != configs.end(); ++it)
-            it->getConfigInit(code, classname);
-          code << "      config_init = true;\n"
-                  "    }\n"
-                  "  }\n";
-        }
-        code << "  // </%config>\n\n"
-                "  return new ::ecpp_component::" << classname << "(ci, um, cl);\n"
-             << "}\n\n";
-      }
-
       // logger, %shared and constructor
       //
       code << "// <%shared>\n"
@@ -518,7 +486,7 @@ namespace tnt
            it != configs.end(); ++it)
         it->getConfigDecl(code, classname);
       code << "// </%config>\n\n"
-           << classname << "::" << classname << "(const Compident& ci, const Urlmapper& um, Comploader& cl)\n"
+           << classname << "::" << classname << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
               "  : EcppComponent(ci, um, cl)";
 
       // initialize subcomponents
@@ -538,7 +506,7 @@ namespace tnt
            << cleanup
            << "  // </%cleanup>\n"
               "}\n\n"
-              "unsigned " << classname << "::operator() (HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam)\n"
+              "unsigned " << classname << "::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam)\n"
            << "{\n";
 
       if (isDebug())
@@ -603,70 +571,56 @@ namespace tnt
                 "}\n\n";
       }
 
-      code << "bool " << classname << "::drop()\n"
-           << "{\n";
-      if (singleton)
-      {
-        code << "  cxxtools::MutexLock lock(mutex);\n"
-             << "  if (--refs == 0)\n"
-             << "  {\n"
-             << "    delete this;\n"
-             << "    theComponent = 0;\n";
-        if (compress)
-          code << "    rawData.release();\n";
-        code << "    return true;\n"
-             << "  }\n"
-             << "  else\n"
-             << "    return false;\n";
-      }
+      code << "void " << classname << "::drop()\n"
+              "{\n"
+              "  factory.drop(this);\n"
+              "}\n\n"
+              "unsigned " << classname << "::getDataCount(const tnt::HttpRequest& request) const\n";
+      if (noData)
+        code << "{ return 0; }\n\n";
       else
-      {
-        code << "  delete this;\n";
-        if (!externData && compress)
-          code << "  rawData.release();\n";
-        code << "  return true;\n";
-      }
-
-      code << "}\n\n"
-              "unsigned " << classname << "::getDataCount(const HttpRequest& request) const\n"
-              "{ return data.size(); }\n\n";
+        code << "{ return data.size(); }\n\n";
 
       if (externData)
       {
-        code << "unsigned " << classname << "::getDataLen(const HttpRequest& request, unsigned n) const\n"
+        code << "unsigned " << classname << "::getDataLen(const tnt::HttpRequest& request, unsigned n) const\n"
                 "{\n"
                 "  const Component* dataComponent = getDataComponent(request);\n"
-                "  if (dataComponent == this)\n"
-                "  {\n"
-                "    if (n >= data.size())\n"
-                "      throw std::range_error(\"range_error in " << classname << "::getDataLen\");\n"
-                "    return data[n].getLength();\n"
-                "  }\n"
-                "  else\n"
-                "    return dataComponent->getDataLen(request, n);\n"
+                "  if (dataComponent == this)\n";
+        if (noData)
+          code << "    throw std::runtime_error(\"no data in " << classname << "::getDataLen\");\n\n";
+        else
+          code << "  {\n"
+                  "    if (n >= data.size())\n"
+                  "      throw std::range_error(\"range_error in " << classname << "::getDataLen\");\n"
+                  "    return data[n].getLength();\n"
+                  "  }\n";
+        code << "  return dataComponent->getDataLen(request, n);\n"
                 "}\n\n"
-                "const char* " << classname << "::getDataPtr(const HttpRequest& request, unsigned n) const\n"
+                "const char* " << classname << "::getDataPtr(const tnt::HttpRequest& request, unsigned n) const\n"
                 "{\n"
                 "  const Component* dataComponent = getDataComponent(request);\n"
-                "  if (dataComponent == this)\n"
-                "  {\n"
-                "    if (n >= data.size())\n"
-                "      throw std::range_error(\"range_error in " << classname << "::getDataPtr\");\n"
-                "    return data[n].getData();\n"
-                "  }\n"
-                "  else\n"
-                "    return dataComponent->getDataPtr(request, n);\n"
+                "  if (dataComponent == this)\n";
+        if (noData)
+          code << "    throw std::runtime_error(\"no data in " << classname << "::getDataLen\");\n\n";
+        else
+          code << "  {\n"
+                  "    if (n >= data.size())\n"
+                  "      throw std::range_error(\"range_error in " << classname << "::getDataPtr\");\n"
+                  "    return data[n].getData();\n"
+                  "  }\n";
+        code << "  return dataComponent->getDataPtr(request, n);\n"
                 "}\n\n";
       }
       else
       {
-        code << "unsigned " << classname << "::getDataLen(const HttpRequest& request, unsigned n) const\n"
+        code << "unsigned " << classname << "::getDataLen(const tnt::HttpRequest& request, unsigned n) const\n"
                 "{\n"
                 "  if (n >= data.size())\n"
                 "    throw std::range_error(\"range_error in " << classname << "::getDataLen\");\n"
                 "  return data[n].getLength();\n"
                 "}\n\n"
-                "const char* " << classname << "::getDataPtr(const HttpRequest& request, unsigned n) const\n"
+                "const char* " << classname << "::getDataPtr(const tnt::HttpRequest& request, unsigned n) const\n"
                 "{\n"
                 "  if (n >= data.size())\n"
                 "    throw std::range_error(\"range_error in " << classname << "::getDataPtr\");\n"
@@ -711,7 +665,6 @@ namespace tnt
       getPre(header);
       header << '\n';
       getNamespaceStart(header);
-      getCreatorDeclaration(header);
       getDeclareShared(header);
       getClassDeclaration(header);
       getNamespaceEnd(header);
@@ -723,14 +676,21 @@ namespace tnt
     void Generator::getCpp(std::ostream& code, const std::string& filename) const
     {
       std::string ns_classname_slash;
+      std::string ns_classname_dot;
+
       if (!maincomp.getNs().empty())
+      {
         ns_classname_slash = maincomp.getNs() + '/';
+        ns_classname_dot = maincomp.getNs() + '.';
+      }
       ns_classname_slash += maincomp.getName();
+      ns_classname_dot += maincomp.getName();
 
       getIntro(code, filename);
       getCppIncludes(code);
 
       code << "#include \"" << ns_classname_slash << ".h\"\n\n"
+              "log_define(\"component." << ns_classname_dot << "\")\n\n"
               "template <typename T> inline void use(const T&) { }\n\n";
 
       getNamespaceStart(code);
@@ -740,12 +700,17 @@ namespace tnt
 
     void Generator::getCppWoHeader(std::ostream& code, const std::string& filename) const
     {
+      std::string ns_classname_dot;
+      if (!maincomp.getNs().empty())
+        ns_classname_dot = maincomp.getNs() + '.';
+      ns_classname_dot += maincomp.getName();
+
       getIntro(code, filename);
 
       getHeaderIncludes(code);
       getCppIncludes(code);
 
-      code << "\n" 
+      code << "log_define(\"component." << ns_classname_dot << "\")\n\n"
               "template <typename T> inline void use(const T&) { }\n\n";
 
       getPre(code);
@@ -753,7 +718,6 @@ namespace tnt
 
       getNamespaceStart(code);
 
-      getCreatorDeclaration(code);
       getDeclareShared(code);
       getClassDeclaration(code);
 

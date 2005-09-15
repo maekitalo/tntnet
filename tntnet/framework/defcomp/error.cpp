@@ -20,98 +20,79 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/component.h>
+#include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
-#include <fstream>
-#include <cxxtools/thread.h>
 
 namespace tnt
 {
   class Urlmapper;
   class Comploader;
-}
 
-static cxxtools::Mutex mutex;
-static tnt::Component* theComponent = 0;
-static unsigned refs = 0;
-
-////////////////////////////////////////////////////////////////////////
-// prototypes for external functions
-//
-extern "C"
-{
-  tnt::Component* create_error(const tnt::Compident& ci, const tnt::Urlmapper& um,
-    tnt::Comploader& cl);
-}
-
-////////////////////////////////////////////////////////////////////////
-// componentdeclaration
-//
-class Errorcomp : public tnt::Component
-{
-  protected:
-    virtual ~Errorcomp() { };
-
-  public:
-    virtual unsigned operator() (tnt::HttpRequest& request,
-      tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-    virtual bool drop();
-};
-
-////////////////////////////////////////////////////////////////////////
-// external functions
-//
-
-tnt::Component* create_error(const tnt::Compident& ci, const tnt::Urlmapper& um,
-  tnt::Comploader& cl)
-{
-  cxxtools::MutexLock lock(mutex);
-  if (theComponent == 0)
+  ////////////////////////////////////////////////////////////////////////
+  // componentdeclaration
+  //
+  class Error : public tnt::Component
   {
-    theComponent = new Errorcomp();
-    refs = 1;
+      friend class ErrorFactory;
+
+    public:
+      Error()
+      { }
+
+      virtual unsigned operator() (tnt::HttpRequest& request,
+        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
+      virtual void drop();
+  };
+
+  ////////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  class ErrorFactory : public tnt::SingletonComponentFactory
+  {
+    public:
+      virtual tnt::Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl);
+  };
+
+  tnt::Component* ErrorFactory::doCreate(const tnt::Compident&,
+    const tnt::Urlmapper&, tnt::Comploader&)
+  {
+    return new Error();
   }
 
-  return theComponent;
-}
+  TNT_COMPONENTFACTORY(Error, ErrorFactory, factory)
 
-////////////////////////////////////////////////////////////////////////
-// componentdefinition
-//
-unsigned Errorcomp::operator() (tnt::HttpRequest& request,
-  tnt::HttpReply& reply, cxxtools::QueryParams&)
-{
-  std::string msg;
-
-  const tnt::HttpRequest::args_type& args = request.getArgs();
-
-  tnt::HttpRequest::args_type::const_iterator i = args.begin();
-  if (i == args.end())
-    reply.throwError("400 internal error");
-
-  msg = *i++;
-  for ( ; i != args.end(); ++i)
+  ////////////////////////////////////////////////////////////////////////
+  // componentdefinition
+  //
+  unsigned Error::operator() (tnt::HttpRequest& request,
+    tnt::HttpReply& reply, cxxtools::QueryParams&)
   {
-    msg += ' ';
-    msg += *i;
+    std::string msg;
+
+    const tnt::HttpRequest::args_type& args = request.getArgs();
+
+    tnt::HttpRequest::args_type::const_iterator i = args.begin();
+    if (i == args.end())
+      reply.throwError("400 internal error");
+
+    msg = *i++;
+    for ( ; i != args.end(); ++i)
+    {
+      msg += ' ';
+      msg += *i;
+    }
+
+    reply.throwError(msg);
+
+    return DECLINED;
   }
 
-  reply.throwError(msg);
-
-  return DECLINED;
-}
-
-bool Errorcomp::drop()
-{
-  cxxtools::MutexLock lock(mutex);
-  if (--refs == 0)
+  void Error::drop()
   {
-     delete this;
-     theComponent = 0;
-     return true;
+    factory.drop(this);
   }
-  else
-    return false;
-}
 
+}

@@ -52,6 +52,7 @@ namespace tnt
         jscompress(argc, argv, "--compress-js"),
         compress(argc, argv, 'z'),
         externData(argc, argv, 'x'),
+        noData(argc, argv, "--nodata"),
         verbose(argc, argv, 'v'),
         debug(argc, argv, 'd'),
         trace(argc, argv, 't'),
@@ -175,6 +176,7 @@ namespace tnt
 
       generator.setCompress(compress);
       generator.setExternData(externData);
+      generator.setNoData(noData);
 
       if (singleton.isSet())
         generator.setSingleton(singleton);
@@ -320,6 +322,7 @@ namespace tnt
            "  -s               generate singleton\n"
            "  -s-              generate no singleton\n"
            "  -b               binary\n"
+           "  -bb              generate multibinary component\n"
            "  -B class         additional base-class\n"
            "  -C class         alternative base-class (derived from tnt::ecppComponent)\n"
            "  --compress-html  remove some space in HTML-code\n"

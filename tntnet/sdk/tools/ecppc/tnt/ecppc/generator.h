@@ -82,6 +82,7 @@ namespace tnt
         filter_enum filter;
         bool compress;
         bool externData;
+        bool noData;
 
         time_t c_time;
         const char* gentime;
@@ -104,11 +105,11 @@ namespace tnt
         void getPre(std::ostream& out) const;
         void getNamespaceStart(std::ostream& out) const;
         void getNamespaceEnd(std::ostream& out) const;
-        void getCreatorDeclaration(std::ostream& out) const;
         void getDeclareShared(std::ostream& out) const;
         void getClassDeclaration(std::ostream& out) const;
 
         void getCppIncludes(std::ostream& out) const;
+        void getFactoryDeclaration(std::ostream& out) const;
         void getCppBody(std::ostream& out) const;
 
       public:
@@ -146,6 +147,14 @@ namespace tnt
 
         void setExternData(bool sw = true)           { externData = sw; }
         bool isExternData() const                    { return externData; }
+
+        void setNoData(bool sw = true)
+          {
+            noData = sw;
+            if (sw)
+              externData = true;
+          }
+        bool isNoData() const                        { return noData; }
 
         void setLastModifiedTime(time_t t)           { c_time = t; }
         time_t getLastModifiedTime() const           { return c_time; }

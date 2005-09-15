@@ -3,6 +3,7 @@ lib_LTLIBRARIES = libtntnet.la
 libtntnet_la_SOURCES = \
 	comploader.cpp \
 	component.cpp \
+	componentfactory.cpp \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	cookie.cpp \
@@ -31,6 +32,7 @@ libtntnet_la_SOURCES = \
 nobase_include_HEADERS = \
 	tnt/comploader.h \
 	tnt/component.h \
+	tnt/componentfactory.h \
 	tnt/contentdisposition.h \
 	tnt/contenttype.h \
 	tnt/convert.h \
