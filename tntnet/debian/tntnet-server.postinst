@@ -27,6 +27,10 @@ case "$1" in
     if ! /etc/init.d/tntnet start; then
      echo "error in /etc/init.d/tntnet start"
     fi
+    if [ ! -d "/var/log/tntnet" ]; then
+      /bin/mkdir /var/log/tntnet
+      /bin/chown www-data:www-data /var/log/tntnet
+    fi
     ;;
 
   abort-upgrade|abort-remove|abort-deconfigure)
