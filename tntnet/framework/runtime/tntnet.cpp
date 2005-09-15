@@ -605,7 +605,10 @@ namespace tnt
     log_info("create " << listeners.size() << " listener threads");
     for (listeners_type::iterator it = listeners.begin();
          it != listeners.end(); ++it)
+    {
       (*it)->create();
+      (*it)->detach();
+    }
 
     // create worker-threads
     log_info("create " << minthreads << " worker threads");
@@ -614,15 +617,18 @@ namespace tnt
       log_debug("create worker " << i);
       Worker* s = new Worker(*this);
       s->create();
+      s->detach();
     }
 
     // create poller-thread
     log_debug("start poller thread");
     pollerthread.create();
+    pollerthread.detach();
 
     log_debug("start timer thread");
     cxxtools::MethodThread<Tntnet> timerThread(*this, &Tntnet::timerTask);
     timerThread.create();
+    timerThread.deatch();
 
     if (filedes >= 0)
       signalParentSuccess(filedes);
@@ -641,6 +647,7 @@ namespace tnt
         log_info("create workerthread");
         Worker* s = new Worker(*this);
         s->create();
+        s->detach();
       }
       else
         log_warn("max worker-threadcount " << maxthreads << " reached");
