@@ -50,7 +50,7 @@ namespace tnt
       cxxtools::MutexLock lock(mutex);
       if (theComponent == 0)
       {
-        theComponent = doCreate(ci, um, cl);
+        theComponent = ComponentFactory::create(ci, um, cl);
         refs = 1;
       }
       else
