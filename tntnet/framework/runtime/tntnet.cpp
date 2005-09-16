@@ -628,7 +628,7 @@ namespace tnt
     log_debug("start timer thread");
     cxxtools::MethodThread<Tntnet> timerThread(*this, &Tntnet::timerTask);
     timerThread.create();
-    timerThread.deatch();
+    timerThread.detach();
 
     if (filedes >= 0)
       signalParentSuccess(filedes);
