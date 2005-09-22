@@ -1,175 +1,139 @@
-tntnet (1.4.1pre1-2) stable; urgency=low
+2005-04-23 tommi@tntnet.org
 
-  * fixed ssl-threading problem
+  - new namingconventions: classfiles start with capitals, methods with lower
+    case
 
- -- Tommi Maekitalo <tommi@tntnet.org>  Mon, 27 Jun 2005 21:57:54 +0200
+2005-06-27 tommi@tntnet.org
 
-tntnet (1.4.1pre1-1) stable; urgency=low
+  - fixed ssl-threading problem
 
-  * dependencygeneration fixed (no *.h-dependency any more unless requested)
-  * no escape of '&' in sout()
-  * fixed upload.ecpp-demo
-  * fixed ecppl/ecppll
+2005-06-22 tommi@tntnet.org
 
- -- Tommi Maekitalo <tommi@tntnet.org>  Wed, 22 Jun 2005 22:06:31 +0200
+  - dependencygeneration fixed (no *.h-dependency any more unless requested)
+  - no escape of '&' in sout()
+  - fixed upload.ecpp-demo
+  - fixed ecppl/ecppll
 
-tntnet (1.4.0-1) stable; urgency=low
+2005-06-13 tommi@tntnet.org
 
-  * components are generated in .cpp-files only by default (no .h-files)
-  * bugfix: component-type was not filled
-  * unsave html-character-output in <$...$> and <?...?...?> is escaped
+  - components are generated in .cpp-files only by default (no .h-files)
+  - bugfix: component-type was not filled
+  - unsave html-character-output in <$...$> and <?...?...?> is escaped
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Mon, 13 Jun 2005 22:36:07 +0200
+2005-06-02 tommi@tntnet.org
 
-tntnet (1.4.0pre3-1) stable; urgency=low
+  - scope-variables
+  - automatic session-handling
+  - removed boost dependency
 
-  * scope-variables
-  * automatic session-handling
-  * removed boost dependency
+2005-05-17 tommi@tntnet.org
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Thu,  2 Jun 2005 10:05:46 +0200
+  - version 1.3.1 released
 
-tntnet (1.3.1-1) stable; urgency=low
+2005-05-17 tommi@tntnet.org
 
-  * released unchanged
+  - monitor-process calls listen before fork of worker instead of worker.
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 17 May 2005 09:20:45 +0200
+2005-05-03 tommi@tntnet.org
 
-tntnet (1.3.1pre1-2) unstable; urgency=low
-
-  * monitor-process calls listen before fork of worker instead of worker.
-
- -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 17 May 2005 09:20:42 +0200
-
-tntnet (1.3.1pre1-1) unstable; urgency=medium
-
-  * better startup-handling: parent-process wait for child to start
+  - better startup-handling: parent-process wait for child to start
     successfully and listen to ports
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Tue,  3 May 2005 23:00:37 +0200
+2005-05-09 tommi@tntnet.org
 
-tntnet (1.3.0.1-1) unstable; urgency=low
+  - Bug: peeraddress was cleared at keep-alive
+  - init-scripts starts tntnet on restart even when not running
 
-  * Bug: peeraddress was cleared at keep-alive
-  * init-scripts starts tntnet on restart even when not running
+2005-03-03 tommi@tntnet.org
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Wed,  9 Mar 2005 20:46:27 +0100
+  - logs remote ip-address in category debug
 
-tntnet (1.3.0-3) unstable; urgency=low
+2005-02-10 tommi@tntnet.org
 
-  * logs remote ip-address in category debug
+  - new syntax for calling subcomponents
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Thu,  3 Mar 2005 21:10:27 +0100
+2005-01-23 tommi@tntnet.org
 
-tntnet (1.3.0-2) unstable; urgency=low
-
-  * new syntax for calling subcomponents
-
- -- Tommi Maekitalo <tommi@epgmbh.de>  Thu, 10 Feb 2005 00:15:59 +0100
-
-tntnet (1.3.0-1) unstable; urgency=low
-
-  * better scalability by creating a poller-thread, which monitors
+  - better scalability by creating a poller-thread, which monitors
     multiple idle connections instead of having a worker-thread
     for each connection.
-  * worker-threads are dynamically stopped and started
+  - worker-threads are dynamically stopped and started
+  - Version 1.3.0 released
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Sat, 29 Jan 2005 21:57:11 +0100
+2005-01-12 tommi@tntnet.org
 
-tntnet (1.2.3-1) unstable; urgency=low
-
-  * some protection against DoS-attacks (MaxRequestSize, MaxBodySize,
+  - version 1.2.3 released
+  - some protection against DoS-attacks (MaxRequestSize, MaxBodySize,
     MaxHeaderSize)
-  * support for Cookies
-  * tnt::savepoint
+  - support for Cookies
+  - tnt::savepoint
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Wed, 12 Jan 2005 15:28:19 +0100
+2004-12-14 tommi@tntnet.org
 
-tntnet (1.2.2-1) unstable; urgency=low
+  - version 1.2.2 released
+  - Bug in Keep-Alive fixed
 
-  * Bug in Keep-Alive fixed
+2004-12-05 tommi@tntnet.org
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 14 Dec 2004 09:09:00 +0100
+  - version 1.2.1 released
+  - Content-MD5-header
+  - moved logging-wrapper to cxxtools (1.2.1)
+  - typed arguments
 
-tntnet (1.2.1-1) unstable; urgency=low
+2004-11-25 tommi@tntnet.org
 
-  * Content-MD5-header
-  * moved logging-wrapper to cxxtools (1.2.1)
-  * typed arguments
+  - version 1.2.0 released
+  - use cxxtools-1.2.0
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Sun,  5 Dec 2004 21:34:40 +0100
+2004-11-24 tommi@tntnet.org
 
-tntnet (1.2.0-1) unstable; urgency=low
+  - add missing CR in HTTP-Header
 
-  * use cxxtools-1.2.0
+2004-11-22 tommi@tntnet.org
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Thu, 25 Nov 2004 23:06:58 +0100
+  - init-script checks, if tntnet is really running when pid-file is found
 
-tntnet (1.1.3-3) unstable; urgency=low
+2004-11-12 tommi@tntnet.org
 
-  * add missing CR in HTTP-Header
+  - version 1.1.3 released
+  - generate tntnet.conf with autoconf to get autoconf-parameters in
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Wed, 24 Nov 2004 11:56:28 +0100
+2004-11-11 tommi@tntnet.org
 
-tntnet (1.1.3-2) unstable; urgency=medium
+  - added missing tntnet.so.*
 
-  * init-script checks, if tntnet is really running when pid-file is found
+2004-11-03 tommi@tntnet.org
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Mon, 22 Nov 2004 10:54:43 +0100
+  - version 1.1.2 released
+  - improved autoconf/automake-buildsystem
+  - minor feature-improvements and bugfixes
 
-tntnet (1.1.3-1) unstable; urgency=low
+2004-10-25 tommi@tntnet.org
 
-  * generate tntnet.conf with autoconf to get autoconf-parameters in
+  - version 1.1.1 released
+  - buldsystem changed to autoconf/automake
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Fri, 12 Nov 2004 12:04:16 +0100
+2004-09-20 tommi@tntnet.org
 
-tntnet (1.1.2-2) unstable; urgency=low
-
-  * added missing tntnet.so.*
-
- -- Tommi Maekitalo <tommi@epgmbh.de>  Thu, 11 Nov 2004 16:28:29 +0100
-
-tntnet (1.1.2-1) unstable; urgency=low
-
-  * improved autoconf/automake-buildsystem
-  * minor feature-improvements and bugfixes
-
- -- Tommi Maekitalo <tommi@tntnet.org>  Wed,  3 Nov 2004 21:05:31 +0100
-
-tntnet (1.1.1-1) unstable; urgency=low
-
-  * buldsystem changed to autoconf/automake
-
- -- Tommi Maekitalo <tommi@epgmbh.de>  Mon, 25 Oct 2004 11:04:08 +0200
-
-tntnet (1.1-4) unstable; urgency=low
-
-  * resolved: server might crash under high load, because I linked it
+  - resolved: server might crash under high load, because I linked it
     with the non-multithreaded regex-library
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Mon, 20 Sep 2004 14:51:34 +0200
+2004-09-16 tommi@tntnet.org
 
-tntnet (1.1-3) unstable; urgency=low
-
-  * new build for compatibility with cxxtools 1.1
+  - new build for compatibility with cxxtools 1.1
 
  -- Tommi Maekitalo <tommi@epgmbh.de>  Thu, 16 Sep 2004 22:28:57 +0200
 
-tntnet (1.1-2) unstable; urgency=low
+2004-09-07 tommi@tntnet.org
 
-  * Korrekturen im HTTP-Header
+  - fixed HTTP-header
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Tue,  7 Sep 2004 12:20:32 +0200
+2004-08-31 tommi@tntnet.org
 
-tntnet (1.1-1) unstable; urgency=low
+  - version 1.1 released
+  - ecpp-components read LANG from request first.
 
-  * ecpp-components read LANG from request first.
+2004-03-25 tommi@tntnet.org
 
- -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 31 Aug 2004 14:32:28 +0200
-
-tntnet (1.0-1) unstable; urgency=low
-
-  * Initial Release.
-
- -- hotspot <hotspot@epgmbh.de>  Thu, 25 Mar 2004 16:53:31 +0100
+  - initial release 1.0
 
