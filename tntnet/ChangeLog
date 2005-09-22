@@ -1,7 +1,6 @@
-2005-04-23 tommi@tntnet.org
+2005-08-23 tommi@tntnet.org
 
-  - new namingconventions: classfiles start with capitals, methods with lower
-    case
+  - new namingconventions: classfiles start with uppercase, methods with lowercase
 
 2005-06-27 tommi@tntnet.org
 
