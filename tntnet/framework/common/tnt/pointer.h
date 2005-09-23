@@ -22,8 +22,6 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_POINTER_H
 #define TNT_POINTER_H
 
-#include <cxxtools/thread.h>
-
 namespace tnt
 {
   /// smart pointer for objects with own reference-counting through
