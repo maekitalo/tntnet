@@ -1,6 +1,7 @@
 2005-08-23 tommi@tntnet.org
 
   - new namingconventions: classfiles start with uppercase, methods with lowercase
+  - use cxxtools-1.4.0
 
 2005-06-27 tommi@tntnet.org
 
