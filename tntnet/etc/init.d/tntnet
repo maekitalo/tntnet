@@ -71,6 +71,17 @@ case "$1" in
 		fi
 		;;
 
+	reload)
+		echo -n "Reload tntnet - "
+		if [ ! -f $PIDFILE ]
+		then
+			echo tntnet not running
+        else
+	        PID=`cat $PIDFILE`
+	        kill -HUP $PID
+        fi
+        ;;
+
 	status)
 		if [ ! -f $PIDFILE ]
 		then
