@@ -1,3 +1,15 @@
+2005-09-26 tommi@tntnet.org
+
+  - one level of indirection of factory-pointer removed.
+  - detection of cxxtools- and zlib-headers fixed. Missing headers trigger a
+	error at configure-time.
+
+2005-09-15 tommi@tntnet.org
+
+  - components are created with a factory instead of a create-method.
+	This way there is no need to convert a void* to a function-pointer, what
+	is not defined in c++.
+
 2005-08-23 tommi@tntnet.org
 
   - new namingconventions: classfiles start with uppercase, methods with lowercase

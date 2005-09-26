@@ -1,5 +1,5 @@
-AC_INIT([tntnet],[1.5.0pre1],[Tommi Maekitalo <tommi@tntnet.org>])
-AM_INIT_AUTOMAKE(tntnet, 1.5.0pre1)
+AC_INIT([tntnet],[1.5.0pre2],[Tommi Maekitalo <tommi@tntnet.org>])
+AM_INIT_AUTOMAKE(tntnet, 1.5.0pre2)
 
 abi_current=4
 abi_revision=1
@@ -35,9 +35,9 @@ AC_SUBST(CXXTOOLS_CXXFLAGS)
 AC_SUBST(CXXTOOLS_LDFLAGS)
 AC_SUBST(CXXTOOLS_LOG_LDFLAGS)
 
-AC_CHECK_HEADER([cxxtools/tcpstream.h])
-AC_CHECK_HEADER([cxxtools/log.h])
-AC_CHECK_HEADER([zlib.h])
+AC_CHECK_HEADER([cxxtools/tcpstream.h], , AC_MSG_ERROR([cxxtools not found]))
+AC_CHECK_HEADER([cxxtools/log.h], , AC_MSG_ERROR([cxxtools-logging not found]))
+AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADERS([limits])
 
 #
