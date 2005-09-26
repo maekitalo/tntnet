@@ -76,11 +76,11 @@ case "$1" in
 		if [ ! -f $PIDFILE ]
 		then
 			echo tntnet not running
-        else
-	        PID=`cat $PIDFILE`
-	        kill -HUP $PID
-        fi
-        ;;
+		else
+			PID=`cat $PIDFILE`
+			kill -HUP $PID
+		fi
+		;;
 
 	status)
 		if [ ! -f $PIDFILE ]
