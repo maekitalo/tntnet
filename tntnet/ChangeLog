@@ -12,6 +12,11 @@
 
 2005-08-23 tommi@tntnet.org
 
+  - documentation update (see doc/tntnet.sxw)
+  - initscript update - tntnet reload
+
+2005-08-22 tommi@tntnet.org
+
   - new namingconventions: classfiles start with uppercase, methods with lowercase
   - use cxxtools-1.4.0
 
