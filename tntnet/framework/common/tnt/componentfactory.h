@@ -26,11 +26,9 @@ Boston, MA  02111-1307  USA
 #include <tnt/comploader.h>
 #include <cxxtools/thread.h>
 
-#define TNT_COMPONENTFACTORY(componentName, factoryType, factory) \
-  static factoryType factory; \
-  extern "C" { \
-    tnt::ComponentFactory* componentName ## _factory = &factory; \
-  }
+#define TNT_COMPONENTFACTORY(componentName, factoryType, factoryName) \
+  extern "C" { factoryType componentName ## _factory; } \
+  static factoryType& factoryName = componentName ## _factory;
 
 namespace tnt
 {

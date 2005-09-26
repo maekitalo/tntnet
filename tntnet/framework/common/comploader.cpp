@@ -47,7 +47,7 @@ Component* ComponentLibrary::create(
     // creatorsymbol not known - load it
     log_debug("lookup symbol \"" << component_name << "_factory\"");
 
-    factory = *(static_cast<ComponentFactory**>(sym((component_name + "_factory").c_str()).getSym()));
+    factory = static_cast<ComponentFactory*>(sym((component_name + "_factory").c_str()).getSym());
     factoryMap.insert(factoryMapType::value_type(component_name, factory));
   }
   else
