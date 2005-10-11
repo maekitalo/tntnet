@@ -34,9 +34,9 @@ Installation
 
 To install tntnet, you need cxxtools (http://www.tntnet.org/).
 
-this version needs cxxtools version >=1.3.1.
+This version needs at least cxxtools version 1.5
 
-you can find generig installation instructions in the file INSTALL.
+You can find generic installation instructions in the file INSTALL.
 
 After building you can try out tntnet by changing to a directory of a
 demo-application (e.g. cd sdk/demos/session) and running
