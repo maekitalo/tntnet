@@ -41,7 +41,7 @@ namespace tnt
 
       try
       {
-        handler.onCpp("  // <%include>" + file + '\n');
+        handler.onCpp("  // <%include> " + file + '\n');
         parse(inp);
         handler.onCpp("  // </%include>\n");
       }
@@ -1165,16 +1165,21 @@ namespace tnt
             break;
 
           case state_include0:
-            expr = ch;
-            state = state_include1;
+            if (ch == '<')
+              state = state_cppe0;
+            else if (!std::isspace(ch))
+            {
+              expr = ch;
+              state = state_include1;
+            }
             break;
 
           case state_include1:
-            if (ch == '<')
+            if (std::isspace(ch) || ch == '<')
             {
               doInclude(expr);
               expr.clear(),
-              state = state_cppe0;
+              state = (ch == '<' ? state_cppe0 : state_include0);
             }
             else
               expr += ch;
@@ -1282,7 +1287,10 @@ namespace tnt
               state = state_scope0;
             }
             else if (ch == '(')
+            {
               state = state_scopeinit;
+              bracket_count = 0;
+            }
             else if (std::isspace(ch))
               scopevar += ch;
             else if (std::isspace(scopevar.at(scopevar.size() - 1)))
@@ -1309,7 +1317,7 @@ namespace tnt
             break;
 
           case state_scopeinit:
-            if (ch == ')')
+            if (bracket_count == 0 && ch == ')')
             {
               // scopevar contains variable-definition
               // scopeinit contains constructorparameter
@@ -1324,7 +1332,13 @@ namespace tnt
               state = state_scopee0;
             }
             else
+            {
               scopeinit += ch;
+              if (ch == '(')
+                ++bracket_count;
+              else if (ch == ')')
+                --bracket_count;
+            }
             break;
 
           case state_scopee0:
