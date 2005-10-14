@@ -89,8 +89,8 @@ EOF
   cat <<EOF
 SUFFIXES=.ecpp .gif .jpg
 ECPPC=@bindir@/ecppc
-CXXFLAGS+=`tntnet-config --cxxflags` -fPIC -O2
-LDFLAGS+=-shared `tntnet-config --libs`
+CXXFLAGS+=\`tntnet-config --cxxflags\` -fPIC -O2
+LDFLAGS+=-shared \`tntnet-config --libs\`
 
 %.cpp: %.ecpp
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_CPP) \$<
