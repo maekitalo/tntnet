@@ -48,6 +48,10 @@ namespace tnt
       { }
 
       explicit Contenttype(const std::string& ct);
+      Contenttype(const std::string& type_, const std::string& subtype_)
+        : type(type_),
+          subtype(subtype_)
+          { }
 
       const std::string& getType() const     { return type; }
       const std::string& getSubtype() const  { return subtype; }
