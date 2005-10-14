@@ -63,6 +63,12 @@ namespace tnt
         { return parameter.find(key); }
       parameter_iterator parameter_upper_bound(parameter_type::key_type key) const
         { return parameter.upper_bound(key); }
+
+      bool operator== (const Contenttype& ct) const
+        { return type == ct.type
+              && subtype == ct.subtype
+              && parameter == ct.parameter
+              && boundary == ct.boundary; }
   };
 
   inline std::istream& operator>> (std::istream& in, Contenttype& ct)
