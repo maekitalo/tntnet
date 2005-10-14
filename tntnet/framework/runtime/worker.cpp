@@ -208,7 +208,7 @@ namespace tnt
     std::string currentSessionCookieName;
 
     Dispatcher::PosType pos(application.getDispatcher(), request.getUrl());
-    while (1)
+    while (true)
     {
       // pos.getNext() throws NotFoundException at end
       Dispatcher::CompidentType ci = pos.getNext();

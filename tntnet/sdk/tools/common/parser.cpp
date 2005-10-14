@@ -261,6 +261,11 @@ namespace tnt
               }
               state = state_compe0;
             }
+            else if (ch == '\\')
+            {
+              html += '<';
+              state = state_html;
+            }
             else
             {
               html += '<';
