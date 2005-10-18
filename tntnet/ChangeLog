@@ -1,3 +1,7 @@
+2005-10-18 tommi@tntnet.org
+
+  - components with compressed data did not work any more - fixed
+
 2005-09-26 tommi@tntnet.org
 
   - one level of indirection of factory-pointer removed.
