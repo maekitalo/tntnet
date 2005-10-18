@@ -496,6 +496,9 @@ namespace tnt
 
       code << "\n{\n";
 
+      if (compress)
+        code << "  rawData.addRef();\n";
+
       code << "  // <%init>\n"
            << init
            << "  // </%init>\n"
@@ -504,8 +507,12 @@ namespace tnt
               "{\n"
               "  // <%cleanup>\n"
            << cleanup
-           << "  // </%cleanup>\n"
-              "}\n\n"
+           << "  // </%cleanup>\n";
+
+      if (compress)
+        code << "  rawData.release();\n";
+
+      code << "}\n\n"
               "unsigned " << classname << "::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam)\n"
            << "{\n";
 
