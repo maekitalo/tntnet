@@ -118,6 +118,20 @@ namespace
         std::string("error in write(): ") + strerror(errno));
     close(fd);
   }
+
+  inline bool isTrue(char ch)
+  {
+    return ch == '1'
+        || ch == 't' || ch == 'T'
+        || ch == 'y' || ch == 'Y'
+        || ch == 'j' || ch == 'J';
+  }
+
+  inline bool isTrue(const std::string& s)
+  {
+    return s.size() > 0 && isTrue(s[0]);
+  }
+
 }
 
 namespace tnt
@@ -151,29 +165,18 @@ namespace tnt
     {
       log_init_debug();
       log_warn("Debugmode");
+      isDaemon = false;
     }
     else
     {
-      std::string pf;
-      if (propertyfilename.isSet())
-        pf = propertyfilename.getValue();
-      else
-        pf = config.getValue("PropertyFile");
-
-      if (pf.empty())
-        log_init();
-      else
-      {
-        struct stat properties_stat;
-        if (stat(pf.c_str(), &properties_stat) != 0)
-          throw std::runtime_error("propertyfile " + pf + " not found");
-
-        log_init(pf.c_str());
-      }
+      isDaemon = isTrue(config.getValue("Daemon"));
     }
 
-    minthreads = config.getValue<unsigned>("MinThreads", 5);
-    maxthreads = config.getValue<unsigned>("MaxThreads", 10);
+    if (!isDaemon)
+      initLogging();
+
+    minthreads = config.getValue<unsigned>("MinThreads", 10);
+    maxthreads = config.getValue<unsigned>("MaxThreads", 100);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
     Worker::setMinThreads(minthreads);
     Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
@@ -329,23 +332,9 @@ namespace tnt
           + strerror(errno));
   }
 
-  static inline bool isTrue(char ch)
-  {
-    return ch == '1'
-        || ch == 't' || ch == 'T'
-        || ch == 'y' || ch == 'Y'
-        || ch == 'j' || ch == 'J';
-  }
-
-  static inline bool isTrue(const std::string& s)
-  {
-    return s.size() > 0 && isTrue(s[0]);
-  }
-
   int Tntnet::run()
   {
-    std::string daemon = config.getValue("Daemon");
-    if (!debug && isTrue(daemon))
+    if (isDaemon)
     {
       int filedes = mkDaemon();
 
@@ -369,6 +358,7 @@ namespace tnt
         setGroup();
         setUser();
 
+        initLogging();
         workerProcess(filedes);
       }
       else
@@ -399,6 +389,7 @@ namespace tnt
             setGroup();
             setUser();
 
+            initLogging();
             workerProcess(filedes_monitor[1]);
             return -1;
           }
@@ -434,6 +425,29 @@ namespace tnt
     }
 
     return 0;
+  }
+
+  void Tntnet::initLogging()
+  {
+    if (debug)
+      return;  // logging already initialized
+
+    std::string pf;
+    if (propertyfilename.isSet())
+      pf = propertyfilename.getValue();
+    else
+      pf = config.getValue("PropertyFile");
+
+    if (pf.empty())
+      log_init();
+    else
+    {
+      struct stat properties_stat;
+      if (stat(pf.c_str(), &properties_stat) != 0)
+        throw std::runtime_error("propertyfile " + pf + " not found");
+
+      log_init(pf.c_str());
+    }
   }
 
   void Tntnet::writePidfile(int pid)
@@ -596,10 +610,6 @@ namespace tnt
   void Tntnet::workerProcess(int filedes)
   {
     log_debug("worker-process");
-
-    // change group and user
-    setGroup();
-    setUser();
 
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");

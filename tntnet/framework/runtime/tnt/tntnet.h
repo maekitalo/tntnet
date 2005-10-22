@@ -45,6 +45,7 @@ namespace tnt
       Tntconfig config;
       cxxtools::Arg<const char*> propertyfilename;
       cxxtools::Arg<bool> debug;
+      bool isDaemon;
 
       unsigned minthreads;
       unsigned maxthreads;
@@ -77,6 +78,7 @@ namespace tnt
       Tntnet(const Tntnet&);
       Tntnet& operator= (const Tntnet&);
 
+      void initLogging();
       void writePidfile(int pid);
       void monitorProcess(int workerPid);
       void initWorkerProcess();
