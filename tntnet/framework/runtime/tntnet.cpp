@@ -587,6 +587,8 @@ namespace tnt
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
     Worker::setMinThreads(minthreads);
     Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
+    Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
+    Worker::setReportStateTime(config.getValue<unsigned>("ReportStateTime", Worker::getReportStateTime()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
     Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
 
