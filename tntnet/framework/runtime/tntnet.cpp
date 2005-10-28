@@ -174,40 +174,6 @@ namespace tnt
 
     if (!isDaemon)
       initLogging();
-
-    minthreads = config.getValue<unsigned>("MinThreads", 10);
-    maxthreads = config.getValue<unsigned>("MaxThreads", 100);
-    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
-    Worker::setMinThreads(minthreads);
-    Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
-    queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
-    Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
-
-    Tntconfig::config_entries_type configSetEnv;
-    config.getConfigValues("SetEnv", configSetEnv);
-    for (Tntconfig::config_entries_type::const_iterator it = configSetEnv.begin();
-         it != configSetEnv.end(); ++it)
-    {
-      if (it->params.size() >= 2)
-      {
-#ifdef HAVE_SETENV
-        log_debug("setenv " << it->params[0] << "=\"" << it->params[1] << '"');
-        ::setenv(it->params[0].c_str(), it->params[1].c_str(), 1);
-#else
-        std::string name  = it->params[0];
-        std::string value = it->params[1];
-
-        char* env = new char[name.size() + value.size() + 2];
-        name.copy(env, name.size());
-        env[name.size()] = '=';
-        value.copy(env + name.size() + 1, value.size());
-        env[name.size() + value.size() + 1] = '\0';
-
-        log_debug("putenv(" << env);
-        ::putenv(env);
-#endif
-      }
-    }
   }
 
   void Tntnet::setGroup() const
@@ -611,6 +577,45 @@ namespace tnt
   {
     log_debug("worker-process");
 
+    // reload configuration
+    config = Tntconfig();
+    config.load(conf);
+
+    // initialize worker-process
+    minthreads = config.getValue<unsigned>("MinThreads", 10);
+    maxthreads = config.getValue<unsigned>("MaxThreads", 100);
+    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
+    Worker::setMinThreads(minthreads);
+    Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
+    queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
+    Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
+
+    Tntconfig::config_entries_type configSetEnv;
+    config.getConfigValues("SetEnv", configSetEnv);
+    for (Tntconfig::config_entries_type::const_iterator it = configSetEnv.begin();
+         it != configSetEnv.end(); ++it)
+    {
+      if (it->params.size() >= 2)
+      {
+#ifdef HAVE_SETENV
+        log_debug("setenv " << it->params[0] << "=\"" << it->params[1] << '"');
+        ::setenv(it->params[0].c_str(), it->params[1].c_str(), 1);
+#else
+        std::string name  = it->params[0];
+        std::string value = it->params[1];
+
+        char* env = new char[name.size() + value.size() + 2];
+        name.copy(env, name.size());
+        env[name.size()] = '=';
+        value.copy(env + name.size() + 1, value.size());
+        env[name.size() + value.size() + 1] = '\0';
+
+        log_debug("putenv(" << env);
+        ::putenv(env);
+#endif
+      }
+    }
+
     // launch listener-threads
     log_info("create " << listeners.size() << " listener threads");
     for (listeners_type::iterator it = listeners.begin();
@@ -645,7 +650,7 @@ namespace tnt
 
     // mainloop
     cxxtools::Mutex mutex;
-    while (1)
+    while (true)
     {
       {
         cxxtools::MutexLock lock(mutex);
@@ -708,8 +713,7 @@ namespace tnt
       }
       log_debug(count << " sessions timed out " << sessionScopes.size() << " sessions left");
 
-      log_debug("drop old components");
-      Worker::dropOldComponents();
+      Worker::timer();
     }
   }
 

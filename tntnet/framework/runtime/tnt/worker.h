@@ -42,16 +42,22 @@ namespace tnt
 
       Comploader mycomploader;
 
-      unsigned threadNumber;
+      unsigned threadId;
+      const char* state;
+      time_t lastRequestTime;
 
       typedef std::set<Worker*> workers_type;
       static workers_type workers;
 
       static unsigned compLifetime;
+      static unsigned maxRequestTime;
+      static unsigned reportStateTime;
+      static time_t nextReportStateTime;
       static unsigned minThreads;
 
       bool processRequest(HttpRequest& request, std::iostream& socket,
         unsigned keepAliveCount);
+      void healthCheck(time_t currentTime);
 
     public:
       Worker(Tntnet& app);
@@ -61,15 +67,23 @@ namespace tnt
 
       void dispatch(HttpRequest& request, HttpReply& reply);
       void cleanup(unsigned seconds)
-      { mycomploader.cleanup(seconds); }
+        { mycomploader.cleanup(seconds); }
       static void addSearchPath(const std::string& path)
-      { Comploader::addSearchPath(path); }
+        { Comploader::addSearchPath(path); }
 
-      static void dropOldComponents();
-      static void setCompLifetime(unsigned sec)
-      { compLifetime = sec; }
-      static unsigned getCompLifetime()
-      { return compLifetime; }
+      static void timer();
+
+      static void setCompLifetime(unsigned sec)    { compLifetime = sec; }
+      static unsigned getCompLifetime()            { return compLifetime; }
+
+      /// Sets a hard limit for request-time.
+      /// When the time is exceeded, this process exits.
+      static void setMaxRequestTime(unsigned sec)  { maxRequestTime = sec; }
+      static unsigned getMaxRequestTime()          { return maxRequestTime; }
+
+      static void setReportStateTime(unsigned sec) { reportStateTime = sec; }
+      static unsigned getReportStateTime()         { return reportStateTime; }
+
 
       static workers_type::size_type getCountThreads();
       static void setMinThreads(unsigned n)

@@ -48,6 +48,17 @@ namespace
       ~ComponentUnloadLock()
       { comp.unlock(); }
   };
+
+  static const char stateStarting[]          = "0 starting";
+  static const char stateWaitingForJob[]     = "1 waiting for job";
+  static const char stateParsing[]           = "2 parsing request";
+  static const char statePostParsing[]       = "3 post parsing";
+  static const char stateDispatch[]          = "4 dispatch";
+  static const char stateProcessingRequest[] = "5 processing request";
+  static const char stateFlush[]             = "6 flush";
+  static const char stateSendReply[]         = "7 send reply";
+  static const char stateSendError[]         = "8 send error";
+  static const char stateStopping[]          = "9 stopping";
 }
 
 namespace tnt
@@ -56,15 +67,20 @@ namespace tnt
   unsigned Worker::nextThreadNumber = 0;
   Worker::workers_type Worker::workers;
   unsigned Worker::compLifetime = 600;
+  unsigned Worker::maxRequestTime = 600;
+  unsigned Worker::reportStateTime = 1200;
+  time_t Worker::nextReportStateTime = 0;
   unsigned Worker::minThreads = 5;
   static const std::string& sessionCookiePrefix = "tntnet.";
 
   Worker::Worker(Tntnet& app)
     : application(app),
       mycomploader(app.getConfig()),
-      threadNumber(++nextThreadNumber)
+      threadId(0),
+      state(stateStarting),
+      lastRequestTime(0)
   {
-    log_debug("initialize thread " << threadNumber);
+    log_debug("initialize thread " << threadId);
 
     cxxtools::MutexLock lock(mutex);
     workers.insert(this);
@@ -78,11 +94,13 @@ namespace tnt
 
   void Worker::run()
   {
+    threadId = pthread_self();
     Jobqueue& queue = application.getQueue();
-    log_debug("start thread " << threadNumber);
+    log_debug("start thread " << threadId);
     while (queue.getWaitThreadCount() < minThreads)
     {
       log_debug("waiting for job");
+      state = stateWaitingForJob;
       Jobqueue::JobPtr j = queue.get();
       log_debug("got job - fd=" << j->getFd());
 
@@ -95,7 +113,9 @@ namespace tnt
         {
           keepAlive = false;
           log_debug("call parser");
+          state = stateParsing;
           j->getParser().parse(socket);
+          state = statePostParsing;
 
           if (socket.eof())
             log_debug("eof");
@@ -126,12 +146,16 @@ namespace tnt
       }
     }
 
-    log_info("end worker-thread " << threadNumber);
+    state = stateStopping;
+
+    log_info("end worker-thread " << threadId);
   }
 
   bool Worker::processRequest(HttpRequest& request, std::iostream& socket,
          unsigned keepAliveCount)
   {
+    time(&lastRequestTime);
+
     // log message
     char buffer[20];
     log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
@@ -185,6 +209,7 @@ namespace tnt
     }
     catch (const HttpError& e)
     {
+      state = stateSendError;
       log_warn("http-Error: " << e.what());
       socket << "HTTP/1.0 " << e.what()
              << "\r\n\r\n"
@@ -198,6 +223,7 @@ namespace tnt
 
   void Worker::dispatch(HttpRequest& request, HttpReply& reply)
   {
+    state = stateDispatch;
     const std::string& url = request.getUrl();
 
     log_info("dispatch " << request.getQuery());
@@ -210,6 +236,8 @@ namespace tnt
     Dispatcher::PosType pos(application.getDispatcher(), request.getUrl());
     while (true)
     {
+      state = stateDispatch;
+
       // pos.getNext() throws NotFoundException at end
       Dispatcher::CompidentType ci = pos.getNext();
       try
@@ -241,15 +269,17 @@ namespace tnt
         // set application-scope
         request.setApplicationScope(application.getApplicationScope(ci.libname));
 
-        log_debug("call component " << ci
-          << " path \"" << ci.getPathInfo() << '"');
+        log_info("call component " << ci << " path " << request.getPathInfo());
+        state = stateProcessingRequest;
         unsigned http_return = comp(request, reply, request.getQueryParams());
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())
           {
             log_info("request ready, returncode " << http_return);
+            state = stateFlush;
             reply.out().flush();
+            log_info("reply sent");
           }
           else
           {
@@ -283,8 +313,9 @@ namespace tnt
               }
             }
 
+            state = stateSendReply;
             reply.sendReply(http_return);
-            log_debug("reply sent");
+            log_info("reply sent");
           }
           return;
         }
@@ -299,12 +330,43 @@ namespace tnt
     throw NotFoundException(request.getUrl());
   }
 
-  void Worker::dropOldComponents()
+  void Worker::timer()
   {
+    time_t currentTime;
+    time(&currentTime);
+    bool reportState = false;
+    if (currentTime > nextReportStateTime)
+    {
+      if (nextReportStateTime)
+        reportState = true;
+      nextReportStateTime = currentTime + reportStateTime;
+    }
+
     cxxtools::MutexLock lock(mutex);
     for (workers_type::iterator it = workers.begin();
          it != workers.end(); ++it)
+    {
+      (*it)->healthCheck(currentTime);
       (*it)->cleanup(compLifetime);
+      if (reportState)
+        log_info("threadstate " << (*it)->threadId << ": " << (*it)->state);
+    }
+  }
+
+  void Worker::healthCheck(time_t currentTime)
+  {
+    if (state != stateWaitingForJob
+        && lastRequestTime != 0
+        && maxRequestTime > 0)
+    {
+      if (currentTime - lastRequestTime > maxRequestTime)
+      {
+        log_fatal("requesttime " << maxRequestTime
+          << " seconds exceeded - exit process");
+        log_info("current state: " << state);
+        exit(1);
+      }
+    }
   }
 
   Worker::workers_type::size_type Worker::getCountThreads()
