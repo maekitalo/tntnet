@@ -47,10 +47,15 @@ namespace tnt
   /// HTTP-error 404
   class NotFoundException : public HttpError
   {
+      std::string url;
     public:
-      NotFoundException(const std::string& url)
-        : HttpError("404 Not Found (" + url + ')')
+      NotFoundException(const std::string& url_)
+        : HttpError("404 Not Found (" + url_ + ')'),
+          url(url_)
         { }
+      ~NotFoundException() throw() { }
+
+      const std::string& getUrl() const  { return url; }
   };
 }
 

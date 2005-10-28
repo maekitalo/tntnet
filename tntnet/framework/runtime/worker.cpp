@@ -188,16 +188,6 @@ namespace tnt
               << request.keepAlive() << '/' << reply.keepAlive());
         }
       }
-      catch (const cxxtools::dl::DlopenError& e)
-      {
-        log_warn("dl::DlopenError catched - libname " << e.getLibname());
-        throw NotFoundException(e.getLibname());
-      }
-      catch (const cxxtools::dl::SymbolNotFound& e)
-      {
-        log_warn("dl::SymbolNotFound catched - symbol " << e.getSymbol());
-        throw NotFoundException(e.getSymbol());
-      }
       catch (const HttpError& e)
       {
         throw;
@@ -242,6 +232,7 @@ namespace tnt
       Dispatcher::CompidentType ci = pos.getNext();
       try
       {
+        log_debug("load component " << ci);
         Component& comp = mycomploader.fetchComp(ci, application.getDispatcher());
         ComponentUnloadLock unload_lock(comp);
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
@@ -322,8 +313,13 @@ namespace tnt
         else
           log_debug("component " << ci << " returned DECLINED");
       }
-      catch (const NotFoundException&)
+      catch (const cxxtools::dl::DlopenError& e)
       {
+        log_warn("dl::DlopenError catched - libname " << e.getLibname());
+      }
+      catch (const cxxtools::dl::SymbolNotFound& e)
+      {
+        log_warn("dl::SymbolNotFound catched - symbol " << e.getSymbol());
       }
     }
 
