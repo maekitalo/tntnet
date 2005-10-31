@@ -154,14 +154,16 @@ namespace tnt
 
     cxxtools::MutexLock lock(mutex);
 
-    if (capacity > 0 && jobs.size() < capacity)
-      jobs.push_back(j);
-    else
+    if (capacity > 0)
     {
-      log_warn("Jobqueue full");
-      notFull.wait(lock);
-      jobs.push_back(j);
+      while (jobs.size() >= capacity)
+      {
+        log_warn("Jobqueue full");
+        notFull.wait(lock);
+      }
     }
+
+    jobs.push_back(j);
 
     if (waitThreads == 0)
     {
@@ -174,7 +176,7 @@ namespace tnt
 
   Jobqueue::JobPtr Jobqueue::get()
   {
-    // warten, bis ein Job vohanden ist
+    // wait, until a job is available
     ++waitThreads;
 
     cxxtools::MutexLock lock(mutex);
@@ -185,12 +187,11 @@ namespace tnt
 
     log_debug("Jobqueue: fetch job " << waitThreads << " waiting threads left");
 
-    // nehme nächste Job (lock ist noch aktiv)
+    // take next job (queue is locked)
     JobPtr j = jobs.front();
     jobs.pop_front();
 
-    // wenn weitere Jobs vorhanden sind, dann wecken wir
-    // einen weitern Thread
+    // if there are more jobs, wake onther thread
     if (!jobs.empty())
       notEmpty.signal();
     notFull.signal();
