@@ -1,7 +1,7 @@
 2005-11-04 tommi@tntnet.org
 
   - new health-check - if a thread takes too long for processing (default: 10
-    minutes, the thread is considered hanging and tntnet is restarted
+    minutes), the thread is considered hanging and tntnet is restarted
     automatically.
 
 2005-10-22 tommi@tntnet.org
