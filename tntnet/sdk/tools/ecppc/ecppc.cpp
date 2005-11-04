@@ -203,15 +203,15 @@ namespace tnt
         for (inputfiles_type::const_iterator it = inputfiles.begin();
              it != inputfiles.end(); ++it)
         {
-          inputfile = it->c_str();
+          std::string inputfile = *it;
 
           struct stat st;
-          if (stat(inputfile, &st) != 0)
-            throw std::runtime_error("can't stat " + std::string(inputfile));
+          if (stat(inputfile.c_str(), &st) != 0)
+            throw std::runtime_error("can't stat " + inputfile);
 
-          std::ifstream in(inputfile);
+          std::ifstream in(inputfile.c_str());
           if (!in)
-            throw std::runtime_error("can't read " + std::string(inputfile));
+            throw std::runtime_error("can't read " + inputfile);
 
           std::ostringstream content;
           content << in.rdbuf();
@@ -221,6 +221,11 @@ namespace tnt
             mime = mimetype;
           else
             mime = mimeDb.getMimetype(inputfile);
+
+          // strip path
+          std::string::size_type p;
+          if ((p = inputfile.find_last_of('/')) != std::string::npos)
+            inputfile.erase(0, p + 1);
 
           generator.addImage(inputfile, content.str(), mime, st.st_ctime);
         }
