@@ -44,7 +44,7 @@ namespace tnt
 
       unsigned threadId;
       const char* state;
-      time_t lastRequestTime;
+      time_t lastWaitTime;
 
       typedef std::set<Worker*> workers_type;
       static workers_type workers;

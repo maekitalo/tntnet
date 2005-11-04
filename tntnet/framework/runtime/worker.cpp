@@ -78,7 +78,7 @@ namespace tnt
       mycomploader(app.getConfig()),
       threadId(0),
       state(stateStarting),
-      lastRequestTime(0)
+      lastWaitTime(0)
   {
     log_debug("initialize thread " << threadId);
 
@@ -103,6 +103,8 @@ namespace tnt
       state = stateWaitingForJob;
       Jobqueue::JobPtr j = queue.get();
       log_debug("got job - fd=" << j->getFd());
+
+      time(&lastWaitTime);
 
       std::iostream& socket = j->getStream();
 
@@ -154,8 +156,6 @@ namespace tnt
   bool Worker::processRequest(HttpRequest& request, std::iostream& socket,
          unsigned keepAliveCount)
   {
-    time(&lastRequestTime);
-
     // log message
     char buffer[20];
     log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
@@ -352,10 +352,10 @@ namespace tnt
   void Worker::healthCheck(time_t currentTime)
   {
     if (state != stateWaitingForJob
-        && lastRequestTime != 0
+        && lastWaitTime != 0
         && maxRequestTime > 0)
     {
-      if (currentTime - lastRequestTime > maxRequestTime)
+      if (currentTime - lastWaitTime > maxRequestTime)
       {
         log_fatal("requesttime " << maxRequestTime
           << " seconds exceeded - exit process");
