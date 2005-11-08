@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <string>
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/thread.h>
+#include <cxxtools/pool.h>
 #include <tnt/comploader.h>
 #include <tnt/tntnet.h>
 
@@ -33,14 +34,32 @@ namespace tnt
   class HttpRequest;
   class HttpReply;
 
-  class Worker : public cxxtools::Thread
+  class ComploaderCreator
+  {
+      static const Tntconfig* config;
+
+    public:
+      static void setConfig(const Tntconfig& config_)
+        { config = &config_; }
+
+      Comploader* operator() ()
+      {
+        return new Comploader(*config);
+      }
+  };
+
+  class Worker : public cxxtools::DetachedThread
   {
       static cxxtools::Mutex mutex;
       static unsigned nextThreadNumber;
 
       Tntnet& application;
 
-      Comploader mycomploader;
+      typedef cxxtools::Pool<Comploader, ComploaderCreator> ComploaderPoolType;
+      static ComploaderPoolType comploaderPool;
+
+      ComploaderPoolType::objectptr_type comploaderObject;
+      Comploader& comploader;
 
       unsigned threadId;
       const char* state;
@@ -59,15 +78,16 @@ namespace tnt
         unsigned keepAliveCount);
       void healthCheck(time_t currentTime);
 
+      ~Worker();
+
     public:
       Worker(Tntnet& app);
-      ~Worker();
 
       virtual void run();
 
       void dispatch(HttpRequest& request, HttpReply& reply);
       void cleanup(unsigned seconds)
-        { mycomploader.cleanup(seconds); }
+        { comploader.cleanup(seconds); }
       static void addSearchPath(const std::string& path)
         { Comploader::addSearchPath(path); }
 

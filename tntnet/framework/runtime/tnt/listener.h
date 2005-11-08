@@ -32,7 +32,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class Listener : public cxxtools::Thread
+  class Listener : public cxxtools::AttachedThread
   {
       cxxtools::net::Server server;
       Jobqueue& queue;
@@ -43,7 +43,7 @@ namespace tnt
   };
 
 #ifdef USE_SSL
-  class Ssllistener : public cxxtools::Thread
+  class Ssllistener : public cxxtools::AttachedThread
   {
       SslServer server;
       Jobqueue& queue;

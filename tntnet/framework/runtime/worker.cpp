@@ -73,9 +73,13 @@ namespace tnt
   unsigned Worker::minThreads = 5;
   static const std::string& sessionCookiePrefix = "tntnet.";
 
+  const Tntconfig* ComploaderCreator::config = 0;
+  Worker::ComploaderPoolType Worker::comploaderPool;
+
   Worker::Worker(Tntnet& app)
     : application(app),
-      mycomploader(app.getConfig()),
+      comploaderObject(comploaderPool.get()),
+      comploader(comploaderObject),
       threadId(0),
       state(stateStarting),
       lastWaitTime(0)
@@ -88,8 +92,11 @@ namespace tnt
 
   Worker::~Worker()
   {
+    log_debug("delete worker " << threadId);
+
     cxxtools::MutexLock lock(mutex);
     workers.erase(this);
+    comploader.cleanup(0);
   }
 
   void Worker::run()
@@ -148,9 +155,11 @@ namespace tnt
       }
     }
 
-    state = stateStopping;
+    time(&lastWaitTime);
 
     log_info("end worker-thread " << threadId);
+
+    state = stateStopping;
   }
 
   bool Worker::processRequest(HttpRequest& request, std::iostream& socket,
@@ -233,7 +242,7 @@ namespace tnt
       try
       {
         log_debug("load component " << ci);
-        Component& comp = mycomploader.fetchComp(ci, application.getDispatcher());
+        Component& comp = comploader.fetchComp(ci, application.getDispatcher());
         ComponentUnloadLock unload_lock(comp);
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
@@ -357,8 +366,8 @@ namespace tnt
     {
       if (currentTime - lastWaitTime > maxRequestTime)
       {
-        log_fatal("requesttime " << maxRequestTime
-          << " seconds exceeded - exit process");
+        log_fatal("requesttime " << maxRequestTime << " seconds in thread "
+          << threadId << " exceeded - exit process");
         log_info("current state: " << state);
         exit(1);
       }

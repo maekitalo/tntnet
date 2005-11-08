@@ -37,7 +37,6 @@ namespace tnt
   class ComponentFactory;
   class Tntconfig;
 
-  /// Hält Symbole zum erzeugen von Komponenten.
   class ComponentLibrary : public cxxtools::dl::Library
   {
       typedef std::map<std::string, ComponentFactory*> factoryMapType;
@@ -65,7 +64,6 @@ namespace tnt
       const std::string& getName() const  { return libname; }
   };
 
-  /// pro-Thread Klasse zum laden von Komponenten
   class Comploader
   {
     private:

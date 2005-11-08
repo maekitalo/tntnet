@@ -29,7 +29,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class Poller : public cxxtools::Thread
+  class Poller : public cxxtools::AttachedThread
   {
       Jobqueue& queue;
       int notify_pipe[2];

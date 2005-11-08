@@ -53,8 +53,6 @@ Component* ComponentLibrary::create(
   else
     factory = i->second;
 
-  log_debug("factory " << factory);
-
   // call the creator
   Compident ci = Compident(libname, component_name);
   log_info("create \"" << ci << '"');
@@ -84,7 +82,10 @@ Comploader::~Comploader()
 {
   for (componentmap_type::iterator i = componentmap.begin();
        i != componentmap.end(); ++i)
+  {
+    log_debug("drop " << i->first << " (" << i->second << ')');
     i->second->drop();
+  }
 }
 
 cxxtools::RWLock Comploader::libraryMonitor;
@@ -205,6 +206,7 @@ void Comploader::cleanup(unsigned seconds)
       rdlock.unlock();
 
       cxxtools::WrLock wrlock(componentMonitor);
+      it = componentmap.begin();
       while (it != componentmap.end())
       {
         if (it->second->getLastAccesstime() < t)

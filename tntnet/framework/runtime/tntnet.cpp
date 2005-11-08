@@ -585,6 +585,7 @@ namespace tnt
     minthreads = config.getValue<unsigned>("MinThreads", 10);
     maxthreads = config.getValue<unsigned>("MaxThreads", 100);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
+    ComploaderCreator::setConfig(config);
     Worker::setMinThreads(minthreads);
     Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
@@ -622,10 +623,7 @@ namespace tnt
     log_info("create " << listeners.size() << " listener threads");
     for (listeners_type::iterator it = listeners.begin();
          it != listeners.end(); ++it)
-    {
       (*it)->create();
-      (*it)->detach();
-    }
 
     // create worker-threads
     log_info("create " << minthreads << " worker threads");
@@ -634,18 +632,15 @@ namespace tnt
       log_debug("create worker " << i);
       Worker* s = new Worker(*this);
       s->create();
-      s->detach();
     }
 
     // create poller-thread
     log_debug("start poller thread");
     pollerthread.create();
-    pollerthread.detach();
 
     log_debug("start timer thread");
-    cxxtools::MethodThread<Tntnet> timerThread(*this, &Tntnet::timerTask);
+    cxxtools::MethodThread<Tntnet, cxxtools::AttachedThread> timerThread(*this, &Tntnet::timerTask);
     timerThread.create();
-    timerThread.detach();
 
     if (filedes >= 0)
       signalParentSuccess(filedes);
@@ -664,7 +659,6 @@ namespace tnt
         log_info("create workerthread");
         Worker* s = new Worker(*this);
         s->create();
-        s->detach();
       }
       else
         log_warn("max worker-threadcount " << maxthreads << " reached");
@@ -678,7 +672,6 @@ namespace tnt
     {
       listeners_type::value_type s = *listeners.begin();
       listeners.erase(s);
-      s->join();
       delete s;
     }
   }

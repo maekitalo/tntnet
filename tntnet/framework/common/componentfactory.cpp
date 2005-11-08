@@ -20,6 +20,9 @@ Boston, MA  02111-1307  USA
 */
 
 #include "tnt/componentfactory.h"
+#include <cxxtools/log.h>
+
+log_define("tntnet.componentfactory");
 
 namespace tnt
 {
@@ -41,6 +44,7 @@ namespace tnt
 
   void ComponentFactory::drop(Component* comp)
   {
+    log_debug("delete component " << comp);
     delete comp;
   }
 
@@ -64,8 +68,11 @@ namespace tnt
     cxxtools::MutexLock lock(mutex);
     if (--refs <= 0)
     {
+      log_debug("delete component " << comp);
       delete theComponent;
       theComponent = 0;
     }
+    else
+      log_debug("component " << comp << " references left = " << refs);
   }
 }
