@@ -149,31 +149,6 @@ namespace tnt
       queue(100),
       pollerthread(queue)
   {
-    if (argc != 1)
-    {
-      std::ostringstream msg;
-      msg << PACKAGE_STRING "\n\n"
-             "usage: " << argv[0] << " {options}\n\n"
-             "  -c file          configurationfile (default: " TNTNET_CONF ")\n"
-             "  -d               enable all debug output (ignoring properties-file)\n";
-      throw std::invalid_argument(msg.str());
-    }
-
-    config.load(conf);
-
-    if (debug)
-    {
-      log_init_debug();
-      log_warn("Debugmode");
-      isDaemon = false;
-    }
-    else
-    {
-      isDaemon = isTrue(config.getValue("Daemon"));
-    }
-
-    if (!isDaemon)
-      initLogging();
   }
 
   void Tntnet::setGroup() const
@@ -300,6 +275,21 @@ namespace tnt
 
   int Tntnet::run()
   {
+    config.load(conf);
+
+    if (debug)
+    {
+      log_init_debug();
+      log_warn("Debugmode");
+      isDaemon = false;
+    }
+    else
+    {
+      isDaemon = isTrue(config.getValue("Daemon"));
+    }
+
+    if (!isDaemon)
+      initLogging();
     if (isDaemon)
     {
       int filedes = mkDaemon();
@@ -832,6 +822,15 @@ int main(int argc, char* argv[])
   try
   {
     tnt::Tntnet app(argc, argv);
+    if (argc != 1)
+    {
+      std::cout << PACKAGE_STRING "\n\n"
+             "usage: " << argv[0] << " {options}\n\n"
+             "  -c file          configurationfile (default: " TNTNET_CONF ")\n"
+             "  -d               enable all debug output (ignoring properties-file)\n";
+      return -1;
+    }
+
     return app.run();
   }
   catch(const std::exception& e)
