@@ -269,7 +269,8 @@ namespace tnt
   bool HttpRequest::keepAlive() const
   {
     header_type::const_iterator it = header.find(httpheader::connection);
-    return it != header.end() && it->second == httpheader::connectionKeepAlive;
+    return it == header.end() ? getMajorVersion() == 1 && getMinorVersion() == 1
+                              : it->second == httpheader::connectionKeepAlive;
   }
 
   void HttpRequest::setApplicationScope(Scope* s)
