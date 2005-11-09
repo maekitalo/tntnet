@@ -87,7 +87,7 @@ namespace tnt
       void timerTask();
 
     public:
-      Tntnet(int argc, char* argv[]);
+      Tntnet(int& argc, char* argv[]);
       int run();
 
       static void shutdown();

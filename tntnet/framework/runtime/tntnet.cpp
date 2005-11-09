@@ -142,7 +142,7 @@ namespace tnt
   bool Tntnet::stop = false;
   std::string Tntnet::pidFileName;
 
-  Tntnet::Tntnet(int argc, char* argv[])
+  Tntnet::Tntnet(int& argc, char* argv[])
     : conf(argc, argv, 'c', TNTNET_CONF),
       propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
@@ -824,7 +824,7 @@ int main(int argc, char* argv[])
     tnt::Tntnet app(argc, argv);
     if (argc != 1)
     {
-      std::cout << PACKAGE_STRING "\n\n"
+      std::cout << PACKAGE_STRING "\n\n" << argc <<
              "usage: " << argv[0] << " {options}\n\n"
              "  -c file          configurationfile (default: " TNTNET_CONF ")\n"
              "  -d               enable all debug output (ignoring properties-file)\n";
