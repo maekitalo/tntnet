@@ -27,6 +27,7 @@ Boston, MA  02111-1307  USA
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <tnt/sessionscope.h>
+#include "config.h"
 
 namespace tnt
 {
@@ -204,11 +205,26 @@ namespace tnt
 
   std::string HttpRequest::getPeerIp() const
   {
+#ifdef HAVE_INET_NTOP
+    char buffer[32];
+    const char* r = inet_ntop(AF_INET,
+                              &(peerAddr.sin_addr),
+                              buffer,
+                              sizeof(buffer));
+    if (r == 0)
+    {
+      std::ostringstream msg;
+      msg << "error " << errno << " in inet_ntop: " << strerror(errno);
+      throw std::runtime_error(msg.str());
+    }
+    return std::string(buffer);
+#else
     static cxxtools::Mutex monitor;
     cxxtools::MutexLock lock(monitor);
 
     char* p = inet_ntoa(peerAddr.sin_addr);
     return std::string(p);
+#endif
   }
 
   std::string HttpRequest::getServerIp() const
