@@ -13,6 +13,10 @@ AC_CONFIG_HEADERS([framework/common/config.h])
 AC_CONFIG_HEADERS([framework/common/tnt/config.h])
 AC_CONFIG_SRCDIR([framework/runtime/tntnet.cpp])
 
+AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
+AC_SEARCH_LIBS(inet_ntop, nsl socket resolv)
+AC_CHECK_FUNCS(inet_ntop)
+
 AC_PROG_CXX(g++-3.0 g++ c++ CC)
 AC_PROG_LIBTOOL
 
