@@ -37,7 +37,7 @@ namespace tnt
       if (std::isprint(ch))
         return std::string(1, '\'') + ch + '\'';
       else
-        return std::string("'\\x") + hex[ch >> 4] + hex[ch & 0xf] + '\'';
+        return std::string("'\\x") + hex[(ch >> 4) & 0xf] + hex[ch & 0xf] + '\'';
     }
   }
 
