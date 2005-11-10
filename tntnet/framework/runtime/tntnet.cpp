@@ -609,12 +609,6 @@ namespace tnt
       }
     }
 
-    // launch listener-threads
-    log_info("create " << listeners.size() << " listener threads");
-    for (listeners_type::iterator it = listeners.begin();
-         it != listeners.end(); ++it)
-      (*it)->create();
-
     // create worker-threads
     log_info("create " << minthreads << " worker threads");
     for (unsigned i = 0; i < minthreads; ++i)
@@ -627,6 +621,12 @@ namespace tnt
     // create poller-thread
     log_debug("start poller thread");
     pollerthread.create();
+
+    // launch listener-threads
+    log_info("create " << listeners.size() << " listener threads");
+    for (listeners_type::iterator it = listeners.begin();
+         it != listeners.end(); ++it)
+      (*it)->create();
 
     log_debug("start timer thread");
     cxxtools::MethodThread<Tntnet, cxxtools::AttachedThread> timerThread(*this, &Tntnet::timerTask);
