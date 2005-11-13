@@ -111,8 +111,6 @@ namespace tnt
       Jobqueue::JobPtr j = queue.get();
       log_debug("got job - fd=" << j->getFd());
 
-      time(&lastWaitTime);
-
       std::iostream& socket = j->getStream();
 
       try
@@ -120,6 +118,8 @@ namespace tnt
         bool keepAlive;
         do
         {
+          time(&lastWaitTime);
+
           keepAlive = false;
           log_debug("call parser");
           state = stateParsing;

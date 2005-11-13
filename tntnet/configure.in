@@ -34,13 +34,27 @@ CXXTOOLS_CXXFLAGS=`$CXXTOOLS_CONFIG --cxxflags`
 CXXTOOLS_LDFLAGS=`$CXXTOOLS_CONFIG --libs`
 CXXTOOLS_LOG_LDFLAGS=`$CXXTOOLS_CONFIG --log-libs`
 
+AC_CHECK_HEADER([cxxtools/log.h], , AC_MSG_ERROR([cxxtools-logging not found]))
+
+AC_MSG_CHECKING([for cxxtools usability])
+save_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="$CXXFLAGS $CXXTOOLS_CXXFLAGS"
+AC_COMPILE_IFELSE(
+  [#include <cxxtools/thread.h>
+   void t() { cxxtools::AttachedThread* p; }
+  ],
+  AC_MSG_RESULT(yes),
+  [
+    AC_MSG_RESULT(no)
+    AC_MSG_ERROR(please check your cxxtools-installation - maybe you need an upgrade)
+  ]
+  )
+
 AC_SUBST(CXXTOOLS_CONFIG)
 AC_SUBST(CXXTOOLS_CXXFLAGS)
 AC_SUBST(CXXTOOLS_LDFLAGS)
 AC_SUBST(CXXTOOLS_LOG_LDFLAGS)
 
-AC_CHECK_HEADER([cxxtools/tcpstream.h], , AC_MSG_ERROR([cxxtools not found]))
-AC_CHECK_HEADER([cxxtools/log.h], , AC_MSG_ERROR([cxxtools-logging not found]))
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADERS([limits])
 
