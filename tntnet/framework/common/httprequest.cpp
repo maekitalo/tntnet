@@ -27,6 +27,7 @@ Boston, MA  02111-1307  USA
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <tnt/sessionscope.h>
+#include <errno.h>
 #include "config.h"
 
 namespace tnt
