@@ -445,6 +445,10 @@ namespace tnt
           << WTERMSIG(status) << " - restart child");
       }
     }
+    else if (WEXITSTATUS(status) == 111)
+    {
+      log_info("child requested restart");
+    }
     else
     {
       log_info("child exited with exitcode " << WEXITSTATUS(status));
