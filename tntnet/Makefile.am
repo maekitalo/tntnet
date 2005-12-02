@@ -8,7 +8,6 @@ SUBDIRS = \
     sdk/tools/ecppc \
     sdk/tools/ecppl \
     sdk/tools/ecppll \
-    sdk/tools/parsertest \
     sdk/demos/calc \
     sdk/demos/config \
     sdk/demos/cookie \
