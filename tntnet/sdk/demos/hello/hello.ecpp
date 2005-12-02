@@ -2,7 +2,7 @@
   this is a simple hello-world-application
 #>
 <%args>
-name             // define query-parameter
+name;            // define query-parameter
                  // this defines a variable of type std::string with
                  // the name "name"
 </%args>

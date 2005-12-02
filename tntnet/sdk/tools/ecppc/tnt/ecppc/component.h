@@ -71,6 +71,8 @@ namespace tnt
         {
           args.push_back(Variable(name, value));
         }
+        void addEndCall(const std::string& comp)
+          { compbody.addEndCall(comp); }
 
         void addSubcomp(const std::string& comp)
           { compbody.addSubcomp(comp); }

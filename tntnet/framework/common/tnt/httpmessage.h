@@ -53,6 +53,7 @@ namespace tnt
     protected:
       header_type header;
       Cookies httpcookies;
+      void setBody(const std::string& b)   { body = b; }
 
     public:
       HttpMessage()

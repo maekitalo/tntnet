@@ -1,14 +1,11 @@
-- cgi.so
-- sauberes Beenden
-- entladen von shared libs
+- http-auth
+- unload shared libs
 - ranges
-- serialisation i10n/boost?
+- on-the-fly compression
 
 doc:
-- ingnorieren von Zeilenschaltungen nach %-Tags
 - '{}' (split)
-- '\' (escape)
 - multipart
-- <%attr>
 - ecppl/ecppll
 - ecppc -d (debug)
+- default-arguments (example)

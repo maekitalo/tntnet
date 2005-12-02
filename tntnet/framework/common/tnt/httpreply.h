@@ -41,9 +41,13 @@ namespace tnt
       std::ostream* current_outstream;
       HtmlEscOstream save_outstream;
 
+      bool compressEncoding;
+      bool deflateEncoding;
+
       unsigned keepAliveCounter;
       static unsigned keepAliveTimeout;
 
+      void tryCompress();
       void send(unsigned ret);
 
     public:
@@ -94,6 +98,9 @@ namespace tnt
       unsigned getKeepAliveCounter() const  { return keepAliveCounter; }
       static void setKeepAliveTimeout(unsigned ms)  { keepAliveTimeout = ms; }
       static unsigned getKeepAliveTimeout()         { return keepAliveTimeout; }
+
+      void setCompressEncoding(bool sw = true)   { compressEncoding = sw; }
+      void setDeflateEncoding(bool sw = true)    { deflateEncoding = sw; }
 
       bool keepAlive() const;
   };

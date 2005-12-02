@@ -133,6 +133,17 @@ Component& Comploader::fetchComp(const Compident& ci,
   }
 }
 
+Component* Comploader::createComp(const Compident& ci,
+  const Urlmapper& rootmapper)
+{
+  log_debug("createComp \"" << ci << '"');
+
+  ComponentLibrary& lib = fetchLib(ci.libname);
+  Component* comp = lib.create(ci.compname, *this, rootmapper);
+  comp->touch();
+  return comp;
+}
+
 ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib " << libname);

@@ -2,6 +2,7 @@ bin_PROGRAMS = ecppc
 
 ecppc_SOURCES = \
 	body.cpp \
+	closecomponent.cpp \
 	component.cpp \
 	cssfilter.cpp \
 	dependencygenerator.cpp \
@@ -13,6 +14,7 @@ ecppc_SOURCES = \
 	subcomponent.cpp \
 	variable.cpp \
 	tnt/ecppc/body.h \
+	tnt/ecppc/closecomponent.h \
 	tnt/ecppc/component.h \
 	tnt/ecppc/cssfilter.h \
 	tnt/ecppc/dependencygenerator.h \

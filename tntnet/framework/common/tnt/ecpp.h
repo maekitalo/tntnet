@@ -89,6 +89,9 @@ namespace tnt
       Component& fetchComp(const std::string& url) const;
       Component& fetchComp(const Compident& ci) const;
       Component& fetchComp(const Subcompident& ci) const;
+      Component* createComp(const Compident& ci) const;
+      Component* createComp(const std::string& url) const
+        { return createComp(Compident(url)); }
 
       /// helper-methods for calling components
       template <typename compident_type,

@@ -312,6 +312,11 @@ namespace tnt
               }
             }
 
+            if (request.getEncoding().accept("compress"))
+              reply.setCompressEncoding();
+            if (request.getEncoding().accept("deflate"))
+              reply.setDeflateEncoding();
+
             state = stateSendReply;
             reply.sendReply(http_return);
             log_info("reply sent");

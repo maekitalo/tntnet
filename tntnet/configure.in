@@ -1,5 +1,5 @@
-AC_INIT([tntnet],[1.5.0pre5],[Tommi Maekitalo <tommi@tntnet.org>])
-AM_INIT_AUTOMAKE(tntnet, 1.5.0pre5)
+AC_INIT([tntnet],[1.5.0pre6],[Tommi Maekitalo <tommi@tntnet.org>])
+AM_INIT_AUTOMAKE(tntnet, 1.5.0pre6)
 
 abi_current=4
 abi_revision=1
@@ -17,7 +17,7 @@ AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(inet_ntop, nsl socket resolv)
 AC_CHECK_FUNCS(inet_ntop)
 
-AC_PROG_CXX(g++-3.0 g++ c++ CC)
+AC_PROG_CXX(g++ c++ CC)
 AC_PROG_LIBTOOL
 
 AC_LANG(C++)

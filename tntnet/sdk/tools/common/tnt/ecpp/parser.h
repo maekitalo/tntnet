@@ -40,6 +40,7 @@ namespace tnt
         ParseHandler& handler;
 
         bool inComp;
+        bool inClose;
         bool splitBar;
 
         char split_start;
@@ -52,6 +53,7 @@ namespace tnt
         Parser(ParseHandler& handler_)
           : handler(handler_),
             inComp(false),
+            inClose(false),
             splitBar(false),
             split_start('{'),
             split_end('}')

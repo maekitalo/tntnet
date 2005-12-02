@@ -35,6 +35,8 @@ namespace tnt
       out << data;
     }
 
+    unsigned BodypartCall::nextNumber = 0;
+
     void BodypartCall::call(std::ostream& out, const std::string& qparam) const
     {
       if (std::isalpha(comp[0]))
@@ -45,7 +47,10 @@ namespace tnt
 
     void BodypartCall::callLocal(std::ostream& out, const std::string& qparam) const
     {
-      out << "    main()." << comp << "(request, reply, " << qparam;
+      if (haveEndCall)
+        throw std::runtime_error("end-tag not allowed in call \"" + comp + '"');
+
+      out << "  main()." << comp << "(request, reply, " << qparam;
       if (!cppargs.empty())
         out << ", " << cppargs;
       out << ");\n";
@@ -102,35 +107,44 @@ namespace tnt
       }
     }
 
-    void BodypartCall::callByIdent(std::ostream& out, const std::string& ident,
-                                    const std::string& qparam) const
+    void BodypartCall::callByIdent(std::ostream& out, const std::string& ident, const std::string& qparam) const
     {
       if (!cppargs.empty())
         throw std::runtime_error("cppargs not allowed in call \"" + comp + '"');
 
-      out << "    callComp(" << ident << ", request, reply, " << qparam << ");\n";
+      if (haveEndCall)
+      {
+        out << "  tnt::ComponentGuard _tnt_comp" << getNumber() << "(createComp(" << ident << "));\n"
+               "  _tnt_comp" << getNumber() << "->call(request, reply, " << qparam << ");\n";
+      }
+      else
+        out << "  callComp(" << ident << ", request, reply, " << qparam << ");\n";
     }
 
     void BodypartCall::callByExpr(std::ostream& out, const std::string& qparam) const
     {
       if (!cppargs.empty())
         throw std::runtime_error("cppargs not allowed in call \"" + comp + '"');
+      else if (haveEndCall)
+        throw std::runtime_error("end-tag not allowed in call \"" + comp + '"');
 
-      out << "    callComp(" << comp << ", request, reply, " << qparam << ");\n";
+      out << "  callComp(" << comp << ", request, reply, " << qparam << ");\n";
     }
 
     void BodypartCall::getBody(std::ostream& out) const
     {
       out << "  // <& " << comp << " ...\n";
 
+      std::ostringstream o;
+      o << "_tnt_cq" << getNumber();
+      std::string queryParamName = o.str();
+
       if (args.empty())
       {
         if (pass_cgi.empty())
         {
-          out << "  {\n"
-              << "    cxxtools::QueryParams cq(qparam, false);\n";
-          call(out, "cq");
-          out << "  }\n";
+          out << "  cxxtools::QueryParams " << queryParamName << "(qparam, false);\n";
+          call(out, queryParamName);
         }
         else
         {
@@ -139,16 +153,15 @@ namespace tnt
       }
       else
       {
-        out << "  {\n";
         if (pass_cgi.empty())
-          out << "    cxxtools::QueryParams cq(qparam, false);\n";
+          out << "  cxxtools::QueryParams " << queryParamName << "(qparam, false);\n";
         else
-          out << "    cxxtools::QueryParams cq(" << pass_cgi << ", true);\n";
+          out << "  cxxtools::QueryParams " << queryParamName << "(" << pass_cgi << ", true);\n";
 
         for (comp_args_type::const_iterator i = args.begin();
              i != args.end(); ++i)
         {
-          out << "    cq.add( \"" << i->first << "\", tnt::toString";
+          out << "  " << queryParamName << ".add( \"" << i->first << "\", tnt::toString";
           if (i->second[0] == '(' && i->second[i->second.size() - 1] == ')')
             out << i->second;
           else
@@ -156,13 +169,42 @@ namespace tnt
           out << " );\n";
         }
 
-        call(out, "cq");
-        out << "  }\n";
+        call(out, queryParamName);
       }
 
       out << "  // &>\n";
     }
 
+    void BodypartEndCall::getBody(std::ostream& out) const
+    {
+      out << "  // </& " << bpc.getName() << " ...\n"
+             "  _tnt_comp" << bpc.getNumber()
+          << "->endTag(request, reply, _tnt_cq" << bpc.getNumber()
+          << ");\n"
+             "  // >\n";
+    }
+
+    void Body::addCall(const std::string& comp,
+                       const comp_args_type& args,
+                       const std::string& pass_cgi,
+                       const std::string& cppargs)
+    {
+      BodypartCall* bpc = new BodypartCall(comp, args, pass_cgi, cppargs, subcomps);
+      data.push_back(body_part_pointer(bpc));
+      callStack.push(bpc);
+    }
+
+    void Body::addEndCall(const std::string& comp)
+    {
+      while (!callStack.empty() && callStack.top()->getName() != comp)
+        callStack.pop();
+      if (callStack.empty())
+        throw std::runtime_error("start tag for \"" + comp + "\" not found");
+
+      BodypartEndCall* bpec = new BodypartEndCall(*callStack.top());
+      callStack.pop();
+      data.push_back(body_part_pointer(bpec));
+    }
     void Body::getBody(std::ostream& out) const
     {
       for (body_type::const_iterator it = data.begin();

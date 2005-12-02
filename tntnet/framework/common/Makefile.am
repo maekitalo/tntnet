@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = libtntnet.la
 
 libtntnet_la_SOURCES = \
+	compident.cpp \
 	comploader.cpp \
 	component.cpp \
 	componentfactory.cpp \
@@ -8,6 +9,7 @@ libtntnet_la_SOURCES = \
 	contenttype.cpp \
 	cookie.cpp \
 	ecpp.cpp \
+	encoding.cpp \
 	htmlescostream.cpp \
 	http.cpp \
 	httperror.cpp \
@@ -30,15 +32,18 @@ libtntnet_la_SOURCES = \
 	zdata.cpp
 
 nobase_include_HEADERS = \
+	tnt/compident.h \
 	tnt/comploader.h \
 	tnt/component.h \
 	tnt/componentfactory.h \
+	tnt/componentguard.h \
 	tnt/contentdisposition.h \
 	tnt/contenttype.h \
 	tnt/convert.h \
 	tnt/cookie.h \
 	tnt/data.h \
 	tnt/ecpp.h \
+	tnt/encoding.h \
 	tnt/htmlescostream.h \
 	tnt/http.h \
 	tnt/httperror.h \

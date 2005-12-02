@@ -99,10 +99,10 @@ namespace tnt
     Component* comp;
     try
     {
-      // suche Komponente nach Namen
+      // fetch component by name
       comp = &loader.fetchComp(ci, rootmapper);
 
-      // wenn eine Subkomponente übergeben wurde, suche nach dieser
+      // if there is a subcomponent, fetch it
       if (!ci.subname.empty())
       {
         try
@@ -118,12 +118,11 @@ namespace tnt
     }
     catch (const NotFoundException&)
     {
-      // wenn nicht gefunden, dann nach Url
+      // not found - fetch by url
       Compident ci = rootmapper.mapComp(url);
       comp = &loader.fetchComp(ci, rootmapper);
     }
 
-    // liefere Komponente
     return *comp;
   }
 
@@ -137,6 +136,19 @@ namespace tnt
     }
     else
       return loader.fetchComp(ci, rootmapper);
+  }
+
+  Component* EcppComponent::createComp(const Compident& ci) const
+  {
+    log_debug("createComp(" << ci << ")");
+    if (ci.libname.empty())
+    {
+      Compident cii(ci);
+      cii.libname = myident.libname;
+      return loader.createComp(cii, rootmapper);
+    }
+    else
+      return loader.createComp(ci, rootmapper);
   }
 
   EcppSubComponent& EcppComponent::fetchSubComp(const std::string& sub) const

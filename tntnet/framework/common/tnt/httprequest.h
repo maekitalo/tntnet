@@ -28,6 +28,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/contenttype.h>
 #include <tnt/multipart.h>
 #include <tnt/cookie.h>
+#include <tnt/encoding.h>
 #include <cxxtools/query_params.h>
 #include <tnt/scope.h>
 
@@ -55,6 +56,9 @@ namespace tnt
       mutable bool lang_init;
       mutable std::string lang;
 
+      mutable Encoding encoding;
+      mutable bool encodingRead;
+
       Scope* requestScope;
       Scope* applicationScope;
       Sessionscope* sessionScope;
@@ -74,6 +78,7 @@ namespace tnt
       HttpRequest()
         : ssl(false),
           lang_init(false),
+          encodingRead(false),
           requestScope(0),
           applicationScope(0),
           sessionScope(0),
@@ -141,6 +146,8 @@ namespace tnt
         { return getCookies().hasCookies(); }
       Cookie getCookie(const std::string& name) const
         { return getCookies().getCookie(name); }
+
+      const Encoding& getEncoding() const;
 
       bool keepAlive() const;
 

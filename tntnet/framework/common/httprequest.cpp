@@ -134,6 +134,7 @@ namespace tnt
       requestScope = 0;
     }
     httpcookies.clear();
+    encodingRead = false;
 
     releaseLocks();
 
@@ -281,6 +282,16 @@ namespace tnt
     }
 
     return httpcookies;
+  }
+
+  const Encoding& HttpRequest::getEncoding() const
+  {
+    if (!encodingRead)
+    {
+      encoding.parse(getHeader(httpheader::acceptEncoding));
+      encodingRead = true;
+    }
+    return encoding;
   }
 
   bool HttpRequest::keepAlive() const

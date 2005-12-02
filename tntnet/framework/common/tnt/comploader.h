@@ -87,6 +87,8 @@ namespace tnt
 
       virtual Component& fetchComp(const Compident& compident,
         const Urlmapper& rootmapper);
+      virtual Component* createComp(const Compident& compident,
+        const Urlmapper& rootmapper);
 
       // lookup library; load if needed
       virtual ComponentLibrary& fetchLib(const std::string& libname);

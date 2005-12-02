@@ -1,8 +1,8 @@
 <%args>
-double arg1 = 0     // typed parameter with default value
-double arg2 = 0     // typed parameter with default value
-char op = ' '       // typed parameter with default value
-method = "post"     // parameter with default type std::string
+double arg1 = 0;     // typed parameter with default value
+double arg2 = 0;     // typed parameter with default value
+char op = ' ';       // typed parameter with default value
+method = "post";     // parameter with default type std::string
 </%args>
 
 <{  // <= this starts a c++-processing-block

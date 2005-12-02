@@ -27,19 +27,13 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  Compident::Compident(const std::string& ident)
+  unsigned Component::operator() (HttpRequest& request,
+    HttpReply& reply, cxxtools::QueryParams& qparam)
   {
-    std::string::size_type pos = ident.find('@');
-    if (pos == std::string::npos)
-      compname = ident;
-    else
-    {
-      compname = ident.substr(0, pos);
-      libname = ident.substr(pos + 1);
-    }
+    return DECLINED;
   }
 
-  unsigned Component::operator() (HttpRequest& request,
+  unsigned Component::endTag(HttpRequest& request,
     HttpReply& reply, cxxtools::QueryParams& qparam)
   {
     return DECLINED;

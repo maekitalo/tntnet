@@ -53,5 +53,5 @@ namespace tnt
   }
 }
 
-#endif // TNT_ECPPC_COMPONENT_H
+#endif // TNT_ECPPC_SUBCOMPONENT_H
 

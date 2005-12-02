@@ -40,6 +40,8 @@ namespace tnt
       : singleton(true),
         raw(false),
         maincomp(classname, ns),
+        haveCloseComp(false),
+        closeComp(classname),
         currentComp(&maincomp),
         filter(filter_null),
         compress(false),
@@ -168,6 +170,11 @@ namespace tnt
       currentComp->addCall(comp, args, pass_cgi, cppargs);
     }
 
+    void Generator::onEndCall(const std::string& comp)
+    {
+      currentComp->addEndCall(comp);
+    }
+
     void Generator::onDeclareShared(const std::string& code)
     {
       declare_shared += code;
@@ -188,6 +195,19 @@ namespace tnt
     }
 
     void Generator::onComp(const std::string& code)
+    {
+      currentComp = &maincomp;
+    }
+
+    void Generator::startClose()
+    {
+      if (haveCloseComp)
+        throw std::runtime_error("dumplicate close-part");
+      haveCloseComp = true;
+      currentComp = &closeComp;
+    }
+
+    void Generator::endClose()
     {
       currentComp = &maincomp;
     }
@@ -288,8 +308,11 @@ namespace tnt
              "    ~" << maincomp.getName() << "();\n\n"
              "  public:\n"
              "    " << maincomp.getName() << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
-             "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam);\n"
-             "    void drop();\n"
+             "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam);\n";
+      if (haveCloseComp)
+        out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
+               "                    cxxtools::QueryParams& qparam);\n";
+      out << "    void drop();\n"
              "    unsigned    getDataCount(const tnt::HttpRequest& request) const;\n"
              "    unsigned    getDataLen(const tnt::HttpRequest& request, unsigned n) const;\n"
              "    const char* getDataPtr(const tnt::HttpRequest& request, unsigned n) const;\n";
@@ -317,7 +340,8 @@ namespace tnt
              "#include <tnt/httpheader.h>\n"
              "#include <tnt/http.h>\n"
              "#include <tnt/data.h>\n"
-             "#include <tnt/componentfactory.h>\n";
+             "#include <tnt/componentfactory.h>\n"
+             "#include <tnt/componentguard.h>\n";
       if (hasScopevars())
         out << "#include <tnt/objecttemplate.h>\n"
                "#include <tnt/objectptr.h>\n";
@@ -578,6 +602,8 @@ namespace tnt
                 "}\n\n";
       }
 
+      if (haveCloseComp)
+        closeComp.getDefinition(code);
       code << "void " << classname << "::drop()\n"
               "{\n"
               "  factory.drop(this);\n"

@@ -26,6 +26,7 @@ Boston, MA  02111-1307  USA
 #include <string>
 #include <list>
 #include <set>
+#include <stack>
 #include <tnt/ecpp/parser.h>
 
 namespace tnt
@@ -64,11 +65,16 @@ namespace tnt
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef std::set<std::string> subcomps_type;
 
+        static unsigned nextNumber;
+
+        unsigned number;
+
         std::string comp;
         comp_args_type args;
         std::string pass_cgi;
         std::string cppargs;
         const subcomps_type& subcomps;
+        bool haveEndCall;
 
         void call(std::ostream& out, const std::string& qparam) const;
         void callLocal(std::ostream& out, const std::string& qparam) const;
@@ -78,18 +84,32 @@ namespace tnt
 
       public:
         BodypartCall(const std::string& comp_,
-                      const comp_args_type& args_,
-                      const std::string& pass_cgi_,
-                      const std::string& cppargs_,
-                      const subcomps_type& subcomps_)
-          : comp(comp_),
+                     const comp_args_type& args_,
+                     const std::string& pass_cgi_,
+                     const std::string& cppargs_,
+                     const subcomps_type& subcomps_)
+          : number(nextNumber++),
+            comp(comp_),
             args(args_),
             pass_cgi(pass_cgi_),
             cppargs(cppargs_),
-            subcomps(subcomps_)
+            subcomps(subcomps_),
+            haveEndCall(false)
             { }
 
         const std::string& getName() const  { return comp; }
+        unsigned getNumber() const          { return number; }
+        void setHaveEndCall(bool sw = true) { haveEndCall = sw; }
+        void getBody(std::ostream& out) const;
+    };
+
+    class BodypartEndCall : public Bodypart
+    {
+        BodypartCall& bpc;
+      public:
+        explicit BodypartEndCall(BodypartCall& bpc_)
+          : bpc(bpc_)
+          { bpc.setHaveEndCall(); }
         void getBody(std::ostream& out) const;
     };
 
@@ -102,6 +122,8 @@ namespace tnt
         body_type data;
         subcomps_type mysubcomps;
         const subcomps_type& subcomps;
+
+        std::stack<BodypartCall*> callStack;
 
       public:
         Body()
@@ -119,12 +141,8 @@ namespace tnt
         void addCall(const std::string& comp,
                      const comp_args_type& args,
                      const std::string& pass_cgi,
-                     const std::string& cppargs)
-        {
-          data.push_back(
-            body_part_pointer(
-              new BodypartCall(comp, args, pass_cgi, cppargs, subcomps)));
-        }
+                     const std::string& cppargs);
+        void addEndCall(const std::string& comp);
 
         void addSubcomp(const std::string& comp)
         {

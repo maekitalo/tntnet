@@ -22,11 +22,10 @@ Boston, MA  02111-1307  USA
 #ifndef TNT_COMPONENT_H
 #define TNT_COMPONENT_H
 
-#include <string>
-#include <time.h>
-#include <iostream>
-
+#include <tnt/compident.h>
 #include "tnt/config.h"
+
+#include <time.h>
 
 #ifdef HAVE_LIMITS
 #include <limits>
@@ -42,37 +41,6 @@ namespace tnt
 
 class HttpRequest;
 class HttpReply;
-
-struct Compident
-{
-  std::string libname;
-  std::string compname;
-
-  bool operator< (const Compident& ci) const
-  {
-    return libname < ci.libname
-      || libname == ci.libname && compname < ci.compname;
-  }
-
-  Compident() { }
-  Compident(const std::string& l, const std::string& n)
-    : libname(l),
-      compname(n)
-  { }
-
-  explicit Compident(const std::string& ident);
-
-  std::string toString() const
-  { return compname + '@' + libname; }
-
-  bool empty() const
-    { return libname.empty() && compname.empty(); }
-  void clear()
-    { libname.clear(); compname.clear(); }
-};
-
-inline std::ostream& operator<< (std::ostream& out, const Compident& comp)
-{ return out << comp.toString(); }
 
 class Component
 {
@@ -92,6 +60,8 @@ class Component
     void unlock()                    { touch(); }
 
     virtual unsigned operator() (HttpRequest& request,
+      HttpReply& reply, cxxtools::QueryParams& qparam);
+    virtual unsigned endTag (HttpRequest& request,
       HttpReply& reply, cxxtools::QueryParams& qparam);
     virtual void drop() = 0;
 

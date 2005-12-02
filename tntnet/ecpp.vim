@@ -48,7 +48,8 @@ syn region ecppExpr matchgroup=Delimiter start="<\$" end="\$>" contains=@cppTop
 syn region ecppCondExpr matchgroup=Delimiter start="<?" end="?>" contains=ecppCondExprDelim,@cppTop
 syn region ecppCpp matchgroup=Delimiter start="<%cpp>" end="</%cpp>" contains=@cppTop
 syn region ecppCpps matchgroup=Delimiter start="<{" end="}>" contains=@cppTop
-syn region ecppComp keepend matchgroup=Delimiter start="<&" end="&>" contains=@cppTop
+syn region ecppComp keepend matchgroup=Delimiter start="<&" end=">" contains=@cppTop
+syn region ecppEndComp keepend matchgroup=Delimiter start="</&" end=">" contains=@cppTop
 
 syn region ecppArgs matchgroup=Delimiter start="<%args>" end="</%args>" contains=@cppTop
 syn region ecppConfig matchgroup=Delimiter start="<%config>" end="</%config>" contains=@cppTop
@@ -71,6 +72,7 @@ syn match	ecppIncluded	display contained "<[^>]*>"
 syn region ecppInclude matchgroup=Delimiter start="<%include>" end="</%include>" contains=@ecppIncluded
 
 syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contains=@htmlTop
+syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@htmlTop
 " syn region ecppMethod matchgroup=Delimiter start="<%method[^>]*>" end="</%method>" contains=@htmlTop
 
 syn region ecppDoc matchgroup=Delimiter start="<%doc>" end="</%doc>"
@@ -82,7 +84,7 @@ syn region ecppTranslateTag matchgroup=Delimiter start="{" end="}"
 
 " syn region ecppClass matchgroup=Delimiter start="<%class>" end="</%class>" contains=@cppTop
 
-syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppInit,ecppCleanup,ecppShared,ecppDef,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDeclareShared,ecppDefine,ecppComment,ecppTranslateTag,ecppTranslate
+syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppEndComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppInit,ecppCleanup,ecppShared,ecppDef,ecppClose,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDeclareShared,ecppDefine,ecppComment,ecppTranslateTag,ecppTranslate
 
 " Set up default highlighting. Almost all of this is done in the included
 " syntax files.

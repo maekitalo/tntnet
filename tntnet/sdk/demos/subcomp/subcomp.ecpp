@@ -64,7 +64,7 @@ normal parameterlist just like in c++-functions after the defition
  &lt;&amp; localcomp_p(5) &amp;&gt;
 </p>
 <p class="result">
- <& localcomp_p(5) &>
+ <& localcomp_p(5) >
 </p>
 
 

@@ -52,11 +52,14 @@ namespace tnt
         virtual void onCall(const std::string& comp,
           const comp_args_type& args, const std::string& pass_cgi,
           const std::string& cppargs);
+        virtual void onEndCall(const std::string& comp);
         virtual void onDeclareShared(const std::string& code);
         virtual void onShared(const std::string& code);
         virtual void onScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
+        virtual void startClose();
+        virtual void endClose();
         virtual void onComp(const std::string& code);
         virtual void onCondExpr(const std::string& cond, const std::string& expr);
         virtual void onConfig(const std::string& code, const std::string& value);

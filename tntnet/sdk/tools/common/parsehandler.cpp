@@ -77,6 +77,10 @@ namespace tnt
     {
     }
 
+    void ParseHandler::onEndCall(const std::string& comp)
+    {
+    }
+
     void ParseHandler::onDeclareShared(const std::string& code)
     {
     }
@@ -91,6 +95,14 @@ namespace tnt
     }
 
     void ParseHandler::startComp(const std::string& arg, const cppargs_type& cppargs)
+    {
+    }
+
+    void ParseHandler::startClose()
+    {
+    }
+
+    void ParseHandler::endClose()
     {
     }
 

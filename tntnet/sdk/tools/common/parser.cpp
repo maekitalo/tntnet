@@ -125,15 +125,18 @@ namespace tnt
         state_scopeargeq,
         state_scopeargval0,
         state_scopeargval,
-        state_scopevale,
+        state_scopevale,  // 70
         state_scope0,
         state_scope,
         state_scopeinit,
         state_scopee,
         state_scopee0,
         state_scopecomment0,
-        state_scopecomment
-        };
+        state_scopecomment,
+        state_endcall0,
+        state_endcall,
+        state_endcalle  // 80
+      };
 
       state_type state = state_nl;
       std::string tag, etag, tagarg;
@@ -252,13 +255,8 @@ namespace tnt
               }
               state = state_cond;
             }
-            else if (inComp && ch == '/')
+            else if (ch == '/')
             {
-              if (!html.empty())
-              {
-                handler.onHtml(html);
-                html.clear();
-              }
               state = state_compe0;
             }
             else if (ch == '\\')
@@ -327,6 +325,12 @@ namespace tnt
                 scope = component_scope;
                 state = state_scope0;
               }
+              else if (!inClose && tag == "close")
+              {
+                handler.startClose();
+                state = state_html0;
+                inClose = true;
+              }
               else
                 state = state_cpp;
             }
@@ -378,6 +382,12 @@ namespace tnt
                 state = state_html0;
                 inComp = true;
               }
+              else if (tag == "close")
+              {
+                handler.startClose();
+                state = state_html0;
+                inClose = true;
+              }
               else
                 state = state_cpp;
             }
@@ -397,6 +407,12 @@ namespace tnt
                 handler.startComp(tagarg, cppargs);
                 state = state_html0;
                 inComp = true;
+              }
+              else if (tag == "close")
+              {
+                handler.startClose();
+                state = state_html0;
+                inClose = true;
               }
               else
                 state = state_cpp;
@@ -886,14 +902,14 @@ namespace tnt
             break;
 
           case state_callname:
-            if (ch == '&' || ch == '/')
+            if (ch == '&' || ch == '/' || ch == '>')
             {
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               comp.clear();
               comp_args.clear();
               pass_cgi.clear();
               defarg.clear();
-              state = state_callend;
+              state = ch == '>' ? state_html : state_callend;
             }
             else if (std::isspace(ch))
               state = state_callarg0;
@@ -944,7 +960,7 @@ namespace tnt
               arg = ch;
               state = state_callarg;
             }
-            else if (ch == '&' || ch == '/')
+            else if (ch == '&' || ch == '/' || ch == '>')
             {
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               arg.clear();
@@ -952,7 +968,7 @@ namespace tnt
               comp_args.clear();
               pass_cgi.clear();
               defarg.clear();
-              state = state_callend;
+              state = ch == '>' ? state_html : state_callend;
             }
             else if (ch == '(' && arg.empty() && pass_cgi.empty())
               state = state_call_cpparg0;
@@ -967,7 +983,7 @@ namespace tnt
               state = state_callarge;
             else if (ch == '=')
               state = state_callval0;
-            else if (pass_cgi.empty() && ch == '&' || ch == '/')
+            else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
               handler.onCall(comp, comp_args, arg, defarg);
               arg.clear();
@@ -975,7 +991,7 @@ namespace tnt
               comp_args.clear();
               pass_cgi.clear();
               defarg.clear();
-              state = state_callend;
+              state = ch == '>' ? state_html : state_callend;
             }
             else
               throw parse_error(std::string("invalid argumentname (") + ch + ')', state, curline);
@@ -990,7 +1006,7 @@ namespace tnt
               arg = ch;
               state = state_callarg;
             }
-            else if (pass_cgi.empty() && ch == '&' || ch == '/')
+            else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
               handler.onCall(comp, comp_args, arg, defarg);
               arg.clear();
@@ -998,7 +1014,7 @@ namespace tnt
               comp_args.clear();
               pass_cgi.clear();
               defarg.clear();
-              state = state_callend;
+              state = ch == '>' ? state_html : state_callend;
             }
             else if (!std::isspace(ch))
               throw parse_error("5", state, curline);
@@ -1092,8 +1108,17 @@ namespace tnt
           case state_compe0:
             if (ch == '%')
             {
+              if (!html.empty())
+              {
+                handler.onHtml(html);
+                html.clear();
+              }
               state = state_compe;
               tag.clear();
+            }
+            else if (ch == '&')
+            {
+              state = state_endcall0;
             }
             else
             {
@@ -1106,10 +1131,16 @@ namespace tnt
           case state_compe:
             if (ch == '>')
             {
-              if (tag == "def")
+              if (inComp && tag == "def")
               {
                 handler.onComp(code);
                 inComp = false;
+                state = state_html0;
+              }
+              else if (inClose && tag == "close")
+              {
+                handler.endClose();
+                inClose = false;
                 state = state_html0;
               }
               else
@@ -1122,7 +1153,7 @@ namespace tnt
             else
             {
               tag += ch;
-              if (tag.size() > 3)
+              if (tag.size() > 5)
               {
                 html += "</%";
                 html += tag;
@@ -1365,12 +1396,71 @@ namespace tnt
               state = state_scope0;
             break;
 
+          case state_endcall0:
+            if (std::isalnum(ch))
+            {
+              comp = ch;
+              state = state_endcall;
+            }
+            else if ('>')
+            {
+              if (!html.empty())
+              {
+                handler.onHtml(html);
+                html.clear();
+              }
+              handler.onEndCall(comp);
+              comp.clear();
+              state = state_html;
+            }
+            else if (!std::isspace(ch))
+              throw parse_error(std::string("character expected, \'") + ch
+                + "\' found", state, curline);
+            break;
+
+          case state_endcall:
+            if (ch == '>')
+            {
+              if (!html.empty())
+              {
+                handler.onHtml(html);
+                html.clear();
+              }
+              handler.onEndCall(comp);
+              comp.clear();
+              state = state_html;
+            }
+            else if (std::isspace(ch))
+            {
+              handler.onEndCall(comp);
+              comp.clear();
+              state = state_endcalle;
+            }
+            else if (std::isalnum(ch) || ch == '@')
+              comp += ch;
+            else
+              throw parse_error("character expected", state, curline);
+            break;
+
+          case state_endcalle:
+            if (ch == '>')
+              state = state_html;
+            else if (!std::isspace(ch))
+              throw parse_error("'>' expected", state, curline);
+            break;
+
         }  // switch(state)
 
       }  // while(in.get(ch))
 
       if (state != state_html && state != state_nl)
         throw parse_error("parse error", state, curline);
+
+      if (inComp)
+        throw parse_error("</%def> missing", state, curline);
+
+      if (inClose)
+        throw parse_error("</%close> missing", state, curline);
 
       if (!html.empty())
         handler.onHtml(html);
