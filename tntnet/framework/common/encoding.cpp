@@ -35,6 +35,8 @@ namespace tnt
       state_0,
       state_encoding,
       state_quality,
+      state_qualityq,
+      state_qualityeq,
       state_qualitypoint,
       state_qualitytenth,
       state_qualityign
@@ -57,7 +59,7 @@ namespace tnt
 
         case state_encoding:
           if (ch == ';')
-            state = state_quality;
+            state = state_qualityq;
           else if (ch == ',')
           {
             log_debug("encoding=" << encoding);
@@ -66,6 +68,20 @@ namespace tnt
           }
           else
             encoding += ch;
+          break;
+
+        case state_qualityq:
+          if (ch == 'q')
+            state = state_qualityeq;
+          else if (!std::isspace(ch))
+            throw std::runtime_error("invalid encoding-string \"" + header + '"');
+          break;
+
+        case state_qualityeq:
+          if (ch == '=')
+            state = state_quality;
+          else if (!std::isspace(ch))
+            throw std::runtime_error("invalid encoding-string \"" + header + '"');
           break;
 
         case state_quality:
