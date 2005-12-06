@@ -25,7 +25,7 @@ Boston, MA  02111-1307  USA
 #include <unistd.h>
 #include <fcntl.h>
 
-log_define("tntnet.poll")
+log_define("tntnet.poller")
 
 namespace tnt
 {

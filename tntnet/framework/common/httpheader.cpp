@@ -48,5 +48,6 @@ namespace tnt
     const std::string cookie = "Cookie:";
     const std::string pragma = "Pragma:";
     const std::string expires = "Expires:";
+    const std::string userAgent = "User-Agent:";
   }
 }

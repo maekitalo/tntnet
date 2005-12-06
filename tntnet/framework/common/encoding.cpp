@@ -38,7 +38,7 @@ namespace tnt
       state_qualitypoint,
       state_qualitytenth,
       state_qualityign
-    } state;
+    } state = state_0;
 
     std::string encoding;
     unsigned quality;

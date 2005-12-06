@@ -71,6 +71,7 @@ namespace tnt
   unsigned Worker::reportStateTime = 1200;
   time_t Worker::nextReportStateTime = 0;
   unsigned Worker::minThreads = 5;
+  bool Worker::enableCompression = false;
   static const std::string& sessionCookiePrefix = "tntnet.";
 
   const Tntconfig* ComploaderCreator::config = 0;
@@ -166,9 +167,9 @@ namespace tnt
          unsigned keepAliveCount)
   {
     // log message
-    char buffer[20];
-    log_debug("process request: " << request.getMethod() << ' ' << request.getUrl()
+    log_info("process request: " << request.getMethod() << ' ' << request.getUrl()
       << " from client " << request.getPeerIp());
+    log_info("user-Agent \"" << request.getUserAgent() << '"');
 
     // create reply-object
     HttpReply reply(socket);
@@ -312,10 +313,13 @@ namespace tnt
               }
             }
 
-            if (request.getEncoding().accept("compress"))
-              reply.setCompressEncoding();
-            if (request.getEncoding().accept("deflate"))
-              reply.setDeflateEncoding();
+            if (enableCompression)
+            {
+              if (request.getEncoding().accept("compress"))
+                reply.setCompressEncoding();
+              if (request.getEncoding().accept("deflate"))
+                reply.setDeflateEncoding();
+            }
 
             state = stateSendReply;
             reply.sendReply(http_return);

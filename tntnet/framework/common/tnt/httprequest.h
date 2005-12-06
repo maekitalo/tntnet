@@ -148,6 +148,8 @@ namespace tnt
         { return getCookies().getCookie(name); }
 
       const Encoding& getEncoding() const;
+      std::string getUserAgent() const
+        { return getHeader(httpheader::userAgent); }
 
       bool keepAlive() const;
 

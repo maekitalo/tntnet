@@ -31,7 +31,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpMessage
   //
-  log_define("tntnet.http")
+  log_define("tntnet.httpmessage")
 
   void HttpMessage::clear()
   {

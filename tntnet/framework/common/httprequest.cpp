@@ -32,7 +32,7 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  log_define("tntnet.http")
+  log_define("tntnet.httprequest")
 
   ////////////////////////////////////////////////////////////////////////
   // HttpRequest
@@ -40,13 +40,13 @@ namespace tnt
   unsigned HttpRequest::serial_ = 0;
 
   HttpRequest::HttpRequest(const std::string& url)
-  : ssl(false),
-    lang_init(false),
-    requestScope(0),
-    applicationScope(0),
-    sessionScope(0),
-    applicationScopeLocked(false),
-    sessionScopeLocked(false)
+    : ssl(false),
+      lang_init(false),
+      requestScope(0),
+      applicationScope(0),
+      sessionScope(0),
+      applicationScopeLocked(false),
+      sessionScopeLocked(false)
   {
     std::istringstream s("GET " + url + " HTTP/1.1\r\n\r\n");
     parse(s);
@@ -294,11 +294,25 @@ namespace tnt
     return encoding;
   }
 
+  namespace
+  {
+    class CompareNoCase
+    {
+      public:
+        bool operator() (char c1, char c2) const
+          { return tolower(c1) == tolower(c2); }
+    };
+  }
+
   bool HttpRequest::keepAlive() const
   {
     header_type::const_iterator it = header.find(httpheader::connection);
     return it == header.end() ? getMajorVersion() == 1 && getMinorVersion() == 1
-                              : it->second == httpheader::connectionKeepAlive;
+                              : it->second.size() >= httpheader::connectionKeepAlive.size()
+                                && std::equal(it->second.begin(),
+                                              it->second.end(),
+                                              httpheader::connectionKeepAlive.begin(),
+                                              CompareNoCase());
   }
 
   void HttpRequest::setApplicationScope(Scope* s)

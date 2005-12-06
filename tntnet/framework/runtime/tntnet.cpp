@@ -119,19 +119,6 @@ namespace
     close(fd);
   }
 
-  inline bool isTrue(char ch)
-  {
-    return ch == '1'
-        || ch == 't' || ch == 'T'
-        || ch == 'y' || ch == 'Y'
-        || ch == 'j' || ch == 'J';
-  }
-
-  inline bool isTrue(const std::string& s)
-  {
-    return s.size() > 0 && isTrue(s[0]);
-  }
-
 }
 
 namespace tnt
@@ -285,7 +272,7 @@ namespace tnt
     }
     else
     {
-      isDaemon = isTrue(config.getValue("Daemon"));
+      isDaemon = config.getBoolValue("Daemon", false);
     }
 
     if (!isDaemon)
@@ -295,16 +282,16 @@ namespace tnt
       int filedes = mkDaemon();
 
       // close stdin, stdout and stderr
-      std::string noclosestd = config.getValue("NoCloseStdout");
-      if (!isTrue(noclosestd))
+      bool noclosestd = config.getBoolValue("NoCloseStdout", false);
+      if (!noclosestd)
         closeStdHandles();
       else
         log_debug("not closing stdout");
 
       setDir("");
 
-      std::string nomonitor = config.getValue("NoMonitor");
-      if (isTrue(nomonitor))
+      bool nomonitor = config.getBoolValue("NoMonitor", false);
+      if (nomonitor)
       {
         log_debug("start worker-process without monitor");
         writePidfile(getpid());
@@ -576,14 +563,15 @@ namespace tnt
     config.load(conf);
 
     // initialize worker-process
-    minthreads = config.getValue<unsigned>("MinThreads", 10);
-    maxthreads = config.getValue<unsigned>("MaxThreads", 100);
+    minthreads = config.getValue<unsigned>("MinThreads", 5);
+    maxthreads = config.getValue<unsigned>("MaxThreads", 10);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
     ComploaderCreator::setConfig(config);
     Worker::setMinThreads(minthreads);
     Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
     Worker::setReportStateTime(config.getValue<unsigned>("ReportStateTime", Worker::getReportStateTime()));
+    Worker::setEnableCompression(config.getBoolValue("EnableCompression", Worker::getEnableCompression()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
     Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
 

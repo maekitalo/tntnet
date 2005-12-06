@@ -73,6 +73,7 @@ namespace tnt
       static unsigned reportStateTime;
       static time_t nextReportStateTime;
       static unsigned minThreads;
+      static bool enableCompression;
 
       bool processRequest(HttpRequest& request, std::iostream& socket,
         unsigned keepAliveCount);
@@ -104,10 +105,11 @@ namespace tnt
       static void setReportStateTime(unsigned sec) { reportStateTime = sec; }
       static unsigned getReportStateTime()         { return reportStateTime; }
 
-
       static workers_type::size_type getCountThreads();
-      static void setMinThreads(unsigned n)
-      { minThreads = n; }
+      static void setMinThreads(unsigned n)        { minThreads = n; }
+
+      static void setEnableCompression(bool sw = true)  { enableCompression = sw; }
+      static unsigned getEnableCompression()            { return enableCompression; }
   };
 }
 

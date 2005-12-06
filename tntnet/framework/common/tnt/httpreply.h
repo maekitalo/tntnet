@@ -47,7 +47,7 @@ namespace tnt
       unsigned keepAliveCounter;
       static unsigned keepAliveTimeout;
 
-      void tryCompress();
+      void tryCompress(std::string& body);
       void send(unsigned ret);
 
     public:

@@ -39,7 +39,7 @@ static void listenRetry(cxxtools::net::Server& server,
     try
     {
       log_debug("listen " << ipaddr << ':' << port);
-      server.listen(ipaddr, port);
+      server.listen(ipaddr, port, 128);
       return;
     }
     catch (const cxxtools::net::Exception& e)

@@ -106,6 +106,14 @@ namespace tnt
           std::istringstream v(getValue(key));
           return (v >> ret) ? ret : def;
         }
+      bool getBoolValue(const std::string& key, bool def) const
+        {
+          std::string v = getValue(key);
+          if (v.empty())
+            return def;
+          char ch = v.at(0);
+          return ch == '1' || ch == 't' || ch == 'T' || ch == 'y' || ch == 'Y';
+        }
 
       std::string getValue(const std::string& key, const char* def) const
       {

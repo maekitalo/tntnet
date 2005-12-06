@@ -22,10 +22,12 @@ Boston, MA  02111-1307  USA
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <tnt/httpheader.h>
+#include <tnt/deflatestream.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 #include <cxxtools/dynbuffer.h>
 #include <zlib.h>
+#include <netinet/in.h>
 
 namespace tnt
 {
@@ -36,26 +38,33 @@ namespace tnt
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
 
-  void HttpReply::tryCompress()
+  void HttpReply::tryCompress(std::string& body)
   {
     if (!hasHeader(httpheader::contentEncoding))
     {
       if (deflateEncoding)
       {
-        /*
-        TODO implement Deflator
-        Deflator d(1);
-        body = d.deflate(body);
+        log_debug("deflate");
+
+        std::ostringstream b;
+        DeflateStream deflator(b);
+        deflator.write(body.data(), body.size());
+        deflator.flush();
+        std::string::size_type oldSize = body.size();
+        body = b.str();
+        log_info("deflated body " << oldSize << " bytes to " << body.size() << " bytes");
+
         setHeader(httpheader::contentEncoding, "deflate");
-        */
       }
       else if (compressEncoding)
       {
-        uLongf s = getBody().size() * getBody().size() / 100 + 100;
+        log_debug("compress");
+
+        uLongf s = body.size() * body.size() / 100 + 100;
         cxxtools::Dynbuffer<Bytef> p;
         p.reserve(s);
 
-        int z_ret = ::compress(p.data(), &s, (const Bytef*)getBody().data(), getBody().size());
+        int z_ret = ::compress(p.data(), &s, (const Bytef*)body.data(), body.size());
 
         if (z_ret != Z_OK)
         {
@@ -65,10 +74,10 @@ namespace tnt
              z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
         }
 
-        log_debug("compressed body " << getBody().size() << " bytes to " << s << " bytes");
+        log_info("compressed body " << body.size() << " bytes to " << s << " bytes");
         setContentLengthHeader(s);
 
-        setBody(std::string(p.data(), p.data() + s));
+        body.assign(p.data(), p.data() + s);
         setHeader(httpheader::contentEncoding, "compress");
       }
     }
@@ -76,18 +85,17 @@ namespace tnt
 
   void HttpReply::send(unsigned ret)
   {
-    log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-           << ' ' << ret << " OK");
-    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-           << ' ' << ret << " OK" << "\r\n";
-
     std::string body = outstream.str();
+
+    // complete headers
 
     if (!hasHeader(httpheader::date))
       setHeader(httpheader::date, htdate(time(0)));
 
     if (!hasHeader(httpheader::server))
       setHeader(httpheader::server, httpheader::serverName);
+
+    tryCompress(body);
 
     if (keepAliveTimeout > 0 && keepAliveCounter > 0)
     {
@@ -97,16 +105,18 @@ namespace tnt
       if (!hasHeader(httpheader::contentLength))
         setContentLengthHeader(body.size());
     }
-    else
-    {
-      if (!hasHeader(httpheader::connection))
-        setKeepAliveHeader(0);
-    }
-
-    tryCompress();
+    else if (!hasHeader(httpheader::connection))
+      setKeepAliveHeader(0);
 
     if (!hasHeader(httpheader::contentType))
       setHeader(httpheader::contentType, contentType);
+
+    // send header
+
+    log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+           << ' ' << ret << " OK");
+    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+           << ' ' << ret << " OK" << "\r\n";
 
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
@@ -122,6 +132,8 @@ namespace tnt
     }
 
     socket << "\r\n";
+
+    // send body
 
     if (getMethod() == "HEAD")
       log_debug("HEAD-request - empty body");

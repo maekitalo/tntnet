@@ -50,6 +50,7 @@ namespace tnt
     extern const std::string cookie;
     extern const std::string pragma;
     extern const std::string expires;
+    extern const std::string userAgent;
   }
 }
 

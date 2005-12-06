@@ -8,6 +8,7 @@ libtntnet_la_SOURCES = \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	cookie.cpp \
+    deflatestream.cpp \
 	ecpp.cpp \
 	encoding.cpp \
 	htmlescostream.cpp \
@@ -18,6 +19,7 @@ libtntnet_la_SOURCES = \
 	httpparser.cpp \
 	httprequest.cpp \
 	httpreply.cpp \
+	inflatestream.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
 	messageheaderparser.cpp \
@@ -42,6 +44,7 @@ nobase_include_HEADERS = \
 	tnt/convert.h \
 	tnt/cookie.h \
 	tnt/data.h \
+	tnt/deflatestream.h \
 	tnt/ecpp.h \
 	tnt/encoding.h \
 	tnt/htmlescostream.h \
@@ -52,6 +55,7 @@ nobase_include_HEADERS = \
 	tnt/httpparser.h \
 	tnt/httprequest.h \
 	tnt/httpreply.h \
+	tnt/inflatestream.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/messageheaderparser.h \
