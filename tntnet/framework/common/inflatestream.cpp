@@ -21,6 +21,7 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/inflatestream.h"
 #include <cxxtools/log.h>
+#include <sstream>
 
 log_define("tntnet.inflatestream");
 
@@ -32,14 +33,20 @@ namespace tnt
     {
       if (ret != Z_OK)
       {
-        log_error("InflateError ret=" << ret << " msg=\"" << stream.msg << '"');
-        throw InflateError(ret, stream.msg);
+        log_error("InflateError " << ret << ": \"" << (stream.msg ? stream.msg : "") << '"');
+        std::ostringstream msg;
+        msg << "inflate-error " << ret;
+        if (stream.msg)
+          msg << ": " << stream.msg;
+        throw InflateError(ret, msg.str());
       }
     }
   }
 
-  InflateStreamBuf::InflateStreamBuf(std::streambuf* sink_)
-    : sink(sink_)
+  InflateStreamBuf::InflateStreamBuf(std::streambuf* sink_, unsigned bufsize_)
+    : sink(sink_),
+      obuffer(new char_type[bufsize_]),
+      bufsize(bufsize_)
   {
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
@@ -48,12 +55,13 @@ namespace tnt
     stream.total_in = 0;
 
     checkError(::inflateInit(&stream), stream);
-    setp(obuffer, obuffer + sizeof(obuffer));
+    setp(obuffer, obuffer + bufsize);
   }
 
   InflateStreamBuf::~InflateStreamBuf()
   {
     ::inflateEnd(&stream);
+    delete obuffer;
   }
 
   InflateStreamBuf::int_type InflateStreamBuf::overflow(int_type c)
@@ -67,23 +75,23 @@ namespace tnt
     do
     {
       // initialize zbuffer
-      char_type zbuffer[sizeof(obuffer)];
+      char_type zbuffer[bufsize];
       stream.next_out = (Bytef*)zbuffer;
-      stream.avail_out = sizeof(zbuffer);
+      stream.avail_out = bufsize;
 
       log_debug("pre:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
       checkError(::inflate(&stream, Z_SYNC_FLUSH), stream);
       log_debug("post:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
 
       // copy zbuffer to sink
-      std::streamsize count = sizeof(zbuffer) - stream.avail_out;
+      std::streamsize count = bufsize - stream.avail_out;
       std::streamsize n = sink->sputn(zbuffer, count);
       if (n < count)
         return traits_type::eof();
     } while (stream.avail_in > 0);
 
     // reset outbuffer
-    setp(obuffer, obuffer + sizeof(obuffer));
+    setp(obuffer, obuffer + bufsize);
     if (c != traits_type::eof())
       sputc(traits_type::to_char_type(c));
 

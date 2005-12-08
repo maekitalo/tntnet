@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <iostream>
 #include <stdexcept>
 #include <zlib.h>
+#include <cxxtools/dynbuffer.h>
 
 namespace tnt
 {
@@ -44,12 +45,12 @@ namespace tnt
   class DeflateStreamBuf : public std::streambuf
   {
       z_stream stream;
-      char_type* obuffer;
-      unsigned bufsize;
+      cxxtools::Dynbuffer<char_type> obuffer;
       std::streambuf* sink;
 
     public:
-      explicit DeflateStreamBuf(std::streambuf* sink_, int level = Z_DEFAULT_COMPRESSION, unsigned bufsize = 512);
+      explicit DeflateStreamBuf(std::streambuf* sink_, int level = Z_DEFAULT_COMPRESSION,
+        unsigned bufsize = 8192);
       ~DeflateStreamBuf();
 
       /// see std::streambuf
@@ -59,6 +60,8 @@ namespace tnt
       /// see std::streambuf
       int sync();
 
+      /// end deflate-stream
+      int end();
       void setSink(std::streambuf* sink_)   { sink = sink_; }
       uLong getAdler() const                { return stream.adler; }
   };
@@ -77,6 +80,7 @@ namespace tnt
           streambuf(sink.rdbuf(), level)
           { }
 
+      void end();
       void setSink(std::streambuf* sink)   { streambuf.setSink(sink); }
       void setSink(std::ostream& sink)     { streambuf.setSink(sink.rdbuf()); }
       uLong getAdler() const   { return streambuf.getAdler(); }

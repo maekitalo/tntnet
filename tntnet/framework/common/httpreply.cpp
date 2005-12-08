@@ -38,18 +38,48 @@ namespace tnt
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
 
+#undef htonl
+#define htonl
   void HttpReply::tryCompress(std::string& body)
   {
     if (!hasHeader(httpheader::contentEncoding))
     {
-      if (deflateEncoding)
+      if (gzipEncoding)
+      {
+        log_debug("gzip");
+
+        std::ostringstream b;
+        char f[] = "\x1f\x8b\x08\x00"
+             "\x00\x00\x00\x00"
+             "\x04\x03";
+        b.write(f, sizeof(f) - 1);
+
+        DeflateStream deflator(b);
+        deflator.write(body.data(), body.size());
+        deflator.end();
+
+        uLong crc = crc32(0, reinterpret_cast<const Bytef*>(body.data()), body.size());
+        uint32_t u = htonl(crc);
+        b.write(reinterpret_cast<const char*>(&crc), 4);
+        u = htonl(body.size());
+        b.write(reinterpret_cast<const char*>(&u), 4);
+
+        std::string::size_type oldSize = body.size();
+        body = b.str();
+        log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
+
+        setHeader(httpheader::contentEncoding, "gzip");
+      }
+      else if (deflateEncoding)
       {
         log_debug("deflate");
 
         std::ostringstream b;
+
         DeflateStream deflator(b);
         deflator.write(body.data(), body.size());
-        deflator.flush();
+        deflator.end();
+
         std::string::size_type oldSize = body.size();
         body = b.str();
         log_info("deflated body " << oldSize << " bytes to " << body.size() << " bytes");
@@ -150,8 +180,9 @@ namespace tnt
       socket(s),
       current_outstream(&outstream),
       save_outstream(outstream),
-      compressEncoding(false),
+      gzipEncoding(false),
       deflateEncoding(false),
+      compressEncoding(false),
       keepAliveCounter(0)
   { }
 

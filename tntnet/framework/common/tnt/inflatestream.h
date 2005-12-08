@@ -44,11 +44,12 @@ namespace tnt
   class InflateStreamBuf : public std::streambuf
   {
       z_stream stream;
-      char_type obuffer[512];
+      char_type* obuffer;
+      unsigned bufsize;
       std::streambuf* sink;
 
     public:
-      explicit InflateStreamBuf(std::streambuf* sink_);
+      explicit InflateStreamBuf(std::streambuf* sink_, unsigned bufsize = 8192);
       ~InflateStreamBuf();
 
       /// see std::streambuf
