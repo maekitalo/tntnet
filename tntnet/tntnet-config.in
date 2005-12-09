@@ -72,6 +72,9 @@ PropertyFile        tntnet.properties
 #KeepAliveTimeout   15000
 #KeepAliveMax       100
 #SessionTimeout     300
+#ListenBacklog      128
+#ListenRetry        5
+#EnableCompression  no
 EOF
 }
 
