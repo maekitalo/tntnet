@@ -51,6 +51,15 @@ To create a simple application run "tntnet-config --project=hello".
 This creates a directory "hello" with a simple project and prints
 out a short message, how to run the application.
 
-There are some demo-applications you can try out and play with in sdk/demos.
+There are some demo-applications you can try in sdk/demos. To run the demos
+without installing tntnet, change to the directory of the demo and run tntnet
+from the directory framework/runtime and pass the configurationfile tntnet.conf
+with -c:
+  cd sdk/demos/hello
+  ../../../framework/runtime/tntnet -c tntnet.conf
 
-Documentation is provided in OpenOffice- or pdf-formats in doc/tntnet.* and doc/tntnet-configuration.*.
+Tntnet listens on port 8000. Start your browser and enter the url:
+  http://localhost:8000/hello
+
+Documentation is provided in OpenOffice- or pdf-formats in doc/tntnet.* and
+doc/tntnet-configuration.*.
