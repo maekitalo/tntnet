@@ -115,7 +115,8 @@ namespace tnt
       if (haveEndCall)
       {
         out << "  tnt::ComponentGuard _tnt_comp" << getNumber() << "(createComp(" << ident << "));\n"
-               "  _tnt_comp" << getNumber() << "->call(request, reply, " << qparam << ");\n";
+               "  if (_tnt_comp" << getNumber() << "->call(request, reply, " << qparam << ") != DECLINED)\n"
+               "  {\n";
       }
       else
         out << "  callComp(" << ident << ", request, reply, " << qparam << ");\n";
@@ -178,6 +179,7 @@ namespace tnt
     void BodypartEndCall::getBody(std::ostream& out) const
     {
       out << "  // </& " << bpc.getName() << " ...\n"
+             "  }\n"
              "  _tnt_comp" << bpc.getNumber()
           << "->endTag(request, reply, _tnt_cq" << bpc.getNumber()
           << ");\n"
