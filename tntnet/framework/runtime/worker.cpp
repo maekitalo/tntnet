@@ -68,7 +68,7 @@ namespace tnt
   Worker::workers_type Worker::workers;
   unsigned Worker::compLifetime = 600;
   unsigned Worker::maxRequestTime = 600;
-  unsigned Worker::reportStateTime = 1200;
+  unsigned Worker::reportStateTime = 0;
   time_t Worker::nextReportStateTime = 0;
   unsigned Worker::minThreads = 5;
   bool Worker::enableCompression = false;
@@ -315,10 +315,12 @@ namespace tnt
 
             if (enableCompression)
             {
-              if (request.getEncoding().accept("compress"))
-                reply.setCompressEncoding();
+              if (request.getEncoding().accept("gzip"))
+                reply.setGzipEncoding();
               if (request.getEncoding().accept("deflate"))
                 reply.setDeflateEncoding();
+              if (request.getEncoding().accept("compress"))
+                reply.setCompressEncoding();
             }
 
             state = stateSendReply;
@@ -348,7 +350,7 @@ namespace tnt
     time_t currentTime;
     time(&currentTime);
     bool reportState = false;
-    if (currentTime > nextReportStateTime)
+    if (reportStateTime > 0 && currentTime > nextReportStateTime)
     {
       if (nextReportStateTime)
         reportState = true;

@@ -36,10 +36,17 @@ namespace tnt
   {
       cxxtools::net::Server server;
       Jobqueue& queue;
+      static int backlog;
+      static unsigned listenRetry;
 
     public:
       Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q);
       virtual void run();
+
+      static void setBacklog(int backlog_)   { backlog = backlog_; }
+      static int getBacklog()                { return backlog; }
+      static void setListenRetry(unsigned listenRetry_)   { listenRetry = listenRetry_; }
+      static unsigned getListenRetry()                { return listenRetry; }
   };
 
 #ifdef USE_SSL

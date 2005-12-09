@@ -574,6 +574,8 @@ namespace tnt
     Worker::setEnableCompression(config.getBoolValue("EnableCompression", Worker::getEnableCompression()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
     Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
+    Listener::setBacklog(config.getValue<int>("ListenBacklog", Listener::getBacklog()));
+    Listener::setListenRetry(config.getValue<int>("ListenRetry", Listener::getListenRetry()));
 
     Tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);

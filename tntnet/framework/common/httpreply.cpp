@@ -38,8 +38,6 @@ namespace tnt
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
 
-#undef htonl
-#define htonl
   void HttpReply::tryCompress(std::string& body)
   {
     if (!hasHeader(httpheader::contentEncoding))

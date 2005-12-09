@@ -31,21 +31,21 @@ Boston, MA  02111-1307  USA
 
 log_define("tntnet.listener")
 
-static void listenRetry(cxxtools::net::Server& server,
-  const char* ipaddr, unsigned short int port, unsigned retry)
+static void doListenRetry(cxxtools::net::Server& server,
+  const char* ipaddr, unsigned short int port)
 {
   for (unsigned n = 1; true; ++n)
   {
     try
     {
       log_debug("listen " << ipaddr << ':' << port);
-      server.listen(ipaddr, port, 128);
+      server.listen(ipaddr, port, tnt::Listener::getBacklog());
       return;
     }
     catch (const cxxtools::net::Exception& e)
     {
       log_debug("cxxtools::net::Exception catched: errno=" << e.getErrno() << " msg=" << e.what());
-      if (e.getErrno() != EADDRINUSE || n > retry)
+      if (e.getErrno() != EADDRINUSE || n > tnt::Listener::getListenRetry())
       {
         log_debug("rethrow exception");
         throw;
@@ -58,11 +58,14 @@ static void listenRetry(cxxtools::net::Server& server,
 
 namespace tnt
 {
+  int Listener::backlog = 128;
+  unsigned Listener::listenRetry = 5;
+
   Listener::Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q)
     : queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port);
-    listenRetry(server, ipaddr.c_str(), port, 5);
+    doListenRetry(server, ipaddr.c_str(), port);
   }
 
   void Listener::run()
@@ -94,7 +97,7 @@ namespace tnt
       queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port << " (ssl)");
-    listenRetry(server, ipaddr.c_str(), port, 5);
+    doListenRetry(server, ipaddr.c_str(), port);
   }
 
   void Ssllistener::run()
