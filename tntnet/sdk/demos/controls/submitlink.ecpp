@@ -1,0 +1,7 @@
+<%args>
+href;
+</%args>
+<a href="" onClick='document.forms[0].action="<$href$>"; document.forms[0].submit(); return false;'>
+<%close>
+</a><br>
+</%close>

@@ -1,0 +1,16 @@
+<%args>
+myaction;
+</%args>
+<%request scope="global">
+std::string message;
+</%request>
+<{
+  if (!myaction.empty())
+  {
+    // put your action-processing here
+    message = "action processed";
+  }
+}>
+<h1>This is page 1</h1>
+
+<input type="submit" name="myaction" value="push me">

@@ -97,6 +97,7 @@ AC_CONFIG_FILES([
     sdk/tools/ecppll/Makefile
     sdk/demos/calc/Makefile
     sdk/demos/config/Makefile
+    sdk/demos/controls/Makefile
     sdk/demos/cookie/Makefile
     sdk/demos/hello/Makefile
     sdk/demos/savepoint/Makefile

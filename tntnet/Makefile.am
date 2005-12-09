@@ -10,6 +10,7 @@ SUBDIRS = \
     sdk/tools/ecppll \
     sdk/demos/calc \
     sdk/demos/config \
+    sdk/demos/controls \
     sdk/demos/cookie \
     sdk/demos/hello \
     sdk/demos/savepoint \
