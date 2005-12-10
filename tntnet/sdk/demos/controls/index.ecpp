@@ -7,9 +7,9 @@ std::string message;
  </head>
  <body>
 
-  <form method="post">
+  <form method="post" style="height:100%">
    <table style="width:100%; height:100%;">
-    <tr style="height:100%">
+    <tr>
      <td class="treemenu">
        <&treemenu qparam>
      </td>
