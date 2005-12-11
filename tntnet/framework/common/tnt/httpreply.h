@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/httpmessage.h>
 #include <tnt/htmlescostream.h>
+#include <tnt/encoding.h>
 #include <sstream>
 
 namespace tnt
@@ -41,9 +42,7 @@ namespace tnt
       std::ostream* current_outstream;
       HtmlEscOstream save_outstream;
 
-      bool gzipEncoding;
-      bool deflateEncoding;
-      bool compressEncoding;
+      Encoding acceptEncoding;
 
       unsigned keepAliveCounter;
       static unsigned keepAliveTimeout;
@@ -100,9 +99,8 @@ namespace tnt
       static void setKeepAliveTimeout(unsigned ms)  { keepAliveTimeout = ms; }
       static unsigned getKeepAliveTimeout()         { return keepAliveTimeout; }
 
-      void setGzipEncoding(bool sw = true)       { gzipEncoding = sw; }
-      void setDeflateEncoding(bool sw = true)    { deflateEncoding = sw; }
-      void setCompressEncoding(bool sw = true)   { compressEncoding = sw; }
+      void setAcceptEncoding(const Encoding& enc)    { acceptEncoding = enc; }
+      void setAcceptEncoding(const std::string& enc) { acceptEncoding.parse(enc); }
 
       bool keepAlive() const;
   };

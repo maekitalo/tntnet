@@ -314,14 +314,7 @@ namespace tnt
             }
 
             if (enableCompression)
-            {
-              if (request.getEncoding().accept("gzip"))
-                reply.setGzipEncoding();
-              if (request.getEncoding().accept("deflate"))
-                reply.setDeflateEncoding();
-              if (request.getEncoding().accept("compress"))
-                reply.setCompressEncoding();
-            }
+              reply.setAcceptEncoding(request.getEncoding());
 
             state = stateSendReply;
             reply.sendReply(http_return);

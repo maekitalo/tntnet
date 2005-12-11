@@ -58,7 +58,7 @@ static void doListenRetry(cxxtools::net::Server& server,
 
 namespace tnt
 {
-  int Listener::backlog = 128;
+  int Listener::backlog = 16;
   unsigned Listener::listenRetry = 5;
 
   Listener::Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q)

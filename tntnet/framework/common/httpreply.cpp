@@ -42,7 +42,7 @@ namespace tnt
   {
     if (!hasHeader(httpheader::contentEncoding))
     {
-      if (gzipEncoding)
+      if (acceptEncoding.accept("gzip"))
       {
         log_debug("gzip");
 
@@ -67,46 +67,6 @@ namespace tnt
         log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
 
         setHeader(httpheader::contentEncoding, "gzip");
-      }
-      else if (deflateEncoding)
-      {
-        log_debug("deflate");
-
-        std::ostringstream b;
-
-        DeflateStream deflator(b);
-        deflator.write(body.data(), body.size());
-        deflator.end();
-
-        std::string::size_type oldSize = body.size();
-        body = b.str();
-        log_info("deflated body " << oldSize << " bytes to " << body.size() << " bytes");
-
-        setHeader(httpheader::contentEncoding, "deflate");
-      }
-      else if (compressEncoding)
-      {
-        log_debug("compress");
-
-        uLongf s = body.size() * body.size() / 100 + 100;
-        cxxtools::Dynbuffer<Bytef> p;
-        p.reserve(s);
-
-        int z_ret = ::compress(p.data(), &s, (const Bytef*)body.data(), body.size());
-
-        if (z_ret != Z_OK)
-        {
-          throw std::runtime_error(std::string("error compressing body: ") +
-            (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
-             z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
-             z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
-        }
-
-        log_info("compressed body " << body.size() << " bytes to " << s << " bytes");
-        setContentLengthHeader(s);
-
-        body.assign(p.data(), p.data() + s);
-        setHeader(httpheader::contentEncoding, "compress");
       }
     }
   }
@@ -178,9 +138,6 @@ namespace tnt
       socket(s),
       current_outstream(&outstream),
       save_outstream(outstream),
-      gzipEncoding(false),
-      deflateEncoding(false),
-      compressEncoding(false),
       keepAliveCounter(0)
   { }
 
