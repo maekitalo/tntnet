@@ -76,33 +76,35 @@ namespace tnt
   {
     log_debug("DeflateStreamBuf::overflow");
 
-    // initialize input-stream for
+    // initialize input-stream
     stream.next_in = (Bytef*)obuffer.data();
-    stream.avail_in = pptr() - pbase();
+    stream.avail_in = pptr() - obuffer.data();
 
+    // initialize zbuffer for deflated data
     char zbuffer[8192];
-    while (stream.avail_in > 0)
+    stream.next_out = (Bytef*)zbuffer;
+    stream.avail_out = sizeof(zbuffer);
+
+    // deflate
+    log_debug("pre:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
+    checkError(::deflate(&stream, Z_NO_FLUSH), stream);
+    log_debug("post:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
+
+    // copy zbuffer to sink / consume deflated data
+    std::streamsize count = sizeof(zbuffer) - stream.avail_out;
+    if (count > 0)
     {
-      // initialize zbuffer
-      stream.next_out = (Bytef*)zbuffer;
-      stream.avail_out = sizeof(zbuffer);
-
-      log_debug("pre:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
-      checkError(::deflate(&stream, Z_NO_FLUSH), stream);
-      log_debug("post:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
-
-      // copy zbuffer to sink
-      std::streamsize count = sizeof(zbuffer) - stream.avail_out;
-      if (count > 0)
-      {
-        std::streamsize n = sink->sputn(zbuffer, count);
-        if (n < count)
-          return traits_type::eof();
-      }
+      std::streamsize n = sink->sputn(zbuffer, count);
+      if (n < count)
+        return traits_type::eof();
     }
 
+    // move remaining characters to start of obuffer
+    if (stream.avail_in > 0)
+      memmove(obuffer.data(), stream.next_in, stream.avail_in);
+
     // reset outbuffer
-    setp(obuffer.begin(), obuffer.end());
+    setp(obuffer.begin() + stream.avail_in, obuffer.end());
     if (c != traits_type::eof())
       sputc(traits_type::to_char_type(c));
 
@@ -116,6 +118,8 @@ namespace tnt
 
   int DeflateStreamBuf::sync()
   {
+    log_debug("DeflateStreamBuf::sync");
+
     // initialize input-stream for
     stream.next_in = (Bytef*)obuffer.data();
     stream.avail_in = pptr() - pbase();
