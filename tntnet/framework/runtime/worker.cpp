@@ -201,6 +201,11 @@ namespace tnt
       {
         throw;
       }
+      //catch (const cxxtools::Net::Timeout& t)
+      //{
+          // TODO pass job to writer-thread
+          // return false;
+      //}
       catch (const std::exception& e)
       {
         throw HttpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
@@ -279,7 +284,6 @@ namespace tnt
             log_info("request ready, returncode " << http_return);
             state = stateFlush;
             reply.out().flush();
-            log_info("reply sent");
           }
           else
           {
@@ -318,8 +322,11 @@ namespace tnt
 
             state = stateSendReply;
             reply.sendReply(http_return);
-            log_info("reply sent");
           }
+
+          if (reply.out())
+            log_info("reply sent");
+
           return;
         }
         else
