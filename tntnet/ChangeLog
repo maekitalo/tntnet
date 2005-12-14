@@ -1,3 +1,17 @@
+2005-12-09 tommi@tntnet.org
+
+  - new demo "controls" to demonstrate usage of end-tags
+  - new configuration-variables ListenBacklog, ListenRetry, EnableCompression
+
+2005-12-02 tommi@tntnet.org
+
+  - end-tags for component-calls
+  - documentation-updates and converted to open-document-format
+
+2005-12-01 tommi@tntnet.org
+
+  - fixed SSL-problems - need to mutex-lock SSL-read and -write-calls
+
 2005-11-08 tommi@tntnet.org
 
   - store comploader in objectpool for later reuse.
