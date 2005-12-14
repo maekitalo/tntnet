@@ -157,7 +157,8 @@ namespace tnt
         case state_token:
           if (*p == '/')
           {
-            tokens.push_back(Pstr(s, p));
+            if (p - s != 1 || *s != '.')
+              tokens.push_back(Pstr(s, p));
             state = state_start;
           }
           else if (p == e)
