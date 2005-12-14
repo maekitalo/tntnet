@@ -3,6 +3,10 @@
   - new demo "controls" to demonstrate usage of end-tags
   - new configuration-variables ListenBacklog, ListenRetry, EnableCompression
 
+2005-12-08 tommi@tntnet.org
+
+  - tntnet now supports gzip-encoding
+
 2005-12-02 tommi@tntnet.org
 
   - end-tags for component-calls
