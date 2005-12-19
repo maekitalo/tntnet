@@ -1,5 +1,5 @@
-AC_INIT([tntnet],[1.5.0pre6],[Tommi Maekitalo <tommi@tntnet.org>])
-AM_INIT_AUTOMAKE(tntnet, 1.5.0pre6)
+AC_INIT([tntnet],[1.5.0pre7],[Tommi Maekitalo <tommi@tntnet.org>])
+AM_INIT_AUTOMAKE(tntnet, 1.5.0pre7)
 
 abi_current=4
 abi_revision=1
@@ -32,12 +32,12 @@ fi
 
 CXXTOOLS_CXXFLAGS=`$CXXTOOLS_CONFIG --cxxflags`
 CXXTOOLS_LDFLAGS=`$CXXTOOLS_CONFIG --libs`
+CXXFLAGS="$CXXFLAGS $CXXTOOLS_CXXFLAGS"
+LDFLAGS="$CXXFLAGS $CXXTOOLS_LDFLAGS"
 
 AC_CHECK_HEADER([cxxtools/log.h], , AC_MSG_ERROR([cxxtools-logging not found]))
 
 AC_MSG_CHECKING([for cxxtools usability])
-save_CXXFLAGS=$CXXFLAGS
-CXXFLAGS="$CXXFLAGS $CXXTOOLS_CXXFLAGS"
 AC_COMPILE_IFELSE(
   [#include <cxxtools/thread.h>
    void t() { cxxtools::AttachedThread* p; }

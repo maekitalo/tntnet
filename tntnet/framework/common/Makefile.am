@@ -77,5 +77,4 @@ nobase_include_HEADERS = \
 nobase_nodist_include_HEADERS = \
 	tnt/config.h
 
-libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz @CXXTOOLS_LDFLAGS@
-AM_CPPFLAGS = @CXXTOOLS_CXXFLAGS@
+libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz

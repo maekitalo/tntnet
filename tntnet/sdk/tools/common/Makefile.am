@@ -10,5 +10,4 @@ libtntnet_sdk_la_SOURCES = \
 	tnt/ecpp/scopetypes.h \
 	tnt/stringescaper.h
 
-libtntnet_sdk_la_LDFLAGS = -version-info @sonumber@ @CXXTOOLS_LDFLAGS@
-AM_CPPFLAGS = @CXXTOOLS_CXXFLAGS@
+libtntnet_sdk_la_LDFLAGS = -version-info @sonumber@

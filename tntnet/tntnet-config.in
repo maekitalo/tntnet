@@ -130,7 +130,7 @@ while test $# -gt 0; do
         ;;
 
     --libs)
-        echo @CXXTOOLS_LOG_LDFLAGS@ -ltntnet
+        echo @CXXTOOLS_LDFLAGS@ -ltntnet
         ;;
 
     --makefile=*)

@@ -25,5 +25,3 @@ tntnet_SOURCES += \
 	tnt/ssl.h
 tntnet_LDFLAGS += -lssl
 endif
-
-AM_CPPFLAGS = @CXXTOOLS_CXXFLAGS@

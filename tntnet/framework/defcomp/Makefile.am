@@ -19,4 +19,3 @@ tntnet_la_SOURCES = \
 
 tntnet_la_LDFLAGS = -module
 tntnet_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
-AM_CPPFLAGS = @CXXTOOLS_CXXFLAGS@
