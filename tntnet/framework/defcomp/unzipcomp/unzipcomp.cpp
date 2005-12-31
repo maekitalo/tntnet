@@ -49,6 +49,9 @@ namespace tnt
   class UnzipFactory : public tnt::SingletonComponentFactory
   {
     public:
+      UnzipFactory(const std::string& componentName)
+        : tnt::SingletonComponentFactory(componentName)
+        { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
   };
@@ -59,7 +62,7 @@ namespace tnt
     return new Unzip();
   }
 
-  TNT_COMPONENTFACTORY(Unzip, UnzipFactory, factory)
+  TNT_COMPONENTFACTORY(Unzip, UnzipFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

@@ -41,6 +41,9 @@ namespace tnt
   class StaticFactory : public tnt::SingletonComponentFactory
   {
     public:
+      StaticFactory(const std::string& componentName)
+        : tnt::SingletonComponentFactory(componentName)
+        { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
   };
@@ -51,7 +54,7 @@ namespace tnt
     return new Static();
   }
 
-  TNT_COMPONENTFACTORY(Static, StaticFactory, factory)
+  TNT_COMPONENTFACTORY(Static, StaticFactory)
 
   //////////////////////////////////////////////////////////////////////
   // componentdefinition

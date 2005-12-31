@@ -1,5 +1,5 @@
-/* tnt/urlmapper.h
-   Copyright (C) 2003 Tommi Maekitalo
+/* urlmapper.cpp
+   Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -19,21 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#ifndef TNT_URLMAPPER_H
-#define TNT_URLMAPPER_H
-
-#include <tnt/component.h>
+#include "tnt/urlmapper.h"
+#include "tnt/httperror.h"
 
 namespace tnt
 {
-  // map compUrl to compident
-  class Urlmapper
+  Compident Urlmapper::mapComp(const std::string& compUrl) const
   {
-    public:
-      virtual ~Urlmapper()  { }
-      virtual Compident mapComp(const std::string& compUrl) const;
-  };
+    throw NotFoundException(compUrl);
+  }
 }
-
-#endif // TNT_URLMAPPER_H
-

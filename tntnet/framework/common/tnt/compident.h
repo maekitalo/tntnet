@@ -47,7 +47,7 @@ struct Compident
   explicit Compident(const std::string& ident);
 
   std::string toString() const
-  { return compname + '@' + libname; }
+  { return libname.empty() ? compname : (compname + '@' + libname); }
 
   bool empty() const
     { return libname.empty() && compname.empty(); }

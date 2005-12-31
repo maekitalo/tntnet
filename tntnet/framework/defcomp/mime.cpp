@@ -121,6 +121,9 @@ namespace tnt
   class MimeFactory : public tnt::SingletonComponentFactory
   {
     public:
+      MimeFactory(const std::string& componentName)
+        : tnt::SingletonComponentFactory(componentName)
+        { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
       virtual void doConfigure(const tnt::Tntconfig& config);
@@ -141,7 +144,7 @@ namespace tnt
                   MimeConfigurator());
   }
 
-  TNT_COMPONENTFACTORY(Mime, MimeFactory, factory)
+  TNT_COMPONENTFACTORY(Mime, MimeFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

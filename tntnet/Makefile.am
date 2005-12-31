@@ -4,6 +4,7 @@ SUBDIRS = \
     framework/common \
     framework/runtime \
     framework/defcomp \
+    framework/cgi \
     sdk/tools/common \
     sdk/tools/ecppc \
     sdk/tools/ecppl \

@@ -31,6 +31,7 @@ libtntnet_la_SOURCES = \
 	sessionscope.cpp \
 	sodata.cpp \
 	tntconfig.cpp \
+	urlmapper.cpp \
 	zdata.cpp
 
 nobase_include_HEADERS = \

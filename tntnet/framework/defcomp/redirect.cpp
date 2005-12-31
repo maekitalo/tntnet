@@ -49,6 +49,9 @@ namespace tnt
   class RedirectFactory : public tnt::SingletonComponentFactory
   {
     public:
+      RedirectFactory(const std::string& componentName)
+        : tnt::SingletonComponentFactory(componentName)
+        { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
   };
@@ -59,7 +62,7 @@ namespace tnt
     return new Redirect();
   }
 
-  TNT_COMPONENTFACTORY(Redirect, RedirectFactory, factory)
+  TNT_COMPONENTFACTORY(Redirect, RedirectFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

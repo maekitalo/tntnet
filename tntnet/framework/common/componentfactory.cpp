@@ -20,12 +20,20 @@ Boston, MA  02111-1307  USA
 */
 
 #include "tnt/componentfactory.h"
+#include "tnt/comploader.h"
 #include <cxxtools/log.h>
 
 log_define("tntnet.componentfactory");
 
 namespace tnt
 {
+  ComponentFactory::ComponentFactory(const std::string& componentName)
+    : configured(false)
+  {
+    log_debug("create componentfactory for " << componentName);
+    Comploader::addStaticFactory(componentName, this);
+  }
+
   void ComponentFactory::doConfigure(const tnt::Tntconfig& config)
   {
   }

@@ -41,6 +41,9 @@ namespace tnt
   class FstaticFactory : public tnt::SingletonComponentFactory
   {
     public:
+      FstaticFactory(const std::string& componentName)
+        : tnt::SingletonComponentFactory(componentName)
+        { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
   };
@@ -51,7 +54,7 @@ namespace tnt
     return new Fstatic();
   }
 
-  TNT_COMPONENTFACTORY(Fstatic, FstaticFactory, factory)
+  TNT_COMPONENTFACTORY(Fstatic, FstaticFactory)
 
   //////////////////////////////////////////////////////////////////////
   // componentdefinition

@@ -89,6 +89,7 @@ AC_CONFIG_FILES([
     framework/common/Makefile
     framework/runtime/Makefile
     framework/defcomp/Makefile
+    framework/cgi/Makefile
     sdk/tools/common/Makefile
     sdk/tools/ecppc/Makefile
     sdk/tools/ecppl/Makefile

@@ -44,10 +44,14 @@ Component* ComponentLibrary::create(
   factoryMapType::const_iterator i = factoryMap.find(component_name);
   if (i == factoryMap.end())
   {
-    // creatorsymbol not known - load it
-    log_debug("lookup symbol \"" << component_name << "_factory\"");
+    std::string factoryName = component_name + "_factory";
+    if (getHandle() == 0)
+      throw cxxtools::dl::SymbolNotFound(factoryName);
 
-    factory = static_cast<ComponentFactory*>(sym((component_name + "_factory").c_str()).getSym());
+    // creatorsymbol not known - load it
+    log_debug("lookup symbol \"" << factoryName << '"');
+
+    factory = static_cast<ComponentFactory*>(sym(factoryName.c_str()).getSym());
     factoryMap.insert(factoryMapType::value_type(component_name, factory));
   }
   else
@@ -91,6 +95,7 @@ Comploader::~Comploader()
 cxxtools::RWLock Comploader::libraryMonitor;
 Comploader::librarymap_type Comploader::librarymap;
 Comploader::search_path_type Comploader::search_path;
+bool Comploader::staticFactoryAddEnabled = true;
 
 Component& Comploader::fetchComp(const Compident& ci,
   const Urlmapper& rootmapper)
@@ -146,7 +151,11 @@ Component* Comploader::createComp(const Compident& ci,
 
 ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
-  log_debug("fetchLib " << libname);
+  log_debug("fetchLib \"" << libname << '"');
+
+  // When first library is fetched static initializers are run,
+  // so we disable registation of static factories here.
+  staticFactoryAddEnabled = false;
 
   cxxtools::RdLock lock(libraryMonitor);
   librarymap_type::iterator i = librarymap.find(libname);
@@ -196,11 +205,9 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 
       i = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
     }
-
-    return i->second;
   }
-  else
-    return i->second;
+
+  return i->second;
 }
 
 void Comploader::cleanup(unsigned seconds)
@@ -233,6 +240,29 @@ void Comploader::cleanup(unsigned seconds)
       }
       break;
     }
+  }
+}
+
+void Comploader::addStaticFactory(const std::string& component_name,
+  ComponentFactory* factory)
+{
+  if (staticFactoryAddEnabled)
+  {
+    log_debug("Comploader::addStaticFactory(" << component_name << ", "
+      << factory << ')');
+
+    // seach library with empty name
+
+    cxxtools::WrLock wrlock(libraryMonitor);
+    librarymap_type::iterator it = librarymap.find(std::string());
+    if (it == librarymap.end())
+    {
+      // empty library not in map - create a new empty library-object
+      it = librarymap.insert(
+        librarymap_type::value_type(std::string(),
+                                    ComponentLibrary())).first;
+    }
+    it->second.addStaticFactory(component_name, factory);
   }
 }
 

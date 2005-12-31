@@ -101,10 +101,13 @@ namespace tnt
 
     // send header
 
-    log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-           << ' ' << ret << " OK");
-    socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-           << ' ' << ret << " OK" << "\r\n";
+    if (sendStatusLine)
+    {
+      log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+             << ' ' << ret << " OK");
+      socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+             << ' ' << ret << " OK" << "\r\n";
+    }
 
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
@@ -133,12 +136,13 @@ namespace tnt
     }
   }
 
-  HttpReply::HttpReply(std::ostream& s)
+  HttpReply::HttpReply(std::ostream& s, bool sendStatusLine_)
     : contentType("text/html"),
       socket(s),
       current_outstream(&outstream),
       save_outstream(outstream),
-      keepAliveCounter(0)
+      keepAliveCounter(0),
+      sendStatusLine(sendStatusLine_)
   { }
 
   void HttpReply::sendReply(unsigned ret)

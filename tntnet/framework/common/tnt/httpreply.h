@@ -47,11 +47,13 @@ namespace tnt
       unsigned keepAliveCounter;
       static unsigned keepAliveTimeout;
 
+      bool sendStatusLine;
+
       void tryCompress(std::string& body);
       void send(unsigned ret);
 
     public:
-      explicit HttpReply(std::ostream& s);
+      explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
 
       void setContentType(const std::string& t)    { contentType = t; }
       const std::string& getContentType() const    { return contentType; }

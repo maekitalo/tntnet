@@ -26,9 +26,12 @@ Boston, MA  02111-1307  USA
 #include <tnt/comploader.h>
 #include <cxxtools/thread.h>
 
-#define TNT_COMPONENTFACTORY(componentName, factoryType, factoryName) \
-  extern "C" { factoryType componentName ## _factory; } \
-  static factoryType& factoryName = componentName ## _factory;
+#define TNT_COMPONENTFACTORY(componentName, factoryType) \
+  extern "C" { \
+    factoryType componentName ## _factory( #componentName );   \
+    tnt::ComponentFactory* componentName ## _factoryptr = & componentName ## _factory; \
+  } \
+  static factoryType& factory = componentName ## _factory;
 
 namespace tnt
 {
@@ -46,9 +49,7 @@ namespace tnt
       virtual void doConfigure(const tnt::Tntconfig& config);
 
     public:
-      ComponentFactory()
-        : configured(false)
-        { }
+      ComponentFactory(const std::string& componentName_);
 
       virtual Component* create(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
@@ -66,8 +67,9 @@ namespace tnt
         const tnt::Urlmapper& um, tnt::Comploader& cl) = 0;
 
     public:
-      SingletonComponentFactory()
-        : theComponent(0),
+      SingletonComponentFactory(const std::string& componentName)
+        : ComponentFactory(componentName),
+          theComponent(0),
           refs(0)
       { }
 
@@ -80,6 +82,10 @@ namespace tnt
   class ComponentFactoryImpl : public FactoryBaseType
   {
     public:
+      ComponentFactoryImpl(const std::string& componentName)
+        : ComponentFactory(componentName)
+        { }
+
       virtual Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl)
       {

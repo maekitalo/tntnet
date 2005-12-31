@@ -52,6 +52,9 @@ namespace tnt
   class ErrorFactory : public tnt::SingletonComponentFactory
   {
     public:
+      ErrorFactory(const std::string& componentName)
+        : tnt::SingletonComponentFactory(componentName)
+        { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
   };
@@ -62,7 +65,7 @@ namespace tnt
     return new Error();
   }
 
-  TNT_COMPONENTFACTORY(Error, ErrorFactory, factory)
+  TNT_COMPONENTFACTORY(Error, ErrorFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

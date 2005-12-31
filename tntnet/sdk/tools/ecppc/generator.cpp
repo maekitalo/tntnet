@@ -369,10 +369,13 @@ namespace tnt
       code << "class " << maincomp.getName() << "Factory : public " << factoryBase << "\n"
               "{\n"
               "  public:\n"
-              "      virtual tnt::Component* doCreate(const tnt::Compident& ci,\n"
-              "        const tnt::Urlmapper& um, tnt::Comploader& cl);\n";
+              "    " << maincomp.getName() << "Factory(const std::string& componentName)\n"
+              "      : " << factoryBase << "(componentName)\n"
+              "      { }\n"
+              "    virtual tnt::Component* doCreate(const tnt::Compident& ci,\n"
+              "      const tnt::Urlmapper& um, tnt::Comploader& cl);\n";
       if (!configs.empty())
-        code << "      virtual void doConfigure(const tnt::Tntconfig& config);\n";
+        code << "    virtual void doConfigure(const tnt::Tntconfig& config);\n";
       code << "};\n"
               "\n"
               "tnt::Component* " << maincomp.getName() << "Factory::doCreate(const tnt::Compident& ci,\n"
@@ -392,7 +395,7 @@ namespace tnt
                 "}\n\n";
       }
 
-      code << "TNT_COMPONENTFACTORY(" << maincomp.getName() << ", " << maincomp.getName() << "Factory, factory)\n\n";
+      code << "TNT_COMPONENTFACTORY(" << maincomp.getName() << ", " << maincomp.getName() << "Factory)\n\n";
     }
 
     void Generator::getCppBody(std::ostream& code) const

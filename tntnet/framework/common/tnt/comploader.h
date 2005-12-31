@@ -54,7 +54,7 @@ namespace tnt
         { }
 
       ComponentLibrary(const std::string& name)
-        : cxxtools::dl::Library(name.c_str()),
+        : cxxtools::dl::Library(name.empty() ? 0 : name.c_str()),
           libname(name)
         { }
 
@@ -62,6 +62,9 @@ namespace tnt
         const Urlmapper& rootmapper);
 
       const std::string& getName() const  { return libname; }
+      void addStaticFactory(const std::string& component_name,
+        ComponentFactory* factory)
+        { factoryMap.insert(factoryMapType::value_type(component_name, factory)); }
   };
 
   class Comploader
@@ -80,6 +83,7 @@ namespace tnt
       componentmap_type componentmap;
       const Tntconfig& config;
       static search_path_type search_path;
+      static bool staticFactoryAddEnabled;
 
     public:
       Comploader(const Tntconfig& config_);
@@ -99,6 +103,9 @@ namespace tnt
 
       static void addSearchPath(const std::string& path)
         { search_path.push_back(path); }
+      static void addStaticFactory(const std::string& component_name, ComponentFactory* factory);
+      static void disableStaticFactoryAdd(bool sw = true)
+        { staticFactoryAddEnabled = false; }
   };
 }
 

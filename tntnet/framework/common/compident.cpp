@@ -1,4 +1,4 @@
-/* component.cpp
+/* compident.cpp
    Copyright (C) 2003-2005 Tommi Maekitalo
 
 This file is part of tntnet.
