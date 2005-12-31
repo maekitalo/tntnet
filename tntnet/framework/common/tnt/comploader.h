@@ -104,8 +104,6 @@ namespace tnt
       static void addSearchPath(const std::string& path)
         { search_path.push_back(path); }
       static void addStaticFactory(const std::string& component_name, ComponentFactory* factory);
-      static void disableStaticFactoryAdd(bool sw = true)
-        { staticFactoryAddEnabled = false; }
   };
 }
 
