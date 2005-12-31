@@ -14,6 +14,7 @@ nobase_nodist_sysconf_DATA = \
 tntnet/tntnet.conf: tntnet/tntnet.conf.in
 	sed -e 's,@libdir\@,@libdir@,g;' \
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
-		-e 's,@datadir\@,@datadir@,g;' <$< >$@
+		-e 's,@datadir\@,@datadir@,g;' <tntnet/tntnet.conf.in >tntnet/tntnet.conf
+
 tntnet/tntnet.properties:
 	cxxtools-config --logfile /var/log/tntnet.log --properties tntnet >$@
