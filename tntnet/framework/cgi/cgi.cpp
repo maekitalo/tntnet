@@ -22,7 +22,6 @@ Boston, MA  02111-1307  USA
 #include <tnt/cgi.h>
 #include <tnt/urlmapper.h>
 #include <tnt/comploader.h>
-#include <tnt/tntconfig.h>
 #include <tnt/httpreply.h>
 #include <tnt/convert.h>
 #include <cxxtools/dynbuffer.h>
@@ -32,6 +31,15 @@ Boston, MA  02111-1307  USA
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <config.h>
+
+#ifndef CONFIG_DIR
+# define CONFIG_DIR "/etc/tntnet/"
+#endif
+
+#ifndef TNTNET_CONF
+# define TNTNET_CONF CONFIG_DIR "tntnet.conf"
+#endif
 
 log_define("cgi");
 
@@ -104,6 +112,29 @@ namespace tnt
       componentName.erase(0, pos + 1);
 
     log_debug("componentName=" << componentName);
+
+    // load configuration:
+    cxxtools::Arg<const char*> conf(argc, argv, 'c', TNTNET_CONF);
+
+    if (conf.isSet())
+      config.load(conf);
+    else
+    {
+      const char* tntnetConf = ::getenv("TNTNET_CONF");
+      if (tntnetConf)
+        config.load(tntnetConf);
+      else
+      {
+        try
+        {
+          config.load(TNTNET_CONF);
+        }
+        catch (const std::exception& e)
+        {
+          log_warn(e.what());
+        }
+      }
+    }
   }
 
   int Cgi::run()
@@ -123,13 +154,7 @@ namespace tnt
 
     readBody();
 
-    // TODO REMOTE_ADDR, REMOTE_PORT, REMOTE_HOST
-
     request.doPostParse();
-
-    Tntconfig config;
-    // TODO load configuration:
-    //  config.load(configfile);
 
     Comploader::configure(config);
     Comploader comploader;

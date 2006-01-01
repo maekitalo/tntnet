@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/httprequest.h>
 #include <tnt/scopemanager.h>
+#include <tnt/tntconfig.h>
 
 namespace tnt
 {
@@ -31,6 +32,7 @@ namespace tnt
   class Cgi
   {
       std::string componentName;
+      Tntconfig config;
 
       HttpRequest request;
       ScopeManager scopeManager;

@@ -263,6 +263,7 @@ void Comploader::configure(const Tntconfig& config_)
 void Comploader::addStaticFactory(const std::string& component_name,
   ComponentFactory* factory)
 {
+  std::cout << "addStaticFactory " << component_name << std::endl;
   if (staticFactoryAddEnabled)
   {
     log_debug("Comploader::addStaticFactory(" << component_name << ", "

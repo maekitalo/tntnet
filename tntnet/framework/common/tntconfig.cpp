@@ -235,6 +235,7 @@ namespace tnt
   //
   void Tntconfig::load(const char* configfile)
   {
+    log_debug("load configuration \"" << configfile << '"');
     std::ifstream in(configfile);
     if (!in)
     {

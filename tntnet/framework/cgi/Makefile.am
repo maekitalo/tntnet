@@ -9,8 +9,9 @@ libtntnet_cgi_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_PROGRAMS = getenv
 
-getenv_SOURCES = getenv.cpp
+getenv_SOURCES = getenv.ecpp
 getenv_LDADD = $(top_builddir)/framework/cgi/libtntnet-cgi.la
 
-getenv.cpp: getenv.ecpp
-	$(top_builddir)/sdk/tools/ecppc/ecppc getenv.ecpp
+SUFFIXES=.ecpp
+.ecpp.cpp:
+	$(top_builddir)/sdk/tools/ecppc/ecppc $<

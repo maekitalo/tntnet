@@ -75,6 +75,7 @@ namespace tnt
       void workerProcess(int filedes = -1);
 
       void timerTask();
+      void loadConfiguration();
 
     public:
       Tntnet(int& argc, char* argv[]);

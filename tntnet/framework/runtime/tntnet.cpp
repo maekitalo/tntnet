@@ -262,7 +262,7 @@ namespace tnt
 
   int Tntnet::run()
   {
-    config.load(conf);
+    loadConfiguration();
 
     if (debug)
     {
@@ -551,7 +551,7 @@ namespace tnt
 
     // reload configuration
     config = Tntconfig();
-    config.load(conf);
+    loadConfiguration();
 
     // initialize worker-process
     minthreads = config.getValue<unsigned>("MinThreads", 5);
@@ -662,6 +662,21 @@ namespace tnt
       getScopemanager().checkSessionTimeout();
 
       Worker::timer();
+    }
+  }
+
+  void Tntnet::loadConfiguration()
+  {
+    config = Tntconfig();
+    if (conf.isSet())
+      config.load(conf);
+    else
+    {
+      const char* tntnetConf = ::getenv("TNTNET_CONF");
+      if (tntnetConf)
+        config.load(tntnetConf);
+      else
+        config.load(conf);
     }
   }
 
