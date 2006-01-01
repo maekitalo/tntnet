@@ -534,16 +534,7 @@ namespace tnt
 #endif // USE_SSL
 
     // configure worker (static)
-    {
-      Tntconfig::config_entries_type compPath;
-      config.getConfigValues("CompPath", compPath);
-      for (Tntconfig::config_entries_type::const_iterator it = compPath.begin();
-           it != compPath.end(); ++it)
-      {
-        if (it->params.size() > 0)
-          Worker::addSearchPath(it->params[0]);
-      }
-    }
+    Comploader::configure(config);
 
     // configure http
     HttpMessage::setMaxRequestSize(config.getValue("MaxRequestSize", static_cast<unsigned>(0)));
@@ -566,7 +557,6 @@ namespace tnt
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
-    ComploaderCreator::setConfig(config);
     Worker::setMinThreads(minthreads);
     Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));

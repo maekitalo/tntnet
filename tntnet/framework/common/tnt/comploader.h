@@ -81,12 +81,12 @@ namespace tnt
       // map soname/compname to compinstance
       cxxtools::RWLock componentMonitor;
       componentmap_type componentmap;
-      const Tntconfig& config;
+      static const Tntconfig* config;
       static search_path_type search_path;
       static bool staticFactoryAddEnabled;
 
     public:
-      Comploader(const Tntconfig& config_);
+      Comploader();
       virtual ~Comploader();
 
       virtual Component& fetchComp(const Compident& compident,
@@ -99,10 +99,8 @@ namespace tnt
 
       void cleanup(unsigned seconds);  // delete comps older than seconds
 
-      const Tntconfig& getConfig() const  { return config; }
-
-      static void addSearchPath(const std::string& path)
-        { search_path.push_back(path); }
+      static const Tntconfig& getConfig()        { return *config; }
+      static void configure(const Tntconfig& config);
       static void addStaticFactory(const std::string& component_name, ComponentFactory* factory);
   };
 }

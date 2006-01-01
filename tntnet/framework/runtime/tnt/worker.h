@@ -34,20 +34,6 @@ namespace tnt
   class HttpRequest;
   class HttpReply;
 
-  class ComploaderCreator
-  {
-      static const Tntconfig* config;
-
-    public:
-      static void setConfig(const Tntconfig& config_)
-        { config = &config_; }
-
-      Comploader* operator() ()
-      {
-        return new Comploader(*config);
-      }
-  };
-
   class Worker : public cxxtools::DetachedThread
   {
       static cxxtools::Mutex mutex;
@@ -55,7 +41,7 @@ namespace tnt
 
       Tntnet& application;
 
-      typedef cxxtools::Pool<Comploader, ComploaderCreator> ComploaderPoolType;
+      typedef cxxtools::Pool<Comploader> ComploaderPoolType;
       static ComploaderPoolType comploaderPool;
 
       ComploaderPoolType::objectptr_type comploaderObject;
@@ -89,8 +75,6 @@ namespace tnt
       void dispatch(HttpRequest& request, HttpReply& reply);
       void cleanup(unsigned seconds)
         { comploader.cleanup(seconds); }
-      static void addSearchPath(const std::string& path)
-        { Comploader::addSearchPath(path); }
 
       static void timer();
 

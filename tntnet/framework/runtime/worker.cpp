@@ -74,7 +74,6 @@ namespace tnt
   bool Worker::enableCompression = false;
   static const std::string& sessionCookiePrefix = "tntnet.";
 
-  const Tntconfig* ComploaderCreator::config = 0;
   Worker::ComploaderPoolType Worker::comploaderPool;
 
   Worker::Worker(Tntnet& app)

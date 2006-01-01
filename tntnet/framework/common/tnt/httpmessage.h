@@ -76,6 +76,9 @@ namespace tnt
       const std::string& getUrl() const         { return url; }
       /// returns get-parameters as string.
       const std::string& getQueryString() const { return queryString; }
+      /// sets query-string
+      void setQueryString(const std::string& queryString_)
+        { queryString = queryString_; }
       /// returns true, if the message has the specified header.
       bool hasHeader(const std::string& key)    { return header.find(key) != header.end(); }
       /// returns the content of the specified header or the passed default
@@ -84,6 +87,8 @@ namespace tnt
         const std::string& def = std::string()) const;
       /// returns the body of the message.
       const std::string& getBody() const        { return body; }
+      /// sets the body of the message.
+      void setBody(const std::string& body_)    { body = body_; }
 
       /// returns the http-major-version-number.
       unsigned short getMajorVersion() const

@@ -67,18 +67,20 @@ Component* ComponentLibrary::create(
 ////////////////////////////////////////////////////////////////////////
 // Comploader
 //
-Comploader::Comploader(const Tntconfig& config_)
-  : config(config_)
+Comploader::Comploader()
 {
-  Tntconfig::config_entries_type configLoad;
-  config.getConfigValues("Load", configLoad);
-
-  for (Tntconfig::config_entries_type::const_iterator it = configLoad.begin();
-       it != configLoad.end(); ++it)
+  if (config)
   {
-    if (it->params.empty())
-      throw std::runtime_error("missing libraryname in Load-command");
-    fetchLib(it->params[0]);
+    Tntconfig::config_entries_type configLoad;
+    config->getConfigValues("Load", configLoad);
+
+    for (Tntconfig::config_entries_type::const_iterator it = configLoad.begin();
+         it != configLoad.end(); ++it)
+    {
+      if (it->params.empty())
+        throw std::runtime_error("missing libraryname in Load-command");
+      fetchLib(it->params[0]);
+    }
   }
 }
 
@@ -94,6 +96,7 @@ Comploader::~Comploader()
 
 cxxtools::RWLock Comploader::libraryMonitor;
 Comploader::librarymap_type Comploader::librarymap;
+const Tntconfig* Comploader::config = 0;
 Comploader::search_path_type Comploader::search_path;
 bool Comploader::staticFactoryAddEnabled = true;
 
@@ -158,16 +161,16 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
   staticFactoryAddEnabled = false;
 
   cxxtools::RdLock lock(libraryMonitor);
-  librarymap_type::iterator i = librarymap.find(libname);
-  if (i == librarymap.end())
+  librarymap_type::iterator it = librarymap.find(libname);
+  if (it == librarymap.end())
   {
     lock.unlock();
 
     cxxtools::WrLock wrlock(libraryMonitor);
 
     // doublecheck after writelock
-    librarymap_type::iterator i = librarymap.find(libname);
-    if (i == librarymap.end())
+    it = librarymap.find(libname);
+    if (it == librarymap.end())
     {
       // load library
       log_info("load library \"" << libname << '"');
@@ -203,11 +206,11 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
         }
       }
 
-      i = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
+      it = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
     }
   }
 
-  return i->second;
+  return it->second;
 }
 
 void Comploader::cleanup(unsigned seconds)
@@ -240,6 +243,20 @@ void Comploader::cleanup(unsigned seconds)
       }
       break;
     }
+  }
+}
+
+void Comploader::configure(const Tntconfig& config_)
+{
+  config = &config_;
+
+  Tntconfig::config_entries_type compPath;
+  config_.getConfigValues("CompPath", compPath);
+  for (Tntconfig::config_entries_type::const_iterator it = compPath.begin();
+       it != compPath.end(); ++it)
+  {
+    if (it->params.size() > 0)
+      search_path.push_back(it->params[0]);
   }
 }
 

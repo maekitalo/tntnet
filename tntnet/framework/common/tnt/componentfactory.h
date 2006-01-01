@@ -29,7 +29,6 @@ Boston, MA  02111-1307  USA
 #define TNT_COMPONENTFACTORY(componentName, factoryType) \
   extern "C" { \
     factoryType componentName ## _factory( #componentName );   \
-    tnt::ComponentFactory* componentName ## _factoryptr = & componentName ## _factory; \
   } \
   static factoryType& factory = componentName ## _factory;
 

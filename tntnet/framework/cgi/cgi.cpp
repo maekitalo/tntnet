@@ -19,12 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
+#include <tnt/cgi.h>
 #include <tnt/urlmapper.h>
 #include <tnt/comploader.h>
 #include <tnt/tntconfig.h>
-#include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
-#include <tnt/componentfactory.h>
 #include <tnt/convert.h>
 #include <cxxtools/dynbuffer.h>
 #include <cxxtools/log.h>
@@ -33,64 +32,98 @@ Boston, MA  02111-1307  USA
 
 log_define("cgi");
 
-int main(int argc, char* argv[])
+namespace tnt
 {
-  try
+  void Cgi::getMethod()
   {
-    log_init();
+    const char* requestMethod = getenv("REQUEST_METHOD");
+    if (requestMethod)
+      request.setMethod(requestMethod);
+  }
 
+  void Cgi::getContentType()
+  {
+    const char* contentType = getenv("CONTENT_TYPE");
+    if (contentType)
+      request.setHeader(httpheader::contentType, contentType);
+  }
+
+  void Cgi::getQueryString()
+  {
+    const char* queryString = getenv("QUERY_STRING");
+    if (queryString)
+    {
+      request.setQueryString(queryString);
+    }
+  }
+
+  void Cgi::getPathInfo()
+  {
+    const char* pathInfo = getenv("PATH_INFO");
+    if (pathInfo)
+      request.setPathInfo(pathInfo);
+  }
+
+  void Cgi::readBody()
+  {
+    const char* contentLength = getenv("CONTENT_LENGTH");
+    unsigned length = contentLength ? stringTo<unsigned>(contentLength) : 0;
+    if (length > 0)
+    {
+      cxxtools::DynBuffer buffer(length);
+      std::cin.get(buffer.data(), length);
+      request.setBody(std::string(buffer.data(), std::cin.gcount()));
+    }
+  }
+
+  Cgi::Cgi(int argc, char* argv[])
+  {
     cxxtools::Arg<const char*> componentNameArg(argc, argv, 'n', argv[0]);
-    std::string componentName = componentNameArg.getValue();
+    componentName = componentNameArg.getValue();
     std::string::size_type pos = componentName.find_last_of('/');
     if (pos != std::string::npos)
       componentName.erase(0, pos + 1);
 
     log_debug("componentName=" << componentName);
+  }
 
-    tnt::Urlmapper urlmapper;
+  int Cgi::run()
+  {
+    getMethod();
+    getContentType();
+    getQueryString();
+    getPathInfo();
+    readBody();
 
-    tnt::Tntconfig config;
+    request.doPostParse();
+
+    Tntconfig config;
     // TODO load configuration:
     //  config.load(configfile);
 
-    // TODO configure comploader:
-    //  tnt::Complader::addSeachPath(path);
+    Comploader::configure(config);
+    Comploader comploader;
 
-    tnt::Comploader comploader(config);
-    tnt::Compident compident(std::string(), componentName);
-
+    Compident compident(std::string(), componentName);
     log_debug("fetch component " << compident);
-    tnt::Component& comp = comploader.fetchComp(compident, urlmapper);
+    Component& comp = comploader.fetchComp(compident, Urlmapper());
 
-    const char* pathInfoSz = getenv("PATH_INFO");
-    std::string pathInfo;
-    if (pathInfoSz)
-      pathInfo = pathInfoSz;
-
-    cxxtools::QueryParams qparam;
-
-    const char* queryString = getenv("QUERY_STRING");
-    if (queryString)
-      qparam.parse_url(queryString);
-    const char* contentLength = getenv("CONTENT_LENGTH");
-    //const char* contentType = getenv("CONTENT_TYPE");
-    unsigned length = contentLength ? tnt::stringTo<unsigned>(contentLength) : 0;
-    if (length > 0)
-    {
-      cxxtools::DynBuffer buffer(length);
-      std::cin.get(buffer.data(), length);
-      qparam.parse_url(std::string(buffer.data(), std::cin.gcount()));
-    }
-
-    tnt::HttpRequest request;
-    request.setPathInfo(pathInfo);
-    tnt::HttpReply reply(std::cout, false);
-    
     log_debug("call component");
-    unsigned ret = comp(request, reply, qparam);
+    HttpReply reply(std::cout, false);
+    unsigned ret = comp(request, reply, request.getQueryParams());
 
     log_debug("send reply");
     reply.sendReply(ret);
+  }
+}
+
+int main(int argc, char* argv[])
+{
+  try
+  {
+    log_init();
+    tnt::Cgi app(argc, argv);
+    return app.run();
   }
   catch (const std::exception& e)
   {
