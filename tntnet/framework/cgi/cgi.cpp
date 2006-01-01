@@ -138,9 +138,16 @@ namespace tnt
     log_debug("fetch component " << compident);
     Component& comp = comploader.fetchComp(compident, Urlmapper());
 
+    scopeManager.preCall(request, compident.libname);
+
     log_debug("call component");
     HttpReply reply(std::cout, false);
     unsigned ret = comp(request, reply, request.getQueryParams());
+
+    // Don't call postCall. postCall just sets a session-cookie,
+    // which don't make sense in cgi, because the program stops after every
+    // request.
+    // scopeManager.postCall(request, reply, compident.libname);
 
     log_debug("send reply");
     reply.sendReply(ret);

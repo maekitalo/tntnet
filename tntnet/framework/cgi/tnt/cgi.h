@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #define TNT_CGI_H
 
 #include <tnt/httprequest.h>
+#include <tnt/scopemanager.h>
 
 namespace tnt
 {
@@ -31,7 +32,8 @@ namespace tnt
   {
       std::string componentName;
 
-      tnt::HttpRequest request;
+      HttpRequest request;
+      ScopeManager scopeManager;
 
       void getHeader(const char* env, const std::string& headername);
       void getMethod();

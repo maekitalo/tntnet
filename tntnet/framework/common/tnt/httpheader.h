@@ -37,8 +37,10 @@ namespace tnt
     extern const std::string server;
     extern const std::string serverName;
     extern const std::string location;
+    extern const std::string accept;
     extern const std::string acceptLanguage;
     extern const std::string acceptEncoding;
+    extern const std::string acceptCharset;
     extern const std::string contentEncoding;
     extern const std::string date;
     extern const std::string keepAlive;

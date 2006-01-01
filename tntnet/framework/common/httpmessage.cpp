@@ -54,7 +54,10 @@ namespace tnt
   void HttpMessage::setHeader(const std::string& key, const std::string& value)
   {
     log_debug("HttpMessage::setHeader(\"" << key << "\", \"" << value << "\")");
-    header.insert(header_type::value_type(key, value));
+    std::string k = key;
+    if (k.size() > 0 && k.at(k.size() - 1) != ':')
+      k += ':';
+    header.insert(header_type::value_type(k, value));
   }
 
   std::string HttpMessage::dumpHeader() const

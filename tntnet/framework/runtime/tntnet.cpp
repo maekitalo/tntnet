@@ -654,33 +654,12 @@ namespace tnt
   {
     log_debug("timer thread");
 
-    while (1)
+    while (true)
     {
       sleep(1);
 
       log_debug("check sessiontimeout");
-
-      time_t currentTime;
-      time(&currentTime);
-      cxxtools::MutexLock lock(sessionScopesMutex);
-      sessionscopes_type::iterator it = sessionScopes.begin();
-      unsigned count = 0;
-      while (it != sessionScopes.end())
-      {
-        Sessionscope* s = it->second;
-        if (currentTime - s->getAtime() > s->getTimeout())
-        {
-          log_info("sessiontimeout for session " << it->first << " reached");
-          sessionscopes_type::iterator it2 = it;
-          ++it;
-          s->release();
-          sessionScopes.erase(it2);
-          ++count;
-        }
-        else
-          ++it;
-      }
-      log_debug(count << " sessions timed out " << sessionScopes.size() << " sessions left");
+      getScopemanager().checkSessionTimeout();
 
       Worker::timer();
     }
@@ -697,99 +676,6 @@ namespace tnt
     exit(0);
   }
 
-  Scope* Tntnet::getApplicationScope(const std::string& appname)
-  {
-    log_debug("Tntnet::getApplicationScope(\"" << appname << "\")");
-
-    cxxtools::MutexLock lock(applicationScopesMutex);
-
-    scopes_type::iterator it = applicationScopes.find(appname);
-    if (it == applicationScopes.end())
-    {
-      log_debug("applicationscope not found - create new");
-      Scope* s = new Scope();
-      it = applicationScopes.insert(scopes_type::value_type(appname, s)).first;
-      return s;
-    }
-    else
-      log_debug("applicationscope found");
-
-    return it->second;
-  }
-
-  Sessionscope* Tntnet::getSessionScope(const std::string& sessioncookie)
-  {
-    log_debug("Tntnet::getSessionScope(\"" << sessioncookie << "\")");
-
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    if (it == sessionScopes.end())
-    {
-      log_debug("session " << sessioncookie << " not found");
-      return 0;
-    }
-    else
-    {
-      log_debug("session " << sessioncookie << " found");
-      it->second->touch();
-      return it->second;
-    }
-  }
-
-  bool Tntnet::hasSessionScope(const std::string& sessioncookie)
-  {
-    log_debug("Tntnet::hasSessionScope(\"" << sessioncookie << "\")");
-
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    return it != sessionScopes.end();
-  }
-
-  void Tntnet::putSessionScope(const std::string& sessioncookie, Sessionscope* s)
-  {
-    log_debug("Tntnet::putSessionScope " << sessioncookie);
-
-    s->addRef();
-
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    if (it != sessionScopes.end())
-    {
-      log_debug("sessionscope found - replace");
-      it->second->release();
-      it->second = s;
-    }
-    else
-      sessionScopes[sessioncookie] = s;
-  }
-
-  void Tntnet::removeApplicationScope(const std::string& appname)
-  {
-    log_debug("removeApplicationScope(\"" << appname << "\")");
-
-    cxxtools::MutexLock lock(applicationScopesMutex);
-    scopes_type::iterator it = applicationScopes.find(appname);
-    if (it != applicationScopes.end())
-    {
-      log_debug("release applicationscope");
-      it->second->release();
-      applicationScopes.erase(it);
-    }
-  }
-
-  void Tntnet::removeSessionScope(const std::string& sessioncookie)
-  {
-    log_debug("removeSessionScope(\"" << sessioncookie << "\")");
-
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    if (it != sessionScopes.end())
-    {
-      log_debug("release sessionscope");
-      it->second->release();
-      sessionScopes.erase(it);
-    }
-  }
 }
 
 ////////////////////////////////////////////////////////////////////////

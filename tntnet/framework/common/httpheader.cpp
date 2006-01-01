@@ -35,8 +35,10 @@ namespace tnt
     const std::string server = "Server:";
     const std::string serverName = "Tntnet/" VERSION;
     const std::string location = "Location:";
+    const std::string accept = "Accept:";
     const std::string acceptLanguage = "Accept-Language:";
     const std::string acceptEncoding = "Accept-Encoding:";
+    const std::string acceptCharset = "Accept-Charset:";
     const std::string contentEncoding = "Content-Encoding:";
     const std::string date = "Date:";
     const std::string keepAlive = "Keep-Alive:";

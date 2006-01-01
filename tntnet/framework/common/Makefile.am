@@ -28,6 +28,7 @@ libtntnet_la_SOURCES = \
 	object.cpp \
 	savepoint.cpp \
 	scope.cpp \
+	scopemanager.cpp \
 	sessionscope.cpp \
 	sodata.cpp \
 	tntconfig.cpp \
@@ -69,6 +70,7 @@ nobase_include_HEADERS = \
 	tnt/pointer.h \
 	tnt/savepoint.h \
 	tnt/scope.h \
+	tnt/scopemanager.h \
 	tnt/sessionscope.h \
 	tnt/sodata.h \
 	tnt/tntconfig.h \

@@ -31,7 +31,6 @@ Boston, MA  02111-1307  USA
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <cxxtools/md5stream.h>
 
 log_define("tntnet.worker")
 
@@ -72,7 +71,6 @@ namespace tnt
   time_t Worker::nextReportStateTime = 0;
   unsigned Worker::minThreads = 5;
   bool Worker::enableCompression = false;
-  static const std::string& sessionCookiePrefix = "tntnet.";
 
   Worker::ComploaderPoolType Worker::comploaderPool;
 
@@ -234,8 +232,6 @@ namespace tnt
     if (!HttpRequest::checkUrl(url))
       throw HttpError(HTTP_BAD_REQUEST, "illegal url");
 
-    std::string currentSessionCookieName;
-
     Dispatcher::PosType pos(application.getDispatcher(), request.getUrl());
     while (true)
     {
@@ -251,27 +247,7 @@ namespace tnt
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
-        // check session-cookie
-        currentSessionCookieName = sessionCookiePrefix + ci.libname;
-        Cookie c = request.getCookie(currentSessionCookieName);
-        if (c.getValue().empty())
-        {
-          log_debug("session-cookie " << currentSessionCookieName << " not found");
-          request.setSessionScope(0);
-        }
-        else
-        {
-          log_debug("session-cookie " << currentSessionCookieName << " found: " << c.getValue());
-          Sessionscope* sessionScope = application.getSessionScope(c.getValue());
-          if (sessionScope != 0)
-          {
-            log_debug("session found");
-            request.setSessionScope(sessionScope);
-          }
-        }
-
-        // set application-scope
-        request.setApplicationScope(application.getApplicationScope(ci.libname));
+        application.getScopemanager().preCall(request, ci.libname);
 
         log_info("call component " << ci << " path " << request.getPathInfo());
         state = stateProcessingRequest;
@@ -288,33 +264,7 @@ namespace tnt
           {
             log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
-            if (request.hasSessionScope())
-            {
-              // request has session-scope
-              std::string cookie = request.getCookie(currentSessionCookieName);
-              if (cookie.empty() || !application.hasSessionScope(cookie))
-              {
-                // client has no or unknown cookie
-
-                cxxtools::Md5stream c;
-                c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
-                cookie = c.getHexDigest();
-                log_debug("set Cookie " << cookie);
-                reply.setCookie(currentSessionCookieName, cookie);
-                application.putSessionScope(cookie, &request.getSessionScope());
-              }
-            }
-            else
-            {
-              std::string cookie = request.getCookie(currentSessionCookieName);
-              if (!cookie.empty())
-              {
-                // client has cookie
-                log_debug("clear Cookie " << currentSessionCookieName);
-                reply.clearCookie(currentSessionCookieName);
-                application.removeSessionScope(cookie);
-              }
-            }
+            application.getScopemanager().postCall(request, reply, ci.libname);
 
             if (enableCompression)
               reply.setAcceptEncoding(request.getEncoding());

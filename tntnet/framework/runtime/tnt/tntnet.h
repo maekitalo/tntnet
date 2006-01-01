@@ -27,20 +27,13 @@ Boston, MA  02111-1307  USA
 #include "tnt/job.h"
 #include "tnt/poller.h"
 #include "tnt/dispatcher.h"
+#include <tnt/scopemanager.h>
 #include <set>
 
 namespace tnt
 {
-  class Scope;
-  class Sessionscope;
-
   class Tntnet
   {
-    public:
-      typedef std::map<std::string, Scope*> scopes_type;
-      typedef std::map<std::string, Sessionscope*> sessionscopes_type;
-
-    private:
       cxxtools::Arg<const char*> conf;
       Tntconfig config;
       cxxtools::Arg<const char*> propertyfilename;
@@ -62,10 +55,7 @@ namespace tnt
 
       static std::string pidFileName;
 
-      scopes_type applicationScopes;
-      sessionscopes_type sessionScopes;
-      cxxtools::Mutex applicationScopesMutex;
-      cxxtools::Mutex sessionScopesMutex;
+      ScopeManager scopemanager;
 
       // helper methods
       void setUser() const;
@@ -97,13 +87,7 @@ namespace tnt
       Poller&     getPoller()                 { return pollerthread; }
       const Dispatcher& getDispatcher() const { return d_dispatcher; }
       const Tntconfig&  getConfig() const     { return config; }
-
-      Scope* getApplicationScope(const std::string& appname);
-      Sessionscope* getSessionScope(const std::string& sessioncookie);
-      bool hasSessionScope(const std::string& sessioncookie);
-      void putSessionScope(const std::string& sessioncookie, Sessionscope* s);
-      void removeApplicationScope(const std::string& appname);
-      void removeSessionScope(const std::string& sessioncookie);
+      ScopeManager& getScopemanager()         { return scopemanager; }
   };
 
 }
