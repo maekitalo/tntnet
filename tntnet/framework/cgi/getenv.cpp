@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 // getenv.cpp
 // generated with ecppc
-// date: Fri Dec 30 23:34:54 2005
+// date: Sun Jan  1 16:45:19 2006
 //
 
 #include <tnt/ecpp.h>
@@ -13,6 +13,8 @@
 #include <tnt/data.h>
 #include <tnt/componentfactory.h>
 #include <tnt/componentguard.h>
+#include <tnt/objecttemplate.h>
+#include <tnt/objectptr.h>
 #include <cxxtools/log.h>
 #include <stdexcept>
 
@@ -106,6 +108,7 @@ unsigned getenv::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, c
   ::use(dataComponent);
 
 
+  TNT_SESSION_COMPONENT_VAR(int, hi, "hi", ());   // <%session> int hi
   // <%args>
   // </%args>
 

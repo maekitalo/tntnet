@@ -33,10 +33,11 @@ namespace tnt
 
       tnt::HttpRequest request;
 
+      void getHeader(const char* env, const std::string& headername);
       void getMethod();
-      void getContentType();
       void getQueryString();
       void getPathInfo();
+      void getRemoteAddr();
       void readBody();
 
     public:

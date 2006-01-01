@@ -29,11 +29,21 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
 #include <cxxtools/arg.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 log_define("cgi");
 
 namespace tnt
 {
+  void Cgi::getHeader(const char* env, const std::string& headername)
+  {
+    const char* value = getenv(env);
+    if (value)
+      request.setHeader(headername, value);
+  }
+
   void Cgi::getMethod()
   {
     const char* requestMethod = getenv("REQUEST_METHOD");
@@ -41,20 +51,11 @@ namespace tnt
       request.setMethod(requestMethod);
   }
 
-  void Cgi::getContentType()
-  {
-    const char* contentType = getenv("CONTENT_TYPE");
-    if (contentType)
-      request.setHeader(httpheader::contentType, contentType);
-  }
-
   void Cgi::getQueryString()
   {
     const char* queryString = getenv("QUERY_STRING");
     if (queryString)
-    {
       request.setQueryString(queryString);
-    }
   }
 
   void Cgi::getPathInfo()
@@ -62,6 +63,24 @@ namespace tnt
     const char* pathInfo = getenv("PATH_INFO");
     if (pathInfo)
       request.setPathInfo(pathInfo);
+  }
+
+  void Cgi::getRemoteAddr()
+  {
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(sockaddr_in));
+
+    addr.sin_family = AF_INET;
+
+    const char* remotePort = getenv("REMOTE_PORT");
+    if (remotePort)
+      addr.sin_port = stringTo<u_int16_t>(remotePort);
+
+    const char* remoteAddr = getenv("REMOTE_ADDR");
+    if (remoteAddr)
+      inet_pton(AF_INET, remoteAddr, &addr);
+
+    request.setPeerAddr(addr);
   }
 
   void Cgi::readBody()
@@ -90,10 +109,21 @@ namespace tnt
   int Cgi::run()
   {
     getMethod();
-    getContentType();
+    getHeader("CONTENT_TYPE", httpheader::contentType);
     getQueryString();
     getPathInfo();
+    getHeader("HTTP_CONNECTION", httpheader::connection);
+    getHeader("HTTP_USER_AGENT", httpheader::userAgent);
+    getHeader("HTTP_ACCEPT", httpheader::accept);
+    getHeader("HTTP_ACCEPT_ENCODING", httpheader::acceptEncoding);
+    getHeader("HTTP_ACCEPT_CHARSET", httpheader::acceptCharset);
+    getHeader("HTTP_ACCEPT_LANGUAGE", httpheader::acceptLanguage);
+    getHeader("HTTP_HOST", httpheader::host);
+    getRemoteAddr();
+
     readBody();
+
+    // TODO REMOTE_ADDR, REMOTE_PORT, REMOTE_HOST
 
     request.doPostParse();
 
