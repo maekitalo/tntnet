@@ -1,0 +1,64 @@
+<#
+ This is a little example for a ecpp-file, which is compiled into a cgi-program.
+#>
+<%pre>
+#include <unistd.h>
+#include <errno.h>
+#include <cxxtools/dynbuffer.h>
+</%pre>
+<%cpp>
+
+  cxxtools::Dynbuffer<char> cwd(64);
+  while (getcwd(cwd.data(), cwd.size()) == 0 && errno == ERANGE)
+    cwd.reserve(cwd.size() * 2);
+
+</%cpp>
+<html>
+ <style type="text/css">
+  table {
+    border: 2px solid black;
+    width: 100%;
+  }
+  th {
+    background-color: gold;
+  }
+  td {
+    border: 1px solid blue;
+  }
+
+  td.name {
+  }
+
+  td.value {
+    font-style: italic;
+  }
+
+ </style>
+
+<body>
+ <h1>environment variables</h1>
+ <table>
+  <tr>
+   <th>Name</th>
+   <th>Value</th>
+  </tr>
+<{
+  for (char** env = environ; *env; ++env)
+  {
+    std::string e = *env;
+    std::string::size_type p = e.find('=');
+    std::string n = e.substr(0, p);
+    std::string v = e.substr(p + 1);
+}>
+  <tr>
+   <td class="name"><$n$></td>
+   <td class="value"><$v$></td>
+  </tr>
+<{
+  }
+}>
+ </table>
+
+ current working directory: <$ cwd.data() $>
+</body>
+</html>
