@@ -187,11 +187,6 @@ namespace tnt
 
   int SslStream::SslRead(char* buffer, int bufsize) const
   {
-    // I had crashes without this (and the lock in SslWrite) lock:
-    // openssl should be thread-safe, with the installed callbacks, but I did not
-    // get it working
-    cxxtools::MutexLock lock(mutex);
-
     log_debug("read");
 
     int n;
@@ -240,7 +235,6 @@ namespace tnt
           (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
             ? POLLIN|POLLOUT
             : POLLIN;
-        lock.unlock();
         int p = ::poll(&fds, 1, getTimeout());
 
         log_debug("poll => " << p << " revents=" << fds.revents);
@@ -257,7 +251,6 @@ namespace tnt
           throw cxxtools::net::Timeout();
         }
 
-        lock.lock();
         n = ::SSL_read(ssl, buffer, bufsize);
         log_debug("SSL_read returns " << n);
         checkSslError();
@@ -273,11 +266,6 @@ namespace tnt
 
   int SslStream::SslWrite(const char* buffer, int bufsize) const
   {
-    // I had crashes without this (and the lock in SslRead) lock:
-    // openssl should be thread-safe, with the installed callbacks, but I did not
-    // get it working
-    cxxtools::MutexLock lock(mutex);
-
     int n = 0;
     int s = bufsize;
 
@@ -300,9 +288,7 @@ namespace tnt
       fds.events =
         (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ)
           ? POLLIN|POLLOUT : POLLOUT;
-      lock.unlock();
       int p = ::poll(&fds, 1, getTimeout());
-      lock.lock();
 
       if (p < 0)
       {
@@ -333,44 +319,68 @@ namespace tnt
 
   ssl_streambuf::int_type ssl_streambuf::overflow(ssl_streambuf::int_type c)
   {
-    if (pptr() != pbase())
+    try
     {
-      int n = m_stream.SslWrite(pbase(), pptr() - pbase());
-      if (n <= 0)
-        return traits_type::eof();
-    }
+      if (pptr() != pbase())
+      {
+        int n = m_stream.SslWrite(pbase(), pptr() - pbase());
+        if (n <= 0)
+          return traits_type::eof();
+      }
 
-    setp(m_buffer, m_buffer + m_bufsize);
-    if (c != traits_type::eof())
+      setp(m_buffer, m_buffer + m_bufsize);
+      if (c != traits_type::eof())
+      {
+        *pptr() = (char_type)c;
+        pbump(1);
+      }
+
+      return 0;
+    }
+    catch (const std::exception& e)
     {
-      *pptr() = (char_type)c;
-      pbump(1);
+      log_error("error int ssl_streambuf::overflow: " << e.what());
+      return traits_type::eof();
     }
-
-    return 0;
   }
 
   ssl_streambuf::int_type ssl_streambuf::underflow()
   {
-    int n = m_stream.SslRead(m_buffer, m_bufsize);
-    if (n <= 0)
-      return traits_type::eof();
+    try
+    {
+      int n = m_stream.SslRead(m_buffer, m_bufsize);
+      if (n <= 0)
+        return traits_type::eof();
 
-    setg(m_buffer, m_buffer, m_buffer + n);
-    return (int_type)(unsigned char)m_buffer[0];
+      setg(m_buffer, m_buffer, m_buffer + n);
+      return (int_type)(unsigned char)m_buffer[0];
+    }
+    catch (const std::exception& e)
+    {
+      log_error("error in ssl_streambuf::underflow: " << e.what());
+      return traits_type::eof();
+    }
   }
 
   int ssl_streambuf::sync()
   {
-    if (pptr() != pbase())
+    try
     {
-      int n = m_stream.SslWrite(pbase(), pptr() - pbase());
-      if (n <= 0)
-        return -1;
-      else
-        setp(m_buffer, m_buffer + m_bufsize);
+      if (pptr() != pbase())
+      {
+        int n = m_stream.SslWrite(pbase(), pptr() - pbase());
+        if (n <= 0)
+          return -1;
+        else
+          setp(m_buffer, m_buffer + m_bufsize);
+      }
+      return 0;
     }
-    return 0;
+    catch (const std::exception& e)
+    {
+      log_error("error in ssl_streambuf::sync(): " << e.what());
+      return traits_type::eof();
+    }
   }
 
   //////////////////////////////////////////////////////////////////////

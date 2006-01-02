@@ -159,7 +159,7 @@ namespace tnt
     Comploader::configure(config);
     Comploader comploader;
 
-    Compident compident(std::string(), componentName);
+    Compident compident = Compident(std::string(), componentName);
     log_debug("fetch component " << compident);
     Component& comp = comploader.fetchComp(compident, Urlmapper());
 
