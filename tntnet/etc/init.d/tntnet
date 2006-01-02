@@ -75,11 +75,18 @@ case "$1" in
 		echo -n "Reload tntnet - "
 		if [ ! -f $PIDFILE ]
 		then
-			echo tntnet not running
+			echo -n "tntnet not running; start"
+			if start
+			then
+				echo "ok"
+			else
+				echo "failed"
+			fi
 		else
 			PID=`cat $PIDFILE`
 			kill -HUP $PID
 		fi
+		echo "done"
 		;;
 
 	status)
