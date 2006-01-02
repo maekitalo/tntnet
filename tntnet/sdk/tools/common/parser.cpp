@@ -42,7 +42,7 @@ namespace tnt
       try
       {
         handler.onCpp("  // <%include> " + file + '\n');
-        parse(inp);
+        parsePriv(inp);
         handler.onCpp("  // </%include>\n");
       }
       catch (const std::exception&)
@@ -52,7 +52,7 @@ namespace tnt
       }
     }
 
-    void Parser::parse(std::istream& in)
+    void Parser::parsePriv(std::istream& in)
     {
       enum state_type {
         state_html0,  // 0
@@ -152,6 +152,8 @@ namespace tnt
       std::string scopetype, scopevar, scopeinit;
       scope_container_type scope_container;
       scope_type scope;
+      bool inComp = false;
+      bool inClose = false;
 
       handler.start();
 
@@ -1464,7 +1466,11 @@ namespace tnt
 
       if (!html.empty())
         handler.onHtml(html);
+    }
 
+    void Parser::parse(std::istream& in)
+    {
+      parsePriv(in);
       handler.end();
     }
 
