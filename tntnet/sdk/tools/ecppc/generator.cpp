@@ -123,6 +123,13 @@ namespace tnt
       currentComp->addHtml(m.str());
     }
 
+    void Generator::onHtmlExpression(const std::string& expr)
+    {
+      std::ostringstream m;
+      m << "  reply.out() << (" << expr << ");\n";
+      currentComp->addHtml(m.str());
+    }
+
     void Generator::onCpp(const std::string& code)
     {
       currentComp->addHtml(code);

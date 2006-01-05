@@ -168,6 +168,7 @@ namespace tnt
 
         virtual void onHtml(const std::string& html);
         virtual void onExpression(const std::string& expr);
+        virtual void onHtmlExpression(const std::string& expr);
         virtual void onCpp(const std::string& cpp);
         virtual void onPre(const std::string& code);
         virtual void onDeclare(const std::string& code);

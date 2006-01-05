@@ -41,6 +41,10 @@ namespace tnt
     {
     }
 
+    void ParseHandler::onHtmlExpression(const std::string& code)
+    {
+    }
+
     void ParseHandler::onCpp(const std::string& code)
     {
     }

@@ -154,6 +154,7 @@ namespace tnt
       scope_type scope;
       bool inComp = false;
       bool inClose = false;
+      bool htmlExpr = false;
 
       handler.start();
 
@@ -276,8 +277,14 @@ namespace tnt
 
           case state_expr:
             if (ch == '$')
-              // expression might end
-              state = state_expre0;
+            {
+              if (!htmlExpr && code.empty())
+                // <$$ ... $>
+                htmlExpr = true;
+              else
+                // expression might end
+                state = state_expre0;
+            }
             else
               code += ch;
             break;
@@ -286,7 +293,13 @@ namespace tnt
             if (ch == '>')
             {
               // expression ends, html continues
-              handler.onExpression(code);
+              if (htmlExpr)
+              {
+                handler.onHtmlExpression(code);
+                htmlExpr = false;
+              }
+              else
+                handler.onExpression(code);
               code.clear();
               state = state_html;
             }
@@ -666,13 +679,11 @@ namespace tnt
               arg.clear();
               state = state_argscomment0;
             }
-            else if (ch == '\n' || ch == ';')
+            else if (ch == ';')
             {
               processNV(tag, arg, std::string());
               arg.clear();
               state = state_args0;
-              if (ch == '\n')
-                std::cerr << "depricated syntax: ';' missing in line " << curline << std::endl;
             }
             else
               arg += ch;
