@@ -28,11 +28,16 @@ namespace tnt
     ////////////////////////////////////////////////////////////////////////
     // Closecomponent
     //
-    void Closecomponent::getDefinition(std::ostream& code) const
+    void Closecomponent::getDefinition(std::ostream& code, bool externData) const
     {
       code << "unsigned " << getName() << "::endTag (tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
            "  cxxtools::QueryParams& qparam)\n"
            "{\n";
+
+      if (externData)
+        code << "  const Component* dataComponent = main().getDataComponent(request);\n"
+                "  ::use(dataComponent);\n\n";
+
       Component::getBody(code);
       code << "}\n\n";
     }

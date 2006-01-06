@@ -566,10 +566,8 @@ namespace tnt
                 "  }\n";
 
       if (externData && !data.empty())
-        code << "  const Component* dataComponent = main().getDataComponent(request);\n\n";
-      else
-        code << "  const Component* dataComponent = this;\n";
-      code << "  ::use(dataComponent);\n\n";
+        code << "  const Component* dataComponent = main().getDataComponent(request);\n"
+                "  ::use(dataComponent);\n\n";
 
       if (multiImages.empty())
       {
@@ -613,7 +611,7 @@ namespace tnt
       }
 
       if (haveCloseComp)
-        closeComp.getDefinition(code);
+        closeComp.getDefinition(code, externData);
       code << "void " << classname << "::drop()\n"
               "{\n"
               "  factory.drop(this);\n"

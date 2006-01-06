@@ -36,7 +36,7 @@ namespace tnt
           : Component(classname)
           { }
 
-        void getDefinition(std::ostream& o) const;
+        void getDefinition(std::ostream& o, bool externData) const;
     };
   }
 }
