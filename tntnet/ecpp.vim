@@ -44,7 +44,7 @@ endif
 syn match ecppCondExprDelim "?"
 
 syn region ecppLine matchgroup=Delimiter start="^%" end="$" contains=@cppTop
-syn region ecppExpr matchgroup=Delimiter start="<\$" end="\$>" contains=@cppTop
+syn region ecppExpr matchgroup=Delimiter start="<\$\$?" end="\$>" contains=@cppTop
 syn region ecppCondExpr matchgroup=Delimiter start="<?" end="?>" contains=ecppCondExprDelim,@cppTop
 syn region ecppCpp matchgroup=Delimiter start="<%cpp>" end="</%cpp>" contains=@cppTop
 syn region ecppCpps matchgroup=Delimiter start="<{" end="}>" contains=@cppTop
@@ -67,6 +67,7 @@ syn region ecppDefine matchgroup=Delimiter start="<%define>" end="</%define>" co
 syn region ecppCleanup matchgroup=Delimiter start="<%cleanup>" end="</%cleanup>" contains=@cppTop
 " syn region ecppOnce matchgroup=Delimiter start="<%once>" end="</%once>" contains=@cppTop
 syn region ecppShared matchgroup=Delimiter start="<%shared>" end="</%shared>" contains=@cppTop
+syn region ecppShared matchgroup=Delimiter start="<%close>" end="</%close>" contains=@cppTop
 " syn region	ecppIncluded	display contained start=+"+ skip=+\\\\\|\\"+ end=+"+
 syn match	ecppIncluded	display contained "<[^>]*>"
 syn region ecppInclude matchgroup=Delimiter start="<%include>" end="</%include>" contains=@ecppIncluded
