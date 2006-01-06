@@ -654,7 +654,7 @@ namespace tnt
   {
     log_debug("timer thread");
 
-    while (true)
+    while (!stop)
     {
       sleep(1);
 
@@ -676,7 +676,7 @@ namespace tnt
       if (tntnetConf)
         config.load(tntnetConf);
       else
-        config.load(conf);
+        config.load(TNTNET_CONF);
     }
   }
 
