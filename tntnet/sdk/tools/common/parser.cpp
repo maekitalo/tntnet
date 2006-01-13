@@ -968,7 +968,7 @@ namespace tnt
             break;
 
           case state_callarg0:
-            if (std::isalpha(ch))
+            if (std::isalpha(ch) || ch == '_')
             {
               arg = ch;
               state = state_callarg;
@@ -990,7 +990,7 @@ namespace tnt
             break;
 
           case state_callarg:
-            if (std::isalnum(ch))
+            if (std::isalnum(ch) || ch == '_')
               arg += ch;
             else if (std::isspace(ch))
               state = state_callarge;
@@ -1013,7 +1013,7 @@ namespace tnt
           case state_callarge:
             if (ch == '=')
               state = state_callval0;
-            else if (pass_cgi.empty() && std::isalnum(ch))
+            else if (pass_cgi.empty() && (std::isalnum(ch) || ch == '_'))
             {
               pass_cgi = arg;
               arg = ch;
@@ -1410,7 +1410,7 @@ namespace tnt
             break;
 
           case state_endcall0:
-            if (std::isalnum(ch))
+            if (std::isalnum(ch) || ch == '_')
             {
               comp = ch;
               state = state_endcall;
@@ -1449,7 +1449,7 @@ namespace tnt
               comp.clear();
               state = state_endcalle;
             }
-            else if (std::isalnum(ch) || ch == '@')
+            else if (std::isalnum(ch) || ch == '_' || ch == '@')
               comp += ch;
             else
               throw parse_error("character expected", state, curline);
