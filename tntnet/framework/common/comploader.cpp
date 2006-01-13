@@ -59,7 +59,7 @@ Component* ComponentLibrary::create(
 
   // call the creator
   Compident ci = Compident(libname, component_name);
-  log_info("create \"" << ci << '"');
+  log_debug("create \"" << ci << '"');
 
   return factory->create(ci, rootmapper, cl);
 }
@@ -263,7 +263,6 @@ void Comploader::configure(const Tntconfig& config_)
 void Comploader::addStaticFactory(const std::string& component_name,
   ComponentFactory* factory)
 {
-  std::cout << "addStaticFactory " << component_name << std::endl;
   if (staticFactoryAddEnabled)
   {
     log_debug("Comploader::addStaticFactory(" << component_name << ", "
