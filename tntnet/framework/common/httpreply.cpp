@@ -40,7 +40,7 @@ namespace tnt
 
   void HttpReply::tryCompress(std::string& body)
   {
-    if (!hasHeader(httpheader::contentEncoding))
+    if (!body.empty() && !hasHeader(httpheader::contentEncoding))
     {
       if (acceptEncoding.accept("gzip"))
       {
@@ -57,16 +57,27 @@ namespace tnt
         deflator.end();
 
         uLong crc = crc32(0, reinterpret_cast<const Bytef*>(body.data()), body.size());
-        uint32_t u = htonl(crc);
-        b.write(reinterpret_cast<const char*>(&crc), 4);
-        u = htonl(body.size());
-        b.write(reinterpret_cast<const char*>(&u), 4);
+        uint32_t u = crc;
+        b.put(static_cast<char>(u & 0xFF));
+        b.put(static_cast<char>((u >>= 8) & 0xFF));
+        b.put(static_cast<char>((u >>= 8) & 0xFF));
+        b.put(static_cast<char>((u >>= 8) & 0xFF));
+
+        u = body.size();
+        b.put(static_cast<char>(u & 0xFF));
+        b.put(static_cast<char>((u >>= 8) & 0xFF));
+        b.put(static_cast<char>((u >>= 8) & 0xFF));
+        b.put(static_cast<char>((u >>= 8) & 0xFF));
 
         std::string::size_type oldSize = body.size();
-        body = b.str();
-        log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
+        // only send compressed data, if the data is compressed more than 10%
+        if (oldSize * 9 / 10 > b.str().size())
+        {
+          body = b.str();
+          log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
 
-        setHeader(httpheader::contentEncoding, "gzip");
+          setHeader(httpheader::contentEncoding, "gzip");
+        }
       }
     }
   }
