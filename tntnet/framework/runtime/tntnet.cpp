@@ -556,7 +556,7 @@ namespace tnt
     // initialize worker-process
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 10);
-    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 0);
+    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 10);
     Worker::setMinThreads(minthreads);
     Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));

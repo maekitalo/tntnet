@@ -62,7 +62,7 @@ PropertyFile        tntnet.properties
 #Daemon             0
 #MinThreads         5
 #MaxThreads         10
-#ThreadStartDelay   0  # in ms
+#ThreadStartDelay   10  # in ms
 #QueueSize          100
 #CompPath           path
 #Load               webapp  # preload webapplication
