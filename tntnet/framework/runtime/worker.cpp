@@ -90,11 +90,11 @@ namespace tnt
 
   Worker::~Worker()
   {
-    log_debug("delete worker " << threadId);
-
     cxxtools::MutexLock lock(mutex);
     workers.erase(this);
     comploader.cleanup(0);
+
+    log_debug("delete worker " << threadId << " - " << workers.size() << " threads left - " << application.getQueue().getWaitThreadCount() << " waiting threads");
   }
 
   void Worker::run()
@@ -151,11 +151,15 @@ namespace tnt
         log_debug("timeout - put job in poller");
         application.getPoller().addIdleJob(j);
       }
+      catch (const std::exception& e)
+      {
+        log_warn("unexpected exception: " << e.what());
+      }
     }
 
     time(&lastWaitTime);
 
-    log_info("end worker-thread " << threadId);
+    log_debug("end worker-thread " << threadId);
 
     state = stateStopping;
   }
