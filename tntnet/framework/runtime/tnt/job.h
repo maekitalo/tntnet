@@ -194,6 +194,8 @@ namespace tnt
         { capacity = c; }
       unsigned getWaitThreadCount() const
         { return waitThreads; }
+      bool empty() const
+        { return jobs.empty(); }
   };
 }
 

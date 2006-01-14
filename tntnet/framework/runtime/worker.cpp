@@ -142,6 +142,15 @@ namespace tnt
             {
               j->setRead();
               j->clear();
+
+              // if there is something to do and no threads waiting, we take
+              // the next job just to improve resposiveness.
+              if (queue.getWaitThreadCount() == 0
+                && !queue.empty())
+              {
+                application.getPoller().addIdleJob(j);
+                keepAlive = false;
+              }
             }
           }
         } while (keepAlive);
