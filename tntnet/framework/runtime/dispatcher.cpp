@@ -53,11 +53,14 @@ namespace {
 Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
   Dispatcher::urlmap_type::const_iterator& pos) const
 {
-  using std::transform;
-  using std::back_inserter;
+  // check cache
+  urlMapCacheType::key_type cacheKey = urlMapCacheType::key_type(compUrl, pos);
+  urlMapCacheType::const_iterator um = urlMapCache.find(cacheKey);
+  if (um != urlMapCache.end())
+    return um->second;
 
+  // no cache hit
   regmatch_formatter formatter;
-  nextcomp_pair_type ret;
 
   for (; pos != urlmap.end(); ++pos)
   {
@@ -70,8 +73,10 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
       ci.compname = formatter(src.compname);
       if (src.hasPathInfo())
         ci.setPathInfo(formatter(src.getPathInfo()));
-      transform(src.getArgs().begin(), src.getArgs().end(),
-        back_inserter(ci.getArgsRef()), formatter);
+      std::transform(src.getArgs().begin(), src.getArgs().end(),
+        std::back_inserter(ci.getArgsRef()), formatter);
+
+      urlMapCache.insert(urlMapCacheType::value_type(cacheKey, ci));
 
       return ci;
     }

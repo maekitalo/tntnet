@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/thread.h>
 #include <tnt/urlmapper.h>
 #include <vector>
+#include <map>
 #include "tnt/regex.h"
 
 namespace tnt
@@ -72,7 +73,9 @@ namespace tnt
       urlmap_type urlmap;   // map url to soname/compname
       mutable cxxtools::RWLock rwlock;
 
-      typedef std::pair<CompidentType, urlmap_type::iterator> nextcomp_pair_type;
+      typedef std::map<std::pair<std::string, urlmap_type::const_iterator>,
+                       CompidentType> urlMapCacheType;
+      mutable urlMapCacheType urlMapCache;
 
       // don't make this public - it's not threadsafe:
       CompidentType mapCompNext(const std::string& compUrl,
