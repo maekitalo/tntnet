@@ -47,17 +47,10 @@ namespace tnt
         singleton(argc, argv, 's'),
         componentclass(argc, argv, 'C'),
         baseclass(argc, argv, 'B'),
-        htmlcompress(argc, argv, "--compress-html"),
-        csscompress(argc, argv, "--compress-css"),
-        jscompress(argc, argv, "--compress-js"),
         compress(argc, argv, 'z'),
-        externData(argc, argv, 'x'),
-        noData(argc, argv, "--nodata"),
         verbose(argc, argv, 'v'),
         debug(argc, argv, 'd'),
         trace(argc, argv, 't'),
-        splitBar(argc, argv, 'S'),
-        splitChars(argc, argv, "--split-chars"),
         generateDependencies(argc, argv, 'M'),
         generateHeader(argc, argv, 'h')
     {
@@ -167,16 +160,7 @@ namespace tnt
           generator.setMimetype(it->second);
       }
 
-      if (htmlcompress)
-        generator.setHtmlCompress();
-      else if (csscompress)
-        generator.setCssCompress();
-      else if (jscompress)
-        generator.setJsCompress();
-
       generator.setCompress(compress);
-      generator.setExternData(externData);
-      generator.setNoData(noData);
 
       if (singleton.isSet())
         generator.setSingleton(singleton);
@@ -300,18 +284,7 @@ namespace tnt
       // create parser
       tnt::ecpp::Parser parser(handler);
 
-      parser.setSplitBar(splitBar);
-      if (splitChars.isSet())
-      {
-        if (splitChars.getValue()[0] == '\0'
-         || splitChars.getValue()[1] == '\0'
-         || splitChars.getValue()[2] != '\0')
-          throw std::runtime_error("--split-chars needs exactly 2 characters");
-
-        parser.setSplitChars(splitChars.getValue()[0],
-                             splitChars.getValue()[1]);
-      }
-
+      // call parser
       parser.parse(in);
     }
 
@@ -330,16 +303,10 @@ namespace tnt
            "  -bb              generate multibinary component\n"
            "  -B class         additional base-class\n"
            "  -C class         alternative base-class (derived from tnt::ecppComponent)\n"
-           "  --compress-html  remove some space in HTML-code\n"
-           "  --compress-css   remove some space in CSS-code\n"
-           "  --compress-js    remove some space in JavaScript-code\n"
            "  -z               compress constant data\n"
-           "  -x               look for constants in language-specific library\n"
            "  -v               verbose\n"
            "  -t               generate traces\n"
-           "  -S               split chunks at '{' und '}'\n"
-           "  --split-chars zz select alternative split-chars\n"
-           "  -M               generate dependency form Makefile\n"
+           "  -M               generate dependency for Makefile\n"
            "  -h               generate separate header-file\n";
       msg = o.str();
     }

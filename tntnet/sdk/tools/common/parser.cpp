@@ -28,6 +28,9 @@ namespace tnt
 {
   namespace ecpp
   {
+    static const char split_start = '{';
+    static const char split_end = '}';
+
     void Parser::doInclude(const std::string& file)
     {
       handler.onInclude(file);
@@ -155,6 +158,7 @@ namespace tnt
       bool inComp = false;
       bool inClose = false;
       bool htmlExpr = false;
+      bool splitBar = false;
 
       handler.start();
 
@@ -346,6 +350,12 @@ namespace tnt
                 state = state_html0;
                 inClose = true;
               }
+              else if (tag == "i18n")
+              {
+                splitBar = true;
+                handler.startI18n();
+                state = state_html0;
+              }
               else
                 state = state_cpp;
             }
@@ -403,6 +413,13 @@ namespace tnt
                 state = state_html0;
                 inClose = true;
               }
+              else if (tag == "i18n")
+              {
+                std::cout << "i18n" << std::endl;
+                splitBar = true;
+                handler.startI18n();
+                state = state_html0;
+              }
               else
                 state = state_cpp;
             }
@@ -428,6 +445,12 @@ namespace tnt
                 handler.startClose();
                 state = state_html0;
                 inClose = true;
+              }
+              else if (tag == "i18n")
+              {
+                splitBar = true;
+                handler.startI18n();
+                state = state_html0;
               }
               else
                 state = state_cpp;
@@ -567,8 +590,7 @@ namespace tnt
                 throw parse_error("invalid end-tag - "
                   + tag + " expected, "
                   + etag + " found", state, curline);
-
-              if (tag == "pre")
+              else if (tag == "pre")
                 handler.onPre(code);
               else if (tag == "declare")
                 handler.onDeclare(code);
@@ -616,7 +638,7 @@ namespace tnt
             }
             else if (ch == '\\')
               state = state_htmlesc;
-            else if (splitBar && (ch == split_start|| ch == split_end))
+            else if (ch == split_start|| ch == split_end)
             {
               if (!html.empty())
               {
@@ -1156,6 +1178,12 @@ namespace tnt
                 inClose = false;
                 state = state_html0;
               }
+              else if (splitBar && tag == "i18n")
+              {
+                splitBar = false;
+                handler.endI18n();
+                state = state_html0;
+              }
               else
               {
                 html += "</%";
@@ -1466,7 +1494,7 @@ namespace tnt
 
       }  // while(in.get(ch))
 
-      if (state != state_html && state != state_nl)
+      if (state != state_html && state != state_html0 && state != state_nl)
         throw parse_error("parse error", state, curline);
 
       if (inComp)

@@ -1,5 +1,5 @@
 /* tnt/component.h
-   Copyright (C) 2003-2005 Tommi Maekitalo
+   Copyright (C) 2003-2006 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -67,12 +67,6 @@ class Component
 
     virtual std::string getAttribute(const std::string& name,
       const std::string& def = std::string()) const;
-
-    virtual unsigned getDataCount(const HttpRequest& request) const;
-    virtual unsigned getDataLen(const HttpRequest& request, unsigned n) const;
-    virtual const char* getDataPtr(const HttpRequest& request, unsigned n) const;
-    std::string getData(const HttpRequest& r, unsigned n) const
-      { return std::string(getDataPtr(r, n), getDataLen(r, n)); }
 
     /// explicitly call operator() - sometimes more readable
     unsigned call(HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam)

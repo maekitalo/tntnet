@@ -65,8 +65,9 @@ namespace tnt
         code << "  log_trace(\"" << outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n";
 
       if (externData)
-        code << "  const Component* dataComponent = main().getDataComponent(request);\n"
-                "  ::use(dataComponent);\n\n";
+        code << "  tnt::DataChunks data(getData(request, rawData));\n";
+      else
+        code << "  tnt::DataChunks data(rawData);\n";
 
       Component::getBody(code);
       code << "}\n\n";

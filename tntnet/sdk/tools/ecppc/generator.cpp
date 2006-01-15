@@ -20,9 +20,6 @@ Boston, MA  02111-1307  USA
 */
 
 #include "tnt/ecppc/generator.h"
-#include "tnt/ecppc/htmlfilter.h"
-#include "tnt/ecppc/cssfilter.h"
-#include "tnt/ecppc/jsfilter.h"
 #include <tnt/stringescaper.h>
 #include <iterator>
 #include <zlib.h>
@@ -43,7 +40,7 @@ namespace tnt
         haveCloseComp(false),
         closeComp(classname),
         currentComp(&maincomp),
-        filter(filter_null),
+        externData(false),
         compress(false),
         c_time(0)
     {
@@ -76,38 +73,16 @@ namespace tnt
 
     void Generator::onHtml(const std::string& html)
     {
-      std::ostringstream d;
-      switch (filter)
-      {
-        case filter_null:
-          d << html;
-          break;
-
-        case filter_html:
-          for_each(html.begin(), html.end(), tnt::ecppc::Htmlfilter(d)).flush();
-          break;
-
-        case filter_css:
-          for_each(html.begin(), html.end(), tnt::ecppc::Cssfilter(d));
-          break;
-
-        case filter_js:
-          for_each(html.begin(), html.end(), tnt::ecppc::Jsfilter(d));
-          break;
-
-      }
-
-      std::string chunk = d.str();
-      data.push_back(chunk);
+      data.push_back(html);
       if (!html.empty())
       {
         std::ostringstream m;
 
-        m << "  reply.out() << DATA(dataComponent, request, " << (data.count() - 1) << "); // ";
+        m << "  reply.out() << data[" << (data.count() - 1) << "]; // ";
 
         std::transform(
-          chunk.begin(),
-          chunk.end(),
+          html.begin(),
+          html.end(),
           std::ostream_iterator<const char*>(m),
           stringescaper(false));
 
@@ -238,6 +213,15 @@ namespace tnt
       currentComp->addScopevar(Scopevar(container, scope, type, var, init));
     }
 
+    void Generator::startI18n()
+    {
+      externData = true;
+    }
+
+    void Generator::endI18n()
+    {
+    }
+
     void Generator::getIntro(std::ostream& out, const std::string& filename) const
     {
       out << "////////////////////////////////////////////////////////////////////////\n"
@@ -319,10 +303,7 @@ namespace tnt
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
                "                    cxxtools::QueryParams& qparam);\n";
-      out << "    void drop();\n"
-             "    unsigned    getDataCount(const tnt::HttpRequest& request) const;\n"
-             "    unsigned    getDataLen(const tnt::HttpRequest& request, unsigned n) const;\n"
-             "    const char* getDataPtr(const tnt::HttpRequest& request, unsigned n) const;\n";
+      out << "    void drop();\n";
       if (!attr.empty())
         out << "    std::string getAttribute(const std::string& name,\n"
                "      const std::string& def = std::string()) const;\n";
@@ -361,10 +342,6 @@ namespace tnt
 
       out << "#include <cxxtools/log.h>\n"
              "#include <stdexcept>\n\n";
-
-      if (externData)
-        out << "#include <tnt/comploader.h>\n"
-               "#include <stdlib.h>\n";
 
       if (!multiImages.empty())
         out << "#include <string.h>\n";
@@ -421,58 +398,42 @@ namespace tnt
 
       getFactoryDeclaration(code);
 
-      if (!noData)
+      if (compress)
       {
-        if (compress)
+        code << "static tnt::Zdata rawData(\n\"";
+
+        uLongf s = data.size() * data.size() / 100 + 100;
+        cxxtools::Dynbuffer<Bytef> p;
+        p.reserve(s);
+
+        int z_ret = ::compress(p.data(), &s, (const Bytef*)data.ptr(), data.size());
+
+        if (z_ret != Z_OK)
         {
-          code << "static tnt::Zdata rawData(\n\"";
-
-          uLongf s = data.size() * data.size() / 100 + 100;
-          cxxtools::Dynbuffer<Bytef> p;
-          p.reserve(s);
-
-          int z_ret = ::compress(p.data(), &s, (const Bytef*)data.ptr(), data.size());
-
-          if (z_ret != Z_OK)
-          {
-            throw std::runtime_error(std::string("error compressing data: ") +
-              (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
-               z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
-               z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
-          }
-
-          std::transform(p.data(), p.data() + s,
-            std::ostream_iterator<const char*>(code),
-            stringescaper());
-
-          code << "\",\n  " << s << ", " << data.size() << ");\n"
-               << "static tnt::DataChunks<tnt::Zdata> data(rawData);\n\n";
+          throw std::runtime_error(std::string("error compressing data: ") +
+            (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
+             z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
+             z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
         }
-        else
-        {
-          code << "static tnt::RawData rawData(\n\"";
 
-          std::transform(
-            data.ptr(),
-            data.ptr() + data.size(),
-            std::ostream_iterator<const char*>(code),
-            stringescaper());
+        std::transform(p.data(), p.data() + s,
+          std::ostream_iterator<const char*>(code),
+          stringescaper());
 
-          code << "\",\n  " << data.size() << ");\n"
-               << "static tnt::DataChunks<tnt::RawData> data(rawData);\n\n";
-        }
-      }
-
-      if (externData)
-      {
-        code << "#define DATA(dc, r, n) (tnt::DataChunk(dc->getDataPtr(r, n), dc->getDataLen(r, n)))\n"
-                "#define DATA_SIZE(dc, r, n) (dc->getDataLen(r, n))\n\n";
-         
+        code << "\",\n  " << s << ", " << data.size() << ");\n"
+             << "static tnt::DataChunks<tnt::Zdata> data(rawData);\n\n";
       }
       else
       {
-        code << "#define DATA(dc, r, n) data[n]\n"
-                "#define DATA_SIZE(dc, r, n) data.size(n)\n\n";
+        code << "static const char* rawData = \"";
+
+        std::transform(
+          data.ptr(),
+          data.ptr() + data.size(),
+          std::ostream_iterator<const char*>(code),
+          stringescaper());
+
+        code << "\";\n\n";
       }
 
       // multi-images
@@ -565,9 +526,13 @@ namespace tnt
                 "      return HTTP_NOT_MODIFIED;\n"
                 "  }\n";
 
-      if (externData && !data.empty())
-        code << "  const Component* dataComponent = main().getDataComponent(request);\n"
-                "  ::use(dataComponent);\n\n";
+      if (!data.empty())
+      {
+        if (externData)
+          code << "  tnt::DataChunks data(getData(request, rawData));\n";
+        else
+          code << "  tnt::DataChunks data(rawData);\n";
+      }
 
       if (multiImages.empty())
       {
@@ -575,7 +540,7 @@ namespace tnt
           code << "  reply.setHeader(tnt::httpheader::lastModified, \""
                << tnt::HttpMessage::htdate(c_time) << "\");\n";
         if (raw)
-          code << "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, 0));\n"
+          code << "  reply.setContentLengthHeader(data.size(0));\n"
                   "  reply.setDirectMode();\n";
 
         code << '\n';
@@ -603,9 +568,9 @@ namespace tnt
                 "    return HTTP_NOT_MODIFIED;\n\n"
 
                 "  reply.setHeader(tnt::httpheader::lastModified, url_c_time[url_idx]);\n"
-                "  reply.setContentLengthHeader(DATA_SIZE(dataComponent, request, url_idx));\n"
+                "  reply.setContentLengthHeader(data.size(url_idx));\n"
                 "  reply.setDirectMode();\n"
-                "  reply.out() << DATA(dataComponent, request, url_idx);\n"
+                "  reply.out() << data[url_idx];\n"
                 "  return HTTP_OK;\n"
                 "}\n\n";
       }
@@ -615,59 +580,7 @@ namespace tnt
       code << "void " << classname << "::drop()\n"
               "{\n"
               "  factory.drop(this);\n"
-              "}\n\n"
-              "unsigned " << classname << "::getDataCount(const tnt::HttpRequest& request) const\n";
-      if (noData)
-        code << "{ return 0; }\n\n";
-      else
-        code << "{ return data.size(); }\n\n";
-
-      if (externData)
-      {
-        code << "unsigned " << classname << "::getDataLen(const tnt::HttpRequest& request, unsigned n) const\n"
-                "{\n"
-                "  const Component* dataComponent = getDataComponent(request);\n"
-                "  if (dataComponent == this)\n";
-        if (noData)
-          code << "    throw std::runtime_error(\"no data in " << classname << "::getDataLen\");\n\n";
-        else
-          code << "  {\n"
-                  "    if (n >= data.size())\n"
-                  "      throw std::range_error(\"range_error in " << classname << "::getDataLen\");\n"
-                  "    return data[n].getLength();\n"
-                  "  }\n";
-        code << "  return dataComponent->getDataLen(request, n);\n"
-                "}\n\n"
-                "const char* " << classname << "::getDataPtr(const tnt::HttpRequest& request, unsigned n) const\n"
-                "{\n"
-                "  const Component* dataComponent = getDataComponent(request);\n"
-                "  if (dataComponent == this)\n";
-        if (noData)
-          code << "    throw std::runtime_error(\"no data in " << classname << "::getDataLen\");\n\n";
-        else
-          code << "  {\n"
-                  "    if (n >= data.size())\n"
-                  "      throw std::range_error(\"range_error in " << classname << "::getDataPtr\");\n"
-                  "    return data[n].getData();\n"
-                  "  }\n";
-        code << "  return dataComponent->getDataPtr(request, n);\n"
-                "}\n\n";
-      }
-      else
-      {
-        code << "unsigned " << classname << "::getDataLen(const tnt::HttpRequest& request, unsigned n) const\n"
-                "{\n"
-                "  if (n >= data.size())\n"
-                "    throw std::range_error(\"range_error in " << classname << "::getDataLen\");\n"
-                "  return data[n].getLength();\n"
-                "}\n\n"
-                "const char* " << classname << "::getDataPtr(const tnt::HttpRequest& request, unsigned n) const\n"
-                "{\n"
-                "  if (n >= data.size())\n"
-                "    throw std::range_error(\"range_error in " << classname << "::getDataPtr\");\n"
-                "  return data[n].getData();\n"
-                "}\n\n";
-      }
+              "}\n\n";
 
       if (!attr.empty())
       {

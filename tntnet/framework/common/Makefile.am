@@ -20,6 +20,8 @@ libtntnet_la_SOURCES = \
 	httprequest.cpp \
 	httpreply.cpp \
 	inflatestream.cpp \
+	ioapi.c \
+	langlib.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
 	messageheaderparser.cpp \
@@ -32,6 +34,8 @@ libtntnet_la_SOURCES = \
 	sessionscope.cpp \
 	sodata.cpp \
 	tntconfig.cpp \
+	unzip.c \
+	unzipfile.cpp \
 	urlmapper.cpp \
 	zdata.cpp
 
@@ -58,6 +62,7 @@ nobase_include_HEADERS = \
 	tnt/httprequest.h \
 	tnt/httpreply.h \
 	tnt/inflatestream.h \
+	tnt/langlib.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/messageheaderparser.h \
@@ -74,10 +79,14 @@ nobase_include_HEADERS = \
 	tnt/sessionscope.h \
 	tnt/sodata.h \
 	tnt/tntconfig.h \
+	tnt/unzipfile.h \
 	tnt/urlmapper.h \
 	tnt/zdata.h
 
 nobase_nodist_include_HEADERS = \
-	tnt/config.h
+	crypt.h \
+	ioapi.h \
+	tnt/config.h \
+    unzip.h
 
 libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz

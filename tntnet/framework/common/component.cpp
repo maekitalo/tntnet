@@ -1,5 +1,5 @@
 /* component.cpp
-   Copyright (C) 2003-2005 Tommi Maekitalo
+   Copyright (C) 2003-2006 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -44,15 +44,6 @@ namespace tnt
   {
     return def;
   }
-
-  unsigned Component::getDataCount(const HttpRequest& request) const
-  { return 0; }
-
-  unsigned Component::getDataLen(const HttpRequest& request, unsigned n) const
-  { return 0; }
-
-  const char* Component::getDataPtr(const HttpRequest& request, unsigned n) const
-  { return 0; }
 
   unsigned Component::call(HttpRequest& request, HttpReply& reply)
   {

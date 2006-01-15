@@ -26,20 +26,6 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class RawData
-  {
-      const char* data;
-      const unsigned dataLen;
-
-    public:
-      RawData(const char* data_, unsigned dataLen_)
-        : data(data_),
-          dataLen(dataLen_)
-      { }
-
-      operator const char* () const      { return data; }
-  };
-
   class DataChunk
   {
       const char* data;
@@ -65,10 +51,9 @@ namespace tnt
   //   count X unsigned: offsets
   //   data
   //
-  template <typename DataPtr>
   class DataChunks
   {
-      DataPtr& dataObject;
+      const char* dataObject;
 
       const unsigned* udata() const
       {
@@ -77,24 +62,22 @@ namespace tnt
       }
 
     public:
-      DataChunks(DataPtr& d)
+      DataChunks(const char* d)
         : dataObject(d)
       { }
 
       const char* data() const
-      {
-        return reinterpret_cast<const char*>(udata()[0]);
-      }
+      { return dataObject; }
 
-      // Anzahl der chunks
+      // number of chunks
       unsigned size() const
       { return (udata()[0] / sizeof(unsigned)) - 1; }
 
-      // Offset des n-ten chunks vom Start des Datenbereiches
+      // offset of n-th chunk from start
       unsigned offset(unsigned n) const
       { return udata()[n] - udata()[0]; }
 
-      // Grösse des n-ten chunks in Byte
+      // size of nth chunk in bytes
       unsigned size(unsigned n) const
       { return udata()[n + 1] - udata()[n]; }
 

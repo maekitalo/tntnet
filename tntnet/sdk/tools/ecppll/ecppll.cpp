@@ -22,6 +22,8 @@ Boston, MA  02111-1307  USA
 #include <tnt/ecpp/parser.h>
 #include <tnt/ecpp/parsehandler.h>
 #include <tnt/stringescaper.h>
+#include <tnt/datachunks_creator.h>
+#include <tnt/filename.h>
 
 #include <cxxtools/arg.h>
 
@@ -35,7 +37,7 @@ Boston, MA  02111-1307  USA
 #include "config.h"
 
 ////////////////////////////////////////////////////////////////////////
-// Ecppll - Applikationsklasse - Basisklasse
+// Ecppll - Applicationclass
 //
 class Ecppll : public tnt::ecpp::ParseHandler
 {
@@ -75,8 +77,6 @@ class Ecppll : public tnt::ecpp::ParseHandler
     void print(std::ostream& out);
     int getRet() const  { return ret; }
 
-    void setSplitBar(bool sw = true)          { parser.setSplitBar(sw); }
-    void setSplitChars(char start, char end)  { parser.setSplitChars(start, end); }
     void parse(std::istream& in)              { parser.parse(in); }
 };
 
@@ -90,20 +90,9 @@ void Ecppll::tokenSplit(bool start)
 
 void Ecppll::print(std::ostream& out)
 {
-  for (data_type::const_iterator it = data.begin();
-       it != data.end(); ++it)
-  {
-    out << parser.getSplitStartChar();
-    for (data_type::const_iterator::value_type::const_iterator n = it->begin();
-         n != it->end(); ++n)
-    {
-      if (*n == parser.getSplitStartChar()
-       || *n == parser.getSplitEndChar())
-        out << '\\';
-      out << *n;
-    }
-    out << parser.getSplitEndChar();
-  }
+  tnt::DatachunksCreator dc;
+  std::copy(data.begin(), data.end(), std::back_inserter(dc));
+  out.write(dc.ptr(), dc.size());
 }
 
 void Ecppll::readReplaceTokens(std::istream& in)
@@ -244,7 +233,6 @@ int main(int argc, char* argv[])
   {
     cxxtools::Arg<const char*> ofile(argc, argv, 'o');
     cxxtools::Arg<bool> fail_on_warn(argc, argv, 'F');
-    cxxtools::Arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 3)
     {
@@ -253,7 +241,6 @@ int main(int argc, char* argv[])
            "usage: " << argv[0] << " [options] ecpp-source translated-data\n\n"
            " -o filename        outputfile\n"
            " -F                 fail on warning\n"
-           " --split-chars zz  select alternative split-chars\n"
         << std::endl;
       return 1;
     }
@@ -281,18 +268,6 @@ int main(int argc, char* argv[])
 
     app.setFailOnWarn(fail_on_warn);
     app.readReplaceTokens(txt);
-    app.setSplitBar();
-
-    if (splitChars.isSet())
-    {
-      if (splitChars.getValue()[0] == '\0'
-       || splitChars.getValue()[1] == '\0'
-       || splitChars.getValue()[2] != '\0')
-        throw std::runtime_error("--split-chars needs exactly 2 characters");
-
-      app.setSplitChars(splitChars.getValue()[0],
-                        splitChars.getValue()[1]);
-    }
 
     // parse
     app.parse(ecpp);
@@ -300,11 +275,21 @@ int main(int argc, char* argv[])
     // process
     if (ofile.isSet())
     {
-      std::ofstream out(ofile);
-      app.print(out);
+      if (strcmp(ofile.getValue(), "-") == 0)
+        app.print(std::cout);
+      else
+      {
+        std::ofstream out(ofile);
+        app.print(out);
+      }
     }
     else
-      app.print(std::cout);
+    {
+      tnt::Filename f(argv[1]);
+      f.setExt("tntdata");
+      std::ofstream out(f.getFullPath().c_str());
+      app.print(out);
+    }
 
     return app.getRet();
   }

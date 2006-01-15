@@ -23,13 +23,14 @@ Boston, MA  02111-1307  USA
 #define TNT_COMPLOADER_H
 
 #include <cxxtools/dlloader.h>
+#include <cxxtools/thread.h>
 #include <tnt/urlmapper.h>
+#include <tnt/langlib.h>
 #include <map>
 #include <set>
 #include <list>
 #include <string>
 #include <utility>
-#include <cxxtools/thread.h>
 
 namespace tnt
 {
@@ -43,6 +44,8 @@ namespace tnt
 
       factoryMapType factoryMap;
       std::string libname;
+      typedef std::map<std::string, LangLib*> langlibsType;
+      langlibsType langlibs;
 
     public:
       ComponentLibrary()
@@ -58,8 +61,11 @@ namespace tnt
           libname(name)
         { }
 
+      ~ComponentLibrary();
+
       Component* create(const std::string& component_name, Comploader& cl,
         const Urlmapper& rootmapper);
+      LangLib* getLangLib(const std::string& lang);
 
       const std::string& getName() const  { return libname; }
       void addStaticFactory(const std::string& component_name,
@@ -93,6 +99,7 @@ namespace tnt
         const Urlmapper& rootmapper);
       virtual Component* createComp(const Compident& compident,
         const Urlmapper& rootmapper);
+      const char* getLangData(const Compident& compident, const std::string& lang);
 
       // lookup library; load if needed
       virtual ComponentLibrary& fetchLib(const std::string& libname);

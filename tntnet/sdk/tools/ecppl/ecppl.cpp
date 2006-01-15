@@ -36,7 +36,6 @@ int main(int argc, char* argv[])
     cxxtools::Arg<bool> lang(argc, argv, 'l');
     cxxtools::Arg<bool> nolang(argc, argv, 'n');
     cxxtools::Arg<const char*> ofile(argc, argv, 'o');
-    cxxtools::Arg<const char*> splitChars(argc, argv, "--split-chars");
 
     if (argc != 2)
     {
@@ -47,7 +46,6 @@ int main(int argc, char* argv[])
            "  -o filename        outputfile\n"
            "  -n                 nolang\n"
            "  -l                 lang (default)\n"
-           "  --split-chars zz   select alternative split-chars\n"
         << std::endl;
       return -1;
     }
@@ -57,18 +55,6 @@ int main(int argc, char* argv[])
     Ecpplang generator;
 
     tnt::ecpp::Parser parser(generator);
-    parser.setSplitBar();
-    if (splitChars.isSet())
-    {
-      if (splitChars.getValue()[0] == '\0'
-       || splitChars.getValue()[1] == '\0'
-       || splitChars.getValue()[2] != '\0')
-        throw std::runtime_error("--split-chars needs exactly 2 characters");
-
-      parser.setSplitChars(splitChars.getValue()[0],
-                           splitChars.getValue()[1]);
-    }
-
     generator.setLang(lang || !nolang);
     generator.setNoLang(nolang);
     parser.parse(in);

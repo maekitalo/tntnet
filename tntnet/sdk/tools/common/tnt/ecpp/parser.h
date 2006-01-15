@@ -39,11 +39,6 @@ namespace tnt
     {
         ParseHandler& handler;
 
-        bool splitBar;
-
-        char split_start;
-        char split_end;
-
         std::istream& get(char& ch);
         void doInclude(const std::string& file);
 
@@ -51,25 +46,10 @@ namespace tnt
 
       public:
         Parser(ParseHandler& handler_)
-          : handler(handler_),
-            splitBar(false),
-            split_start('{'),
-            split_end('}')
+          : handler(handler_)
         { }
 
         void parse(std::istream& in);
-
-        void setSplitBar(bool sw = true)  { splitBar = sw; }
-        bool isSplitBar() const           { return splitBar; }
-
-        void setSplitChars(char start, char end)
-        {
-          split_start = start;
-          split_end = end;
-        }
-
-        char getSplitStartChar() const  { return split_start; }
-        char getSplitEndChar() const    { return split_end; }
 
         typedef std::multimap<std::string, std::string> comp_args_type;
         typedef std::list<std::pair<std::string, std::string> > cppargs_type;

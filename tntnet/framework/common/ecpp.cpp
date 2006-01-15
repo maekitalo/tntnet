@@ -161,45 +161,18 @@ namespace tnt
     return *it->second;
   }
 
-  const Component* EcppComponent::getDataComponent(const HttpRequest& request) const
+  const char* EcppComponent::getData(const HttpRequest& request, const char* def) const
   {
     std::string LANG = request.getLang();
 
     if (!LANG.empty())
     {
-      Compident ci = Compident(getCompident().libname + '.' + LANG,
-                                    getCompident().compname);
-
-      // check compidentmap
-      {
-        cxxtools::RdLock lock(equivMonitor);
-
-        libnotfound_type::const_iterator lit = libnotfound.find(ci.libname);
-        if (lit != libnotfound.end())
-          return this;
-
-        compnotfound_type::const_iterator cit = compnotfound.find(ci);
-        if (cit != compnotfound.end())
-          return this;
-      }
-
-      try
-      {
-        return &fetchComp(ci);
-      }
-      catch (const cxxtools::dl::SymbolNotFound&)
-      {
-        // symbol with lang not found - remember this
-        rememberCompNotFound(ci);
-      }
-      catch (const cxxtools::dl::DlopenError&)
-      {
-        // library with lang not found - remember this
-        rememberLibNotFound(ci.libname);
-      }
+      const char* data = loader.getLangData(myident, LANG);
+      if (data)
+        return data;
     }
 
-    return this;
+    return def;
   }
 
   void EcppComponent::rememberLibNotFound(const std::string& lib)

@@ -36,6 +36,8 @@ namespace tnt
       void createChunks() const;
 
     public:
+      typedef const std::string& const_reference;
+
       void push_back(const std::string& data)
         { chunks.push_back(data); chunks_cache.clear(); }
       void push_back(const char* data, unsigned len)

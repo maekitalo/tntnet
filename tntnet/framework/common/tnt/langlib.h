@@ -1,5 +1,5 @@
-/* closecomponent.cpp
-   Copyright (C) 2005 Tommi Maekitalo
+/* tnt/langlib.h
+   Copyright (C) 2006 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -19,28 +19,36 @@ Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA  02111-1307  USA
 */
 
-#include "tnt/ecppc/closecomponent.h"
+#ifndef TNT_LANGLIB_H
+#define TNT_LANGLIB_H
+
+#include <string>
+#include <map>
+#include <set>
+#include <tnt/unzipfile.h>
+#include <cxxtools/thread.h>
 
 namespace tnt
 {
-  namespace ecppc
+  class LangLib
   {
-    ////////////////////////////////////////////////////////////////////////
-    // Closecomponent
-    //
-    void Closecomponent::getDefinition(std::ostream& code, bool externData) const
-    {
-      code << "unsigned " << getName() << "::endTag (tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
-           "  cxxtools::QueryParams& qparam)\n"
-           "{\n";
+      unzipFile file;
+      std::string lang;
+      typedef std::map<std::string, std::string> dataMapType;
+      typedef std::set<std::string> notFoundType;
+      dataMapType dataMap;
+      notFoundType notFound;
+      cxxtools::RWLock monitor;
 
-      if (externData)
-        code << "  tnt::DataChunks data(getData(request, rawData));\n";
-      else
-        code << "  tnt::DataChunks data(rawData);\n";
+    public:
+      LangLib()
+        { }
 
-      Component::getBody(code);
-      code << "}\n\n";
-    }
-  }
+      LangLib(const std::string lib, const std::string& lang_);
+
+      const char* getData(const std::string& compname);
+  };
 }
+
+#endif // TNT_LANGLIB_H
+

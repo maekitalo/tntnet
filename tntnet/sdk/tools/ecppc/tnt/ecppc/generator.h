@@ -76,17 +76,8 @@ namespace tnt
 
         tnt::DatachunksCreator data;
 
-        enum filter_enum
-        {
-          filter_null,
-          filter_html,
-          filter_css,
-          filter_js
-        };
-        filter_enum filter;
-        bool compress;
         bool externData;
-        bool noData;
+        bool compress;
 
         time_t c_time;
         const char* gentime;
@@ -137,28 +128,8 @@ namespace tnt
         void setRawMode(bool sw = true)              { raw = sw; }
         bool isRawMode() const                       { return raw; }
 
-        void setHtmlCompress(bool sw = true)         { filter = sw ? filter_html : filter_null; }
-        bool isHtmlCompress()                        { return filter == filter_html; }
-
-        void setCssCompress(bool sw = true)          { filter = sw ? filter_css : filter_null; }
-        bool isCssCompress()                         { return filter == filter_css; }
-
-        void setJsCompress(bool sw = true)           { filter = sw ? filter_js : filter_null; }
-        bool isJsCompress()                          { return filter == filter_js; }
-
         void setCompress(bool sw = true)             { compress = sw; }
         bool isCompress() const                      { return compress; }
-
-        void setExternData(bool sw = true)           { externData = sw; }
-        bool isExternData() const                    { return externData; }
-
-        void setNoData(bool sw = true)
-          {
-            noData = sw;
-            if (sw)
-              externData = true;
-          }
-        bool isNoData() const                        { return noData; }
 
         void setLastModifiedTime(time_t t)           { c_time = t; }
         time_t getLastModifiedTime() const           { return c_time; }
@@ -192,6 +163,8 @@ namespace tnt
         virtual void onConfig(const std::string& name, const std::string& value);
         virtual void onScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);
+        virtual void startI18n();
+        virtual void endI18n();
 
         void getHeader(std::ostream& out, const std::string& filename) const;
         void getCpp(std::ostream& out, const std::string& filename) const;

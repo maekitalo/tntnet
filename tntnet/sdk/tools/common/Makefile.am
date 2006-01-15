@@ -2,12 +2,18 @@ lib_LTLIBRARIES = libtntnet_sdk.la
 
 libtntnet_sdk_la_SOURCES = \
 	datachunks_creator.cpp \
+	filename.cpp \
 	parsehandler.cpp \
 	parser.cpp \
 	tnt/datachunks_creator.h \
 	tnt/ecpp/parsehandler.h \
 	tnt/ecpp/parser.h \
 	tnt/ecpp/scopetypes.h \
+	tnt/filename.h \
 	tnt/stringescaper.h
 
 libtntnet_sdk_la_LDFLAGS = -version-info @sonumber@
+
+bin_PROGRAMS = ftest
+ftest_SOURCES = ftest.cpp
+ftest_LDADD = libtntnet_sdk.la

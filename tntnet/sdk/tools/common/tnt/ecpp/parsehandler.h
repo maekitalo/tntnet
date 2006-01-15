@@ -66,6 +66,8 @@ namespace tnt
         virtual void onConfig(const std::string& code, const std::string& value);
         virtual void tokenSplit(bool start);
         virtual void onInclude(const std::string& file);
+        virtual void startI18n();
+        virtual void endI18n();
     };
 
   }

@@ -32,6 +32,13 @@ namespace tnt
 //
 log_define("tntnet.comploader")
 
+ComponentLibrary::~ComponentLibrary()
+{
+  for (langlibsType::iterator it = langlibs.begin();
+       it != langlibs.end(); ++it)
+    delete it->second;
+}
+
 Component* ComponentLibrary::create(
   const std::string& component_name, Comploader& cl,
   const Urlmapper& rootmapper)
@@ -62,6 +69,27 @@ Component* ComponentLibrary::create(
   log_debug("create \"" << ci << '"');
 
   return factory->create(ci, rootmapper, cl);
+}
+
+LangLib* ComponentLibrary::getLangLib(const std::string& lang)
+{
+  static cxxtools::RWLock monitor;
+  cxxtools::RdLock lock(monitor);
+  langlibsType::const_iterator it = langlibs.find(lang);
+  if (it != langlibs.end())
+    return it->second;
+
+  lock.unlock();
+  cxxtools::WrLock wrlock(monitor);
+
+  it = langlibs.find(lang);
+  if (it != langlibs.end())
+    return it->second;
+
+  LangLib* l = new LangLib(libname, lang);
+  langlibs[lang] = l;
+
+  return l;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -150,6 +178,18 @@ Component* Comploader::createComp(const Compident& ci,
   Component* comp = lib.create(ci.compname, *this, rootmapper);
   comp->touch();
   return comp;
+}
+
+const char* Comploader::getLangData(const Compident& ci,
+  const std::string& lang)
+{
+  log_debug("getLangData(" << ci << ", \"" << lang << "\")");
+  ComponentLibrary& lib = fetchLib(ci.libname);
+  LangLib* langLib = lib.getLangLib(lang);
+  if (langLib)
+    return langLib->getData(ci.compname);
+  else
+    return 0;
 }
 
 ComponentLibrary& Comploader::fetchLib(const std::string& libname)

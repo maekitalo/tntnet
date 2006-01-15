@@ -51,17 +51,10 @@ namespace tnt
         cxxtools::Arg<bool> singleton;
         cxxtools::Arg<std::string> componentclass;
         cxxtools::Arg<std::string> baseclass;
-        cxxtools::Arg<bool> htmlcompress;
-        cxxtools::Arg<bool> csscompress;
-        cxxtools::Arg<bool> jscompress;
         cxxtools::Arg<bool> compress;
-        cxxtools::Arg<bool> externData;
-        cxxtools::Arg<bool> noData;
         cxxtools::Arg<bool> verbose;
         cxxtools::Arg<bool> debug;
         cxxtools::Arg<bool> trace;
-        cxxtools::Arg<bool> splitBar;
-        cxxtools::Arg<const char*> splitChars;
         cxxtools::Arg<bool> generateDependencies;
         cxxtools::Arg<bool> generateHeader;
 

@@ -32,7 +32,7 @@ Requestcounter (page): <$ ++rp $><br>
 <& subcomp &>
 </div>
 
-<a href="session">reload this</a>
+<a href="session">reload this</a> -
 <a href="appsession">applicationsession only</a>
 
 <%def subcomp>

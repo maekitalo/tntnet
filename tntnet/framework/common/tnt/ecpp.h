@@ -135,7 +135,7 @@ namespace tnt
         std::string scallComp(const compident_type& ci)
         { return fetchComp(ci).scall(); }
 
-      const Component* getDataComponent(const HttpRequest& request) const;
+      const char* getData(const HttpRequest& request, const char* def) const;
 
     public:
       EcppComponent(const Compident& ci, const Urlmapper& um, Comploader& cl);
