@@ -21,7 +21,6 @@ Boston, MA  02111-1307  USA
 
 #include <tnt/cgi.h>
 #include <tnt/urlmapper.h>
-#include <tnt/comploader.h>
 #include <tnt/httpreply.h>
 #include <tnt/convert.h>
 #include <cxxtools/dynbuffer.h>
@@ -32,6 +31,12 @@ Boston, MA  02111-1307  USA
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <config.h>
+
+// fastcgi is not yet implemented!!!
+#ifdef WITH_FASTCGI
+# include "fastcgi.h"
+# include <errno.h>
+#endif
 
 #ifndef CONFIG_DIR
 # define CONFIG_DIR "/etc/tntnet/"
@@ -137,7 +142,49 @@ namespace tnt
     }
   }
 
+  void Cgi::execute()
+  {
+    Compident compident = Compident(std::string(), componentName);
+    log_debug("fetch component " << compident);
+    Component& comp = comploader.fetchComp(compident, Urlmapper());
+
+    scopeManager.preCall(request, compident.libname);
+
+    log_debug("call component");
+    HttpReply reply(std::cout, false);
+    unsigned ret = comp(request, reply, request.getQueryParams());
+
+    // Don't call postCall. postCall just sets a session-cookie,
+    // which don't make sense in cgi, because the program stops after every
+    // request.
+    // scopeManager.postCall(request, reply, compident.libname);
+
+    log_debug("send reply");
+    reply.sendReply(ret);
+  }
+
+  bool Cgi::isFastCgi() const
+  {
+#ifdef WITH_FASTCGI
+    struct sockaddr sock;
+    socklen_t len = sizeof(sock);
+    return getpeername(FCGI_LISTENSOCK_FILENO, &sock, &len) == -1
+        && errno == ENOTCONN;
+#else
+    return false;
+#endif
+  }
+
   int Cgi::run()
+  {
+#ifdef WITH_FASTCGI
+    return isCgi() ? runCgi() : runFCgi();
+#else
+    return runCgi();
+#endif
+  }
+
+  int Cgi::runCgi()
   {
     getMethod();
     getHeader("CONTENT_TYPE", httpheader::contentType);
@@ -157,25 +204,14 @@ namespace tnt
     request.doPostParse();
 
     Comploader::configure(config);
-    Comploader comploader;
 
-    Compident compident = Compident(std::string(), componentName);
-    log_debug("fetch component " << compident);
-    Component& comp = comploader.fetchComp(compident, Urlmapper());
+    execute();
+    return 0;
+  }
 
-    scopeManager.preCall(request, compident.libname);
-
-    log_debug("call component");
-    HttpReply reply(std::cout, false);
-    unsigned ret = comp(request, reply, request.getQueryParams());
-
-    // Don't call postCall. postCall just sets a session-cookie,
-    // which don't make sense in cgi, because the program stops after every
-    // request.
-    // scopeManager.postCall(request, reply, compident.libname);
-
-    log_debug("send reply");
-    reply.sendReply(ret);
+  int Cgi::runFCgi()
+  {
+    return 0;
   }
 }
 

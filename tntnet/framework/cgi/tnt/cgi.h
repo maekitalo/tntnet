@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httprequest.h>
 #include <tnt/scopemanager.h>
 #include <tnt/tntconfig.h>
+#include <tnt/comploader.h>
 
 namespace tnt
 {
@@ -36,6 +37,7 @@ namespace tnt
 
       HttpRequest request;
       ScopeManager scopeManager;
+      Comploader comploader;
 
       void getHeader(const char* env, const std::string& headername);
       void getMethod();
@@ -43,10 +45,15 @@ namespace tnt
       void getPathInfo();
       void getRemoteAddr();
       void readBody();
+      void execute();
 
     public:
       Cgi(int argc, char* argv[]);
+      bool isFastCgi() const;
+      bool isCgi() const  { return !isFastCgi(); }
       int run();
+      int runCgi();
+      int runFCgi();
   };
 }
 
