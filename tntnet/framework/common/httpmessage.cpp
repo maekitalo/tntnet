@@ -109,7 +109,18 @@ namespace tnt
           : start(s), end(e)
           { }
 
+        void setStart(const char* s)
+        {
+          start = s;
+        }
+
+        void setEnd(const char* e)
+        {
+          end = e;
+        }
+
         size_type size() const  { return end - start; }
+        bool empty() const      { return start == end; }
 
         bool operator== (const Pstr& s) const
         {
@@ -130,69 +141,34 @@ namespace tnt
 
   bool HttpMessage::checkUrl(const std::string& url)
   {
-    typedef std::list<Pstr> tokens_type;
-
-    // teile in Komponenten auf
-    enum state_type {
-      state_start,
-      state_token,
-      state_end
-    };
-
-    state_type state = state_start;
-
-    tokens_type tokens;
+    unsigned level = 0;
     const char* p = url.data();
     const char* e = p + url.size();
-    const char* s = p;
-    for (; state != state_end && p != e; ++p)
+    Pstr str(p, p);
+    for (; p != e; ++p)
     {
-      switch (state)
+      if (*p == '/')
       {
-        case state_start:
-          if (*p != '/')
+        str.setEnd(p);
+        if (!str.empty())
+        {
+          if (str == ".")
+            ;
+          else if (str == "..")
           {
-            s = p;
-            state = state_token;
+            if (level == 0)
+              return false;
+            --level;
           }
-          break;
-
-        case state_token:
-          if (*p == '/')
-          {
-            if (p - s != 1 || *s != '.')
-              tokens.push_back(Pstr(s, p));
-            state = state_start;
-          }
-          else if (p == e)
-          {
-            tokens.push_back(Pstr(s, p));
-            state = state_end;
-          }
-          break;
-
-        case state_end:
-          break;
+          else
+            ++level;
+        }
+        str.setStart(p + 1);
       }
     }
 
-    // entferne jedes .. inklusive der vorhergehenden Komponente
-    tokens_type::iterator i = tokens.begin();
-    while (i != tokens.end())
-    {
-      if (*i == "..")
-      {
-        if (i == tokens.begin())
-          return false;
-        --i;
-        i = tokens.erase(i);  // lösche 2 Komponenten
-        i = tokens.erase(i);
-      }
-      else
-      {
-        ++i;
-      }
-    }
+    if (level == 0 && (str.setEnd(p), str == ".."))
+      return false;
 
     return true;
   }
