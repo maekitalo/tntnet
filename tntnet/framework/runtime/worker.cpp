@@ -127,7 +127,15 @@ namespace tnt
           if (socket.eof())
             log_debug("eof");
           else if (j->getParser().failed())
-            log_error("end parser");
+          {
+            state = stateSendError;
+            log_warn("bad request");
+            socket << "HTTP/1.0 500 bad request\r\n"
+                      "Content-Type: text/html\r\n"
+                      "\r\n"
+                      "<html><body><h1>Error</h1><p>bad request</p></body></html>"
+                   << std::endl;
+          }
           else if (socket.fail())
             log_error("socket failed");
           else
@@ -178,8 +186,8 @@ namespace tnt
   {
     // log message
     log_info("process request: " << request.getMethod() << ' ' << request.getUrl()
-      << " from client " << request.getPeerIp());
-    log_info("user-Agent \"" << request.getUserAgent() << '"');
+      << " from client " << request.getPeerIp() << " user-Agent \"" << request.getUserAgent()
+      << '"');
 
     // create reply-object
     HttpReply reply(socket);
@@ -211,11 +219,6 @@ namespace tnt
       {
         throw;
       }
-      //catch (const cxxtools::Net::Timeout& t)
-      //{
-          // TODO pass job to writer-thread
-          // return false;
-      //}
       catch (const std::exception& e)
       {
         throw HttpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
@@ -225,9 +228,10 @@ namespace tnt
     {
       state = stateSendError;
       log_warn("http-Error: " << e.what());
-      socket << "HTTP/1.0 " << e.what()
-             << "\r\n\r\n"
-             << "<html><body><h1>Error</h1><p>"
+      socket << "HTTP/1.0 " << e.what() << "\r\n"
+                "Content-Type: text/html\r\n"
+                "\r\n"
+                "<html><body><h1>Error</h1><p>"
              << e.what() << "</p></body></html>" << std::endl;
       return false;
     }
