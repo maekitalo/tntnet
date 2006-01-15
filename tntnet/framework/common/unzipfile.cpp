@@ -22,6 +22,9 @@ Boston, MA  02111-1307  USA
 #include "tnt/unzipfile.h"
 #include <sstream>
 #include "unzip.h"
+#include <cxxtools/log.h>
+
+log_define("tnt.unzipfile");
 
 namespace tnt
 {
@@ -29,6 +32,7 @@ namespace tnt
   {
     int checkError(int ret, const char* function)
     {
+      log_debug("checkError(" << ret << ", " << function << ')');
       if (ret < 0)
       {
         switch (ret)
@@ -103,7 +107,7 @@ namespace tnt
     {
       delete file;
       file = 0;
-      throw std::runtime_error("error opening " + path);
+      throw unzipFileNotFound(path);
     }
   }
 

@@ -46,6 +46,14 @@ namespace tnt
       int getErr() const  { return err; }
   };
 
+  class unzipFileNotFound : public unzipError
+  {
+    public:
+      unzipFileNotFound(const std::string& file)
+        : unzipError(0, "file not found " + file)
+        { }
+  };
+
   class unzipEndOfListOfFile : public unzipError
   {
     public:

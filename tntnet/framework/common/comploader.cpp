@@ -86,9 +86,16 @@ LangLib* ComponentLibrary::getLangLib(const std::string& lang)
   if (it != langlibs.end())
     return it->second;
 
-  LangLib* l = new LangLib(libname, lang);
+  LangLib* l = 0;
+  try
+  {
+    l = new LangLib(libname, lang);
+  }
+  catch (const unzipError& e)
+  {
+    log_error("unzipError: " << e.what());
+  }
   langlibs[lang] = l;
-
   return l;
 }
 

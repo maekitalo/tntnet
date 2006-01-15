@@ -49,7 +49,7 @@ namespace tnt
 
       try
       {
-        unzipFileStream fileStream(file, compname, true);
+        unzipFileStream fileStream(file, compname + ".tntdata", true);
         std::ostringstream data;
         data << fileStream.rdbuf();
         it = dataMap.insert(dataMapType::value_type(compname, data.str())).first;
