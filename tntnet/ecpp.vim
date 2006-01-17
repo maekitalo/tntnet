@@ -44,7 +44,7 @@ endif
 syn match ecppCondExprDelim "?"
 
 syn region ecppLine matchgroup=Delimiter start="^%" end="$" contains=@cppTop
-syn region ecppExpr matchgroup=Delimiter start="<\$\$?" end="\$>" contains=@cppTop
+syn region ecppExpr matchgroup=Delimiter start="<\$" end="\$>" contains=@cppTop
 syn region ecppCondExpr matchgroup=Delimiter start="<?" end="?>" contains=ecppCondExprDelim,@cppTop
 syn region ecppCpp matchgroup=Delimiter start="<%cpp>" end="</%cpp>" contains=@cppTop
 syn region ecppCpps matchgroup=Delimiter start="<{" end="}>" contains=@cppTop
@@ -72,20 +72,21 @@ syn region ecppShared matchgroup=Delimiter start="<%close>" end="</%close>" cont
 syn match	ecppIncluded	display contained "<[^>]*>"
 syn region ecppInclude matchgroup=Delimiter start="<%include>" end="</%include>" contains=@ecppIncluded
 
-syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contains=@htmlTop
-syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@htmlTop
 " syn region ecppMethod matchgroup=Delimiter start="<%method[^>]*>" end="</%method>" contains=@htmlTop
 
 syn region ecppDoc matchgroup=Delimiter start="<%doc>" end="</%doc>"
 syn region ecppComment matchgroup=Delimiter start="<#" end="#>" contains=@cCommentGroup
 syn region ecppTranslateTag matchgroup=Delimiter start="{" end="}"
-" contains=ecppTranslate
 " syn match ecppTranslate contained "[^}]\+"
 " syn region ecppText matchgroup=Delimiter start="<%text>" end="</%text>"
 
 " syn region ecppClass matchgroup=Delimiter start="<%class>" end="</%class>" contains=@cppTop
 
-syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppEndComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppInit,ecppCleanup,ecppShared,ecppDef,ecppClose,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDeclareShared,ecppDefine,ecppComment,ecppTranslateTag,ecppTranslate
+syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppEndComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppPre,ecppInit,ecppCleanup,ecppShared,ecppDoc,ecppText,ecppGlobal,ecppDeclare,ecppDeclareShared,ecppDefine,ecppComment,ecppTranslateTag
+
+syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contains=@htmlTop
+syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@htmlTop
+syn region ecppInt matchgroup=Delimiter start="<%i18n>" end="</%i18n>" contains=@htmlTop
 
 " Set up default highlighting. Almost all of this is done in the included
 " syntax files.
@@ -101,7 +102,6 @@ if version >= 508 || !exists("did_ecpp_syn_inits")
 	HiLink ecppDoc Comment
 	HiLink ecppComment Comment
 	HiLink ecppTranslateTag Identifier
-	HiLink ecppTranslate Identifier
 
 	delc HiLink
 endif

@@ -6,16 +6,9 @@ tntnet_la_SOURCES = \
 	redirect.cpp \
 	static.cpp \
 	fstatic.cpp \
-	unzipcomp/unzip_pp.cpp \
-	unzipcomp/unzipcomp.cpp \
-	unzipcomp/unzip.c \
-	unzipcomp/ioapi.c \
+	unzipcomp.cpp \
 	static.h \
-	fstatic.h \
-	unzipcomp/crypt.h \
-	unzipcomp/ioapi.h \
-	unzipcomp/unzip.h \
-	unzipcomp/unzip_pp.h
+	fstatic.h
 
 tntnet_la_LDFLAGS = -module
 tntnet_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la

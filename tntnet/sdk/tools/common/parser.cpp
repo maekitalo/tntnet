@@ -415,7 +415,6 @@ namespace tnt
               }
               else if (tag == "i18n")
               {
-                std::cout << "i18n" << std::endl;
                 splitBar = true;
                 handler.startI18n();
                 state = state_html0;
@@ -638,7 +637,7 @@ namespace tnt
             }
             else if (ch == '\\')
               state = state_htmlesc;
-            else if (ch == split_start|| ch == split_end)
+            else if (splitBar && (ch == split_start|| ch == split_end))
             {
               if (!html.empty())
               {

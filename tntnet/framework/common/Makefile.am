@@ -8,7 +8,7 @@ libtntnet_la_SOURCES = \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	cookie.cpp \
-    deflatestream.cpp \
+	deflatestream.cpp \
 	ecpp.cpp \
 	encoding.cpp \
 	htmlescostream.cpp \
@@ -37,7 +37,10 @@ libtntnet_la_SOURCES = \
 	unzip.c \
 	unzipfile.cpp \
 	urlmapper.cpp \
-	zdata.cpp
+	zdata.cpp \
+	crypt.h \
+	ioapi.h \
+	unzip.h
 
 nobase_include_HEADERS = \
 	tnt/compident.h \
@@ -84,9 +87,6 @@ nobase_include_HEADERS = \
 	tnt/zdata.h
 
 nobase_nodist_include_HEADERS = \
-	crypt.h \
-	ioapi.h \
-	tnt/config.h \
-    unzip.h
+	tnt/config.h
 
 libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz

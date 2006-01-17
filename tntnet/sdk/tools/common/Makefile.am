@@ -13,7 +13,3 @@ libtntnet_sdk_la_SOURCES = \
 	tnt/stringescaper.h
 
 libtntnet_sdk_la_LDFLAGS = -version-info @sonumber@
-
-bin_PROGRAMS = ftest
-ftest_SOURCES = ftest.cpp
-ftest_LDADD = libtntnet_sdk.la
