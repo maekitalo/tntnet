@@ -76,6 +76,7 @@ namespace tnt
       typedef std::map<std::pair<std::string, urlmap_type::const_iterator>,
                        CompidentType> urlMapCacheType;
       mutable urlMapCacheType urlMapCache;
+      static urlMapCacheType::size_type maxUrlMapCache;
 
       // don't make this public - it's not threadsafe:
       CompidentType mapCompNext(const std::string& compUrl,
@@ -87,6 +88,11 @@ namespace tnt
       void addUrlMapEntry(const std::string& url, const CompidentType& ci);
 
       Compident mapComp(const std::string& compUrl) const;
+
+      static urlMapCacheType::size_type getMaxUrlMapCache()
+        { return maxUrlMapCache; }
+      static void setMaxUrlMapCache(urlMapCacheType::size_type s)
+        { maxUrlMapCache = s; }
 
       friend class PosType;
 

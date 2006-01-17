@@ -566,6 +566,7 @@ namespace tnt
     Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
     Listener::setBacklog(config.getValue<int>("ListenBacklog", Listener::getBacklog()));
     Listener::setListenRetry(config.getValue<int>("ListenRetry", Listener::getListenRetry()));
+    Dispatcher::setMaxUrlMapCache(config.getValue<unsigned>("MaxUrlMapCache", Dispatcher::getMaxUrlMapCache()));
 
     Tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);

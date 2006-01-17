@@ -23,6 +23,9 @@ Boston, MA  02111-1307  USA
 #include <tnt/httperror.h>
 #include <functional>
 #include <iterator>
+#include <cxxtools/log.h>
+
+log_define("tntnet.dispatcher");
 
 namespace tnt
 {
@@ -50,6 +53,8 @@ namespace {
   };
 }
 
+Dispatcher::urlMapCacheType::size_type Dispatcher::maxUrlMapCache = 8192;
+
 Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
   Dispatcher::urlmap_type::const_iterator& pos) const
 {
@@ -75,6 +80,13 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
         ci.setPathInfo(formatter(src.getPathInfo()));
       std::transform(src.getArgs().begin(), src.getArgs().end(),
         std::back_inserter(ci.getArgsRef()), formatter);
+
+      // clear cache after maxUrlMapCache distict requests
+      if (urlMapCache.size() >= maxUrlMapCache)
+      {
+        log_info("clear url-map-cache");
+        urlMapCache.clear();
+      }
 
       urlMapCache.insert(urlMapCacheType::value_type(cacheKey, ci));
 
