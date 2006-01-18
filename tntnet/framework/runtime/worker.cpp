@@ -228,7 +228,7 @@ namespace tnt
     {
       state = stateSendError;
       log_warn("http-Error: " << e.what());
-      socket << "HTTP/1.0 " << e.what() << "\r\n"
+      socket << "HTTP/1.0 " << std::string(e.what(), 3) << "\r\n"
                 "Content-Type: text/html\r\n"
                 "\r\n"
                 "<html><body><h1>Error</h1><p>"
