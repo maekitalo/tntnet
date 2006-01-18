@@ -285,7 +285,6 @@ namespace tnt
         out << ", public " << baseclass;
       out << "\n"
              "{\n"
-             "    friend class " << maincomp.getName() << "Factory;\n"
              "    " << maincomp.getName() << "& main()  { return *this; }\n\n" 
              "    // <%declare>\n"
           << declare
@@ -420,8 +419,7 @@ namespace tnt
           std::ostream_iterator<const char*>(code),
           stringescaper());
 
-        code << "\",\n  " << s << ", " << data.size() << ");\n"
-             << "static tnt::DataChunks<tnt::Zdata> data(rawData);\n\n";
+        code << "\",\n  " << s << ", " << data.size() << ");\n";
       }
       else
       {
