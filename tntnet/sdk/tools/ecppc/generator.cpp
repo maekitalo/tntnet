@@ -289,11 +289,6 @@ namespace tnt
              "    // <%declare>\n"
           << declare
           << "    // </%declare>\n\n"
-          << "    // <%config>\n";
-      for (variable_declarations::const_iterator it = configs.begin();
-           it != configs.end(); ++it)
-        it->getConfigHDecl(out);
-      out << "    // </%config>\n\n"
              "  protected:\n"
              "    ~" << maincomp.getName() << "();\n\n"
              "  public:\n"
@@ -302,18 +297,26 @@ namespace tnt
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
                "                    cxxtools::QueryParams& qparam);\n";
-      out << "    void drop();\n";
+      out << "    void drop();\n\n";
+
       if (!attr.empty())
         out << "    std::string getAttribute(const std::string& name,\n"
-               "      const std::string& def = std::string()) const;\n";
+               "      const std::string& def = std::string()) const;\n\n";
 
-      out << '\n';
+      if (!configs.empty())
+      {
+        out << "    // <%config>\n";
+        for (variable_declarations::const_iterator it = configs.begin();
+             it != configs.end(); ++it)
+          it->getConfigHDecl(out);
+        out << "    // </%config>\n\n";
+      }
 
-      // Deklaration der Subcomponenten
+      // declare subcomponents
       for (subcomps_type::const_iterator i = subcomps.begin(); i != subcomps.end(); ++i)
         i->getHeader(out);
 
-      // Instanzen der Subcomponenten
+      // instantiate subcomponents
       for (subcomps_type::const_iterator i = subcomps.begin(); i != subcomps.end(); ++i)
         out << "    " << i->getName() << "_type " << i->getName() << ";\n";
 
