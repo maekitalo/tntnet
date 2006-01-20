@@ -23,7 +23,6 @@ Boston, MA  02111-1307  USA
 #define STRINGESCAPER_H
 
 #include <functional>
-#include <string>
 
 class stringescaper : public std::unary_function<const char*, char>
 {
