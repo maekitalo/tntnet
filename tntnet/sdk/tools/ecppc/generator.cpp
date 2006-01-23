@@ -557,7 +557,7 @@ namespace tnt
                 "  if (it == urls_end || strcmp(url, *it) != 0)\n"
                 "  {\n"
                 "    log_info(\"binary file \\\"\" << url << \"\\\" not found\");\n"
-                "    throw tnt::NotFoundException(request.getPathInfo());\n"
+                "    return DECLINED;\n"
                 "  }\n"
                 "  unsigned url_idx = it - urls_begin;\n\n"
 
