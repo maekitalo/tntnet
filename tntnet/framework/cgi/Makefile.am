@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = libtntnet-cgi.la
+lib_LTLIBRARIES = libtntnet-cgi.la
 
 libtntnet_cgi_la_SOURCES = \
 	cgi.cpp \
