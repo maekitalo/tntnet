@@ -1,3 +1,15 @@
+2006-01-25 tommi@tntnet.org
+
+  - add support for locales
+
+2006-01-15 tommi@tntnet.org
+  - Simplified constant data-handling for i18n
+  - i18n is now controled with <%i18n>-tags
+
+2005-12-31 tommi@tntnet.org
+
+  - components can be compiled into cgi-programs
+
 2005-12-09 tommi@tntnet.org
 
   - new demo "controls" to demonstrate usage of end-tags
