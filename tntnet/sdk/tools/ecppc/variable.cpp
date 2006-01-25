@@ -83,7 +83,8 @@ namespace tnt
           << name << "_type " << name << ";\n"
           << "std::transform(qparam.begin(\"" << name
           << "\"), qparam.end(), std::back_inserter(" << name
-          << "), tnt::stringTo<" << type << ">);\n";
+          << "), tnt::stringToConverter<" << type
+          << ">(reply.out().getloc()));\n";
       }
     }
 
@@ -102,15 +103,15 @@ namespace tnt
         {
           // no default-value
 
-          o << "tnt::stringTo<" << type << ">( qparam.param(\""
-            << name << "\") );\n";
+          o << "tnt::stringToConverter<" << type
+            << ">(reply.out().getloc())( qparam.param(\"" << name << "\") );\n";
         }
         else
         {
           // with default-value
-          o << "qparam.has(\"" << name << "\") ? tnt::stringToWithDefault<"
-            << type << ">(qparam.param(\"" << name
-            << "\"), " << value << ") : " << value << ";\n";
+          o << "qparam.has(\"" << name << "\") ? tnt::stringToWithDefaultConverter<"
+            << type << ">(" << value << ", reply.out().getloc())(qparam.param(\""
+            << name << "\")) : " << value << ";\n";
         }
       }
       else
@@ -143,7 +144,8 @@ namespace tnt
             << " = config.getValue(\"" << name << "\");\n";
         else
           o << "    if (config.hasValue(\"" << name << "\"))\n"
-            << "      " << classname << "::" << name << " = config.getValue(\"" << name << "\");\n";
+            << "      " << classname << "::" << name << " = config.getValue(\""
+            << name << "\");\n";
       }
     }
 

@@ -1,5 +1,5 @@
 /* tnt/convert.h
-   Copyright (C) 2004 Tommi Maekitalo
+   Copyright (C) 2004,2006 Tommi Maekitalo
 
 This file is part of tntnet.
 
@@ -24,9 +24,25 @@ Boston, MA  02111-1307  USA
 
 #include <sstream>
 #include <stdexcept>
+#include <locale>
 
 namespace tnt
 {
+  class convertException : public std::runtime_error
+  {
+      std::string value;
+
+    public:
+      explicit convertException(const std::string& value_)
+        : std::runtime_error("cannot cast \"" + value_ + '"'),
+          value(value_)
+        { }
+      ~convertException() throw ()
+        { }
+
+      const std::string& getValue() const   { return value; }
+  };
+
   template <typename T>
   inline std::string toString(const T& value)
   {
@@ -35,11 +51,27 @@ namespace tnt
     return s.str();
   }
 
+  template <typename T>
+  inline std::string toString(const T& value, const std::locale& loc)
+  {
+    std::ostringstream s;
+    s.imbue(loc);
+    s << value;
+    return s.str();
+  }
+
   template <>
   inline std::string toString(const std::string& value)
   { return value; }
 
+  template <>
+  inline std::string toString(const std::string& value, const std::locale&)
+  { return value; }
+
   inline std::string toString(const char* value)
+  { return std::string(value); }
+
+  inline std::string toString(const char* value, const std::locale&)
   { return std::string(value); }
 
   template <typename T>
@@ -49,7 +81,19 @@ namespace tnt
     std::istringstream s(value);
     s >> ret;
     if (!s)
-      throw std::runtime_error("cannot cast " + value);
+      throw convertException(value);
+    return ret;
+  }
+
+  template <typename T>
+  inline T stringTo(const std::string& value, const std::locale& loc)
+  {
+    T ret;
+    std::istringstream s(value);
+    s.imbue(loc);
+    s >> ret;
+    if (!s)
+      throw convertException(value);
     return ret;
   }
 
@@ -64,13 +108,63 @@ namespace tnt
     return ret;
   }
 
+  template <typename T>
+  inline T stringToWithDefault(const std::string& value, const T& def, const std::locale& loc)
+  {
+    T ret;
+    std::istringstream s(value);
+    s.imbue(loc);
+    s >> ret;
+    if (!s)
+      return def;
+    return ret;
+  }
+
   template <>
   inline std::string stringTo<std::string>(const std::string& value)
   { return value; }
 
   template <>
+  inline std::string stringTo<std::string>(const std::string& value, const std::locale&)
+  { return value; }
+
+  template <>
   inline std::string stringToWithDefault<std::string>(const std::string& value, const std::string&)
   { return value; }
+
+  template <>
+  inline std::string stringToWithDefault<std::string>(const std::string& value, const std::string&, const std::locale&)
+  { return value; }
+
+  template <typename T>
+  class stringToConverter : public std::unary_function<std::string, T>
+  {
+      std::locale loc;
+    public:
+      stringToConverter() { }
+      explicit stringToConverter(const std::locale& loc_)
+        : loc(loc_)
+        { }
+
+      T operator() (std::string s)
+      { return stringTo<T>(s, loc); }
+  };
+
+  template <typename T>
+  class stringToWithDefaultConverter : public std::unary_function<std::string, T>
+  {
+      T def;
+      std::locale loc;
+
+    public:
+      explicit stringToWithDefaultConverter(const T& def_) : def(def_) { }
+      stringToWithDefaultConverter(const T& def_, const std::locale& loc_)
+        : def(def_), loc(loc_)
+        { }
+
+      T operator() (std::string s)
+      { return stringToWithDefault<T>(s, def, loc); }
+  };
 }
 
 #endif // TNT_CONVERT_H

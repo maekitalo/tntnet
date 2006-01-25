@@ -31,6 +31,7 @@ Boston, MA  02111-1307  USA
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <locale>
 
 log_define("tntnet.worker")
 
@@ -193,6 +194,20 @@ namespace tnt
     HttpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
     reply.setMethod(request.getMethod());
+    std::string LANG = request.getLang();
+    if (!LANG.empty())
+    {
+      try
+      {
+        std::locale loc(LANG.c_str());
+        reply.out().imbue(loc);
+        reply.sout().imbue(loc);
+      }
+      catch (const std::exception& e)
+      {
+        log_warn("unknown locale " << LANG);
+      }
+    }
 
     if (request.keepAlive())
       reply.setKeepAliveCounter(keepAliveCount);
