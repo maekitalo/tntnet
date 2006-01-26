@@ -1,8 +1,12 @@
 <%session>
-unsigned s(0);
+
+  unsigned s(0);
+
 </%session>
 <%session scope="global">
-unsigned sa(0);
+
+  unsigned sa(0);
+
 </%session>
 
 Sessioncounter (component): <$ ++s $><br>

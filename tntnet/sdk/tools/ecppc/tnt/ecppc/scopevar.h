@@ -53,6 +53,11 @@ namespace tnt
             init(init_)
             { }
 
+        scope_container_type getScopeContainer() const
+          { return scope_container; }
+        scope_type getScope() const
+          { return scope; }
+
         void get(std::ostream& o) const;
     };
   }

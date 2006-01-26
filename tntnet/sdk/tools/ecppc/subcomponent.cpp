@@ -72,5 +72,12 @@ namespace tnt
       Component::getBody(code);
       code << "}\n\n";
     }
+
+    void Subcomponent::getScopevars(std::ostream& o) const
+    {
+      Component::getScopevars(o);
+      outerclass->getScopevars(o, ecpp::page_scope);
+      outerclass->getScopevars(o, ecpp::global_scope);
+    }
   }
 }

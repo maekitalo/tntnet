@@ -61,5 +61,15 @@ namespace tnt
         it->get(body);
       }
     }
+
+    void Component::getScopevars(std::ostream& body, ecpp::scope_type scope) const
+    {
+      for (scopevars_type::const_iterator it = scopevars.begin();
+           it != scopevars.end(); ++it)
+      {
+        if (it->getScope() == scope)
+          it->get(body);
+      }
+    }
   }
 }

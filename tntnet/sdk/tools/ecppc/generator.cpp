@@ -210,7 +210,9 @@ namespace tnt
     void Generator::onScope(scope_container_type container, scope_type scope,
       const std::string& type, const std::string& var, const std::string& init)
     {
-      currentComp->addScopevar(Scopevar(container, scope, type, var, init));
+      tnt::ecppc::Component* comp = (scope == ecpp::page_scope ? &maincomp : currentComp);
+
+      comp->addScopevar(Scopevar(container, scope, type, var, init));
     }
 
     void Generator::startI18n()
