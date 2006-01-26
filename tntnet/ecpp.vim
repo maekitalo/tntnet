@@ -86,7 +86,7 @@ syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecp
 
 syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contains=@htmlTop
 syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@htmlTop
-syn region ecppInt matchgroup=Delimiter start="<%i18n>" end="</%i18n>" contains=@htmlTop
+"syn region ecppInt matchgroup=Delimiter start="<%i18n>" end="</%i18n>" contains=@ecppTop
 
 " Set up default highlighting. Almost all of this is done in the included
 " syntax files.
