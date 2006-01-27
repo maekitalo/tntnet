@@ -106,33 +106,6 @@ namespace tnt
 
       bool keepAlive() const;
   };
-
-  /// HTTP-error-class
-  class HttpError : public std::exception
-  {
-      std::string msg;
-
-    public:
-      HttpError(const std::string& m)
-        : msg(m)
-        { }
-
-      HttpError(unsigned errcode, const std::string& msg);
-      ~HttpError() throw ()
-        { }
-
-      const char* what() const throw ()
-      { return msg.c_str(); }
-  };
-
-  /// HTTP-error 404
-  class NotFoundException : public HttpError
-  {
-    public:
-      NotFoundException(const std::string& url)
-        : HttpError(404, "Not Found (" + url + ')')
-        { }
-  };
 }
 
 #endif // TNT_HTTPREPLY_H

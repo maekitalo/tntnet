@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/job.h"
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
+#include <tnt/httperror.h>
 #include <tnt/http.h>
 #include <tnt/poller.h>
 #include <tnt/sessionscope.h>
