@@ -26,6 +26,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httperror.h>
 #include <tnt/http.h>
 #include <tnt/httpheader.h>
+#include <tnt/httperror.h>
 #include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
