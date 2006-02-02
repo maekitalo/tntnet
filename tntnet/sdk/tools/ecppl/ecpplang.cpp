@@ -48,7 +48,7 @@ void Ecpplang::print(std::ostream& out) const
       it->second.begin(),
       it->second.end(),
       std::ostream_iterator<const char*>(out),
-      stringescaper(false));
+      tnt::stringescaper(false));
     out << '\n';
   }
 }

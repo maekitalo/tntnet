@@ -163,6 +163,8 @@ namespace tnt
         virtual void onConfig(const std::string& name, const std::string& value);
         virtual void onScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);
+        virtual void onInclude(const std::string& file);
+        virtual void onIncludeEnd(const std::string& file);
         virtual void startI18n();
         virtual void endI18n();
 

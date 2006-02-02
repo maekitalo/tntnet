@@ -173,7 +173,7 @@ void Ecppll::onHtml(const std::string& html)
       html.begin(),
       html.end(),
       std::ostream_iterator<const char*>(msg),
-      stringescaper(false));
+      tnt::stringescaper(false));
 
     bool found = true;
 

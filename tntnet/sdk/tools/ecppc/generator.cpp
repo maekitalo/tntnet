@@ -215,6 +215,16 @@ namespace tnt
       comp->addScopevar(Scopevar(container, scope, type, var, init));
     }
 
+    void Generator::onInclude(const std::string& file)
+    {
+      currentComp->addHtml("  // <%include> " + file + '\n');
+    }
+
+    void Generator::onIncludeEnd(const std::string& file)
+    {
+      currentComp->addHtml("  // </%include>\n");
+    }
+
     void Generator::startI18n()
     {
       externData = true;
@@ -422,7 +432,7 @@ namespace tnt
 
         std::transform(p.data(), p.data() + s,
           std::ostream_iterator<const char*>(code),
-          stringescaper());
+          tnt::stringescaper());
 
         code << "\",\n  " << s << ", " << data.size() << ");\n";
       }
