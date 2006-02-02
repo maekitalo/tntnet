@@ -28,16 +28,16 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class convertException : public std::runtime_error
+  class convertError : public std::runtime_error
   {
       std::string value;
 
     public:
-      explicit convertException(const std::string& value_)
+      explicit convertError(const std::string& value_)
         : std::runtime_error("cannot cast \"" + value_ + '"'),
           value(value_)
         { }
-      ~convertException() throw ()
+      ~convertError() throw ()
         { }
 
       const std::string& getValue() const   { return value; }
@@ -81,7 +81,7 @@ namespace tnt
     std::istringstream s(value);
     s >> ret;
     if (!s)
-      throw convertException(value);
+      throw convertError(value);
     return ret;
   }
 
@@ -93,7 +93,7 @@ namespace tnt
     s.imbue(loc);
     s >> ret;
     if (!s)
-      throw convertException(value);
+      throw convertError(value);
     return ret;
   }
 
