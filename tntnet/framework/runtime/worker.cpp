@@ -72,7 +72,7 @@ namespace tnt
   unsigned Worker::reportStateTime = 0;
   time_t Worker::nextReportStateTime = 0;
   unsigned Worker::minThreads = 5;
-  bool Worker::enableCompression = false;
+  bool Worker::enableCompression = true;
 
   Worker::ComploaderPoolType Worker::comploaderPool;
 
