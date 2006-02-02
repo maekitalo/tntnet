@@ -85,9 +85,7 @@ namespace tnt
       if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
         reply.setContentType(request.getArg(1));
 
-      std::copy(std::istreambuf_iterator<char>(in),
-                std::istreambuf_iterator<char>(),
-                std::ostreambuf_iterator<char>(reply.out()));
+      reply.out() << in.rdbuf();
     }
     catch (const unzipEndOfListOfFile&)
     {
