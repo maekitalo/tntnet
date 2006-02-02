@@ -5,6 +5,7 @@ libtntnet_sdk_la_SOURCES = \
 	filename.cpp \
 	parsehandler.cpp \
 	parser.cpp \
+	stringescaper.cpp \
 	tnt/datachunks_creator.h \
 	tnt/ecpp/parsehandler.h \
 	tnt/ecpp/parser.h \

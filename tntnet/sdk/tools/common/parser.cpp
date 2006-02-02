@@ -44,15 +44,17 @@ namespace tnt
 
       try
       {
-        handler.onCpp("  // <%include> " + file + '\n');
+        unsigned lineNumber = handler.lineNumber;
         parsePriv(inp);
-        handler.onCpp("  // </%include>\n");
+        handler.lineNumber = lineNumber;
       }
       catch (const std::exception&)
       {
         std::cerr << "file " << file << std::endl;
         throw;
       }
+
+      handler.onIncludeEnd(file);
     }
 
     void Parser::parsePriv(std::istream& in)
@@ -148,7 +150,8 @@ namespace tnt
       std::string cond, expr;
       comp_args_type comp_args;
       std::string pass_cgi;
-      unsigned curline = 1;
+      unsigned& curline = handler.lineNumber;
+      curline = 1;
       std::string defarg, defval;
       cppargs_type cppargs;
       unsigned bracket_count = 0;

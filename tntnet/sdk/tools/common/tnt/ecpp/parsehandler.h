@@ -30,10 +30,18 @@ namespace tnt
   {
     class ParseHandler
     {
+        friend class Parser;
+        unsigned lineNumber;
+
       public:
         typedef Parser::comp_args_type comp_args_type;
         typedef Parser::cppargs_type cppargs_type;
 
+        ParseHandler()
+          : lineNumber(0)
+          { }
+
+        unsigned getLineNumber() const  { return lineNumber; }
         virtual ~ParseHandler() {}
 
         virtual void start();
@@ -66,6 +74,7 @@ namespace tnt
         virtual void onConfig(const std::string& code, const std::string& value);
         virtual void tokenSplit(bool start);
         virtual void onInclude(const std::string& file);
+        virtual void onIncludeEnd(const std::string& file);
         virtual void startI18n();
         virtual void endI18n();
     };
