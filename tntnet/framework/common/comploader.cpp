@@ -93,7 +93,7 @@ LangLib* ComponentLibrary::getLangLib(const std::string& lang)
   }
   catch (const unzipError& e)
   {
-    log_error("unzipError: " << e.what());
+    log_warn("unzipError: " << e.what());
   }
   langlibs[lang] = l;
   return l;
