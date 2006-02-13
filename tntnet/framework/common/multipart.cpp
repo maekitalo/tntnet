@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/multipart.h>
+#include <tnt/httpheader.h>
 #include <sstream>
 #include <stdexcept>
 #include <streambuf>
@@ -104,6 +105,12 @@ namespace tnt
     if (it != header.end())
       return it->second;
     return std::string();
+  }
+
+  std::string Partheader::getMimetype() const
+  {
+    const_iterator it = find(httpheader::contentType);
+    return it == end() ? std::string() : it->second;
   }
 
   void Multipart::set(const std::string& boundary, const std::string& b)
