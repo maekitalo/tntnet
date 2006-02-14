@@ -27,7 +27,7 @@
     
 }>
 
-    <p><$ std::distance(it->getBodyBegin(), it->getBodyEnd()) $> bytes received; data:</p>
+    <p><$ it->getSize() $> bytes received; data:</p>
 
 <pre>
 <{
@@ -36,10 +36,10 @@
   // and prints it to a target-ostream. "reply.out()" gives us a ostream
   // to our client.
 
-  cxxtools::Hdostream hd(reply.sout());
+  cxxtools::Hdostream hd(reply.out());
 
   // hexdump first 1k of uploaded file
-  if (std::distance(it->getBodyBegin(), it->getBodyEnd()) > 1024)
+  if (it->getSize() > 1024)
   {
     std::copy(it->getBodyBegin(),
               it->getBodyBegin() + 1024,
