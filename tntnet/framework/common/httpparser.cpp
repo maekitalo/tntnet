@@ -101,7 +101,17 @@ namespace tnt
       log_debug("url=" << message.url);
       SET_STATE(state_qparam);
     }
-    else if (std::isspace(ch))
+    else if (ch == '\r')
+    {
+      log_debug("url=" << message.url);
+      SET_STATE(state_end0);
+    }
+    else if (ch == '\n')
+    {
+      log_debug("url=" << message.url);
+      SET_STATE(state_header);
+    }
+    else if (ch == ' ' || ch == '\t')
     {
       log_debug("url=" << message.url);
       SET_STATE(state_version);
