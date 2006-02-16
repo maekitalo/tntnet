@@ -52,14 +52,16 @@ namespace tnt
 
       pollfds.reserve(current_jobs.size() + new_jobs.size() + 1);
 
+      time_t currentTime;
+      time(&currentTime);
       for (jobs_type::iterator it = new_jobs.begin();
            it != new_jobs.end(); ++it)
       {
         append(*it);
         int msec;
         if (poll_timeout < 0)
-          poll_timeout = (*it)->msecToTimeout();
-        else if ((msec = (*it)->msecToTimeout()) < poll_timeout)
+          poll_timeout = (*it)->msecToTimeout(currentTime);
+        else if ((msec = (*it)->msecToTimeout(currentTime)) < poll_timeout)
           poll_timeout = msec;
       }
 
@@ -110,6 +112,8 @@ namespace tnt
   {
     log_debug("dispatch " << current_jobs.size() << " jobs");
 
+    time_t currentTime;
+    time(&currentTime);
     for (unsigned i = 0; i < current_jobs.size(); )
     {
       if (pollfds[i + 1].revents != 0)
@@ -123,7 +127,7 @@ namespace tnt
       else
       {
         // check timeout
-        int msec = current_jobs[i]->msecToTimeout();
+        int msec = current_jobs[i]->msecToTimeout(currentTime);
         if (msec <= 0)
         {
           log_debug("keep-alive-timeout reached");

@@ -45,9 +45,9 @@ namespace tnt
     touch();
   }
 
-  int Job::msecToTimeout() const
+  int Job::msecToTimeout(time_t currentTime) const
   {
-    return (lastAccessTime - time(0) + 1) * 1000
+    return (lastAccessTime - currentTime + 1) * 1000
          + getKeepAliveTimeout()
          - getSocketReadTimeout();
   }

@@ -114,7 +114,7 @@ namespace tnt
         { return keepAliveCounter > 0 ? --keepAliveCounter : 0; }
       void clear();
       void touch()     { time(&lastAccessTime); }
-      int msecToTimeout() const;
+      int msecToTimeout(time_t currentTime) const;
 
       static void setSocketReadTimeout(unsigned ms)     { socket_read_timeout = ms; }
       static void setSocketWriteTimeout(unsigned ms)    { socket_write_timeout = ms; }
