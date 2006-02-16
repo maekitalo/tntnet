@@ -250,7 +250,7 @@ namespace tnt
     state = stateDispatch;
     const std::string& url = request.getUrl();
 
-    log_info("dispatch " << request.getQuery());
+    log_debug("dispatch " << request.getQuery());
 
     if (!HttpRequest::checkUrl(url))
       throw HttpError(HTTP_BAD_REQUEST, "illegal url");
@@ -272,7 +272,7 @@ namespace tnt
 
         application.getScopemanager().preCall(request, ci.libname);
 
-        log_info("call component " << ci << " path " << request.getPathInfo());
+        log_debug("call component " << ci << " path " << request.getPathInfo());
         state = stateProcessingRequest;
         unsigned http_return = comp(request, reply, request.getQueryParams());
         if (http_return != DECLINED)
