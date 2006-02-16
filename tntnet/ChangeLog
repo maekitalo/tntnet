@@ -1,3 +1,7 @@
+2006-02-16 tommi@tntnet.org
+
+  - dramatic performance-improvement by optimization of locale-handling
+
 2006-01-25 tommi@tntnet.org
 
   - add support for locales
