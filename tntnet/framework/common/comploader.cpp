@@ -183,7 +183,6 @@ Component* Comploader::createComp(const Compident& ci,
 
   ComponentLibrary& lib = fetchLib(ci.libname);
   Component* comp = lib.create(ci.compname, *this, rootmapper);
-  comp->touch();
   return comp;
 }
 
