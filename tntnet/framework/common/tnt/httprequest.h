@@ -31,6 +31,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/encoding.h>
 #include <cxxtools/query_params.h>
 #include <tnt/scope.h>
+#include <locale>
 
 namespace tnt
 {
@@ -53,8 +54,8 @@ namespace tnt
       bool ssl;
       unsigned serial;
       static unsigned serial_;
-      mutable bool lang_init;
-      mutable std::string lang;
+      mutable bool locale_init;
+      mutable std::locale locale;
 
       mutable Encoding encoding;
       mutable bool encodingRead;
@@ -77,7 +78,7 @@ namespace tnt
     public:
       HttpRequest()
         : ssl(false),
-          lang_init(false),
+          locale_init(false),
           encodingRead(false),
           requestScope(0),
           applicationScope(0),
@@ -136,7 +137,8 @@ namespace tnt
 
       unsigned getSerial() const             { return serial; }
 
-      std::string getLang() const;
+      const std::locale& getLocale() const;
+      std::string getLang() const  { return getLocale().name(); }
 
       const Cookies& getCookies() const;
 

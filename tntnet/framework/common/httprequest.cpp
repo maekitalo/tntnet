@@ -41,7 +41,7 @@ namespace tnt
 
   HttpRequest::HttpRequest(const std::string& url)
     : ssl(false),
-      lang_init(false),
+      locale_init(false),
       requestScope(0),
       applicationScope(0),
       sessionScope(0),
@@ -62,8 +62,8 @@ namespace tnt
       mp(r.mp),
       ssl(r.ssl),
       serial(r.serial),
-      lang_init(r.lang_init),
-      lang(r.lang),
+      locale_init(r.locale_init),
+      locale(r.locale),
       requestScope(r.requestScope),
       applicationScope(r.applicationScope),
       sessionScope(r.sessionScope),
@@ -101,8 +101,8 @@ namespace tnt
     mp = r.mp;
     ssl = r.ssl;
     serial = r.serial;
-    lang_init = r.lang_init;
-    lang = r.lang;
+    locale_init = r.locale_init;
+    locale = r.locale;
     requestScope = r.requestScope;
     applicationScope = r.applicationScope;
     sessionScope = r.sessionScope;
@@ -127,7 +127,7 @@ namespace tnt
     qparam.clear();
     ct = Contenttype();
     mp = Multipart();
-    lang_init = false;
+    locale_init = false;
     if (requestScope)
     {
       requestScope->release();
@@ -238,31 +238,39 @@ namespace tnt
     return std::string(p);
   }
 
-  std::string HttpRequest::getLang() const
+  const std::locale& HttpRequest::getLocale() const
   {
-    if (!lang_init)
+    if (!locale_init)
     {
       static const std::string LANG = "LANG";
-      log_debug("HttpRequest::getLang() " << qparam.dump());
+      static const std::locale stdlocale("");
 
-      lang = qparam[LANG];
+      locale_init = true;
 
-      if (lang.empty())
-      {
-        const char* LANG = ::getenv("LANG");
-        if (LANG)
-          lang = LANG;
-      }
+      log_debug("HttpRequest::getLocale() " << qparam.dump());
+
+      std::string lang = qparam[LANG];
+
+      if (lang.empty() || lang == stdlocale.name())
+        return stdlocale;
       else
       {
         log_debug("LANG from query-parameter");
+        try
+        {
+          locale = std::locale(lang.c_str());
+        }
+        catch (const std::exception& e)
+        {
+          log_warn("unknown locale " << LANG);
+          return stdlocale;
+        }
       }
 
-      log_debug("LANG=" << lang);
-      lang_init = true;
+      log_debug("LANG=" << locale.name());
     }
 
-    return lang;
+    return locale;
   }
 
   const Cookies& HttpRequest::getCookies() const

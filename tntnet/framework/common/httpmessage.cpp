@@ -77,7 +77,7 @@ namespace tnt
   std::string HttpMessage::htdate(time_t t)
   {
     struct ::tm tm;
-    localtime_r(&t, &tm);
+    gmtime_r(&t, &tm);
     return htdate(&tm);
   }
 
@@ -88,7 +88,6 @@ namespace tnt
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     char buffer[80];
 
-    mktime(tm);
     sprintf(buffer, "%s, %02d %s %d %02d:%02d:%02d GMT",
       wday[tm->tm_wday], tm->tm_mday, monthn[tm->tm_mon], tm->tm_year + 1900,
       tm->tm_hour, tm->tm_min, tm->tm_sec);

@@ -195,20 +195,10 @@ namespace tnt
     HttpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
     reply.setMethod(request.getMethod());
-    std::string LANG = request.getLang();
-    if (!LANG.empty())
-    {
-      try
-      {
-        std::locale loc(LANG.c_str());
-        reply.out().imbue(loc);
-        reply.sout().imbue(loc);
-      }
-      catch (const std::exception& e)
-      {
-        log_warn("unknown locale " << LANG);
-      }
-    }
+
+    std::locale loc = request.getLocale();
+    reply.out().imbue(loc);
+    reply.sout().imbue(loc);
 
     if (request.keepAlive())
       reply.setKeepAliveCounter(keepAliveCount);
