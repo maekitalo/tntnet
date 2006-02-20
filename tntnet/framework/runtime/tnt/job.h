@@ -192,6 +192,8 @@ namespace tnt
 
       void setCapacity(unsigned c)
         { capacity = c; }
+      unsigned getCapacity() const
+        { return capacity; }
       unsigned getWaitThreadCount() const
         { return waitThreads; }
       bool empty() const

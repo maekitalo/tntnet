@@ -40,7 +40,7 @@ namespace tnt
     queryString.clear();
     header.clear();
     body.clear();
-    majorVersion = 0;
+    majorVersion = 1;
     minorVersion = 0;
     contentSize = 0;
   }

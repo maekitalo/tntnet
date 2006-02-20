@@ -90,7 +90,7 @@ namespace tnt
     // complete headers
 
     if (!hasHeader(httpheader::date))
-      setHeader(httpheader::date, htdate(time(0)));
+      setHeader(httpheader::date, htdateCurrent());
 
     if (!hasHeader(httpheader::server))
       setHeader(httpheader::server, httpheader::serverName);

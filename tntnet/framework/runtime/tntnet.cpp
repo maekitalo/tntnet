@@ -562,8 +562,8 @@ namespace tnt
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
     Worker::setReportStateTime(config.getValue<unsigned>("ReportStateTime", Worker::getReportStateTime()));
     Worker::setEnableCompression(config.getBoolValue("EnableCompression", Worker::getEnableCompression()));
-    queue.setCapacity(config.getValue<unsigned>("QueueSize", 100));
-    Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", 300));
+    queue.setCapacity(config.getValue<unsigned>("QueueSize", queue.getCapacity()));
+    Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", Sessionscope::getDefaultTimeout()));
     Listener::setBacklog(config.getValue<int>("ListenBacklog", Listener::getBacklog()));
     Listener::setListenRetry(config.getValue<int>("ListenRetry", Listener::getListenRetry()));
     Dispatcher::setMaxUrlMapCache(config.getValue<unsigned>("MaxUrlMapCache", Dispatcher::getMaxUrlMapCache()));

@@ -56,7 +56,7 @@ namespace tnt
 
     public:
       HttpMessage()
-        : majorVersion(0),
+        : majorVersion(1),
           minorVersion(0)
         { }
       virtual ~HttpMessage()

@@ -65,14 +65,20 @@ namespace tnt
 
   bool HttpMessage::Parser::state_cmd(char ch)
   {
-    if (std::isspace(ch))
+    if (ch == ' ')
     {
       log_debug("method=" << message.method);
       SET_STATE(state_url0);
     }
-    else
+    else if (ch > ' ')
       message.method += ch;
-    return false;
+    else
+    {
+      log_warn("invalid character " << chartoprint(ch) << " in method");
+      httpCode = HTTP_BAD_REQUEST;
+      failedFlag = true;
+    }
+    return failedFlag;
   }
 
   bool HttpMessage::Parser::state_url0(char ch)
@@ -111,7 +117,7 @@ namespace tnt
       log_debug("url=" << message.url);
       SET_STATE(state_header);
     }
-    else if (ch == ' ' || ch == '\t')
+    else if (ch == ' ')
     {
       log_debug("url=" << message.url);
       SET_STATE(state_version);
@@ -142,7 +148,11 @@ namespace tnt
   bool HttpMessage::Parser::state_version(char ch)
   {
     if (ch == '/')
+    {
+      message.majorVersion = 0;
+      message.minorVersion = 0;
       SET_STATE(state_version_major);
+    }
     else if (ch == '\r')
     {
       log_warn("invalid character " << chartoprint(ch) << " in version");
