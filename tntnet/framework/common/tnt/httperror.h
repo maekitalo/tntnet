@@ -42,6 +42,18 @@ namespace tnt
 
       const char* what() const throw ()
       { return msg.c_str(); }
+
+      std::string getErrcodeStr() const
+      { return msg.substr(0, 3); }
+
+      unsigned getErrcode() const
+      {
+        return (msg[0] - '0') * 100
+             + (msg[1] - '0') * 10
+             + (msg[2] - '0');
+      }
+
+      std::string getErrmsg() const;
   };
 
   /// HTTP-error 404

@@ -83,7 +83,7 @@ namespace tnt
     }
   }
 
-  void HttpReply::send(unsigned ret)
+  void HttpReply::send(unsigned ret, const char* msg)
   {
     std::string body = outstream.str();
 
@@ -116,9 +116,9 @@ namespace tnt
     if (sendStatusLine)
     {
       log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-             << ' ' << ret << " OK");
+             << ' ' << ret << ' ' << msg);
       socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-             << ' ' << ret << " OK" << "\r\n";
+             << ' ' << ret << ' ' << msg << "\r\n";
     }
 
     for (header_type::const_iterator it = header.begin();
@@ -157,11 +157,11 @@ namespace tnt
       sendStatusLine(sendStatusLine_)
   { }
 
-  void HttpReply::sendReply(unsigned ret)
+  void HttpReply::sendReply(unsigned ret, const char* msg)
   {
     if (!isDirectMode())
     {
-      send(ret);
+      send(ret, msg);
       socket.flush();
     }
   }
@@ -218,11 +218,11 @@ namespace tnt
       setHeader(httpheader::connection, httpheader::connectionClose);
   }
 
-  void HttpReply::setDirectMode()
+  void HttpReply::setDirectMode(unsigned ret, const char* msg)
   {
     if (!isDirectMode())
     {
-      send(HTTP_OK);
+      send(ret, msg);
       current_outstream = &socket;
       save_outstream.setSink(socket);
     }

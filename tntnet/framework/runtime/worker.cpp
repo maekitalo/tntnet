@@ -234,12 +234,12 @@ namespace tnt
     {
       state = stateSendError;
       log_warn("http-Error: " << e.what());
-      socket << "HTTP/1.0 " << std::string(e.what(), 3) << "\r\n"
-                "Content-Type: text/html\r\n"
-                "\r\n"
-                "<html><body><h1>Error</h1><p>"
-             << e.what() << "</p></body></html>" << std::endl;
-      return false;
+      HttpReply reply(socket);
+      reply.setVersion(1, 1);
+      reply.setKeepAliveCounter(keepAliveCount);
+      reply.out() << "<html><body><h1>Error</h1><p>"
+                  << e.what() << "</p></body></html>" << std::endl;
+      reply.sendReply(e.getErrcode(), e.getErrmsg());
     }
 
     return keepAliveCount > 0;

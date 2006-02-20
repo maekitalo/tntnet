@@ -46,4 +46,9 @@ namespace tnt
   {
   }
 
+  std::string HttpError::getErrmsg() const
+  {
+    std::string::size_type p = msg.find('\n', 4);
+    return p == std::string::npos ? msg.substr(4) : msg.substr(4, p - 4);
+  }
 }

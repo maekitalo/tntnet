@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httpmessage.h>
 #include <tnt/htmlescostream.h>
 #include <tnt/encoding.h>
+#include <tnt/http.h>
 #include <sstream>
 
 namespace tnt
@@ -50,7 +51,7 @@ namespace tnt
       bool sendStatusLine;
 
       void tryCompress(std::string& body);
-      void send(unsigned ret);
+      void send(unsigned ret, const char* msg);
 
     public:
       explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
@@ -63,7 +64,9 @@ namespace tnt
       virtual void throwNotFound(const std::string& errorMessage) const;
       unsigned redirect(const std::string& newLocation);
 
-      void sendReply(unsigned ret);
+      void sendReply(unsigned ret, const char* msg = "OK");
+      void sendReply(unsigned ret, const std::string& msg)
+        { sendReply(ret, msg.c_str()); }
 
       /// returns outputstream
       std::ostream& out()   { return *current_outstream; }
@@ -73,7 +76,7 @@ namespace tnt
       void setContentLengthHeader(size_t size);
       void setKeepAliveHeader(unsigned timeout = 15);
 
-      virtual void setDirectMode();
+      virtual void setDirectMode(unsigned ret = HTTP_OK, const char* msg = "OK");
       virtual void setDirectModeNoFlush();
       virtual bool isDirectMode() const
         { return current_outstream == &socket; }
