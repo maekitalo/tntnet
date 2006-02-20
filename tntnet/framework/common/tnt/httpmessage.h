@@ -130,6 +130,8 @@ namespace tnt
       static std::string htdate(time_t t);
       /// Returns a properly formatted date-string, as needed in http.
       static std::string htdate(struct ::tm* tm);
+      /// Returns a properly formatted current time-string, as needed in http.
+      static std::string htdateCurrent();
 
       /// Checks for double-dot-url. Returns false, if the url used as
       /// a filename would escape from the basedir.
