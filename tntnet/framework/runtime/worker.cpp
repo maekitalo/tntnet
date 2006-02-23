@@ -33,6 +33,7 @@ Boston, MA  02111-1307  USA
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <locale>
+#include <errno.h>
 
 log_define("tntnet.worker")
 
@@ -169,6 +170,11 @@ namespace tnt
       {
         log_debug("timeout - put job in poller");
         application.getPoller().addIdleJob(j);
+      }
+      catch (const cxxtools::net::Exception& e)
+      {
+        if (e.getErrno() != ENOENT)
+          log_warn("unexpected exception: " << e.what());
       }
       catch (const std::exception& e)
       {
