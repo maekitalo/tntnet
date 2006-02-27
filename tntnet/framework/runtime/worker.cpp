@@ -193,7 +193,7 @@ namespace tnt
          unsigned keepAliveCount)
   {
     // log message
-    log_info("process request: " << request.getMethod() << ' ' << request.getUrl()
+    log_info("process request: " << request.getMethod() << ' ' << request.getQuery()
       << " from client " << request.getPeerIp() << " user-Agent \"" << request.getUserAgent()
       << '"');
 
