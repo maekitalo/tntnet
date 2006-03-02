@@ -244,6 +244,9 @@ namespace tnt
     {
       static const std::string LANG = "LANG";
       static const std::locale stdlocale("");
+      typedef std::map<std::string, std::locale> locale_map_type;
+      static locale_map_type locale_map;
+      static cxxtools::Mutex locale_monitor;
 
       locale_init = true;
 
@@ -258,7 +261,15 @@ namespace tnt
         log_debug("LANG from query-parameter");
         try
         {
-          locale = std::locale(lang.c_str());
+          cxxtools::MutexLock lock(locale_monitor);
+          locale_map_type::const_iterator it = locale_map.find(lang);
+          if (it == locale_map.end())
+          {
+            locale = std::locale(lang.c_str());
+            locale_map.insert(locale_map_type::value_type(lang, locale));
+          }
+          else
+            locale = it->second;
         }
         catch (const std::exception& e)
         {
