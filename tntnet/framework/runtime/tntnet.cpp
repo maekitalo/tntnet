@@ -541,7 +541,7 @@ namespace tnt
     Job::setSocketReadTimeout(config.getValue("SocketReadTimeout", static_cast<unsigned>(200)));
     Job::setSocketWriteTimeout(config.getValue("SocketWriteTimeout", static_cast<unsigned>(10000)));
     Job::setKeepAliveTimeout(config.getValue("KeepAliveTimeout", static_cast<unsigned>(15000)));
-    Job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(100)));
+    Job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(1000)));
     Job::setSocketBufferSize(config.getValue("BufferSize", static_cast<unsigned>(16384)));
   }
 

@@ -70,7 +70,7 @@ PropertyFile        tntnet.properties
 #SocketReadTimeout  200
 #SocketWriteTimeout 10000
 #KeepAliveTimeout   15000
-#KeepAliveMax       100
+#KeepAliveMax       1000
 #SessionTimeout     300
 #ListenBacklog      16
 #ListenRetry        5
