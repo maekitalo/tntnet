@@ -167,7 +167,7 @@ namespace tnt
                 struct pollfd fd;
                 fd.fd = j->getFd();
                 fd.events = POLLIN;
-                if (::poll(&fd, 1, 100) == 0)
+                if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
                 {
                   application.getPoller().addIdleJob(j);
                   keepAlive = false;

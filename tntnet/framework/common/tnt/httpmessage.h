@@ -139,6 +139,7 @@ namespace tnt
 
       /// Sets a limit for a maximum request size.
       static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }
+      static size_t getMaxRequestSize()          { return maxRequestSize; }
   };
 }
 

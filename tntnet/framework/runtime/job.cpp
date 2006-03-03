@@ -32,8 +32,8 @@ namespace tnt
 {
   unsigned Job::socket_read_timeout = 200;
   unsigned Job::socket_write_timeout = 10000;
-  unsigned Job::keepalive_max = 100;
-  unsigned Job::socket_buffer_size = 4096;
+  unsigned Job::keepalive_max = 1000;
+  unsigned Job::socket_buffer_size = 16384;
 
   Job::~Job()
   { }

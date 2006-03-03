@@ -537,12 +537,18 @@ namespace tnt
     Comploader::configure(config);
 
     // configure http
-    HttpMessage::setMaxRequestSize(config.getValue("MaxRequestSize", static_cast<unsigned>(0)));
-    Job::setSocketReadTimeout(config.getValue("SocketReadTimeout", static_cast<unsigned>(200)));
-    Job::setSocketWriteTimeout(config.getValue("SocketWriteTimeout", static_cast<unsigned>(10000)));
-    Job::setKeepAliveTimeout(config.getValue("KeepAliveTimeout", static_cast<unsigned>(15000)));
-    Job::setKeepAliveMax(config.getValue("KeepAliveMax", static_cast<unsigned>(1000)));
-    Job::setSocketBufferSize(config.getValue("BufferSize", static_cast<unsigned>(16384)));
+    HttpMessage::setMaxRequestSize(
+      config.getValue("MaxRequestSize", HttpMessage::getMaxRequestSize()));
+    Job::setSocketReadTimeout(
+      config.getValue("SocketReadTimeout", Job::getSocketReadTimeout()));
+    Job::setSocketWriteTimeout(
+      config.getValue("SocketWriteTimeout", Job::getSocketWriteTimeout()));
+    Job::setKeepAliveTimeout(
+      config.getValue("KeepAliveTimeout", Job::getKeepAliveTimeout()));
+    Job::setKeepAliveMax(
+      config.getValue("KeepAliveMax", Job::getKeepAliveMax()));
+    Job::setSocketBufferSize(
+      config.getValue("BufferSize", Job::getSocketBufferSize()));
   }
 
   void Tntnet::workerProcess(int filedes)
