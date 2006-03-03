@@ -51,19 +51,6 @@ namespace tnt
     return call(request, reply, qparam);
   }
 
-  unsigned Component::call(HttpReply& reply, cxxtools::QueryParams& qparam)
-  {
-    HttpRequest request;
-    return call(request, reply, qparam);
-  }
-
-  unsigned Component::call(HttpReply& reply)
-  {
-    HttpRequest request;
-    cxxtools::QueryParams qparam;
-    return call(request, reply, qparam);
-  }
-
   std::string Component::scall(HttpRequest& request, cxxtools::QueryParams& qparam)
   {
     // set up new reply-object
@@ -81,19 +68,6 @@ namespace tnt
 
   std::string Component::scall(HttpRequest& request)
   {
-    cxxtools::QueryParams qparam;
-    return scall(request, qparam);
-  }
-
-  std::string Component::scall(cxxtools::QueryParams& qparam)
-  {
-    HttpRequest request;
-    return scall(request, qparam);
-  }
-
-  std::string Component::scall()
-  {
-    HttpRequest request;
     cxxtools::QueryParams qparam;
     return scall(request, qparam);
   }

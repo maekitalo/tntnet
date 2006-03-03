@@ -73,19 +73,11 @@ class Component
       { return operator() (request, reply, qparam); }
     /// call component without parameters
     unsigned call(HttpRequest& request, HttpReply& reply);
-    /// call component dummy request
-    unsigned call(HttpReply& reply, cxxtools::QueryParams& qparam);
-    /// call component without parameters and dummy request
-    unsigned call(HttpReply& reply);
 
     /// return output as a string rather than outputting to stream
     std::string scall(HttpRequest& request, cxxtools::QueryParams& qparam);
     /// return output as a string rather than outputting to stream without query-parameters
     std::string scall(HttpRequest& request);
-    /// return output as a string rather than outputting to stream with empty request
-    std::string scall(cxxtools::QueryParams& qparam);
-    /// return output as a string rather than outputting to stream with empty request and without query-parameters
-    std::string scall();
 };
 
 }
