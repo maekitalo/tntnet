@@ -162,6 +162,17 @@ namespace tnt
                 application.getPoller().addIdleJob(j);
                 keepAlive = false;
               }
+              else
+              {
+                struct pollfd fd;
+                fd.fd = j->getFd();
+                fd.events = POLLIN;
+                if (::poll(&fd, 1, 100) == 0)
+                {
+                  application.getPoller().addIdleJob(j);
+                  keepAlive = false;
+                }
+              }
             }
           }
         } while (keepAlive);
