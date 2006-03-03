@@ -551,7 +551,7 @@ namespace tnt
             {
               handler.onCpp(code);
               code.clear();
-              state = state_html0;
+              state = state_html;
             }
             else
             {

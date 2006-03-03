@@ -1,3 +1,8 @@
+2006-03-02 tommi@tntnet.org
+
+  - locale-cache
+  - poll before read, which reduces system calls even more
+
 2006-02-16 tommi@tntnet.org
 
   - dramatic performance-improvement by optimization of locale-handling
