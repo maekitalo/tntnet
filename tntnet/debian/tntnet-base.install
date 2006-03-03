@@ -1,3 +1,4 @@
 usr/bin/tntnet
 usr/lib/libtntnet.so.*
+usr/lib/libtntnet-cgi.so.*
 usr/lib/tntnet/tntnet.so.*
