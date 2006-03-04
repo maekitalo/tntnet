@@ -136,19 +136,16 @@ namespace tnt
                 typename parameter2_type>
         unsigned callSubComp(const std::string& sub, HttpRequest& request,
             parameter1_type& p1,
-            parameter2_type& p2) const
-        { return fetchSubComp(sub).call(request, p1, p2); }
+            parameter2_type& p2) const;
 
       template <typename parameter1_type>
         unsigned callSubComp(const std::string& sub, HttpRequest& request,
-            parameter1_type& p1) const
-        { return fetchSubComp(sub).call(request, p1); }
+            parameter1_type& p1) const;
 
       /// helper-methods for fetching contents of subcomponents
       template <typename parameter1_type>
         std::string scallSubComp(const std::string& sub, HttpRequest& request,
-            parameter1_type& p1) const
-        { return fetchSubComp(sub).scall(request, p1); }
+            parameter1_type& p1) const;
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -190,6 +187,30 @@ namespace tnt
                         )
                  .fetchSubComp(ci.subname);
   }
+
+  template <typename parameter1_type,
+            typename parameter2_type>
+    unsigned EcppComponent::callSubComp(
+        const std::string& sub,
+        HttpRequest& request,
+        parameter1_type& p1,
+        parameter2_type& p2) const
+    { return fetchSubComp(sub).call(request, p1, p2); }
+
+  template <typename parameter1_type>
+    unsigned EcppComponent::callSubComp(
+        const std::string& sub,
+        HttpRequest& request,
+        parameter1_type& p1) const
+    { return fetchSubComp(sub).call(request, p1); }
+
+  /// helper-methods for fetching contents of subcomponents
+  template <typename parameter1_type>
+    std::string EcppComponent::scallSubComp(
+        const std::string& sub,
+        HttpRequest& request,
+        parameter1_type& p1) const
+    { return fetchSubComp(sub).scall(request, p1); }
 
   //////////////////////////////////////////////////////////////////////
   // scope-helper
