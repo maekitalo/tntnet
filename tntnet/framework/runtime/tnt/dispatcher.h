@@ -115,19 +115,6 @@ namespace tnt
 
           CompidentType getNext();
       };
-
-      template <class OutputIterator>
-        void mapCompAll(const std::string& compUrl, OutputIterator it)
-      {
-        cxxtools::RdLock lock(rwlock);
-        urlmap_type::const_iterator pos = urlmap.begin();
-        CompidentType ci;
-        while (mapCompNext(compUrl, ci, pos))
-        {
-          *it++ = ci;
-          ++pos;
-        }
-      }
   };
 
 }
