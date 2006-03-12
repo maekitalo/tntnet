@@ -24,7 +24,10 @@ Boston, MA  02111-1307  USA
 #include <iterator>
 #include <zlib.h>
 #include <cxxtools/dynbuffer.h>
+#include <cxxtools/log.h>
 #include <tnt/httpmessage.h>
+
+log_define("tntnet.generator");
 
 namespace tnt
 {
@@ -73,22 +76,23 @@ namespace tnt
 
     void Generator::onHtml(const std::string& html)
     {
+      log_debug("onHtml(\"" << html << "\")");
+
       data.push_back(html);
-      if (!html.empty())
-      {
-        std::ostringstream m;
 
-        m << "  reply.out() << data[" << (data.count() - 1) << "]; // ";
+      std::ostringstream m;
+      m << "  reply.out() << data[" << (data.count() - 1) << "]; // ";
 
-        std::transform(
-          html.begin(),
-          html.end(),
-          std::ostream_iterator<const char*>(m),
-          stringescaper(false));
+      std::transform(
+        html.begin(),
+        html.end(),
+        std::ostream_iterator<const char*>(m),
+        stringescaper(false));
 
-        m << '\n';
-        currentComp->addHtml(m.str());
-      }
+      m << '\n';
+      currentComp->addHtml(m.str());
+
+      log_debug("onHtml(\"" << html << "\") end, data.size()=" << data.count());
     }
 
     void Generator::onExpression(const std::string& expr)

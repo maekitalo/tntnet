@@ -23,6 +23,9 @@ Boston, MA  02111-1307  USA
 #include "tnt/ecpp/parsehandler.h"
 #include <sstream>
 #include <fstream>
+#include <cxxtools/log.h>
+
+log_define("tntnet.parser");
 
 namespace tnt
 {
@@ -33,6 +36,7 @@ namespace tnt
 
     void Parser::doInclude(const std::string& file)
     {
+      log_debug("onInclude(\"" << file << "\")");
       handler.onInclude(file);
 
       std::ifstream inp(file.c_str());
@@ -54,6 +58,7 @@ namespace tnt
         throw;
       }
 
+      log_debug("onIncludeEnd(\"" << file << "\")");
       handler.onIncludeEnd(file);
     }
 
@@ -189,6 +194,7 @@ namespace tnt
             {
               if (!html.empty() || ch == split_end)
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -214,6 +220,7 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -224,6 +231,7 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -233,6 +241,7 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -242,6 +251,7 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -251,6 +261,7 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -302,11 +313,15 @@ namespace tnt
               // expression ends, html continues
               if (htmlExpr)
               {
+                log_debug("onHtmlExpression(\"" << code << "\")");
                 handler.onHtmlExpression(code);
                 htmlExpr = false;
               }
               else
+              {
+                log_debug("onExpression(\"" << code << "\")");
                 handler.onExpression(code);
+              }
               code.clear();
               state = state_html;
             }
@@ -549,6 +564,7 @@ namespace tnt
           case state_cppse:
             if (ch == '>')
             {
+              log_debug("onCpp(\"" << code << "\")");
               handler.onCpp(code);
               code.clear();
               state = state_html;
@@ -593,19 +609,40 @@ namespace tnt
                   + tag + " expected, "
                   + etag + " found", state, curline);
               else if (tag == "pre")
+              {
+                log_debug("onPre(\"" << code << "\")");
                 handler.onPre(code);
+              }
               else if (tag == "declare")
+              {
+                log_debug("onDeclare(\"" << code << "\")");
                 handler.onDeclare(code);
+              }
               else if (tag == "init")
+              {
+                log_debug("onInit(\"" << code << "\")");
                 handler.onInit(code);
+              }
               else if (tag == "cleanup")
+              {
+                log_debug("onCleanup(\"" << code << "\")");
                 handler.onCleanup(code);
+              }
               else if (tag == "declare_shared")
+              {
+                log_debug("onDeclareShared(\"" << code << "\")");
                 handler.onDeclareShared(code);
+              }
               else if (tag == "shared")
+              {
+                log_debug("onShared(\"" << code << "\")");
                 handler.onShared(code);
+              }
               else if (tag == "cpp")
+              {
+                log_debug("onCpp(\"" << code << "\")");
                 handler.onCpp(code);
+              }
               else if (tag == "args" || tag == "attr" || tag == "config"
                 || tag == "include"
                 || tag == "session"
@@ -633,6 +670,7 @@ namespace tnt
               // start of oneline-cpp
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -644,6 +682,7 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -662,6 +701,7 @@ namespace tnt
             if (ch == '\n')
             {
               code += '\n';
+              log_debug("onCpp(\"" << code << "\")");
               handler.onCpp(code);
               code.clear();
               state = state_nl;
@@ -849,6 +889,7 @@ namespace tnt
             {
               if (value.empty())
                 throw parse_error("value expected", state, curline);
+              log_debug("onAttr(\"" << arg << "\", \"" << value << "\")");
               handler.onAttr(arg, value);
               arg.clear();
               value.clear();
@@ -890,6 +931,7 @@ namespace tnt
             {
               if (value.empty())
                 throw parse_error("value expected", state, curline);
+              log_debug("onAttr(\"" << arg << "\", \"" << value << "\")");
               handler.onAttr(arg, value);
               arg.clear();
               value.clear();
@@ -941,6 +983,7 @@ namespace tnt
           case state_callname:
             if (ch == '&' || ch == '/' || ch == '>')
             {
+              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               comp.clear();
               comp_args.clear();
@@ -999,6 +1042,7 @@ namespace tnt
             }
             else if (ch == '&' || ch == '/' || ch == '>')
             {
+              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               arg.clear();
               comp.clear();
@@ -1022,6 +1066,7 @@ namespace tnt
               state = state_callval0;
             else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
+              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
               handler.onCall(comp, comp_args, arg, defarg);
               arg.clear();
               comp.clear();
@@ -1045,6 +1090,7 @@ namespace tnt
             }
             else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
+              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
               handler.onCall(comp, comp_args, arg, defarg);
               arg.clear();
               comp.clear();
@@ -1119,6 +1165,7 @@ namespace tnt
               arg.clear();
               value.clear();
 
+              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               comp.clear();
               comp_args.clear();
@@ -1147,6 +1194,7 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
@@ -1170,6 +1218,7 @@ namespace tnt
             {
               if (inComp && tag == "def")
               {
+                log_debug("onComp(\"" << code << "\")");
                 handler.onComp(code);
                 inComp = false;
                 state = state_html0;
@@ -1230,6 +1279,7 @@ namespace tnt
           case state_condexpre:
             if (ch == '>')
             {
+              log_debug("onCondExpression(\"" << cond << ", " << code << "\")");
               handler.onCondExpr(cond, expr);
               cond.clear();
               expr.clear();
@@ -1359,6 +1409,8 @@ namespace tnt
               if (scopetype.size() > 0
                 && std::isspace(scopetype.at(scopetype.size() - 1)))
                   scopetype.erase(scopetype.size() - 1);
+              log_debug("onScope(" << scope_container << ", " << scope << ", "
+                  << scopetype << ", " << scopevar << ", " << scopeinit << ')');
               handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
 
               scopetype.clear();
@@ -1403,6 +1455,8 @@ namespace tnt
               if (scopetype.size() > 0
                 && std::isspace(scopetype.at(scopetype.size() - 1)))
                   scopetype.erase(scopetype.size() - 1);
+              log_debug("onScope(" << scope_container << ", " << scope << ", "
+                  << scopetype << ", " << scopevar << ", " << scopeinit << ')');
               handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
 
               scopetype.clear();
@@ -1449,9 +1503,11 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
+              log_debug("onEndCall(\"" << comp << "\")");
               handler.onEndCall(comp);
               comp.clear();
               state = state_html;
@@ -1466,15 +1522,18 @@ namespace tnt
             {
               if (!html.empty())
               {
+                log_debug("onHtml(\"" << html << "\")");
                 handler.onHtml(html);
                 html.clear();
               }
+              log_debug("onEndCall(\"" << comp << "\")");
               handler.onEndCall(comp);
               comp.clear();
               state = state_html;
             }
             else if (std::isspace(ch))
             {
+              log_debug("onEndCall(\"" << comp << "\")");
               handler.onEndCall(comp);
               comp.clear();
               state = state_endcalle;
@@ -1506,7 +1565,10 @@ namespace tnt
         throw parse_error("</%close> missing", state, curline);
 
       if (!html.empty())
+      {
+        log_debug("onHtml(\"" << html << "\")");
         handler.onHtml(html);
+      }
     }
 
     void Parser::parse(std::istream& in)
