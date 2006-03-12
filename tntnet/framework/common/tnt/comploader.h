@@ -44,6 +44,7 @@ namespace tnt
 
       factoryMapType factoryMap;
       std::string libname;
+      std::string path;
       typedef std::map<std::string, LangLib*> langlibsType;
       langlibsType langlibs;
 
@@ -51,9 +52,10 @@ namespace tnt
       ComponentLibrary()
         { }
 
-      ComponentLibrary(const std::string& path, const std::string& name)
-        : cxxtools::dl::Library((path + '/' + name).c_str()),
-          libname(name)
+      ComponentLibrary(const std::string& path_, const std::string& name)
+        : cxxtools::dl::Library((path_ + '/' + name).c_str()),
+          libname(name),
+          path(path_)
         { }
 
       ComponentLibrary(const std::string& name)

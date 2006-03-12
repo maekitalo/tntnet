@@ -81,7 +81,7 @@ namespace tnt
       unsigned size(unsigned n) const
       { return udata()[n + 1] - udata()[n]; }
 
-      // Zeiger auf das n-te chunk
+      // pointer to n-th chunk
       const char* ptr(unsigned n) const
       {
         const char* d = dataObject;

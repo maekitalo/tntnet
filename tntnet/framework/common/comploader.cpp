@@ -89,7 +89,8 @@ LangLib* ComponentLibrary::getLangLib(const std::string& lang)
   LangLib* l = 0;
   try
   {
-    l = new LangLib(libname, lang);
+    std::string n = (path.empty() ? libname : (path + '/' + libname));
+    l = new LangLib(n, lang);
   }
   catch (const unzipError& e)
   {
