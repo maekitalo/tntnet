@@ -255,10 +255,10 @@ namespace tnt
       std::string lang = qparam[LANG];
 
       if (lang.empty() || lang == stdlocale.name())
-        return stdlocale;
+        locale = stdlocale;
       else
       {
-        log_debug("LANG from query-parameter");
+        log_debug("LANG from query-parameter (" << lang << ')');
         try
         {
           cxxtools::MutexLock lock(locale_monitor);
@@ -273,8 +273,9 @@ namespace tnt
         }
         catch (const std::exception& e)
         {
-          log_warn("unknown locale " << LANG);
-          return stdlocale;
+          log_warn("unknown locale " << lang << ": " << e.what());
+          locale = stdlocale;
+          locale_map.insert(locale_map_type::value_type(lang, locale));
         }
       }
 
