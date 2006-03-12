@@ -20,7 +20,7 @@ Description: Web-application-server
 Package: tntnet-dev
 Section: devel
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, tntnet-base
+Depends: ${shlibs:Depends}, ${misc:Depends}, tntnet-base, libcxxtools-dev (>= 1.4.0)
 Description: Web-application-server
  tntnet is a webapplication-server for webapplications written in c++.
  It uses a template-language, where you can embed c++-code inside

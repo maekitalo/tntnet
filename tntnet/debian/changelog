@@ -1,3 +1,15 @@
+tntnet (1.5.1pre1-2) stable; urgency=low
+
+  * search languages-files in same path as componentlibrary
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Fri, 10 Mar 2006 09:29:20 +0100
+
+tntnet (1.5.1pre1-1) stable; urgency=low
+
+  * fixed language-generation
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Mon,  6 Mar 2006 14:15:32 +0100
+
 tntnet (1.5.0-1) stable; urgency=low
 
   * updated to 1.5.0
