@@ -75,12 +75,6 @@ namespace tnt
       typedef std::set<std::string> libnotfound_type;
       typedef std::set<Compident> compnotfound_type;
 
-      static libnotfound_type libnotfound;
-      static compnotfound_type compnotfound;
-
-      static void rememberLibNotFound(const std::string& lib);
-      static void rememberCompNotFound(const Compident& ci);
-
     protected:
       virtual ~EcppComponent();
 

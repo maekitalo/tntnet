@@ -62,8 +62,6 @@ namespace tnt
   // EcppComponent
   //
   cxxtools::RWLock equivMonitor;
-  EcppComponent::libnotfound_type EcppComponent::libnotfound;
-  EcppComponent::compnotfound_type EcppComponent::compnotfound;
 
   EcppComponent::EcppComponent(const Compident& ci, const Urlmapper& um,
     Comploader& cl)
@@ -173,20 +171,6 @@ namespace tnt
     }
 
     return def;
-  }
-
-  void EcppComponent::rememberLibNotFound(const std::string& lib)
-  {
-    log_debug("remember lib not found " << lib);
-    cxxtools::WrLock wrlock(equivMonitor);
-    libnotfound.insert(lib);
-  }
-
-  void EcppComponent::rememberCompNotFound(const Compident& ci)
-  {
-    log_debug("remember comp not found " << ci);
-    cxxtools::WrLock wrlock(equivMonitor);
-    compnotfound.insert(ci);
   }
 
   ///////////////////////////////////////////////////////////////////////

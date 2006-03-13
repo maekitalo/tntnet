@@ -291,8 +291,6 @@ namespace tnt
 
     if (!httpcookies.hasCookies())
     {
-      log_debug("cookies found");
-
       header_type::const_iterator it = header.find(httpheader::cookie);
       if (it != header.end())
       {

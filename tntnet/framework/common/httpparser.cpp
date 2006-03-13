@@ -232,6 +232,7 @@ namespace tnt
         else
         {
           SET_STATE(state_body);
+          message.body.reserve(bodySize);
           return false;
         }
       }
