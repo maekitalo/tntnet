@@ -121,6 +121,8 @@ namespace tnt
         {
           time(&lastWaitTime);
 
+          log_info("read request");
+
           keepAlive = false;
           log_debug("call parser");
           state = stateParsing;
