@@ -33,14 +33,22 @@ namespace tnt
 {
   static void checkSslError()
   {
+    log_debug("ERR_get_error");
     unsigned long code = ERR_get_error();
     if (code != 0)
     {
       char buffer[120];
+      log_debug("ERR_error_string");
       if (ERR_error_string(code, buffer))
+      {
+        log_debug("SSL-Error " << code << ": \"" << buffer << '"');
         throw SslException(buffer, code);
+      }
       else
+      {
+        log_debug("unknown SSL-Error " << code);
         throw SslException("unknown SSL-Error", code);
+      }
     }
   }
 
@@ -54,10 +62,11 @@ namespace tnt
   static void pthreads_locking_callback(int mode, int n, const char *file,
     int line)
   {
+    /*
     log_debug("pthreads_locking_callback " << CRYPTO_thread_id()
       << " n=" << n
       << " mode=" << ((mode & CRYPTO_LOCK) ? 'l' : 'u')
-      << ' ' << file << ':' << line);
+      << ' ' << file << ':' << line); */
 
     if (mode & CRYPTO_LOCK)
       ssl_mutex[n].lock();
@@ -83,8 +92,11 @@ namespace tnt
       cxxtools::MutexLock lock(mutex);
       if (!initialized)
       {
+        log_debug("SSL_load_error_strings");
         SSL_load_error_strings();
+        log_debug("SSL_library_init");
         SSL_library_init();
+
         checkSslError();
         thread_setup();
         initialized = true;
@@ -113,6 +125,7 @@ namespace tnt
   {
     ssl_init();
 
+    log_debug("SSL_CTX_new(SSLv23_server_method())");
     ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
 
@@ -123,6 +136,7 @@ namespace tnt
   {
     ssl_init();
 
+    log_debug("SSL_CTX_new(SSLv23_server_method())");
     ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
 
@@ -132,7 +146,10 @@ namespace tnt
   SslServer::~SslServer()
   {
     if (ctx)
+    {
+      log_debug("SSL_CTX_free(ctx)");
       SSL_CTX_free(ctx);
+    }
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -148,45 +165,84 @@ namespace tnt
     : ssl(0)
   {
     ssl_init();
-
-    ssl = SSL_new( server.getSslContext() );
-    checkSslError();
-
-    SSL_set_accept_state(ssl);
-    SSL_set_fd(ssl, getFd());
-
-    SSL_accept(ssl);
-    checkSslError();
+    accept(server);
   }
 
   SslStream::~SslStream()
   {
     if (ssl)
+    {
+      log_debug("SSL_free(" << ssl << ')');
       SSL_free(ssl);
+    }
   }
 
-  void SslStream::Accept(const SslServer& server)
+  void SslStream::accept(const SslServer& server)
   {
     log_debug("accept");
     Stream::accept(server);
 
     log_debug("tcp-connection established - build ssltunnel");
+
+    log_debug("SSL_new(" << server.getSslContext() << ')');
     ssl = SSL_new( server.getSslContext() );
     checkSslError();
 
+    log_debug("SSL_set_fd(" << ssl << ", " << getFd() << ')');
     SSL_set_fd(ssl, getFd());
 
+    log_debug("SSL_set_accept_state(" << ssl << ')');
     SSL_set_accept_state(ssl);
-    SSL_accept(ssl);
+
+    log_debug("SSL_accept(" << ssl << ')');
+    int ret = SSL_accept(ssl);
     checkSslError();
 
-    setTimeout(getTimeout());
+    if (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_READ
+        || SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE)
+    {
+      struct pollfd fds;
+      fds.fd = getFd();
+
+      do
+      {
+        fds.events = (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE)
+              ? POLLOUT : POLLIN;
+
+        int p = ::poll(&fds, 1, getTimeout());
+        log_debug("poll => " << p << " revents=" << fds.revents);
+
+        if (p < 0)
+        {
+          int errnum = errno;
+          throw cxxtools::net::Exception(strerror(errnum));
+        }
+        else if (p == 0)
+        {
+          log_debug("accept-timeout");
+          throw cxxtools::net::Timeout();
+        }
+
+        log_debug("SSL_accept(" << ssl << ')');
+        ret = SSL_accept(ssl);
+
+        checkSslError();
+
+        log_debug("SSL_get_error => " << SSL_get_error(ssl, ret));
+      } while (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_READ
+            || SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE);
+    }
 
     log_debug("ssl-connection ready");
   }
 
   int SslStream::SslRead(char* buffer, int bufsize) const
   {
+    // I had crashes without this (and the lock in SslWrite) lock:
+    // openssl should be thread-safe, with the installed callbacks, but I did not
+    // get it working
+    cxxtools::MutexLock lock(mutex);
+
     log_debug("read");
 
     int n;
@@ -207,6 +263,7 @@ namespace tnt
       // non-blocking/with timeout
 
       // try read
+      log_debug("SSL_read");
       n = ::SSL_read(ssl, buffer, bufsize);
 
       log_debug("ssl-read => " << n);
@@ -214,6 +271,7 @@ namespace tnt
       if (n > 0)
         return n;
 
+      log_debug("SSL_get_error(" << ssl << ", " << n << ')');
       if (SSL_get_error(ssl, n) != SSL_ERROR_WANT_READ
        && SSL_get_error(ssl, n) != SSL_ERROR_WANT_WRITE)
         checkSslError();
@@ -251,6 +309,7 @@ namespace tnt
           throw cxxtools::net::Timeout();
         }
 
+        log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
         n = ::SSL_read(ssl, buffer, bufsize);
         log_debug("SSL_read returns " << n);
         checkSslError();
@@ -266,11 +325,17 @@ namespace tnt
 
   int SslStream::SslWrite(const char* buffer, int bufsize) const
   {
+    // I had crashes without this (and the lock in SslRead) lock:
+    // openssl should be thread-safe, with the installed callbacks, but I did not
+    // get it working
+    cxxtools::MutexLock lock(mutex);
+
     int n = 0;
     int s = bufsize;
 
     while (true)
     {
+      log_debug("SSL_write(" << ssl << ", buffer, " << s << ')');
       n = SSL_write(ssl, buffer, s);
       checkSslError();
 
@@ -303,6 +368,7 @@ namespace tnt
       }
     }
 
+    log_debug("SslStream::SslWrite returns " << bufsize);
     return bufsize;
   }
 

@@ -150,6 +150,7 @@ namespace tnt
   class SslTcpjob : public Job
   {
       ssl_iostream socket;
+      static unsigned ssl_accept_timeout;
 
     public:
       SslTcpjob()
@@ -162,6 +163,9 @@ namespace tnt
       int getFd() const;
       void setRead();
       void setWrite();
+
+      static void setSslAcceptTimeout(unsigned ms)   { ssl_accept_timeout = ms; }
+      static unsigned getSslAcceptTimeout()      { return ssl_accept_timeout; }
   };
 #endif // USE_SSL
 

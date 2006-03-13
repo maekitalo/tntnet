@@ -68,14 +68,7 @@ namespace tnt
       explicit SslStream(const SslServer& server);
       ~SslStream();
 
-      void Accept(const SslServer& server);
-
-#if 0
-currently no client-support
-      void Connect(const char* ipaddr, unsigned short int port);
-      void Connect(const std::string& ipaddr, unsigned short int port)
-        { Connect(ipaddr.c_str(), port); }
-#endif
+      void accept(const SslServer& server);
 
       int SslRead(char* buffer, int bufsize) const;
       int SslWrite(const char* buffer, int bufsize) const;

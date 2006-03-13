@@ -495,6 +495,8 @@ namespace tnt
     std::string defaultCertificateKey = config.getValue("SslKey");
     configListen.clear();
     config.getConfigValues("SslListen", configListen);
+    SslTcpjob::setSslAcceptTimeout(
+      config.getValue("SslAcceptTimeout", SslTcpjob::getSslAcceptTimeout()));
 
     for (Tntconfig::config_entries_type::const_iterator it = configListen.begin();
          it != configListen.end(); ++it)
@@ -519,8 +521,8 @@ namespace tnt
         it->params.size() >= 3 ? it->params[2]
                                : defaultCertificateFile;
       std::string certificateKey =
-        it->params.size() >= 4 ? it->params[3]
-                               : defaultCertificateKey;
+        it->params.size() >= 4 ? it->params[3] :
+        it->params.size() >= 3 ? it->params[2] : defaultCertificateKey;
 
       if (certificateFile.empty())
         throw std::runtime_error("Ssl-certificate not configured");
