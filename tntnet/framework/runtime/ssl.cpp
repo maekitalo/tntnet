@@ -193,47 +193,6 @@ namespace tnt
 
     log_debug("SSL_set_accept_state(" << ssl << ')');
     SSL_set_accept_state(ssl);
-
-    log_debug("SSL_accept(" << ssl << ')');
-    int ret = SSL_accept(ssl);
-    checkSslError();
-
-    if (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_READ
-        || SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE)
-    {
-      struct pollfd fds;
-      fds.fd = getFd();
-
-      do
-      {
-        fds.events = (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE)
-              ? POLLOUT : POLLIN;
-
-        int p = ::poll(&fds, 1, getTimeout());
-        log_debug("poll => " << p << " revents=" << fds.revents);
-
-        if (p < 0)
-        {
-          int errnum = errno;
-          throw cxxtools::net::Exception(strerror(errnum));
-        }
-        else if (p == 0)
-        {
-          log_debug("accept-timeout");
-          throw cxxtools::net::Timeout();
-        }
-
-        log_debug("SSL_accept(" << ssl << ')');
-        ret = SSL_accept(ssl);
-
-        checkSslError();
-
-        log_debug("SSL_get_error => " << SSL_get_error(ssl, ret));
-      } while (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_READ
-            || SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE);
-    }
-
-    log_debug("ssl-connection ready");
   }
 
   int SslStream::SslRead(char* buffer, int bufsize) const
@@ -412,20 +371,12 @@ namespace tnt
 
   ssl_streambuf::int_type ssl_streambuf::underflow()
   {
-    try
-    {
-      int n = m_stream.SslRead(m_buffer, m_bufsize);
-      if (n <= 0)
-        return traits_type::eof();
-
-      setg(m_buffer, m_buffer, m_buffer + n);
-      return (int_type)(unsigned char)m_buffer[0];
-    }
-    catch (const std::exception& e)
-    {
-      log_error("error in ssl_streambuf::underflow: " << e.what());
+    int n = m_stream.SslRead(m_buffer, m_bufsize);
+    if (n <= 0)
       return traits_type::eof();
-    }
+
+    setg(m_buffer, m_buffer, m_buffer + n);
+    return (int_type)(unsigned char)m_buffer[0];
   }
 
   int ssl_streambuf::sync()
