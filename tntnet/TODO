@@ -1,7 +1,5 @@
 - http-auth
-- unload shared libs
 - ranges
-- on-the-fly compression
 
 doc:
 - '{}' (split)

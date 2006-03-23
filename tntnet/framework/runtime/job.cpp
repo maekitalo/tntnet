@@ -107,12 +107,8 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // SslTcpjob
   //
-  unsigned SslTcpjob::ssl_accept_timeout = 10000;
-
   void SslTcpjob::accept(const SslServer& listener)
   {
-    socket.setTimeout(getSslAcceptTimeout());
-
     log_debug("accept (ssl)");
     socket.accept(listener);
     log_debug("connection accepted (ssl)");

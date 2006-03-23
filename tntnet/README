@@ -23,9 +23,9 @@ parsing and conversion, automatic sessionmanagement, scoped variables
 Logging is done through cxxtools, which provides a unique API for log4cpp,
 log4cxx or simple logging to files or console.
 
-Tntnet is fully multithreaded and much work has been gone into making it
-scalable. It uses a dynamic pool of workerthreads, which answers requests
-from http-clients.
+Tntnet is fully multithreaded, so it scales well on multiprocessor machines.
+It uses a dynamic pool of workerthreads, which answers requests from
+http-clients.
 
 Ssl is supported via the openssl-library.
 
@@ -34,15 +34,9 @@ Installation
 
 To install tntnet, you need cxxtools (http://www.tntnet.org/).
 
-This version needs at least cxxtools version 1.5
+This version needs at least cxxtools version 1.4.0
 
 You can find generic installation instructions in the file INSTALL.
-
-After building you can try out tntnet by changing to a directory of a
-demo-application (e.g. cd sdk/demos/session) and running
-"../../../framework/runtime/tntnet -c tntnet.conf". Start your browser and
-navigate to "http://localhost:8000/session" (or whatever demo you choosed) and
-watch the result.
 
 Quick start
 ===========

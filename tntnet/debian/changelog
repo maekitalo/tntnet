@@ -1,3 +1,15 @@
+tntnet (1.5.1pre1-4) stable; urgency=low
+
+  * delay closing standard-handles for better error-reporting at startup
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Tue, 21 Mar 2006 08:11:20 +0100
+
+tntnet (1.5.1pre1-3) stable; urgency=low
+
+  * ssl-fixed and new parameter SslAcceptTimeout
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Mon, 13 Mar 2006 13:13:13 +0100
+
 tntnet (1.5.1pre1-2) stable; urgency=low
 
   * search languages-files in same path as componentlibrary

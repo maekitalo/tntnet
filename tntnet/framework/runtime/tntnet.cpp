@@ -31,6 +31,7 @@ Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -91,23 +92,20 @@ namespace
       }
     }
   }
-}
 
-static bool checkChildSuccess(int fd)
-{
-  log_debug("checkChildSuccess");
+  bool checkChildSuccess(int fd)
+  {
+    log_debug("checkChildSuccess");
 
-  char buffer[1];
-  int ret = ::read(fd, &buffer, 1);
-  if (ret < 0)
-    throw std::runtime_error(
-      std::string("error in read(): ") + strerror(errno));
-  close(fd);
-  return ret > 0;
-}
+    char buffer;
+    int ret = ::read(fd, &buffer, 1);
+    if (ret < 0)
+      throw std::runtime_error(
+        std::string("error in read: ") + strerror(errno));
+    close(fd);
+    return ret > 0;
+  }
 
-namespace
-{
   void signalParentSuccess(int fd)
   {
     log_debug("signalParentSuccess");
@@ -244,6 +242,14 @@ namespace tnt
 
   void Tntnet::closeStdHandles() const
   {
+    // close stdin, stdout and stderr
+    bool noclosestd = config.getBoolValue("NoCloseStdout", false);
+    if (noclosestd)
+    {
+      log_debug("not closing stdout");
+      return;
+    }
+
     if (freopen("/dev/null", "r", stdin) == 0)
       throw std::runtime_error(
         std::string("unable to replace stdin with /dev/null: ")
@@ -275,18 +281,9 @@ namespace tnt
       isDaemon = config.getBoolValue("Daemon", false);
     }
 
-    if (!isDaemon)
-      initLogging();
     if (isDaemon)
     {
       int filedes = mkDaemon();
-
-      // close stdin, stdout and stderr
-      bool noclosestd = config.getBoolValue("NoCloseStdout", false);
-      if (!noclosestd)
-        closeStdHandles();
-      else
-        log_debug("not closing stdout");
 
       setDir("");
 
@@ -363,6 +360,7 @@ namespace tnt
     else
     {
       log_info("no daemon-mode");
+      initLogging();
       initWorkerProcess();
       workerProcess();
     }
@@ -401,6 +399,26 @@ namespace tnt
 
     if (!pidFileName.empty())
     {
+      if (pidFileName[0] != '/')
+      {
+        // prepend current working-directory to pidfilename if not absolute
+        std::vector<char> buf(256);
+        const char* cwd;
+        while (true)
+        {
+          cwd = ::getcwd(&buf[0], buf.size());
+          if (cwd)
+            break;
+          else if (errno == ERANGE)
+            buf.resize(buf.size() * 2);
+          else
+            throw std::runtime_error(
+              std::string("error in getcwd: ") + strerror(errno));
+        }
+        pidFileName = std::string(cwd) + '/' + pidFileName;
+        log_debug("pidfile=" << pidFileName);
+      }
+
       std::ofstream pidfile(pidFileName.c_str());
       if (!pidfile)
         throw std::runtime_error("unable to open pid-file " + pidFileName);
@@ -495,8 +513,6 @@ namespace tnt
     std::string defaultCertificateKey = config.getValue("SslKey");
     configListen.clear();
     config.getConfigValues("SslListen", configListen);
-    SslTcpjob::setSslAcceptTimeout(
-      config.getValue("SslAcceptTimeout", SslTcpjob::getSslAcceptTimeout()));
 
     for (Tntconfig::config_entries_type::const_iterator it = configListen.begin();
          it != configListen.end(); ++it)
@@ -626,7 +642,10 @@ namespace tnt
     timerThread.create();
 
     if (filedes >= 0)
+    {
       signalParentSuccess(filedes);
+      closeStdHandles();
+    }
 
     // mainloop
     cxxtools::Mutex mutex;
@@ -667,7 +686,7 @@ namespace tnt
     {
       sleep(1);
 
-      log_debug("check sessiontimeout");
+      //log_debug("check sessiontimeout");
       getScopemanager().checkSessionTimeout();
 
       Worker::timer();
@@ -718,7 +737,7 @@ int main(int argc, char* argv[])
     tnt::Tntnet app(argc, argv);
     if (argc != 1)
     {
-      std::cout << PACKAGE_STRING "\n\n" << argc <<
+      std::cout << PACKAGE_STRING "\n\n" <<
              "usage: " << argv[0] << " {options}\n\n"
              "  -c file          configurationfile (default: " TNTNET_CONF ")\n"
              "  -d               enable all debug output (ignoring properties-file)\n";
