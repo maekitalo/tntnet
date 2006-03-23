@@ -30,7 +30,8 @@ EXTRA_DIST = ecpp.vim \
     doc/tntnet-configuration.pdf \
     doc/tntnet-configuration.odt \
     doc/logo-tntnet.cdr \
-    doc/quick-start-guide.html \
+    doc/quick-start-guide.odt \
+    doc/quick-start-guide.pdf \
     debian/changelog \
     debian/compat \
     debian/control \
