@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
     Ecpplang generator;
 
-    tnt::ecpp::Parser parser(generator);
+    tnt::ecpp::Parser parser(generator, argv[1]);
     generator.setLang(lang || !nolang);
     generator.setNoLang(nolang);
     parser.parse(in);

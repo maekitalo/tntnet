@@ -38,6 +38,8 @@ namespace tnt
     class Parser
     {
         ParseHandler& handler;
+        std::string curfile;
+        unsigned curline;
 
         std::istream& get(char& ch);
         void doInclude(const std::string& file);
@@ -45,8 +47,10 @@ namespace tnt
         void parsePriv(std::istream& in);
 
       public:
-        Parser(ParseHandler& handler_)
-          : handler(handler_)
+        Parser(ParseHandler& handler_, const std::string& fname)
+          : handler(handler_),
+            curfile(fname),
+            curline(1)
         { }
 
         void parse(std::istream& in);

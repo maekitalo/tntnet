@@ -48,9 +48,15 @@ namespace tnt
 
       try
       {
-        unsigned lineNumber = handler.lineNumber;
+        std::string curfileSave = curfile;
+        unsigned curlineSave = curline;
+        curfile = file;
+        curline = 1;
+
         parsePriv(inp);
-        handler.lineNumber = lineNumber;
+
+        curfile = curfileSave;
+        curline = curlineSave;
       }
       catch (const std::exception&)
       {
@@ -155,8 +161,6 @@ namespace tnt
       std::string cond, expr;
       comp_args_type comp_args;
       std::string pass_cgi;
-      unsigned& curline = handler.lineNumber;
-      curline = 1;
       std::string defarg, defval;
       cppargs_type cppargs;
       unsigned bracket_count = 0;

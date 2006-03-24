@@ -60,8 +60,8 @@ class Ecppll : public tnt::ecpp::ParseHandler
     replacetokens_type::const_iterator next;
 
   public:
-    Ecppll()
-      : parser(*this),
+    explicit Ecppll(const std::string& fname)
+      : parser(*this, fname),
         ret(0),
         inLang(false),
         failOnWarn(false)
@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
     }
 
     // create and initialize applicationobject
-    Ecppll app;
+    Ecppll app(argv[1]);
 
     app.setFailOnWarn(fail_on_warn);
     app.readReplaceTokens(txt);

@@ -282,7 +282,7 @@ namespace tnt
     void Ecppc::runParser(std::istream& in, tnt::ecpp::ParseHandler& handler)
     {
       // create parser
-      tnt::ecpp::Parser parser(handler);
+      tnt::ecpp::Parser parser(handler, inputfile);
 
       // call parser
       parser.parse(in);

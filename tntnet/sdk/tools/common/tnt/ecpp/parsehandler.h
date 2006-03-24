@@ -30,18 +30,13 @@ namespace tnt
   {
     class ParseHandler
     {
-        friend class Parser;
-        unsigned lineNumber;
-
       public:
         typedef Parser::comp_args_type comp_args_type;
         typedef Parser::cppargs_type cppargs_type;
 
         ParseHandler()
-          : lineNumber(0)
           { }
 
-        unsigned getLineNumber() const  { return lineNumber; }
         virtual ~ParseHandler() {}
 
         virtual void start();
