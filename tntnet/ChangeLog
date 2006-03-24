@@ -1,3 +1,8 @@
+2006-03-24 tommi@tntnet.org
+
+  - include #line-directives into generated code to help finding
+    syntax errors in components
+
 2006-03-23 tommi@tntnet.org
 
   - fix ssl

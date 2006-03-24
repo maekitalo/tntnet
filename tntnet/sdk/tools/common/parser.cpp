@@ -36,9 +36,6 @@ namespace tnt
 
     void Parser::doInclude(const std::string& file)
     {
-      log_debug("onInclude(\"" << file << "\")");
-      handler.onInclude(file);
-
       std::ifstream inp(file.c_str());
       if (!inp)
       {
@@ -51,7 +48,11 @@ namespace tnt
         std::string curfileSave = curfile;
         unsigned curlineSave = curline;
         curfile = file;
-        curline = 1;
+        curline = 0;
+
+        log_debug("onInclude(\"" << file << "\")");
+        handler.onLine(curline, curfile);
+        handler.onInclude(file);
 
         parsePriv(inp);
 
@@ -65,6 +66,7 @@ namespace tnt
       }
 
       log_debug("onIncludeEnd(\"" << file << "\")");
+      handler.onLine(curline, curfile);
       handler.onIncludeEnd(file);
     }
 
@@ -318,12 +320,14 @@ namespace tnt
               if (htmlExpr)
               {
                 log_debug("onHtmlExpression(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onHtmlExpression(code);
                 htmlExpr = false;
               }
               else
               {
                 log_debug("onExpression(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onExpression(code);
               }
               code.clear();
@@ -368,6 +372,7 @@ namespace tnt
               }
               else if (!inClose && tag == "close")
               {
+                handler.onLine(curline, curfile);
                 handler.startClose();
                 state = state_html0;
                 inClose = true;
@@ -425,12 +430,14 @@ namespace tnt
                 state = state_attr0;
               else if (tag == "def")
               {
+                handler.onLine(curline, curfile);
                 handler.startComp(tagarg, cppargs);
                 state = state_html0;
                 inComp = true;
               }
               else if (tag == "close")
               {
+                handler.onLine(curline, curfile);
                 handler.startClose();
                 state = state_html0;
                 inClose = true;
@@ -457,12 +464,14 @@ namespace tnt
                 state = state_attr0;
               else if (tag == "def")
               {
+                handler.onLine(curline, curfile);
                 handler.startComp(tagarg, cppargs);
                 state = state_html0;
                 inComp = true;
               }
               else if (tag == "close")
               {
+                handler.onLine(curline, curfile);
                 handler.startClose();
                 state = state_html0;
                 inClose = true;
@@ -537,6 +546,7 @@ namespace tnt
           case state_defarg_end:
             if (ch == '>')
             {
+              handler.onLine(curline, curfile);
               handler.startComp(tagarg, cppargs);
               inComp = true;
               cppargs.clear();
@@ -569,6 +579,7 @@ namespace tnt
             if (ch == '>')
             {
               log_debug("onCpp(\"" << code << "\")");
+              handler.onLine(curline, curfile);
               handler.onCpp(code);
               code.clear();
               state = state_html;
@@ -615,36 +626,43 @@ namespace tnt
               else if (tag == "pre")
               {
                 log_debug("onPre(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onPre(code);
               }
               else if (tag == "declare")
               {
                 log_debug("onDeclare(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onDeclare(code);
               }
               else if (tag == "init")
               {
                 log_debug("onInit(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onInit(code);
               }
               else if (tag == "cleanup")
               {
                 log_debug("onCleanup(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onCleanup(code);
               }
               else if (tag == "declare_shared")
               {
                 log_debug("onDeclareShared(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onDeclareShared(code);
               }
               else if (tag == "shared")
               {
                 log_debug("onShared(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onShared(code);
               }
               else if (tag == "cpp")
               {
                 log_debug("onCpp(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onCpp(code);
               }
               else if (tag == "args" || tag == "attr" || tag == "config"
@@ -706,6 +724,7 @@ namespace tnt
             {
               code += '\n';
               log_debug("onCpp(\"" << code << "\")");
+              handler.onLine(curline, curfile);
               handler.onCpp(code);
               code.clear();
               state = state_nl;
@@ -894,6 +913,7 @@ namespace tnt
               if (value.empty())
                 throw parse_error("value expected", state, curline);
               log_debug("onAttr(\"" << arg << "\", \"" << value << "\")");
+              handler.onLine(curline, curfile);
               handler.onAttr(arg, value);
               arg.clear();
               value.clear();
@@ -936,6 +956,7 @@ namespace tnt
               if (value.empty())
                 throw parse_error("value expected", state, curline);
               log_debug("onAttr(\"" << arg << "\", \"" << value << "\")");
+              handler.onLine(curline, curfile);
               handler.onAttr(arg, value);
               arg.clear();
               value.clear();
@@ -988,6 +1009,7 @@ namespace tnt
             if (ch == '&' || ch == '/' || ch == '>')
             {
               log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
+              handler.onLine(curline, curfile);
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               comp.clear();
               comp_args.clear();
@@ -1047,6 +1069,7 @@ namespace tnt
             else if (ch == '&' || ch == '/' || ch == '>')
             {
               log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
+              handler.onLine(curline, curfile);
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               arg.clear();
               comp.clear();
@@ -1071,6 +1094,7 @@ namespace tnt
             else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
               log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
+              handler.onLine(curline, curfile);
               handler.onCall(comp, comp_args, arg, defarg);
               arg.clear();
               comp.clear();
@@ -1095,6 +1119,7 @@ namespace tnt
             else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
               log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
+              handler.onLine(curline, curfile);
               handler.onCall(comp, comp_args, arg, defarg);
               arg.clear();
               comp.clear();
@@ -1170,6 +1195,7 @@ namespace tnt
               value.clear();
 
               log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
+              handler.onLine(curline, curfile);
               handler.onCall(comp, comp_args, pass_cgi, defarg);
               comp.clear();
               comp_args.clear();
@@ -1223,12 +1249,14 @@ namespace tnt
               if (inComp && tag == "def")
               {
                 log_debug("onComp(\"" << code << "\")");
+                handler.onLine(curline, curfile);
                 handler.onComp(code);
                 inComp = false;
                 state = state_html0;
               }
               else if (inClose && tag == "close")
               {
+                handler.onLine(curline, curfile);
                 handler.endClose();
                 inClose = false;
                 state = state_html0;
@@ -1284,6 +1312,7 @@ namespace tnt
             if (ch == '>')
             {
               log_debug("onCondExpression(\"" << cond << ", " << code << "\")");
+              handler.onLine(curline, curfile);
               handler.onCondExpr(cond, expr);
               cond.clear();
               expr.clear();
@@ -1415,6 +1444,7 @@ namespace tnt
                   scopetype.erase(scopetype.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
+              handler.onLine(curline, curfile);
               handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
 
               scopetype.clear();
@@ -1461,6 +1491,7 @@ namespace tnt
                   scopetype.erase(scopetype.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
+              handler.onLine(curline, curfile);
               handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
 
               scopetype.clear();
@@ -1512,6 +1543,7 @@ namespace tnt
                 html.clear();
               }
               log_debug("onEndCall(\"" << comp << "\")");
+              handler.onLine(curline, curfile);
               handler.onEndCall(comp);
               comp.clear();
               state = state_html;
@@ -1531,6 +1563,7 @@ namespace tnt
                 html.clear();
               }
               log_debug("onEndCall(\"" << comp << "\")");
+              handler.onLine(curline, curfile);
               handler.onEndCall(comp);
               comp.clear();
               state = state_html;
@@ -1538,6 +1571,7 @@ namespace tnt
             else if (std::isspace(ch))
             {
               log_debug("onEndCall(\"" << comp << "\")");
+              handler.onLine(curline, curfile);
               handler.onEndCall(comp);
               comp.clear();
               state = state_endcalle;
@@ -1585,9 +1619,15 @@ namespace tnt
       const std::string& value)
     {
       if (tag == "args")
+      {
+        handler.onLine(curline, curfile);
         handler.onArg(name, value);
+      }
       else if (tag == "config")
+      {
+        handler.onLine(curline, curfile);
         handler.onConfig(name, value);
+      }
     }
 
     parse_error::parse_error(const std::string& txt, int state, unsigned curline)

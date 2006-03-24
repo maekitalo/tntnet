@@ -33,6 +33,10 @@ namespace tnt
     {
     }
 
+    void ParseHandler::onLine(unsigned lineno, const std::string& file)
+    {
+    }
+
     void ParseHandler::onHtml(const std::string& html)
     {
     }

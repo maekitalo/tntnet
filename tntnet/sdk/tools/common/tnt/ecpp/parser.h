@@ -50,7 +50,7 @@ namespace tnt
         Parser(ParseHandler& handler_, const std::string& fname)
           : handler(handler_),
             curfile(fname),
-            curline(1)
+            curline(0)
         { }
 
         void parse(std::istream& in);

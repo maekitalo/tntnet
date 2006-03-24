@@ -91,6 +91,9 @@ namespace tnt
         typedef std::list<MultiImageType> MultiImagesType;
         MultiImagesType multiImages;
 
+        unsigned curline;
+        std::string curfile;
+
         bool hasScopevars() const;
 
         // codegenerator helper
@@ -137,6 +140,7 @@ namespace tnt
         void addImage(const std::string& name, const std::string& content,
             const std::string& mime, time_t c_time);
 
+        virtual void onLine(unsigned lineno, const std::string& file);
         virtual void onHtml(const std::string& html);
         virtual void onExpression(const std::string& expr);
         virtual void onHtmlExpression(const std::string& expr);
