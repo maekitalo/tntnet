@@ -105,32 +105,32 @@ namespace tnt
     void Generator::onExpression(const std::string& expr)
     {
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-           "  reply.sout() << (" << expr << ");\n";
+      printLine(m);
+      m << "  reply.sout() << (" << expr << ");\n";
       currentComp->addHtml(m.str());
     }
 
     void Generator::onHtmlExpression(const std::string& expr)
     {
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-           "  reply.out() << (" << expr << ");\n";
+      printLine(m);
+      m << "  reply.out() << (" << expr << ");\n";
       currentComp->addHtml(m.str());
     }
 
     void Generator::onCpp(const std::string& code)
     {
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-        << code << '\n';
+      printLine(m);
+      m << code << '\n';
       currentComp->addHtml(m.str());
     }
 
     void Generator::onPre(const std::string& code)
     {
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-        << code << '\n';
+      printLine(m);
+      m << code << '\n';
       pre += m.str();
     }
 
@@ -138,24 +138,24 @@ namespace tnt
     {
       singleton = false;
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-        << code << '\n';
+      printLine(m);
+      m << code << '\n';
       declare += m.str();
     }
 
     void Generator::onInit(const std::string& code)
     {
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-        << code << '\n';
+      printLine(m);
+      m << code << '\n';
       init += m.str();
     }
 
     void Generator::onCleanup(const std::string& code)
     {
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-        << code << '\n';
+      printLine(m);
+      m << code << '\n';
       cleanup += m.str();
     }
 
@@ -225,8 +225,8 @@ namespace tnt
     void Generator::onCondExpr(const std::string& cond, const std::string& expr)
     {
       std::ostringstream m;
-      m << "#line " << curline << " \"" << curfile << "\"\n"
-           "  if (" << cond << ")\n"
+      printLine(m);
+      m << "  if (" << cond << ")\n"
            "    reply.sout() << " << expr << ";\n";
       currentComp->addHtml(m.str());
     }
@@ -640,6 +640,11 @@ namespace tnt
       for (subcomps_type::const_iterator i = subcomps.begin();
            i != subcomps.end(); ++i)
         i->getDefinition(code, isDebug(), externData);
+    }
+
+    void Generator::printLine(std::ostream& out) const
+    {
+      out << "#line " << (curline + 1) << " \"" << curfile << "\"\n";
     }
 
     void Generator::getHeader(std::ostream& header, const std::string& filename) const

@@ -110,6 +110,8 @@ namespace tnt
         void getFactoryDeclaration(std::ostream& out) const;
         void getCppBody(std::ostream& out) const;
 
+        void printLine(std::ostream& out) const;
+
       public:
         Generator(const std::string& classname, const std::string& ns);
 
