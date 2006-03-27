@@ -1,3 +1,10 @@
+tntnet (1.5.1pre2-1) stable; urgency=low
+
+  * include #line-directives into generated code to help finding
+    syntax errors in components
+
+ -- Tommi Maekitalo <tommi@hotspot.hotspotcenter.de>  Fri, 24 Mar 2006 21:55:00 +0100
+
 tntnet (1.5.1pre1-4) stable; urgency=low
 
   * delay closing standard-handles for better error-reporting at startup
