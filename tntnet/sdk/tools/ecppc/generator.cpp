@@ -177,12 +177,12 @@ namespace tnt
       const comp_args_type& args, const std::string& pass_cgi,
       const std::string& cppargs)
     {
-      currentComp->addCall(comp, args, pass_cgi, cppargs);
+      currentComp->addCall(curline, curfile, comp, args, pass_cgi, cppargs);
     }
 
     void Generator::onEndCall(const std::string& comp)
     {
-      currentComp->addEndCall(comp);
+      currentComp->addEndCall(curline, curfile, comp);
     }
 
     void Generator::onDeclareShared(const std::string& code)

@@ -39,14 +39,26 @@ namespace tnt
     {
         unsigned refs;
 
+        unsigned curline;
+        std::string curfile;
+
       public:
-        Bodypart() : refs(0)  { }
+        Bodypart()
+          : refs(0),
+            curline(0)
+          { }
+        Bodypart(unsigned line, const std::string& file)
+          : refs(0),
+            curline(line),
+            curfile(file)
+          { }
         virtual ~Bodypart();
 
         void addRef()  { ++refs; }
         void release() { if (--refs <= 0) delete this; }
 
         virtual void getBody(std::ostream& out) const = 0;
+        void printLine(std::ostream& out) const;
     };
 
     class BodypartStatic : public Bodypart
@@ -54,7 +66,7 @@ namespace tnt
         std::string data;
 
       public:
-        BodypartStatic(const std::string& data_)
+        explicit BodypartStatic(const std::string& data_)
           : data(data_)
           { }
         void getBody(std::ostream& out) const;
@@ -83,12 +95,14 @@ namespace tnt
         void callByExpr(std::ostream& out, const std::string& qparam) const;
 
       public:
-        BodypartCall(const std::string& comp_,
+        BodypartCall(unsigned line, const std::string& file,
+                     const std::string& comp_,
                      const comp_args_type& args_,
                      const std::string& pass_cgi_,
                      const std::string& cppargs_,
                      const subcomps_type& subcomps_)
-          : number(nextNumber++),
+          : Bodypart(line, file),
+            number(nextNumber++),
             comp(comp_),
             args(args_),
             pass_cgi(pass_cgi_),
@@ -107,8 +121,10 @@ namespace tnt
     {
         BodypartCall& bpc;
       public:
-        explicit BodypartEndCall(BodypartCall& bpc_)
-          : bpc(bpc_)
+        BodypartEndCall(unsigned line, const std::string& file,
+            BodypartCall& bpc_)
+          : Bodypart(line, file),
+            bpc(bpc_)
           { bpc.setHaveEndCall(); }
         void getBody(std::ostream& out) const;
     };
@@ -138,11 +154,13 @@ namespace tnt
               new BodypartStatic(code)));
         }
 
-        void addCall(const std::string& comp,
+        void addCall(unsigned line, const std::string& file,
+                     const std::string& comp,
                      const comp_args_type& args,
                      const std::string& pass_cgi,
                      const std::string& cppargs);
-        void addEndCall(const std::string& comp);
+        void addEndCall(unsigned line, const std::string& file,
+                        const std::string& comp);
 
         void addSubcomp(const std::string& comp)
         {

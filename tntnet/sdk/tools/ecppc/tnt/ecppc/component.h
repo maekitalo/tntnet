@@ -62,17 +62,19 @@ namespace tnt
         void addHtml(const std::string& code)
           { compbody.addHtml(code); }
 
-        void addCall(const std::string& comp,
+        void addCall(unsigned line, const std::string& file,
+                     const std::string& comp,
                      const comp_args_type& args,
                      const std::string& pass_cgi,
                      const std::string& cppargs)
-          { compbody.addCall(comp, args, pass_cgi, cppargs); }
+          { compbody.addCall(line, file, comp, args, pass_cgi, cppargs); }
         void addArg(const std::string& name, const std::string& value)
         {
           args.push_back(Variable(name, value));
         }
-        void addEndCall(const std::string& comp)
-          { compbody.addEndCall(comp); }
+        void addEndCall(unsigned line, const std::string& file,
+                        const std::string& comp)
+          { compbody.addEndCall(line, file, comp); }
 
         void addSubcomp(const std::string& comp)
           { compbody.addSubcomp(comp); }

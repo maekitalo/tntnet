@@ -22,6 +22,9 @@ Boston, MA  02111-1307  USA
 #include "tnt/ecppc/body.h"
 #include <tnt/ecpp.h>
 #include <sstream>
+#include <cxxtools/log.h>
+
+log_define("tntnet.body");
 
 namespace tnt
 {
@@ -29,6 +32,15 @@ namespace tnt
   {
     Bodypart::~Bodypart()
     { }
+
+    void Bodypart::printLine(std::ostream& out) const
+    {
+      if (!curfile.empty())
+        out << "#line " << (curline + 1) << " \"" << curfile << "\"\n";
+      else
+        log_warn("no filename to print in #line-directive");
+    }
+
 
     void BodypartStatic::getBody(std::ostream& out) const
     {
@@ -39,6 +51,7 @@ namespace tnt
 
     void BodypartCall::call(std::ostream& out, const std::string& qparam) const
     {
+      printLine(out);
       if (std::isalpha(comp[0]))
         callByIdent(out, qparam);
       else
@@ -144,6 +157,7 @@ namespace tnt
       {
         if (pass_cgi.empty())
         {
+          printLine(out);
           out << "  cxxtools::QueryParams " << queryParamName << "(qparam, false);\n";
           call(out, queryParamName);
         }
@@ -154,6 +168,7 @@ namespace tnt
       }
       else
       {
+        printLine(out);
         if (pass_cgi.empty())
           out << "  cxxtools::QueryParams " << queryParamName << "(qparam, false);\n";
         else
@@ -162,6 +177,7 @@ namespace tnt
         for (comp_args_type::const_iterator i = args.begin();
              i != args.end(); ++i)
         {
+          printLine(out);
           out << "  " << queryParamName << ".add( \"" << i->first << "\", tnt::toString";
           if (i->second[0] == '(' && i->second[i->second.size() - 1] == ')')
             out << i->second;
@@ -186,24 +202,27 @@ namespace tnt
              "  // >\n";
     }
 
-    void Body::addCall(const std::string& comp,
+    void Body::addCall(unsigned line, const std::string& file,
+                       const std::string& comp,
                        const comp_args_type& args,
                        const std::string& pass_cgi,
                        const std::string& cppargs)
     {
-      BodypartCall* bpc = new BodypartCall(comp, args, pass_cgi, cppargs, subcomps);
+      BodypartCall* bpc = new BodypartCall(line, file,
+          comp, args, pass_cgi, cppargs, subcomps);
       data.push_back(body_part_pointer(bpc));
       callStack.push(bpc);
     }
 
-    void Body::addEndCall(const std::string& comp)
+    void Body::addEndCall(unsigned line, const std::string& file,
+        const std::string& comp)
     {
       while (!callStack.empty() && callStack.top()->getName() != comp)
         callStack.pop();
       if (callStack.empty())
         throw std::runtime_error("start tag for \"" + comp + "\" not found");
 
-      BodypartEndCall* bpec = new BodypartEndCall(*callStack.top());
+      BodypartEndCall* bpec = new BodypartEndCall(line, file, *callStack.top());
       callStack.pop();
       data.push_back(body_part_pointer(bpec));
     }
