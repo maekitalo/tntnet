@@ -273,22 +273,25 @@ int main(int argc, char* argv[])
     app.parse(ecpp);
 
     // process
-    if (ofile.isSet())
+    if (app.getRet() == 0)
     {
-      if (strcmp(ofile.getValue(), "-") == 0)
-        app.print(std::cout);
+      if (ofile.isSet())
+      {
+        if (strcmp(ofile.getValue(), "-") == 0)
+          app.print(std::cout);
+        else
+        {
+          std::ofstream out(ofile);
+          app.print(out);
+        }
+      }
       else
       {
-        std::ofstream out(ofile);
+        tnt::Filename f(argv[1]);
+        f.setExt("tntdata");
+        std::ofstream out(f.getFullPath().c_str());
         app.print(out);
       }
-    }
-    else
-    {
-      tnt::Filename f(argv[1]);
-      f.setExt("tntdata");
-      std::ofstream out(f.getFullPath().c_str());
-      app.print(out);
     }
 
     return app.getRet();
