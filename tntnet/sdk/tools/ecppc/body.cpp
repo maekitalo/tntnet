@@ -178,12 +178,10 @@ namespace tnt
              i != args.end(); ++i)
         {
           printLine(out);
-          out << "  " << queryParamName << ".add( \"" << i->first << "\", tnt::toString";
-          if (i->second[0] == '(' && i->second[i->second.size() - 1] == ')')
-            out << i->second;
-          else
-            out << '(' << i->second << ')';
-          out << " );\n";
+          out << "  " << queryParamName << ".add( \"" << i->first
+              << "\", tnt::toString("
+              << i->second
+              << ", reply.out().getloc() ) );\n";
         }
 
         call(out, queryParamName);
