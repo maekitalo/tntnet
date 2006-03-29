@@ -222,6 +222,9 @@ namespace tnt
     if (request.keepAlive())
       reply.setKeepAliveCounter(keepAliveCount);
 
+    if (enableCompression)
+      reply.setAcceptEncoding(request.getEncoding());
+
     // process request
     try
     {
@@ -310,9 +313,6 @@ namespace tnt
             log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
             application.getScopemanager().postCall(request, reply, ci.libname);
-
-            if (enableCompression)
-              reply.setAcceptEncoding(request.getEncoding());
 
             state = stateSendReply;
             reply.sendReply(http_return);

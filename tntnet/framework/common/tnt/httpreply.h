@@ -47,6 +47,7 @@ namespace tnt
 
       unsigned keepAliveCounter;
       static unsigned keepAliveTimeout;
+      static unsigned minCompressSize;
 
       bool sendStatusLine;
 
@@ -99,10 +100,14 @@ namespace tnt
       const Cookies& getCookies() const
         { return httpcookies; }
 
-      void setKeepAliveCounter(unsigned c)  { keepAliveCounter = c; }
-      unsigned getKeepAliveCounter() const  { return keepAliveCounter; }
+      void setKeepAliveCounter(unsigned c)          { keepAliveCounter = c; }
+      unsigned getKeepAliveCounter() const          { return keepAliveCounter; }
+
       static void setKeepAliveTimeout(unsigned ms)  { keepAliveTimeout = ms; }
       static unsigned getKeepAliveTimeout()         { return keepAliveTimeout; }
+
+      static void setMinCompressSize(unsigned s)    { minCompressSize = s; }
+      static unsigned getMinCompressSize()          { return minCompressSize; }
 
       void setAcceptEncoding(const Encoding& enc)    { acceptEncoding = enc; }
       void setAcceptEncoding(const std::string& enc) { acceptEncoding.parse(enc); }

@@ -52,11 +52,6 @@ namespace tnt
          - getSocketReadTimeout();
   }
 
-  void Job::setKeepAliveTimeout(unsigned ms)
-  {
-    HttpReply::setKeepAliveTimeout(ms);
-  }
-
   unsigned Job::getKeepAliveTimeout()
   {
     return HttpReply::getKeepAliveTimeout();

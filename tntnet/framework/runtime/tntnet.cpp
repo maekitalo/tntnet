@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/tntnet.h"
 #include "tnt/listener.h"
 #include "tnt/http.h"
+#include "tnt/httpreply.h"
 #include "tnt/sessionscope.h"
 
 #include <cxxtools/tcpstream.h>
@@ -561,12 +562,14 @@ namespace tnt
       config.getValue("SocketReadTimeout", Job::getSocketReadTimeout()));
     Job::setSocketWriteTimeout(
       config.getValue("SocketWriteTimeout", Job::getSocketWriteTimeout()));
-    Job::setKeepAliveTimeout(
-      config.getValue("KeepAliveTimeout", Job::getKeepAliveTimeout()));
     Job::setKeepAliveMax(
       config.getValue("KeepAliveMax", Job::getKeepAliveMax()));
     Job::setSocketBufferSize(
       config.getValue("BufferSize", Job::getSocketBufferSize()));
+    HttpReply::setMinCompressSize(
+      config.getValue("MinCompressSize", HttpReply::getMinCompressSize()));
+    HttpReply::setKeepAliveTimeout(
+      config.getValue("KeepAliveTimeout", HttpReply::getKeepAliveTimeout()));
   }
 
   void Tntnet::workerProcess(int filedes)

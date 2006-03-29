@@ -38,10 +38,11 @@ namespace tnt
   // HttpReply
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
+  unsigned HttpReply::minCompressSize = 300;
 
   void HttpReply::tryCompress(std::string& body)
   {
-    if (!body.empty() && !hasHeader(httpheader::contentEncoding))
+    if (body.size() >= minCompressSize && !hasHeader(httpheader::contentEncoding))
     {
       if (acceptEncoding.accept("gzip"))
       {

@@ -31,6 +31,8 @@ namespace tnt
   {
     log_debug("encode header \"" << header << '"');
 
+    encodingMap.clear();
+
     enum {
       state_0,
       state_encoding,
@@ -148,16 +150,26 @@ namespace tnt
   unsigned Encoding::accept(const std::string& encoding) const
   {
     // check, if encoding is specified
+
+    log_debug("accept(\"" << encoding << "\")");
+
     encodingMapType::const_iterator it =  encodingMap.find(encoding);
     if (it != encodingMap.end())
+    {
+      log_debug("accept(\"" << encoding << "\") => " << it->second);
       return it->second;
+    }
 
     // check, if a wildcard-rule is specified
     it = encodingMap.find("*");
     if (it != encodingMap.end())
+    {
+      log_debug("accept(\"" << encoding << "\") => " << it->second);
       return it->second;
+    }
 
     // return 10 (accept), if encoding is identity, 0 otherwise
+    log_debug("accept(\"" << encoding << "\") => " << (encoding == "identity" ? 10 : 0));
     return encoding == "identity" ? 10 : 0;
   }
 

@@ -118,7 +118,6 @@ namespace tnt
 
       static void setSocketReadTimeout(unsigned ms)     { socket_read_timeout = ms; }
       static void setSocketWriteTimeout(unsigned ms)    { socket_write_timeout = ms; }
-      static void setKeepAliveTimeout(unsigned ms);
       static void setKeepAliveMax(unsigned n)       { keepalive_max = n; }
       static void setSocketBufferSize(unsigned b)   { socket_buffer_size = b; }
 
