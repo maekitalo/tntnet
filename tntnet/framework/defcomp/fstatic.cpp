@@ -56,7 +56,7 @@ namespace tnt
     return new Fstatic();
   }
 
-  TNT_COMPONENTFACTORY(Fstatic, FstaticFactory)
+  TNT_COMPONENTFACTORY(fstatic, FstaticFactory)
 
   //////////////////////////////////////////////////////////////////////
   // componentdefinition

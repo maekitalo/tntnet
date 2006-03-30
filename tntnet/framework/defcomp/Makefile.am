@@ -10,5 +10,5 @@ tntnet_la_SOURCES = \
 	static.h \
 	fstatic.h
 
-tntnet_la_LDFLAGS = -module
+tntnet_la_LDFLAGS = -module -version-info @sonumber@
 tntnet_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la

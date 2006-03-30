@@ -62,7 +62,7 @@ namespace tnt
     return new Unzip();
   }
 
-  TNT_COMPONENTFACTORY(Unzip, UnzipFactory)
+  TNT_COMPONENTFACTORY(unzip, UnzipFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

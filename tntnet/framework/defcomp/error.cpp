@@ -65,7 +65,7 @@ namespace tnt
     return new Error();
   }
 
-  TNT_COMPONENTFACTORY(Error, ErrorFactory)
+  TNT_COMPONENTFACTORY(error, ErrorFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

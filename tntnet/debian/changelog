@@ -1,3 +1,9 @@
+tntnet (1.5.1pre2-2) stable; urgency=low
+
+  * added missing /usr/lib/tntnet/tntnet.so
+
+ -- Tommi Maekitalo <tommi@epgmbh.de>  Thu, 30 Mar 2006 08:32:37 +0200
+
 tntnet (1.5.1pre2-1) stable; urgency=low
 
   * include #line-directives into generated code to help finding

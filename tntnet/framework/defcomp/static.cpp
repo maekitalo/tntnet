@@ -56,7 +56,7 @@ namespace tnt
     return new Static();
   }
 
-  TNT_COMPONENTFACTORY(Static, StaticFactory)
+  TNT_COMPONENTFACTORY(static, StaticFactory)
 
   //////////////////////////////////////////////////////////////////////
   // componentdefinition

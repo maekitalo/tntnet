@@ -144,7 +144,7 @@ namespace tnt
                   MimeConfigurator());
   }
 
-  TNT_COMPONENTFACTORY(Mime, MimeFactory)
+  TNT_COMPONENTFACTORY(mime, MimeFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

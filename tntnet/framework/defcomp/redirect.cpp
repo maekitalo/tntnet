@@ -62,7 +62,7 @@ namespace tnt
     return new Redirect();
   }
 
-  TNT_COMPONENTFACTORY(Redirect, RedirectFactory)
+  TNT_COMPONENTFACTORY(redirect, RedirectFactory)
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition
