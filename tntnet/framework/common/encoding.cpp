@@ -23,7 +23,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/log.h>
 #include <stdexcept>
 
-log_define("tntnet.encoding");
+log_define("tntnet.encoding")
 
 namespace tnt
 {

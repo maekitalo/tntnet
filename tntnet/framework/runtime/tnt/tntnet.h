@@ -32,6 +32,8 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
+  class ListenerBase;
+
   class Tntnet
   {
       cxxtools::Arg<const char*> conf;
@@ -47,7 +49,7 @@ namespace tnt
       Jobqueue queue;
 
       static bool stop;
-      typedef std::set<cxxtools::Thread*> listeners_type;
+      typedef std::set<ListenerBase*> listeners_type;
       listeners_type listeners;
 
       Poller pollerthread;

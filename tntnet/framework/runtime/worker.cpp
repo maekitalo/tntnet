@@ -110,6 +110,11 @@ namespace tnt
       log_debug("waiting for job");
       state = stateWaitingForJob;
       Jobqueue::JobPtr j = queue.get();
+      if (Tntnet::shouldStop())
+      {
+        log_warn("stop worker");
+        break;
+      }
       log_debug("got job - fd=" << j->getFd());
 
       std::iostream& socket = j->getStream();

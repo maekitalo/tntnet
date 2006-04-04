@@ -58,11 +58,25 @@ static void doListenRetry(cxxtools::net::Server& server,
 
 namespace tnt
 {
+  void ListenerBase::doStop()
+  {
+    log_warn("stop listener " << ipaddr << ':' << port);
+    try
+    {
+      cxxtools::net::Stream(ipaddr, port);
+    }
+    catch (const std::exception& e)
+    {
+      log_error(e.what());
+    }
+  }
+
   int Listener::backlog = 16;
   unsigned Listener::listenRetry = 5;
 
   Listener::Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q)
-    : queue(q)
+    : ListenerBase(ipaddr, port),
+      queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port);
     doListenRetry(server, ipaddr.c_str(), port);
@@ -79,6 +93,10 @@ namespace tnt
         Tcpjob* j = new Tcpjob;
         Jobqueue::JobPtr p(j);
         j->accept(server);
+
+        if (Tntnet::shouldStop())
+          break;
+
         queue.put(p);
       }
       catch (const std::exception& e)
@@ -93,7 +111,8 @@ namespace tnt
       const char* keyFile,
       const std::string& ipaddr, unsigned short int port,
       Jobqueue& q)
-    : server(certificateFile, keyFile),
+    : ListenerBase(ipaddr, port),
+      server(certificateFile, keyFile),
       queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port << " (ssl)");
@@ -111,6 +130,10 @@ namespace tnt
         SslTcpjob* j = new SslTcpjob;
         Jobqueue::JobPtr p(j);
         j->accept(server);
+
+        if (Tntnet::shouldStop())
+          break;
+
         queue.put(p);
       }
       catch (const std::exception& e)
@@ -119,6 +142,7 @@ namespace tnt
       }
     }
   }
+
 #endif // USE_SSL
 
 }

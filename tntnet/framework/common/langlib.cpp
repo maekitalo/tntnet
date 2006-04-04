@@ -23,13 +23,13 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/log.h>
 #include <sstream>
 
-log_define("tnt.langlib");
+log_define("tntnet.langlib")
 
 namespace tnt
 {
   LangLib::LangLib(const std::string lib, const std::string& lang_)
-    : lang(lang_),
-      file(lib + '.' + lang_)
+    : file(lib + '.' + lang_),
+      lang(lang_)
   { }
 
   const char* LangLib::getData(const std::string& compname)

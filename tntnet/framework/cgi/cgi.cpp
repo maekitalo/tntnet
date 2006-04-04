@@ -46,7 +46,7 @@ Boston, MA  02111-1307  USA
 # define TNTNET_CONF CONFIG_DIR "tntnet.conf"
 #endif
 
-log_define("cgi");
+log_define("tntnet.cgi")
 
 namespace tnt
 {

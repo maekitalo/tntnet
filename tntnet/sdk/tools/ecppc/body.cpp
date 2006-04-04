@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 #include <sstream>
 #include <cxxtools/log.h>
 
-log_define("tntnet.body");
+log_define("tntnet.body")
 
 namespace tnt
 {

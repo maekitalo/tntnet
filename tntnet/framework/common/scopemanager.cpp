@@ -26,7 +26,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 
-log_define("tntnet.scopemanager");
+log_define("tntnet.scopemanager")
 
 namespace tnt
 {

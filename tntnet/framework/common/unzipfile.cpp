@@ -24,7 +24,7 @@ Boston, MA  02111-1307  USA
 #include "unzip.h"
 #include <cxxtools/log.h>
 
-log_define("tnt.unzipfile");
+log_define("tntnet.unzipfile")
 
 namespace tnt
 {

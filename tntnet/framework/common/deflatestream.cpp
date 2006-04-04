@@ -23,7 +23,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/log.h>
 #include <sstream>
 
-log_define("tntnet.deflatestream");
+log_define("tntnet.deflatestream")
 
 namespace tnt
 {
@@ -45,8 +45,8 @@ namespace tnt
   }
 
   DeflateStreamBuf::DeflateStreamBuf(std::streambuf* sink_, int level, unsigned bufsize_)
-    : sink(sink_),
-      obuffer(bufsize_)
+    : obuffer(bufsize_),
+      sink(sink_)
   {
     memset(&stream, 0, sizeof(z_stream));
     stream.zalloc = Z_NULL;

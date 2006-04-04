@@ -53,6 +53,7 @@ namespace tnt
       Poller(Jobqueue& q);
 
       virtual void run();
+      void doStop();
       void addIdleJob(Jobqueue::JobPtr job);
   };
 

@@ -25,7 +25,7 @@ Boston, MA  02111-1307  USA
 #include <iterator>
 #include <cxxtools/log.h>
 
-log_define("tntnet.dispatcher");
+log_define("tntnet.dispatcher")
 
 namespace tnt
 {

@@ -88,6 +88,11 @@ namespace tnt
       {
         log_debug("poll timeout=" << poll_timeout);
         ::poll(pollfds.data(), current_jobs.size() + 1, poll_timeout);
+        if (Tntnet::shouldStop())
+        {
+          log_warn("stop poller");
+          break;
+        }
 
         poll_timeout = -1;
 
@@ -106,6 +111,13 @@ namespace tnt
         log_error("error in poll-loop: " << e.what());
       }
     }
+  }
+
+  void Poller::doStop()
+  {
+    log_debug("notify stop");
+    char ch = 'A';
+    ::write(notify_pipe[1], &ch, 1);
   }
 
   void Poller::dispatch()

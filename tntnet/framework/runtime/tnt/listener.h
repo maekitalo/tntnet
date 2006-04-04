@@ -32,7 +32,21 @@ Boston, MA  02111-1307  USA
 
 namespace tnt
 {
-  class Listener : public cxxtools::AttachedThread
+  class ListenerBase : public cxxtools::AttachedThread
+  {
+      std::string ipaddr;
+      unsigned short int port;
+
+    public:
+      ListenerBase(const std::string& ipaddr_, unsigned short int port_)
+        : ipaddr(ipaddr_),
+          port(port_)
+          { }
+
+      void doStop();
+  };
+
+  class Listener : public ListenerBase
   {
       cxxtools::net::Server server;
       Jobqueue& queue;
@@ -50,7 +64,7 @@ namespace tnt
   };
 
 #ifdef USE_SSL
-  class Ssllistener : public cxxtools::AttachedThread
+  class Ssllistener : public ListenerBase
   {
       SslServer server;
       Jobqueue& queue;

@@ -477,7 +477,7 @@ namespace tnt
     if (configListen.empty())
     {
       log_warn("no listeners defined - using 0.0.0.0:80");
-      cxxtools::Thread* s = new tnt::Listener("0.0.0.0", 80, queue);
+      ListenerBase* s = new tnt::Listener("0.0.0.0", 80, queue);
       listeners.insert(s);
     }
     else
@@ -503,7 +503,7 @@ namespace tnt
 
         std::string ip(it->params[0]);
         log_debug("create listener ip=" << ip << " port=" << port);
-        cxxtools::Thread* s = new tnt::Listener(ip, port, queue);
+        ListenerBase* s = new tnt::Listener(ip, port, queue);
         listeners.insert(s);
       }
     }
@@ -546,7 +546,7 @@ namespace tnt
 
       std::string ip(it->params[0]);
       log_debug("create ssl-listener ip=" << ip << " port=" << port);
-      cxxtools::Thread* s = new Ssllistener(certificateFile.c_str(),
+      ListenerBase* s = new Ssllistener(certificateFile.c_str(),
           certificateKey.c_str(), ip, port, queue);
       listeners.insert(s);
     }
@@ -652,12 +652,15 @@ namespace tnt
 
     // mainloop
     cxxtools::Mutex mutex;
-    while (true)
+    while (!stop)
     {
       {
         cxxtools::MutexLock lock(mutex);
         queue.noWaitThreads.wait(lock);
       }
+
+      if (stop)
+        break;
 
       if (Worker::getCountThreads() < maxthreads)
       {
@@ -672,6 +675,8 @@ namespace tnt
         usleep(threadstartdelay);
     }
 
+    log_warn("stopping Tntnet");
+
     // join-loop
     while (!listeners.empty())
     {
@@ -679,6 +684,8 @@ namespace tnt
       listeners.erase(s);
       delete s;
     }
+
+    log_info("listeners stopped");
   }
 
   void Tntnet::timerTask()
@@ -694,6 +701,18 @@ namespace tnt
 
       Worker::timer();
     }
+
+    log_warn("stopping Tntnet");
+
+    if (!pidFileName.empty())
+      unlink(pidFileName.c_str());
+
+    queue.noWaitThreads.signal();
+    Worker::setMinThreads(0);
+    for (listeners_type::iterator it = listeners.begin();
+         it != listeners.end(); ++it)
+      (*it)->doStop();
+    pollerthread.doStop();
   }
 
   void Tntnet::loadConfiguration()
@@ -713,15 +732,14 @@ namespace tnt
 
   void Tntnet::shutdown()
   {
-    if (!pidFileName.empty())
-      unlink(pidFileName.c_str());
-
     stop = true;
-
-    // eigentlich nicht richtig, aber momentan die einzige Möglichkeit:
-    exit(0);
   }
 
+}
+
+void sigEnd(int)
+{
+  tnt::Tntnet::shutdown();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -732,8 +750,8 @@ int main(int argc, char* argv[])
 {
   signal(SIGPIPE, SIG_IGN);
   signal(SIGABRT, SIG_IGN);
+  signal(SIGTERM, sigEnd);
   std::ios::sync_with_stdio(false);
-  //setlocale(LC_ALL, "");
 
   try
   {

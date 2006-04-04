@@ -27,7 +27,7 @@ Boston, MA  02111-1307  USA
 #include <cxxtools/log.h>
 #include <tnt/httpmessage.h>
 
-log_define("tntnet.generator");
+log_define("tntnet.generator")
 
 namespace tnt
 {

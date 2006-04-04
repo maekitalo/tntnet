@@ -21,9 +21,10 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/inflatestream.h"
 #include <cxxtools/log.h>
+#include <cxxtools/dynbuffer.h>
 #include <sstream>
 
-log_define("tntnet.inflatestream");
+log_define("tntnet.inflatestream")
 
 namespace tnt
 {
@@ -44,9 +45,9 @@ namespace tnt
   }
 
   InflateStreamBuf::InflateStreamBuf(std::streambuf* sink_, unsigned bufsize_)
-    : sink(sink_),
-      obuffer(new char_type[bufsize_]),
-      bufsize(bufsize_)
+    : obuffer(new char_type[bufsize_]),
+      bufsize(bufsize_),
+      sink(sink_)
   {
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
@@ -75,8 +76,8 @@ namespace tnt
     do
     {
       // initialize zbuffer
-      char_type zbuffer[bufsize];
-      stream.next_out = (Bytef*)zbuffer;
+      cxxtools::Dynbuffer<Bytef> zbuffer(bufsize);
+      stream.next_out = zbuffer.data();
       stream.avail_out = bufsize;
 
       log_debug("pre:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
@@ -85,7 +86,7 @@ namespace tnt
 
       // copy zbuffer to sink
       std::streamsize count = bufsize - stream.avail_out;
-      std::streamsize n = sink->sputn(zbuffer, count);
+      std::streamsize n = sink->sputn(reinterpret_cast<char*>(zbuffer.data()), count);
       if (n < count)
         return traits_type::eof();
     } while (stream.avail_in > 0);
