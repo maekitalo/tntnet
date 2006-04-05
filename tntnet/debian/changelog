@@ -1,3 +1,15 @@
+tntnet (1.5.1pre3-2) stable; urgency=low
+
+  * cxxtools aktualisiert mit locking-freiem logging
+
+ -- Tommi Maekitalo <tommi@tntnet.org>  Wed,  5 Apr 2006 21:17:39 +0200
+
+tntnet (1.5.1pre3-1) stable; urgency=low
+
+  * std::is... replaced with faster inline-methods without locales
+
+ -- Tommi Maekitalo <tommi@tntnet.org>  Wed,  5 Apr 2006 09:54:32 +0200
+
 tntnet (1.5.1pre2-2) stable; urgency=low
 
   * added missing /usr/lib/tntnet/tntnet.so
