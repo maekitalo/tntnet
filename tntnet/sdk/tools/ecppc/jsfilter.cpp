@@ -21,6 +21,7 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/ecppc/jsfilter.h"
 #include <iostream>
+#include <locale>
 
 namespace tnt
 {
@@ -38,7 +39,7 @@ namespace tnt
             state = state_slash;
           else
           {
-            if (std::isspace(ch))
+            if (std::isspace(ch, std::locale()))
             {
               state = state_space;
             }
@@ -72,7 +73,7 @@ namespace tnt
         case state_space:
           if (ch == '/')
             state = state_slash;
-          else if (!std::isspace(ch))
+          else if (!std::isspace(ch, std::locale()))
           {
             out << ch;
             state = state_start;

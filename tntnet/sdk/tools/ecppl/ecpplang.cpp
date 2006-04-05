@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include <iterator>
+#include <algorithm>
 
 void Ecpplang::onHtml(const std::string& html)
 {

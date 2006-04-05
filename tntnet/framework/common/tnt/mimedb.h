@@ -51,8 +51,8 @@ namespace tnt
       void read(std::istream& in);
 
       size_type erase(const key_type& k)       { return mimeDb.erase(k); }
-      void erase(iterator p)                   { return mimeDb.erase(p); }
-      void erase(iterator p, iterator q)       { return mimeDb.erase(p, q); }
+      void erase(iterator p)                   { mimeDb.erase(p); }
+      void erase(iterator p, iterator q)       { mimeDb.erase(p, q); }
       void clear()                             { mimeDb.clear(); }
       iterator find(const key_type& k)         { return mimeDb.find(k); }
       const_iterator find(const key_type& k) const

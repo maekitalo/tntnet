@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <stdexcept>
 #include <ctype.h>
 #include <functional>
+#include <algorithm>
 #include <cxxtools/log.h>
 
 log_define("tntnet.contenttype")

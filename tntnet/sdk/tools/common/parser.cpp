@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/ecpp/parsehandler.h"
 #include <sstream>
 #include <fstream>
+#include <locale>
 #include <cxxtools/log.h>
 
 log_define("tntnet.parser")
@@ -386,19 +387,19 @@ namespace tnt
               else
                 state = state_cpp;
             }
-            else if (!inComp && tag == "def" && std::isspace(ch))
+            else if (!inComp && tag == "def" && std::isspace(ch, std::locale()))
               state = state_tagarg0;
-            else if (std::isspace(ch) && tag == "application")
+            else if (std::isspace(ch, std::locale()) && tag == "application")
             {
               scope_container = application_container;
               state = state_scopearg0;
             }
-            else if (std::isspace(ch) && tag == "session")
+            else if (std::isspace(ch, std::locale()) && tag == "session")
             {
               scope_container = session_container;
               state = state_scopearg0;
             }
-            else if (std::isspace(ch) && tag == "request")
+            else if (std::isspace(ch, std::locale()) && tag == "request")
             {
               scope_container = request_container;
               state = state_scopearg0;
@@ -410,7 +411,7 @@ namespace tnt
           case state_tagarg0:
             if (ch == '>')
               state = state_cpp;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               tagarg = ch;
               state = state_tagarg;
@@ -418,7 +419,7 @@ namespace tnt
             break;
 
           case state_tagarg:
-            if (std::isspace(ch))
+            if (std::isspace(ch, std::locale()))
               state = state_tagarge;
             else if (tag == "def" && ch == '(')
               state = state_defarg0;
@@ -486,7 +487,7 @@ namespace tnt
           case state_defarg0:
             if (ch == ')')
               state = state_defarg_end;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               defarg += ch;
               state = state_defarg;
@@ -513,7 +514,7 @@ namespace tnt
             break;
 
           case state_defargdefval0:
-            if (!std::isspace(ch))
+            if (!std::isspace(ch, std::locale()))
             {
               defval = ch;
               state = state_defargdefval;
@@ -547,7 +548,7 @@ namespace tnt
               cppargs.clear();
               state = state_html0;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("def", state, curline);
             break;
 
@@ -727,7 +728,7 @@ namespace tnt
               state = state_cppe0;
             else if (ch == '/')
               state = state_args0comment;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               arg = ch;
               state = state_argsvar;
@@ -777,7 +778,7 @@ namespace tnt
               if (ch == '\n')
                 std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               processNV(tag, arg, std::string());
               arg.clear();
@@ -856,7 +857,7 @@ namespace tnt
               state = state_cppe0;
             else if (ch == '/')
               state = state_attr0comment;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               arg = ch;
               state = state_attrvar;
@@ -876,7 +877,7 @@ namespace tnt
               value.clear();
               state = state_attrval;
             }
-            else if (std::isspace(ch))
+            else if (std::isspace(ch, std::locale()))
               state = state_attrvare;
             else
               arg += ch;
@@ -890,7 +891,7 @@ namespace tnt
               value.clear();
               state = state_attrval;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("'=' expected", state, curline);
             break;
 
@@ -967,7 +968,7 @@ namespace tnt
               comp = ch;
               state = state_callname_string;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               comp = ch;
               state = state_callname;
@@ -986,7 +987,7 @@ namespace tnt
             comp += ch;
             if (ch == '"')
               state = state_callarg0;
-            else if (std::isspace(ch))
+            else if (std::isspace(ch, std::locale()))
               throw parse_error("invalid componentname", state, curline);
             break;
 
@@ -1001,7 +1002,7 @@ namespace tnt
               defarg.clear();
               state = ch == '>' ? state_html : state_callend;
             }
-            else if (std::isspace(ch))
+            else if (std::isspace(ch, std::locale()))
               state = state_callarg0;
             else if (ch == '(')
               state = state_call_cpparg0;
@@ -1010,7 +1011,7 @@ namespace tnt
             break;
 
           case state_call_cpparg0:
-            if (!std::isspace(ch))
+            if (!std::isspace(ch, std::locale()))
             {
               if (ch == ')')
                 state = state_callarg;
@@ -1045,7 +1046,7 @@ namespace tnt
             break;
 
           case state_callarg0:
-            if (std::isalpha(ch) || ch == '_')
+            if (std::isalpha(ch, std::locale()) || ch == '_')
             {
               arg = ch;
               state = state_callarg;
@@ -1063,14 +1064,14 @@ namespace tnt
             }
             else if (ch == '(' && arg.empty() && pass_cgi.empty())
               state = state_call_cpparg0;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error(std::string("invalid argumentname (") + ch + ')', state, curline);
             break;
 
           case state_callarg:
-            if (std::isalnum(ch) || ch == '_')
+            if (std::isalnum(ch, std::locale()) || ch == '_')
               arg += ch;
-            else if (std::isspace(ch))
+            else if (std::isspace(ch, std::locale()))
               state = state_callarge;
             else if (ch == '=')
               state = state_callval0;
@@ -1092,7 +1093,7 @@ namespace tnt
           case state_callarge:
             if (ch == '=')
               state = state_callval0;
-            else if (pass_cgi.empty() && (std::isalnum(ch) || ch == '_'))
+            else if (pass_cgi.empty() && (std::isalnum(ch, std::locale()) || ch == '_'))
             {
               pass_cgi = arg;
               arg = ch;
@@ -1109,7 +1110,7 @@ namespace tnt
               defarg.clear();
               state = ch == '>' ? state_html : state_callend;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("5", state, curline);
             break;
 
@@ -1125,7 +1126,7 @@ namespace tnt
               value = ch;
               state = state_callval_string;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               value = ch;
               state = state_callval_word;
@@ -1157,7 +1158,7 @@ namespace tnt
             break;
 
           case state_callval_word:
-            if (std::isspace(ch))
+            if (std::isspace(ch, std::locale()))
             {
               comp_args.insert(comp_args_type::value_type(arg, value));
               arg.clear();
@@ -1298,7 +1299,7 @@ namespace tnt
           case state_include0:
             if (ch == '<')
               state = state_cppe0;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               expr = ch;
               state = state_include1;
@@ -1306,7 +1307,7 @@ namespace tnt
             break;
 
           case state_include1:
-            if (std::isspace(ch) || ch == '<')
+            if (std::isspace(ch, std::locale()) || ch == '<')
             {
               doInclude(expr);
               expr.clear(),
@@ -1322,7 +1323,7 @@ namespace tnt
               state = state_scope0;
               scope = component_scope;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               tagarg = ch;
               state = state_scopearg;
@@ -1337,7 +1338,7 @@ namespace tnt
                 throw parse_error("argument \"scope\" expected", state, curline);
               tagarg.clear();
             }
-            else if (std::isspace(ch))
+            else if (std::isspace(ch, std::locale()))
             {
               state = state_scopeargeq;
               if (tagarg != "scope")
@@ -1351,14 +1352,14 @@ namespace tnt
           case state_scopeargeq:
             if (ch == '=')
               state = state_scopeargval0;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("\"=\" expected", state, curline);
             break;
 
           case state_scopeargval0:
             if (ch == '"')
               state = state_scopeargval;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("argument expected", state, curline);
             break;
 
@@ -1386,7 +1387,7 @@ namespace tnt
           case state_scopevale:
             if (ch == '>')
               state = state_scope0;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("'>' expected", state, curline);
             break;
 
@@ -1395,7 +1396,7 @@ namespace tnt
               state = state_scopee;
             else if (ch == '/')
               state = state_scopecomment0;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
             {
               scopevar = ch;
               state = state_scope;
@@ -1409,7 +1410,7 @@ namespace tnt
               // scopevar contains variable-definition
               // scopeinit is empty
               if (scopetype.size() > 0
-                && std::isspace(scopetype.at(scopetype.size() - 1)))
+                && std::isspace(scopetype.at(scopetype.size() - 1), std::locale()))
                   scopetype.erase(scopetype.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
@@ -1424,9 +1425,9 @@ namespace tnt
               state = state_scopeinit;
               bracket_count = 0;
             }
-            else if (std::isspace(ch))
+            else if (std::isspace(ch, std::locale()))
               scopevar += ch;
-            else if (std::isspace(scopevar.at(scopevar.size() - 1)))
+            else if (std::isspace(scopevar.at(scopevar.size() - 1), std::locale()))
             {
               scopetype += scopevar;
               scopevar = ch;
@@ -1455,7 +1456,7 @@ namespace tnt
               // scopevar contains variable-definition
               // scopeinit contains constructorparameter
               if (scopetype.size() > 0
-                && std::isspace(scopetype.at(scopetype.size() - 1)))
+                && std::isspace(scopetype.at(scopetype.size() - 1), std::locale()))
                   scopetype.erase(scopetype.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
@@ -1479,7 +1480,7 @@ namespace tnt
           case state_scopee0:
             if (ch == ';')
               state = state_scope0;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("invalid scopedefinition", state, curline);
             break;
 
@@ -1496,7 +1497,7 @@ namespace tnt
             break;
 
           case state_endcall0:
-            if (std::isalnum(ch) || ch == '_')
+            if (std::isalnum(ch, std::locale()) || ch == '_')
             {
               comp = ch;
               state = state_endcall;
@@ -1514,7 +1515,7 @@ namespace tnt
               comp.clear();
               state = state_html;
             }
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error(std::string("character expected, \'") + ch
                 + "\' found", state, curline);
             break;
@@ -1533,14 +1534,14 @@ namespace tnt
               comp.clear();
               state = state_html;
             }
-            else if (std::isspace(ch))
+            else if (std::isspace(ch, std::locale()))
             {
               log_debug("onEndCall(\"" << comp << "\")");
               handler.onEndCall(comp);
               comp.clear();
               state = state_endcalle;
             }
-            else if (std::isalnum(ch) || ch == '_' || ch == '@')
+            else if (std::isalnum(ch, std::locale()) || ch == '_' || ch == '@')
               comp += ch;
             else
               throw parse_error("character expected", state, curline);
@@ -1549,7 +1550,7 @@ namespace tnt
           case state_endcalle:
             if (ch == '>')
               state = state_html;
-            else if (!std::isspace(ch))
+            else if (!std::isspace(ch, std::locale()))
               throw parse_error("'>' expected", state, curline);
             break;
 

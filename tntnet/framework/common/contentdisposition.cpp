@@ -22,6 +22,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/contentdisposition.h>
 #include <ctype.h>
 #include <functional>
+#include <algorithm>
 
 namespace tnt
 {

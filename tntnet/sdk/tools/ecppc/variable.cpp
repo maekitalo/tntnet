@@ -21,6 +21,7 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/ecppc/variable.h"
 #include <sstream>
+#include <locale>
 
 namespace tnt
 {
@@ -38,7 +39,7 @@ namespace tnt
       std::ostringstream a;
 
       std::string::size_type e = arg.size();
-      while (e > 0 && std::isspace(arg.at(e - 1)))
+      while (e > 0 && std::isspace(arg.at(e - 1), std::locale()))
         --e;
 
       // e points past the last character of our arg
@@ -47,19 +48,19 @@ namespace tnt
       {
         isvector = true;
         e -= 2;
-        while (e > 0 && std::isspace(arg.at(e - 1)))
+        while (e > 0 && std::isspace(arg.at(e - 1), std::locale()))
           --e;
       }
       else
         isvector = false;
 
       std::string::size_type b = e;
-      while (b > 0 && !std::isspace(arg.at(b - 1)))
+      while (b > 0 && !std::isspace(arg.at(b - 1), std::locale()))
         --b;
       // b points to the first character of our arg
 
       std::string::size_type t = b;
-      while (t > 0 && std::isspace(arg.at(t - 1)))
+      while (t > 0 && std::isspace(arg.at(t - 1), std::locale()))
         --t;
       // t points past the last character of the type
 

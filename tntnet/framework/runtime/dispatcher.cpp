@@ -23,6 +23,7 @@ Boston, MA  02111-1307  USA
 #include <tnt/httperror.h>
 #include <functional>
 #include <iterator>
+#include <algorithm>
 #include <cxxtools/log.h>
 
 log_define("tntnet.dispatcher")

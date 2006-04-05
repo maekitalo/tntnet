@@ -21,6 +21,7 @@ Boston, MA  02111-1307  USA
 
 #include "tnt/ecppc/htmlfilter.h"
 #include <iostream>
+#include <locale>
 
 namespace tnt
 {
@@ -37,13 +38,13 @@ namespace tnt
         case state_start:
           if (ch == '<')
             state = state_token;
-          else if (std::isspace(ch))
+          else if (std::isspace(ch, std::locale()))
             state = state_space0;
           out << ch;
           break;
 
         case state_token:
-          if (std::isspace(ch))
+          if (std::isspace(ch, std::locale()))
           {
             out << ' ';
             state = state_tokenspace;
@@ -57,7 +58,7 @@ namespace tnt
           break;
 
         case state_tokenspace:
-          if (!std::isspace(ch))
+          if (!std::isspace(ch, std::locale()))
           {
             if (ch == '>')
               state = state_space0;
@@ -68,7 +69,7 @@ namespace tnt
           break;
 
         case state_space0:
-          if (std::isspace(ch))
+          if (std::isspace(ch, std::locale()))
           {
             out << ch;
             state = state_space;
@@ -76,7 +77,7 @@ namespace tnt
           // no break!!!
 
         case state_space:
-          if (!std::isspace(ch))
+          if (!std::isspace(ch, std::locale()))
           {
             if (ch == '<')
               // hier lassen wir spaces zwischen Tags weg
@@ -90,7 +91,7 @@ namespace tnt
           break;
 
         case state_data:
-          if (std::isspace(ch))
+          if (std::isspace(ch, std::locale()))
             html += ch;
           else if (ch == '<')
           {

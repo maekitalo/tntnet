@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 
 #include <stdexcept>
 #include <iostream>
+#include <string>
 
 namespace tnt
 {

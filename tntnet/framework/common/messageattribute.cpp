@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include <tnt/messageattribute.h>
+#include <tnt/fastctype.h>
 #include <iostream>
 
 namespace tnt
@@ -76,7 +77,7 @@ namespace tnt
             type = ch;
             state = state_type0;
           }
-          else if (std::isspace(ch))
+          else if (myisspace(ch))
             in.setstate(std::ios::failbit);
           break;
 

@@ -25,6 +25,7 @@ Boston, MA  02111-1307  USA
 #include <functional>
 #include <string.h>
 #include <string>
+#include <locale>
 
 namespace tnt
 {
@@ -48,7 +49,7 @@ namespace tnt
           strcpy(data, "\\?");
         else if (escQuote && ch == '"')
           strcpy(data, "\\\"");
-        else if (std::isprint(ch) && ch != '\\')
+        else if (std::isprint(ch, std::locale()) && ch != '\\')
         {
           data[0] = ch;
           data[1] = '\0';
@@ -68,7 +69,7 @@ namespace tnt
       static std::string escape(const std::string& str,
           const stringescaper& se = stringescaper(false));
       static std::string mk_stringconst(const std::string& str,
-          unsigned maxcols = 0, const stringescaper& se = stringescaper());
+          unsigned maxcols = 0, const stringescaper& se = stringescaper(true));
   };
 }
 

@@ -20,6 +20,7 @@ Boston, MA  02111-1307  USA
 */
 
 #include "tnt/encoding.h"
+#include "tnt/fastctype.h"
 #include <cxxtools/log.h>
 #include <stdexcept>
 
@@ -52,7 +53,7 @@ namespace tnt
       switch (state)
       {
         case state_0:
-          if (!std::isspace(ch))
+          if (!myisspace(ch))
           {
             encoding = ch;
             state = state_encoding;
@@ -75,19 +76,19 @@ namespace tnt
         case state_qualityq:
           if (ch == 'q')
             state = state_qualityeq;
-          else if (!std::isspace(ch))
+          else if (!myisspace(ch))
             throw std::runtime_error("invalid encoding-string \"" + header + '"');
           break;
 
         case state_qualityeq:
           if (ch == '=')
             state = state_quality;
-          else if (!std::isspace(ch))
+          else if (!myisspace(ch))
             throw std::runtime_error("invalid encoding-string \"" + header + '"');
           break;
 
         case state_quality:
-          if (std::isdigit(ch))
+          if (myisdigit(ch))
           {
             quality = (ch - '0') * 10;
             state = state_qualitypoint;
@@ -110,7 +111,7 @@ namespace tnt
           break;
 
         case state_qualitytenth:
-          if (std::isdigit(ch))
+          if (myisdigit(ch))
           {
             quality += ch - '0';
             log_debug("encoding=" << encoding << " quality " << quality);

@@ -22,6 +22,7 @@ Boston, MA  02111-1307  USA
 #include "tnt/stringescaper.h"
 #include <sstream>
 #include <iterator>
+#include <algorithm>
 
 namespace tnt
 {

@@ -24,6 +24,7 @@ Boston, MA  02111-1307  USA
 #include <fstream>
 #include <stack>
 #include <sstream>
+#include <locale>
 #include <cxxtools/multifstream.h>
 #include <cxxtools/log.h>
 
@@ -41,7 +42,7 @@ namespace tnt
       case state_start:
         if (ch == '#')
           state = state_comment;
-        else if (!std::isspace(ch))
+        else if (!std::isspace(ch, std::locale()))
         {
           current_cmd = ch;
           state = state_cmd;
@@ -63,7 +64,7 @@ namespace tnt
           current_params.clear();
           state = state_comment;
         }
-        else if (std::isspace(ch))
+        else if (std::isspace(ch, std::locale()))
           state = state_args;
         else
           current_cmd += ch;
@@ -82,7 +83,7 @@ namespace tnt
           state = state_args_esc;
         else if (ch == '"')
           state = state_qstring;
-        else if (!std::isspace(ch))
+        else if (!std::isspace(ch, std::locale()))
         {
           current_token = ch;
           state = state_token;
@@ -111,7 +112,7 @@ namespace tnt
 
           state = ch == '\n' ? state_start : state_cmd;
         }
-        else if (std::isspace(ch))
+        else if (std::isspace(ch, std::locale()))
         {
           current_params.push_back(current_token);
           current_token.clear();
