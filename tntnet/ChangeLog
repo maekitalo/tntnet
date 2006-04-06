@@ -1,3 +1,8 @@
+2006-04-04 tommi@tntnet.org
+
+  - ANSI-C++-fixes
+  - make SIGTERM a graceful shutdown
+
 2006-03-24 tommi@tntnet.org
 
   - include #line-directives into generated code to help finding

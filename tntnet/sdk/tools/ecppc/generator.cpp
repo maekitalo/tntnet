@@ -461,7 +461,7 @@ namespace tnt
 
         std::transform(p.data(), p.data() + s,
           std::ostream_iterator<const char*>(code),
-          tnt::stringescaper());
+          stringescaper());
 
         code << "\",\n  " << s << ", " << data.size() << ");\n";
       }
