@@ -126,10 +126,9 @@ namespace tnt
         {
           time(&lastWaitTime);
 
-          log_info("read request");
+          log_debug("read request");
 
           keepAlive = false;
-          log_debug("call parser");
           state = stateParsing;
           j->getParser().parse(socket);
           state = statePostParsing;
@@ -324,7 +323,9 @@ namespace tnt
           }
 
           if (reply.out())
-            log_info("reply sent");
+            log_debug("reply sent");
+          else
+            log_warn("stream error");
 
           return;
         }

@@ -128,12 +128,17 @@ namespace tnt
     time(&currentTime);
     for (unsigned i = 0; i < current_jobs.size(); )
     {
-      if (pollfds[i + 1].revents != 0)
+      if (pollfds[i + 1].revents & POLLIN)
       {
         log_debug("job found " << pollfds[i + 1].fd);
 
         // put job into work-queue
         queue.put(current_jobs[i]);
+        remove(i);
+      }
+      else if (pollfds[i + 1].revents != 0)
+      {
+        log_debug("pollevent " << std::hex << pollfds[i + 1].revents << " on fd "  << pollfds[i + 1].fd);
         remove(i);
       }
       else
