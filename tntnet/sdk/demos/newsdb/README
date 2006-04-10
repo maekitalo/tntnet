@@ -1,0 +1,3 @@
+This demo shows, how to access a database with Tntnet using Tntdb. It uses
+connectionpooling and prepared statements with automatic caching for best
+performance.

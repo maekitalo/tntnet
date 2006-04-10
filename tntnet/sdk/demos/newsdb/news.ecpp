@@ -1,0 +1,39 @@
+<%include>global.ecpp</%include>
+<%args>
+int id;
+</%args>
+<%pre>
+#include <tntdb/result.h>
+#include <tntdb/row.h>
+</%pre>
+<%cpp>
+
+tntdb::Statement stmt = conn.prepareCached(
+  "select title, ctime, long_text"
+  "  from article"
+  " where id = :id");
+
+stmt.set("id", id);
+
+tntdb::Row res = stmt.selectRow();
+std::string title = res[0];
+std::string time = res[1];
+std::string longtext = res[2];
+
+</%cpp>
+<html>
+ <head>
+  <link rel="stylesheet" type="text/css" href="newscss.css">
+  <title>Ecpp-News-Demo</title>
+ </head>
+ <body>
+  <h1 class="title"><$title$></h1>
+
+  <p class="time"><$time$></p>
+
+  <p class="longtext"><$longtext$></p>
+
+  <p class="link"><a href="index">back</a></p>
+
+ </body>
+</html>

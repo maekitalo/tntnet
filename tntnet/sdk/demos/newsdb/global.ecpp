@@ -1,0 +1,16 @@
+<%pre>
+
+#include <tntdb/connection.h>
+#include <tntdb/connect.h>
+
+</%pre>
+<%config>
+
+dburl = "sqlite:newsdb.db";
+
+</%config>
+<%request scope="global">
+
+tntdb::Connection conn(tntdb::connectCached(dburl));
+
+</%request>

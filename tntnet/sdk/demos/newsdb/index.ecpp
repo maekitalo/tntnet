@@ -1,0 +1,62 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tntdb/result.h>
+#include <tntdb/row.h>
+
+</%pre>
+<%args>
+unsigned limit = 6;
+unsigned offset = 0;
+</%args>
+<%cpp>
+
+tntdb::Statement stmt = conn.prepareCached(
+  "select id, title, short_text"
+  "  from article"
+  " order by ctime desc, id"
+  " limit :limit"
+  " offset :offset");
+
+stmt.set("limit", limit)
+    .set("offset", offset);
+
+tntdb::Result res = stmt.select();
+
+</%cpp>
+<html>
+ <head>
+  <link rel="stylesheet" type="text/css" href="newscss.css">
+  <title>Ecpp-News-Demo</title>
+ </head>
+ <body>
+  <h1 class="ecppdemo">Ecpp-News-Demo</h1>
+
+  <hr>
+
+<{
+  for (tntdb::Result::const_iterator cur = res.begin();
+       cur != res.end(); ++cur)
+  {
+    tntdb::Row row = *cur;
+    int id = row[0];
+    std::string title = row[1];
+    std::string shorttext = row[2];
+}>
+  <h1 class="title"><a href="news?id=<$id$>"><$title$></a></h2>
+
+  <p class="shorttext"><$shorttext$></p>
+
+  <p class="link"><a href="news?id=<$id$>">more...</a></p>
+
+% }
+
+  <hr>
+
+% if (offset >= limit) {
+  <a class="navigation" href="index?offset=<$ offset - limit $>">previous page</a>
+% }
+  <a class="navigation" href="index?offset=<$ offset + limit $>">next page</a>
+
+ </body>
+</html>

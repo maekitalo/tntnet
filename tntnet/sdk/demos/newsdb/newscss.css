@@ -1,0 +1,39 @@
+h1.ecppdemo {
+  font-size: 14pt;
+  font-family: Verdana, Arial, sansserif
+}
+
+h1.title {
+  font-size: 14pt;
+  font-family: Verdana, Arial, sansserif
+}
+
+h1.title a {
+  text-decoration: none;
+}
+
+p.shorttext {
+  font-size: 8pt;
+  font-family: Times New Roman, Times, serif;
+}
+
+p.link {
+  font-size: 8pt;
+  font-family: Times New Roman, Times, serif;
+}
+
+p.time {
+  font-size: 8pt;
+  font-family: Times New Roman, Times, serif;
+}
+
+p.longtext {
+  font-size: 8pt;
+  font-family: Times New Roman, Times, serif;
+}
+
+a.link {
+}
+
+a.navigation {
+}
