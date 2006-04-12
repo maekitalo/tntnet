@@ -33,4 +33,14 @@ EXTRA_DIST = ecpp.vim \
     doc/quick-start-guide.odt \
     doc/quick-start-guide.pdf \
 	COPYING.GPL \
-	LICENSE.OpenSSL
+	LICENSE.OpenSSL \
+    sdk/demos/newsdb/Makefile \
+    sdk/demos/newsdb/README \
+    sdk/demos/newsdb/global.ecpp \
+    sdk/demos/newsdb/index.ecpp \
+    sdk/demos/newsdb/newscss.css \
+    sdk/demos/newsdb/newsdata.sh \
+    sdk/demos/newsdb/newsdb.ecpp \
+    sdk/demos/newsdb/newsdb.sql \
+    sdk/demos/newsdb/tntnet.conf \
+    sdk/demos/newsdb/tntnet.properties

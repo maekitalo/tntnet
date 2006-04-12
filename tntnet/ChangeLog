@@ -1,3 +1,9 @@
+2006-04-12 tommi@tntnet.org
+
+  - new demo newsdb, which reads news from a database using tntdb
+  - add openssl-license and allow tntnet to be linked with openssl
+  - fix names of standard-components (components in tntnet.so)
+
 2006-04-04 tommi@tntnet.org
 
   - ANSI-C++-fixes
