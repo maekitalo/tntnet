@@ -16,6 +16,11 @@ postgresql and mysql are commented out in the example tntnet.conf.
 For setting up the database there is one sql-script newsdb.sql to create
 the table and a shell-script newsdata.sh to generate test data.
 
+The shell-script creates 20 articles by default. When called with one
+parameter, the parameter is interpreted as the number of articles to generate.
+With 2 parameters the first parameter specifies a startvalue ant the second
+the number of articles to generate.
+
 Sqlite
 ------
 To create the database enter these commands:
