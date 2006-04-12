@@ -1,7 +1,7 @@
 Tntnet
 ======
 
-Tntnet is a webapplicationserver for webapplications written in C++.
+Tntnet is a web application server for web applications written in C++.
 
 You can write a Web-page with HTML and with special tags you embed
 C++-code into the page for active contents. These pages, called
@@ -55,5 +55,5 @@ with -c:
 Tntnet listens on port 8000. Start your browser and enter the url:
   http://localhost:8000/hello
 
-Documentation is provided in OpenOffice- or pdf-formats in doc/tntnet.* and
-doc/tntnet-configuration.*.
+Documentation is provided in opendocument- or pdf-formats in doc/tntnet.*,
+doc/quick-start-guide.* and doc/tntnet-configuration.*.

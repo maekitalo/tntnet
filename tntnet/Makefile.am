@@ -32,18 +32,5 @@ EXTRA_DIST = ecpp.vim \
     doc/logo-tntnet.cdr \
     doc/quick-start-guide.odt \
     doc/quick-start-guide.pdf \
-    debian/changelog \
-    debian/compat \
-    debian/control \
-    debian/copyright \
-    debian/docs \
-    debian/rules \
-    debian/tntnet-base.dirs \
-    debian/tntnet-base.install \
-    debian/tntnet-dev.dirs \
-    debian/tntnet-dev.install \
-    debian/tntnet-server.conffiles \
-    debian/tntnet-server.dirs \
-    debian/tntnet-server.install \
-    debian/tntnet-server.postinst \
-    debian/tntnet-server.prerm
+	COPYING.GPL \
+	LICENSE.OpenSSL
