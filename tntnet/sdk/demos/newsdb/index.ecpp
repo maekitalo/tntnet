@@ -3,6 +3,7 @@
 
 #include <tntdb/result.h>
 #include <tntdb/row.h>
+#include <tntdb/statement.h>
 
 </%pre>
 <%args>
@@ -14,14 +15,7 @@ unsigned offset = 0;
 tntdb::Statement stmt = conn.prepareCached(
   "select id, title, short_text"
   "  from article"
-  " order by ctime desc, id"
-  " limit :limit"
-  " offset :offset");
-
-stmt.set("limit", limit)
-    .set("offset", offset);
-
-tntdb::Result res = stmt.select();
+  " order by ctime desc, id");
 
 </%cpp>
 <html>
@@ -35,9 +29,13 @@ tntdb::Result res = stmt.select();
   <hr>
 
 <{
-  for (tntdb::Result::const_iterator cur = res.begin();
-       cur != res.end(); ++cur)
+  unsigned count = 0;
+  for (tntdb::Statement::const_iterator cur = stmt.begin();
+       cur != stmt.end() && count < offset + limit; ++cur, ++count)
   {
+    if (count < offset)
+      continue;
+
     tntdb::Row row = *cur;
     int id = row[0];
     std::string title = row[1];

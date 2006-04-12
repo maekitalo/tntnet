@@ -15,10 +15,10 @@ tntdb::Statement stmt = conn.prepareCached(
 
 stmt.set("id", id);
 
-tntdb::Row res = stmt.selectRow();
-std::string title = res[0];
-std::string time = res[1];
-std::string longtext = res[2];
+tntdb::Row row = stmt.selectRow();
+std::string title = row[0];
+std::string time = row[1];
+std::string longtext = row[2];
 
 </%cpp>
 <html>

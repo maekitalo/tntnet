@@ -6,11 +6,14 @@
 </%pre>
 <%config>
 
+// read variable from tntnet.conf with default value
 dburl = "sqlite:newsdb.db";
 
 </%config>
 <%request scope="global">
 
+// Create a request-scope variable and set up a connection.
+// Use the tntdb-connection-cache.
 tntdb::Connection conn(tntdb::connectCached(dburl));
 
 </%request>

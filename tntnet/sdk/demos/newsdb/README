@@ -1,3 +1,73 @@
 This demo shows, how to access a database with Tntnet using Tntdb. It uses
 connectionpooling and prepared statements with automatic caching for best
 performance.
+
+It is not built automatically, when Tntnet is built, because Tntnet does
+not check for Tntdb, which is needed here. A simple Makefile is provided,
+which builts the demo by entering just 'make' in a shell.
+
+It works with sqlite3, postgresql and mysql. The database is choosen in
+tntnet.conf (this also demonstrates, how to access tntnet.conf in your
+applications). The application uses a variable dburl, which specifies the
+connectionstring. It defaults to "sqlite:newsdb.db". You can guess, what it
+menans: use sqlite3 with the file newsdb.db. The connectionstrings for
+postgresql and mysql are commented out in the example tntnet.conf.
+
+For setting up the database there is one sql-script newsdb.sql to create
+the table and a shell-script newsdata.sh to generate test data.
+
+Sqlite
+------
+To create the database enter these commands:
+  sqlite3 newsdb.db <newsdb.sql
+  ./newsdata.sh | sqlite3 newsdb.db
+
+Postgresql
+----------
+To create the database enter these commands:
+  createdb newsdb
+  psql newsdb -f newsdb.sql
+  ./newsdata.sh | psql newsdb
+
+You have to make sure, you have enough permissions to create the database.
+Consult the postgresql-administration-guide for that.
+
+Mysql
+-----
+To create the database enter these commands:
+  mysqladmin create newsdb
+  mysql newsdb <newsdb.sql
+  ./newsdata.sh | mysql newsdb
+
+Running tntnet
+--------------
+To run tntnet enter
+  tntnet -c tntnet.conf
+
+Tntnet runs on the shell and prints its log to the terminal. Tntnet listens
+on port 8000 by default.
+
+Start your browser and navigate to "http://localhost:8000/index" and watch
+the result.
+
+Testing performance
+-------------------
+For best performance, edit tntnet.properties and redirect the log to a file
+by uncommenting the line
+  file=tntnet.log
+
+Make sure, flushdelay is set to a suitable value (100 is ok). This delays
+writing to the logfile, which speeds up logging significantly. Logmessages
+are written to a buffer and multiple logmessages are written in one system
+call to the file, instead of triggering a call for every message.
+
+To test the performance you can use ab or ab2, which come with apache. Run:
+  /usr/sbin/ab2 -n 10000 -k -c 3 'http://localhost:8000/index'
+or
+  /usr/sbin/ab2 -n 10000 -k -c 3 'http://localhost:8000/newsdb?id=1'
+
+This makes 10000 requests with keep-alive and 3 in parallel.
+
+You should alway use quotes, when entering urls on the commandline. It is not
+necessery here, but when passing multiple get-parameters you have to use '&',
+which would be interpreted by the shell.
