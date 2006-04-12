@@ -85,7 +85,7 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
       // clear cache after maxUrlMapCache distict requests
       if (urlMapCache.size() >= maxUrlMapCache)
       {
-        log_info("clear url-map-cache");
+        log_warn("clear url-map-cache");
         urlMapCache.clear();
       }
 
