@@ -47,7 +47,7 @@ namespace tnt
       ComploaderPoolType::objectptr_type comploaderObject;
       Comploader& comploader;
 
-      unsigned threadId;
+      pthread_t threadId;
       const char* state;
       time_t lastWaitTime;
 
