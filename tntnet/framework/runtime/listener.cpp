@@ -63,6 +63,7 @@ namespace tnt
     log_warn("stop listener " << ipaddr << ':' << port);
     try
     {
+      // connect once to wake up listener, so it will check stop-flag
       cxxtools::net::Stream(ipaddr, port);
     }
     catch (const std::exception& e)
@@ -93,6 +94,7 @@ namespace tnt
         Tcpjob* j = new Tcpjob;
         Jobqueue::JobPtr p(j);
         j->accept(server);
+        log_debug("connection accepted");
 
         if (Tntnet::shouldStop())
           break;
@@ -104,6 +106,8 @@ namespace tnt
         log_error("error in accept-loop: " << e.what());
       }
     }
+
+    log_debug("stop listener");
   }
 
 #ifdef USE_SSL
@@ -138,9 +142,11 @@ namespace tnt
       }
       catch (const std::exception& e)
       {
-        log_error("error in accept-loop: " << e.what());
+        log_error("error in ssl-accept-loop: " << e.what());
       }
     }
+
+    log_debug("stop ssl-listener");
   }
 
 #endif // USE_SSL

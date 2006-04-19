@@ -49,6 +49,7 @@ namespace tnt
       Jobqueue queue;
 
       static bool stop;
+      static int ret;
       typedef std::set<ListenerBase*> listeners_type;
       listeners_type listeners;
 
@@ -84,6 +85,7 @@ namespace tnt
       int run();
 
       static void shutdown();
+      static void restart();
       static bool shouldStop()   { return stop; }
 
       Jobqueue&   getQueue()                  { return queue; }

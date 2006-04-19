@@ -57,8 +57,39 @@ Boston, MA  02111-1307  USA
 
 log_define("tntnet.tntnet")
 
+#define log_error_master(expr) \
+  do { \
+    std::cout << "ERROR: " << expr << std::endl; \
+  } while(false)
+
+#define log_warn_master(expr) \
+  do { \
+    std::cout << "WARN: " << expr << std::endl; \
+  } while(false)
+
+#define log_info_master(expr) \
+  do { \
+    std::cout << "INFO: " << expr << std::endl; \
+  } while(false)
+
+#define log_debug_master(expr) \
+  do { \
+    std::cout << "DEBUG: " << expr << std::endl; \
+  } while(false)
+
 namespace
 {
+  void sigEnd(int)
+  {
+    tnt::Tntnet::shutdown();
+  }
+
+  void sigReload(int)
+  {
+    // stopping child with 111 signals monitor-process to restart child
+    tnt::Tntnet::restart();
+  }
+
   void configureDispatcher(tnt::Dispatcher& dis, const tnt::Tntconfig& config)
   {
     typedef tnt::Dispatcher::CompidentType CompidentType;
@@ -126,6 +157,7 @@ namespace tnt
   // Tntnet
   //
   bool Tntnet::stop = false;
+  int Tntnet::ret = 0;
   std::string Tntnet::pidFileName;
 
   Tntnet::Tntnet(int& argc, char* argv[])
@@ -332,7 +364,7 @@ namespace tnt
 
             initLogging();
             workerProcess(filedes_monitor[1]);
-            return -1;
+            return ret;
           }
           else
           {
@@ -442,32 +474,38 @@ namespace tnt
       // SIGTERM means normal exit
       if (WTERMSIG(status) == SIGTERM)
       {
-        log_info("child terminated normally");
+        log_info_master("child terminated normally");
         stop = true;
       }
       else
       {
-        log_info("child terminated with signal "
+        log_warn_master("child terminated with signal "
           << WTERMSIG(status) << " - restart child");
       }
     }
     else if (WEXITSTATUS(status) == 111)
     {
-      log_info("child requested restart");
+      log_info_master("child requested restart");
     }
     else
     {
-      log_info("child exited with exitcode " << WEXITSTATUS(status));
+      log_info_master("child exited with exitcode " << WEXITSTATUS(status));
       stop = true;
     }
 
     if (unlink(pidFileName.c_str()) != 0)
-      log_warn("failed to remove pidfile \"" << pidFileName << "\" error " << errno);
+      log_error_master("failed to remove pidfile \"" << pidFileName << "\" error " << errno);
   }
 
   void Tntnet::initWorkerProcess()
   {
     log_debug("init workerprocess");
+
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGABRT, SIG_IGN);
+    signal(SIGTERM, sigEnd);
+    signal(SIGHUP, sigReload);
+
     configureDispatcher(d_dispatcher, config);
 
     // create listener-threads
@@ -570,6 +608,8 @@ namespace tnt
       config.getValue("MinCompressSize", HttpReply::getMinCompressSize()));
     HttpReply::setKeepAliveTimeout(
       config.getValue("KeepAliveTimeout", HttpReply::getKeepAliveTimeout()));
+
+    log_debug("listeners.size()=" << listeners.size());
   }
 
   void Tntnet::workerProcess(int filedes)
@@ -681,8 +721,17 @@ namespace tnt
     while (!listeners.empty())
     {
       listeners_type::value_type s = *listeners.begin();
+      log_debug("remove listener from listener-list");
       listeners.erase(s);
+
+      log_debug("request listener to stop");
+      s->doStop();
+
+      log_debug("join listener-thread");
+      s->join();
       delete s;
+
+      log_debug("listener stopped");
     }
 
     log_info("listeners stopped");
@@ -696,9 +745,10 @@ namespace tnt
     {
       sleep(1);
 
-      //log_debug("check sessiontimeout");
+      log_debug("check sessiontimeout");
       getScopemanager().checkSessionTimeout();
 
+      log_debug("worker-timer");
       Worker::timer();
     }
 
@@ -709,9 +759,6 @@ namespace tnt
 
     queue.noWaitThreads.signal();
     Worker::setMinThreads(0);
-    for (listeners_type::iterator it = listeners.begin();
-         it != listeners.end(); ++it)
-      (*it)->doStop();
     pollerthread.doStop();
   }
 
@@ -735,11 +782,13 @@ namespace tnt
     stop = true;
   }
 
-}
+  void Tntnet::restart()
+  {
+    // stopping child with 111 signals monitor-process to restart child
+    stop = true;
+    ret = 111;
+  }
 
-void sigEnd(int)
-{
-  tnt::Tntnet::shutdown();
 }
 
 ////////////////////////////////////////////////////////////////////////
