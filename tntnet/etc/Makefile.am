@@ -11,10 +11,10 @@ nobase_dist_sysconf_DATA = \
 nobase_nodist_sysconf_DATA = \
     tntnet/tntnet.properties
 
-tntnet/tntnet.conf: tntnet/tntnet.conf.in
+tntnet/tntnet.conf: tntnet/tntnet.conf.in Makefile
 	sed -e 's,@libdir\@,@libdir@,g;' \
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
 		-e 's,@datadir\@,@datadir@,g;' <tntnet/tntnet.conf.in >tntnet/tntnet.conf
 
-tntnet/tntnet.properties:
+tntnet/tntnet.properties: Makefile
 	cxxtools-config --logfile /var/log/tntnet/tntnet.log --properties tntnet >$@
