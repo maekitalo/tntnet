@@ -14,7 +14,9 @@ std::string message;
        <&treemenu qparam>
      </td>
      <td class="mainarea">
+% if (request.getPathInfo() != "index") {
        <& (request.getPathInfo()) qparam >
+% }
 % if (!message.empty()) {
        <hr>
        <$ message $>
