@@ -66,7 +66,7 @@ namespace tnt
 
   static unsigned long pthreads_thread_id()
   {
-    return static_cast<unsigned long>(pthread_self());
+    return (unsigned long)pthread_self();
   }
 
   static void pthreads_locking_callback(int mode, int n, const char *file,
