@@ -40,8 +40,9 @@ AC_CHECK_HEADER([cxxtools/log.h], , AC_MSG_ERROR([cxxtools-logging not found]))
 
 AC_MSG_CHECKING([for cxxtools usability])
 AC_COMPILE_IFELSE(
-  [#include <cxxtools/thread.h>
-   void t() { cxxtools::AttachedThread* p; }
+  [#include <cxxtools/net.h>
+   void t() { cxxtools::net::Socket s;
+              struct sockaddr_storage t = s.getSockAddr(); }
   ],
   AC_MSG_RESULT(yes),
   [
