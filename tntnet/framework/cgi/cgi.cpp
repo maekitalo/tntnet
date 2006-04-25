@@ -90,20 +90,20 @@ namespace tnt
 
   void Cgi::getRemoteAddr()
   {
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(sockaddr_in));
+    struct sockaddr_in6 addr;
+    memset(&addr, 0, sizeof(addr));
 
-    addr.sin_family = AF_INET;
+    addr.sin6_family = AF_INET6;
 
     const char* remotePort = getenv("REMOTE_PORT");
     if (remotePort)
-      addr.sin_port = stringTo<u_int16_t>(remotePort);
+      addr.sin6_port = stringTo<u_int16_t>(remotePort);
 
     const char* remoteAddr = getenv("REMOTE_ADDR");
     if (remoteAddr)
-      inet_pton(AF_INET, remoteAddr, &addr);
+      inet_pton(AF_INET6, remoteAddr, &addr);
 
-    request.setPeerAddr(addr);
+    request.setPeerAddr(*reinterpret_cast <sockaddr_storage *> (&addr));
   }
 
   void Cgi::readBody()

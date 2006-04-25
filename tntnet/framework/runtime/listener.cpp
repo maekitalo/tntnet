@@ -54,7 +54,7 @@ static void doListenRetry(cxxtools::net::Server& server,
     }
     catch (const cxxtools::net::Exception& e)
     {
-      log_debug("cxxtools::net::Exception catched: errno=" << e.getErrno() << " msg=" << e.what());
+      log_debug("cxxtools::net::Exception caught: errno=" << e.getErrno() << " msg=" << e.what());
       if (e.getErrno() != EADDRINUSE || n > tnt::Listener::getListenRetry())
       {
         log_debug("rethrow exception");

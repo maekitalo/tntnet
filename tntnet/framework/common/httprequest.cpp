@@ -219,8 +219,8 @@ namespace tnt
   {
 #ifdef HAVE_INET_NTOP
     char buffer[32];
-    const char* r = inet_ntop(AF_INET,
-                              &(peerAddr.sin_addr),
+    const char* r = inet_ntop(AF_INET6,
+                              &peerAddr,
                               buffer,
                               sizeof(buffer));
     if (r == 0)
@@ -244,8 +244,10 @@ namespace tnt
     static cxxtools::Mutex monitor;
     cxxtools::MutexLock lock(monitor);
 
-    char* p = inet_ntoa(serverAddr.sin_addr);
-    return std::string(p);
+    in6_addr tmp = reinterpret_cast <const struct sockaddr_in6 *> (&serverAddr)->sin6_addr;
+    char strbuf[INET6_ADDRSTRLEN];
+    inet_ntop(AF_INET6, &tmp, strbuf, sizeof(strbuf));
+    return std::string(strbuf);
   }
 
   const std::locale& HttpRequest::getLocale() const

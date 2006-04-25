@@ -57,8 +57,8 @@ namespace tnt
       std::string pathinfo;
       args_type args;
       cxxtools::QueryParams qparam;
-      struct sockaddr_in peerAddr;
-      struct sockaddr_in serverAddr;
+      struct sockaddr_storage peerAddr;
+      struct sockaddr_storage serverAddr;
       Contenttype ct;
       Multipart mp;
       bool ssl;
@@ -123,19 +123,19 @@ namespace tnt
       cxxtools::QueryParams& getQueryParams()               { return qparam; }
       const cxxtools::QueryParams& getQueryParams() const   { return qparam; }
 
-      void setPeerAddr(const struct sockaddr_in& p)
-        { memcpy(&peerAddr, &p, sizeof(struct sockaddr_in)); }
-      const struct sockaddr_in& getPeerAddr() const
+      void setPeerAddr(const struct sockaddr_storage& p)
+        { memcpy(&peerAddr, &p, sizeof(peerAddr)); }
+      const struct sockaddr_storage& getPeerAddr() const
         { return peerAddr; }
       std::string getPeerIp() const;
 
-      void setServerAddr(const struct sockaddr_in& p)
-        { memcpy(&serverAddr, &p, sizeof(struct sockaddr_in)); }
-      const struct sockaddr_in& getServerAddr() const
+      void setServerAddr(const struct sockaddr_storage& p)
+        { memcpy(&serverAddr, &p, sizeof(serverAddr)); }
+      const struct sockaddr_storage& getServerAddr() const
         { return serverAddr; }
       std::string getServerIp() const;
       unsigned short int getServerPort() const
-        { return ntohs(serverAddr.sin_port); }
+        { return ntohs(reinterpret_cast <const struct sockaddr_in6 *> (&serverAddr)->sin6_port); }
 
       void setSsl(bool sw = true)
         { ssl = sw; }

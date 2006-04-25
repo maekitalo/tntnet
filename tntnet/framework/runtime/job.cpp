@@ -75,16 +75,16 @@ namespace tnt
     log_debug("accept");
     socket.accept(listener);
 
-    struct sockaddr s = socket.getSockAddr();
-    struct sockaddr_in sockaddr_in;
-    memcpy(&sockaddr_in, &s, sizeof(sockaddr_in));
+    struct sockaddr_storage s = socket.getSockAddr();
+    struct sockaddr_storage sockaddr;
+    memcpy(&sockaddr, &s, sizeof(sockaddr));
 
-    char buffer[20];
+    char buffer[INET6_ADDRSTRLEN];
     log_debug("connection accepted from "
-      << inet_ntop(AF_INET, &(socket.getPeeraddr_in().sin_addr), buffer, sizeof(buffer)));
+      << inet_ntop(AF_INET6, &(socket.getPeeraddr()), buffer, sizeof(buffer)));
 
-    getRequest().setPeerAddr(socket.getPeeraddr_in());
-    getRequest().setServerAddr(sockaddr_in);
+    getRequest().setPeerAddr(socket.getPeeraddr());
+    getRequest().setServerAddr(sockaddr);
     getRequest().setSsl(false);
   }
 
@@ -118,12 +118,12 @@ namespace tnt
     socket.accept(listener);
     log_debug("connection accepted (ssl)");
 
-    struct sockaddr s = socket.getSockAddr();
-    struct sockaddr_in sockaddr_in;
-    memcpy(&sockaddr_in, &s, sizeof(sockaddr_in));
+    struct sockaddr_storage s = socket.getSockAddr();
+    struct sockaddr_storage sockaddr;
+    memcpy(&sockaddr, &s, sizeof(sockaddr));
 
-    getRequest().setPeerAddr(socket.getPeeraddr_in());
-    getRequest().setServerAddr(sockaddr_in);
+    getRequest().setPeerAddr(socket.getPeeraddr());
+    getRequest().setServerAddr(sockaddr);
     getRequest().setSsl(true);
 
     setRead();
