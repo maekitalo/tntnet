@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 1.5.1pre3, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.5.1pre4, [Tommi Maekitalo <tommi@tntnet.org>])
 AM_INIT_AUTOMAKE
 
 abi_current=4
@@ -35,8 +35,6 @@ CXXTOOLS_CXXFLAGS=`$CXXTOOLS_CONFIG --cxxflags`
 CXXTOOLS_LDFLAGS=`$CXXTOOLS_CONFIG --libs`
 CXXFLAGS="$CXXFLAGS $CXXTOOLS_CXXFLAGS"
 LDFLAGS="$CXXFLAGS $CXXTOOLS_LDFLAGS"
-
-AC_CHECK_HEADER([cxxtools/log.h], , AC_MSG_ERROR([cxxtools-logging not found]))
 
 AC_MSG_CHECKING([for cxxtools usability])
 AC_COMPILE_IFELSE(

@@ -38,9 +38,9 @@ EXTRA_DIST = ecpp.vim \
     sdk/demos/newsdb/README \
     sdk/demos/newsdb/global.ecpp \
     sdk/demos/newsdb/index.ecpp \
+    sdk/demos/newsdb/news.ecpp \
     sdk/demos/newsdb/newscss.css \
     sdk/demos/newsdb/newsdata.sh \
-    sdk/demos/newsdb/newsdb.ecpp \
     sdk/demos/newsdb/newsdb.sql \
     sdk/demos/newsdb/tntnet.conf \
     sdk/demos/newsdb/tntnet.properties
