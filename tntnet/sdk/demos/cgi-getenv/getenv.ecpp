@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include <cxxtools/dynbuffer.h>
+
+extern char** environ;
+
 </%pre>
 <%cpp>
 
