@@ -38,6 +38,7 @@
 #include <arpa/inet.h>
 #include <tnt/sessionscope.h>
 #include <errno.h>
+#include <string.h>
 #include "config.h"
 
 namespace tnt
@@ -215,39 +216,33 @@ namespace tnt
     }
   }
 
+  namespace
+  {
+    std::string formatIp(const sockaddr_storage& addr)
+    {
+#ifdef HAVE_INET_NTOP
+      const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
+      char strbuf[INET6_ADDRSTRLEN];
+      inet_ntop(sa->sin_family, &sa->sin_addr, strbuf, sizeof(strbuf));
+      return strbuf;
+#else
+      static cxxtools::Mutex monitor;
+      cxxtools::MutexLock lock(monitor);
+
+      char* p = inet_ntoa(peerAddr.sin_addr);
+      return std::string(p);
+#endif
+    }
+  }
+
   std::string HttpRequest::getPeerIp() const
   {
-#ifdef HAVE_INET_NTOP
-    char buffer[32];
-    const char* r = inet_ntop(AF_INET6,
-                              &peerAddr,
-                              buffer,
-                              sizeof(buffer));
-    if (r == 0)
-    {
-      std::ostringstream msg;
-      msg << "error " << errno << " in inet_ntop: " << strerror(errno);
-      throw std::runtime_error(msg.str());
-    }
-    return std::string(buffer);
-#else
-    static cxxtools::Mutex monitor;
-    cxxtools::MutexLock lock(monitor);
-
-    char* p = inet_ntoa(peerAddr.sin_addr);
-    return std::string(p);
-#endif
+    return formatIp(peerAddr);
   }
 
   std::string HttpRequest::getServerIp() const
   {
-    static cxxtools::Mutex monitor;
-    cxxtools::MutexLock lock(monitor);
-
-    in6_addr tmp = reinterpret_cast <const struct sockaddr_in6 *> (&serverAddr)->sin6_addr;
-    char strbuf[INET6_ADDRSTRLEN];
-    inet_ntop(AF_INET6, &tmp, strbuf, sizeof(strbuf));
-    return std::string(strbuf);
+    return formatIp(serverAddr);
   }
 
   const std::locale& HttpRequest::getLocale() const
