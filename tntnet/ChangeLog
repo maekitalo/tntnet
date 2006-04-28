@@ -1,3 +1,6 @@
+2006-04-26 tommi@tntnet.org
+  - support for IPv6
+
 2006-04-12 tommi@tntnet.org
 
   - new demo newsdb, which reads news from a database using tntdb
