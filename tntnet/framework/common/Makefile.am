@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = libtntnet.la
 
 libtntnet_la_SOURCES = \
+	cache.cpp \
 	compident.cpp \
 	comploader.cpp \
 	component.cpp \

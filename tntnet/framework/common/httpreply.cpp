@@ -34,6 +34,7 @@
 #include <tnt/httpheader.h>
 #include <tnt/deflatestream.h>
 #include <tnt/httperror.h>
+#include <tnt/cache.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 #include <cxxtools/dynbuffer.h>
@@ -48,15 +49,40 @@ namespace tnt
   // HttpReply
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
-  unsigned HttpReply::minCompressSize = 300;
+  unsigned HttpReply::minCompressSize = 1024;
+  static Cache compressCache(1024);
 
-  void HttpReply::tryCompress(std::string& body)
+  void HttpReply::setCompressCacheSize(unsigned s)
   {
-    if (body.size() >= minCompressSize && !hasHeader(httpheader::contentEncoding))
+    compressCache.setMaxSize(s * 1024);
+  }
+
+  unsigned HttpReply::getCompressCacheSize()
+  {
+    return compressCache.getMaxSize() / 1024;
+  }
+
+  namespace
+  {
+    std::string doCompress(const std::string& body)
     {
-      if (acceptEncoding.accept("gzip"))
+      static cxxtools::Mutex mutex;
+
+      cxxtools::MutexLock lock(mutex);
+
+      std::string ret;
+
+      std::pair<bool, std::string> c = compressCache.get(body);
+      if (c.first)
       {
-        log_debug("gzip");
+        log_debug("compress-cache hit");
+        ret = c.second;
+      }
+      else
+      {
+        log_debug("compress-cache miss");
+
+        lock.unlock();  // unlock while compressing
 
         std::ostringstream b;
         char f[] = "\x1f\x8b\x08\x00"
@@ -81,11 +107,35 @@ namespace tnt
         b.put(static_cast<char>((u >>= 8) & 0xFF));
         b.put(static_cast<char>((u >>= 8) & 0xFF));
 
+        lock.lock();  // relock cache
+        compressCache.put(body, b.str());
+
+        ret = b.str();
+      }
+
+      log_debug("cache hits/misses/hitratio " << compressCache.getHits() << '/'
+        << compressCache.getMisses() << '/'
+        << compressCache.getHits() * 100 / (compressCache.getHits() + compressCache.getMisses()) << '%');
+
+      return ret;
+    }
+  }
+
+  void HttpReply::tryCompress(std::string& body)
+  {
+    if (body.size() >= minCompressSize && !hasHeader(httpheader::contentEncoding))
+    {
+      if (acceptEncoding.accept("gzip"))
+      {
+        log_debug("gzip");
+
+        std::string cbody = doCompress(body);
+
         std::string::size_type oldSize = body.size();
-        // only send compressed data, if the data is compressed more than 10%
-        if (oldSize * 9 / 10 > b.str().size())
+        // only send compressed data, if the data is compressed more than 1/8th
+        if (oldSize - (oldSize >> 3) > cbody.size())
         {
-          body = b.str();
+          body = cbody;
           log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
 
           setHeader(httpheader::contentEncoding, "gzip");

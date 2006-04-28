@@ -616,6 +616,8 @@ namespace tnt
       config.getValue("BufferSize", Job::getSocketBufferSize()));
     HttpReply::setMinCompressSize(
       config.getValue("MinCompressSize", HttpReply::getMinCompressSize()));
+    HttpReply::setCompressCacheSize(
+      config.getValue("CompressCacheSize", HttpReply::getCompressCacheSize()));
     HttpReply::setKeepAliveTimeout(
       config.getValue("KeepAliveTimeout", HttpReply::getKeepAliveTimeout()));
 
