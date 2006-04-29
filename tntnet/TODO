@@ -1,5 +1,6 @@
 - http-auth
 - ranges
+- apache-module
 
 doc:
 - '{}' (split)
