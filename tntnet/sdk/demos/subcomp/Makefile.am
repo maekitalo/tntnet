@@ -1,8 +1,8 @@
 pkglib_LTLIBRARIES = lib.la extlib.la
 
 lib_la_SOURCES = \
-	subcomp.ecpp \
-	extcomp.ecpp
+	comp.ecpp \
+    subcomp.ecpp
 
 extlib_la_SOURCES = \
 	extcomp.ecpp
