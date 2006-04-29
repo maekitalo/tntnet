@@ -253,11 +253,17 @@ namespace tnt
         generator.getHeader(hout, ofile + ".h");
         hout.close();
 
+        if (!hout)
+          throw std::runtime_error("error writing file \"" + ofile + ".h\"");
+
         if (verbose)
           std::cout << "generate " << obase << ".cpp" << std::endl;
         std::ofstream sout((obase + ".cpp").c_str());
         generator.getCpp(sout, ofile + ".cpp");
         sout.close();
+
+        if (!sout)
+          throw std::runtime_error("error writing file \"" + ofile + ".cpp\"");
       }
       else
       {
@@ -266,6 +272,9 @@ namespace tnt
         std::ofstream sout((obase + ".cpp").c_str());
         generator.getCppWoHeader(sout, ofile + ".cpp");
         sout.close();
+
+        if (!sout)
+          throw std::runtime_error("error writing file \"" + ofile + ".cpp\"");
       }
 
       return 0;
@@ -335,6 +344,6 @@ int main(int argc, char* argv[])
   catch(const std::exception& e)
   {
     std::cerr << e.what() << std::endl;
-    return -1;
+    return 1;
   }
 }

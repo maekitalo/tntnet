@@ -86,8 +86,6 @@ normal parameterlist just like in c++-functions after the defition
  <& extcomp@extlib param1="value1" &>
 </p>
 
-% return HTTP_OK;
-
 <h2> a external subcomponentcall </h2>
 
 <p class="example">
@@ -96,8 +94,6 @@ normal parameterlist just like in c++-functions after the defition
 <p class="result">
  <& extcomp.subcomp@extlib param1="value1" &>
 </p>
-
-% return HTTP_OK;
 
 <h2> compose componentname by expression </h2>
 <{
@@ -145,6 +141,12 @@ normal parameterlist just like in c++-functions after the defition
   callComp("extcomp@extlib", request, reply, qparam);
 }>
 </p>
+
+<h2>component in a different namespace</h2>
+<p class="example">
+ &lt;&amp; "mynamespace::nscomp" &amp;&gt;
+</p>
+<& "mynamespace::nscomp" &>
 
 </body>
 </html>

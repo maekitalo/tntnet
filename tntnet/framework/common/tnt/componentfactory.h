@@ -38,12 +38,14 @@
 
 #define TNT_COMPONENTFACTORY(componentName, factoryType) \
   extern "C" { \
-    factoryType componentName ## _factory( #componentName );   \
+    factoryType componentName ## __factory( #componentName );   \
   } \
-  static factoryType& factory = componentName ## _factory;
+  static factoryType& factory = componentName ## __factory;
 
 namespace tnt
 {
+  extern const std::string factorySuffix;
+
   class ComponentFactory
   {
       // noncopyable
@@ -104,4 +106,4 @@ namespace tnt
 
 }
 
-#endif // TNT_COMPONENT_H
+#endif // TNT_COMPONENTFACTORY_H

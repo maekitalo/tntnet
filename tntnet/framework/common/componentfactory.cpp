@@ -37,6 +37,8 @@ log_define("tntnet.componentfactory")
 
 namespace tnt
 {
+  const std::string factorySuffix = "__factory";
+
   ComponentFactory::ComponentFactory(const std::string& componentName)
     : configured(false)
   {

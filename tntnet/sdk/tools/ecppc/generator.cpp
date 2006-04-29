@@ -36,6 +36,7 @@
 #include <cxxtools/dynbuffer.h>
 #include <cxxtools/log.h>
 #include <tnt/httpmessage.h>
+#include <tnt/componentfactory.h>
 
 log_define("tntnet.generator")
 
@@ -301,7 +302,7 @@ namespace tnt
 
     void Generator::getNamespaceStart(std::ostream& out) const
     {
-      out << "namespace component\n"
+      out << "namespace\n"
              "{\n";
 
       if (!maincomp.getNs().empty())
@@ -315,7 +316,7 @@ namespace tnt
     {
       if (!maincomp.getNs().empty())
         out << "} // namespace " << maincomp.getNs() << '\n';
-      out << "} // namespace component\n";
+      out << "} // namespace\n\n";
     }
 
     void Generator::getDeclareShared(std::ostream& out) const
@@ -432,7 +433,21 @@ namespace tnt
                 "}\n\n";
       }
 
-      code << "TNT_COMPONENTFACTORY(" << maincomp.getName() << ", " << maincomp.getName() << "Factory)\n\n";
+      getNamespaceEnd(code);
+
+      std::string ns = maincomp.getNs().empty() ? std::string() : (maincomp.getNs() + "::");
+      std::string componentName = maincomp.getName();
+      std::string factoryType = ns + maincomp.getName() + "Factory";
+      std::string factoryName = (maincomp.getNs().empty() ? std::string() : (maincomp.getNs() + "__"))
+                              + componentName + factorySuffix;
+
+      code << "extern \"C\" {\n"
+              "  " << factoryType << ' ' << factoryName << "(\"" << componentName << "\");\n"
+              "}\n\n";
+
+      getNamespaceStart(code);
+
+      code << factoryType << "& factory = " << factoryName << ";\n\n";
     }
 
     void Generator::getCppBody(std::ostream& code) const

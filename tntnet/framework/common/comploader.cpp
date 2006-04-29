@@ -61,7 +61,14 @@ Component* ComponentLibrary::create(
   factoryMapType::const_iterator i = factoryMap.find(component_name);
   if (i == factoryMap.end())
   {
-    std::string factoryName = component_name + "_factory";
+    std::string factoryName = component_name;
+
+    std::string::size_type pos = factoryName.find("::");
+    if (pos != std::string::npos)
+      factoryName.replace(pos, 2, "__");
+
+    factoryName += factorySuffix;
+
     if (getHandle() == 0)
       throw cxxtools::dl::SymbolNotFound(factoryName);
 
