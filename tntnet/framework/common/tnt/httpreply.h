@@ -119,9 +119,6 @@ namespace tnt
       static void setMinCompressSize(unsigned s)    { minCompressSize = s; }
       static unsigned getMinCompressSize()          { return minCompressSize; }
 
-      static void setCompressCacheSize(unsigned s);
-      static unsigned getCompressCacheSize();
-
       void setAcceptEncoding(const Encoding& enc)    { acceptEncoding = enc; }
       void setAcceptEncoding(const std::string& enc) { acceptEncoding.parse(enc); }
 

@@ -34,7 +34,6 @@
 #include <tnt/httpheader.h>
 #include <tnt/deflatestream.h>
 #include <tnt/httperror.h>
-#include <tnt/cache.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 #include <cxxtools/dynbuffer.h>
@@ -50,74 +49,37 @@ namespace tnt
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
   unsigned HttpReply::minCompressSize = 1024;
-  static Cache compressCache(1024);
-
-  void HttpReply::setCompressCacheSize(unsigned s)
-  {
-    compressCache.setMaxSize(s * 1024);
-  }
-
-  unsigned HttpReply::getCompressCacheSize()
-  {
-    return compressCache.getMaxSize() / 1024;
-  }
 
   namespace
   {
     std::string doCompress(const std::string& body)
     {
-      static cxxtools::Mutex mutex;
-
-      cxxtools::MutexLock lock(mutex);
-
       std::string ret;
 
-      std::pair<bool, std::string> c = compressCache.get(body);
-      if (c.first)
-      {
-        log_debug("compress-cache hit");
-        ret = c.second;
-      }
-      else
-      {
-        log_debug("compress-cache miss");
+      std::ostringstream b;
+      char f[] = "\x1f\x8b\x08\x00"
+           "\x00\x00\x00\x00"
+           "\x04\x03";
+      b.write(f, sizeof(f) - 1);
 
-        lock.unlock();  // unlock while compressing
+      DeflateStream deflator(b);
+      deflator.write(body.data(), body.size());
+      deflator.end();
 
-        std::ostringstream b;
-        char f[] = "\x1f\x8b\x08\x00"
-             "\x00\x00\x00\x00"
-             "\x04\x03";
-        b.write(f, sizeof(f) - 1);
+      uLong crc = crc32(0, reinterpret_cast<const Bytef*>(body.data()), body.size());
+      uint32_t u = crc;
+      b.put(static_cast<char>(u & 0xFF));
+      b.put(static_cast<char>((u >>= 8) & 0xFF));
+      b.put(static_cast<char>((u >>= 8) & 0xFF));
+      b.put(static_cast<char>((u >>= 8) & 0xFF));
 
-        DeflateStream deflator(b);
-        deflator.write(body.data(), body.size());
-        deflator.end();
+      u = body.size();
+      b.put(static_cast<char>(u & 0xFF));
+      b.put(static_cast<char>((u >>= 8) & 0xFF));
+      b.put(static_cast<char>((u >>= 8) & 0xFF));
+      b.put(static_cast<char>((u >>= 8) & 0xFF));
 
-        uLong crc = crc32(0, reinterpret_cast<const Bytef*>(body.data()), body.size());
-        uint32_t u = crc;
-        b.put(static_cast<char>(u & 0xFF));
-        b.put(static_cast<char>((u >>= 8) & 0xFF));
-        b.put(static_cast<char>((u >>= 8) & 0xFF));
-        b.put(static_cast<char>((u >>= 8) & 0xFF));
-
-        u = body.size();
-        b.put(static_cast<char>(u & 0xFF));
-        b.put(static_cast<char>((u >>= 8) & 0xFF));
-        b.put(static_cast<char>((u >>= 8) & 0xFF));
-        b.put(static_cast<char>((u >>= 8) & 0xFF));
-
-        lock.lock();  // relock cache
-        compressCache.put(body, b.str());
-
-        ret = b.str();
-      }
-
-      log_debug("cache hits/misses/hitratio " << compressCache.getHits() << '/'
-        << compressCache.getMisses() << '/'
-        << compressCache.getHits() * 100 / (compressCache.getHits() + compressCache.getMisses()) << '%');
-
-      return ret;
+      return b.str();
     }
   }
 
