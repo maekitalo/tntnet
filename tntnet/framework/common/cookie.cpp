@@ -224,11 +224,14 @@ namespace tnt
           if (ch == '"')
           {
             value.clear();
+            value.reserve(32);
             state = state_qvalue;
           }
           else if (!myisspace(ch))
           {
-            value = ch;
+            value.clear();
+            value.reserve(32);
+            value += ch;
             state = state_value;
           }
           break;

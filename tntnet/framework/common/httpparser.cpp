@@ -75,7 +75,9 @@ namespace tnt
   {
     if (istokenchar(ch))
     {
-      message.method = ch;
+      message.method.clear();
+      message.method.reserve(16);
+      message.method += ch;
       SET_STATE(state_cmd);
     }
     else if (!myisspace(ch))
@@ -111,7 +113,9 @@ namespace tnt
     {
       if (ch > ' ')
       {
-        message.url = ch;
+        message.url.clear();
+        message.url.reserve(32);
+        message.url += ch;
         SET_STATE(state_url);
       }
       else

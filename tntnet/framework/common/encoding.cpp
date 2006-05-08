@@ -65,7 +65,9 @@ namespace tnt
         case state_0:
           if (!myisspace(ch))
           {
-            encoding = ch;
+            encoding.clear();
+            encoding.reserve(16);
+            encoding += ch;
             state = state_encoding;
           }
           break;

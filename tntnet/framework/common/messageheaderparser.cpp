@@ -55,7 +55,9 @@ namespace tnt
   {
     if (ch >= 33 && ch <= 126 && ch != ':')
     {
-      fieldname = ch;
+      fieldname.clear();
+      fieldname.reserve(16);
+      fieldname += ch;
       SET_STATE(state_fieldname);
     }
     else if (ch == '\n')
@@ -108,7 +110,8 @@ namespace tnt
       SET_STATE(state_fieldbody0);
     else if (ch >= 33 && ch <= 126)  // "Field-name blah..."
     {
-      fieldbody = ch;
+      fieldbody.reserve(32);
+      fieldbody += ch;
       SET_STATE(state_fieldbody);
     }
     else if (!myisspace(ch))
@@ -128,7 +131,9 @@ namespace tnt
       SET_STATE(state_fieldbody_crlf);
     else if (!myisspace(ch))
     {
-      fieldbody = ch;
+      fieldbody.clear();
+      fieldbody.reserve(32);
+      fieldbody += ch;
       SET_STATE(state_fieldbody);
     }
     return false;
@@ -196,7 +201,9 @@ namespace tnt
                    break;
       }
       fieldbody.clear();
-      fieldname = ch;
+      fieldname.clear();
+      fieldname.reserve(16);
+      fieldname += ch;
     }
     return false;
   }

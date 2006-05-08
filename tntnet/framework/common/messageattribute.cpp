@@ -84,7 +84,9 @@ namespace tnt
         case state_0:
           if (istokenchar(ch))
           {
-            type = ch;
+            type.clear();
+            type.reserve(16);
+            type += ch;
             state = state_type0;
           }
           else if (myisspace(ch))
@@ -200,7 +202,9 @@ namespace tnt
             state = state_qvalue;
           else if (istokenchar(ch))
           {
-            value = ch;
+            value.clear();
+            value.reserve(16);
+            value += ch;
             state = state_value;
           }
           else
