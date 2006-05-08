@@ -132,7 +132,14 @@ namespace tnt
       setKeepAliveHeader(0);
 
     if (!hasHeader(httpheader::contentType))
+    {
+      static const std::string contentTypeHttp1_1 = "text/html; charset=iso-8859-1";
+      static const std::string contentTypeHttp1_0 = "text/html";
+      if (contentType.empty())
+        contentType = getMajorVersion() >= 1 && getMinorVersion() >= 1 ? contentTypeHttp1_1
+                                                                       : contentTypeHttp1_0;
       setHeader(httpheader::contentType, contentType);
+    }
 
     // send header
 
@@ -172,8 +179,7 @@ namespace tnt
   }
 
   HttpReply::HttpReply(std::ostream& s, bool sendStatusLine_)
-    : contentType("text/html"),
-      socket(s),
+    : socket(s),
       current_outstream(&outstream),
       save_outstream(outstream),
       keepAliveCounter(0),
