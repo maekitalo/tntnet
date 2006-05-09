@@ -1,6 +1,19 @@
+tntnet (1.5.1pre4-2) stable; urgency=low
+
+  * IPv6
+  * send charset in content-size-header in http/1.1
+
+ -- Tommi Maekitalo <tommi@tntnet.org>  Tue,  9 May 2006 08:02:39 +0200
+
+tntnet (1.5.1pre4-1) stable; urgency=low
+
+  * fix graceful shutdown
+
+ -- Tommi Maekitalo <tommi@tntnet.org>  Tue, 18 Apr 2006 13:33:33 +0200
+
 tntnet (1.5.1pre3-2) stable; urgency=low
 
-  * cxxtools aktualisiert mit locking-freiem logging
+  * compiled with new cxxtools, which has lock-free logging
 
  -- Tommi Maekitalo <tommi@tntnet.org>  Wed,  5 Apr 2006 21:17:39 +0200
 
