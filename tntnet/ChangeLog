@@ -1,4 +1,9 @@
+2006-05-08 tommi@tntnet.org
+
+  - send charset in content-type-header with HTTP/1.1
+
 2006-04-29 tommi@tntnet.org
+
   - improved namespace-support for components
 
 2006-04-26 tommi@tntnet.org
