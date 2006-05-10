@@ -76,7 +76,6 @@ PropertyFile        tntnet.properties
 #ListenRetry        5
 #EnableCompression  no
 #MinCompressSize    1024  # in bytes
-#CompressCacheSize  1024  # in kbytes
 EOF
 }
 
