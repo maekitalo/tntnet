@@ -177,7 +177,7 @@ namespace tnt
         cxxtools::Md5stream c;
         c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
         cookie = c.getHexDigest();
-        log_debug("set Cookie " << cookie);
+        log_info("create new session " << cookie);
         reply.setCookie(currentSessionCookieName, cookie);
         putSessionScope(cookie, &request.getSessionScope());
       }

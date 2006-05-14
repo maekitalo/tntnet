@@ -370,6 +370,7 @@ namespace tnt
   {
     if (sessionScope)
     {
+      log_info("end session");
       releaseSessionScopeLock();
       sessionScope->release();
       sessionScope = 0;
