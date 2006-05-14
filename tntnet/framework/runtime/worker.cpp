@@ -37,7 +37,6 @@
 #include <tnt/httperror.h>
 #include <tnt/http.h>
 #include <tnt/poller.h>
-#include <tnt/sessionscope.h>
 #include <cxxtools/log.h>
 #include <sys/types.h>
 #include <sys/socket.h>
