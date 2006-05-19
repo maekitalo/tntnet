@@ -383,7 +383,7 @@ namespace tnt
         && lastWaitTime != 0
         && maxRequestTime > 0)
     {
-      if (maxRequestTime + currentTime - lastWaitTime > 0)
+      if (static_cast<unsigned>(currentTime - lastWaitTime) > maxRequestTime)
       {
         log_fatal("requesttime " << maxRequestTime << " seconds in thread "
           << threadId << " exceeded - exit process");

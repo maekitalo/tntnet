@@ -205,7 +205,7 @@ namespace tnt
     while (it != sessionScopes.end())
     {
       Sessionscope* s = it->second;
-      if (s->getTimeout() + currentTime - s->getAtime() > 0)
+      if (static_cast <unsigned> (currentTime - s->getAtime()) > s->getTimeout())
       {
         log_info("sessiontimeout for session " << it->first << " reached");
         sessionscopes_type::iterator it2 = it;
