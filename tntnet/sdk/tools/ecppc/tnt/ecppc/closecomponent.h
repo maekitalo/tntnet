@@ -45,6 +45,7 @@ namespace tnt
         Closecomponent(const std::string& classname)
           : Component(classname)
           { }
+        virtual ~Closecomponent() {}
 
         void getDefinition(std::ostream& o, bool externData) const;
     };

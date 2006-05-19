@@ -65,6 +65,7 @@ namespace tnt
           : classname(classname_),
             ns(ns_)
           { }
+        virtual ~Component() {}
 
         const std::string& getName() const  { return classname; }
         const std::string& getNs() const    { return ns; }
