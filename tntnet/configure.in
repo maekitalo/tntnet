@@ -73,7 +73,10 @@ AC_ARG_WITH([openssl],
     if test -d "${openssl_prefix}/lib" ; then
       LIBDIRS="$LIBDIRS -L${openssl_prefix}/lib"
     fi
-    AC_CHECK_HEADER([openssl/ssl.h], [], [AC_MSG_ERROR(openssl/ssl.h not found)])
+    AC_CHECK_HEADER([openssl/ssl.h], [],
+      [AC_MSG_WARN(openssl/ssl.h not found - continue without ssl-support)
+       openssl=0
+       ])
 
   ])
 
