@@ -42,6 +42,7 @@
 #include <cxxtools/query_params.h>
 #include <tnt/scope.h>
 #include <locale>
+#include <sys/socket.h>
 
 namespace tnt
 {
