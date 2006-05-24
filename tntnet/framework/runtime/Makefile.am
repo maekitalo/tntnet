@@ -23,5 +23,5 @@ if MAKE_OPENSSL
 tntnet_SOURCES += \
 	ssl.cpp \
 	tnt/ssl.h
-tntnet_LDFLAGS += -lssl
+tntnet_LDFLAGS += -lssl -lcrypto
 endif
