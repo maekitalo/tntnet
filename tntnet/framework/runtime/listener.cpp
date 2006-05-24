@@ -78,7 +78,8 @@ namespace tnt
     }
     catch (const std::exception& e)
     {
-      log_error(e.what());
+      log_warn("error waking up listener: " << e.what() << " try 127.0.0.1");
+      cxxtools::net::Stream("127.0.0.1", port);
     }
   }
 
