@@ -3,7 +3,7 @@ noinst_PROGRAMS = getenv
 getenv_SOURCES = \
 	getenv.ecpp
 
-getenv_LDADD = $(top_builddir)/framework/cgi/libtntnet-cgi.la
+getenv_LDADD = $(top_builddir)/framework/cgi/libtntnet_cgi.la
 
 CLEANFILES = getenv.cpp
 

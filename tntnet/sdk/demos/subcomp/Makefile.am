@@ -15,7 +15,7 @@ extlib_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 nscomp.cpp: ECPPFLAGS=-N mynamespace -o nscomp.cpp
 
-data_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = subcomp.cpp extcomp.cpp tntnet.conf tntnet.properties
 
 EXTRA_DIST = tntnet.conf tntnet.properties

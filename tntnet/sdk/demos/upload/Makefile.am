@@ -6,7 +6,7 @@ upload_la_SOURCES = \
 upload_la_LDFLAGS = -module
 upload_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
-data_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = upload.cpp tntnet.conf tntnet.properties
 
 SUFFIXES=.ecpp

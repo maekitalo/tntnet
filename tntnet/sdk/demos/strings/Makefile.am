@@ -6,7 +6,7 @@ strings_la_SOURCES = \
 strings_la_LDFLAGS = -module
 strings_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
-data_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = strings.cpp tntnet.conf tntnet.properties
 
 SUFFIXES=.ecpp

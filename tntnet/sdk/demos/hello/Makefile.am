@@ -7,7 +7,7 @@ hello_la_SOURCES = \
 hello_la_LDFLAGS = -module
 hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
-data_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = hello.cpp tntnet.cpp tntnet.conf tntnet.properties
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc

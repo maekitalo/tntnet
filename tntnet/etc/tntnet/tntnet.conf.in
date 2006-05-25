@@ -6,18 +6,16 @@ Listen	    0.0.0.0 80
 #SslListen  0.0.0.0 443 @sysconfdir@/tntnet/tntnet.pem
 
 Daemon	    1
-#PidFile	/var/run/tntnet.pid
 User	    www-data
 Group	    www-data
 CompPath    @libdir@/tntnet
-CompPath    @datadir@/tntnet
 
 # set some limit to prevent DoS-attacks
 MaxRequestSize     1048576  # 1 MB
 
 #Dir                /
 #Chroot             /var/safedir
-#PidFile            /var/run/tntnet.pid
+#PidFile            @localstatedir@/tntnet.pid
 #Daemon             0
 #MinThreads         5
 #MaxThreads         10
@@ -37,6 +35,15 @@ MaxRequestSize     1048576  # 1 MB
 
 include @sysconfdir@/tntnet.d/*.conf
 include @sysconfdir@/tntnet/mime.conf
+
+# make demos callable
+MapUrl  /demos/controls$            redirect@tntnet /demos/controls/
+MapUrl  /demos/controls/(.*)\..*    $1@controls
+MapUrl  /demos/controls/$           index@controls  index
+MapUrl  /demos/controls/(.*)        index@controls  $1
+MapUrl  /demos/(.*)\..*   $1@$1    $1
+MapUrl  /demos/(.*)   $1@$1
+MapUrl  /demos/tntnet.jpg   tntnet@hello
 
 # configure tntnet as a simple webserver
 MapUrl  .*      mime@tntnet

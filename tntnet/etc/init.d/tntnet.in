@@ -1,11 +1,8 @@
 #!/bin/sh
 
-PIDFILE=/var/run/tntnet.pid
-COMPPATH=/usr/lib/component
-[ "$LANG" == "" ] && export LANG=de_DE@euro
+PIDFILE=@localstatedir@/tntnet.pid
 
 function start() {
-	export LD_LIBRARY_PATH=$COMPPATH
 	tntnet
 }
 

@@ -25,3 +25,5 @@ tntnet_SOURCES += \
 	tnt/ssl.h
 tntnet_LDFLAGS += -lssl -lcrypto
 endif
+
+tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@sharedstatedir@/tntnet.pid\"

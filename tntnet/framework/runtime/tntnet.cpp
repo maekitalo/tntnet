@@ -53,12 +53,8 @@
 #include <errno.h>
 #include <config.h>
 
-#ifndef CONFIG_DIR
-# define CONFIG_DIR "/etc/tntnet/"
-#endif
-
 #ifndef TNTNET_CONF
-# define TNTNET_CONF CONFIG_DIR "tntnet.conf"
+# define TNTNET_CONF "/etc/tntnet.conf"
 #endif
 
 #ifndef TNTNET_PID

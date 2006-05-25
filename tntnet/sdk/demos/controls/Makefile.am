@@ -19,7 +19,7 @@ controls_la_SOURCES = \
 controls_la_LDFLAGS = -module
 controls_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
-data_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.conf tntnet.properties
 EXTRA_DIST = tntnet.conf
 CLEANFILES = tntnet.properties \
 	controls.cpp \

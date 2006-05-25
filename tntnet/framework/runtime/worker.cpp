@@ -343,11 +343,11 @@ namespace tnt
       }
       catch (const cxxtools::dl::DlopenError& e)
       {
-        log_warn("dl::DlopenError catched - libname " << e.getLibname());
+        log_warn("DlopenError catched - libname " << e.getLibname());
       }
       catch (const cxxtools::dl::SymbolNotFound& e)
       {
-        log_warn("dl::SymbolNotFound catched - symbol " << e.getSymbol());
+        log_warn("SymbolNotFound catched - symbol " << e.getSymbol());
       }
     }
 
