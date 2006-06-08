@@ -61,7 +61,6 @@ namespace tnt
 
     public:
       ComponentFactory(const std::string& componentName_);
-      virtual ~ComponentFactory() {}
 
       virtual Component* create(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
@@ -84,7 +83,6 @@ namespace tnt
           theComponent(0),
           refs(0)
       { }
-      virtual ~SingletonComponentFactory() {}
 
       virtual Component* create(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
