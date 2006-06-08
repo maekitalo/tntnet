@@ -167,12 +167,31 @@ namespace tnt
   std::string Tntnet::pidFileName;
 
   Tntnet::Tntnet(int& argc, char* argv[])
-    : conf(argc, argv, 'c', TNTNET_CONF),
-      propertyfilename(argc, argv, 'P'),
+    : propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
       queue(100),
       pollerthread(queue)
   {
+    // check for argument -c
+    cxxtools::Arg<const char*> conf(argc, argv, 'c');
+    if (conf.isSet())
+      configFile = conf;
+    else
+    {
+      // read 1st parameter from argument-list
+      cxxtools::Arg<const char*> conf(argc, argv);
+      if (conf.isSet())
+        configFile = conf;
+      else
+      {
+        // check environment-variable TNTNET_CONF
+        const char* tntnetConf = ::getenv("TNTNET_CONF");
+        if (tntnetConf)
+          configFile = tntnetConf;
+        else
+          configFile = TNTNET_CONF;  // take default
+      }
+    }
   }
 
   void Tntnet::setGroup() const
@@ -771,16 +790,7 @@ namespace tnt
   void Tntnet::loadConfiguration()
   {
     config = Tntconfig();
-    if (conf.isSet())
-      config.load(conf);
-    else
-    {
-      const char* tntnetConf = ::getenv("TNTNET_CONF");
-      if (tntnetConf)
-        config.load(tntnetConf);
-      else
-        config.load(TNTNET_CONF);
-    }
+    config.load(configFile.c_str());
   }
 
   void Tntnet::shutdown()

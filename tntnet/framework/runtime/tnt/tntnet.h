@@ -46,7 +46,7 @@ namespace tnt
 
   class Tntnet
   {
-      cxxtools::Arg<const char*> conf;
+      std::string configFile;
       Tntconfig config;
       cxxtools::Arg<const char*> propertyfilename;
       cxxtools::Arg<bool> debug;
