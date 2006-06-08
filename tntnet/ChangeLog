@@ -1,3 +1,9 @@
+2006-06-08 tommi@tntnet.org
+
+  - take first commandline-argument as configurationfile
+  - remove unnecessery virtual destructors (although this triggers some
+    compiler-warnings)
+
 2006-05-24 tommi@tntnet.org
 
   - fix linking with openssl for Open-BSD (and possibly others)
