@@ -57,30 +57,40 @@ AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADERS([limits])
 
 #
-# OpenSSL
+# SSL
 #
-AC_ARG_WITH([openssl],
-  AS_HELP_STRING([--with-openssl], [build with OpenSSL support]),
-  [openssl_prefix=$withval],
-  [
-    AC_MSG_RESULT([building with OpenSSL support])
-    AC_DEFINE([USE_SSL], 1, [Define to build with (Open)SSL support. (--with-openssl)])
-    openssl=1
+AC_ARG_WITH([ssl],
+  AS_HELP_STRING(['--with-ssl=gnutls|openssl|no'], [build with SSL support (default is gnutls)]),
+  [ssl_option=$withval],
+  [ssl_option=gnutls])
 
-    if test -d "${openssl_prefix}/include" ; then
-      INCLUDES="$INCLUDES -I${openssl_prefix}/include"
-    fi
-    if test -d "${openssl_prefix}/lib" ; then
-      LIBDIRS="$LIBDIRS -L${openssl_prefix}/lib"
-    fi
-    AC_CHECK_HEADER([openssl/ssl.h], [],
-      [AC_MSG_WARN(openssl/ssl.h not found - continue without ssl-support)
-       openssl=0
-       ])
+case "$ssl_option" in
+    gnutls|yes)
+        AC_CHECK_HEADER([gnutls/gnutls.h], [
+            AC_MSG_RESULT([building with GnuTLS support])
+            AC_DEFINE(WITH_GNUTLS, [], [Define to build with gnutls])
+            with_gnutls=1
+          ],
+          [AC_MSG_ERROR(gnutls-headers not not found)])
+        ;;
+    openssl)
+        AC_CHECK_HEADER([openssl/ssl.h], [
+            AC_MSG_RESULT([building with OpenSSL support])
+            AC_DEFINE(WITH_OPENSSL, [], [Define to build with openssl])
+            with_openssl=1
+          ],
+          [AC_MSG_ERROR(openssl-headers not not found)])
+        ;;
+    no)
+        AC_MSG_RESULT([building without ssl support])
+        ;;
+    *)
+        AC_MSG_ERROR([unknown ssl-value $ssl_option])
+        ;;
+esac
 
-  ])
-
-AM_CONDITIONAL(MAKE_OPENSSL, test x$openssl == x1)
+AM_CONDITIONAL(MAKE_GNUTLS, test x$with_gnutls = x1)
+AM_CONDITIONAL(MAKE_OPENSSL, test x$with_openssl = x1)
 
 #
 # others

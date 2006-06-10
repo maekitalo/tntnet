@@ -151,6 +151,49 @@ namespace tnt
 
 #endif // USE_SSL
 
+#ifdef USE_GNUTLS
+  ////////////////////////////////////////////////////////////////////////
+  // GnuTlsTcpjob
+  //
+  void GnuTlsTcpjob::accept(const GnuTlsServer& listener)
+  {
+    log_debug("accept (ssl)");
+    socket.accept(listener);
+    log_debug("connection accepted (ssl)");
+
+    struct sockaddr_storage s = socket.getSockAddr();
+    struct sockaddr_storage sockaddr;
+    memcpy(&sockaddr, &s, sizeof(sockaddr));
+
+    getRequest().setPeerAddr(socket.getPeeraddr());
+    getRequest().setServerAddr(sockaddr);
+    getRequest().setSsl(true);
+
+    setRead();
+  }
+
+  std::iostream& GnuTlsTcpjob::getStream()
+  {
+    return socket;
+  }
+
+  int GnuTlsTcpjob::getFd() const
+  {
+    return socket.getFd();
+  }
+
+  void GnuTlsTcpjob::setRead()
+  {
+    socket.setTimeout(getSocketReadTimeout());
+  }
+
+  void GnuTlsTcpjob::setWrite()
+  {
+    socket.setTimeout(getSocketWriteTimeout());
+  }
+
+#endif // USE_GNUTLS
+
   //////////////////////////////////////////////////////////////////////
   // Jobqueue
   //

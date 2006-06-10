@@ -1,3 +1,7 @@
+2006-06-10 tommi@tntnet.org
+
+  - port to gnutls
+
 2006-06-08 tommi@tntnet.org
 
   - take first commandline-argument as configurationfile

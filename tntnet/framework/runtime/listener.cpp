@@ -35,8 +35,12 @@
 #include <errno.h>
 #include <unistd.h>
 
-#ifdef USE_SSL
-#  include "tnt/ssl.h"
+#ifdef WITH_GNUTLS
+#  include "tnt/gnutls.h"
+#endif
+
+#ifdef WITH_OPENSSL
+#  include "tnt/openssl.h"
 #endif
 
 log_define("tntnet.listener")
@@ -120,6 +124,16 @@ namespace tnt
 
     log_debug("stop listener");
   }
+
+#ifdef WITH_GNUTLS
+#define USE_SSL
+
+#endif
+
+#ifdef WITH_OPENSSL
+#define USE_SSL
+
+#endif
 
 #ifdef USE_SSL
   Ssllistener::Ssllistener(const char* certificateFile,

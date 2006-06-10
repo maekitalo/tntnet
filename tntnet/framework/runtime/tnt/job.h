@@ -40,10 +40,7 @@
 #include <tnt/httpparser.h>
 #include <tnt/pointer.h>
 #include <time.h>
-
-#ifdef USE_SSL
-#  include "tnt/ssl.h"
-#endif
+#include "tnt/ssl.h"
 
 /**
 // in tntnet (mainthread):

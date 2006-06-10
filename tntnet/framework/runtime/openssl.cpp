@@ -1,4 +1,4 @@
-/* ssl.cpp
+/* openssl.cpp
  * Copyright (C) 2003-2005 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@
  * files in the program, then also delete it here.
  */
 
-#include "tnt/ssl.h"
+#include "tnt/openssl.h"
 #include <cxxtools/thread.h>
 #include <openssl/err.h>
 #include <cxxtools/log.h>
@@ -52,17 +52,17 @@ namespace tnt
       if (ERR_error_string(code, buffer))
       {
         log_debug("SSL-Error " << code << ": \"" << buffer << '"');
-        throw SslException(buffer, code);
+        throw OpensslException(buffer, code);
       }
       else
       {
         log_debug("unknown SSL-Error " << code);
-        throw SslException("unknown SSL-Error", code);
+        throw OpensslException("unknown SSL-Error", code);
       }
     }
   }
 
-  static cxxtools::Mutex *ssl_mutex;
+  static cxxtools::Mutex *openssl_mutex;
 
   static unsigned long pthreads_thread_id()
   {
@@ -79,21 +79,21 @@ namespace tnt
       << ' ' << file << ':' << line); */
 
     if (mode & CRYPTO_LOCK)
-      ssl_mutex[n].lock();
+      openssl_mutex[n].lock();
     else
-      ssl_mutex[n].unlock();
+      openssl_mutex[n].unlock();
   }
 
   static void thread_setup(void)
   {
-    ssl_mutex = new cxxtools::Mutex[CRYPTO_num_locks()];
+    openssl_mutex = new cxxtools::Mutex[CRYPTO_num_locks()];
 
     CRYPTO_set_id_callback(pthreads_thread_id);
     CRYPTO_set_locking_callback(pthreads_locking_callback);
   }
 
   static cxxtools::Mutex mutex;
-  static void ssl_init()
+  static void openssl_init()
   {
     static bool initialized = false;
 
@@ -114,7 +114,7 @@ namespace tnt
     }
   }
 
-  void SslServer::installCertificates(const char* certificateFile, const char* privateKeyFile)
+  void OpensslServer::installCertificates(const char* certificateFile, const char* privateKeyFile)
   {
     log_debug("use certificate file " << certificateFile);
     if (SSL_CTX_use_certificate_file(ctx, certificateFile, SSL_FILETYPE_PEM) <= 0)
@@ -126,14 +126,14 @@ namespace tnt
 
     log_debug("check private key");
     if (!SSL_CTX_check_private_key(ctx))
-      throw SslException("private key does not match the certificate public key", 0);
+      throw OpensslException("private key does not match the certificate public key", 0);
 
     log_debug("private key ok");
   }
 
-  SslServer::SslServer(const char* certificateFile)
+  OpensslServer::OpensslServer(const char* certificateFile)
   {
-    ssl_init();
+    openssl_init();
 
     log_debug("SSL_CTX_new(SSLv23_server_method())");
     ctx = SSL_CTX_new(SSLv23_server_method());
@@ -142,9 +142,9 @@ namespace tnt
     installCertificates(certificateFile, certificateFile);
   }
 
-  SslServer::SslServer(const char* certificateFile, const char* privateKeyFile)
+  OpensslServer::OpensslServer(const char* certificateFile, const char* privateKeyFile)
   {
-    ssl_init();
+    openssl_init();
 
     log_debug("SSL_CTX_new(SSLv23_server_method())");
     ctx = SSL_CTX_new(SSLv23_server_method());
@@ -153,7 +153,7 @@ namespace tnt
     installCertificates(certificateFile, privateKeyFile);
   }
 
-  SslServer::~SslServer()
+  OpensslServer::~OpensslServer()
   {
     if (ctx)
     {
@@ -163,22 +163,22 @@ namespace tnt
   }
 
   //////////////////////////////////////////////////////////////////////
-  // SslStream
+  // OpensslStream
   //
-  SslStream::SslStream()
+  OpensslStream::OpensslStream()
     : ssl(0)
   {
-    ssl_init();
+    openssl_init();
   }
 
-  SslStream::SslStream(const SslServer& server)
+  OpensslStream::OpensslStream(const OpensslServer& server)
     : ssl(0)
   {
-    ssl_init();
+    openssl_init();
     accept(server);
   }
 
-  SslStream::~SslStream()
+  OpensslStream::~OpensslStream()
   {
     if (ssl)
     {
@@ -187,7 +187,7 @@ namespace tnt
     }
   }
 
-  void SslStream::accept(const SslServer& server)
+  void OpensslStream::accept(const OpensslServer& server)
   {
     log_debug("accept");
     Stream::accept(server);
@@ -205,9 +205,9 @@ namespace tnt
     SSL_set_accept_state(ssl);
   }
 
-  int SslStream::SslRead(char* buffer, int bufsize) const
+  int OpensslStream::sslRead(char* buffer, int bufsize) const
   {
-    // I had crashes without this (and the lock in SslWrite) lock:
+    // I had crashes without this (and the lock in sslWrite) lock:
     // openssl should be thread-safe, with the installed callbacks, but I did not
     // get it working
     cxxtools::MutexLock lock(mutex);
@@ -292,9 +292,9 @@ namespace tnt
     return n;
   }
 
-  int SslStream::SslWrite(const char* buffer, int bufsize) const
+  int OpensslStream::sslWrite(const char* buffer, int bufsize) const
   {
-    // I had crashes without this (and the lock in SslRead) lock:
+    // I had crashes without this (and the lock in sslRead) lock:
     // openssl should be thread-safe, with the installed callbacks, but I did not
     // get it working
     cxxtools::MutexLock lock(mutex);
@@ -337,14 +337,14 @@ namespace tnt
       }
     }
 
-    log_debug("SslStream::SslWrite returns " << bufsize);
+    log_debug("OpensslStream::sslWrite returns " << bufsize);
     return bufsize;
   }
 
   //////////////////////////////////////////////////////////////////////
-  // ssl_streambuf
+  // openssl_streambuf
   //
-  ssl_streambuf::ssl_streambuf(SslStream& stream, unsigned bufsize, int timeout)
+  openssl_streambuf::openssl_streambuf(OpensslStream& stream, unsigned bufsize, int timeout)
     : m_stream(stream),
       m_buffer(new char_type[bufsize]),
       m_bufsize(bufsize)
@@ -352,13 +352,13 @@ namespace tnt
     setTimeout(timeout);
   }
 
-  ssl_streambuf::int_type ssl_streambuf::overflow(ssl_streambuf::int_type c)
+  openssl_streambuf::int_type openssl_streambuf::overflow(openssl_streambuf::int_type c)
   {
     try
     {
       if (pptr() != pbase())
       {
-        int n = m_stream.SslWrite(pbase(), pptr() - pbase());
+        int n = m_stream.sslWrite(pbase(), pptr() - pbase());
         if (n <= 0)
           return traits_type::eof();
       }
@@ -374,14 +374,14 @@ namespace tnt
     }
     catch (const std::exception& e)
     {
-      log_error("error int ssl_streambuf::overflow: " << e.what());
+      log_error("error int openssl_streambuf::overflow: " << e.what());
       return traits_type::eof();
     }
   }
 
-  ssl_streambuf::int_type ssl_streambuf::underflow()
+  openssl_streambuf::int_type openssl_streambuf::underflow()
   {
-    int n = m_stream.SslRead(m_buffer, m_bufsize);
+    int n = m_stream.sslRead(m_buffer, m_bufsize);
     if (n <= 0)
       return traits_type::eof();
 
@@ -389,13 +389,13 @@ namespace tnt
     return (int_type)(unsigned char)m_buffer[0];
   }
 
-  int ssl_streambuf::sync()
+  int openssl_streambuf::sync()
   {
     try
     {
       if (pptr() != pbase())
       {
-        int n = m_stream.SslWrite(pbase(), pptr() - pbase());
+        int n = m_stream.sslWrite(pbase(), pptr() - pbase());
         if (n <= 0)
           return -1;
         else
@@ -405,12 +405,12 @@ namespace tnt
     }
     catch (const std::exception& e)
     {
-      log_error("error in ssl_streambuf::sync(): " << e.what());
+      log_error("error in openssl_streambuf::sync(): " << e.what());
       return traits_type::eof();
     }
   }
 
   //////////////////////////////////////////////////////////////////////
-  // ssl_iostream
+  // openssl_iostream
   //
 }

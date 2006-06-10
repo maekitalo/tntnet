@@ -18,12 +18,22 @@ tntnet_SOURCES = \
 
 tntnet_LDFLAGS = -lpthread
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
+tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@sharedstatedir@/tntnet.pid\"
+
+if MAKE_GNUTLS
+tntnet_SOURCES += \
+	gcryptinit.c \
+	tnt/gcryptinit.h \
+	gnutls.cpp \
+	tnt/gnutls.h
+tntnet_LDFLAGS += `libgnutls-config --libs`
+tntnet_CXXFLAGS += `libgnutls-config --cflags`
+endif
 
 if MAKE_OPENSSL
 tntnet_SOURCES += \
-	ssl.cpp \
-	tnt/ssl.h
+	openssl.cpp \
+	tnt/openssl.h
 tntnet_LDFLAGS += -lssl -lcrypto
 endif
 
-tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@sharedstatedir@/tntnet.pid\"

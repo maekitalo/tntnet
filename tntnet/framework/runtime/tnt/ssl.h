@@ -1,5 +1,5 @@
 /* tnt/ssl.h
- * Copyright (C) 2003 Tommi Maekitalo
+ * Copyright (C) 2006 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -32,100 +32,32 @@
 #ifndef TNT_SSL_H
 #define TNT_SSL_H
 
-#include <cxxtools/tcpstream.h>
-#include <openssl/ssl.h>
+#ifdef WITH_GNUTLS
+#  include "tnt/gnutls.h"
+#  define USE_SSL
+#endif
+
+#ifdef WITH_OPENSSL
+#  include "tnt/openssl.h"
+#  define USE_SSL
+#endif
 
 namespace tnt
 {
-  class SslException : public std::runtime_error
-  {
-      unsigned long code;
+#ifdef WITH_GNUTLS
 
-    public:
-      SslException(const std::string& what, unsigned long code_)
-        : std::runtime_error(what),
-          code(code_)
-      { }
+  typedef GnuTlsServer SslServer;
+  typedef GnuTls_iostream ssl_iostream;
 
-      unsigned long getCode() const
-      { return code; }
-  };
+#endif
 
-  class SslServer : public cxxtools::net::Server
-  {
-      SSL_CTX* ctx;
-      void installCertificates(const char* certificateFile, const char* privateKeyFile);
+#ifdef WITH_OPENSSL
 
-    public:
-      SslServer(const char* certificateFile);
-      SslServer(const char* certificateFile, const char* privateKeyFile);
-      ~SslServer();
+  typedef OpensslServer SslServer;
+  typedef openssl_iostream ssl_iostream;
 
-      SSL_CTX* getSslContext() const  { return ctx; }
-  };
+#endif
 
-  class SslStream : public cxxtools::net::Stream
-  {
-      SSL* ssl;
-
-    public:
-      SslStream();
-
-      explicit SslStream(int fd)
-        : cxxtools::net::Stream(fd)
-        { }
-
-      explicit SslStream(const SslServer& server);
-      ~SslStream();
-
-      void accept(const SslServer& server);
-
-      int SslRead(char* buffer, int bufsize) const;
-      int SslWrite(const char* buffer, int bufsize) const;
-  };
-
-  class ssl_streambuf : public std::streambuf
-  {
-      SslStream& m_stream;
-      char_type* m_buffer;
-      unsigned m_bufsize;
-
-    public:
-      explicit ssl_streambuf(SslStream& stream, unsigned bufsize = 256, int timeout = -1);
-      ~ssl_streambuf()
-      { delete[] m_buffer; }
-
-      void setTimeout(int t)   { m_stream.setTimeout(t); }
-      int getTimeout() const   { return m_stream.getTimeout(); }
-
-      /// überladen aus std::streambuf
-      int_type overflow(int_type c);
-      /// überladen aus std::streambuf
-      int_type underflow();
-      /// überladen aus std::streambuf
-      int sync();
-  };
-
-  class ssl_iostream : public SslStream, public std::iostream
-  {
-      ssl_streambuf m_buffer;
-
-    public:
-      explicit ssl_iostream(unsigned bufsize = 256, int timeout = -1)
-        : SslStream(-1),
-          std::iostream(&m_buffer),
-          m_buffer(*this, bufsize, timeout)
-        { }
-
-      explicit ssl_iostream(const SslServer& server, unsigned bufsize = 256, int timeout = -1)
-        : SslStream(server),
-          std::iostream(&m_buffer),
-          m_buffer(*this, bufsize, timeout)
-        { }
-
-      void setTimeout(int timeout)  { m_buffer.setTimeout(timeout); }
-      int getTimeout() const        { return m_buffer.getTimeout(); }
-  };
 }
 
 #endif // TNT_SSL_H

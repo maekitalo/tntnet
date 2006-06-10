@@ -36,10 +36,6 @@
 #include <cxxtools/thread.h>
 #include "tnt/job.h"
 
-#ifdef USE_SSL
-#  include "tnt/ssl.h"
-#endif
-
 namespace tnt
 {
   class ListenerBase : public cxxtools::AttachedThread
