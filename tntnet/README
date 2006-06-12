@@ -20,14 +20,14 @@ Features supported include: cookies, HTTP-upload, automatic request-parameter
 parsing and conversion, automatic sessionmanagement, scoped variables
 (application, request and session), internationalisation, keep-alive.
 
-Logging is done through cxxtools, which provides a unique API for log4cpp,
+Logging is done through cxxtools, which provides a unified API for log4cpp,
 log4cxx or simple logging to files or console.
 
 Tntnet is fully multithreaded, so it scales well on multiprocessor machines.
 It uses a dynamic pool of workerthreads, which answers requests from
 http-clients.
 
-Ssl is supported via the openssl-library.
+Ssl is supported via the gnutls- or openssl-library.
 
 Installation 
 ============
