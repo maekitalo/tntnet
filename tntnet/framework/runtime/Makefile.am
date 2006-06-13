@@ -13,6 +13,7 @@ tntnet_SOURCES = \
 	tnt/listener.h \
 	tnt/poller.h \
 	tnt/regex.h \
+	tnt/ssl.h \
 	tnt/worker.h \
 	tnt/tntnet.h
 
