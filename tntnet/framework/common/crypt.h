@@ -3,7 +3,7 @@
 
    Version 1.00, September 10th, 2003
 
-   Copyright (C) 1998-2003 Gilles Vollant
+ * Copyright (C) 1998-2003 Gilles Vollant
 
    This code is a modified version of crypting code in Infozip distribution
 
