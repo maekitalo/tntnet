@@ -1,0 +1,11 @@
+<%include>calcModel.ecpp</%include>
+<%args>
+double arg1 = 0;     // typed parameter with default value
+double arg2 = 0;     // typed parameter with default value
+char op = ' ';       // typed parameter with default value
+</%args>
+<{  // <= this starts a c++-processing-block
+
+  calc.set(arg1, arg2, op);
+
+}> <# <= this ends a c++-processing-block (and this is a ecpp-comment) #>

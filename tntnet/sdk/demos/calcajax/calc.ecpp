@@ -1,0 +1,26 @@
+<%args>
+double arg1;
+double arg2;
+char op;
+</%args>
+<%cpp>
+
+  double result = 0.0;
+
+  bool result_ok = true;
+  if (op == 'p')
+    op = '+';
+  switch (op)
+  {
+    case '+': result = arg1 + arg2; break;
+    case '-': result = arg1 - arg2; break;
+    case '*': result = arg1 * arg2; break;
+    case '/': result = arg1 / arg2; break;
+    default: result_ok = false;
+  }
+
+</%cpp>
+% if (result_ok) {
+<hr>
+<$arg1$> <$op$> <$arg2$> = <$result$>
+% }

@@ -1,0 +1,11 @@
+<html>
+ <head>
+  <title>Calculator</title>
+ </head>
+ <body bgcolor=#ffffcc>
+
+<& calcController qparam >
+<& calcView qparam >
+
+ </body>
+</html>

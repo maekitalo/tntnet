@@ -1,0 +1,42 @@
+<html>
+ <head>
+  <title>Calculator</title>
+  <script src="calcajax_js" type="text/javascript">
+  </script>
+  <script type="text/javascript">
+    function calc(op)
+    {
+      var arg1 = document.getElementById("arg1").value;
+      var arg2 = document.getElementById("arg2").value;
+      var url = "/calc?arg1=" + escape(arg1)
+              + "&arg2=" + escape(arg2)
+              + "&op=" + escape(op);
+
+      ajaxGet(url,
+        function(request)
+        {
+          var e = document.getElementById("result");
+          e.innerHTML = request.responseText;
+          e.style.display = "block";
+        } );
+    }
+  </script>
+ </head>
+ <body bgcolor=#ffffcc>
+  <h1>Tommi's Tnt-Calculator</h1>
+
+  <form>
+   <input type="text" value="0" id="arg1"> <br>
+   <input type="text" value="0" id="arg2"> <br>
+   <input type="button" value="+" onClick="calc('p')">
+   <input type="button" value="-" onClick="calc('-')">
+   <input type="button" value="*" onClick="calc('*')">
+   <input type="button" value="/" onClick="calc('/')">
+  </form>
+
+  <div id="result" style="display:none">
+
+  </div>
+
+ </body>
+</html>
