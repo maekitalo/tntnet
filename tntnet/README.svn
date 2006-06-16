@@ -1,0 +1,7 @@
+Installation from subversion
+============================
+
+In the subversion-repository there is no configure-script, but configure.in,
+which is the source for configure. You need autoconf and automake to
+create configure.  There is a shellscript autogen.sh included, which
+calls the desired programs.
