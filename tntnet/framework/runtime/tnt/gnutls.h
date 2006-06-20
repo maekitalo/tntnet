@@ -95,6 +95,7 @@ namespace tnt
       void accept(const GnuTlsServer& server);
       int sslRead(char* buffer, int bufsize) const;
       int sslWrite(const char* buffer, int bufsize) const;
+      void shutdown() const;
   };
 
   class GnuTls_streambuf : public std::streambuf

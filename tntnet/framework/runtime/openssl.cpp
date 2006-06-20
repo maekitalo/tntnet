@@ -170,6 +170,15 @@ namespace tnt
   {
     if (ssl)
     {
+      try
+      {
+        shutdown();
+      }
+      catch (const std::exception& e)
+      {
+        log_error("error closing ssl-connection: " << e.what());
+      }
+
       log_debug("SSL_free(" << ssl << ')');
       SSL_free(ssl);
     }
@@ -203,34 +212,35 @@ namespace tnt
     log_debug("read");
 
     int n;
+    int err;
 
     if (getTimeout() < 0)
     {
       // blocking
       do
       {
-        log_debug("read unbuffered");
+        log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ") (blocking)");
         n = ::SSL_read(ssl, buffer, bufsize);
       } while (n <= 0 &&
-                (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ
-              || SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE));
+                ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
+               || err == SSL_ERROR_WANT_WRITE));
+      checkSslError();
     }
     else
     {
       // non-blocking/with timeout
 
       // try read
-      log_debug("SSL_read");
+      log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
       n = ::SSL_read(ssl, buffer, bufsize);
-
       log_debug("ssl-read => " << n);
 
       if (n > 0)
         return n;
 
       log_debug("SSL_get_error(" << ssl << ", " << n << ')');
-      if (SSL_get_error(ssl, n) != SSL_ERROR_WANT_READ
-       && SSL_get_error(ssl, n) != SSL_ERROR_WANT_WRITE)
+      if ((err = SSL_get_error(ssl, n)) != SSL_ERROR_WANT_READ
+       && err != SSL_ERROR_WANT_WRITE)
         checkSslError();
 
       if (getTimeout() == 0)
@@ -243,28 +253,8 @@ namespace tnt
       do
       {
         log_debug("poll");
-
-        struct pollfd fds;
-        fds.fd = getFd();
-        fds.events =
-          (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
-            ? POLLIN|POLLOUT
-            : POLLIN;
-        int p = ::poll(&fds, 1, getTimeout());
-
-        log_debug("poll => " << p << " revents=" << fds.revents);
-
-        if (p < 0)
-        {
-          int errnum = errno;
-          throw cxxtools::net::Exception(strerror(errnum));
-        }
-        else if (p == 0)
-        {
-          // no data
-          log_debug("read-timeout");
-          throw cxxtools::net::Timeout();
-        }
+        doPoll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
+                  ? POLLIN|POLLOUT : POLLIN);
 
         log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
         n = ::SSL_read(ssl, buffer, bufsize);
@@ -272,11 +262,9 @@ namespace tnt
         checkSslError();
 
       } while (n <= 0
-         && (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ
-          || SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE));
+         && ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
+          || err == SSL_ERROR_WANT_WRITE));
     }
-
-    checkSslError();
     return n;
   }
 
@@ -305,28 +293,66 @@ namespace tnt
       if (s <= 0)
         break;
 
-      struct pollfd fds;
-      fds.fd = getFd();
-      fds.events =
-        (SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ)
-          ? POLLIN|POLLOUT : POLLOUT;
-      int p = ::poll(&fds, 1, getTimeout());
-
-      if (p < 0)
-      {
-        int errnum = errno;
-        throw cxxtools::net::Exception(strerror(errnum));
-      }
-      else if (p == 0)
-      {
-        // no data
-        log_warn("write-timeout");
-        throw cxxtools::net::Timeout();
-      }
+      doPoll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
+                  ? POLLIN|POLLOUT : POLLIN);
     }
 
     log_debug("OpensslStream::sslWrite returns " << bufsize);
     return bufsize;
+  }
+
+  void OpensslStream::shutdown() const
+  {
+    cxxtools::MutexLock lock(mutex);
+
+    int n, err;
+    if (getTimeout() < 0)
+    {
+      // blocking
+      do
+      {
+        log_debug("shutdown unbuffered");
+        n = ::SSL_shutdown(ssl);
+      } while (n <= 0 &&
+                ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
+              || err == SSL_ERROR_WANT_WRITE));
+      checkSslError();
+    }
+    else
+    {
+      // non-blocking/with timeout
+
+      // try read
+      log_debug("SSL_shutdown(" << ssl << ')');
+      n = ::SSL_shutdown(ssl);
+      log_debug("ssl-shutdown => " << n);
+
+      log_debug("SSL_get_error(" << ssl << ", " << n << ')');
+      if ((err = SSL_get_error(ssl, n)) != SSL_ERROR_WANT_READ
+       && err != SSL_ERROR_WANT_WRITE)
+        checkSslError();
+
+      if (getTimeout() == 0)
+      {
+        log_debug("shutdown-timeout");
+        throw cxxtools::net::Timeout();
+      }
+
+      do
+      {
+        log_debug("poll");
+        doPoll(err == SSL_ERROR_WANT_WRITE ? POLLIN|POLLOUT : POLLIN);
+
+        log_debug("SSL_shutdown(" << ssl << ')');
+        n = ::SSL_shutdown(ssl);
+        log_debug("SSL_shutdown returns " << n);
+
+        checkSslError();
+
+      } while (n <= 0
+         && ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
+          || err == SSL_ERROR_WANT_WRITE));
+    }
   }
 
   //////////////////////////////////////////////////////////////////////

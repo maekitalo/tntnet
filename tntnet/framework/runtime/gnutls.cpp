@@ -151,8 +151,20 @@ namespace tnt
 
   GnuTlsStream::~GnuTlsStream()
   {
-    log_debug("gnutls_deinit(session)");
-    gnutls_deinit(session);
+    if (session)
+    {
+      try
+      {
+        shutdown();
+      }
+      catch (const std::exception& e)
+      {
+        log_error("error shutting down ssl-conneciton: " << e.what());
+      }
+
+      log_debug("gnutls_deinit(session)");
+      gnutls_deinit(session);
+    }
   }
 
   void GnuTlsStream::accept(const GnuTlsServer& server)
@@ -299,6 +311,45 @@ namespace tnt
     }
 
     return ret;
+  }
+
+  void GnuTlsStream::shutdown() const
+  {
+    int ret;
+
+    if (getTimeout() < 0)
+    {
+      // blocking
+      do
+      {
+        log_debug("gnutls_bye");
+        ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
+      } while (ret <= 0
+            && (ret == GNUTLS_E_INTERRUPTED
+             || ret == GNUTLS_E_AGAIN));
+    }
+    else
+    {
+      // non-blocking/with timeout
+
+      while (true)
+      {
+        log_debug("gnutls_bye");
+        ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
+        log_debug("gnutls_bye => " << ret);
+
+        if (ret > 0)
+          break;
+
+        if (ret < 0
+          && ret != GNUTLS_E_INTERRUPTED
+          && ret != GNUTLS_E_AGAIN)
+            throw GnuTlsException("gnutls_bye", ret);
+
+        log_debug("poll");
+        doPoll(POLLIN);
+      }
+    }
   }
 
   //////////////////////////////////////////////////////////////////////

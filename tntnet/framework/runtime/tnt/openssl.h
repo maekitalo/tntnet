@@ -70,6 +70,7 @@ namespace tnt
 
       int sslRead(char* buffer, int bufsize) const;
       int sslWrite(const char* buffer, int bufsize) const;
+      void shutdown() const;
   };
 
   class openssl_streambuf : public std::streambuf
