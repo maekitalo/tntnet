@@ -191,7 +191,7 @@ namespace tnt
     log_debug("gnutls_dh_set_prime_bits(session, 1024)");
     gnutls_dh_set_prime_bits(session, 1024);
 
-    log_debug("(gnutls_transport_set_ptr(" << getFd() << ')');
+    log_debug("gnutls_transport_set_ptr(" << getFd() << ')');
     gnutls_transport_set_ptr(session, (gnutls_transport_ptr_t)getFd());
 
     if (getTimeout() < 0)
@@ -324,7 +324,7 @@ namespace tnt
       {
         log_debug("gnutls_bye");
         ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
-      } while (ret <= 0
+      } while (ret < 0
             && (ret == GNUTLS_E_INTERRUPTED
              || ret == GNUTLS_E_AGAIN));
     }
@@ -338,7 +338,7 @@ namespace tnt
         ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
         log_debug("gnutls_bye => " << ret);
 
-        if (ret > 0)
+        if (ret == 0)
           break;
 
         if (ret < 0

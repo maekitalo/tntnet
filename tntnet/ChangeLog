@@ -1,3 +1,7 @@
+2006-06-20 tommi@tntnet.org
+
+  - graceful shutdown of ssl-connections (gnutls and openssl)
+
 2006-06-16 tommi@tntnet.org
 
   - new demo-applications calcmvc, which shows a simple mvc-pattern, and
