@@ -25,8 +25,14 @@
 
 namespace tnt
 {
+  class StringLessIgnoreCase : public std::binary_function<std::string, std::string, bool>
+  {
+    public:
+      bool operator()(const std::string& s1, const std::string& s2) const;
+  };
+
   /// Standard-message-header like rfc822
-  class Messageheader : public std::multimap<std::string, std::string>
+  class Messageheader : public std::multimap<std::string, std::string, StringLessIgnoreCase>
   {
     public:
       class Parser;
