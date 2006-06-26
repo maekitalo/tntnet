@@ -76,6 +76,8 @@ PropertyFile        tntnet.properties
 #ListenRetry        5
 #EnableCompression  no
 #MinCompressSize    1024  # in bytes
+#DefaultContentType text/html
+#DefaultEncoding    iso-8859-1
 EOF
 }
 
@@ -91,7 +93,7 @@ EOF
   fi
 
   cat <<EOF
-SUFFIXES=.ecpp .gif .jpg
+SUFFIXES=.ecpp .gif .jpg .css .js
 ECPPC=@bindir@/ecppc
 CXXFLAGS+=\`tntnet-config --cxxflags\` -fPIC -O2
 LDFLAGS+=-shared \`tntnet-config --libs\`
@@ -104,6 +106,8 @@ LDFLAGS+=-shared \`tntnet-config --libs\`
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_JPG) -b \$<
 %.cpp: %.css
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_CSS) -b \$<
+%.cpp: %.js
+	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_JS) -b \$<
 EOF
 }
 

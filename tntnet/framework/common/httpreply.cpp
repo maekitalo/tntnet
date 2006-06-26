@@ -37,6 +37,8 @@ namespace tnt
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
   unsigned HttpReply::minCompressSize = 1024;
+  std::string HttpReply::defaultContentType = "text/html";
+  std::string HttpReply::defaultEncoding = "iso-8859-1";
 
   namespace
   {
@@ -121,11 +123,15 @@ namespace tnt
 
     if (!hasHeader(httpheader::contentType))
     {
-      static const std::string contentTypeHttp1_1 = "text/html; charset=iso-8859-1";
-      static const std::string contentTypeHttp1_0 = "text/html";
       if (contentType.empty())
-        contentType = getMajorVersion() >= 1 && getMinorVersion() >= 1 ? contentTypeHttp1_1
-                                                                       : contentTypeHttp1_0;
+      {
+        contentType = defaultContentType;
+        if (getMajorVersion() >= 1 && getMinorVersion() >= 1)
+        {
+          contentType.append("; charset=");
+          contentType.append(contentEncoding.empty() ? defaultEncoding : contentEncoding);
+        }
+      }
       setHeader(httpheader::contentType, contentType);
     }
 

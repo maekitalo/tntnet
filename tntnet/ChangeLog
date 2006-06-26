@@ -1,3 +1,9 @@
+2006-06-25 tommi@tntnet.org
+
+  - make http-headers case-insensitive as per spec
+  - improve support for content-encoding in HttpReply. This adds a
+    member-variable to HttpReply, which makes it binary incompatible.
+
 2006-06-20 tommi@tntnet.org
 
   - graceful shutdown of ssl-connections (gnutls and openssl)

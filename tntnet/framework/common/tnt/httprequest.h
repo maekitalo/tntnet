@@ -124,7 +124,7 @@ namespace tnt
         { return serverAddr; }
       std::string getServerIp() const;
       unsigned short int getServerPort() const
-        { return ntohs(reinterpret_cast <const struct sockaddr_in6 *> (&serverAddr)->sin6_port); }
+        { return ntohs(reinterpret_cast <const struct sockaddr_in *> (&serverAddr)->sin_port); }
 
       void setSsl(bool sw = true)
         { ssl = sw; }

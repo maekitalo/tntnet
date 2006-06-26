@@ -36,6 +36,7 @@ namespace tnt
       friend class Savepoint;
 
       std::string contentType;
+      std::string contentEncoding;
       std::ostream& socket;
       std::ostringstream outstream;
       std::ostream* current_outstream;
@@ -46,6 +47,8 @@ namespace tnt
       unsigned keepAliveCounter;
       static unsigned keepAliveTimeout;
       static unsigned minCompressSize;
+      static std::string defaultContentType;
+      static std::string defaultEncoding;
 
       bool sendStatusLine;
 
@@ -55,8 +58,10 @@ namespace tnt
     public:
       explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
 
-      void setContentType(const std::string& t)    { contentType = t; }
+      void setContentType(const std::string& t, const std::string& e = std::string())
+        { contentType = t; contentEncoding = e; }
       const std::string& getContentType() const    { return contentType; }
+      const std::string& getContentEncoding() const { return contentEncoding; }
 
       virtual void throwError(unsigned errorCode, const std::string& errorMessage) const;
       virtual void throwError(const std::string& errorMessage) const;
@@ -106,6 +111,12 @@ namespace tnt
 
       static void setMinCompressSize(unsigned s)    { minCompressSize = s; }
       static unsigned getMinCompressSize()          { return minCompressSize; }
+
+      static void setDefaultContentType(const std::string& ct) { defaultContentType = ct; }
+      static const std::string& getDefaultContentType()        { return defaultContentType; }
+
+      static void setDefaultEncoding(const std::string& ct) { defaultEncoding = ct; }
+      static const std::string& getDefaultEncoding()        { return defaultEncoding; }
 
       void setAcceptEncoding(const Encoding& enc)    { acceptEncoding = enc; }
       void setAcceptEncoding(const std::string& enc) { acceptEncoding.parse(enc); }

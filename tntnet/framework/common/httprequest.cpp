@@ -177,7 +177,8 @@ namespace tnt
           for (Multipart::const_iterator it = mp.begin();
                it != mp.end(); ++it)
           {
-            // hochgeladene Dateien nicht in qparam übernehmen
+            // don't copy uploaded files into qparam to prevent unnecessery
+            // copies of large chunks
             if (it->getFilename().empty())
             {
               std::string multipartBody(it->getBodyBegin(), it->getBodyEnd());
