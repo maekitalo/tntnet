@@ -67,8 +67,6 @@ namespace tnt
   Worker::workers_type Worker::workers;
   unsigned Worker::compLifetime = 600;
   unsigned Worker::maxRequestTime = 600;
-  unsigned Worker::reportStateTime = 0;
-  time_t Worker::nextReportStateTime = 0;
   unsigned Worker::minThreads = 5;
   bool Worker::enableCompression = true;
 
@@ -346,28 +344,18 @@ namespace tnt
   {
     time_t currentTime;
     time(&currentTime);
-    bool reportState = false;
-    if (reportStateTime > 0 && currentTime > nextReportStateTime)
-    {
-      if (nextReportStateTime)
-        reportState = true;
-      nextReportStateTime = currentTime + reportStateTime;
-    }
 
     cxxtools::MutexLock lock(mutex);
     for (workers_type::iterator it = workers.begin();
          it != workers.end(); ++it)
     {
       (*it)->healthCheck(currentTime);
-      (*it)->cleanup(compLifetime);
-      if (reportState)
-        log_info("threadstate " << (*it)->threadId << ": " << (*it)->state);
     }
   }
 
   void Worker::healthCheck(time_t currentTime)
   {
-    if (state != stateWaitingForJob
+    if (state == stateProcessingRequest
         && lastWaitTime != 0
         && maxRequestTime > 0)
     {

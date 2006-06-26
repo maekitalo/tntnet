@@ -54,8 +54,6 @@ namespace tnt
 
       static unsigned compLifetime;
       static unsigned maxRequestTime;
-      static unsigned reportStateTime;
-      static time_t nextReportStateTime;
       static unsigned minThreads;
       static bool enableCompression;
 
@@ -83,9 +81,6 @@ namespace tnt
       /// When the time is exceeded, this process exits.
       static void setMaxRequestTime(unsigned sec)  { maxRequestTime = sec; }
       static unsigned getMaxRequestTime()          { return maxRequestTime; }
-
-      static void setReportStateTime(unsigned sec) { reportStateTime = sec; }
-      static unsigned getReportStateTime()         { return reportStateTime; }
 
       static workers_type::size_type getCountThreads();
       static void setMinThreads(unsigned n)        { minThreads = n; }

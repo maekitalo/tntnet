@@ -640,7 +640,6 @@ namespace tnt
     Worker::setMinThreads(minthreads);
     Worker::setCompLifetime(config.getValue<unsigned>("CompLifetime", Worker::getCompLifetime()));
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
-    Worker::setReportStateTime(config.getValue<unsigned>("ReportStateTime", Worker::getReportStateTime()));
     Worker::setEnableCompression(config.getBoolValue("EnableCompression", Worker::getEnableCompression()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", queue.getCapacity()));
     Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", Sessionscope::getDefaultTimeout()));
