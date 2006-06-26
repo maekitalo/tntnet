@@ -166,18 +166,15 @@ Component& Comploader::fetchComp(const Compident& ci,
       Component* comp = lib.create(ci.compname, *this, rootmapper);
 
       componentmap[ci] = comp;
-      comp->touch();
       return *comp;
     }
     else
     {
-      it->second->touch();
       return *(it->second);
     }
   }
   else
   {
-    it->second->touch();
     return *(it->second);
   }
 }
@@ -265,36 +262,12 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
   return it->second;
 }
 
-void Comploader::cleanup(unsigned seconds)
+void Comploader::cleanup()
 {
-  time_t t = time(0) - seconds;
-
-  cxxtools::RdLock rdlock(componentMonitor);
-  for (componentmap_type::iterator it = componentmap.begin();
-       it != componentmap.end(); ++it)
+  while (!componentmap.empty())
   {
-    if (it->second->getLastAccesstime() < t)
-    {
-      // we have something to clean
-      rdlock.unlock();
-
-      cxxtools::WrLock wrlock(componentMonitor);
-      it = componentmap.begin();
-      while (it != componentmap.end())
-      {
-        if (it->second->getLastAccesstime() < t)
-        {
-          componentmap_type::iterator it2 = it;
-          ++it;
-          log_debug("drop " << it2->first);
-          it2->second->drop();
-          componentmap.erase(it2);
-        }
-      else
-        ++it;
-      }
-      break;
-    }
+    componentmap.begin()->second->drop();
+    componentmap.erase(componentmap.begin());
   }
 }
 

@@ -104,7 +104,7 @@ namespace tnt
       // lookup library; load if needed
       virtual ComponentLibrary& fetchLib(const std::string& libname);
 
-      void cleanup(unsigned seconds);  // delete comps older than seconds
+      void cleanup();  // delete components
 
       static const Tntconfig& getConfig()        { return *config; }
       static void configure(const Tntconfig& config);

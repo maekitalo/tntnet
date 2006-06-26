@@ -36,18 +36,6 @@ log_define("tntnet.worker")
 
 namespace
 {
-  class ComponentUnloadLock
-  {
-      tnt::Component& comp;
-
-    public:
-      ComponentUnloadLock(tnt::Component& c)
-        : comp(c)
-      { comp.lock(); }
-      ~ComponentUnloadLock()
-      { comp.unlock(); }
-  };
-
   static const char stateStarting[]          = "0 starting";
   static const char stateWaitingForJob[]     = "1 waiting for job";
   static const char stateParsing[]           = "2 parsing request";
@@ -65,7 +53,6 @@ namespace tnt
   cxxtools::Mutex Worker::mutex;
   unsigned Worker::nextThreadNumber = 0;
   Worker::workers_type Worker::workers;
-  unsigned Worker::compLifetime = 600;
   unsigned Worker::maxRequestTime = 600;
   unsigned Worker::minThreads = 5;
   bool Worker::enableCompression = true;
@@ -90,7 +77,7 @@ namespace tnt
   {
     cxxtools::MutexLock lock(mutex);
     workers.erase(this);
-    comploader.cleanup(0);
+    comploader.cleanup();
 
     log_debug("delete worker " << threadId << " - " << workers.size() << " threads left - " << application.getQueue().getWaitThreadCount() << " waiting threads");
   }
@@ -290,7 +277,6 @@ namespace tnt
       {
         log_debug("load component " << ci);
         Component& comp = comploader.fetchComp(ci, application.getDispatcher());
-        ComponentUnloadLock unload_lock(comp);
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 

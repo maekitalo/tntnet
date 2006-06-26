@@ -10,7 +10,6 @@ AC_SUBST(sonumber)
 unset CDPATH
 
 AC_CONFIG_HEADERS([framework/common/config.h])
-AC_CONFIG_HEADERS([framework/common/tnt/config.h])
 AC_CONFIG_SRCDIR([framework/runtime/tntnet.cpp])
 
 AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
@@ -54,7 +53,6 @@ AC_SUBST(CXXTOOLS_CXXFLAGS)
 AC_SUBST(CXXTOOLS_LDFLAGS)
 
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
-AC_CHECK_HEADERS([limits])
 
 #
 # SSL

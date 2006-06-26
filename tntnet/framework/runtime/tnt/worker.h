@@ -52,7 +52,6 @@ namespace tnt
       typedef std::set<Worker*> workers_type;
       static workers_type workers;
 
-      static unsigned compLifetime;
       static unsigned maxRequestTime;
       static unsigned minThreads;
       static bool enableCompression;
@@ -69,13 +68,8 @@ namespace tnt
       virtual void run();
 
       void dispatch(HttpRequest& request, HttpReply& reply);
-      void cleanup(unsigned seconds)
-        { comploader.cleanup(seconds); }
 
       static void timer();
-
-      static void setCompLifetime(unsigned sec)    { compLifetime = sec; }
-      static unsigned getCompLifetime()            { return compLifetime; }
 
       /// Sets a hard limit for request-time.
       /// When the time is exceeded, this process exits.

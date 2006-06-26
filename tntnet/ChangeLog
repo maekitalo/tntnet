@@ -3,6 +3,8 @@
   - make http-headers case-insensitive as per spec
   - improve support for content-encoding in HttpReply. This adds a
     member-variable to HttpReply, which makes it binary incompatible.
+  - don't delete components any more - they don't eat so much memory
+    and it is impossible to know, when components aren't needed any more
 
 2006-06-20 tommi@tntnet.org
 

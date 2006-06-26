@@ -21,13 +21,7 @@
 #define TNT_COMPONENT_H
 
 #include <tnt/compident.h>
-#include "tnt/config.h"
-
 #include <time.h>
-
-#ifdef HAVE_LIMITS
-#include <limits>
-#endif
 
 namespace cxxtools
 {
@@ -45,17 +39,8 @@ class Component
     time_t atime;
 
   public:
-    Component()     { time(&atime); }
+    Component()     { }
     virtual ~Component() { }
-
-    void touch(time_t plus = 0)      { time(&atime); atime += plus; }
-    time_t getLastAccesstime() const { return atime; }
-#ifdef HAVE_LIMITS
-    void lock()                      { atime = std::numeric_limits<time_t>::max(); }
-#else
-    void lock()                      { touch(3600); }
-#endif
-    void unlock()                    { touch(); }
 
     virtual unsigned operator() (HttpRequest& request,
       HttpReply& reply, cxxtools::QueryParams& qparam);
