@@ -676,10 +676,10 @@ namespace tnt
             else if (ch == '%')
             {
               // start of oneline-cpp
+              handler.onLine(curline, curfile); //#
               if (!html.empty())
               {
                 log_debug("onHtml(\"" << html << "\")");
-                handler.onLine(curline, curfile); //#
                 handler.onHtml(html);
                 html.clear();
               }
