@@ -76,8 +76,7 @@ PropertyFile        tntnet.properties
 #ListenRetry        5
 #EnableCompression  no
 #MinCompressSize    1024  # in bytes
-#DefaultContentType text/html
-#DefaultEncoding    iso-8859-1
+#DefaultContentType text/html; charset=iso-8859-1
 EOF
 }
 
@@ -175,7 +174,7 @@ EOF
 
 Sample ecpp-project "$optarg" created.
 To build change to the directory "$optarg" and run make.
-To run the application execute "tntnet -c tntnet.conf" there.
+To run the application execute "tntnet tntnet.conf" there.
 To view the page navigate your browser to "http://localhost:8000/$optarg".
 
 EOF
