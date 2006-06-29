@@ -23,7 +23,7 @@
 #include <tnt/fastctype.h>
 #include <cxxtools/log.h>
 #include <sstream>
-#include <locale>
+#include <cctype>
 
 #define SET_STATE(new_state)  state = &Parser::new_state
 
@@ -34,7 +34,7 @@ namespace tnt
     std::string chartoprint(char ch)
     {
       const static char hex[] = "0123456789abcdef";
-      if (std::isprint(ch, std::locale()))
+      if (std::isprint(ch))
         return std::string(1, '\'') + ch + '\'';
       else
         return std::string("'\\x") + hex[(ch >> 4) & 0xf] + hex[ch & 0xf] + '\'';
