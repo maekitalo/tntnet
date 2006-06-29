@@ -37,8 +37,7 @@ namespace tnt
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
   unsigned HttpReply::minCompressSize = 1024;
-  std::string HttpReply::defaultContentType = "text/html";
-  std::string HttpReply::defaultEncoding = "iso-8859-1";
+  std::string HttpReply::defaultContentType = "text/html; charset=iso-8859-1";
 
   namespace
   {
@@ -122,18 +121,7 @@ namespace tnt
       setKeepAliveHeader(0);
 
     if (!hasHeader(httpheader::contentType))
-    {
-      if (contentType.empty())
-      {
-        contentType = defaultContentType;
-        if (getMajorVersion() >= 1 && getMinorVersion() >= 1)
-        {
-          contentType.append("; charset=");
-          contentType.append(contentEncoding.empty() ? defaultEncoding : contentEncoding);
-        }
-      }
       setHeader(httpheader::contentType, contentType);
-    }
 
     // send header
 
@@ -173,7 +161,8 @@ namespace tnt
   }
 
   HttpReply::HttpReply(std::ostream& s, bool sendStatusLine_)
-    : socket(s),
+    : contentType(defaultContentType),
+      socket(s),
       current_outstream(&outstream),
       save_outstream(outstream),
       keepAliveCounter(0),

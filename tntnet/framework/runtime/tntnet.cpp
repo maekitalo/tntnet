@@ -623,8 +623,6 @@ namespace tnt
       config.getValue("KeepAliveTimeout", HttpReply::getKeepAliveTimeout()));
     HttpReply::setDefaultContentType(
       config.getValue("DefaultContentType", HttpReply::getDefaultContentType()));
-    HttpReply::setDefaultEncoding(
-      config.getValue("DefaultEncoding", HttpReply::getDefaultEncoding()));
 
     log_debug("listeners.size()=" << listeners.size());
   }
