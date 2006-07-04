@@ -132,6 +132,10 @@ namespace tnt
     Cookie c = request.getCookie(currentSessionCookieName);
     if (c.getValue().empty())
     {
+      log_debug(sessionScopes.size() << " sessions available");
+      for (sessionscopes_type::iterator it = sessionScopes.begin(); it != sessionScopes.end(); ++it)
+        log_debug("available session " << it->first << " value " << it->second);
+
       log_debug("session-cookie " << currentSessionCookieName << " not found");
       request.setSessionScope(0);
     }

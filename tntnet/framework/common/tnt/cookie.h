@@ -23,6 +23,7 @@
 #include <string>
 #include <map>
 #include <iosfwd>
+#include <tnt/stringlessignorecase.h>
 
 namespace tnt
 {
@@ -44,7 +45,7 @@ namespace tnt
       static const std::string expires;
 
     private:
-      typedef std::map<std::string, std::string> attrs_type;
+      typedef std::map<std::string, std::string, StringLessIgnoreCase> attrs_type;
       std::string value;
       attrs_type attrs;
       bool secureFlag;
@@ -104,7 +105,7 @@ namespace tnt
       friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
       friend class cookie_parser;
 
-      typedef std::map<std::string, Cookie> cookies_type;
+      typedef std::map<std::string, Cookie, StringLessIgnoreCase> cookies_type;
       cookies_type data;
 
       static const Cookie emptyCookie;

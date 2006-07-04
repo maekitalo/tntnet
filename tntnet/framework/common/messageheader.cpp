@@ -20,7 +20,6 @@
 #include <tnt/messageheader.h>
 #include <tnt/messageheaderparser.h>
 #include <cxxtools/log.h>
-#include <cctype>
 
 namespace tnt
 {
@@ -30,24 +29,6 @@ namespace tnt
   {
     data.parse(in);
     return in;
-  }
-
-  bool StringLessIgnoreCase::operator()(const std::string& s1, const std::string& s2) const
-  {
-    std::string::const_iterator it1 = s1.begin();
-    std::string::const_iterator it2 = s2.begin();
-    while (it1 != s1.end() && it2 != s2.end())
-    {
-      char c1 = std::toupper(*it1);
-      char c2 = std::toupper(*it2);
-      if (c1 < c2)
-        return true;
-      else if (c2 < c1)
-        return false;
-      ++it1;
-      ++it2;
-    }
-    return it1 == s1.end() ? (it2 != s2.end()) : (it2 == s2.end());
   }
 
   void Messageheader::parse(std::istream& in, size_t maxHeaderSize)

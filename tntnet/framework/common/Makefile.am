@@ -33,6 +33,7 @@ libtntnet_la_SOURCES = \
 	scopemanager.cpp \
 	sessionscope.cpp \
 	sodata.cpp \
+	stringlessignorecase.cpp \
 	tntconfig.cpp \
 	unzip.c \
 	unzipfile.cpp \
@@ -82,6 +83,7 @@ nobase_include_HEADERS = \
 	tnt/scopemanager.h \
 	tnt/sessionscope.h \
 	tnt/sodata.h \
+	tnt/stringlessignorecase.h \
 	tnt/tntconfig.h \
 	tnt/unzipfile.h \
 	tnt/urlmapper.h \

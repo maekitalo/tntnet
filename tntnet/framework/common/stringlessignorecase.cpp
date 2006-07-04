@@ -1,5 +1,5 @@
-/* tnt/messageheader.h
- * Copyright (C) 2003 Tommi Maekitalo
+/* stringlessignorecase.cpp
+ * Copyright (C) 2006 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,41 +17,26 @@
  *
  */
 
-#ifndef TNT_MESSAGEHEADER_H
-#define TNT_MESSAGEHEADER_H
-
-#include <string>
-#include <map>
 #include <tnt/stringlessignorecase.h>
+#include <cctype>
 
 namespace tnt
 {
-  /// Standard-message-header like rfc822
-  class Messageheader : public std::multimap<std::string, std::string, StringLessIgnoreCase>
+  bool StringLessIgnoreCase::operator()(const std::string& s1, const std::string& s2) const
   {
-    public:
-      class Parser;
-      friend class Parser;
-
-    protected:
-      enum return_type
-      {
-        OK,
-        FAIL,
-        END
-      };
-
-      virtual return_type onField(const std::string& name, const std::string& value);
-
-    public:
-      virtual ~Messageheader()   { }
-
-      void parse(std::istream& in, size_t maxHeaderSize = 0);
-  };
-
-  std::istream& operator>> (std::istream& in, Messageheader& data);
-
+    std::string::const_iterator it1 = s1.begin();
+    std::string::const_iterator it2 = s2.begin();
+    while (it1 != s1.end() && it2 != s2.end())
+    {
+      char c1 = std::toupper(*it1);
+      char c2 = std::toupper(*it2);
+      if (c1 < c2)
+        return true;
+      else if (c2 < c1)
+        return false;
+      ++it1;
+      ++it2;
+    }
+    return it1 == s1.end() ? (it2 != s2.end()) : (it2 == s2.end());
+  }
 }
-
-#endif // TNT_MESSAGEHEADER_H
-

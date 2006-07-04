@@ -1,4 +1,4 @@
-/* tnt/messageheader.h
+/* tnt/stringlessignorecase.h
  * Copyright (C) 2003 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
@@ -17,41 +17,21 @@
  *
  */
 
-#ifndef TNT_MESSAGEHEADER_H
-#define TNT_MESSAGEHEADER_H
+#ifndef TNT_STRINGLESSIGNORECASE_H
+#define TNT_STRINGLESSIGNORECASE_H
 
 #include <string>
-#include <map>
-#include <tnt/stringlessignorecase.h>
+#include <functional>
 
 namespace tnt
 {
-  /// Standard-message-header like rfc822
-  class Messageheader : public std::multimap<std::string, std::string, StringLessIgnoreCase>
+  class StringLessIgnoreCase : public std::binary_function<std::string, std::string, bool>
   {
     public:
-      class Parser;
-      friend class Parser;
-
-    protected:
-      enum return_type
-      {
-        OK,
-        FAIL,
-        END
-      };
-
-      virtual return_type onField(const std::string& name, const std::string& value);
-
-    public:
-      virtual ~Messageheader()   { }
-
-      void parse(std::istream& in, size_t maxHeaderSize = 0);
+      bool operator()(const std::string& s1, const std::string& s2) const;
   };
-
-  std::istream& operator>> (std::istream& in, Messageheader& data);
 
 }
 
-#endif // TNT_MESSAGEHEADER_H
+#endif // TNT_STRINGLESSIGNORECASE_H
 
