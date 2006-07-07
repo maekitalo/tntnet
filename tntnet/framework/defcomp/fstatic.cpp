@@ -105,7 +105,7 @@ namespace tnt
       reply.setHeader(tnt::httpheader::connection,
                       tnt::httpheader::connectionKeepAlive);
 
-    // send datea
+    // send data
     reply.setDirectMode();
     reply.out() << in.rdbuf();
 
