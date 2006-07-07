@@ -48,9 +48,9 @@ out a short message, how to run the application.
 There are some demo-applications you can try in sdk/demos. To run the demos
 without installing tntnet, change to the directory of the demo and run tntnet
 from the directory framework/runtime and pass the configurationfile tntnet.conf
-with -c:
+as a parameter:
   cd sdk/demos/hello
-  ../../../framework/runtime/tntnet -c tntnet.conf
+  ../../../framework/runtime/tntnet tntnet.conf
 
 Tntnet listens on port 8000. Start your browser and enter the url:
   http://localhost:8000/hello

@@ -61,6 +61,7 @@ namespace tnt
 
       Scope* requestScope;
       Scope* applicationScope;
+      Scope* threadScope;
       Sessionscope* sessionScope;
 
       bool applicationScopeLocked;
@@ -81,6 +82,7 @@ namespace tnt
           encodingRead(false),
           requestScope(0),
           applicationScope(0),
+          threadScope(0),
           sessionScope(0),
           applicationScopeLocked(false),
           sessionScopeLocked(false)
@@ -157,12 +159,16 @@ namespace tnt
       void setApplicationScope(Scope* s);
       void setApplicationScope(Scope& s)  { setApplicationScope(&s); }
 
+      void setThreadScope(Scope* s);
+      void setThreadScope(Scope& s)       { setThreadScope(&s); }
+
       void setSessionScope(Sessionscope* s);
       void setSessionScope(Sessionscope& s)      { setSessionScope(&s); }
       void clearSession();
 
       Scope& getRequestScope();
       Scope& getApplicationScope();
+      Scope& getThreadScope()                    { return *threadScope; }
       Sessionscope& getSessionScope();
       bool   hasSessionScope() const;
   };

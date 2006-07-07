@@ -246,6 +246,15 @@ namespace tnt
 #define TNT_APPLICATION_GLOBAL_VAR(type, varname, key, construct) \
   TNT_VAR(Application, type, varname, key, construct)
 
+#define TNT_THREAD_COMPONENT_VAR(type, varname, key, construct) \
+  TNT_VAR(Thread, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_THREAD_PAGE_VAR(type, varname, key, construct) \
+  TNT_VAR(Thread, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_THREAD_GLOBAL_VAR(type, varname, key, construct) \
+  TNT_VAR(Thread, type, varname, key, construct)
+
 #define TNT_REQUEST_COMPONENT_VAR(type, varname, key, construct) \
   TNT_VAR(Request, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
 

@@ -28,10 +28,12 @@ namespace tnt
     {
       std::string tag =
           scope_container == ecpp::application_container ? "application"
+        : scope_container == ecpp::thread_container      ? "thread"
         : scope_container == ecpp::session_container     ? "session"
         :                                                  "request";
       std::string container =
           scope_container == ecpp::application_container ? "APPLICATION"
+        : scope_container == ecpp::thread_container      ? "THREAD"
         : scope_container == ecpp::session_container     ? "SESSION"
         :                                                  "REQUEST";
       std::string key = scope == ecpp::global_scope ? "GLOBAL"

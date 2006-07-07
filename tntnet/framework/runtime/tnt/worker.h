@@ -26,6 +26,7 @@
 #include <cxxtools/pool.h>
 #include <tnt/comploader.h>
 #include <tnt/tntnet.h>
+#include <tnt/scope.h>
 
 namespace tnt
 {
@@ -44,6 +45,8 @@ namespace tnt
 
       ComploaderPoolType::objectptr_type comploaderObject;
       Comploader& comploader;
+
+      Scope threadScope;
 
       pthread_t threadId;
       const char* state;

@@ -358,6 +358,12 @@ namespace tnt
                 scope = component_scope;
                 state = state_scope0;
               }
+              else if (tag == "thread")
+              {
+                scope_container = thread_container;
+                scope = component_scope;
+                state = state_scope0;
+              }
               else if (tag == "session")
               {
                 scope_container = session_container;
@@ -390,6 +396,11 @@ namespace tnt
             else if (std::isspace(ch, std::locale()) && tag == "application")
             {
               scope_container = application_container;
+              state = state_scopearg0;
+            }
+            else if (std::isspace(ch, std::locale()) && tag == "thread")
+            {
+              scope_container = thread_container;
               state = state_scopearg0;
             }
             else if (std::isspace(ch, std::locale()) && tag == "session")
@@ -655,6 +666,7 @@ namespace tnt
                 || tag == "include"
                 || tag == "session"
                 || tag == "application"
+                || tag == "thread"
                 || tag == "request")
                 ;
               else

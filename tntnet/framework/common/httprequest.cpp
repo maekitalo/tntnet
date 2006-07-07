@@ -43,6 +43,7 @@ namespace tnt
       locale_init(false),
       requestScope(0),
       applicationScope(0),
+      threadScope(0),
       sessionScope(0),
       applicationScopeLocked(false),
       sessionScopeLocked(false)
@@ -65,6 +66,7 @@ namespace tnt
       locale(r.locale),
       requestScope(r.requestScope),
       applicationScope(r.applicationScope),
+      threadScope(r.threadScope),
       sessionScope(r.sessionScope),
       applicationScopeLocked(false),
       sessionScopeLocked(false)
@@ -73,6 +75,8 @@ namespace tnt
       requestScope->addRef();
     if (applicationScope)
       applicationScope->addRef();
+    if (threadScope)
+      threadScope->addRef();
     if (sessionScope)
       sessionScope->addRef();
   }
@@ -85,6 +89,8 @@ namespace tnt
       requestScope->release();
     if (applicationScope)
       applicationScope->release();
+    if (threadScope)
+      threadScope->release();
     if (sessionScope)
       sessionScope->release();
   }
@@ -104,6 +110,7 @@ namespace tnt
     locale = r.locale;
     requestScope = r.requestScope;
     applicationScope = r.applicationScope;
+    threadScope = r.threadScope;
     sessionScope = r.sessionScope;
     applicationScopeLocked = false;
     sessionScopeLocked = false;
@@ -112,6 +119,8 @@ namespace tnt
       requestScope->addRef();
     if (applicationScope)
       applicationScope->addRef();
+    if (threadScope)
+      threadScope->addRef();
     if (sessionScope)
       sessionScope->addRef();
 
@@ -141,6 +150,12 @@ namespace tnt
     {
       applicationScope->release();
       applicationScope = 0;
+    }
+
+    if (threadScope)
+    {
+      threadScope->release();
+      threadScope = 0;
     }
 
     if (sessionScope)
@@ -340,6 +355,17 @@ namespace tnt
     if (s)
       s->addRef();
     applicationScope = s;
+  }
+
+  void HttpRequest::setThreadScope(Scope* s)
+  {
+    if (threadScope)
+      threadScope->release();
+
+    if (s)
+      s->addRef();
+
+    threadScope = s;
   }
 
   void HttpRequest::setSessionScope(Sessionscope* s)

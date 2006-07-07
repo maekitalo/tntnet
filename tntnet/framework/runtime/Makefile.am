@@ -19,7 +19,7 @@ tntnet_SOURCES = \
 
 tntnet_LDFLAGS = -lpthread
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
-tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@sharedstatedir@/tntnet.pid\"
+tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@localstatedir@/tntnet.pid\"
 
 if MAKE_GNUTLS
 tntnet_SOURCES += \

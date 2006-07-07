@@ -280,6 +280,7 @@ namespace tnt
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
+        request.setThreadScope(threadScope);
         application.getScopemanager().preCall(request, ci.libname);
 
         log_debug("call component " << ci << " path " << request.getPathInfo());

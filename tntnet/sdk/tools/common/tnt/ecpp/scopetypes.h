@@ -33,6 +33,7 @@ namespace tnt
     enum scope_container_type
     {
       application_container,
+      thread_container,
       session_container,
       request_container
     };
