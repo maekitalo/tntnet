@@ -8,7 +8,7 @@
     {
       var arg1 = document.getElementById("arg1").value;
       var arg2 = document.getElementById("arg2").value;
-      var url = "/calc?arg1=" + escape(arg1)
+      var url = "calc?arg1=" + escape(arg1)
               + "&arg2=" + escape(arg2)
               + "&op=" + escape(op);
 

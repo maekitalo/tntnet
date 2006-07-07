@@ -9,10 +9,11 @@ SUBDIRS = \
     sdk/tools/ecppc \
     sdk/tools/ecppl \
     sdk/tools/ecppll \
+    sdk/demos \
     sdk/demos/calc \
     sdk/demos/calcajax \
     sdk/demos/calcmvc \
-    sdk/demos/cgi-getenv \
+    sdk/demos/chat \
     sdk/demos/config \
     sdk/demos/controls \
     sdk/demos/cookie \

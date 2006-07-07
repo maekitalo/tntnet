@@ -1,0 +1,30 @@
+<%pre>
+
+#include <list>
+#include <string>
+
+struct chatMessage
+{
+  chatMessage() { }
+  chatMessage(const std::string& person_, const std::string& message_)
+    : person(person_),
+      message(message_)
+      { }
+
+  std::string person;
+  std::string message;
+};
+
+typedef std::list<chatMessage> chat_type;
+
+</%pre>
+<%config>
+
+unsigned maxComments = 10;
+
+</%config>
+<%application scope="global">
+
+chat_type chat;
+
+</%application>

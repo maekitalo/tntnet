@@ -1,0 +1,21 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tnt/httpheader.h>
+
+</%pre>
+<%cpp>
+
+  log_debug("getchat - " << chat.size() << " comments");
+
+  reply.setHeader(tnt::httpheader::cacheControl, "no-cache");
+
+</%cpp>
+<table>
+% for (chat_type::const_iterator it = chat.begin(); it != chat.end(); ++it) {
+ <tr>
+  <td class="person"><$ it->person $></td>
+  <td class="message"><$$ it->message $></td>
+ </tr>
+% }
+</table>

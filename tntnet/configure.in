@@ -105,10 +105,11 @@ AC_CONFIG_FILES([
     sdk/tools/ecppc/Makefile
     sdk/tools/ecppl/Makefile
     sdk/tools/ecppll/Makefile
+    sdk/demos/Makefile
     sdk/demos/calc/Makefile
     sdk/demos/calcajax/Makefile
     sdk/demos/calcmvc/Makefile
-    sdk/demos/cgi-getenv/Makefile
+    sdk/demos/chat/Makefile
     sdk/demos/config/Makefile
     sdk/demos/controls/Makefile
     sdk/demos/cookie/Makefile

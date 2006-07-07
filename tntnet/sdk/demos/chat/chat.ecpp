@@ -1,0 +1,87 @@
+<html>
+ <head>
+  <title>ecpp-application chat</title>
+  <script src="ajax" type="text/javascript"></script>
+  <script type="text/javascript">
+
+   window.setInterval("updateChat()", 1000);
+
+   var oldContent;
+
+   function onReceive(request)
+   {
+     var c = document.getElementById("chat");
+     if (request.responseText != oldContent)
+     {
+       c.innerHTML = request.responseText;
+       oldContent = request.responseText;
+     }
+   }
+
+   function updateChat(ms)
+   {
+     ajaxGet("getchat", onReceive);
+   }
+
+   function sendMessage()
+   {
+     var p = document.getElementById("person");
+     var m = document.getElementById("message");
+     ajaxGet("putchat?person=" + escape(p.value) + "&message=" + escape(m.value),
+       onReceive);
+     m.value = "";
+     m.focus();
+   }
+
+   function addText(t)
+   {
+     var m = document.getElementById("message");
+     m.value += t;
+   }
+
+  </script>
+  <style type="text/css">
+   .person {
+     font-weight: bold;
+   }
+   .message {
+     color: blue;
+   }
+  </style>
+ </head>
+ <body>
+  <h1><$ request.getArgs().size() > 0 ? request.getArgs()[0] : "Ajaxchat" $></h1>
+
+  <form>
+   <table>
+    <tr>
+     <td>
+      your Name
+     </td>
+     <td>
+      <input type="text" name="person" id="person" size="20">
+     </td>
+    </tr>
+    <tr>
+     <td>
+      your Message
+     </td>
+     <td>
+      <input type="text" name="message" id="message" size="80"><br>
+     </td>
+    </tr>
+   </table>
+   <input type="button" value="talk" onClick="sendMessage()">
+   <img src="smile" onClick='addText(" :) ")'>
+   <img src="sad" onClick='addText(" :( ")'>
+   <img src="wink" onClick='addText(" ;) ")'>
+  </form>
+  <script type="text/javascript">
+   document.getElementById("person").focus();
+  </script>
+
+  <hr>
+  <div id="chat"><& getchat ></div>
+
+ </body>
+</html>
