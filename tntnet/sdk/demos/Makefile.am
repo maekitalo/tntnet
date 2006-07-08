@@ -6,7 +6,7 @@ alldemos_la_SOURCES = \
 alldemos_la_LDFLAGS = -module
 alldemos_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
-EXTRA_DIST = tntnet.conf
+EXTRA_DIST = tntnet.conf demos.txt
 noinst_DATA = tntnet.properties
 CLEANFILES = alldemos.cpp tntnet.properties
 

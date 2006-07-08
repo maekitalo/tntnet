@@ -110,6 +110,7 @@ AC_CONFIG_FILES([
     sdk/demos/calcajax/Makefile
     sdk/demos/calcmvc/Makefile
     sdk/demos/chat/Makefile
+    sdk/demos/comp/Makefile
     sdk/demos/config/Makefile
     sdk/demos/controls/Makefile
     sdk/demos/cookie/Makefile
@@ -118,7 +119,6 @@ AC_CONFIG_FILES([
     sdk/demos/session/Makefile
     sdk/demos/sprintf/Makefile
     sdk/demos/strings/Makefile
-    sdk/demos/subcomp/Makefile
     sdk/demos/upload/Makefile
     etc/Makefile
     tntnet-config

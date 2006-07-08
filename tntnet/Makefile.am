@@ -14,6 +14,7 @@ SUBDIRS = \
     sdk/demos/calcajax \
     sdk/demos/calcmvc \
     sdk/demos/chat \
+    sdk/demos/comp \
     sdk/demos/config \
     sdk/demos/controls \
     sdk/demos/cookie \
@@ -22,7 +23,6 @@ SUBDIRS = \
     sdk/demos/session \
     sdk/demos/sprintf \
     sdk/demos/strings \
-    sdk/demos/subcomp \
     sdk/demos/upload \
     etc
 

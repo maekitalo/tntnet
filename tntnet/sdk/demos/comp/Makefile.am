@@ -1,6 +1,6 @@
-pkglib_LTLIBRARIES = lib.la extlib.la
+pkglib_LTLIBRARIES = comp.la extlib.la
 
-lib_la_SOURCES = \
+comp_la_SOURCES = \
 	comp.ecpp \
     subcomp.ecpp \
     nscomp.ecpp
@@ -8,15 +8,16 @@ lib_la_SOURCES = \
 extlib_la_SOURCES = \
 	extcomp.ecpp
 
-lib_la_LDFLAGS = -module
-lib_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+comp_la_LDFLAGS = -module
+comp_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 extlib_la_LDFLAGS = -module
 extlib_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 nscomp.cpp: ECPPFLAGS=-N mynamespace -o nscomp.cpp
 
 noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = subcomp.cpp extcomp.cpp tntnet.conf tntnet.properties
+CLEANFILES = comp.cpp subcomp.cpp extcomp.cpp nscomp.cpp \
+    tntnet.conf tntnet.properties
 
 EXTRA_DIST = tntnet.conf tntnet.properties
 
@@ -27,4 +28,4 @@ SUFFIXES=.ecpp
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@
 tntnet.conf:
-	/bin/sh $(top_builddir)/tntnet-config --config=lib >$@
+	/bin/sh $(top_builddir)/tntnet-config --config=comp >$@
