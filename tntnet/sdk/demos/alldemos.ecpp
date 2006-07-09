@@ -48,6 +48,8 @@ std::ifstream demos(filename.c_str());
 
     // find delimiters '|'
     std::string::size_type n0 = line.find('|');
+    if (n0 == std::string::npos)
+      continue;
     std::string::size_type n1 = line.find('|', n0 + 1);
     if (n1 == std::string::npos)
       continue;
