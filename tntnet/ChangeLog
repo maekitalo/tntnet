@@ -1,3 +1,8 @@
+2006-07-09 tommi@tntnet.org
+
+  - thread-scope variables
+  - new demo "alldemos", which links to all other demos
+
 2006-07-03 tommi@tntnet.org
 
   - cookies are case-insensitive (see rfc 2109)
