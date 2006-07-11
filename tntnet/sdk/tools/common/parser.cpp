@@ -1285,6 +1285,13 @@ namespace tnt
           case state_condexpr:
             if (ch == '?')
               state = state_condexpre;
+            else if (expr.empty() && ch == '>')
+            {
+              // special case for xml-header (<?xml ... ?>)
+              handler.onHtml("<?" + cond + "?>");
+              cond.clear();
+              state = state_html;
+            }
             else
               expr += ch;
             break;
