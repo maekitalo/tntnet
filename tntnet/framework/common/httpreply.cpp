@@ -109,16 +109,16 @@ namespace tnt
 
     tryCompress(body);
 
-    if (keepAliveTimeout > 0 && keepAliveCounter > 0)
+    if (!hasHeader(httpheader::connection))
     {
-      if (!hasHeader(httpheader::connection))
+      if (keepAliveTimeout > 0 && keepAliveCounter > 0)
         setKeepAliveHeader(getKeepAliveTimeout() + 999 / 1000);
-
-      if (!hasHeader(httpheader::contentLength))
-        setContentLengthHeader(body.size());
+      else
+        setKeepAliveHeader(0);
     }
-    else if (!hasHeader(httpheader::connection))
-      setKeepAliveHeader(0);
+
+    if (!hasHeader(httpheader::contentLength))
+      setContentLengthHeader(body.size());
 
     if (!hasHeader(httpheader::contentType))
       setHeader(httpheader::contentType, contentType);
