@@ -4,24 +4,18 @@ ecppc_SOURCES = \
 	body.cpp \
 	closecomponent.cpp \
 	component.cpp \
-	cssfilter.cpp \
 	dependencygenerator.cpp \
 	ecppc.cpp \
 	generator.cpp \
-	htmlfilter.cpp \
-	jsfilter.cpp \
 	scopevar.cpp \
 	subcomponent.cpp \
 	variable.cpp \
 	tnt/ecppc/body.h \
 	tnt/ecppc/closecomponent.h \
 	tnt/ecppc/component.h \
-	tnt/ecppc/cssfilter.h \
 	tnt/ecppc/dependencygenerator.h \
 	tnt/ecppc/ecppc.h \
 	tnt/ecppc/generator.h \
-	tnt/ecppc/htmlfilter.h \
-	tnt/ecppc/jsfilter.h \
 	tnt/ecppc/scopevar.h \
 	tnt/ecppc/subcomponent.h \
 	tnt/ecppc/variable.h
