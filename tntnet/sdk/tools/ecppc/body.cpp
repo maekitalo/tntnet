@@ -20,7 +20,7 @@
 #include "tnt/ecppc/body.h"
 #include <tnt/ecpp.h>
 #include <sstream>
-#include <locale>
+#include <cctype>
 #include <cxxtools/log.h>
 
 log_define("tntnet.body")
@@ -51,7 +51,7 @@ namespace tnt
     void BodypartCall::call(std::ostream& out, const std::string& qparam) const
     {
       printLine(out);
-      if (std::isalpha(comp[0], std::locale()))
+      if (std::isalpha(comp[0]))
         callByIdent(out, qparam);
       else
         callByExpr(out, qparam);
