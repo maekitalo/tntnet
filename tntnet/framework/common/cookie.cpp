@@ -19,7 +19,7 @@
 
 #include <tnt/cookie.h>
 #include <tnt/httperror.h>
-#include <tnt/fastctype.h>
+#include <cctype>
 #include <cxxtools/log.h>
 #include <iostream>
 #include <sstream>
@@ -182,29 +182,29 @@ namespace tnt
             name.clear();
             state = state_name;
           }
-          else if (!myisspace(ch))
+          else if (!std::isspace(ch))
           {
             attr = false;
-            name = mytolower(ch);
+            name = ch;
             state = state_name;
           }
           break;
 
         case state_name:
-          if (myisspace(ch))
+          if (std::isspace(ch))
             state = (name == Cookie::secure ? state_valuee : state_eq);
           else if (ch == '=')
             state = (name == Cookie::secure ? state_valuee : state_value0);
           else if ((ch == ',' || ch == ';') && name == Cookie::secure)
             state = state_valuee;
           else
-            name += mytolower(ch);
+            name += ch;
           break;
 
         case state_eq:
           if (ch == '=')
             state = state_value0;
-          else if (!myisspace(ch))
+          else if (!std::isspace(ch))
             throw HttpError("400 invalid cookie: " + header);
           break;
 
@@ -215,7 +215,7 @@ namespace tnt
             value.reserve(32);
             state = state_qvalue;
           }
-          else if (!myisspace(ch))
+          else if (!std::isspace(ch))
           {
             value.clear();
             value.reserve(32);
@@ -230,7 +230,7 @@ namespace tnt
             process_nv();
             state = state_0;
           }
-          else if (myisspace(ch))
+          else if (std::isspace(ch))
             state = state_valuee;
           else
             value += ch;
@@ -242,7 +242,7 @@ namespace tnt
             process_nv();
             state = state_0;
           }
-          else if (myisspace(ch))
+          else if (std::isspace(ch))
             state = state_valuee;
           else
             throw HttpError("400 invalid cookie: " + header);
@@ -261,7 +261,7 @@ namespace tnt
             process_nv();
             state = state_0;
           }
-          else if (!myisspace(ch))
+          else if (!std::isspace(ch))
             throw HttpError("400 invalid cookie: " + header);
           break;
       }

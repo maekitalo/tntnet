@@ -18,7 +18,7 @@
  */
 
 #include <tnt/messageheaderparser.h>
-#include <tnt/fastctype.h>
+#include <cctype>
 #include <cxxtools/log.h>
 
 namespace tnt
@@ -52,7 +52,7 @@ namespace tnt
       return true;
     else if (ch == '\r')
       SET_STATE(state_cr);
-    else if (!myisspace(ch))
+    else if (!std::isspace(ch))
     {
       log_warn("invalid character " << chartoprint(ch));
       failedFlag = true;
@@ -81,7 +81,7 @@ namespace tnt
     }
     else if (ch >= 33 && ch <= 126)
       fieldname += ch;
-    else if (myisspace(ch))
+    else if (std::isspace(ch))
       SET_STATE(state_fieldnamespace);
     else
     {
@@ -102,7 +102,7 @@ namespace tnt
       fieldbody += ch;
       SET_STATE(state_fieldbody);
     }
-    else if (!myisspace(ch))
+    else if (!std::isspace(ch))
     {
       log_warn("invalid character " << chartoprint(ch) << " in fieldname-space");
       failedFlag = true;
@@ -117,7 +117,7 @@ namespace tnt
       SET_STATE(state_fieldbody_cr);
     else if (ch == '\n')
       SET_STATE(state_fieldbody_crlf);
-    else if (!myisspace(ch))
+    else if (!std::isspace(ch))
     {
       fieldbody.clear();
       fieldbody.reserve(32);
@@ -171,7 +171,7 @@ namespace tnt
       fieldbody.clear();
       return true;
     }
-    else if (myisspace(ch))
+    else if (std::isspace(ch))
     {
       fieldbody += ch;
       SET_STATE(state_fieldbody);

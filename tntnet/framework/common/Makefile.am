@@ -41,8 +41,7 @@ libtntnet_la_SOURCES = \
 	zdata.cpp \
 	crypt.h \
 	ioapi.h \
-	unzip.h \
-	tnt/fastctype.h
+	unzip.h
 
 nobase_include_HEADERS = \
 	tnt/compident.h \

@@ -18,7 +18,7 @@
  */
 
 #include "tnt/encoding.h"
-#include "tnt/fastctype.h"
+#include <cctype>
 #include <cxxtools/log.h>
 #include <stdexcept>
 
@@ -51,7 +51,7 @@ namespace tnt
       switch (state)
       {
         case state_0:
-          if (!myisspace(ch))
+          if (!std::isspace(ch))
           {
             encoding.clear();
             encoding.reserve(16);
@@ -76,19 +76,19 @@ namespace tnt
         case state_qualityq:
           if (ch == 'q')
             state = state_qualityeq;
-          else if (!myisspace(ch))
+          else if (!std::isspace(ch))
             throw std::runtime_error("invalid encoding-string \"" + header + '"');
           break;
 
         case state_qualityeq:
           if (ch == '=')
             state = state_quality;
-          else if (!myisspace(ch))
+          else if (!std::isspace(ch))
             throw std::runtime_error("invalid encoding-string \"" + header + '"');
           break;
 
         case state_quality:
-          if (myisdigit(ch))
+          if (std::isdigit(ch))
           {
             quality = (ch - '0') * 10;
             state = state_qualitypoint;
@@ -111,7 +111,7 @@ namespace tnt
           break;
 
         case state_qualitytenth:
-          if (myisdigit(ch))
+          if (std::isdigit(ch))
           {
             quality += ch - '0';
             log_debug("encoding=" << encoding << " quality " << quality);

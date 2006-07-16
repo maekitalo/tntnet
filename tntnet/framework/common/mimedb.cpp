@@ -18,7 +18,7 @@
  */
 
 #include "tnt/mimedb.h"
-#include "tnt/fastctype.h"
+#include <cctype>
 #include <iostream>
 #include <fstream>
 #include <locale>
@@ -70,7 +70,7 @@ void MimeDb::read(std::istream& in)
         }
         else if (ch == '#')
           state = state_comment;
-        else if (!myisspace(ch))
+        else if (!std::isspace(ch))
           throw std::runtime_error("parse error in mimedb");
         break;
 
@@ -82,7 +82,7 @@ void MimeDb::read(std::istream& in)
       case state_mime:
         if (ch == '\n')
           state = state_0;
-        else if (myisspace(ch))
+        else if (std::isspace(ch))
           state = state_ext0;
         else
           mime += ch;
@@ -91,7 +91,7 @@ void MimeDb::read(std::istream& in)
       case state_ext0:
         if (ch == '\n')
           state = state_0;
-        else if (!myisspace(ch))
+        else if (!std::isspace(ch))
         {
           ext = ch;
           state = state_ext;
@@ -99,7 +99,7 @@ void MimeDb::read(std::istream& in)
         break;
 
       case state_ext:
-        if (myisspace(ch))
+        if (std::isspace(ch))
         {
           log_debug(ext << " => " << mime);
           mimeDb.insert(mimedb_type::value_type(ext, mime));

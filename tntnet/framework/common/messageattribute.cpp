@@ -18,7 +18,7 @@
  */
 
 #include <tnt/messageattribute.h>
-#include <tnt/fastctype.h>
+#include <cctype>
 #include <iostream>
 
 namespace tnt
@@ -77,7 +77,7 @@ namespace tnt
             type += ch;
             state = state_type0;
           }
-          else if (myisspace(ch))
+          else if (std::isspace(ch))
             in.setstate(std::ios::failbit);
           break;
 

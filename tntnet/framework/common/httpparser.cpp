@@ -20,7 +20,7 @@
 #include <tnt/httpparser.h>
 #include <tnt/httperror.h>
 #include <tnt/httpheader.h>
-#include <tnt/fastctype.h>
+#include <cctype>
 #include <cxxtools/log.h>
 #include <sstream>
 #include <cctype>
@@ -43,7 +43,7 @@ namespace tnt
     inline bool istokenchar(char ch)
     {
       static const char s[] = "\"(),/:;<=>?@[\\]{}";
-      return myisalpha(ch) || std::binary_search(s, s + sizeof(s) - 1, ch);
+      return std::isalpha(ch) || std::binary_search(s, s + sizeof(s) - 1, ch);
     }
   }
 
@@ -68,7 +68,7 @@ namespace tnt
       message.method += ch;
       SET_STATE(state_cmd);
     }
-    else if (!myisspace(ch))
+    else if (!std::isspace(ch))
     {
       log_warn("invalid character " << chartoprint(ch) << " in method");
       httpCode = HTTP_BAD_REQUEST;
@@ -97,7 +97,7 @@ namespace tnt
 
   bool HttpMessage::Parser::state_url0(char ch)
   {
-    if (!myisspace(ch))
+    if (!std::isspace(ch))
     {
       if (ch > ' ')
       {
@@ -151,7 +151,7 @@ namespace tnt
 
   bool HttpMessage::Parser::state_qparam(char ch)
   {
-    if (myisspace(ch))
+    if (std::isspace(ch))
     {
       log_debug("queryString=" << message.queryString);
       SET_STATE(state_version);
@@ -182,7 +182,7 @@ namespace tnt
   {
     if (ch == '.')
       SET_STATE(state_version_minor);
-    else if (myisdigit(ch))
+    else if (std::isdigit(ch))
       message.majorVersion = message.majorVersion * 10 + (ch - '0');
     else
     {
@@ -197,9 +197,9 @@ namespace tnt
   {
     if (ch == '\n')
       SET_STATE(state_header);
-    else if (myisspace(ch))
+    else if (std::isspace(ch))
       SET_STATE(state_end0);
-    else if (myisdigit(ch))
+    else if (std::isdigit(ch))
       message.minorVersion = message.minorVersion * 10 + (ch - '0');
     else
     {
@@ -214,7 +214,7 @@ namespace tnt
   {
     if (ch == '\n')
       SET_STATE(state_header);
-    else if (!myisspace(ch))
+    else if (!std::isspace(ch))
     {
       log_warn("invalid character " << chartoprint(ch) << " in end");
       httpCode = HTTP_BAD_REQUEST;
