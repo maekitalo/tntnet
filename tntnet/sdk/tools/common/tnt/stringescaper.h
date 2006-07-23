@@ -23,7 +23,7 @@
 #include <functional>
 #include <string.h>
 #include <string>
-#include <locale>
+#include <cctype>
 
 namespace tnt
 {
@@ -47,7 +47,7 @@ namespace tnt
           strcpy(data, "\\?");
         else if (escQuote && ch == '"')
           strcpy(data, "\\\"");
-        else if (std::isprint(ch, std::locale()) && ch != '\\')
+        else if (std::isprint(ch) && ch != '\\')
         {
           data[0] = ch;
           data[1] = '\0';
