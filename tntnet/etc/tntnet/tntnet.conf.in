@@ -15,7 +15,7 @@ MaxRequestSize     1048576  # 1 MB
 
 #Dir                /
 #Chroot             /var/safedir
-#PidFile            @localstatedir@/tntnet.pid
+PidFile            @localstatedir@/run/tntnet.pid
 #Daemon             0
 #MinThreads         5
 #MaxThreads         10
@@ -37,15 +37,15 @@ include @sysconfdir@/tntnet.d/*.conf
 include @sysconfdir@/tntnet/mime.conf
 
 # make demos callable
-MapUrl  /demos/controls$            redirect@tntnet /demos/controls/
-MapUrl  /demos/controls/(.*)\..*    $1@controls
-MapUrl  /demos/controls/$           index@controls  index
-MapUrl  /demos/controls/(.*)        index@controls  $1
-MapUrl  /demos/(.*)\..*   $1@$1    $1
-MapUrl  /demos/(.*)   $1@$1
-MapUrl  /demos/tntnet.jpg   tntnet@hello
+MapUrl  ^/demos/controls$            redirect@tntnet /demos/controls/
+MapUrl  ^/demos/controls/(.*)\..*    $1@controls
+MapUrl  ^/demos/controls/$           index@controls  index
+MapUrl  ^/demos/controls/(.*)        index@controls  $1
+MapUrl  ^/demos/(.*)\..*             $1@$1    $1
+MapUrl  ^/demos/(.*)                 $1@$1
+MapUrl  ^/demos/tntnet.jpg           tntnet@hello
 
 # configure tntnet as a simple webserver
 MapUrl  .*      mime@tntnet
-MapUrl  (.*)/   static@tntnet /var/www/$1/index.html
-MapUrl  /(.*)   static@tntnet /var/www/$1
+MapUrl  (.*)/$  static@tntnet /var/www/$1/index.html
+MapUrl  ^/(.*)$ static@tntnet /var/www/$1

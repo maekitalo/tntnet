@@ -27,4 +27,4 @@ init.d/tntnet: init.d/tntnet.in Makefile
 		-e 's,@datadir\@,@datadir@,g;' <init.d/tntnet.in >init.d/tntnet
 
 tntnet/tntnet.properties: Makefile
-	cxxtools-config --logfile @localstatedir@/tntnet.log --properties tntnet >$@
+	cxxtools-config --logfile @localstatedir@/log/tntnet/tntnet.log --properties tntnet >$@
