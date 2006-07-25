@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PIDFILE=@localstatedir@/tntnet.pid
+PIDFILE=@localstatedir@/run/tntnet.pid
 
 function start() {
 	tntnet
