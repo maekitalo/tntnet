@@ -1,4 +1,4 @@
-/* tnt/componentpointer.h
+/* tnt/componentguard.h
  * Copyright (C) 2003-2005 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
