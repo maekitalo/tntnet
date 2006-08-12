@@ -3,13 +3,13 @@ pkglib_LTLIBRARIES = calcajax.la
 calcajax_la_SOURCES = \
 	calcajax.ecpp \
 	calcajax_js.js \
-	calc.ecpp
+	docalc.ecpp
 
 calcajax_la_LDFLAGS = -module
 calcajax_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = calcajax.cpp calc.cpp tntnet.conf tntnet.properties
+CLEANFILES = calcajax.cpp calcajax_js.cpp docalc.cpp tntnet.conf tntnet.properties
 
 SUFFIXES=.js
 .ecpp.cpp:
