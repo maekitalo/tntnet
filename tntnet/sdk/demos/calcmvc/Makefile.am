@@ -12,7 +12,7 @@ calcmvc_la_LDFLAGS = -module
 calcmvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = calcController.cpp calcModel.cpp calcView.cpp \
+CLEANFILES = calcController.cpp calcModel.cpp calcView.cpp calcmvc.cpp \
 	tntnet.conf tntnet.properties
 
 SUFFIXES=.ecpp

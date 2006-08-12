@@ -14,7 +14,9 @@ chat_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 EXTRA_DIST = global.ecpp
 noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = chat.cpp tntnet.conf tntnet.properties
+CLEANFILES = chat.cpp ajax.cpp getchat.cpp putchat.cpp \
+    sad.cpp smile.cpp wink.cpp \
+    tntnet.conf tntnet.properties
 
 SUFFIXES=.ecpp .js .png
 .ecpp.cpp:
