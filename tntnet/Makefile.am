@@ -24,6 +24,7 @@ SUBDIRS = \
     sdk/demos/sprintf \
     sdk/demos/strings \
     sdk/demos/upload \
+    doc/man \
     etc
 
 EXTRA_DIST = ecpp.vim \

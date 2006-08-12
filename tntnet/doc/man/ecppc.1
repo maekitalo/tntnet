@@ -1,0 +1,119 @@
+.\" Copyright (C) 2006 Tommi Maekitalo
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.TH ecppc 1 20006-07-23 "Tntnet" "Tntnet users guide"
+.SH NAME
+ecppc \- compiler for ecpp
+.SH SYNOPSIS
+.B ecppc
+.RB [ \-bhszvtM ]
+.RB [ \-s- ]
+.RB [ \-o
+.IR filename ]
+.RB [ \-n
+.IR name ]
+.RB [ \-m
+.IR mimetype ]
+.RB [ \-B
+.IR class ]
+.RB [ \-C
+.IR class ]
+.RB filename
+.br
+.B ecppc
+.RB \-bb
+.RB filename...
+.SH DESCRIPTION
+.I Ecppc
+is the compiler for the ecpp-language.
+.I Ecpp
+is a template-language, which lets the user embed C++-code into HTML for use in
+.I tntnet
+(8).
+.I Ecppc
+generates a C++-class from a ecpp-template.
+It can also compile binary data into a C++-class, which makes it possible to integrate
+them in a tntnet-application.
+.SH OPTIONS
+.IP "\-b"
+This enables binary-mode.
+.I Ecppc
+does not look for ecpp-tags, but creates a class, which just copies the data
+.IP "\-bb"
+This enables multi-binary-mode.
+Every binary-file has some overhead, when packed into a tntnet-application.
+This overhead can be quite significant, when binary-files are small, like small icons in a
+web application.
+To reduce this overhead, multiple binaries can be packed into a single class, which removes
+the per-binary overhead completely.
+.br
+When the component is called, it uses the path-info-parameter (\fIrequest.getPathInfo()\fP)
+from the request, to decide, which binary to send.
+If no filename matches the path-info, processing is declined.
+The binaries need not be of same mime-type, since the mime-type is looked automatically from the
+mime-database by file-extension of the source-file.
+.IP "\-B class"
+This option generates a additional base-class for this component.
+.IP "\-C class"
+This option generates a alternate base-class for this component.
+The specified class should be derived from tnt::Component.
+.IP "\-h"
+Generate a separate header-file.
+Without this option, the class-declaration and -definition are put both into a single output-file.
+.IP "\-m mimetype"
+Set mimetype of output.
+This is the mimetype, sent by the component to the browser in the Content-Type-header.
+Without this parameter the mimetype is looked up from the mime-database of your system using
+the file-extension of the source-file.
+.IP "\-M"
+This disables normal processing and prints just the ecpp-dependencies from this component.
+The output can be included into a Makefile.
+Ecpp-dependencies are introduces by the \fi<%include>\fP-tag.
+.IP "\-n name"
+Set the classname of the component.
+Normally this is derived from the source-file-name by removing the .ecpp-extension.
+.IP "\-o filename"
+Write the generated file to the specified file instead of deriving the filename from the source-file-name.
+The outputfilename is normally the source-file where the extension is replaced by \fI.cpp\fP.
+.IP "\-s"
+Generate singleton.
+Normally
+.I ecppc
+decides automatically, if the template is suitable for a singleton.
+This option force
+.I ecppc
+to generate a singleton.
+.IP "\-s-"
+Do not generate a singleton.
+.IP "\-v"
+Enable verbose mode.
+This prints additional information about the processing on the standard-output.
+.IP "\-z"
+Compress the data in the component.
+Compressed data is automatically decopressed on first use.
+This reduces the code-size, but slightly slows down the first call of the component.
+.SH AUTHOR
+This manual page was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
+.SH SEE ALSO
+.BR tntnet (1),
+.BR ecpp (7),
+.BR ecppl (1),
+.BR ecppll (1).

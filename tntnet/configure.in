@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 1.5.2pre3, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.5.2pre4, [Tommi Maekitalo <tommi@tntnet.org>])
 AM_INIT_AUTOMAKE
 
 abi_current=5
@@ -120,6 +120,7 @@ AC_CONFIG_FILES([
     sdk/demos/sprintf/Makefile
     sdk/demos/strings/Makefile
     sdk/demos/upload/Makefile
+    doc/man/Makefile
     etc/Makefile
     tntnet-config
     ])
