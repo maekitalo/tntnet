@@ -34,7 +34,6 @@ namespace tnt
 
       bool failedFlag;
 
-      virtual void pre(char ch)    { }
       virtual bool post(bool ret)  { return ret; }
 
     public:
@@ -46,7 +45,6 @@ namespace tnt
 
       bool parse(char ch)
       {
-        pre(ch);
         return post( (static_cast<this_type*>(this)->*state)(ch) );
       }
 
