@@ -1,0 +1,395 @@
+.\" Copyright (C) 2006 Tommi Maekitalo
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.TH ecpp 7 20006-08-13 "Tntnet" "Tntnet users guide"
+.
+\" =====================================================================
+.SH NAME
+\" =====================================================================
+.
+tntnet.conf \- configuration-file for tntnet (8)
+.
+\" =====================================================================
+.SH DESCRIPTION
+\" =====================================================================
+Tntnet is configured with the configuration-file \fBtntnet.conf\fP.
+\fBtntnet.conf\fP contains configuration variables with parameters.
+.PP
+Each line in tntnet.conf is either empty, a comment starting with '#'
+or a variable with 0 or more parameters.
+.PP
+The variablename and parameters are spearated by whitespace.
+A parameter can be surrounded by quotation-marks (")or apostrophes (').
+If the parameter is marked this way, it can contain whitespace itself -
+even linefeeds.
+If the value itself needs to have the separator, the character can be
+prepended by backslash, which disables the special meaning of the
+character itself.
+.PP
+.B Examples:
+.PP
+.RS
+Varname value
+.RE
+.PP
+Defines a variable with the name \fIVarname\fP and the value \fIvalue\fP.
+.PP
+.RS
+Varname2 value1 value2 "This is a value with whitespace
+.br
+and newline and quotationsmark: \\""
+.RE
+.PP
+Defines a variable with 3 parameters.
+.
+\" =====================================================================
+.SH CONFIGURATION VARIABLES
+\" =====================================================================
+This section describes the variables, used by Tntnet (8).
+.SS BufferSize \fIbytes\fP
+Specifies the number of bytes sent in a single system-call.
+This does not limit anything in application-level.
+It does not affect e.g. savepoints or exception-handling.
+Component-output is collected completely and then passed in chunks of BufferSize bytes to the operating system.
+.PP
+The default value is 16384.
+
+.SS CompPath \fIdirectory\fP
+CompPath specifies, where tntnet should search for webapplications. Tntnet searches first in the current directory and then in each directory, you specify here, until a library is found. You can repeat the directive as many times as desired to add more entries. If it is not found, the next MapUrl-entry is tried.
+.PP
+.B Example
+.br
+CompPath /usr/local/lib/tntnet
+.br
+CompPath /usr/local/share/tntnet
+
+.SS Chroot \fIdirectory\fP
+Does a chroot(2)-system call on startup, which locks the process into the directory at system-level.
+.PP
+.B Example
+.br
+Chroot /var/tntnet
+
+.SS Daemon \fI0|1\fP
+If this flag is set to 1, Tntnet forks at startup and terminates the parent-process on successful initialization.
+
+.SS Dir \fIdirectory\fP
+Changes the current working directory of the process on startup.
+.PP
+.B Example
+.br
+Dir /var/tntnet
+
+.SS EnableCompression \fIyes|no\fP
+Specifies, if Tntnet should use gzip-compression at http-level.
+By default Tntnet use compression.
+A http-client like a web browser can send a header “Accept-Encoding”, to tell Tntnet, that it would accept compressed data.
+Tntnet then can decide, if it use compression.
+When the body is complete, Tntnet tries to compress the body.
+If the data can be compressed by more than 10%, Tntnet sends this compressed data.
+With this flag, this feature can be turned off.
+.PP
+Compression slows down processing but reduces the network-load.
+Normally the size of html-pages can be compressed by about 70%, while Tntnet slows down by up to 30%.
+.PP
+.B Example
+.br
+EnableCompression no
+
+.SS Group \fIunix-group\fP
+Changes the group under which tntnet answers requests.
+.PP
+.B Example
+.br
+Group tntnet-group
+
+.SS include \fIfilemask\fP
+Reads additional settings from the specified files.
+\fIFilemask\fP might contain glob-characters, so that multiple files might be read.
+The order is not specified.
+.PP
+.B Example
+.br
+include /etc/tntnet.d/*.conf
+
+.SS KeepAliveTimeout \fImilliseconds\fP
+Sets the timeout for keep-alive requests.
+.PP
+Tntnet tries to do keep-alive-requests wherever possible.
+This has the effect, that tntnet can receive multiple requests within a single
+tcp-connection.
+The connection times out after KeepAliveTimeout milliseconds.
+The timeout defaults to 15000ms.
+.PP
+.B Example
+.br
+KeepAliveTimeout 300000
+
+.SS KeepAliveMax \fInumber\fP
+Sets the maximum number of request per tcp-connection. This defaults to 100.
+.PP
+.B Example
+.br
+KeepAliveMax 10
+
+.SS Listen \fIip\fP [\fIport\fP]
+Specifies, on which address tntnet waits for connections.
+There can be more than one Listen-directives, in which case tntnet waits on
+every address.
+If there is no Listen-directive tntnet listens on 0.0.0.0 port 80.
+\fIip\fP might also be a hostname.
+.PP
+.B Example
+Listen 127.0.0.1 8000
+.br
+
+.SS ListenRetry \fInumber\fP
+On startup Tntnet calls listen on the specified port.
+When the systemcall returns with an error, Tntnet tries again and fails after
+the specified number of attempts.
+.PP
+The default number is 5.
+.PP
+.B Example
+.br
+ListenRetry 10
+
+.SS ListenBacklog \fInumber\fP
+The system-call listen(3p) needs a parameter backlog, which specifies, how many
+pending connections the operating-system should queue before it starts to
+ignore new request.
+The value is configurable here.
+.PP
+The default value is 16
+.PP
+.B Example
+.br
+ListenBacklog 64
+
+.SS Load \fIwebapplication\fP
+Load specifies, which webapplications are preloaded on startup.
+Normally webapplications are loaded as needed.
+The disadvantage is, that tntnet does not check on startup, if a application
+is loadable at all.
+With this directive startup fails, if the application is not loadable.
+.PP
+.B Example
+.br
+Load myapp
+
+.SS MapUrl \fIurl\fP \fIcomponent-identifier\fP [ \fIpath-info\fP { \fIadditional-arguments\fP } ]
+Tells tntnet, which component should be called, when it receives a http-request.
+\fIurl\fP is a regular expression, which is tried against the request-url.
+If it matches, the component-identifier is evaluated.
+\fIcomponent-idetifier\fP may contain backreferences to the url.
+By default the url is passed as path-info to the component, but this can be changed with a third parameter.
+Additional parameters can be passed to the component and accessed through
+tnt::httpRequest::getArgs().
+.PP
+This variable can occur more than once and they are tried in the order they are
+found in the configurationfile, until the regular expression matches and the
+component does not return tnt::DECLINED.
+If no MapUrl-directive is found, http-error 404 (not found) is sent.
+.PP
+.B Example
+.br
+# maps html-pages to components in myapp.so; e.g. /foo.html calls foo@myapp
+MapUrl /([^/.]+)\.html	$1@myapp
+# maps jpeg-urls to myapp; e.g. /foo.jpeg calls foo_jpg@myapp
+MapUrl /([^/.]+)\.jpeg	$1_jpg@myapp
+# maps /foo/bar.html to bar@foo
+MapUrl /([^/.]+)/([^/.]\.html	$2@$1
+.
+.SS
+.PP
+.B Example
+.br
+.
+.SS MapUrlMapCache \fIsize\fP
+As described in MapUrl urls are mapped to components with regular expressions.
+This is a quite expensive operation, while the number of different urls used in
+a typical web application is small.
+Therefore Tntnet has a simple cache, which stores mappings to prevent the need
+to process the same regular expression multiple times.
+The size of this cache is limited.
+After the size is exceeded the cache is simply cleared.
+This clearing is logged with the message “clear url-map-cache”.
+If you have a application whit many different urls and you often see this
+warning-message, you might want to increase the cache.
+.PP
+The default value is 8192.
+.PP
+.B Example
+.br
+MapUrlMapCache 32768
+.
+.SS MaxRequestSize \fInumber\fP
+This directive limits the size of the request.
+After number Bytes the connection is just closed.
+This prevents denial-of-service-attacks through long requests.
+Every request is read into memory, so it must fit into it.
+Bear in mind, that if you use file-upload-fields a request might be larger than
+just a few bytes.
+The value defaults to 0, which means, that there is no limit at all.
+.PP
+.B Example
+.br
+MaxRequestSize 65536
+.
+.SS MinThreads \fInumber\fP
+Tntnet uses a dynamic pool of worker-threads, which wait for incoming requests. MinThreads specifies, how many worker threads there have to be. This defaults to 5.
+.PP
+.B Example
+.br
+MinThreads 10
+.
+.SS MinCompressSize \fInumber\fP
+Http-compression for replies smaller than this are not compressed at all.
+.PP
+The default value for this is 1024.
+.PP
+.B Example
+.br
+MinCompressSize 256
+.
+.SS MaxThreads \fInumber\fP
+Tntnet uses a dynamic pool of worker-threads, which wait for incoming requests.
+\fIMaxThreads\fP limits the number of threads.
+.PP
+The default is 10.
+.PP
+.B Example
+.br
+MaxThreads 20
+.
+.SS NoCloseStdout \fI0|1\fP
+If Daemon is set to 1, tntnet closes standard-in-, standard-out- and
+standard-error-channels, unless NoCloseStdout is set to 1.
+.PP
+.B Example
+.br
+NoCloseStdout 1
+.
+.SS NoMonitor \fI0|1\fP
+On startup, if Daemon is set to 1, tntnet does a second fork.
+The parent keeps waiting for the child and the child does the work.
+If tntnet crashes, what might happen, when a webapplication is buggy, the
+worker-process is restarted.
+This can be switched off by setting NoMonitor to 0.
+.PP
+.B Example
+.br
+NoMonitor 0
+.
+.SS PidFile \fIfilename\fP
+When run in daemon-mode, tntnet writes the process-id of the monitor-process to
+filename.
+When the monitor-process is deactivated, the pid of the worker-process is
+written.
+This ensures, that sending a sigkill to the the stored process-id stops tntnet.
+.PP
+.B Example
+.br
+PidFile /var/run/tntnet.pid
+.
+.SS PropertyFile \fIfilename\fP
+This directive specifies the property-file, where logging is configured.
+The content of the property-file is dependend of the underlying logging-library.
+.PP
+.B Example
+.br
+PropertyFile /etc/tntnet/tntnet.property
+.
+.SS QueueSize \fInumber\fP
+Tntnet has a request-queue, where new requests wait for service.
+This sets a maximum size of this queue, after wich new requests are not accepted.
+.PP
+The default value is 100.
+.PP
+.B Example
+.br
+QueueSize 50
+.
+.SS SessionTimeout \fIseconds\fP
+This sets the number of seconds without requests after which a sesssion is erased.
+.PP
+The default value is 300 seconds.
+.PP
+.B Example
+.br
+SessionTimeout 600
+.
+.SS SocketReadTimeout \fImilliseconds\fP
+A worker-thread waits for some milliseconds on incoming data.
+If there is no data, the job is put into a queue and another thread waits with
+poll(2) on incoming data on multiple sockets.
+The workerthreads are freed and they can respond to other requests quickly.
+The default value is 200 milliseconds, which is good for normal operation.
+A value of 0 results in non-blocking read.
+If timeout is reached, this does not mean, that the socket is closed.
+A small timeout reduces contextswitches on slow connections.
+.PP
+.B Example
+.br
+SocketReadTimeout 0
+.
+.SS SocketWriteTimeout \fImilliseconds\fP
+This defines the time, how long the workerthreads wait on write.
+If the timeout is exceeded, the socket is closed and the browser might not get
+all data.
+The default value is 10000 milliseconds.
+.PP
+.B Example
+.br
+SocketWriteTimeout 20000
+.
+.SS SslListen ip [\fIport\fP [\fIssl-certificate-file\fP [\fIssl-key-file\fP] ] ]
+Specifies, on which ip and port tntnet waits for incoming ssl-connections.
+Optionally a certificate- and key-file can be passed.
+.PP
+.B Example
+.br
+SslListen 192.168.0.1 8443
+.
+.SS ThreadStartDelay \fIms\fP
+.PP
+.B Example
+.br
+ThreadStartDelay 1000
+.
+.SS User \fIusername\fP
+Changes the user under which tntnet answers requests.
+.PP
+.B Example
+.br
+User www-data
+.
+\" =====================================================================
+.SH AUTHOR
+\" =====================================================================
+.
+This manual page was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
+.
+\" =====================================================================
+.SH SEE ALSO
+\" =====================================================================
+.
+.BR tntnet (1)

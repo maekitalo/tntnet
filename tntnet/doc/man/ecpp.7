@@ -108,6 +108,65 @@ to true. Characters with special meaning in html are translated to the
 corresponding html-entities.
 .
 \" ---------------------------------------------------------------------
+.SS <& \fIcomponent\fP [ arguments ] >
+\" ---------------------------------------------------------------------
+Call the specified component.
+The output of the component is printed into the outputstream.
+If the component-name does not start with a letter, the ecpp-compiler
+treats it as a expression, which returns the name of the component.
+You must surround the expression in brackets, if it contains spaces.
+.PP
+The arguments-part specify the parameters, the component will receive.
+Arguments are names-value-pairs separated by '='.
+They are put in the qparam-parameter of the component and are normally
+declared in the <%args>-block.
+Values can be specified in 3 forms:
+.IP
+As a plain word without spaces
+.IP
+As a string enclosed in quotation marks
+.IP
+As a expression enclosed in brackets
+.PP
+A single plain word in the argumentlist
+is treated as a variable of type
+.I cxxtools::query_params
+and a copy is passed to the component. Other parameters are added to this copy.
+If you want to pass all parameters of the current component put the
+variable
+.I qparam
+as a plain word in the argument list.
+.
+.
+\" ---------------------------------------------------------------------
+.SS </&\fIcomponent\fP>
+\" ---------------------------------------------------------------------
+Closing-tag for a component-call.
+When components are called, this closing-tag might occur later.
+The code in <%close>-block is placed here.
+.
+\" ---------------------------------------------------------------------
+.SS <{...}>
+\" ---------------------------------------------------------------------
+C++-inline-processing-block.
+The code in this block is copied into the C++-class unchanged.
+.PP
+A linefeed after the closing tag is not ignored.
+.
+\" ---------------------------------------------------------------------
+.SS <#...#>
+\" ---------------------------------------------------------------------
+Comment-block.
+Everything in this block is ignored.
+.
+\" ---------------------------------------------------------------------
+.SS <%application [ scope="component|page|global"] >...</%application>
+\" ---------------------------------------------------------------------
+Variables defined here, have the lifetime of the application.
+.PP
+Application-scope is automatically locked.
+.
+\" ---------------------------------------------------------------------
 .SS <%args>...</%args>
 \" ---------------------------------------------------------------------
 Defines GET- or POST-parameters recieved by the component.
@@ -131,20 +190,13 @@ This way multiple values with the same name can be received.
 If a type is specified, each value is converted to the target-type.
 .
 \" ---------------------------------------------------------------------
-.SS <%cpp>...</%cpp>
+.SS <%close>...</%close>
 \" ---------------------------------------------------------------------
-C++-processing-block.
-The code between these tags are copied into the C++-class unchanged.
-.br
-A linefeed after the closing tag is ignored.
-.
-\" ---------------------------------------------------------------------
-.SS <{...}>
-\" ---------------------------------------------------------------------
-C++-inline-processing-block.
-The code between these tags are copied into the C++-class unchanged.
-.br
-A linefeed after the closing tag is not ignored.
+Code in these tags is placed into the calling component, when a closing
+tag </&\fIcomponent\fP> is found.
+.PP
+The <%close> receives the same parameters like the corresponding
+normal component call.
 .
 \" ---------------------------------------------------------------------
 .SS <%config>...</%config>
@@ -179,40 +231,38 @@ dburl = "postgresql:dbname=mydb";
 .RE
 .
 \" ---------------------------------------------------------------------
+.SS <%cpp>...</%cpp>
+\" ---------------------------------------------------------------------
+C++-processing-block.
+The code between these tags are copied into the C++-class unchanged.
+.PP
+A linefeed after the closing tag is ignored.
+.
+\" ---------------------------------------------------------------------
+.SS <%def \fIname\fP>...</%def>
+\" ---------------------------------------------------------------------
+Defines a internal subcomponent with the name \fIname\fP, which
+can be called like other components.
+.
+\" ---------------------------------------------------------------------
+.SS <%doc>...</%doc>
+\" ---------------------------------------------------------------------
+Comment-block.
+Everything in this block is ignored.
+.PP
+A linefeed after the closing tag is ignored.
+.
+\" ---------------------------------------------------------------------
+.SS <%include>\fIfilename\fP</%include>
+\" ---------------------------------------------------------------------
+The specified file is read and compiled.
+.
+\" ---------------------------------------------------------------------
 .SS <%pre>...</%pre>
 \" ---------------------------------------------------------------------
 Defines C++-code, which is placed outside the C++-class and outside the
 namespace-definition.
 This is a good place to define #include-directives.
-.
-\" ---------------------------------------------------------------------
-.SS <& \fIcomponent\fP [ arguments ] >
-\" ---------------------------------------------------------------------
-Call the specified component.
-The output of the component is printed into the outputstream.
-if the component-name does not start with a letter, the ecpp-compiler
-treats it as a expression, which returns the name of the component.
-.PP
-The arguments-part specify the parameters, the component will receive.
-Arguments are names-value-pairs separated by '='.
-They are put in the qparam-parameter of the component and are normally
-declared in the <%args>-block.
-Values can be specified in 3 forms:
-.IP
-As a plain word without spaces
-.IP
-As a string enclosed in quotation marks
-.IP
-As a expression enclosed in brackets
-.PP
-A single plain word in the argumentlist
-is treated as a variable of type
-.I cxxtools::query_params
-and a copy is passed to the component. Other parameters are added to this copy.
-If you want to pass all parameters of the current component put the
-variable
-.I qparam
-as a plain word in the argument list.
 .
 \" ---------------------------------------------------------------------
 .SS <%request [ scope="component|page|global"] >...</%request>
@@ -229,13 +279,6 @@ Sessions are identified with cookies. If a <%session>-block is defined
 somewhere in a component, a session-cookie is sent to the client.
 .PP
 Sessions are automatically locked.
-.
-\" ---------------------------------------------------------------------
-.SS <%application [ scope="component|page|global"] >...</%application>
-\" ---------------------------------------------------------------------
-Variables defined here, have the lifetime of the application.
-.PP
-Application-scope is automatically locked.
 .
 \" ---------------------------------------------------------------------
 .SS <%thread [ scope="component|page|global"] >...</%thread>
