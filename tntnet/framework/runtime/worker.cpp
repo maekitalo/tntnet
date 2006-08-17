@@ -266,6 +266,8 @@ namespace tnt
     if (!HttpRequest::checkUrl(url))
       throw HttpError(HTTP_BAD_REQUEST, "illegal url");
 
+    request.setThreadScope(threadScope);
+
     Dispatcher::PosType pos(application.getDispatcher(), request.getUrl());
     while (true)
     {
@@ -280,7 +282,6 @@ namespace tnt
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
-        request.setThreadScope(threadScope);
         application.getScopemanager().preCall(request, ci.libname);
 
         log_debug("call component " << ci << " path " << request.getPathInfo());
