@@ -55,7 +55,7 @@ namespace tnt
     SET_STATE(state_cmd0);
     httpCode = HTTP_OK;
     failedFlag = false;
-    requestSize = 0;
+    RequestSizeMonitor::reset();
     headerParser.reset();
   }
 
@@ -242,6 +242,12 @@ namespace tnt
         if (!valuestream)
           throw HttpError("400 missing Content-Length");
 
+        if (getCurrentRequestSize() + bodySize > getMaxRequestSize())
+        {
+          requestSizeExceeded();
+          return true;
+        }
+
         message.contentSize = bodySize;
         if (bodySize == 0)
           return true;
@@ -265,16 +271,10 @@ namespace tnt
     return --bodySize == 0;
   }
 
-  bool HttpMessage::Parser::post(bool ret)
+  void HttpMessage::Parser::requestSizeExceeded()
   {
-    if (++requestSize > maxRequestSize && maxRequestSize > 0)
-    {
-      log_warn("max request size " << maxRequestSize << " exceeded");
-      httpCode = HTTP_REQUEST_ENTITY_TOO_LARGE;
-      failedFlag = true;
-      return true;
-    }
-
-    return ret;
+    log_warn("max request size " << getMaxRequestSize() << " exceeded");
+    httpCode = HTTP_REQUEST_ENTITY_TOO_LARGE;
+    failedFlag = true;
   }
 }

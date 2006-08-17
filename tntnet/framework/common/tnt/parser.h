@@ -24,8 +24,15 @@
 
 namespace tnt
 {
-  template <typename this_type>
-  class Parser
+  class PrePostNop
+  {
+    protected:
+      void pre(char ch)    { }
+      bool post(bool ret)  { return ret; }
+  };
+
+  template <typename this_type, class PrePostProcessor = PrePostNop>
+  class Parser : public PrePostProcessor
   {
     protected:
 
@@ -34,18 +41,17 @@ namespace tnt
 
       bool failedFlag;
 
-      virtual bool post(bool ret)  { return ret; }
-
     public:
       explicit Parser(state_type initialState)
         : state(initialState),
           failedFlag(false)
         { }
-      virtual ~Parser() {}
 
       bool parse(char ch)
       {
-        return post( (static_cast<this_type*>(this)->*state)(ch) );
+        PrePostProcessor::pre(ch);
+        return PrePostProcessor::post(
+          (static_cast<this_type*>(this)->*state)(ch) );
       }
 
       bool parse(const char* str, unsigned size)

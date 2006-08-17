@@ -27,14 +27,44 @@
 
 namespace tnt
 {
-  class HttpMessage::Parser : public tnt::Parser<HttpMessage::Parser>
+  namespace
+  {
+    class RequestSizeMonitor
+    {
+        size_t requestSize;
+
+      protected:
+        void pre(char ch)    { }
+        bool post(bool ret)
+        {
+          if (++requestSize > HttpMessage::getMaxRequestSize()
+            && HttpMessage::getMaxRequestSize() > 0)
+          {
+            requestSizeExceeded();
+            return true;
+          }
+          return ret;
+        }
+
+        virtual void requestSizeExceeded()  { }
+
+      public:
+        RequestSizeMonitor()
+          : requestSize(0)
+          { }
+        size_t getCurrentRequestSize() const  { return requestSize; }
+        void reset()  { requestSize = 0; }
+    };
+  }
+
+  class HttpMessage::Parser
+    : public tnt::Parser<HttpMessage::Parser, RequestSizeMonitor>
   {
       HttpMessage& message;
       Messageheader::Parser headerParser;
 
       unsigned httpCode;
 
-      size_t requestSize;
       size_t bodySize;
 
       bool state_cmd0(char ch);
@@ -49,15 +79,15 @@ namespace tnt
       bool state_header(char ch);
       bool state_body(char ch);
 
-      bool post(bool ret);
+    protected:
+      virtual void requestSizeExceeded();
 
     public:
       Parser(tnt::HttpMessage& message_)
-        : tnt::Parser<Parser>(&Parser::state_cmd0),
+        : tnt::Parser<Parser, RequestSizeMonitor>(&Parser::state_cmd0),
           message(message_),
           headerParser(message_.header),
-          httpCode(HTTP_OK),
-          requestSize(0)
+          httpCode(HTTP_OK)
         { }
 
       void reset();
