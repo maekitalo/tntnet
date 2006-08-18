@@ -46,8 +46,13 @@ namespace tnt
       std::string pathinfo;
       args_type args;
       cxxtools::QueryParams qparam;
+
       struct sockaddr_storage peerAddr;
       struct sockaddr_storage serverAddr;
+
+      mutable std::string peerAddrStr;
+      mutable std::string serverAddrStr;
+
       Contenttype ct;
       Multipart mp;
       bool ssl;
@@ -115,13 +120,13 @@ namespace tnt
       const cxxtools::QueryParams& getQueryParams() const   { return qparam; }
 
       void setPeerAddr(const struct sockaddr_storage& p)
-        { memcpy(&peerAddr, &p, sizeof(peerAddr)); }
+        { memcpy(&peerAddr, &p, sizeof(peerAddr)); peerAddrStr.clear(); }
       const struct sockaddr_storage& getPeerAddr() const
         { return peerAddr; }
       std::string getPeerIp() const;
 
       void setServerAddr(const struct sockaddr_storage& p)
-        { memcpy(&serverAddr, &p, sizeof(serverAddr)); }
+        { memcpy(&serverAddr, &p, sizeof(serverAddr)); serverAddrStr.clear(); }
       const struct sockaddr_storage& getServerAddr() const
         { return serverAddr; }
       std::string getServerIp() const;

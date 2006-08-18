@@ -222,31 +222,35 @@ namespace tnt
 
   namespace
   {
-    std::string formatIp(const sockaddr_storage& addr)
+    void formatIp(const sockaddr_storage& addr, std::string& str)
     {
 #ifdef HAVE_INET_NTOP
       const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
       char strbuf[INET6_ADDRSTRLEN];
       inet_ntop(sa->sin_family, &sa->sin_addr, strbuf, sizeof(strbuf));
-      return strbuf;
+      str = strbuf;
 #else
       static cxxtools::Mutex monitor;
       cxxtools::MutexLock lock(monitor);
 
       char* p = inet_ntoa(peerAddr.sin_addr);
-      return std::string(p);
+      str = p;
 #endif
     }
   }
 
   std::string HttpRequest::getPeerIp() const
   {
-    return formatIp(peerAddr);
+    if (peerAddrStr.empty())
+      formatIp(peerAddr, peerAddrStr);
+    return peerAddrStr;
   }
 
   std::string HttpRequest::getServerIp() const
   {
-    return formatIp(serverAddr);
+    if (serverAddrStr.empty())
+      formatIp(serverAddr, serverAddrStr);
+    return serverAddrStr;
   }
 
   const std::locale& HttpRequest::getLocale() const
