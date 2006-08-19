@@ -50,9 +50,6 @@ namespace tnt
       struct sockaddr_storage peerAddr;
       struct sockaddr_storage serverAddr;
 
-      mutable std::string peerAddrStr;
-      mutable std::string serverAddrStr;
-
       Contenttype ct;
       Multipart mp;
       bool ssl;
@@ -79,6 +76,9 @@ namespace tnt
       void releaseSessionScopeLock();
 
       void releaseLocks() { releaseSessionScopeLock(); }
+
+      mutable std::string peerAddrStr;
+      mutable std::string serverAddrStr;
 
     public:
       HttpRequest()
