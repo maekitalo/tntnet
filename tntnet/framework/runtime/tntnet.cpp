@@ -157,7 +157,7 @@ namespace tnt
   Tntnet::Tntnet(int& argc, char* argv[])
     : propertyfilename(argc, argv, 'P'),
       debug(argc, argv, 'd'),
-      queue(100),
+      queue(1000),
       pollerthread(queue)
   {
     // check for argument -c
@@ -637,7 +637,7 @@ namespace tnt
 
     // initialize worker-process
     minthreads = config.getValue<unsigned>("MinThreads", 5);
-    maxthreads = config.getValue<unsigned>("MaxThreads", 10);
+    maxthreads = config.getValue<unsigned>("MaxThreads", 100);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 10);
     Worker::setMinThreads(minthreads);
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
