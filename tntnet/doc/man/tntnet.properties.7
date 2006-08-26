@@ -1,0 +1,157 @@
+.\" Copyright (C) 2006 Tommi Maekitalo
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.TH tntnet.properties 7 20006-08-13 "Tntnet" "Tntnet users guide"
+.
+\" =====================================================================
+.SH NAME
+\" =====================================================================
+.
+tntnet.properties \- configuration-file for tntnet (8)
+.
+\" =====================================================================
+.SH DESCRIPTION
+\" =====================================================================
+tntnet(8) uses cxxtools for logging and is configured in the
+configuration-file \fBtntnet.properties\fP.
+.PP
+Because cxxtools is a meta-logging-library, which can be compiled to
+use different logging-libraries, the content of \fBtntnet.properties\fP
+is dependend of the underlying logging-library.
+Cxxtool has a built-in logging-library as default, which is documented
+here.
+
+.SS format
+The format of tntnet.properties is line-based.
+A line consists of a variable-name followed by a equals-symbol and a value.
+Lines, which does not follow this format and lines, which start with a
+hash (#), are ignored.
+It is recomended to prefix non-empty comments with a hash to make clear,
+that it is a comment.
+
+.SS level
+The logging-library has 5 levels for logging: \fIfatal\fP, \fIerror\fP,
+\fIwarn\fP, \fIinfo\fP and \fIdebug\fP.
+\fIFatal\fP has the highers priority and "debug" the lowest.
+
+.SS category
+Each log-message has a category.
+Categories are hierarchical.
+Names of subcategories are devided by a dot.
+
+.SS log-message
+Each log-message has a level and a category.
+If the level of the message is higher or equal to the level of the
+category, the message is logged.
+To assign a level to a category put a line with the word "logger", a dot,
+the category, the symbol "=" and the category into tntnet.properties.
+Only the first letter of the value is checked and case is ignored,
+so e.g. info can be specified with \fIINFO\fP, \fIinfo\fP, \fII\fP or
+even \fIixxxx\fP.
+If no level is specified for the current category, the upper category is
+checked.
+If nothing is found, the default level is used. The default level
+is specified by the variable "\fIrootLogger\fP".
+If no \fIrootLogger\fP is specified, the level error is used.
+
+.SS destination
+If nothing else is specified, log-messages are printed to
+standard-output.
+To redirect output to a file, specify the filename with the variable
+\fIfile\fP.
+.PP
+The cxxtools-logger can limit the size of the log-file by rolling
+log-files.
+If the limit is reached, the current file is renamed by appending ".1"
+to it.
+If there is already a file with that name, this file is renamed to "*.2"
+and so on, until the maximum backupfile limit is reached.
+The oldest file is deleted then.
+To specify the maximum file size, set the variable \fImaxfilesize\fP.
+The value specified here can be postfixed with 'k' or 'M' to specify
+kBytes or MBytes.
+The maximum fileindex backed up is set with \fImaxbackupindex\fP.
+.PP
+Since writing the file can take some time, output can be buffered and
+written physically in regular intervals.
+The interval is specified in milliseconds with the variable \fIflushdelay\fP.
+The logging-library starts a background-thread, which flushes the buffer
+regulary.
+This improves logging-speed significantly.
+The problem is, that a background-thread is used, which consumes
+resources and if the program crashes, the most recent log-messages might
+not be in the file.
+.PP
+Log-messages can be sent to another host in the network with udp.
+This is done by specifying a hostname and a port with the variable
+\fIhost\fP.
+The value must be a hostname, followed by a ':' and a port.
+Each log-message is sent in a single udp-message.
+.
+\" =====================================================================
+.SH EXAMPLES
+\" =====================================================================
+.
+.SS logging to standard-output:
+.RS
+rootLogger=INFO
+.br
+logger.tntnet=WARN
+.br
+.RE
+.
+.SS logging to a file with rolling file and a background-flusher:
+.RS
+rootLogger=INFO
+.br
+logger.tntnet=WARN
+.br
+file=tntnet.log
+.br
+maxfilesize=1MB
+.br
+maxbackupindex=10
+.br
+flulshdelay=100
+.br
+.RE
+.
+.SS logging to another host
+.RS
+rootLogger=INFO
+.br
+logger.tntnet=WARN
+.br
+host=pluto.tntnet.org:1234
+.br
+.RE
+.
+\" =====================================================================
+.SH AUTHOR
+\" =====================================================================
+.
+This manual page was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
+.
+\" =====================================================================
+.SH SEE ALSO
+\" =====================================================================
+.
+.BR tntnet (1)

@@ -19,7 +19,7 @@
 .\" License along with this manual; if not, write to the Free
 .\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
 .\" USA.
-.TH ecpp 7 20006-08-13 "Tntnet" "Tntnet users guide"
+.TH tntnet.conf 7 20006-08-13 "Tntnet" "Tntnet users guide"
 .
 \" =====================================================================
 .SH NAME
@@ -30,7 +30,7 @@ tntnet.conf \- configuration-file for tntnet (8)
 \" =====================================================================
 .SH DESCRIPTION
 \" =====================================================================
-Tntnet is configured with the configuration-file \fBtntnet.conf\fP.
+Tntnet is configured in the configuration-file \fBtntnet.conf\fP.
 \fBtntnet.conf\fP contains configuration variables with parameters.
 .PP
 Each line in tntnet.conf is either empty, a comment starting with '#'
@@ -274,11 +274,11 @@ MinCompressSize 256
 Tntnet uses a dynamic pool of worker-threads, which wait for incoming requests.
 \fIMaxThreads\fP limits the number of threads.
 .PP
-The default is 10.
+The default is 100.
 .PP
 .B Example
 .br
-MaxThreads 20
+MaxThreads 200
 .
 .SS NoCloseStdout \fI0|1\fP
 If Daemon is set to 1, tntnet closes standard-in-, standard-out- and
@@ -312,7 +312,6 @@ PidFile /var/run/tntnet.pid
 .
 .SS PropertyFile \fIfilename\fP
 This directive specifies the property-file, where logging is configured.
-The content of the property-file is dependend of the underlying logging-library.
 .PP
 .B Example
 .br
@@ -322,7 +321,7 @@ PropertyFile /etc/tntnet/tntnet.property
 Tntnet has a request-queue, where new requests wait for service.
 This sets a maximum size of this queue, after wich new requests are not accepted.
 .PP
-The default value is 100.
+The default value is 1000.
 .PP
 .B Example
 .br
@@ -393,3 +392,4 @@ This manual page was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
 \" =====================================================================
 .
 .BR tntnet (1)
+.BR tntnet.properties (7).
