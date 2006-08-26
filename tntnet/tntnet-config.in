@@ -61,9 +61,9 @@ PropertyFile        tntnet.properties
 #PidFile            /var/run/tntnet.pid
 #Daemon             0
 #MinThreads         5
-#MaxThreads         10
+#MaxThreads         100
 #ThreadStartDelay   10  # in ms
-#QueueSize          100
+#QueueSize          1000
 #CompPath           path
 #Load               webapp  # preload webapplication
 #BufferSize         16384
