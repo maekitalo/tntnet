@@ -36,12 +36,8 @@
 # include <errno.h>
 #endif
 
-#ifndef CONFIG_DIR
-# define CONFIG_DIR "/etc/tntnet/"
-#endif
-
 #ifndef TNTNET_CONF
-# define TNTNET_CONF CONFIG_DIR "tntnet.conf"
+# define TNTNET_CONF "/etc/tntnet.conf"
 #endif
 
 log_define("tntnet.cgi")
@@ -146,6 +142,7 @@ namespace tnt
     log_debug("fetch component " << compident);
     Component& comp = comploader.fetchComp(compident, Urlmapper());
 
+    request.setThreadScope(threadScope);
     scopeManager.preCall(request, compident.libname);
 
     log_debug("call component");

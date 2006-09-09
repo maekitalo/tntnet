@@ -36,6 +36,7 @@ namespace tnt
       HttpRequest request;
       ScopeManager scopeManager;
       Comploader comploader;
+      Scope threadScope;
 
       void getHeader(const char* env, const std::string& headername);
       void getMethod();

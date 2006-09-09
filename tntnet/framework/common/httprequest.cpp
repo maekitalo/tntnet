@@ -462,6 +462,13 @@ namespace tnt
     return *requestScope;
   }
 
+  Scope& HttpRequest::getThreadScope()
+  {
+    if (threadScope == 0)
+      throw std::runtime_error("threadscope not set");
+    return *threadScope;
+  }
+
   Scope& HttpRequest::getApplicationScope()
   {
     ensureApplicationScopeLock();

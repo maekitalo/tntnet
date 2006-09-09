@@ -173,7 +173,7 @@ namespace tnt
 
       Scope& getRequestScope();
       Scope& getApplicationScope();
-      Scope& getThreadScope()                    { return *threadScope; }
+      Scope& getThreadScope();
       Sessionscope& getSessionScope();
       bool   hasSessionScope() const;
   };
