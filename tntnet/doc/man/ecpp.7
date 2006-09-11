@@ -82,6 +82,18 @@ Components can have internal subcomponents.
 The name of the internal subcomponent is appended to the classname
 separated by a dot (.).
 .
+\" ---------------------------------------------------------------------
+.SS error-handling
+\" ---------------------------------------------------------------------
+Error-handling is done by exception.
+Tntnet catches all exceptions thrown by components and handles them
+properly.
+Exceptions must be derived from std::exception.
+Exceptions derived from tnt::HttpError, are handled separately.
+They carry a http-return-code, which is sent to the client.
+Other exceptions derived from std::exception, result in a http-error
+code 500 (Internal Server Error).
+.
 \" =====================================================================
 .SH TAGS
 \" =====================================================================
