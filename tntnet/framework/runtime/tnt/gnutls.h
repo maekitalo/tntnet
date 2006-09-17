@@ -43,25 +43,25 @@ namespace tnt
   class GnuTlsInit
   {
       static unsigned initCount;
-      static gnutls_dh_params_t dhParams;
+      static gnutls_dh_params dhParams;
 
     public:
       GnuTlsInit();
       ~GnuTlsInit();
 
-      gnutls_dh_params_t getDhParams() const  { return dhParams; }
+      gnutls_dh_params getDhParams() const  { return dhParams; }
   };
 
   class GnuTlsX509Cred
   {
-      gnutls_certificate_credentials_t x509_cred;
+      gnutls_certificate_credentials x509_cred;
       GnuTlsInit init;
 
     public:
       GnuTlsX509Cred(const char* certificateFile, const char* privateKeyFile);
       ~GnuTlsX509Cred();
 
-      operator gnutls_certificate_credentials_t() const { return x509_cred; }
+      operator gnutls_certificate_credentials() const { return x509_cred; }
   };
 
   class GnuTlsServer : public cxxtools::net::Server
@@ -71,12 +71,12 @@ namespace tnt
     public:
       GnuTlsServer(const char* certificateFile, const char* privateKeyFile);
 
-      gnutls_certificate_credentials_t getCred() const  { return cred; }
+      gnutls_certificate_credentials getCred() const  { return cred; }
   };
 
   class GnuTlsStream : public cxxtools::net::Stream
   {
-      gnutls_session_t session;
+      gnutls_session session;
 
     public:
       GnuTlsStream()
