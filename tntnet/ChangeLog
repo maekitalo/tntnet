@@ -1,3 +1,15 @@
+2006-09-09 tommi@tntnet.org
+
+  - fix crash in cgi-library when using thread-scope in cgi-programs
+
+2006-08-22 tommi@tntnet.org
+
+  - tntnet has now a complete set of man-pages
+
+2006-08-19 tommi@tntnet.org
+
+  - increase maximum limits for better default scalability
+
 2006-07-09 tommi@tntnet.org
 
   - thread-scope variables

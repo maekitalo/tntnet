@@ -1,10 +1,4 @@
 - http-auth
 - ranges
-- apache-module
-
-doc:
-- '{}' (split)
-- multipart
-- ecppl/ecppll
-- ecppc -d (debug)
-- default-arguments (example)
+- VMapUrl - virtual host-specific MapUrl
+- read language from http-header
