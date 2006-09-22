@@ -242,7 +242,8 @@ namespace tnt
         if (!valuestream)
           throw HttpError("400 missing Content-Length");
 
-        if (getCurrentRequestSize() + bodySize > getMaxRequestSize())
+        if (getMaxRequestSize() > 0
+          && getCurrentRequestSize() + bodySize > getMaxRequestSize())
         {
           requestSizeExceeded();
           return true;
