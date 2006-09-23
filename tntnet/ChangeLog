@@ -1,3 +1,10 @@
+2006-09-22 tommi@tntnet.org
+
+  - major bugfix: MaxRequestSize was not checked for 0 in POST-requests.
+    the result was, that POST-requests did not work in the default
+    configuration at all.
+  - Version 1.5.3
+
 2006-09-09 tommi@tntnet.org
 
   - fix crash in cgi-library when using thread-scope in cgi-programs
