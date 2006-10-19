@@ -46,7 +46,7 @@ class Component
       HttpReply& reply, cxxtools::QueryParams& qparam);
     virtual unsigned endTag (HttpRequest& request,
       HttpReply& reply, cxxtools::QueryParams& qparam);
-    virtual void drop() = 0;
+    virtual void drop() { };
 
     virtual std::string getAttribute(const std::string& name,
       const std::string& def = std::string()) const;

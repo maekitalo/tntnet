@@ -128,7 +128,7 @@ namespace tnt
                    << std::endl;
           }
           else if (socket.fail())
-            log_error("socket failed");
+            log_debug("socket failed");
           else
           {
             j->getRequest().doPostParse();
