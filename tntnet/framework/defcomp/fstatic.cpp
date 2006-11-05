@@ -106,6 +106,7 @@ namespace tnt
                       tnt::httpheader::connectionKeepAlive);
 
     // send data
+    log_info("send static file \"" << file << "\" size " << st.st_size << " bytes");
     reply.setDirectMode();
     reply.out() << in.rdbuf();
 

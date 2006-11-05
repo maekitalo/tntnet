@@ -1,3 +1,10 @@
+2006-11-05 tommi@tntnet.org
+
+  - changed some less informative log-entries from info to debug
+  - added logging of file-size in static pages
+  - reading tntnet.conf from current directory in non-root accounts
+  - using port 8000 as default-port in non-root accounts
+
 2006-09-22 tommi@tntnet.org
 
   - major bugfix: MaxRequestSize was not checked for 0 in POST-requests.

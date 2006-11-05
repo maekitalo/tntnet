@@ -176,6 +176,8 @@ namespace tnt
         const char* tntnetConf = ::getenv("TNTNET_CONF");
         if (tntnetConf)
           configFile = tntnetConf;
+        else if (getuid() != 0)
+          configFile = "tntnet.conf";
         else
           configFile = TNTNET_CONF;  // take default
       }
@@ -527,8 +529,9 @@ namespace tnt
 
     if (configListen.empty())
     {
-      log_warn("no listeners defined - using 0.0.0.0:80");
-      ListenerBase* s = new tnt::Listener("0.0.0.0", 80, queue);
+      unsigned short int port = (getuid() == 0 ? 80 : 8000);
+      log_info("no listeners defined - using 0.0.0.0:" << port);
+      ListenerBase* s = new tnt::Listener("0.0.0.0", port, queue);
       listeners.insert(s);
     }
     else

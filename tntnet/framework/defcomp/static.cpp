@@ -110,6 +110,7 @@ namespace tnt
     reply.setHeader(tnt::httpheader::lastModified, lastModified);
 
     // send data
+    log_info("send static file \"" << file << "\" size " << st.st_size << " bytes");
     reply.out() << in.rdbuf();
 
     return HTTP_OK;

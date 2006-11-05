@@ -172,14 +172,14 @@ namespace tnt
             && path.compare(path.size() - ext.size(), ext.size(), ext) == 0)
         {
           log_debug("url-path=\"" << path << "\" type=" << it->second);
-          log_info("content-type " << it->second);
+          log_debug("content-type " << it->second);
           reply.setContentType(it->second);
           return DECLINED;
         }
       }
 
       log_warn("unknown type in url-path \"" << path << "\" set DefaultType " << default_type);
-      log_info("content-type " << default_type);
+      log_debug("content-type " << default_type);
       reply.setContentType(default_type);
     }
 
