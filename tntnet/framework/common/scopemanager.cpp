@@ -28,7 +28,7 @@ log_define("tntnet.scopemanager")
 
 namespace tnt
 {
-  static const std::string& sessionCookiePrefix = "tntnet.";
+  static const char sessionCookiePrefix[] = "tntnet.";
 
   Scope* ScopeManager::getApplicationScope(const std::string& appname)
   {
