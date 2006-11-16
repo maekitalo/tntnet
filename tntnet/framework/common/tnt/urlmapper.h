@@ -29,7 +29,8 @@ namespace tnt
   {
     public:
       virtual ~Urlmapper()  { }
-      virtual Compident mapComp(const std::string& compUrl) const;
+      virtual Compident mapComp(const std::string& vhost,
+        const std::string& compUrl) const;
   };
 }
 

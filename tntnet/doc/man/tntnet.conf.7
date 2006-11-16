@@ -381,6 +381,20 @@ Changes the user under which tntnet answers requests.
 .br
 User www-data
 .
+.SS VMapUrl \fIhost\fP \fIurl\fP \fIcomponent-identifier\fP [ \fIpath-info\fP { \fIadditional-arguments\fP } ]
+This is like MapUrl, but is specific for the virtual host.
+This rule matches only if the host and the url matches against the specified
+values. Both are regular-expressions, so one rule can also match multiple hosts.
+.PP
+.B Example
+.br
+# maps request for the host www1.tntnet.org to application1
+VMapUrl www1.tntnet.org /([^/.]+)	$1@application1
+# maps request for the host www2.tntnet.org to application2
+VMapUrl www2.tntnet.org /([^/.]+)	$1@application2
+# maps all calls to port 8000 to myapp
+VMapUrl .*:8000 /([^/.]+)	$1@myapp
+.
 \" =====================================================================
 .SH AUTHOR
 \" =====================================================================

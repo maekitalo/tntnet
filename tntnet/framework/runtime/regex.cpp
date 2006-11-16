@@ -20,15 +20,11 @@
 #include "tnt/regex.h"
 #include <stdexcept>
 #include <locale>
+#include <cctype>
 
 namespace tnt
 {
-  static inline bool isdigit(char ch)
-  {
-    return ch >= '0' && ch <= '9';
-  }
-
-  unsigned regex_smatch::size() const
+  unsigned RegexSMatch::size() const
   {
     unsigned n;
     for (n = 0; n < 10 && matchbuf[n].rm_so >= 0; ++n)
@@ -37,12 +33,12 @@ namespace tnt
     return n;
   }
 
-  std::string regex_smatch::get(unsigned n) const
+  std::string RegexSMatch::get(unsigned n) const
   {
     return str.substr(matchbuf[n].rm_so, matchbuf[n].rm_eo - matchbuf[n].rm_so);
   }
 
-  std::string regex_smatch::format(const std::string& s) const
+  std::string RegexSMatch::format(const std::string& s) const
   {
     enum state_type
     {
@@ -78,7 +74,7 @@ namespace tnt
           break;
 
         case state_var0:
-          if (isdigit(ch))
+          if (std::isdigit(ch))
           {
             ret = std::string(s.begin(), it - 1);
             regoff_t s = matchbuf[ch - '0'].rm_so;
@@ -101,7 +97,7 @@ namespace tnt
           break;
 
         case state_var1:
-          if (isdigit(ch))
+          if (std::isdigit(ch))
           {
             unsigned s = matchbuf[ch - '0'].rm_so;
             unsigned e = matchbuf[ch - '0'].rm_eo;
@@ -139,7 +135,7 @@ namespace tnt
     return ret;
   }
 
-  void regex::checkerr(int ret) const
+  void Regex::checkerr(int ret) const
   {
     if (ret != 0)
     {
@@ -149,13 +145,13 @@ namespace tnt
     }
   }
 
-  bool regex::match(const std::string& str_, int eflags) const
+  bool Regex::match(const std::string& str_, int eflags) const
   {
-    regex_smatch smatch;
+    RegexSMatch smatch;
     return match(str_, smatch, eflags);
   }
 
-  bool regex::match(const std::string& str_, regex_smatch& smatch, int eflags) const
+  bool Regex::match(const std::string& str_, RegexSMatch& smatch, int eflags) const
   {
     smatch.str = str_;
     int ret = regexec(&expr, str_.c_str(),
@@ -168,7 +164,7 @@ namespace tnt
     return true;
   }
 
-  void regex::free()
+  void Regex::free()
   {
     regfree(&expr);
   }

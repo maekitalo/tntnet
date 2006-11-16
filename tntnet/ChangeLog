@@ -1,3 +1,7 @@
+2006-11-16 tommi@tntnet.org
+
+  - VMapUrl (virtual host specific mapping)
+
 2006-11-05 tommi@tntnet.org
 
   - changed some less informative log-entries from info to debug

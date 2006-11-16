@@ -23,7 +23,6 @@
 #include <cctype>
 #include <cxxtools/log.h>
 #include <sstream>
-#include <cctype>
 
 #define SET_STATE(new_state)  state = &Parser::new_state
 

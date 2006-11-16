@@ -158,6 +158,8 @@ namespace tnt
       const Encoding& getEncoding() const;
       std::string getUserAgent() const
         { return getHeader(httpheader::userAgent); }
+      std::string getHost() const
+        { return getHeader(httpheader::host); }
 
       bool keepAlive() const;
 

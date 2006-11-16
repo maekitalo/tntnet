@@ -93,30 +93,26 @@ namespace tnt
       ci.compname = myident.compname;
 
     Component* comp;
-    try
-    {
-      // fetch component by name
-      comp = &loader.fetchComp(ci, rootmapper);
 
-      // if there is a subcomponent, fetch it
-      if (!ci.subname.empty())
-      {
-        try
-        {
-          EcppComponent& e = dynamic_cast<EcppComponent&>(*comp);
-          comp = &e.fetchSubComp(ci.subname);
-        }
-        catch (const std::exception&)
-        {
-          throw NotFoundException(ci.toString());
-        }
-      }
-    }
-    catch (const NotFoundException&)
+    // fetch component by name
+    comp = &loader.fetchComp(ci, rootmapper);
+
+    // if there is a subcomponent, fetch it
+    if (!ci.subname.empty())
     {
-      // not found - fetch by url
-      Compident ci = rootmapper.mapComp(url);
-      comp = &loader.fetchComp(ci, rootmapper);
+      try
+      {
+        EcppComponent& e = dynamic_cast<EcppComponent&>(*comp);
+        comp = &e.fetchSubComp(ci.subname);
+      }
+      catch (const NotFoundException&)
+      {
+        throw;
+      }
+      catch (const std::exception&)
+      {
+        throw NotFoundException(ci.toString());
+      }
     }
 
     return *comp;

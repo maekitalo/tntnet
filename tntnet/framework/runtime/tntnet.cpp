@@ -114,7 +114,29 @@ namespace
             ci.setArgs(CompidentType::args_type(args.begin() + 3, args.end()));
         }
 
-        dis.addUrlMapEntry(url, ci);
+        dis.addUrlMapEntry(std::string(), url, ci);
+      }
+      else if (v.key == "VMapUrl")
+      {
+        if (args.size() < 3)
+        {
+          std::ostringstream msg;
+          msg << "invalid number of parameters (" << args.size() << ") in VMapUrl";
+          throw std::runtime_error(msg.str());
+        }
+
+        std::string vhost = args[0];
+        std::string url = args[1];
+
+        CompidentType ci = CompidentType(args[2]);
+        if (args.size() > 3)
+        {
+          ci.setPathInfo(args[3]);
+          if (args.size() > 4)
+            ci.setArgs(CompidentType::args_type(args.begin() + 4, args.end()));
+        }
+
+        dis.addUrlMapEntry(vhost, url, ci);
       }
     }
   }

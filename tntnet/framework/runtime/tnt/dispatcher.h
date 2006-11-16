@@ -67,25 +67,69 @@ namespace tnt
       };
 
     private:
-      typedef std::vector<std::pair<regex, CompidentType> > urlmap_type;
+      class VHostRegex
+      {
+          std::string vhost;
+          Regex regex;
+
+        public:
+          VHostRegex(const std::string& vhost_, const Regex& regex_)
+            : vhost(vhost_),
+              regex(regex_)
+              { }
+
+          bool match(const std::string& vhost_, const std::string& str_,
+            RegexSMatch& smatch, int eflags = 0) const
+          {
+            return (vhost.empty() || Regex(vhost).match(vhost_))
+                && regex.match(str_, smatch);
+          }
+      };
+
+      typedef std::vector<std::pair<VHostRegex, CompidentType> > urlmap_type;
       urlmap_type urlmap;   // map url to soname/compname
       mutable cxxtools::RWLock rwlock;
 
-      typedef std::map<std::pair<std::string, urlmap_type::const_iterator>,
-                       CompidentType> urlMapCacheType;
+      class UrlMapCacheKey
+      {
+          std::string vhost;
+          std::string url;
+          urlmap_type::const_iterator pos;
+
+        public:
+          UrlMapCacheKey() { }
+          UrlMapCacheKey(const std::string& vhost_, const std::string& url_,
+              urlmap_type::const_iterator pos_)
+            : vhost(vhost_),
+              url(url_),
+              pos(pos_)
+              { }
+
+          bool operator< (const UrlMapCacheKey& other) const
+          {
+            return vhost < other.vhost
+                || vhost == other.vhost
+                 && (url < other.url
+                  || url == other.url
+                   && pos < other.pos);
+          }
+      };
+
+      typedef std::map<UrlMapCacheKey, CompidentType> urlMapCacheType;
       mutable urlMapCacheType urlMapCache;
       static urlMapCacheType::size_type maxUrlMapCache;
 
       // don't make this public - it's not threadsafe:
-      CompidentType mapCompNext(const std::string& compUrl,
-        urlmap_type::const_iterator& pos) const;
+      CompidentType mapCompNext(const std::string& vhost,
+        const std::string& compUrl, urlmap_type::const_iterator& pos) const;
 
     public:
       virtual ~Dispatcher()  { }
 
-      void addUrlMapEntry(const std::string& url, const CompidentType& ci);
+      void addUrlMapEntry(const std::string& vhost, const std::string& url,
+        const CompidentType& ci);
 
-      Compident mapComp(const std::string& compUrl) const;
+      Compident mapComp(const std::string& vhost, const std::string& compUrl) const;
 
       static urlMapCacheType::size_type getMaxUrlMapCache()
         { return maxUrlMapCache; }
@@ -99,14 +143,17 @@ namespace tnt
           const Dispatcher& dis;
           cxxtools::RdLock lock;
           urlmap_type::const_iterator pos;
+          std::string vhost;
           std::string url;
           bool first;
 
         public:
-          PosType(const Dispatcher& d, const std::string& u)
+          PosType(const Dispatcher& d, const std::string& v,
+            const std::string& u)
             : dis(d),
               lock(dis.rwlock),
               pos(dis.urlmap.begin()),
+              vhost(v),
               url(u),
               first(true)
           { }

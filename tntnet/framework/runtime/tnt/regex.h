@@ -27,9 +27,9 @@
 namespace tnt
 {
   /// collects matches in a regex
-  class regex_smatch
+  class RegexSMatch
   {
-      friend class regex;
+      friend class Regex;
 
       std::string str;
       regmatch_t matchbuf[10];
@@ -47,24 +47,24 @@ namespace tnt
   /// For this class to be complete, the regex_t needs to be
   /// reference-counted. This is unneeded for tntnet, because the regex is
   /// never freed anyway.
-  class regex
+  class Regex
   {
       regex_t expr;
 
       void checkerr(int ret) const;
 
     public:
-      explicit regex(const char* ex, int cflags = REG_EXTENDED)
+      explicit Regex(const char* ex, int cflags = REG_EXTENDED)
       {
         checkerr(::regcomp(&expr, ex, cflags));
       }
 
-      explicit regex(const std::string& ex, int cflags = REG_EXTENDED)
+      explicit Regex(const std::string& ex, int cflags = REG_EXTENDED)
       {
         checkerr(::regcomp(&expr, ex.c_str(), cflags));
       }
 
-      bool match(const std::string& str_, regex_smatch& smatch, int eflags = 0) const;
+      bool match(const std::string& str_, RegexSMatch& smatch, int eflags = 0) const;
       bool match(const std::string& str_, int eflags = 0) const;
 
       void free();

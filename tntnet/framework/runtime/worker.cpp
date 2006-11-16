@@ -268,7 +268,8 @@ namespace tnt
 
     request.setThreadScope(threadScope);
 
-    Dispatcher::PosType pos(application.getDispatcher(), request.getUrl());
+    Dispatcher::PosType pos(application.getDispatcher(), request.getHost(),
+      request.getUrl());
     while (true)
     {
       state = stateDispatch;

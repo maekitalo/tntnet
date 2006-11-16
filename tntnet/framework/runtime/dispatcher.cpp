@@ -29,24 +29,26 @@ log_define("tntnet.dispatcher")
 namespace tnt
 {
 
-void Dispatcher::addUrlMapEntry(const std::string& url, const CompidentType& ci)
+void Dispatcher::addUrlMapEntry(const std::string& vhost,
+  const std::string& url, const CompidentType& ci)
 {
   cxxtools::WrLock lock(rwlock);
 
-  urlmap.push_back(urlmap_type::value_type(regex(url), ci));
+  urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, Regex(url)), ci));
 }
 
-Compident Dispatcher::mapComp(const std::string& compUrl) const
+Compident Dispatcher::mapComp(const std::string& vhost,
+  const std::string& compUrl) const
 {
   urlmap_type::const_iterator pos = urlmap.begin();
-  return mapCompNext(compUrl, pos);
+  return mapCompNext(vhost, compUrl, pos);
 }
 
 namespace {
   class regmatch_formatter : public std::unary_function<const std::string&, std::string>
   {
     public:
-      regex_smatch what;
+      RegexSMatch what;
       std::string operator() (const std::string& s) const
       { return what.format(s); }
   };
@@ -54,11 +56,12 @@ namespace {
 
 Dispatcher::urlMapCacheType::size_type Dispatcher::maxUrlMapCache = 8192;
 
-Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
-  Dispatcher::urlmap_type::const_iterator& pos) const
+Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
+  const std::string& compUrl, Dispatcher::urlmap_type::const_iterator& pos) const
 {
   // check cache
-  urlMapCacheType::key_type cacheKey = urlMapCacheType::key_type(compUrl, pos);
+  urlMapCacheType::key_type cacheKey =
+    urlMapCacheType::key_type(vhost, compUrl, pos);
   urlMapCacheType::const_iterator um = urlMapCache.find(cacheKey);
   if (um != urlMapCache.end())
     return um->second;
@@ -68,13 +71,14 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& compUrl,
 
   for (; pos != urlmap.end(); ++pos)
   {
-    if (pos->first.match(compUrl, formatter.what))
+    if (pos->first.match(vhost, compUrl, formatter.what))
     {
       const CompidentType& src = pos->second;
 
       CompidentType ci;
       ci.libname = formatter(src.libname);
       ci.compname = formatter(src.compname);
+
       if (src.hasPathInfo())
         ci.setPathInfo(formatter(src.getPathInfo()));
       std::transform(src.getArgs().begin(), src.getArgs().end(),
@@ -103,7 +107,7 @@ Dispatcher::CompidentType Dispatcher::PosType::getNext()
   else
     ++pos;
 
-  return dis.mapCompNext(url, pos);
+  return dis.mapCompNext(vhost, url, pos);
 }
 
 }
