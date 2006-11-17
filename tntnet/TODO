@@ -1,4 +1,3 @@
 - http-auth
 - ranges
-- VMapUrl - virtual host-specific MapUrl
 - read language from http-header
