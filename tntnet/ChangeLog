@@ -1,6 +1,7 @@
 2006-11-18 tommi@tntnet.org
 
   - make sdk and demos optional in build-system
+  - fix bug, which made keep-alive-timeout unnecessary short
 
 2006-11-17 tommi@tntnet.org
 
