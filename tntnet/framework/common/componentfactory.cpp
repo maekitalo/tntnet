@@ -31,7 +31,7 @@ namespace tnt
     : configured(false)
   {
     log_debug("create componentfactory for " << componentName);
-    Comploader::addStaticFactory(componentName, this);
+    Comploader::registerFactory(componentName, this);
   }
 
   void ComponentFactory::doConfigure(const tnt::Tntconfig& config)

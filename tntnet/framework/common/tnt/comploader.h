@@ -38,9 +38,11 @@ namespace tnt
 
   class ComponentLibrary : public cxxtools::dl::Library
   {
-      typedef std::map<std::string, ComponentFactory*> factoryMapType;
+      friend class Comploader;
 
+      typedef std::map<std::string, ComponentFactory*> factoryMapType;
       factoryMapType factoryMap;
+
       std::string libname;
       std::string path;
       typedef std::map<std::string, LangLib*> langlibsType;
@@ -68,14 +70,12 @@ namespace tnt
       LangLib* getLangLib(const std::string& lang);
 
       const std::string& getName() const  { return libname; }
-      void addStaticFactory(const std::string& component_name,
-        ComponentFactory* factory)
+      void registerFactory(const std::string& component_name, ComponentFactory* factory)
         { factoryMap.insert(factoryMapType::value_type(component_name, factory)); }
   };
 
   class Comploader
   {
-    private:
       typedef std::map<std::string, ComponentLibrary> librarymap_type;
       typedef std::map<Compident, Component*> componentmap_type;
       typedef std::list<std::string> search_path_type;
@@ -89,7 +89,7 @@ namespace tnt
       componentmap_type componentmap;
       static const Tntconfig* config;
       static search_path_type search_path;
-      static bool staticFactoryAddEnabled;
+      static ComponentLibrary::factoryMapType* currentFactoryMap;
 
     public:
       Comploader();
@@ -108,7 +108,7 @@ namespace tnt
 
       static const Tntconfig& getConfig()        { return *config; }
       static void configure(const Tntconfig& config);
-      static void addStaticFactory(const std::string& component_name, ComponentFactory* factory);
+      static void registerFactory(const std::string& component_name, ComponentFactory* factory);
   };
 }
 

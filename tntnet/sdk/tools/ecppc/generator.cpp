@@ -421,21 +421,7 @@ namespace tnt
                 "}\n\n";
       }
 
-      getNamespaceEnd(code);
-
-      std::string ns = maincomp.getNs().empty() ? std::string() : (maincomp.getNs() + "::");
-      std::string componentName = maincomp.getName();
-      std::string factoryType = ns + maincomp.getName() + "Factory";
-      std::string factoryName = (maincomp.getNs().empty() ? std::string() : (maincomp.getNs() + "__"))
-                              + componentName + factorySuffix;
-
-      code << "extern \"C\" {\n"
-              "  " << factoryType << ' ' << factoryName << "(\"" << componentName << "\");\n"
-              "}\n\n";
-
-      getNamespaceStart(code);
-
-      code << factoryType << "& factory = " << factoryName << ";\n\n";
+      code << maincomp.getName() << "Factory factory(\"" << maincomp.getName() << "\");\n\n";
     }
 
     void Generator::getCppBody(std::ostream& code) const
@@ -704,10 +690,12 @@ namespace tnt
       getCppIncludes(code);
 
       code << "#include \"" << ns_classname_slash << ".h\"\n\n"
-              "log_define(\"component." << ns_classname_dot << "\")\n\n"
-              "template <typename T> inline void use(const T&) { }\n\n";
+              "log_define(\"component." << ns_classname_dot << "\")\n\n";
 
       getNamespaceStart(code);
+
+      code << "template <typename T> inline void use(const T&) { }\n\n";
+
       getCppBody(code);
       getNamespaceEnd(code);
     }
@@ -724,13 +712,14 @@ namespace tnt
       getHeaderIncludes(code);
       getCppIncludes(code);
 
-      code << "log_define(\"component." << ns_classname_dot << "\")\n\n"
-              "template <typename T> inline void use(const T&) { }\n\n";
+      code << "log_define(\"component." << ns_classname_dot << "\")\n\n";
 
       getPre(code);
       code << '\n';
 
       getNamespaceStart(code);
+
+      code << "template <typename T> inline void use(const T&) { }\n\n";
 
       getDeclareShared(code);
       getClassDeclaration(code);

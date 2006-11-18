@@ -183,7 +183,7 @@ namespace tnt
 
     time(&lastWaitTime);
 
-    log_debug("end worker-thread " << threadId);
+    log_info("end worker-thread " << threadId);
 
     state = stateStopping;
   }

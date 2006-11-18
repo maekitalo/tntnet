@@ -5,10 +5,19 @@ SUBDIRS = \
     framework/runtime \
     framework/defcomp \
     framework/cgi \
+    doc/man \
+    etc
+
+if MAKE_SDK
+SUBDIRS += \
     sdk/tools/common \
     sdk/tools/ecppc \
     sdk/tools/ecppl \
-    sdk/tools/ecppll \
+    sdk/tools/ecppll
+endif
+
+if MAKE_DEMOS
+SUBDIRS += \
     sdk/demos \
     sdk/demos/calc \
     sdk/demos/calcajax \
@@ -23,9 +32,8 @@ SUBDIRS = \
     sdk/demos/session \
     sdk/demos/sprintf \
     sdk/demos/strings \
-    sdk/demos/upload \
-    doc/man \
-    etc
+    sdk/demos/upload
+endif
 
 EXTRA_DIST = ecpp.vim \
     doc/tntnet_doku.doc \
@@ -47,3 +55,4 @@ EXTRA_DIST = ecpp.vim \
     sdk/demos/newsdb/newsdb.sql \
     sdk/demos/newsdb/tntnet.conf \
     sdk/demos/newsdb/tntnet.properties
+

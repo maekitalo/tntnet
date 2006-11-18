@@ -58,7 +58,7 @@ AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 # SSL
 #
 AC_ARG_WITH([ssl],
-  AS_HELP_STRING(['--with-ssl=gnutls|openssl|no'], [build with SSL support (default is gnutls)]),
+  AS_HELP_STRING([--with-ssl=gnutls|openssl|no], [build with SSL support (default is gnutls)]),
   [ssl_option=$withval],
   [ssl_option=gnutls])
 
@@ -89,6 +89,28 @@ esac
 
 AM_CONDITIONAL(MAKE_GNUTLS, test x$with_gnutls = x1)
 AM_CONDITIONAL(MAKE_OPENSSL, test x$with_openssl = x1)
+
+#
+# SDK
+#
+AC_ARG_WITH([sdk],
+  AS_HELP_STRING([--with-sdk=yes|no], [build sdk (default: yes)]),
+  [with_sdk=$withval],
+  [with_sdk=yes])
+
+AM_CONDITIONAL(MAKE_SDK, test x$with_sdk = xyes)
+
+AC_ARG_WITH([demos],
+  AS_HELP_STRING([--with-demos=yes|no], [build demos (default: same as with-sdk)]),
+  [with_demos=$withval],
+  [with_demos=$with_sdk])
+
+AM_CONDITIONAL(MAKE_DEMOS, test x$with_demos = xyes)
+
+if test x$with_sdk != xyes -a x$with_demos = xyes
+then
+  AC_MSG_ERROR([demos can't be built without building sdk])
+fi
 
 #
 # others

@@ -1,3 +1,12 @@
+2006-11-18 tommi@tntnet.org
+
+  - make sdk and demos optional in build-system
+
+2006-11-17 tommi@tntnet.org
+
+  - Remove global factory-symbol from shared libraries. This makes it possible to
+    have components with identical names in different libraries.
+
 2006-11-16 tommi@tntnet.org
 
   - VMapUrl (virtual host specific mapping)

@@ -20,6 +20,7 @@
 #include <tnt/comploader.h>
 #include <tnt/componentfactory.h>
 #include <tnt/tntconfig.h>
+#include <tnt/httperror.h>
 #include <cxxtools/log.h>
 
 namespace tnt
@@ -48,30 +49,13 @@ Component* ComponentLibrary::create(
   // look for factory in my map
   factoryMapType::const_iterator i = factoryMap.find(component_name);
   if (i == factoryMap.end())
-  {
-    std::string factoryName = component_name;
+    throw NotFoundException(component_name);
 
-    std::string::size_type pos = factoryName.find("::");
-    if (pos != std::string::npos)
-      factoryName.replace(pos, 2, "__");
-
-    factoryName += factorySuffix;
-
-    if (getHandle() == 0)
-      throw cxxtools::dl::SymbolNotFound(factoryName);
-
-    // creatorsymbol not known - load it
-    log_debug("lookup symbol \"" << factoryName << '"');
-
-    factory = static_cast<ComponentFactory*>(sym(factoryName.c_str()).getSym());
-    factoryMap.insert(factoryMapType::value_type(component_name, factory));
-  }
-  else
-    factory = i->second;
+  factory = i->second;
 
   // call the creator
   Compident ci = Compident(libname, component_name);
-  log_debug("create \"" << ci << '"');
+  log_debug("call creator for \"" << ci << '"');
 
   return factory->create(ci, rootmapper, cl);
 }
@@ -139,7 +123,7 @@ cxxtools::RWLock Comploader::libraryMonitor;
 Comploader::librarymap_type Comploader::librarymap;
 const Tntconfig* Comploader::config = 0;
 Comploader::search_path_type Comploader::search_path;
-bool Comploader::staticFactoryAddEnabled = true;
+ComponentLibrary::factoryMapType* Comploader::currentFactoryMap = 0;
 
 Component& Comploader::fetchComp(const Compident& ci,
   const Urlmapper& rootmapper)
@@ -205,9 +189,8 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib \"" << libname << '"');
 
-  // When first library is fetched static initializers are run,
-  // so we disable registation of static factories here.
-  staticFactoryAddEnabled = false;
+  ComponentLibrary::factoryMapType factoryMap;
+  currentFactoryMap = &factoryMap;
 
   cxxtools::RdLock lock(libraryMonitor);
   librarymap_type::iterator it = librarymap.find(libname);
@@ -255,6 +238,8 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
         }
       }
 
+      lib.factoryMap = factoryMap;
+      currentFactoryMap = 0;
       it = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
     }
   }
@@ -285,17 +270,16 @@ void Comploader::configure(const Tntconfig& config_)
   }
 }
 
-void Comploader::addStaticFactory(const std::string& component_name,
+void Comploader::registerFactory(const std::string& component_name,
   ComponentFactory* factory)
 {
-  if (staticFactoryAddEnabled)
+  log_debug("Comploader::registerFactory(" << component_name << ", " << factory << ')');
+
+  if (currentFactoryMap)
+    currentFactoryMap->insert(ComponentLibrary::factoryMapType::value_type(component_name, factory));
+  else
   {
-    log_debug("Comploader::addStaticFactory(" << component_name << ", "
-      << factory << ')');
-
-    // seach library with empty name
-
-    cxxtools::WrLock wrlock(libraryMonitor);
+    log_debug("register component without library-name");
     librarymap_type::iterator it = librarymap.find(std::string());
     if (it == librarymap.end())
     {
@@ -304,7 +288,7 @@ void Comploader::addStaticFactory(const std::string& component_name,
         librarymap_type::value_type(std::string(),
                                     ComponentLibrary())).first;
     }
-    it->second.addStaticFactory(component_name, factory);
+    it->second.registerFactory(component_name, factory);
   }
 }
 
