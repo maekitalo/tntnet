@@ -64,10 +64,12 @@ namespace tnt
 
       bool parse(std::istream& in)
       {
-        char ch;
-        while (in.get(ch))
-          if (parse(ch))
+        std::streambuf* buf = in.rdbuf();
+        while (buf->sgetc() != std::ios::traits_type::eof())
+          if ( parse(buf->sbumpc()) )
             return true;
+
+        in.setstate(std::ios::eofbit);
         return false;
       }
 
