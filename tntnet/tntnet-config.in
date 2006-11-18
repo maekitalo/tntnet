@@ -76,7 +76,7 @@ PropertyFile        tntnet.properties
 #ListenRetry        5
 #EnableCompression  no
 #MinCompressSize    1024  # in bytes
-#DefaultContentType text/html; charset=iso-8859-1
+#DefaultContentType "text/html; charset=iso-8859-1"
 EOF
 }
 
