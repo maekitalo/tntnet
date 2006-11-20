@@ -1,5 +1,5 @@
 /* poller.cpp
- * Copyright (C) 2005 Tommi Maekitalo
+ * Copyright (C) 2005-2006 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,14 +19,168 @@
 
 #include "tnt/poller.h"
 #include "tnt/tntnet.h"
+#include "tnt/syserror.h"
 #include <cxxtools/log.h>
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef HAVE_EPOLL
+#include <sys/epoll.h>
+#endif
 
 log_define("tntnet.poller")
 
 namespace tnt
 {
+#ifdef HAVE_EPOLL
+
+  Poller::Poller(Jobqueue& q)
+    : queue(q),
+      poll_timeout(-1),
+      pollFd(-1)
+  {
+    pollFd = ::epoll_create(256);
+    if (pollFd < 0)
+      throw SysError("epoll_create");
+
+    pipe(notify_pipe);
+    fcntl(notify_pipe[0], F_SETFL, O_NONBLOCK);
+    addFd(notify_pipe[0], EPOLLIN);
+  }
+
+  void Poller::addFd(int fd, __uint32_t event)
+  {
+    log_debug("addFd(" << fd << ')');
+
+    epoll_event e;
+    e.events = event;
+    e.data.fd = fd;
+    int ret = ::epoll_ctl(pollFd, EPOLL_CTL_ADD, fd, &e);
+    if (ret < 0)
+      throw SysError("epoll_ctl(EPOLL_CTL_ADD)");
+  }
+
+  void Poller::removeFd(int fd)
+  {
+    log_debug("removeFd(" << fd << ')');
+
+    epoll_event e;
+    e.data.fd = fd;
+    int ret = ::epoll_ctl(pollFd, EPOLL_CTL_DEL, fd, &e);
+    if (ret < 0)
+      throw SysError("epoll_ctl(EPOLL_CTL_DEL)");
+  }
+
+  void Poller::doStop()
+  {
+    log_debug("notify stop");
+    char ch = 'A';
+    int ret = ::write(notify_pipe[1], &ch, 1);
+    if (ret < 0)
+      throw SysError("write");
+  }
+
+  void Poller::addIdleJob(Jobqueue::JobPtr job)
+  {
+    log_debug("addIdleJob " << job->getFd());
+
+    {
+      cxxtools::MutexLock lock(mutex);
+      new_jobs.insert(job);
+    }
+
+    char ch = 'A';
+    int ret = ::write(notify_pipe[1], &ch, 1);
+    if (ret < 0)
+      throw SysError("write");
+
+    log_debug("addIdleJob ready");
+  }
+
+  void Poller::append_new_jobs()
+  {
+    cxxtools::MutexLock lock(mutex);
+    if (!new_jobs.empty())
+    {
+      // append new jobs to current
+      log_debug("add " << new_jobs.size() << " new jobs to poll-list");
+
+      time_t currentTime;
+      time(&currentTime);
+      for (new_jobs_type::iterator it = new_jobs.begin();
+           it != new_jobs.end(); ++it)
+      {
+        addFd((*it)->getFd(), EPOLLIN);
+        jobs[(*it)->getFd()] = *it;
+
+        int msec;
+        if (poll_timeout < 0)
+          poll_timeout = (*it)->msecToTimeout(currentTime);
+        else if ((msec = (*it)->msecToTimeout(currentTime)) < poll_timeout)
+          poll_timeout = msec;
+      }
+
+      new_jobs.clear();
+    }
+  }
+
+  void Poller::run()
+  {
+    epoll_event events[16];
+
+    while (!Tntnet::shouldStop())
+    {
+      append_new_jobs();
+
+      try
+      {
+        log_debug("poll timeout=" << poll_timeout);
+        int ret = ::epoll_wait(pollFd, events, 16, poll_timeout);
+        if (ret < 0)
+          throw SysError("epoll_wait");
+
+        if (Tntnet::shouldStop())
+        {
+          log_warn("stop poller");
+          break;
+        }
+
+        poll_timeout = -1;
+
+        for (int i = 0; i < ret; ++i)
+        {
+          if (events[i].data.fd == notify_pipe[0])
+          {
+            log_debug("read notify-pipe");
+            char ch;
+            ::read(notify_pipe[0], &ch, 1);
+          }
+          else
+          {
+            jobs_type::iterator it = jobs.find(events[i].data.fd);
+            if (it == jobs.end())
+            {
+              log_fatal("internal error: job for fd " << events[i].data.fd << " not found in jobs-list");
+              removeFd(events[i].data.fd);
+              ::close(events[i].data.fd);
+              throw std::runtime_error("job not found in jobs-list");
+            }
+
+            log_debug("put fd " << it->first << " back in queue");
+            queue.put(it->second);
+            jobs.erase(events[i].data.fd);
+            removeFd(events[i].data.fd);
+          }
+        }
+      }
+      catch (const std::exception& e)
+      {
+        log_error("error in poll-loop: " << e.what());
+      }
+    }
+  }
+
+#else
+
   Poller::Poller(Jobqueue& q)
     : queue(q),
       poll_timeout(-1)
@@ -115,7 +269,9 @@ namespace tnt
   {
     log_debug("notify stop");
     char ch = 'A';
-    ::write(notify_pipe[1], &ch, 1);
+    int ret = ::write(notify_pipe[1], &ch, 1);
+    if (ret < 0)
+      throw SysError("write");
   }
 
   void Poller::dispatch()
@@ -182,9 +338,12 @@ namespace tnt
     log_debug("notify " << job->getFd());
 
     char ch = 'A';
-    ::write(notify_pipe[1], &ch, 1);
+    int ret = ::write(notify_pipe[1], &ch, 1);
+    if (ret < 0)
+      throw SysError("write");
 
     log_debug("addIdleJob ready");
   }
+#endif // #else HAVE_EPOLL
 
 }

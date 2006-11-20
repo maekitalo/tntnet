@@ -23,6 +23,7 @@
 #include "tnt/http.h"
 #include "tnt/httpreply.h"
 #include "tnt/sessionscope.h"
+#include "tnt/syserror.h"
 
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/log.h>
@@ -148,8 +149,7 @@ namespace
     char buffer;
     int ret = ::read(fd, &buffer, 1);
     if (ret < 0)
-      throw std::runtime_error(
-        std::string("error in read: ") + strerror(errno));
+      throw tnt::SysError("read");
     close(fd);
     return ret > 0;
   }
@@ -160,8 +160,7 @@ namespace
 
     ssize_t s = write(fd, "1", 1);
     if (s < 0)
-      throw std::runtime_error(
-        std::string("error in write(): ") + strerror(errno));
+      throw tnt::SysError("write");
     close(fd);
   }
 
@@ -236,18 +235,12 @@ namespace tnt
     {
       log_debug("chdir(" << dir << ')');
       if (chdir(dir.c_str()) == -1)
-      {
-        throw std::runtime_error(
-          std::string("error in chdir(): ")
-            + strerror(errno));
-      }
+        throw SysError("chdir");
     }
 
     std::string chrootdir = config.getValue("Chroot");
     if (!chrootdir.empty() && chroot(chrootdir.c_str()) == -1)
-      throw std::runtime_error(
-        std::string("error in chroot(): ")
-          + strerror(errno));
+      throw SysError("chroot");
   }
 
   void Tntnet::setUser() const
@@ -279,8 +272,7 @@ namespace tnt
     int filedes[2];
 
     if (pipe(filedes) != 0)
-      throw std::runtime_error(
-        std::string("error in pipe(int[2]): ") + strerror(errno));
+      throw SysError("pipe");
 
     int pid = fork();
     if (pid > 0)
@@ -293,8 +285,7 @@ namespace tnt
       ::exit (checkChildSuccess(filedes[0]) ? 0 : 1);
     }
     else if (pid < 0)
-      throw std::runtime_error(
-        std::string("error in fork(): ") + strerror(errno));
+      throw SysError("fork");
 
     // child
 
@@ -302,9 +293,7 @@ namespace tnt
 
     // setsid
     if (setsid() == -1)
-      throw std::runtime_error(
-        std::string("error in setsid(): ")
-          + strerror(errno));
+      throw SysError("setsid");
 
     // return write-fd
     return filedes[1];
@@ -321,19 +310,13 @@ namespace tnt
     }
 
     if (freopen("/dev/null", "r", stdin) == 0)
-      throw std::runtime_error(
-        std::string("unable to replace stdin with /dev/null: ")
-          + strerror(errno));
+      throw SysError("freopen(stdin)");
 
     if (freopen("/dev/null", "w", stdout) == 0)
-      throw std::runtime_error(
-        std::string("unable to replace stdout with /dev/null: ")
-          + strerror(errno));
+      throw SysError("freopen(stdout)");
 
     if (freopen("/dev/null", "w", stderr) == 0)
-      throw std::runtime_error(
-        std::string("unable to replace stderr with /dev/null: ")
-          + strerror(errno));
+      throw SysError("freopen(stderr)");
   }
 
   int Tntnet::run()
@@ -379,15 +362,12 @@ namespace tnt
           int filedes_monitor[2];
 
           if (pipe(filedes_monitor) != 0)
-            throw std::runtime_error(
-              std::string("error in pipe(int[2]): ") + strerror(errno));
+            throw SysError("pipe");
 
           // fork workerprocess
           int pid = fork();
           if (pid < 0)
-            throw std::runtime_error(
-              std::string("error in forking workerprocess: ")
-                + strerror(errno));
+            throw SysError("fork");
 
           if (pid == 0)
           {
@@ -482,8 +462,7 @@ namespace tnt
           else if (errno == ERANGE)
             buf.resize(buf.size() * 2);
           else
-            throw std::runtime_error(
-              std::string("error in getcwd: ") + strerror(errno));
+            throw SysError("getcwd");
         }
         pidFileName = std::string(cwd) + '/' + pidFileName;
         log_debug("pidfile=" << pidFileName);
@@ -531,7 +510,7 @@ namespace tnt
     }
 
     if (unlink(pidFileName.c_str()) != 0)
-      log_error_master("failed to remove pidfile \"" << pidFileName << "\" error " << errno);
+      throw SysError(("unlink(\"" + pidFileName + "\")").c_str());
   }
 
   void Tntnet::initWorkerProcess()
@@ -693,7 +672,7 @@ namespace tnt
         value.copy(env + name.size() + 1, value.size());
         env[name.size() + value.size() + 1] = '\0';
 
-        log_debug("putenv(" << env);
+        log_debug("putenv(" << env << ')');
         ::putenv(env);
 #endif
       }

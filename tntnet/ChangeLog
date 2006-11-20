@@ -1,3 +1,7 @@
+2006-11-20 tommi@tntnet.org
+
+  - use epoll-interface when available
+
 2006-11-18 tommi@tntnet.org
 
   - make sdk and demos optional in build-system

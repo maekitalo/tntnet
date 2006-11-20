@@ -1,5 +1,5 @@
 /* tnt/poller.h
- * Copyright (C) 2005 Tommi Maekitalo
+ * Copyright (C) 2005-2006 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,15 +21,41 @@
 #define TNT_POLLER_H
 
 #include "tnt/job.h"
-#include <cxxtools/dynbuffer.h>
 #include <cxxtools/thread.h>
-#include <sys/poll.h>
+
+#ifdef HAVE_EPOLL
+#  include <map>
+#  include <set>
+#else
+#  include <cxxtools/dynbuffer.h>
+#  include <sys/poll.h>
+#endif
 
 namespace tnt
 {
   class Poller : public cxxtools::AttachedThread
   {
       Jobqueue& queue;
+
+#ifdef HAVE_EPOLL
+
+      int notify_pipe[2];
+      int pollFd;
+
+      typedef std::map<int, Jobqueue::JobPtr> jobs_type;
+      typedef std::set<Jobqueue::JobPtr> new_jobs_type;
+      jobs_type jobs;
+      new_jobs_type new_jobs;
+      int poll_timeout;
+
+      cxxtools::Mutex mutex;
+
+      void addFd(int fd, __uint32_t event);
+      void removeFd(int fd);
+      void append_new_jobs();
+
+#else
+
       int notify_pipe[2];
 
       typedef std::deque<Jobqueue::JobPtr> jobs_type;
@@ -46,6 +72,8 @@ namespace tnt
       void append(Jobqueue::JobPtr& job);
       void dispatch();
       void remove(jobs_type::size_type n);
+
+#endif // #else HAVE_EPOLL
 
     public:
       Poller(Jobqueue& q);

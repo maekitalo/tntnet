@@ -54,6 +54,12 @@ AC_SUBST(CXXTOOLS_LDFLAGS)
 
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 
+AC_TRY_RUN([
+#include <sys/epoll.h>
+  int main() { return epoll_create(10) <= 0; }
+  ],
+  [AC_DEFINE(HAVE_EPOLL, [], [Define if epoll is supported])])
+
 #
 # SSL
 #

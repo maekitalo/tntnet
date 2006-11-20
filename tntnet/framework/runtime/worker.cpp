@@ -31,6 +31,7 @@
 #include <arpa/inet.h>
 #include <locale>
 #include <errno.h>
+#include <sys/poll.h>
 
 log_define("tntnet.worker")
 
