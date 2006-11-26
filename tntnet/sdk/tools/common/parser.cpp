@@ -35,7 +35,15 @@ namespace tnt
 
     void Parser::doInclude(const std::string& file)
     {
+      log_debug("include \"" << file << '"');
       std::ifstream inp(file.c_str());
+      for (includes_type::const_iterator it = includes.begin();
+           !inp && it != includes.end(); ++it)
+      {
+        log_debug("try include \"" << *it << '/' << file << '"');
+        inp.open((*it + '/' + file).c_str());
+      }
+
       if (!inp)
       {
         std::ostringstream msg;

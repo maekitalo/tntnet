@@ -75,6 +75,9 @@ class Ecppll : public tnt::ecpp::ParseHandler
     void print(std::ostream& out);
     int getRet() const  { return ret; }
 
+    void addInclude(const std::string& dir)
+      { parser.addInclude(dir); }
+
     void parse(std::istream& in)              { parser.parse(in); }
 };
 
@@ -232,13 +235,25 @@ int main(int argc, char* argv[])
     cxxtools::Arg<const char*> ofile(argc, argv, 'o');
     cxxtools::Arg<bool> fail_on_warn(argc, argv, 'F');
 
+    typedef std::list<std::string> includes_type;
+    includes_type includes;
+
+    while (true)
+    {
+      cxxtools::Arg<const char*> include(argc, argv, 'I', 0);
+      if (!include.isSet())
+        break;
+      includes.push_back(include.getValue());
+    }
+
     if (argc != 3)
     {
       std::cerr
         << PACKAGE_STRING "\n\n"
            "usage: " << argv[0] << " [options] ecpp-source translated-data\n\n"
-           " -o filename        outputfile\n"
-           " -F                 fail on warning\n"
+           "  -o filename       outputfile\n"
+           "  -F                fail on warning\n"
+           "  -I dir            include-directory\n"
         << std::endl;
       return 1;
     }
@@ -266,6 +281,10 @@ int main(int argc, char* argv[])
 
     app.setFailOnWarn(fail_on_warn);
     app.readReplaceTokens(txt);
+
+    for (includes_type::const_iterator it = includes.begin();
+         it != includes.end(); ++it)
+      app.addInclude(*it);
 
     // parse
     app.parse(ecpp);

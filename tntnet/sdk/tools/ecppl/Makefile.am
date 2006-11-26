@@ -8,3 +8,4 @@ ecppl_SOURCES = \
 ecppl_LDADD = $(top_builddir)/sdk/tools/common/libtntnet_sdk.la
 
 AM_CPPFLAGS = -I$(top_builddir)/sdk/tools/common
+AM_LDFLAGS = -lcxxtools

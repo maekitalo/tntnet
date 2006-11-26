@@ -24,6 +24,8 @@
 ecppl \- language-extractor for ecpp
 .SH SYNOPSIS
 .B ecppl
+.RB [ \-I
+.IR dir ]
 .RB [ \-ln ]
 .RB [ \-o
 .IR output-filename ]
@@ -44,6 +46,10 @@ Every phrase, which is marked as translatable, is extracted with ecppl
 and written to standard output or to a specified output-filename line by line.
 
 .SH OPTIONS
+.IP "\-I dir"
+Search include-files in directory.
+This option can be passed multiple times.
+All specified directories are searched in turn for include-files.
 .IP "\-l"
 Extract language-phrases (the default)
 .IP "\-n"

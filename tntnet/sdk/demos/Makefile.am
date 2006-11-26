@@ -15,4 +15,4 @@ SUFFIXES=.ecpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	cxxtools-config --properties tntnet >$@

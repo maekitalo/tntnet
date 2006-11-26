@@ -25,6 +25,7 @@
 #include <iosfwd>
 #include <tnt/ecpp/parsehandler.h>
 #include <set>
+#include <list>
 
 namespace tnt
 {
@@ -55,6 +56,9 @@ namespace tnt
         cxxtools::Arg<bool> trace;
         cxxtools::Arg<bool> generateDependencies;
         cxxtools::Arg<bool> generateHeader;
+
+        typedef std::list<std::string> includes_type;
+        includes_type includes;
 
         int runDepencencies();
         int runGenerator();

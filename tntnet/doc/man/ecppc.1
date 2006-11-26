@@ -32,10 +32,8 @@ ecppc \- compiler for ecpp
 .IR name ]
 .RB [ \-m
 .IR mimetype ]
-.RB [ \-B
-.IR class ]
-.RB [ \-C
-.IR class ]
+.RB [ \-I
+.IR dir ]
 .RB filename
 .br
 .B ecppc
@@ -70,14 +68,13 @@ from the request, to decide, which binary to send.
 If no filename matches the path-info, processing is declined.
 The binaries need not be of same mime-type, since the mime-type is looked automatically from the
 mime-database by file-extension of the source-file.
-.IP "\-B class"
-This option generates a additional base-class for this component.
-.IP "\-C class"
-This option generates a alternate base-class for this component.
-The specified class should be derived from tnt::Component.
 .IP "\-h"
 Generate a separate header-file.
 Without this option, the class-declaration and -definition are put both into a single output-file.
+.IP "\-I dir"
+Search include-files in directory.
+This option can be passed multiple times.
+All specified directories are searched in turn for include-files.
 .IP "\-m mimetype"
 Set mimetype of output.
 This is the mimetype, sent by the component to the browser in the Content-Type-header.

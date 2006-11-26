@@ -23,6 +23,7 @@
 #include <tnt/mimedb.h>
 #include <fstream>
 #include <sstream>
+#include <functional>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -52,6 +53,14 @@ namespace tnt
         generateDependencies(argc, argv, 'M'),
         generateHeader(argc, argv, 'h')
     {
+      while (true)
+      {
+        cxxtools::Arg<const char*> include(argc, argv, 'I', 0);
+        if (!include.isSet())
+          break;
+        includes.push_back(include.getValue());
+      }
+
       if (argc < 2 || argv[1][0] == '-')
         throw Usage(argv[0]);
       inputfile = argv[1];
@@ -291,6 +300,11 @@ namespace tnt
       // create parser
       tnt::ecpp::Parser parser(handler, inputfile);
 
+      // initialize parser
+      for (includes_type::const_iterator it = includes.begin();
+           it != includes.end(); ++it)
+        parser.addInclude(*it);
+
       // call parser
       parser.parse(in);
     }
@@ -303,13 +317,12 @@ namespace tnt
            "usage: " << progname << " [options] ecpp-source\n\n"
            "  -o filename      outputfile\n"
            "  -n name          classname\n"
+           "  -I dir           include-directory\n"
            "  -m type          Mimetype\n"
            "  -s               generate singleton\n"
            "  -s-              generate no singleton\n"
            "  -b               binary\n"
            "  -bb              generate multibinary component\n"
-           "  -B class         additional base-class\n"
-           "  -C class         alternative base-class (derived from tnt::ecppComponent)\n"
            "  -z               compress constant data\n"
            "  -v               verbose\n"
            "  -t               generate traces\n"

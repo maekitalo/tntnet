@@ -39,6 +39,9 @@ namespace tnt
         std::string curfile;
         unsigned curline;
 
+        typedef std::list<std::string> includes_type;
+        includes_type includes;
+
         std::istream& get(char& ch);
         void doInclude(const std::string& file);
 
@@ -51,6 +54,8 @@ namespace tnt
             curline(0)
         { }
 
+        void addInclude(const std::string& dir)
+          { includes.push_back(dir); }
         void parse(std::istream& in);
 
         typedef std::multimap<std::string, std::string> comp_args_type;

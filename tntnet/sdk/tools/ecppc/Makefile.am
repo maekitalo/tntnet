@@ -23,3 +23,4 @@ ecppc_SOURCES = \
 ecppc_LDADD = $(top_builddir)/framework/common/libtntnet.la $(top_builddir)/sdk/tools/common/libtntnet_sdk.la
 
 AM_CPPFLAGS = -I$(top_builddir)/sdk/tools/common
+AM_LDFLAGS = -lcxxtools

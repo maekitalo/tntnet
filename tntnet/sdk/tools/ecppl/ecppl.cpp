@@ -35,26 +35,44 @@ int main(int argc, char* argv[])
     cxxtools::Arg<bool> nolang(argc, argv, 'n');
     cxxtools::Arg<const char*> ofile(argc, argv, 'o');
 
+    typedef std::list<std::string> includes_type;
+    includes_type includes;
+
+    while (true)
+    {
+      cxxtools::Arg<const char*> include(argc, argv, 'I', 0);
+      if (!include.isSet())
+        break;
+      includes.push_back(include.getValue());
+    }
+
     if (argc != 2)
     {
       std::cerr
         << PACKAGE_STRING "\n\n"
-           "ecppl-language-extractor\n\n"
            "usage: " << argv[0] << " [options] ecpp-source\n\n"
-           "  -o filename        outputfile\n"
-           "  -n                 nolang\n"
-           "  -l                 lang (default)\n"
+           "  -o filename       outputfile\n"
+           "  -n                extract nolang\n"
+           "  -l                extract lang (default)\n"
+           "  -I dir            include-directory\n"
         << std::endl;
-      return -1;
+      return 1;
     }
+
 
     std::ifstream in(argv[1]);
 
     Ecpplang generator;
 
     tnt::ecpp::Parser parser(generator, argv[1]);
+
+    for (includes_type::const_iterator it = includes.begin();
+         it != includes.end(); ++it)
+      parser.addInclude(*it);
+
     generator.setLang(lang || !nolang);
     generator.setNoLang(nolang);
+
     parser.parse(in);
 
     if (ofile.isSet())

@@ -24,6 +24,8 @@
 ecppll \- language-linker for ecpp
 .SH SYNOPSIS
 .B ecppll
+.RB [ \-I
+.IR dir ]
 .RB [ \-F ]
 .RB [ \-o
 .IR output-filename ]
@@ -53,6 +55,10 @@ Fail on warning.
 If a phrase is not found in the language-data or in language-data is a phrase
 not used it the ecpp-file, ecppll warns about it to standard output.
 If this flag is set, ecppll returns a non-zero return-code.
+.IP "\-I dir"
+Search include-files in directory.
+This option can be passed multiple times.
+All specified directories are searched in turn for include-files.
 .IP "\-o filename"
 Specify output filename
 
