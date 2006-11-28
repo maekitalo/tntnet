@@ -68,9 +68,6 @@ namespace tnt
       bool match(const std::string& str_, int eflags = 0) const;
 
       void free();
-
-    private:
-      friend class value_type;
   };
 
 }
