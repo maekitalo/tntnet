@@ -25,18 +25,26 @@ namespace tnt
   // HttpError
   //
 
-  static std::string httpErrorFormat(unsigned errcode, const std::string& msg)
+  namespace
   {
-    char d[3];
-    d[2] = '0' + errcode % 10;
-    errcode /= 10;
-    d[1] = '0' + errcode % 10;
-    errcode /= 10;
-    d[0] = '0' + errcode % 10;
-    std::string ret(d, 3);
-    ret += ' ';
-    ret += msg;
-    return ret;
+    std::string httpErrorFormat(unsigned errcode, const std::string& msg)
+    {
+      char d[3];
+      d[2] = '0' + errcode % 10;
+      errcode /= 10;
+      d[1] = '0' + errcode % 10;
+      errcode /= 10;
+      d[0] = '0' + errcode % 10;
+      std::string ret(d, 3);
+      ret += ' ';
+      ret += msg;
+      return ret;
+    }
+  }
+
+  HttpError::HttpError(const std::string& m)
+    : msg(m)
+  {
   }
 
   HttpError::HttpError(unsigned errcode, const std::string& msg)
@@ -48,5 +56,11 @@ namespace tnt
   {
     std::string::size_type p = msg.find('\n', 4);
     return p == std::string::npos ? msg.substr(4) : msg.substr(4, p - 4);
+  }
+
+  NotFoundException::NotFoundException(const std::string& url_)
+    : HttpError("404 Not Found (" + url_ + ')'),
+      url(url_)
+  {
   }
 }

@@ -31,12 +31,9 @@ namespace tnt
       std::string msg;
 
     public:
-      HttpError(const std::string& m)
-        : msg(m)
-        { }
-      ~HttpError() throw() { }
-
+      HttpError(const std::string& m);
       HttpError(unsigned errcode, const std::string& msg);
+      ~HttpError() throw() { }
 
       const char* what() const throw ()
       { return msg.c_str(); }
@@ -58,11 +55,9 @@ namespace tnt
   class NotFoundException : public HttpError
   {
       std::string url;
+
     public:
-      NotFoundException(const std::string& url_)
-        : HttpError("404 Not Found (" + url_ + ')'),
-          url(url_)
-        { }
+      NotFoundException(const std::string& url_);
       ~NotFoundException() throw() { }
 
       const std::string& getUrl() const  { return url; }
