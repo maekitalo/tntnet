@@ -36,12 +36,16 @@ namespace tnt
     void Parser::doInclude(const std::string& file)
     {
       log_debug("include \"" << file << '"');
+
+      std::string fullname = file;
       std::ifstream inp(file.c_str());
+
       for (includes_type::const_iterator it = includes.begin();
            !inp && it != includes.end(); ++it)
       {
-        log_debug("try include \"" << *it << '/' << file << '"');
-        inp.open((*it + '/' + file).c_str());
+        fullname = *it + '/' + file;
+        log_debug("try include \"" << fullname << '"');
+        inp.open(fullname.c_str());
       }
 
       if (!inp)
@@ -54,11 +58,11 @@ namespace tnt
       {
         std::string curfileSave = curfile;
         unsigned curlineSave = curline;
-        curfile = file;
+        curfile = fullname;
         curline = 0;
 
-        log_debug("onInclude(\"" << file << "\")");
-        handler.onInclude(file);
+        log_debug("onInclude(\"" << fullname << "\")");
+        handler.onInclude(fullname);
 
         parsePriv(inp);
 
@@ -71,8 +75,8 @@ namespace tnt
         throw;
       }
 
-      log_debug("onIncludeEnd(\"" << file << "\")");
-      handler.onIncludeEnd(file);
+      log_debug("onIncludeEnd(\"" << fullname << "\")");
+      handler.onIncludeEnd(fullname);
     }
 
     void Parser::parsePriv(std::istream& in)
