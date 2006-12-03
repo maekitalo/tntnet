@@ -226,6 +226,7 @@ namespace tnt
   tnt::Objectptr varname##_pointer = request.get##scope##Scope().get(varname##_scopekey);          \
   if (varname##_pointer == 0)          \
     varname##_pointer = request.get##scope##Scope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
+  log_debug(#scope " var " #type "& " #varname); \
   type& varname = varname##_objecttype::getRef(varname##_pointer);
 
 #define TNT_SESSION_COMPONENT_VAR(type, varname, key, construct) \
