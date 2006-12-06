@@ -94,7 +94,7 @@ namespace tnt
 
       static reference getRef(Object* o)
       {
-        return dynamic_cast<ObjectTemplate<data_type>&>(*o).data;
+        return static_cast<ObjectTemplate<data_type>&>(*o).data;
       }
   };
 }
