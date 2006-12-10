@@ -30,13 +30,14 @@
 #include "config.h"
 #include <cxxtools/loginit.h>
 
+log_define("tntnet.ecppc");
+
 namespace tnt
 {
   namespace ecppc
   {
     Ecppc::Ecppc(int& argc, char* argv[])
       : requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
-        ns(cxxtools::Arg<std::string>(argc, argv, 'N')),
         ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         mimetype(argc, argv, 'm'),
@@ -74,7 +75,7 @@ namespace tnt
 
     int Ecppc::run()
     {
-      // requestname aus Inputdatei
+      // requestname from inputfilename
       if (requestname.empty())
       {
         if (multibinary)
@@ -90,22 +91,12 @@ namespace tnt
           if (pos_dot != std::string::npos)
           {
             if (pos_slash == std::string::npos)
-            {
               requestname = input.substr(0, pos_dot);
-            }
             else if (pos_slash < pos_dot)
-            {
               requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
 
-              if (ns.empty())
-              {
-                std::string::size_type pos_slash2 = input.find_last_of("\\/", pos_slash - 1);
-                if (pos_slash2 == std::string::npos)
-                  ns = input.substr(0, pos_slash);
-                else
-                  ns = input.substr(pos_slash2 + 1, pos_slash - pos_slash2 - 1);
-              }
-            }
+            if (ofile.empty())
+              ofile = input.substr(0, pos_dot);
 
             extname = input.substr(pos_dot + 1);
           }
@@ -121,38 +112,21 @@ namespace tnt
           }
         }
       }
-      else if (ns.empty())
-      {
-        std::string::size_type p = requestname.find("::");
-        if (p != std::string::npos)
-        {
-          ns = requestname.substr(0, p);
-          requestname.erase(0, p + 2);
-        }
-      }
 
       if (generateDependencies)
-        return runDepencencies();
+        return runDependencies();
       else
         return runGenerator();
     }
 
     int Ecppc::runGenerator()
     {
-      if (ofile.empty())
-      {
-        if (ns.empty())
-          ofile = requestname;
-        else
-          ofile = ns + '/' + requestname;
-      }
-
       // strip cpp-extension from outputfilename
       if (ofile.size() == ofile.rfind(".cpp") + 4)
         ofile = ofile.substr(0, ofile.size() - 4);
 
       // create generator
-      tnt::ecppc::Generator generator(requestname, ns);
+      tnt::ecppc::Generator generator(requestname);
 
       // initialize
       generator.setDebug(trace);
@@ -277,7 +251,7 @@ namespace tnt
       return 0;
     }
 
-    int Ecppc::runDepencencies()
+    int Ecppc::runDependencies()
     {
       tnt::ecppc::Dependencygenerator generator(requestname, inputfile);
       std::ifstream in(inputfile);

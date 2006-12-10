@@ -142,12 +142,6 @@ normal parameterlist just like in c++-functions after the defition
 }>
 </p>
 
-<h2>component in a different namespace</h2>
-<p class="example">
- &lt;&amp; "mynamespace::nscomp" &amp;&gt;
-</p>
-<& "mynamespace::nscomp" &>
-
 </body>
 </html>
 

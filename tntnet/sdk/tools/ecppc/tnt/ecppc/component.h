@@ -31,7 +31,6 @@ namespace tnt
     class Component
     {
         std::string classname;
-        std::string ns;
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef std::list<Variable> variables_type;
         typedef std::list<Scopevar> scopevars_type;
@@ -44,19 +43,16 @@ namespace tnt
         Component(const Component& main, const std::string& classname_,
           const std::string& ns_ = std::string())
           : classname(classname_),
-            ns(ns_),
             compbody(main.compbody, 1)
           { }
 
       public:
-        explicit Component(const std::string& classname_, const std::string& ns_ = std::string())
-          : classname(classname_),
-            ns(ns_)
+        explicit Component(const std::string& classname_)
+          : classname(classname_)
           { }
         virtual ~Component() {}
 
         const std::string& getName() const  { return classname; }
-        const std::string& getNs() const    { return ns; }
 
         void addHtml(const std::string& code)
           { compbody.addHtml(code); }

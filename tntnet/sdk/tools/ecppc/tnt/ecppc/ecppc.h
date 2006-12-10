@@ -40,7 +40,6 @@ namespace tnt
         typedef std::set<std::string> inputfiles_type;
         inputfiles_type inputfiles;
 
-        std::string ns;
         std::string ofile;
         std::string odir;
         cxxtools::Arg<std::string> mimetype;
@@ -60,7 +59,7 @@ namespace tnt
         typedef std::list<std::string> includes_type;
         includes_type includes;
 
-        int runDepencencies();
+        int runDependencies();
         int runGenerator();
         void runParser(std::istream& in, tnt::ecpp::ParseHandler& handler);
 

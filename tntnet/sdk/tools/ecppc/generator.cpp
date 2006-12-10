@@ -35,10 +35,10 @@ namespace tnt
     ////////////////////////////////////////////////////////////////////////
     // Generator
     //
-    Generator::Generator(const std::string& classname, const std::string& ns)
+    Generator::Generator(const std::string& classname)
       : singleton(true),
         raw(false),
-        maincomp(classname, ns),
+        maincomp(classname),
         haveCloseComp(false),
         closeComp(classname),
         currentComp(&maincomp),
@@ -292,18 +292,10 @@ namespace tnt
     {
       out << "namespace\n"
              "{\n";
-
-      if (!maincomp.getNs().empty())
-        out << "namespace " << maincomp.getNs() << "\n"
-               "{\n";
-
-      out << '\n';
     }
 
     void Generator::getNamespaceEnd(std::ostream& out) const
     {
-      if (!maincomp.getNs().empty())
-        out << "} // namespace " << maincomp.getNs() << '\n';
       out << "} // namespace\n\n";
     }
 
@@ -427,16 +419,6 @@ namespace tnt
     void Generator::getCppBody(std::ostream& code) const
     {
       std::string classname = maincomp.getName();
-      std::string ns_classname;
-      std::string ns_classname_dot;
-
-      if (!maincomp.getNs().empty())
-      {
-        ns_classname = maincomp.getNs() + "::";
-        ns_classname_dot = maincomp.getNs() + '.';
-      }
-      ns_classname += classname;
-      ns_classname_dot += classname;
 
       getFactoryDeclaration(code);
 
@@ -648,17 +630,11 @@ namespace tnt
 
     void Generator::getHeader(std::ostream& header, const std::string& filename) const
     {
-      std::string ns_classname_;
-      const std::string classname = maincomp.getName();
-      const std::string ns = maincomp.getNs();
-      if (ns.empty())
-        ns_classname_ = classname;
-      else
-        ns_classname_ = ns + '_' + classname;
+      std::string classname = maincomp.getName();
 
       getIntro(header, filename);
-      header << "#ifndef ECPP_COMPONENT_" << ns_classname_ << "_H\n"
-                "#define ECPP_COMPONENT_" << ns_classname_ << "_H\n\n";
+      header << "#ifndef ECPP_COMPONENT_" << classname << "_H\n"
+                "#define ECPP_COMPONENT_" << classname << "_H\n\n";
 
       getHeaderIncludes(header);
       header << '\n';
@@ -675,22 +651,11 @@ namespace tnt
 
     void Generator::getCpp(std::ostream& code, const std::string& filename) const
     {
-      std::string ns_classname_slash;
-      std::string ns_classname_dot;
-
-      if (!maincomp.getNs().empty())
-      {
-        ns_classname_slash = maincomp.getNs() + '/';
-        ns_classname_dot = maincomp.getNs() + '.';
-      }
-      ns_classname_slash += maincomp.getName();
-      ns_classname_dot += maincomp.getName();
-
       getIntro(code, filename);
       getCppIncludes(code);
 
-      code << "#include \"" << ns_classname_slash << ".h\"\n\n"
-              "log_define(\"component." << ns_classname_dot << "\")\n\n";
+      code << "#include \"" << maincomp.getName() << ".h\"\n\n"
+              "log_define(\"component." << maincomp.getName() << "\")\n\n";
 
       getNamespaceStart(code);
 
@@ -702,17 +667,12 @@ namespace tnt
 
     void Generator::getCppWoHeader(std::ostream& code, const std::string& filename) const
     {
-      std::string ns_classname_dot;
-      if (!maincomp.getNs().empty())
-        ns_classname_dot = maincomp.getNs() + '.';
-      ns_classname_dot += maincomp.getName();
-
       getIntro(code, filename);
 
       getHeaderIncludes(code);
       getCppIncludes(code);
 
-      code << "log_define(\"component." << ns_classname_dot << "\")\n\n";
+      code << "log_define(\"component." << maincomp.getName() << "\")\n\n";
 
       getPre(code);
       code << '\n';
