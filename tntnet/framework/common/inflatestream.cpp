@@ -30,7 +30,7 @@ namespace tnt
   {
     void checkError(int ret, z_stream& stream)
     {
-      if (ret != Z_OK)
+      if (ret != Z_OK && ret != Z_STREAM_END)
       {
         log_error("InflateError " << ret << ": \"" << (stream.msg ? stream.msg : "") << '"');
         std::ostringstream msg;
