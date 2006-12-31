@@ -93,9 +93,9 @@ EOF
 
   cat <<EOF
 SUFFIXES=.ecpp .gif .jpg .css .js
-ECPPC=@bindir@/ecppc
-CXXFLAGS+=\`tntnet-config --cxxflags\` -fPIC -O2
-LDFLAGS+=-shared \`tntnet-config --libs\`
+ECPPC=ecppc
+CXXFLAGS+=-I$includedir -fPIC -O2
+LDFLAGS+=-shared -L$libdir -ltntnet
 
 %.cpp: %.ecpp
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_CPP) \$<
@@ -132,11 +132,11 @@ while test $# -gt 0; do
         ;;
 
     --cxxflags)
-        echo @CXXTOOLS_CXXFLAGS@
+        echo @CXXTOOLS_CXXFLAGS@ -I$includedir
         ;;
 
     --libs)
-        echo @CXXTOOLS_LDFLAGS@ -ltntnet
+        echo @CXXTOOLS_LDFLAGS@ -L$libdir -ltntnet
         ;;
 
     --makefile=*)
