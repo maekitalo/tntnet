@@ -52,7 +52,6 @@ namespace
 namespace tnt
 {
   cxxtools::Mutex Worker::mutex;
-  unsigned Worker::nextThreadNumber = 0;
   Worker::workers_type Worker::workers;
   unsigned Worker::maxRequestTime = 600;
   unsigned Worker::minThreads = 5;

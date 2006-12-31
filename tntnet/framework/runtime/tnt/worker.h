@@ -36,7 +36,6 @@ namespace tnt
   class Worker : public cxxtools::DetachedThread
   {
       static cxxtools::Mutex mutex;
-      static unsigned nextThreadNumber;
 
       Tntnet& application;
 
