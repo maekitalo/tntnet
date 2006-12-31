@@ -20,6 +20,7 @@
 #ifndef TNT_POLLER_H
 #define TNT_POLLER_H
 
+#include <config.h>
 #include "tnt/job.h"
 #include <cxxtools/thread.h>
 
@@ -50,7 +51,7 @@ namespace tnt
 
       cxxtools::Mutex mutex;
 
-      void addFd(int fd, __uint32_t event);
+      void addFd(int fd, uint32_t event);
       void removeFd(int fd);
       void append_new_jobs();
 
