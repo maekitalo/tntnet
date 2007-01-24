@@ -178,8 +178,7 @@ namespace tnt
         }
       }
 
-      log_warn("unknown type in url-path \"" << path << "\" set DefaultType " << default_type);
-      log_debug("content-type " << default_type);
+      log_debug("unknown type in url-path \"" << path << "\" set DefaultType " << default_type);
       reply.setContentType(default_type);
     }
 

@@ -4,7 +4,9 @@ tntnet_SOURCES = \
 	dispatcher.cpp \
 	job.cpp \
 	listener.cpp \
+	main.cpp \
 	poller.cpp \
+	process.cpp \
 	regex.cpp \
 	syserror.cpp \
 	worker.cpp \
@@ -13,6 +15,7 @@ tntnet_SOURCES = \
 	tnt/job.h \
 	tnt/listener.h \
 	tnt/poller.h \
+	tnt/process.h \
 	tnt/regex.h \
 	tnt/ssl.h \
 	tnt/syserror.h \

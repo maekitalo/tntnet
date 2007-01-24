@@ -107,11 +107,13 @@ namespace tnt
 
           bool operator< (const UrlMapCacheKey& other) const
           {
-            return vhost < other.vhost
-                || vhost == other.vhost
-                 && (url < other.url
-                  || url == other.url
-                   && pos < other.pos);
+            int c = url.compare(other.url);
+            if (c != 0)
+              return c < 0;
+            c = vhost.compare(other.vhost);
+            if (c != 0)
+              return c < 0;
+            return pos < other.pos;
           }
       };
 

@@ -42,9 +42,8 @@ namespace tnt
     if (pollFd < 0)
       throw SysError("epoll_create");
 
-    pipe(notify_pipe);
-    fcntl(notify_pipe[0], F_SETFL, O_NONBLOCK);
-    addFd(notify_pipe[0], EPOLLIN);
+    fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
+    addFd(notify_pipe.getReadFd(), EPOLLIN);
   }
 
   void Poller::addFd(int fd, uint32_t event)
@@ -78,10 +77,7 @@ namespace tnt
   void Poller::doStop()
   {
     log_debug("notify stop");
-    char ch = 'A';
-    int ret = ::write(notify_pipe[1], &ch, 1);
-    if (ret < 0)
-      throw SysError("write");
+    notify_pipe.write('A');
   }
 
   void Poller::addIdleJob(Jobqueue::JobPtr job)
@@ -93,12 +89,7 @@ namespace tnt
       new_jobs.insert(job);
 
       if (new_jobs.size() <= 1)
-      {
-        char ch = 'A';
-        int ret = ::write(notify_pipe[1], &ch, 1);
-        if (ret < 0)
-          throw SysError("write");
-      }
+        notify_pipe.write('A');
     }
 
     log_debug("addIdleJob ready");
@@ -192,18 +183,18 @@ namespace tnt
           log_debug(ret << " events occured");
           for (int i = 0; i < ret; ++i)
           {
-            if (events[i].data.fd == notify_pipe[0])
+            if (events[i].data.fd == notify_pipe.getReadFd())
             {
-              log_debug("read notify-pipe");
-              char buffer[64];
-              ssize_t n = ::read(notify_pipe[0], &buffer, sizeof(buffer));
-              log_debug("read returns " << n);
-
               if (Tntnet::shouldStop())
               {
-                log_warn("stop poller");
+                log_info("stop poller");
                 break;
               }
+
+              log_debug("read notify-pipe");
+              char buffer[64];
+              ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
+              log_debug("read returns " << n);
             }
             else
             {
@@ -246,11 +237,10 @@ namespace tnt
     : queue(q),
       poll_timeout(-1)
   {
-    pipe(notify_pipe);
-    fcntl(notify_pipe[0], F_SETFL, O_NONBLOCK);
+    fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
 
     pollfds.reserve(16);
-    pollfds[0].fd = notify_pipe[0];
+    pollfds[0].fd = notify_pipe.getReadFd();
     pollfds[0].events = POLLIN;
     pollfds[0].revents = 0;
   }
@@ -306,17 +296,17 @@ namespace tnt
 
         if (pollfds[0].revents != 0)
         {
-          log_debug("read notify-pipe");
-          char buffer[64];
-          ssize_t n = ::read(notify_pipe[0], &buffer, sizeof(buffer));
-          log_debug("read returns " << n);
-          pollfds[0].revents = 0;
-
           if (Tntnet::shouldStop())
           {
-            log_warn("stop poller");
+            log_info("stop poller");
             break;
           }
+
+          log_debug("read notify-pipe");
+          char buffer[64];
+          ssize_t n = notify_pipe.read(&buffer, sizeof(buffer));
+          log_debug("read returns " << n);
+          pollfds[0].revents = 0;
         }
 
         if (current_jobs.size() > 0)
@@ -332,10 +322,7 @@ namespace tnt
   void Poller::doStop()
   {
     log_debug("notify stop");
-    char ch = 'A';
-    int ret = ::write(notify_pipe[1], &ch, 1);
-    if (ret < 0)
-      throw SysError("write");
+    notify_pipe.write('A');
   }
 
   void Poller::dispatch()
@@ -401,10 +388,7 @@ namespace tnt
 
     log_debug("notify " << job->getFd());
 
-    char ch = 'A';
-    int ret = ::write(notify_pipe[1], &ch, 1);
-    if (ret < 0)
-      throw SysError("write");
+    notify_pipe.write('A');
 
     log_debug("addIdleJob ready");
   }

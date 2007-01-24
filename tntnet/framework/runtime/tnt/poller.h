@@ -23,6 +23,7 @@
 #include <config.h>
 #include "tnt/job.h"
 #include <cxxtools/thread.h>
+#include <cxxtools/pipe.h>
 
 #ifdef HAVE_EPOLL
 #  include <map>
@@ -40,7 +41,7 @@ namespace tnt
 
 #ifdef HAVE_EPOLL
 
-      int notify_pipe[2];
+      cxxtools::Pipe notify_pipe;
       int pollFd;
 
       typedef std::map<int, Jobqueue::JobPtr> jobs_type;
@@ -57,7 +58,7 @@ namespace tnt
 
 #else
 
-      int notify_pipe[2];
+      cxxtools::Pipe notify_pipe;
 
       typedef std::deque<Jobqueue::JobPtr> jobs_type;
 

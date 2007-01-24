@@ -280,25 +280,6 @@ The default is 100.
 .br
 MaxThreads 200
 .
-.SS NoCloseStdout \fI0|1\fP
-If Daemon is set to 1, tntnet closes standard-in-, standard-out- and
-standard-error-channels, unless NoCloseStdout is set to 1.
-.PP
-.B Example
-.br
-NoCloseStdout 1
-.
-.SS NoMonitor \fI0|1\fP
-On startup, if Daemon is set to 1, tntnet does a second fork.
-The parent keeps waiting for the child and the child does the work.
-If tntnet crashes, what might happen, when a webapplication is buggy, the
-worker-process is restarted.
-This can be switched off by setting NoMonitor to 0.
-.PP
-.B Example
-.br
-NoMonitor 0
-.
 .SS PidFile \fIfilename\fP
 When run in daemon-mode, tntnet writes the process-id of the monitor-process to
 filename.

@@ -176,7 +176,7 @@ namespace tnt
       unsigned capacity;
 
     public:
-      explicit Jobqueue(unsigned capacity_)
+      explicit Jobqueue(unsigned capacity_ = 1000)
         : waitThreads(0),
           capacity(capacity_)
         { }

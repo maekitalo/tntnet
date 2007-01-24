@@ -1,3 +1,7 @@
+2007-01-24 tommi@tntnet.org
+
+  - move process-handling from class Tntnet to a separate class Process
+
 2006-12-03 tommi@tntnet.org
 
   - print full path of dependencies in ecppc -M
