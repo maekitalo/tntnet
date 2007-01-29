@@ -103,6 +103,7 @@ namespace tnt
         state_cppe1,
         state_cppetag,
         state_cppstring,  // 20
+        state_cppstringesc,
         state_nl,
         state_cpp1,
         state_args0,
@@ -111,8 +112,8 @@ namespace tnt
         state_argsvare,
         state_argsval,
         state_argsvalstring,
-        state_argscomment0,
-        state_argscomment,  // 30
+        state_argscomment0,  // 30
+        state_argscomment,
         state_argsvalcomment0,
         state_attr0,
         state_attr0comment,
@@ -121,8 +122,8 @@ namespace tnt
         state_attrval,
         state_attrvalstring,
         state_attrcomment0,
-        state_attrcomment,
-        state_attrvalcomment0,  // 40
+        state_attrcomment,  // 40
+        state_attrvalcomment0,
         state_call0,
         state_callname_expr,
         state_callname_string,
@@ -131,8 +132,8 @@ namespace tnt
         state_call_cpparg,
         state_callend,
         state_callarg0,
-        state_callarg,
-        state_callarge,   // 50
+        state_callarg,   // 50
+        state_callarge,
         state_callval_expr,
         state_callval_string,
         state_callval_word,
@@ -141,8 +142,8 @@ namespace tnt
         state_comment,
         state_commente,
         state_compe0,
-        state_compe,
-        state_cond,  // 60
+        state_compe,  // 60
+        state_cond,
         state_condexpr,
         state_condexpre,
         state_include0,
@@ -151,8 +152,8 @@ namespace tnt
         state_scopearg,
         state_scopeargeq,
         state_scopeargval0,
-        state_scopeargval,
-        state_scopevale,  // 70
+        state_scopeargval,  // 70
+        state_scopevale,
         state_scope0,
         state_scope,
         state_scopeinit,
@@ -161,8 +162,8 @@ namespace tnt
         state_scopecomment0,
         state_scopecomment,
         state_endcall0,
-        state_endcall,
-        state_endcalle  // 80
+        state_endcall,  // 80
+        state_endcalle
       };
 
       state_type state = state_nl;
@@ -590,6 +591,13 @@ namespace tnt
             code += ch;
             if (ch == '"')
               state = state_cpp;
+            else if (ch == '\\')
+              state = state_cppstringesc;
+            break;
+
+          case state_cppstringesc:
+            code += ch;
+            state = state_cppstring;
             break;
 
           case state_cppse:
@@ -627,7 +635,8 @@ namespace tnt
               state = state_cppetag;
             else
             {
-              code += "</%";
+              code += "</";
+              code += ch;
               state = state_cpp;
             }
             break;
