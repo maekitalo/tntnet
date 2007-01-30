@@ -104,65 +104,68 @@ namespace tnt
         state_cppetag,
         state_cppstring,  // 20
         state_cppstringesc,
+        state_cppchar,
+        state_cppcharesc,
+        state_cppchare,
         state_nl,
         state_cpp1,
         state_args0,
         state_args0comment,
         state_argsvar,
-        state_argsvare,
+        state_argsvare,  // 30
         state_argsval,
         state_argsvalstring,
-        state_argscomment0,  // 30
+        state_argscomment0,
         state_argscomment,
         state_argsvalcomment0,
         state_attr0,
         state_attr0comment,
         state_attrvar,
         state_attrvare,
-        state_attrval,
+        state_attrval,  // 40
         state_attrvalstring,
         state_attrcomment0,
-        state_attrcomment,  // 40
+        state_attrcomment,
         state_attrvalcomment0,
         state_call0,
         state_callname_expr,
         state_callname_string,
         state_callname,
         state_call_cpparg0,
-        state_call_cpparg,
+        state_call_cpparg,   // 50
         state_callend,
         state_callarg0,
-        state_callarg,   // 50
+        state_callarg,
         state_callarge,
         state_callval_expr,
         state_callval_string,
         state_callval_word,
         state_callval0,
         state_callvale,
-        state_comment,
+        state_comment,  // 60
         state_commente,
         state_compe0,
-        state_compe,  // 60
+        state_compe,
         state_cond,
         state_condexpr,
         state_condexpre,
         state_include0,
         state_include1,
         state_scopearg0,
-        state_scopearg,
+        state_scopearg,  // 70
         state_scopeargeq,
         state_scopeargval0,
-        state_scopeargval,  // 70
+        state_scopeargval,
         state_scopevale,
         state_scope0,
         state_scope,
         state_scopeinit,
         state_scopee,
         state_scopee0,
-        state_scopecomment0,
+        state_scopecomment0,  // 80
         state_scopecomment,
         state_endcall0,
-        state_endcall,  // 80
+        state_endcall,
         state_endcalle
       };
 
@@ -584,6 +587,8 @@ namespace tnt
               code += ch;
               if (ch == '"')
                 state = state_cppstring;
+              else if (ch == '\'')
+                state = state_cppchar;
             }
             break;
 
@@ -598,6 +603,25 @@ namespace tnt
           case state_cppstringesc:
             code += ch;
             state = state_cppstring;
+            break;
+
+          case state_cppchar:
+            code += ch;
+            if (ch == '\\')
+              state = state_cppcharesc;
+            else
+              state = state_cppchare;
+            break;
+
+          case state_cppcharesc:
+            code += ch;
+            state = state_cppchare;
+            break;
+
+          case state_cppchare:
+            code += ch;
+            if (ch == '\'')
+              state = state_cpp;
             break;
 
           case state_cppse:
