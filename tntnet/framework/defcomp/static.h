@@ -17,11 +17,12 @@
  *
  */
 
-#ifndef STATIC_H
-#define STATIC_H
+#ifndef TNT_STATIC_H
+#define TNT_STATIC_H
 
 #include <tnt/component.h>
 #include <tnt/tntconfig.h>
+#include <mime.h>
 
 namespace tnt
 {
@@ -31,7 +32,7 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // componentdeclaration
   //
-  class Static : public tnt::Component
+  class Static : public tnt::Component, public MimeBase
   {
       static std::string documentRoot;
 
@@ -41,11 +42,11 @@ namespace tnt
       virtual void drop();
 
       static void setDocumentRoot(const std::string& s)
-      { documentRoot = s; }
+        { documentRoot = s; }
       static const std::string& getDocumentRoot()
-      { return documentRoot; }
+        { return documentRoot; }
   };
 }
 
-#endif // STATIC_H
+#endif // TNT_STATIC_H
 

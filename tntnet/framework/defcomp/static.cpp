@@ -1,5 +1,5 @@
 /* static.cpp
- * Copyright (C) 2003 Tommi Maekitalo
+ * Copyright (C) 2003,2007 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -46,12 +46,19 @@ namespace tnt
         { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
+      virtual void doConfigure(const tnt::Tntconfig& config);
   };
 
   tnt::Component* StaticFactory::doCreate(const tnt::Compident&,
     const tnt::Urlmapper&, tnt::Comploader&)
   {
     return new Static();
+  }
+
+  void StaticFactory::doConfigure(const tnt::Tntconfig& config)
+  {
+    std::string mimeDb = config.getValue("MimeDb", "/etc/mime.types");
+    MimeBase::doConfigure(mimeDb, config);
   }
 
   TNT_COMPONENTFACTORY(static, StaticFactory)
@@ -78,13 +85,13 @@ namespace tnt
     if (stat(file.c_str(), &st) != 0)
     {
       log_warn("error in stat for file \"" << file << "\"");
-      reply.throwNotFound(request.getPathInfo());
+      return DECLINED;
     }
 
     if (!S_ISREG(st.st_mode))
     {
       log_warn("no regular file \"" << file << "\"");
-      reply.throwNotFound(request.getPathInfo());
+      return DECLINED;
     }
 
     std::string lastModified = tnt::HttpMessage::htdate(st.st_ctime);
@@ -100,17 +107,23 @@ namespace tnt
     if (!in)
     {
       log_warn("file \"" << file << "\" not found");
-      reply.throwNotFound(request.getPathInfo());
+      return DECLINED;
     }
 
     // set Content-Type
     if (request.getArgs().size() > 0 && request.getArg(0).size() > 0)
       reply.setContentType(request.getArg(0));
+    else
+      reply.setContentType(getMimeType(request.getPathInfo()));
 
     reply.setHeader(tnt::httpheader::lastModified, lastModified);
 
     // send data
     log_info("send static file \"" << file << "\" size " << st.st_size << " bytes");
+
+    if (isTop())
+      reply.setDirectMode();
+
     reply.out() << in.rdbuf();
 
     return HTTP_OK;

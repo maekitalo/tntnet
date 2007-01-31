@@ -87,7 +87,7 @@ namespace tnt
     }
     catch (const unzipEndOfListOfFile&)
     {
-      reply.throwNotFound(pi);
+      return DECLINED;
     }
 
     return HTTP_OK;
