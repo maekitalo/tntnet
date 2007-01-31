@@ -154,11 +154,13 @@ Component& Comploader::fetchComp(const Compident& ci,
     }
     else
     {
+      it->second->setTop(false);
       return *(it->second);
     }
   }
   else
   {
+    it->second->setTop(false);
     return *(it->second);
   }
 }

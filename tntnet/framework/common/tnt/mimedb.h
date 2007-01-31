@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef TNT_MIME_H
-#define TNT_MIME_H
+#ifndef TNT_MIMEDB_H
+#define TNT_MIMEDB_H
 
 #include <map>
 #include <string>
@@ -68,5 +68,5 @@ namespace tnt
   };
 }
 
-#endif // TNT_MIME_H
+#endif // TNT_MIMEDB_H
 

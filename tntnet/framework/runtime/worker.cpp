@@ -280,6 +280,7 @@ namespace tnt
       {
         log_debug("load component " << ci);
         Component& comp = comploader.fetchComp(ci, application.getDispatcher());
+        comp.setTop();
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 

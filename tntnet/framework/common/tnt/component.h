@@ -37,9 +37,10 @@ class HttpReply;
 class Component
 {
     time_t atime;
+    bool top;
 
   public:
-    Component()     { }
+    Component() : atime(0), top(false)    { }
     virtual ~Component() { }
 
     virtual unsigned operator() (HttpRequest& request,
@@ -50,6 +51,9 @@ class Component
 
     virtual std::string getAttribute(const std::string& name,
       const std::string& def = std::string()) const;
+
+    bool isTop() const           { return top; }
+    void setTop(bool sw = true)  { top = sw; }
 
     /// explicitly call operator() - sometimes more readable
     unsigned call(HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam)
