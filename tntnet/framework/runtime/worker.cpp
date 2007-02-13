@@ -67,8 +67,6 @@ namespace tnt
       state(stateStarting),
       lastWaitTime(0)
   {
-    log_debug("initialize thread " << threadId);
-
     cxxtools::MutexLock lock(mutex);
     workers.insert(this);
   }
@@ -147,6 +145,7 @@ namespace tnt
               if (queue.getWaitThreadCount() == 0
                 && !queue.empty())
               {
+                log_debug("pass job to poll-thread");
                 application.getPoller().addIdleJob(j);
                 keepAlive = false;
               }
@@ -155,8 +154,10 @@ namespace tnt
                 struct pollfd fd;
                 fd.fd = j->getFd();
                 fd.events = POLLIN;
+                log_debug("wait for next request (timeout " << Job::getSocketReadTimeout() << ')');
                 if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
                 {
+                  log_debug("pass job to poll-thread");
                   application.getPoller().addIdleJob(j);
                   keepAlive = false;
                 }
