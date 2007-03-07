@@ -231,7 +231,7 @@ Therefore Tntnet has a simple cache, which stores mappings to prevent the need
 to process the same regular expression multiple times.
 The size of this cache is limited.
 After the size is exceeded the cache is simply cleared.
-This clearing is logged with the message “clear url-map-cache”.
+This clearing is logged with the message "clear url-map-cache".
 If you have a application whit many different urls and you often see this
 warning-message, you might want to increase the cache.
 .PP
@@ -341,7 +341,13 @@ The default value is 10000 milliseconds.
 .br
 SocketWriteTimeout 20000
 .
-.SS SslListen ip [\fIport\fP [\fIssl-certificate-file\fP [\fIssl-key-file\fP] ] ]
+.SS SslCertificate \fIfile\fP
+Specifies the certificate-file for ssl-connections if not specified in SslListen
+.
+.SS SslKey \fIfile\fP
+Specifies the certificate-key for ssl-connections if not specified in SslListen
+.
+.SS SslListen \fIip\fP [\fIport\fP [\fIssl-certificate-file\fP [\fIssl-key-file\fP] ] ]
 Specifies, on which ip and port tntnet waits for incoming ssl-connections.
 Optionally a certificate- and key-file can be passed.
 .PP
