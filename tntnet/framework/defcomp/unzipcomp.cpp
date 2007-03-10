@@ -25,6 +25,9 @@
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <tnt/unzipfile.h>
+#include <cxxtools/log.h>
+
+log_define("tntnet.unzip")
 
 namespace tnt
 {
@@ -74,6 +77,8 @@ namespace tnt
     if (request.getArgsCount() < 1)
       reply.throwError(HTTP_INTERNAL_SERVER_ERROR, "missing archive name");
 
+    log_debug("unzip archive \"" << request.getArg(0) << "\" file \"" << pi << '"');
+
     try
     {
       unzipFile f(request.getArg(0));
@@ -87,6 +92,7 @@ namespace tnt
     }
     catch (const unzipEndOfListOfFile&)
     {
+      log_debug("file \"" << pi << "\" not found in archive");
       return DECLINED;
     }
 

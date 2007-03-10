@@ -1,5 +1,5 @@
-/* static.h
- * Copyright (C) 2003 Tommi Maekitalo
+/* mimehandler.h
+ * Copyright (C) 2007 Tommi Maekitalo
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,34 +17,35 @@
  *
  */
 
-#ifndef TNT_STATIC_H
-#define TNT_STATIC_H
+#ifndef TNT_MIMEHANDLER_H
+#define TNT_MIMEHANDLER_H
 
-#include <tnt/component.h>
+#include <tnt/tntconfig.h>
+#include <tnt/mimedb.h>
 
 namespace tnt
 {
-  class MimeHandler;
-
-  //////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  ////////////////////////////////////////////////////////////////////////
+  // MimeHandler
   //
-  class Static : public tnt::Component
+  class MimeHandler
   {
-      friend class StaticFactory;
+    public:
+      static const std::string configMimeDb;
+      static const std::string configDefaultType;
+      static const std::string configAddType;
 
-      static const std::string& configDocumentRoot;
-
-      static std::string documentRoot;
-      static MimeHandler* handler;
-
+    private:
+      typedef tnt::MimeDb mime_map_type;
+      mime_map_type mime_map;
+      std::string default_type;
 
     public:
-      virtual unsigned operator() (tnt::HttpRequest& request,
-        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual void drop();
+      MimeHandler(const tnt::Tntconfig& config);
+
+      std::string getMimeType(const std::string& path) const;
   };
+
 }
 
-#endif // TNT_STATIC_H
-
+#endif // TNT_MIMEHANDLER_H

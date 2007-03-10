@@ -18,6 +18,7 @@
  */
 
 #include "static.h"
+#include "mimehandler.h"
 #include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
@@ -57,8 +58,10 @@ namespace tnt
 
   void StaticFactory::doConfigure(const tnt::Tntconfig& config)
   {
-    std::string mimeDb = config.getValue("MimeDb", "/etc/mime.types");
-    MimeBase::doConfigure(mimeDb, config);
+    if (Static::handler == 0)
+      Static::handler = new MimeHandler(config);
+
+    Static::documentRoot = config.getValue(Static::configDocumentRoot);
   }
 
   TNT_COMPONENTFACTORY(static, StaticFactory)
@@ -66,7 +69,9 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
+  const std::string& Static::configDocumentRoot = "DocumentRoot";
   std::string Static::documentRoot;
+  MimeHandler* Static::handler;
 
   unsigned Static::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
@@ -113,10 +118,18 @@ namespace tnt
     // set Content-Type
     if (request.getArgs().size() > 0 && request.getArg(0).size() > 0)
       reply.setContentType(request.getArg(0));
-    else
-      reply.setContentType(getMimeType(request.getPathInfo()));
+    else if (handler)
+      reply.setContentType(handler->getMimeType(request.getPathInfo()));
 
     reply.setHeader(tnt::httpheader::lastModified, lastModified);
+
+    // set Content-Length
+    reply.setContentLengthHeader(st.st_size);
+
+    // set Keep-Alive
+    if (request.keepAlive())
+      reply.setHeader(tnt::httpheader::connection,
+                      tnt::httpheader::connectionKeepAlive);
 
     // send data
     log_info("send static file \"" << file << "\" size " << st.st_size << " bytes");
@@ -124,7 +137,7 @@ namespace tnt
     if (isTop())
       reply.setDirectMode();
 
-    reply.out() << in.rdbuf();
+    reply.out() << in.rdbuf() << std::flush;
 
     return HTTP_OK;
   }
