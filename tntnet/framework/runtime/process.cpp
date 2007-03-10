@@ -252,6 +252,9 @@ namespace tnt
   {
     log_debug("init worker");
 
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGABRT, SIG_IGN);
+
     log_debug("onInit");
     onInit();
 
