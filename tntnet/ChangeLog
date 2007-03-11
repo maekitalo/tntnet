@@ -1,3 +1,12 @@
+2007-03-11 tommi@tntnet.org
+  - url-decode non-ascii-characters in path-info
+
+2007-03-10 tommi@tntnet.org
+
+  - revert signalhandlers for SIGPIPE and SIGABRT, which were lost when
+    modularized
+  - standard-components static and unzip set mime-type now
+
 2007-01-24 tommi@tntnet.org
 
   - move process-handling from class Tntnet to a separate class Process

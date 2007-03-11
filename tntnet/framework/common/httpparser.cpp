@@ -44,6 +44,21 @@ namespace tnt
       static const char s[] = "\"(),/:;<=>?@[\\]{}";
       return std::isalpha(ch) || std::binary_search(s, s + sizeof(s) - 1, ch);
     }
+
+    inline bool isHexDigit(char ch)
+    {
+      return ch >= '0' && ch <= '9'
+          || ch >= 'A' && ch <= 'Z'
+          || ch >= 'a' && ch <= 'z';
+    }
+
+    inline unsigned valueOfHexDigit(char ch)
+    {
+      return ch >= '0' && ch <= '9' ? ch - '0'
+           : ch >= 'a' && ch <= 'z' ? ch - 'a' + 10
+           : ch >= 'A' && ch <= 'Z' ? ch - 'A' + 10
+           : 0;
+    }
   }
 
   log_define("tntnet.httpmessage.parser")
@@ -137,6 +152,13 @@ namespace tnt
       log_debug("url=" << message.url);
       SET_STATE(state_version);
     }
+    else if (ch == '+')
+      message.url += ' ';
+    else if (ch == '%')
+    {
+      SET_STATE(state_urlesc);
+      message.url += ch;
+    }
     else if (ch > ' ')
       message.url += ch;
     else
@@ -146,6 +168,30 @@ namespace tnt
       failedFlag = true;
     }
     return failedFlag;
+  }
+
+  bool HttpMessage::Parser::state_urlesc(char ch)
+  {
+    if (isHexDigit(ch))
+    {
+      if (message.url.size() >= 2 && message.url[message.url.size() - 2] == '%')
+      {
+        unsigned v = (valueOfHexDigit(message.url[message.url.size() - 1]) << 4) | valueOfHexDigit(ch);
+        message.url[message.url.size() - 2] = static_cast<char>(v);
+        message.url.resize(message.url.size() - 1);
+        SET_STATE(state_url);
+      }
+      else
+      {
+        message.url += ch;
+      }
+      return false;
+    }
+    else
+    {
+      SET_STATE(state_url);
+      return state_url(ch);
+    }
   }
 
   bool HttpMessage::Parser::state_qparam(char ch)
