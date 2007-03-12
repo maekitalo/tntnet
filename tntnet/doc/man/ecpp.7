@@ -339,16 +339,19 @@ And 3 scopes:
 .TP
 .I component
 The variable is only valid in the same component
+.TP
 .I page
 The variable is shared between the components in a single ecpp-file.
 You can specify multiple internal subcomponents in a %def-block.
 Variables, defined in page-scope are shared between these subcomponents.
+.TP
 .I global
 Variables are shared between all components. If you define the same
 variable with global-scope in different components, they must have the
 same type. This is achieved most easily defining them in a separate
 file and include them with a <%include>-block.
 This is the default scope.
+.TP
 .RE
 .PP
 Variables are automatically locked as needed.
