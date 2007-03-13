@@ -39,7 +39,7 @@ namespace tnt
       std::ostream& socket;
       std::ostringstream outstream;
       std::ostream* current_outstream;
-      HtmlEscOstream save_outstream;
+      HtmlEscOstream safe_outstream;
 
       Encoding acceptEncoding;
 
@@ -70,8 +70,9 @@ namespace tnt
 
       /// returns outputstream
       std::ostream& out()   { return *current_outstream; }
-      /// returns save outputstream (unsave html-chars are escaped)
-      std::ostream& sout()  { return save_outstream; }
+      /// returns safe outputstream (unsafe html-chars are escaped)
+      std::ostream& sout()  { return safe_outstream; }
+      void resetContent()   { outstream.str(std::string()); }
 
       void setContentLengthHeader(size_t size);
       void setKeepAliveHeader(unsigned timeout = 15);

@@ -187,17 +187,34 @@ const char* Comploader::getLangData(const Compident& ci,
     return 0;
 }
 
+namespace
+{
+  template <typename T>
+  class ValueResetter
+  {
+      T& value;
+      T null;
+
+    public:
+      explicit ValueResetter(T& value_, T null_ = T())
+        : value(value_),
+          null(null_)
+          { }
+      ~ValueResetter()
+      { value = null; }
+  };
+};
+
 ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib \"" << libname << '"');
-
-  ComponentLibrary::factoryMapType factoryMap;
-  currentFactoryMap = &factoryMap;
 
   cxxtools::RdLock lock(libraryMonitor);
   librarymap_type::iterator it = librarymap.find(libname);
   if (it == librarymap.end())
   {
+    log_debug("library not found - get write-lock");
+
     lock.unlock();
 
     cxxtools::WrLock wrlock(libraryMonitor);
@@ -206,6 +223,11 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
     it = librarymap.find(libname);
     if (it == librarymap.end())
     {
+      log_debug("load library \"" << libname << '"');
+      ComponentLibrary::factoryMapType factoryMap;
+      currentFactoryMap = &factoryMap;
+      ValueResetter<ComponentLibrary::factoryMapType*> valueResetter(currentFactoryMap, 0);
+
       // load library
       log_info("load library \"" << libname << '"');
       ComponentLibrary lib;
@@ -241,8 +263,11 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
       }
 
       lib.factoryMap = factoryMap;
-      currentFactoryMap = 0;
       it = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
+    }
+    else
+    {
+      log_debug("library got after writelock");
     }
   }
 

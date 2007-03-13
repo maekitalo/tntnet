@@ -164,7 +164,7 @@ namespace tnt
     : contentType(defaultContentType),
       socket(s),
       current_outstream(&outstream),
-      save_outstream(outstream),
+      safe_outstream(outstream),
       keepAliveCounter(0),
       sendStatusLine(sendStatusLine_)
   { }
@@ -236,14 +236,14 @@ namespace tnt
     {
       send(ret, msg);
       current_outstream = &socket;
-      save_outstream.setSink(socket);
+      safe_outstream.setSink(socket);
     }
   }
 
   void HttpReply::setDirectModeNoFlush()
   {
     current_outstream = &socket;
-    save_outstream.setSink(socket);
+    safe_outstream.setSink(socket);
   }
 
   void HttpReply::setCookie(const std::string& name, const Cookie& value)

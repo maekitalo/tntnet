@@ -1,3 +1,7 @@
+2007-03-13 tommi@tntnet.org
+  - fix bug, which caused tntnet sometimes to fail loading components
+  - new feature: tnt::HttpReply::resetContent
+
 2007-03-11 tommi@tntnet.org
   - url-decode non-ascii-characters in path-info
 
