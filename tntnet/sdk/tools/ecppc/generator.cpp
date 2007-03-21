@@ -552,7 +552,7 @@ namespace tnt
       if (!data.empty())
       {
         if (externData)
-          code << "  tnt::DataChunks data(getData(request, rawData));\n";
+          code << "  tnt::DataChunks data(getData(request, qparam, rawData));\n";
         else
           code << "  tnt::DataChunks data(rawData);\n";
       }
