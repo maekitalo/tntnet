@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 1.5.3.4, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.5.3.3, [Tommi Maekitalo <tommi@tntnet.org>])
 AM_INIT_AUTOMAKE
 
 abi_current=5
@@ -36,6 +36,7 @@ CXXTOOLS_LDFLAGS=`$CXXTOOLS_CONFIG --libs`
 AC_MSG_CHECKING([for cxxtools usability])
 AC_COMPILE_IFELSE(
   [#include <cxxtools/net.h>
+   #include <cxxtools/pipe.h>
    void t() { cxxtools::net::Socket s;
               struct sockaddr_storage t = s.getSockAddr(); }
   ],
