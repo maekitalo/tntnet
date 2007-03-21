@@ -38,8 +38,26 @@ namespace tnt
 
       typedef bool (this_type::*state_type)(char);
       state_type state;
+      state_type nextState;
 
       bool failedFlag;
+
+      bool state_skipws(char ch)
+      {
+        if (ch != ' ' && ch != '\t')
+        {
+          state = nextState;
+          return (static_cast<this_type*>(this)->*state)(ch);
+        }
+        else
+          return false;
+      }
+
+      void skipWs(state_type nextState_)
+      {
+        state = &Parser::state_skipws;
+        nextState = nextState_;
+      }
 
     public:
       explicit Parser(state_type initialState)

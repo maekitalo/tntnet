@@ -75,6 +75,8 @@ namespace tnt
       bool state_qparam(char ch);
       bool state_version(char ch);
       bool state_version_major(char ch);
+      bool state_version_major_sp(char ch);
+      bool state_version_minor0(char ch);
       bool state_version_minor(char ch);
       bool state_end0(char ch);
       bool state_header(char ch);

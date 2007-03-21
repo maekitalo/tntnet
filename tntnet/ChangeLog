@@ -1,3 +1,6 @@
+2007-03-18 tommi@tntnet.org
+  - be more tolerant about whitespace in http-header
+
 2007-03-13 tommi@tntnet.org
   - fix bug, which caused tntnet sometimes to fail loading components
   - new feature: tnt::HttpReply::resetContent
