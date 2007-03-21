@@ -108,7 +108,8 @@ namespace tnt
       args_type& getArgs()                         { return args; }
 
       args_type::const_reference getArgDef(args_type::size_type n,
-        const std::string& def = std::string()) const;
+        const std::string& def = std::string()) const
+        { return args.size() > n ? args[n] : def; }
       args_type::const_reference getArg(args_type::size_type n) const
                                                    { return args[n]; }
       args_type::size_type getArgsCount() const    { return args.size(); }
