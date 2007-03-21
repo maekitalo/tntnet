@@ -133,100 +133,97 @@ namespace tnt
     {
       append_new_jobs();
 
-      try
+      if (jobs.size() == 0)
+        poll_timeout = -1;
+
+      log_debug("epoll_wait with timeout " << poll_timeout << " ms");
+      usleep(100);
+
+      int ret = ::epoll_wait(pollFd, events, 16, poll_timeout);
+
+      if (ret < 0)
       {
-        if (jobs.size() == 0)
-          poll_timeout = -1;
-
-        log_debug("epoll_wait with timeout " << poll_timeout << " ms");
-        usleep(100);
-        int ret = ::epoll_wait(pollFd, events, 16, poll_timeout);
-        if (ret < 0)
+        if (errno != EINTR)
           throw SysError("epoll_wait");
-        else if (ret == 0)
+      }
+      else if (ret == 0)
+      {
+        // timeout reached - check for timed out requests and get next timeout
+
+        log_debug("timeout reached");
+
+        poll_timeout = -1;
+        time_t currentTime;
+        time(&currentTime);
+        for (jobs_type::iterator it = jobs.begin(); it != jobs.end(); )
         {
-          // timeout reached - check for timed out requests and get next timeout
-
-          log_debug("timeout reached");
-
-          poll_timeout = -1;
-          time_t currentTime;
-          time(&currentTime);
-          for (jobs_type::iterator it = jobs.begin(); it != jobs.end(); )
+          int msec = it->second->msecToTimeout(currentTime);
+          if (msec <= 0)
           {
-            int msec = it->second->msecToTimeout(currentTime);
-            if (msec <= 0)
-            {
-              log_debug("keep-alive-timeout reached");
-              jobs_type::iterator it2 = it++;
-              jobs.erase(it2);
-            }
-            else
-            {
-              if (poll_timeout < 0 || msec < poll_timeout)
-                poll_timeout = msec;
-              ++it;
-            }
+            log_debug("keep-alive-timeout reached");
+            jobs_type::iterator it2 = it++;
+            jobs.erase(it2);
           }
-        }
-        else
-        {
-          time_t currentTime;
-          time(&currentTime);
-          poll_timeout -= (currentTime - pollTime) * 1000;
-          if (poll_timeout <= 0)
-            poll_timeout = 100;
-
-          pollTime = currentTime;
-
-          // no timeout - process events
-          log_debug(ret << " events occured");
-          for (int i = 0; i < ret; ++i)
+          else
           {
-            if (events[i].data.fd == notify_pipe.getReadFd())
-            {
-              if (Tntnet::shouldStop())
-              {
-                log_info("stop poller");
-                break;
-              }
-
-              log_debug("read notify-pipe");
-              char buffer[64];
-              ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
-              log_debug("read returns " << n);
-            }
-            else
-            {
-              jobs_type::iterator it = jobs.find(events[i].data.fd);
-              if (it == jobs.end())
-              {
-                log_fatal("internal error: job for fd " << events[i].data.fd << " not found in jobs-list");
-                removeFd(events[i].data.fd);
-                ::close(events[i].data.fd);
-                throw std::runtime_error("job not found in jobs-list");
-              }
-
-              if ((events[i].events & (EPOLLERR | EPOLLHUP)) != 0)
-              {
-                log_debug("remove fd " << it->first << " from queue");
-              }
-              else
-              {
-                log_debug("put fd " << it->first << " back in queue");
-                queue.put(it->second);
-              }
-
-              jobs.erase(events[i].data.fd);
-              removeFd(events[i].data.fd);
-            }
+            if (poll_timeout < 0 || msec < poll_timeout)
+              poll_timeout = msec;
+            ++it;
           }
         }
       }
-      catch (const std::exception& e)
+      else
       {
-        log_warn("error in poll-loop: " << e.what());
-        poll_timeout = 100;
+        time_t currentTime;
+        time(&currentTime);
+        poll_timeout -= (currentTime - pollTime) * 1000;
+        if (poll_timeout <= 0)
+          poll_timeout = 100;
+
+        pollTime = currentTime;
+
+        // no timeout - process events
+        log_debug(ret << " events occured");
+        for (int i = 0; i < ret; ++i)
+        {
+          if (events[i].data.fd == notify_pipe.getReadFd())
+          {
+            if (Tntnet::shouldStop())
+            {
+              log_info("stop poller");
+              break;
+            }
+
+            log_debug("read notify-pipe");
+            char buffer[64];
+            ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
+            log_debug("read returns " << n);
+          }
+          else
+          {
+            jobs_type::iterator it = jobs.find(events[i].data.fd);
+            if (it == jobs.end())
+            {
+              log_fatal("internal error: job for fd " << events[i].data.fd << " not found in jobs-list");
+              removeFd(events[i].data.fd);
+              ::close(events[i].data.fd);
+              throw std::runtime_error("job not found in jobs-list");
+            }
+
+            if ((events[i].events & (EPOLLERR | EPOLLHUP)) != 0)
+            {
+              log_debug("remove fd " << it->first << " from queue");
+            }
+            else
+            {
+              log_debug("put fd " << it->first << " back in queue");
+              queue.put(it->second);
+            }
+
+            jobs.erase(events[i].data.fd);
+            removeFd(events[i].data.fd);
+          }
+        }
       }
     }
   }
