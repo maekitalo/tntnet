@@ -25,7 +25,6 @@
 #include <tnt/urlmapper.h>
 #include <tnt/langlib.h>
 #include <map>
-#include <set>
 #include <list>
 #include <string>
 #include <utility>
