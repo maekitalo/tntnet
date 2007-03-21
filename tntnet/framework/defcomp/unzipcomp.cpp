@@ -17,6 +17,7 @@
  *
  */
 
+#include "static.h"
 #include "unzip.h"
 
 #include <tnt/component.h>
@@ -31,10 +32,12 @@ log_define("tntnet.unzip")
 
 namespace tnt
 {
+  class MimeHandler;
+
   ////////////////////////////////////////////////////////////////////////
   // componentdeclaration
   //
-  class Unzip : public tnt::Component
+  class Unzip : public Static
   {
       friend class UnzipFactory;
 
@@ -47,11 +50,11 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class UnzipFactory : public tnt::SingletonComponentFactory
+  class UnzipFactory : public StaticFactory
   {
     public:
       UnzipFactory(const std::string& componentName)
-        : tnt::SingletonComponentFactory(componentName)
+        : StaticFactory(componentName)
         { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
@@ -87,6 +90,8 @@ namespace tnt
       // set Content-Type
       if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
         reply.setContentType(request.getArg(1));
+      else
+        setContentType(request, reply);
 
       reply.out() << in.rdbuf();
     }

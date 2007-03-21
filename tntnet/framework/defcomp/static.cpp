@@ -19,7 +19,6 @@
 
 #include "static.h"
 #include "mimehandler.h"
-#include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/httperror.h>
@@ -36,20 +35,6 @@ log_define("tntnet.static")
 
 namespace tnt
 {
-  ////////////////////////////////////////////////////////////////////////
-  // factory
-  //
-  class StaticFactory : public tnt::SingletonComponentFactory
-  {
-    public:
-      StaticFactory(const std::string& componentName)
-        : tnt::SingletonComponentFactory(componentName)
-        { }
-      virtual tnt::Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl);
-      virtual void doConfigure(const tnt::Tntconfig& config);
-  };
-
   tnt::Component* StaticFactory::doCreate(const tnt::Compident&,
     const tnt::Urlmapper&, tnt::Comploader&)
   {
@@ -72,6 +57,12 @@ namespace tnt
   const std::string& Static::configDocumentRoot = "DocumentRoot";
   std::string Static::documentRoot;
   MimeHandler* Static::handler;
+
+  void Static::setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply)
+  {
+    if (handler)
+      reply.setContentType(handler->getMimeType(request.getPathInfo()));
+  }
 
   unsigned Static::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
@@ -118,8 +109,8 @@ namespace tnt
     // set Content-Type
     if (request.getArgs().size() > 0 && request.getArg(0).size() > 0)
       reply.setContentType(request.getArg(0));
-    else if (handler)
-      reply.setContentType(handler->getMimeType(request.getPathInfo()));
+    else
+      setContentType(request, reply);
 
     reply.setHeader(tnt::httpheader::lastModified, lastModified);
 

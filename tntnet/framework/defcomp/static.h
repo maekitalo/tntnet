@@ -21,6 +21,7 @@
 #define TNT_STATIC_H
 
 #include <tnt/component.h>
+#include <tnt/componentfactory.h>
 
 namespace tnt
 {
@@ -38,12 +39,29 @@ namespace tnt
       static std::string documentRoot;
       static MimeHandler* handler;
 
+    protected:
+      void setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply);
 
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
       virtual void drop();
   };
+
+  ////////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  class StaticFactory : public tnt::SingletonComponentFactory
+  {
+    public:
+      StaticFactory(const std::string& componentName)
+        : tnt::SingletonComponentFactory(componentName)
+        { }
+      virtual tnt::Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl);
+      virtual void doConfigure(const tnt::Tntconfig& config);
+  };
+
 }
 
 #endif // TNT_STATIC_H
