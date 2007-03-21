@@ -36,6 +36,8 @@ MapUrl      /([^.]+)(\..+)?       \$1@\$1
 EOF
   else
     cat <<EOF
+# map / to $1@$1
+MapUrl      /$   $1@$1
 # map /comp.* or /comp to comp@$1
 MapUrl      /([^.]+)(\..+)?   \$1@$1
 EOF
