@@ -19,7 +19,7 @@ method = "post";     // parameter with default type std::string
     default: result_ok = false;
   }
 
-}> <# <= this ends a c++-processing-block (and this is a ecpp-comment) #>
+}> <# <= this terminates a c++-processing-block (and this is a ecpp-comment) #>
 
 <html>
  <head>
