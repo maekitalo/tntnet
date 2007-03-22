@@ -22,7 +22,7 @@ tntnet_SOURCES = \
 	tnt/worker.h \
 	tnt/tntnet.h
 
-tntnet_LDFLAGS = -lpthread -lcxxtools
+tntnet_LDFLAGS = -pthread -lcxxtools
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
 tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@localstatedir@/tntnet.pid\"
 
