@@ -22,7 +22,6 @@
 #include <stdexcept>
 #include <fstream>
 #include <stack>
-#include <sstream>
 #include <cctype>
 #include <cxxtools/multifstream.h>
 #include <cxxtools/log.h>
@@ -177,7 +176,6 @@ namespace tnt
       if (!*inp)
       {
         delete inp;
-        std::ostringstream msg;
         throw std::runtime_error("cannot open include file " + params[0]);
       }
       else if (istreams.size() > 5)
