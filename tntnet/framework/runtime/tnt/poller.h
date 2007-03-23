@@ -26,7 +26,7 @@
 #include <cxxtools/thread.h>
 #include <cxxtools/pipe.h>
 
-#ifdef HAVE_EPOLL
+#ifdef WITH_EPOLL
 #  include <map>
 #  include <set>
 #else
@@ -40,7 +40,7 @@ namespace tnt
   {
       Jobqueue& queue;
 
-#ifdef HAVE_EPOLL
+#ifdef WITH_EPOLL
 
       cxxtools::Pipe notify_pipe;
       int pollFd;
@@ -76,7 +76,7 @@ namespace tnt
       void dispatch();
       void remove(jobs_type::size_type n);
 
-#endif // #else HAVE_EPOLL
+#endif // #else WITH_EPOLL
 
     public:
       Poller(Jobqueue& q);

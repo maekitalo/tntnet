@@ -24,7 +24,7 @@
 #include <cxxtools/log.h>
 #include <unistd.h>
 #include <fcntl.h>
-#ifdef HAVE_EPOLL
+#ifdef WITH_EPOLL
 #include <sys/epoll.h>
 #include <errno.h>
 #endif
@@ -33,7 +33,7 @@ log_define("tntnet.poller")
 
 namespace tnt
 {
-#ifdef HAVE_EPOLL
+#ifdef WITH_EPOLL
 
   Poller::Poller(Jobqueue& q)
     : queue(q),

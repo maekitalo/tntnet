@@ -1,5 +1,6 @@
 2007-03-21 tommi@tntnet.org
   - change license from GPL to LGPL
+  - new configure-option --with-epoll=yes|no|probe
 
 2007-03-20 tommi@tntnet.org
   - look for LANG-settings also in sub-query-parameters
