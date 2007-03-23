@@ -16,7 +16,6 @@ MaxRequestSize     1048576  # 1 MB
 #Dir                /
 #Chroot             /var/safedir
 PidFile            @localstatedir@/run/tntnet.pid
-#Daemon             0
 #MinThreads         5
 #MaxThreads         10
 #ThreadStartDelay   0  # in ms
