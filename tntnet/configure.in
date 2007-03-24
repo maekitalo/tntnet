@@ -154,6 +154,7 @@ AC_CONFIG_FILES([
     sdk/demos/calc/Makefile
     sdk/demos/calcajax/Makefile
     sdk/demos/calcmvc/Makefile
+    sdk/demos/calci18n/Makefile
     sdk/demos/chat/Makefile
     sdk/demos/comp/Makefile
     sdk/demos/config/Makefile

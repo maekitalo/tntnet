@@ -22,6 +22,7 @@ SUBDIRS += \
     sdk/demos/calc \
     sdk/demos/calcajax \
     sdk/demos/calcmvc \
+    sdk/demos/calci18n \
     sdk/demos/chat \
     sdk/demos/comp \
     sdk/demos/config \

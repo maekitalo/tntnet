@@ -3,6 +3,7 @@ cookie/|Cookie|famous greeting application with cookie to remember visitor
 calc/|Calc|online desktop-calculator
 calcmvc/|Calcmvc|online desktop-calculator, model-view-controller-enterprise-architecture
 calcajax/|Calcajax|ajax-version of the desktop-calculator
+calci18n/|Calcai18n|international-version of the desktop-calculator
 chat/|Chat|simple chat-program using ajax
 comp/|Comp|building large pages from small components
 controls/|Controls|creating widget-controls like tree-view and how to use sessions
