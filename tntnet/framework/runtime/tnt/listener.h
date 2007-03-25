@@ -22,12 +22,11 @@
 #define TNT_LISTENER_H
 
 #include <config.h>
-#include <cxxtools/thread.h>
 #include "tnt/job.h"
 
 namespace tnt
 {
-  class ListenerBase : public cxxtools::AttachedThread
+  class ListenerBase
   {
       std::string ipaddr;
       unsigned short int port;
@@ -37,6 +36,7 @@ namespace tnt
         : ipaddr(ipaddr_),
           port(port_)
           { }
+      virtual ~ListenerBase() { }
 
       void doStop();
   };
@@ -50,7 +50,6 @@ namespace tnt
 
     public:
       Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q);
-      virtual void run();
 
       static void setBacklog(int backlog_)   { backlog = backlog_; }
       static int getBacklog()                { return backlog; }
@@ -67,7 +66,6 @@ namespace tnt
     public:
       Ssllistener(const char* certificateFile, const char* keyFile,
           const std::string& ipaddr, unsigned short int port, Jobqueue& q);
-      virtual void run();
   };
 #endif // USE_SSL
 

@@ -28,7 +28,7 @@
 namespace tnt
 {
   /// Standard-message-header like rfc822
-  class Messageheader : public std::multimap<std::string, std::string, StringLessIgnoreCase>
+  class Messageheader : public std::multimap<std::string, std::string, StringLessIgnoreCase<std::string> >
   {
     public:
       class Parser;

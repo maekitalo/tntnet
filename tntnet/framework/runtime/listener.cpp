@@ -32,6 +32,10 @@
 #  include "tnt/openssl.h"
 #endif
 
+#ifdef HAVE_TCP_DEFER_ACCEPT
+#  include <netinet/tcp.h>
+#endif
+
 log_define("tntnet.listener")
 
 static void doListenRetry(cxxtools::net::Server& server,
@@ -43,6 +47,14 @@ static void doListenRetry(cxxtools::net::Server& server,
     {
       log_debug("listen " << ipaddr << ':' << port);
       server.listen(ipaddr, port, tnt::Listener::getBacklog());
+
+#ifdef HAVE_TCP_DEFER_ACCEPT
+      int deferSecs = 30;
+      if (::setsockopt(server.getFd(), SOL_SOCKET, TCP_DEFER_ACCEPT,
+          &deferSecs, sizeof(deferSecs)) < 0)
+        throw cxxtools::net::Exception(errno, "setsockopt");
+#endif
+
       return;
     }
     catch (const cxxtools::net::Exception& e)
@@ -85,33 +97,7 @@ namespace tnt
   {
     log_info("listen ip=" << ipaddr << " port=" << port);
     doListenRetry(server, ipaddr.c_str(), port);
-  }
-
-  void Listener::run()
-  {
-    // accept-loop
-    log_debug("enter accept-loop");
-    while (!Tntnet::shouldStop())
-    {
-      try
-      {
-        Tcpjob* j = new Tcpjob;
-        Jobqueue::JobPtr p(j);
-        j->accept(server);
-        log_debug("connection accepted");
-
-        if (Tntnet::shouldStop())
-          break;
-
-        queue.put(p);
-      }
-      catch (const std::exception& e)
-      {
-        log_error("error in accept-loop: " << e.what());
-      }
-    }
-
-    log_debug("stop listener");
+    queue.put(new Tcpjob(server, queue));
   }
 
 #ifdef WITH_GNUTLS
@@ -135,32 +121,7 @@ namespace tnt
   {
     log_info("listen ip=" << ipaddr << " port=" << port << " (ssl)");
     doListenRetry(server, ipaddr.c_str(), port);
-  }
-
-  void Ssllistener::run()
-  {
-    // accept-loop
-    log_debug("enter accept-loop (ssl)");
-    while (!Tntnet::shouldStop())
-    {
-      try
-      {
-        SslTcpjob* j = new SslTcpjob;
-        Jobqueue::JobPtr p(j);
-        j->accept(server);
-
-        if (Tntnet::shouldStop())
-          break;
-
-        queue.put(p);
-      }
-      catch (const std::exception& e)
-      {
-        log_error("error in ssl-accept-loop: " << e.what());
-      }
-    }
-
-    log_debug("stop ssl-listener");
+    queue.put(new SslTcpjob(server, queue));
   }
 
 #endif // USE_SSL

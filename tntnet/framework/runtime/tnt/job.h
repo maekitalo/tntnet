@@ -124,16 +124,22 @@ namespace tnt
       static unsigned getSocketBufferSize()   { return socket_buffer_size; }
   };
 
+  class Jobqueue;
+
   class Tcpjob : public Job
   {
       cxxtools::net::iostream socket;
+      const cxxtools::net::Server& listener;
+      Jobqueue& queue;
+
+      void accept();
 
     public:
-      Tcpjob()
-        : socket(getSocketBufferSize(), getSocketReadTimeout())
+      Tcpjob(const cxxtools::net::Server& listener_, Jobqueue& queue_)
+        : socket(getSocketBufferSize(), getSocketReadTimeout()),
+          listener(listener_),
+          queue(queue_)
         { }
-
-      void accept(const cxxtools::net::Server& listener);
 
       std::iostream& getStream();
       int getFd() const;
@@ -145,13 +151,17 @@ namespace tnt
   class SslTcpjob : public Job
   {
       ssl_iostream socket;
+      const SslServer& listener;
+      Jobqueue& queue;
+
+      void accept();
 
     public:
-      SslTcpjob()
-        : socket(getSocketBufferSize(), getSocketReadTimeout())
+      SslTcpjob(const SslServer& listener_, Jobqueue& queue_)
+        : socket(getSocketBufferSize(), getSocketReadTimeout()),
+          listener(listener_),
+          queue(queue_)
         { }
-
-      void accept(const SslServer& listener);
 
       std::iostream& getStream();
       int getFd() const;

@@ -149,16 +149,15 @@ namespace tnt
 
     configureDispatcher(d_dispatcher, config);
 
-    // create listener-threads
+    // create listeners
     Tntconfig::config_entries_type configListen;
     config.getConfigValues("Listen", configListen);
 
     if (configListen.empty())
     {
       unsigned short int port = (getuid() == 0 ? 80 : 8000);
-      log_info("no listeners defined - using 0.0.0.0:" << port);
-      ListenerBase* s = new tnt::Listener("0.0.0.0", port, queue);
-      listeners.insert(s);
+      log_info("no listeners defined - using ip 0.0.0.0 port " << port);
+      listeners.insert(new tnt::Listener("0.0.0.0", port, queue));
     }
     else
     {
@@ -182,9 +181,8 @@ namespace tnt
         }
 
         std::string ip(it->params[0]);
-        log_debug("create listener ip=" << ip << " port=" << port);
-        ListenerBase* s = new tnt::Listener(ip, port, queue);
-        listeners.insert(s);
+        log_info("listen on ip " << ip << " port " << port);
+        listeners.insert(new tnt::Listener(ip, port, queue));
       }
     }
 
@@ -225,10 +223,9 @@ namespace tnt
         throw std::runtime_error("Ssl-certificate not configured");
 
       std::string ip(it->params[0]);
-      log_debug("create ssl-listener ip=" << ip << " port=" << port);
-      ListenerBase* s = new Ssllistener(certificateFile.c_str(),
-          certificateKey.c_str(), ip, port, queue);
-      listeners.insert(s);
+      log_info("listen on ip " << ip << " port " << port << " (ssl)");
+      listeners.insert(new Ssllistener(certificateFile.c_str(),
+          certificateKey.c_str(), ip, port, queue));
     }
 #endif // USE_SSL
 
@@ -274,12 +271,6 @@ namespace tnt
     log_debug("start poller thread");
     pollerthread.create();
 
-    // launch listener-threads
-    log_info("create " << listeners.size() << " listener threads");
-    for (listeners_type::iterator it = listeners.begin();
-         it != listeners.end(); ++it)
-      (*it)->create();
-
     log_debug("start timer thread");
     cxxtools::MethodThread<Tntnet, cxxtools::AttachedThread> timerThread(*this, &Tntnet::timerTask);
     timerThread.create();
@@ -321,8 +312,6 @@ namespace tnt
       log_debug("request listener to stop");
       s->doStop();
 
-      log_debug("join listener-thread");
-      s->join();
       delete s;
 
       log_debug("listener stopped");

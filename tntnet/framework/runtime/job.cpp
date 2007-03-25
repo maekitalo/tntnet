@@ -19,6 +19,7 @@
 
 
 #include "tnt/job.h"
+#include "tnt/tntnet.h"
 #include <tnt/httpreply.h>
 #include <cxxtools/log.h>
 #include <sys/types.h>
@@ -59,7 +60,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // Tcpjob
   //
-  void Tcpjob::accept(const cxxtools::net::Server& listener)
+  void Tcpjob::accept()
   {
     log_debug("accept");
     socket.accept(listener);
@@ -79,6 +80,13 @@ namespace tnt
 
   std::iostream& Tcpjob::getStream()
   {
+    if (socket.cxxtools::net::Socket::bad())
+    {
+      accept();
+      log_debug("connection accepted");
+      if (!Tntnet::shouldStop())
+        queue.put(new Tcpjob(listener, queue));
+    }
     return socket;
   }
 
@@ -101,7 +109,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // SslTcpjob
   //
-  void SslTcpjob::accept(const SslServer& listener)
+  void SslTcpjob::accept()
   {
     log_debug("accept (ssl)");
     socket.accept(listener);
@@ -120,6 +128,13 @@ namespace tnt
 
   std::iostream& SslTcpjob::getStream()
   {
+    if (socket.cxxtools::net::Socket::bad())
+    {
+      accept();
+      log_debug("connection accepted");
+      if (!Tntnet::shouldStop())
+        queue.put(new Tcpjob(listener, queue));
+    }
     return socket;
   }
 
@@ -144,10 +159,10 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // GnuTlsTcpjob
   //
-  void GnuTlsTcpjob::accept(const GnuTlsServer& listener)
+  void GnuTlsTcpjob::accept()
   {
     log_debug("accept (ssl)");
-    socket.accept(listener);
+    accept();
     log_debug("connection accepted (ssl)");
 
     struct sockaddr_storage s = socket.getSockAddr();

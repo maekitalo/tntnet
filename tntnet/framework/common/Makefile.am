@@ -33,7 +33,6 @@ libtntnet_la_SOURCES = \
 	scopemanager.cpp \
 	sessionscope.cpp \
 	sodata.cpp \
-	stringlessignorecase.cpp \
 	tntconfig.cpp \
 	unzip.c \
 	unzipfile.cpp \

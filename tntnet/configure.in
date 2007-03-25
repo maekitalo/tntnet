@@ -140,6 +140,12 @@ fi
 #
 AC_CHECK_FUNCS([setenv])
 
+AC_COMPILE_IFELSE(
+  [#include <netinet/tcp.h>
+   int i = TCP_DEFER_ACCEPT;
+  ],
+  AC_DEFINE(HAVE_TCP_DEFER_ACCEPT, [], [defined if TCP_DEFER_ACCEPT is defined]))
+
 AC_CONFIG_FILES([
     Makefile
     framework/common/Makefile

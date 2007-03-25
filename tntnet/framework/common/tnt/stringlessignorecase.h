@@ -23,13 +23,31 @@
 
 #include <string>
 #include <functional>
+#include <cctype>
 
 namespace tnt
 {
-  class StringLessIgnoreCase : public std::binary_function<std::string, std::string, bool>
+  template <typename stringType = std::string>
+  class StringLessIgnoreCase : public std::binary_function<stringType, stringType, bool>
   {
     public:
-      bool operator()(const std::string& s1, const std::string& s2) const;
+      bool operator()(const stringType& s1, const stringType& s2) const
+      {
+        typename stringType::const_iterator it1 = s1.begin();
+        typename stringType::const_iterator it2 = s2.begin();
+        while (it1 != s1.end() && it2 != s2.end())
+        {
+          char c1 = std::toupper(*it1);
+          char c2 = std::toupper(*it2);
+          if (c1 < c2)
+            return true;
+          else if (c2 < c1)
+            return false;
+          ++it1;
+          ++it2;
+        }
+        return it1 == s1.end() ? (it2 != s2.end()) : (it2 == s2.end());
+      }
   };
 
 }
