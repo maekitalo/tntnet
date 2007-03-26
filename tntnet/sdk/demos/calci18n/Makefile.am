@@ -16,11 +16,15 @@ CLEANFILES = calci18n.cpp tntnet.conf tntnet.properties \
 	de.cpp calci18n.de de/calci18n.tntdata
 EXTRA_DIST = calci18n.txt.fi calci18n.txt.de
 
+ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
+ECPPL=$(top_builddir)/sdk/tools/ecppl/ecppl
+ECPPLL=$(top_builddir)/sdk/tools/ecppll/ecppll
 SUFFIXES=.ecpp
+
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $<
+	$(ECPPC) $<
 .png.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b $<
+	$(ECPPC) -b $<
 
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@
@@ -28,15 +32,14 @@ tntnet.conf:
 	/bin/sh $(top_builddir)/tntnet-config --config=calci18n >$@
 
 calci18n.txt: calci18n.ecpp
-	ecppl calci18n.ecpp
+	$(ECPPL) -o calci18n.txt calci18n.ecpp
 
 calci18n.fi: calci18n.ecpp calci18n.txt.fi
 	[ -d fi ] || mkdir fi
 	rm -f calci18n.fi
-	( cd fi && ecppll -o calci18n.tntdata ../calci18n.ecpp ../calci18n.txt.fi && zip ../calci18n.fi calci18n.tntdata )
+	( $(ECPPLL) -o fi/calci18n.tntdata calci18n.ecpp calci18n.txt.fi && cd fi && zip ../calci18n.fi calci18n.tntdata )
 
 calci18n.de: calci18n.ecpp calci18n.txt.de
 	[ -d de ] || mkdir de
 	rm -f calci18n.de
-	( cd de && ecppll -o calci18n.tntdata ../calci18n.ecpp ../calci18n.txt.de && zip ../calci18n.de calci18n.tntdata )
-
+	( $(ECPPLL) -o de/calci18n.tntdata calci18n.ecpp calci18n.txt.de && cd de && zip ../calci18n.de calci18n.tntdata )
