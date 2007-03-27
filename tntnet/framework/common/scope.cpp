@@ -43,12 +43,14 @@ namespace tnt
 
   void Scope::addRef()
   {
-    ++refs;
+    cxxtools::MutexLock lock(refmutex);
     log_debug("Scope::addRef(); this=" << this << " refs=" << refs);
+    ++refs;
   }
 
   void Scope::release()
   {
+    cxxtools::MutexLock lock(refmutex);
     log_debug("Scope::release(); this=" << this << " refs=" << refs);
     if (--refs == 0)
     {

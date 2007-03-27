@@ -34,6 +34,7 @@ namespace tnt
       typedef std::map<std::string, Pointer<Object> > container_type;
       container_type data;
       mutable cxxtools::Mutex mutex;
+      cxxtools::Mutex refmutex;
       unsigned refs;
 
       // non-copyable
