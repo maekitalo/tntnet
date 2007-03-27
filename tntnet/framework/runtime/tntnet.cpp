@@ -112,6 +112,7 @@ namespace tnt
     minthreads = config.getValue<unsigned>("MinThreads", 5);
     maxthreads = config.getValue<unsigned>("MaxThreads", 100);
     threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 10);
+    timersleep = config.getValue<unsigned>("TimerSleep", 10);
     Worker::setMinThreads(minthreads);
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
     Worker::setEnableCompression(config.getBoolValue("EnableCompression", Worker::getEnableCompression()));
@@ -326,7 +327,7 @@ namespace tnt
 
     while (!stop)
     {
-      sleep(1);
+      sleep(timersleep);
       getScopemanager().checkSessionTimeout();
       Worker::timer();
     }
