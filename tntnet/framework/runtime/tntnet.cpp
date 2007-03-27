@@ -258,6 +258,18 @@ namespace tnt
   {
     log_debug("worker-process");
 
+    if (listeners.size() > minthreads)
+    {
+      log_warn("need at least one worker per listener - set MinThreads to " << listeners.size());
+      minthreads = listeners.size();
+    }
+
+    if (maxthreads < minthreads)
+    {
+      log_warn("MaxThreads < MinThreads - set MaxThreads = MinThreads = " << minthreads);
+      maxthreads = minthreads;
+    }
+
     // initialize worker-process
     // create worker-threads
     log_info("create " << minthreads << " worker threads");
@@ -295,7 +307,7 @@ namespace tnt
         s->create();
       }
       else
-        log_warn("max worker-threadcount " << maxthreads << " reached");
+        log_info("max worker-threadcount " << maxthreads << " reached");
 
       if (threadstartdelay > 0)
         usleep(threadstartdelay);
