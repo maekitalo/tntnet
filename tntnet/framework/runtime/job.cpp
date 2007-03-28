@@ -230,10 +230,11 @@ namespace tnt
 
   Jobqueue::JobPtr Jobqueue::get()
   {
+    cxxtools::MutexLock lock(mutex);
+
     // wait, until a job is available
     ++waitThreads;
 
-    cxxtools::MutexLock lock(mutex);
     while (jobs.empty())
       notEmpty.wait(lock);
 
