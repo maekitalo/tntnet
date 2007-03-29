@@ -3,6 +3,7 @@
     under high load
   - check for enough worker-threads to handle all sockets (tntnet now needs at
     least one per listen-socket after removing listener threads)
+  - make thread-sleep-time configurable (default: 10s)
 
 2007-03-25 tommi@tntnet.org
   - use TCP_DEFER_ACCEPT if available
