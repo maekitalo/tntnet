@@ -61,7 +61,7 @@ namespace tnt
   InflateStreamBuf::~InflateStreamBuf()
   {
     ::inflateEnd(&stream);
-    delete obuffer;
+    delete[] obuffer;
   }
 
   InflateStreamBuf::int_type InflateStreamBuf::overflow(int_type c)
