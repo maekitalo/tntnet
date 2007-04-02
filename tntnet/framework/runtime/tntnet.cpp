@@ -150,7 +150,28 @@ namespace tnt
 
     configureDispatcher(d_dispatcher, config);
 
-    // create listeners
+    // configure worker (static)
+    Comploader::configure(config);
+
+    // configure http
+    HttpMessage::setMaxRequestSize(
+      config.getValue("MaxRequestSize", HttpMessage::getMaxRequestSize()));
+    Job::setSocketReadTimeout(
+      config.getValue("SocketReadTimeout", Job::getSocketReadTimeout()));
+    Job::setSocketWriteTimeout(
+      config.getValue("SocketWriteTimeout", Job::getSocketWriteTimeout()));
+    Job::setKeepAliveMax(
+      config.getValue("KeepAliveMax", Job::getKeepAliveMax()));
+    Job::setSocketBufferSize(
+      config.getValue("BufferSize", Job::getSocketBufferSize()));
+    HttpReply::setMinCompressSize(
+      config.getValue("MinCompressSize", HttpReply::getMinCompressSize()));
+    HttpReply::setKeepAliveTimeout(
+      config.getValue("KeepAliveTimeout", HttpReply::getKeepAliveTimeout()));
+    HttpReply::setDefaultContentType(
+      config.getValue("DefaultContentType", HttpReply::getDefaultContentType()));
+
+    // initialize listeners
     Tntconfig::config_entries_type configListen;
     config.getConfigValues("Listen", configListen);
 
@@ -188,7 +209,7 @@ namespace tnt
     }
 
 #ifdef USE_SSL
-    // create ssl-listener-threads
+    // initialize ssl-listener
     std::string defaultCertificateFile = config.getValue("SslCertificate");
     std::string defaultCertificateKey = config.getValue("SslKey");
     configListen.clear();
@@ -229,27 +250,6 @@ namespace tnt
           certificateKey.c_str(), ip, port, queue));
     }
 #endif // USE_SSL
-
-    // configure worker (static)
-    Comploader::configure(config);
-
-    // configure http
-    HttpMessage::setMaxRequestSize(
-      config.getValue("MaxRequestSize", HttpMessage::getMaxRequestSize()));
-    Job::setSocketReadTimeout(
-      config.getValue("SocketReadTimeout", Job::getSocketReadTimeout()));
-    Job::setSocketWriteTimeout(
-      config.getValue("SocketWriteTimeout", Job::getSocketWriteTimeout()));
-    Job::setKeepAliveMax(
-      config.getValue("KeepAliveMax", Job::getKeepAliveMax()));
-    Job::setSocketBufferSize(
-      config.getValue("BufferSize", Job::getSocketBufferSize()));
-    HttpReply::setMinCompressSize(
-      config.getValue("MinCompressSize", HttpReply::getMinCompressSize()));
-    HttpReply::setKeepAliveTimeout(
-      config.getValue("KeepAliveTimeout", HttpReply::getKeepAliveTimeout()));
-    HttpReply::setDefaultContentType(
-      config.getValue("DefaultContentType", HttpReply::getDefaultContentType()));
 
     log_debug("listeners.size()=" << listeners.size());
   }
