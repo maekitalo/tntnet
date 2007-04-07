@@ -26,19 +26,15 @@ namespace tnt
 {
   log_define("tntnet.scope")
 
-  static unsigned scopes_total = 0;
-
   Scope::Scope()
     : refs(1)
   {
-    ++scopes_total;
-    log_debug("new Scope " << this << " total=" << scopes_total);
+    log_debug("new Scope " << this);
   }
 
   Scope::~Scope()
   {
-    --scopes_total;
-    log_debug("Scope " << this << " deleted; " << scopes_total << " left");
+    log_debug("Scope " << this << " deleted");
   }
 
   void Scope::addRef()
