@@ -41,11 +41,9 @@ namespace tnt
       Scope(const Scope&);
       Scope& operator=(const Scope&);
 
-      friend class HttpRequest;
-
     public:
       Scope();
-      ~Scope();
+      virtual ~Scope();
 
       void lock()   { mutex.lock(); }
       void unlock() { mutex.unlock(); }
