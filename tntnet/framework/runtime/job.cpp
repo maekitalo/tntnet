@@ -84,9 +84,11 @@ namespace tnt
     {
       accept();
       log_debug("connection accepted");
-      log_debug("socket buffer size = " << getSocketBufferSize());
       if (!Tntnet::shouldStop())
         queue.put(new Tcpjob(listener, queue));
+      else
+        log_warn("tntnet stopping - no new job is generated");
+
     }
     return socket;
   }
@@ -135,6 +137,8 @@ namespace tnt
       log_debug("connection accepted");
       if (!Tntnet::shouldStop())
         queue.put(new SslTcpjob(listener, queue));
+      else
+        log_warn("tntnet stopping - no new ssl-job is generated");
     }
     return socket;
   }
@@ -179,6 +183,15 @@ namespace tnt
 
   std::iostream& GnuTlsTcpjob::getStream()
   {
+    if (socket.cxxtools::net::Socket::bad())
+    {
+      accept();
+      log_debug("connection accepted");
+      if (!Tntnet::shouldStop())
+        queue.put(new GnuTlsTcpjob(listener, queue));
+      else
+        log_warn("tntnet stopping - no new ssl-job is generated");
+    }
     return socket;
   }
 
