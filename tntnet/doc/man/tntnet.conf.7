@@ -322,7 +322,7 @@ A worker-thread waits for some milliseconds on incoming data.
 If there is no data, the job is put into a queue and another thread waits with
 poll(2) on incoming data on multiple sockets.
 The workerthreads are freed and they can respond to other requests quickly.
-The default value is 200 milliseconds, which is good for normal operation.
+The default value is 10 milliseconds, which is good for normal operation.
 A value of 0 results in non-blocking read.
 If timeout is reached, this does not mean, that the socket is closed.
 A small timeout reduces contextswitches on slow connections.
