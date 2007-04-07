@@ -23,6 +23,7 @@
 #include <tnt/httpheader.h>
 #include <cxxtools/log.h>
 #include <sstream>
+#include <algorithm>
 
 #define SET_STATE(new_state)  state = &Parser::new_state
 
