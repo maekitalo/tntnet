@@ -214,14 +214,14 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // Jobqueue
   //
-  void Jobqueue::put(JobPtr j)
+  void Jobqueue::put(JobPtr j, bool force)
   {
     log_debug("Jobqueue::put");
     j->touch();
 
     cxxtools::MutexLock lock(mutex);
 
-    if (capacity > 0)
+    if (!force && capacity > 0)
     {
       while (jobs.size() >= capacity)
       {

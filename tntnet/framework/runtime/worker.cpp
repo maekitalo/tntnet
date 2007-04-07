@@ -137,8 +137,8 @@ namespace tnt
               if (queue.getWaitThreadCount() == 0
                 && !queue.empty())
               {
-                log_debug("pass job to poll-thread");
-                application.getPoller().addIdleJob(j);
+                log_debug("put job back into queue");
+                queue.put(j, true);
                 keepAlive = false;
               }
               else
