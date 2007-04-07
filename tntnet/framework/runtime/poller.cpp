@@ -132,14 +132,14 @@ namespace tnt
     time(&pollTime);
     while (!Tntnet::shouldStop())
     {
+      usleep(100);
+
       append_new_jobs();
 
       if (jobs.size() == 0)
         poll_timeout = -1;
 
       log_debug("epoll_wait with timeout " << poll_timeout << " ms");
-      usleep(100);
-
       int ret = ::epoll_wait(pollFd, events, 16, poll_timeout);
 
       if (ret < 0)
@@ -283,12 +283,12 @@ namespace tnt
   {
     while (!Tntnet::shouldStop())
     {
+      usleep(100);
       append_new_jobs();
 
       try
       {
         log_debug("poll timeout=" << poll_timeout);
-        usleep(100);
         ::poll(pollfds.data(), current_jobs.size() + 1, poll_timeout);
         poll_timeout = -1;
 
