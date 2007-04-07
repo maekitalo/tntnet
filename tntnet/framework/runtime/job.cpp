@@ -84,6 +84,7 @@ namespace tnt
     {
       accept();
       log_debug("connection accepted");
+      log_debug("socket buffer size = " << getSocketBufferSize());
       if (!Tntnet::shouldStop())
         queue.put(new Tcpjob(listener, queue));
     }
@@ -133,7 +134,7 @@ namespace tnt
       accept();
       log_debug("connection accepted");
       if (!Tntnet::shouldStop())
-        queue.put(new Tcpjob(listener, queue));
+        queue.put(new SslTcpjob(listener, queue));
     }
     return socket;
   }
@@ -246,7 +247,7 @@ namespace tnt
     JobPtr j = jobs.front();
     jobs.pop_front();
 
-    // if there are more jobs, wake onther thread
+    // if there are more jobs, wake another thread
     if (!jobs.empty())
       notEmpty.signal();
     notFull.signal();

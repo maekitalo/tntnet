@@ -72,15 +72,6 @@ namespace tnt
     workers.insert(this);
   }
 
-  Worker::~Worker()
-  {
-    cxxtools::MutexLock lock(mutex);
-    workers.erase(this);
-    comploader.cleanup();
-
-    log_debug("delete worker " << threadId << " - " << workers.size() << " threads left - " << application.getQueue().getWaitThreadCount() << " waiting threads");
-  }
-
   void Worker::run()
   {
     threadId = pthread_self();
@@ -188,6 +179,12 @@ namespace tnt
     log_info("end worker-thread " << threadId);
 
     state = stateStopping;
+
+    cxxtools::MutexLock lock(mutex);
+    workers.erase(this);
+    comploader.cleanup();
+
+    log_debug("delete worker " << threadId << " - " << workers.size() << " threads left - " << application.getQueue().getWaitThreadCount() << " waiting threads");
   }
 
   bool Worker::processRequest(HttpRequest& request, std::iostream& socket,

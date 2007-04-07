@@ -63,8 +63,6 @@ namespace tnt
         unsigned keepAliveCount);
       void healthCheck(time_t currentTime);
 
-      ~Worker();
-
     public:
       Worker(Tntnet& app);
 
