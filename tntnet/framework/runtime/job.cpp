@@ -88,7 +88,6 @@ namespace tnt
         queue.put(new Tcpjob(listener, queue));
       else
         log_warn("tntnet stopping - no new job is generated");
-
     }
     return socket;
   }
@@ -231,6 +230,7 @@ namespace tnt
       }
     }
 
+    log_debug("jobs.push");
     jobs.push_back(j);
 
     if (waitThreads == 0)
@@ -249,20 +249,25 @@ namespace tnt
     // wait, until a job is available
     ++waitThreads;
 
+    log_debug("wait for job");
+
     while (jobs.empty())
       notEmpty.wait(lock);
 
     --waitThreads;
 
-    log_debug("Jobqueue: fetch job " << waitThreads << " waiting threads left");
+    log_debug("Jobqueue: fetch job " << waitThreads << " waiting threads left; " << jobs.size() << " jobs in queue");
 
     // take next job (queue is locked)
     JobPtr j = jobs.front();
     jobs.pop_front();
 
-    // if there are more jobs, wake another thread
-    if (!jobs.empty())
+    // if there are threads waiting, wake another
+    if (!jobs.empty() && waitThreads > 0)
+    {
+      log_debug("signal another thread");
       notEmpty.signal();
+    }
     notFull.signal();
 
     return j;
