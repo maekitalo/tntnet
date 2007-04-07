@@ -351,6 +351,9 @@ namespace tnt
 
   void HttpRequest::setApplicationScope(Scope* s)
   {
+    if (applicationScope == s)
+      return;
+
     if (applicationScope)
     {
       releaseApplicationScopeLock();
@@ -364,6 +367,9 @@ namespace tnt
 
   void HttpRequest::setThreadScope(Scope* s)
   {
+    if (threadScope == s)
+      return;
+
     if (threadScope)
       threadScope->release();
 
@@ -375,6 +381,9 @@ namespace tnt
 
   void HttpRequest::setSessionScope(Sessionscope* s)
   {
+    if (sessionScope == s)
+      return;
+
     if (sessionScope)
     {
       releaseSessionScopeLock();
