@@ -40,6 +40,7 @@ namespace tnt
 
         unsigned curline;
         std::string curfile;
+        static bool linenumbersEnabled;
 
       public:
         Bodypart()
@@ -58,6 +59,9 @@ namespace tnt
 
         virtual void getBody(std::ostream& out) const = 0;
         void printLine(std::ostream& out) const;
+
+        static void enableLinenumbers(bool sw = true)  { linenumbersEnabled = sw; }
+        static bool isLinenumbersEnabled()             { return linenumbersEnabled; }
     };
 
     class BodypartStatic : public Bodypart

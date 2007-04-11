@@ -53,7 +53,8 @@ namespace tnt
         debug(argc, argv, 'd'),
         trace(argc, argv, 't'),
         generateDependencies(argc, argv, 'M'),
-        generateHeader(argc, argv, 'h')
+        generateHeader(argc, argv, 'h'),
+        disableLinenumbers(argc, argv, 'L')
     {
       while (true)
       {
@@ -131,6 +132,8 @@ namespace tnt
 
       // initialize
       generator.setDebug(trace);
+      generator.enableLinenumbers(!disableLinenumbers);
+      Bodypart::enableLinenumbers(!disableLinenumbers);
 
       if (mimetype.isSet())
         generator.setMimetype(mimetype);
@@ -302,7 +305,8 @@ namespace tnt
            "  -v               verbose\n"
            "  -t               generate traces\n"
            "  -M               generate dependency for Makefile\n"
-           "  -h               generate separate header-file\n";
+           "  -h               generate separate header-file\n" 
+           "  -L               disable generation of #line-directives\n";
       msg = o.str();
     }
   }

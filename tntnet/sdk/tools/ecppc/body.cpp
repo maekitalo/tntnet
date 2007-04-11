@@ -30,15 +30,20 @@ namespace tnt
 {
   namespace ecppc
   {
+    bool Bodypart::linenumbersEnabled = true;
+
     Bodypart::~Bodypart()
     { }
 
     void Bodypart::printLine(std::ostream& out) const
     {
-      if (!curfile.empty())
-        out << "#line " << (curline + 1) << " \"" << curfile << "\"\n";
-      else
-        log_warn("no filename to print in #line-directive");
+      if (linenumbersEnabled)
+      {
+        if (!curfile.empty())
+          out << "#line " << (curline + 1) << " \"" << curfile << "\"\n";
+        else
+          log_warn("no filename to print in #line-directive");
+      }
     }
 
 

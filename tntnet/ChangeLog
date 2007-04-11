@@ -1,3 +1,6 @@
+2007-04-11 tommi@tntnet.org
+  - new option -L for ecppc to disable generation of #line-directives
+
 2007-03-27 tommi@tntnet.org
   - fix racing-condition in scope-handling, which caused a crash on MP-boxes
     under high load

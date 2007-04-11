@@ -45,7 +45,8 @@ namespace tnt
         currentComp(&maincomp),
         externData(false),
         compress(false),
-        c_time(0)
+        c_time(0),
+        linenumbersEnabled(true)
     {
       time_t cur;
       time(&cur);
@@ -626,7 +627,8 @@ namespace tnt
 
     void Generator::printLine(std::ostream& out) const
     {
-      out << "#line " << (curline + 1) << " \"" << curfile << "\"\n";
+      if (linenumbersEnabled)
+        out << "#line " << (curline + 1) << " \"" << curfile << "\"\n";
     }
 
     void Generator::getHeader(std::ostream& header, const std::string& filename) const

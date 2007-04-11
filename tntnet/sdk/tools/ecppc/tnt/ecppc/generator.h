@@ -93,6 +93,8 @@ namespace tnt
         unsigned curline;
         std::string curfile;
 
+        bool linenumbersEnabled;
+
         bool hasScopevars() const;
 
         // codegenerator helper
@@ -137,6 +139,9 @@ namespace tnt
 
         void setLastModifiedTime(time_t t)           { c_time = t; }
         time_t getLastModifiedTime() const           { return c_time; }
+
+        void enableLinenumbers(bool sw = true)       { linenumbersEnabled = sw; }
+        bool isLinenumbersEnabled() const            { return linenumbersEnabled; }
 
         void addImage(const std::string& name, const std::string& content,
             const std::string& mime, time_t c_time);
