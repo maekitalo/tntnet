@@ -60,7 +60,7 @@ namespace tnt
     container_type::iterator it = data.find(key);
 
     log_debug("Scope::get(\"" << key << "\") Scope=" << this
-           << " => " << (it == data.end() ? 0 : it->second));
+           << " => " << (it == data.end() ? (void*)0 : (void*)it->second.getPtr()));
 
     return it == data.end() ? 0 : it->second.getPtr();
   }

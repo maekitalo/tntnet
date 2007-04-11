@@ -27,6 +27,7 @@
 #include <vector>
 #include <fstream>
 #include <errno.h>
+#include <signal.h>
 
 log_define("tntnet.process");
 

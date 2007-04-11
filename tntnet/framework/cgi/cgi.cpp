@@ -81,7 +81,7 @@ namespace tnt
 
     const char* remotePort = getenv("REMOTE_PORT");
     if (remotePort)
-      addr.sin6_port = stringTo<u_int16_t>(remotePort);
+      addr.sin6_port = stringTo<uint16_t>(remotePort);
 
     const char* remoteAddr = getenv("REMOTE_ADDR");
     if (remoteAddr)

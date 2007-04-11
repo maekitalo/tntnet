@@ -56,19 +56,19 @@ namespace tnt
         : secureFlag(false)
       { }
 
-      Cookie(const std::string& v, unsigned maxAge = 0)
+      Cookie(const std::string& v, unsigned maxAge_ = 0)
         : value(v),
           secureFlag(false)
       {
-        if (maxAge)
-          setMaxAge(maxAge);
+        if (maxAge_)
+          setMaxAge(maxAge_);
       }
-      Cookie(const char* v, unsigned maxAge = 0)
+      Cookie(const char* v, unsigned maxAge_ = 0)
         : value(v),
           secureFlag(false)
       {
-        if (maxAge)
-          setMaxAge(maxAge);
+        if (maxAge_)
+          setMaxAge(maxAge_);
       }
 
       const std::string& getValue() const  { return value; }
@@ -81,8 +81,8 @@ namespace tnt
 
       operator const std::string& () const { return value; }
 
-      void setAttr(const std::string& name, const std::string& value)
-        { attrs[name] = value; }
+      void setAttr(const std::string& name, const std::string& value_)
+        { attrs[name] = value_; }
 
       unsigned    getMaxAge() const;
       std::string getComment() const { return getAttr(comment); }
@@ -93,11 +93,11 @@ namespace tnt
       bool        isSecure() const   { return secureFlag; }
 
       void setMaxAge(unsigned seconds);
-      void setComment(const std::string& value)  { setAttr(comment, value); }
-      void setDomain(const std::string& value)   { setAttr(domain, value); }
-      void setPath(const std::string& value)     { setAttr(path, value); }
-      void setVersion(const std::string& value)  { setAttr(version, value); }
-      void setExpires(const std::string& value)  { setAttr(expires, value); }
+      void setComment(const std::string& value_) { setAttr(comment, value_); }
+      void setDomain(const std::string& value_)  { setAttr(domain, value_); }
+      void setPath(const std::string& value_)    { setAttr(path, value_); }
+      void setVersion(const std::string& value_) { setAttr(version, value_); }
+      void setExpires(const std::string& value_) { setAttr(expires, value_); }
       void setSecure(bool f = true)              { secureFlag = f; }
   };
 
@@ -121,8 +121,8 @@ namespace tnt
         return it == data.end() ? emptyCookie : it->second;
       }
 
-      void setCookie(const std::string& name, const Cookie& value)
-        { data[name] = value; }
+      void setCookie(const std::string& name, const Cookie& value_)
+        { data[name] = value_; }
 
       void clearCookie(const std::string& name);
       void clearCookie(const std::string& name, const Cookie& c);

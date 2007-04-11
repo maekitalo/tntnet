@@ -1,5 +1,7 @@
 2007-04-11 tommi@tntnet.org
   - new option -L for ecppc to disable generation of #line-directives
+  - add missing includes and rename some variables to suppress warnings from
+    Sun Studo 11 (thank you Mark)
 
 2007-03-27 tommi@tntnet.org
   - fix racing-condition in scope-handling, which caused a crash on MP-boxes
