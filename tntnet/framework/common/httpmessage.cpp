@@ -20,6 +20,7 @@
 
 #include <tnt/httpmessage.h>
 #include <cxxtools/log.h>
+#include <cxxtools/thread.h>
 #include <list>
 #include <sstream>
 
