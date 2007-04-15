@@ -76,8 +76,6 @@ namespace tnt
       requestScope->addRef();
     if (applicationScope)
       applicationScope->addRef();
-    if (threadScope)
-      threadScope->addRef();
     if (sessionScope)
       sessionScope->addRef();
   }
@@ -90,8 +88,6 @@ namespace tnt
       requestScope->release();
     if (applicationScope)
       applicationScope->release();
-    if (threadScope)
-      threadScope->release();
     if (sessionScope)
       sessionScope->release();
   }
@@ -120,8 +116,6 @@ namespace tnt
       requestScope->addRef();
     if (applicationScope)
       applicationScope->addRef();
-    if (threadScope)
-      threadScope->addRef();
     if (sessionScope)
       sessionScope->addRef();
 
@@ -153,11 +147,7 @@ namespace tnt
       applicationScope = 0;
     }
 
-    if (threadScope)
-    {
-      threadScope->release();
-      threadScope = 0;
-    }
+    threadScope = 0;
 
     if (sessionScope)
     {
@@ -367,15 +357,6 @@ namespace tnt
 
   void HttpRequest::setThreadScope(Scope* s)
   {
-    if (threadScope == s)
-      return;
-
-    if (threadScope)
-      threadScope->release();
-
-    if (s)
-      s->addRef();
-
     threadScope = s;
   }
 
