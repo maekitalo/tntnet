@@ -24,19 +24,19 @@ log_define("tntnet.testjob");
 
 namespace tnt
 {
-  StressHttpClientStreambuf::DummyHttpClientStreambuf(const std::string& url)
+  StressHttpClientStreambuf::StressHttpClientStreambuf(const std::string& url)
   {
     request = "GET " + url + " HTTP/1.0\r\nUser-agent: dummy\r\n\r\n";
     char* p = const_cast<char*>(request.data());
     setg(p, p, p + request.size());
   }
 
-  StressHttpClientStreambuf::int_type DummyHttpClientStreambuf::overflow(int_type c)
+  StressHttpClientStreambuf::int_type StressHttpClientStreambuf::overflow(int_type c)
   {
     return 0;
   }
 
-  StressHttpClientStreambuf::int_type DummyHttpClientStreambuf::underflow()
+  StressHttpClientStreambuf::int_type StressHttpClientStreambuf::underflow()
   {
     return traits_type::eof();
   }
@@ -49,7 +49,7 @@ namespace tnt
   cxxtools::Mutex StressJob::mutex;
   unsigned StressJob::count = 0;
 
-  StressJob::DummyJob(Jobqueue& queue_, const std::string& url_)
+  StressJob::StressJob(Jobqueue& queue_, const std::string& url_)
     : client(url_),
       init(false),
       queue(queue_),
