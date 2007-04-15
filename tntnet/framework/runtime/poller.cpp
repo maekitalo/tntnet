@@ -69,7 +69,7 @@ namespace tnt
     if (ret < 0)
     {
       if (errno == EBADF)
-        log_debug("fd " << fd << " couldn't be removed");
+        log_warn("fd " << fd << " couldn't be removed");
       else
         throw SysError("epoll_ctl(EPOLL_CTL_DEL)");
     }
