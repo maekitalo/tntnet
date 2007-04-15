@@ -82,17 +82,7 @@ namespace tnt
       mutable std::string serverAddrStr;
 
     public:
-      HttpRequest()
-        : ssl(false),
-          locale_init(false),
-          encodingRead(false),
-          requestScope(0),
-          applicationScope(0),
-          threadScope(0),
-          sessionScope(0),
-          applicationScopeLocked(false),
-          sessionScopeLocked(false)
-        { }
+      HttpRequest();
       HttpRequest(const std::string& url);
       HttpRequest(const HttpRequest& r);
       ~HttpRequest();

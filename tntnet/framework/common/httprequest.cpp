@@ -39,6 +39,21 @@ namespace tnt
   //
   unsigned HttpRequest::serial_ = 0;
 
+  HttpRequest::HttpRequest()
+    : ssl(false),
+      locale_init(false),
+      encodingRead(false),
+      requestScope(0),
+      applicationScope(0),
+      threadScope(0),
+      sessionScope(0),
+      applicationScopeLocked(false),
+      sessionScopeLocked(false)
+  {
+    memset(&peerAddr, 0, sizeof(peerAddr));
+    memset(&serverAddr, 0, sizeof(peerAddr));
+  }
+
   HttpRequest::HttpRequest(const std::string& url)
     : ssl(false),
       locale_init(false),
@@ -217,15 +232,15 @@ namespace tnt
     {
 #ifdef HAVE_INET_NTOP
       const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
-      char strbuf[INET6_ADDRSTRLEN];
-      inet_ntop(sa->sin_family, &sa->sin_addr, strbuf, sizeof(strbuf));
-      str = strbuf;
+      char strbuf[INET6_ADDRSTRLEN + 1];
+      const char* p = inet_ntop(sa->sin_family, &sa->sin_addr, strbuf, sizeof(strbuf));
+      str = (p == 0 ? "-" : strbuf);
 #else
       static cxxtools::Mutex monitor;
       cxxtools::MutexLock lock(monitor);
 
-      char* p = inet_ntoa(peerAddr.sin_addr);
-      str = p;
+      const char* p = inet_ntoa(peerAddr.sin_addr);
+      str = (p == 0 ? "-" : strbuf);
 #endif
     }
   }
