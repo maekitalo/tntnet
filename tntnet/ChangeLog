@@ -1,3 +1,7 @@
+2007-04-15 tommi@tntnet.org
+  - fixed serious bug: don't delete thread-scope in request - worker-thread
+    does this
+
 2007-04-11 tommi@tntnet.org
   - new option -L for ecppc to disable generation of #line-directives
   - add missing includes and rename some variables to suppress warnings from
