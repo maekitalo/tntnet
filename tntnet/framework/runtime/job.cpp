@@ -249,7 +249,7 @@ namespace tnt
     // wait, until a job is available
     ++waitThreads;
 
-    log_debug("wait for job");
+    log_debug("wait for job (" << jobs.size() << " jobs available)");
 
     while (jobs.empty())
       notEmpty.wait(lock);
