@@ -38,6 +38,28 @@ namespace tnt
   Job::~Job()
   { }
 
+  unsigned Job::addRef()
+  {
+    cxxtools::MutexLock lock(mutex);
+    return ++refs;
+  }
+
+  unsigned Job::release()
+  {
+    mutex.lock();
+    if (--refs == 0)
+    {
+      mutex.unlock();
+      delete this;
+      return 0;
+    }
+    else
+    {
+      mutex.unlock();
+      return refs;
+    }
+  }
+
   void Job::clear()
   {
     parser.reset();

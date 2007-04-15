@@ -68,6 +68,7 @@ namespace tnt
       time_t lastAccessTime;
 
       unsigned refs;
+      cxxtools::Mutex mutex;
 
       static unsigned socket_read_timeout;
       static unsigned socket_write_timeout;
@@ -86,17 +87,8 @@ namespace tnt
       virtual ~Job();
 
     public:
-      unsigned addRef()   { return ++refs; }
-      unsigned release()
-      {
-        if (--refs == 0)
-        {
-          delete this;
-          return 0;
-        }
-        else
-          return refs;
-      }
+      unsigned addRef();
+      unsigned release();
 
       virtual std::iostream& getStream() = 0;
       virtual int getFd() const = 0;

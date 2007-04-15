@@ -46,13 +46,16 @@ namespace tnt
 
   void Scope::release()
   {
-    cxxtools::MutexLock lock(refmutex);
+    refmutex.lock();
     log_debug("Scope::release(); this=" << this << " refs=" << refs);
     if (--refs == 0)
     {
+      refmutex.unlock();
       log_debug("delete Scope " << this);
       delete this;
     }
+    else
+      refmutex.unlock();
   }
 
   Object* Scope::get(const std::string& key)
