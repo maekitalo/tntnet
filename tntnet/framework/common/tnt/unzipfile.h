@@ -150,9 +150,9 @@ namespace tnt
 
     public:
       unzipFileStream(unzipFile& f, const std::string& fileName, bool caseSensitivity = true)
-        : std::istream(&streambuf),
+        : std::istream(0),
           streambuf(f, fileName, caseSensitivity)
-      { }
+        { rdbuf(&streambuf); }
   };
 
 }
