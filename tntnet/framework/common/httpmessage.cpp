@@ -83,8 +83,8 @@ namespace tnt
 
   std::string HttpMessage::htdate(struct ::tm* tm)
   {
-    const char* wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-    const char* monthn[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    static const char* wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    static const char* monthn[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     char buffer[80];
 
@@ -100,6 +100,8 @@ namespace tnt
     static time_t lastDay = 0;
     static cxxtools::Mutex mutex;
 
+    cxxtools::MutexLock lock(mutex, false);
+
     /*
      * we cache the last split tm-struct here, because it is pretty expensive
      * to calculate the date with gmtime_r.
@@ -108,30 +110,13 @@ namespace tnt
     time_t t;
     struct ::tm tm;
 
-    // get current time
     time(&t);
     time_t day = t / (24*60*60);
 
-    // check lastDay
-    if (day == lastDay)
-    {
-      // We can use the cached tm-struct and calculate hour, minute and
-      // seconds. No locking was needed at all. This is the common case.
-      memcpy(&tm, &lastTm, sizeof(struct ::tm));
-      tm.tm_sec = t % 60;
-      t /= 60;
-      tm.tm_min = t % 60;
-      t /= 24;
-      tm.tm_hour = t % 24;
-    }
-
-    // We recheck the last day here to ensure, our lastTm was valid even
-    // after the check. There is a small chance, that the day has changed
-    // and someone was just setting the lastTm.
     if (day != lastDay)
     {
       // Day differs, we calculate new date.
-      cxxtools::MutexLock lock(mutex);
+      lock.lock();
 
       // Check again with lock. Another thread might have computed it already.
       if (day != lastDay)
@@ -142,11 +127,19 @@ namespace tnt
         // the lock above. That way we avoid racing-conditions when accessing
         // lastTm without locking in the normal case.
         lastDay = 0;
-        gmtime_r(&t, &tm);
-        memcpy(&lastTm, &tm, sizeof(struct ::tm));
+        gmtime_r(&t, &lastTm);
         lastDay = day;
       }
     }
+
+    // We can use the cached tm-struct and calculate hour, minute and
+    // seconds. No locking was needed at all. This is the common case.
+    memcpy(&tm, &lastTm, sizeof(struct ::tm));
+    tm.tm_sec = t % 60;
+    t /= 60;
+    tm.tm_min = t % 60;
+    t /= 24;
+    tm.tm_hour = t % 24;
 
     return htdate(&tm);
   }
