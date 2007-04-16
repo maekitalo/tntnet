@@ -88,9 +88,7 @@ namespace tnt
     {
       cxxtools::MutexLock lock(mutex);
       new_jobs.insert(job);
-
-      if (new_jobs.size() <= 1)
-        notify_pipe.write('A');
+      notify_pipe.write('A');
     }
 
     log_debug("addIdleJob ready");
