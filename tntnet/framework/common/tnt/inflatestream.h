@@ -68,13 +68,13 @@ namespace tnt
 
     public:
       explicit InflateStream(std::streambuf* sink)
-        : std::ostream(0),
+        : std::ostream(),
           streambuf(sink)
-        { rdbuf(&streambuf); }
+        { init(&streambuf); }
       explicit InflateStream(std::ostream& sink)
-        : std::ostream(0),
+        : std::ostream(),
           streambuf(sink.rdbuf())
-        { rdbuf(&streambuf); }
+        { init(&streambuf); }
 
       void setSink(std::streambuf* sink)   { streambuf.setSink(sink); }
       void setSink(std::ostream& sink)     { streambuf.setSink(sink.rdbuf()); }
