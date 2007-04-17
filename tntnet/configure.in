@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 1.5.3.3, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.5.3.4, [Tommi Maekitalo <tommi@tntnet.org>])
 AM_INIT_AUTOMAKE
 
 abi_current=5

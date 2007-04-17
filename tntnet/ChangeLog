@@ -1,3 +1,9 @@
+2007-04-16 tommi@tntnet.org
+  - 2 other serious bugs fixed: epoll was not always waked up on new jobs.
+    After this, idle-jobs where queued until system-resources were
+	exhausted. Another problem was a race-condition when the http-date-header
+	was generated. After these fixes tntnet runs stable under high load.
+
 2007-04-15 tommi@tntnet.org
   - fixed serious bug: don't delete thread-scope in request - worker-thread
     does this
@@ -8,7 +14,7 @@
     Sun Studo 11 (thank you Mark)
 
 2007-03-27 tommi@tntnet.org
-  - fix racing-condition in scope-handling, which caused a crash on MP-boxes
+  - fix race-condition in scope-handling, which caused a crash on MP-boxes
     under high load
   - check for enough worker-threads to handle all sockets (tntnet now needs at
     least one per listen-socket after removing listener threads)
