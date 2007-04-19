@@ -98,9 +98,9 @@ namespace tnt
   {
     static struct ::tm lastTm;
     static time_t lastDay = 0;
+    static time_t lastTime = 0;
+    static std::string lastHtdate;
     static cxxtools::Mutex mutex;
-
-    cxxtools::MutexLock lock(mutex, false);
 
     /*
      * we cache the last split tm-struct here, because it is pretty expensive
@@ -108,40 +108,33 @@ namespace tnt
      */
 
     time_t t;
-    struct ::tm tm;
-
     time(&t);
     time_t day = t / (24*60*60);
+
+    cxxtools::MutexLock lock(mutex);
 
     if (day != lastDay)
     {
       // Day differs, we calculate new date.
-      lock.lock();
 
-      // Check again with lock. Another thread might have computed it already.
-      if (day != lastDay)
-      {
-        // still differs
-
-        // We set lastDay to zero first, so that other threads will reach
-        // the lock above. That way we avoid racing-conditions when accessing
-        // lastTm without locking in the normal case.
-        lastDay = 0;
-        gmtime_r(&t, &lastTm);
-        lastDay = day;
-      }
+      gmtime_r(&t, &lastTm);
+      lastDay = day;
     }
 
-    // We can use the cached tm-struct and calculate hour, minute and
-    // seconds. No locking was needed at all. This is the common case.
-    memcpy(&tm, &lastTm, sizeof(struct ::tm));
-    tm.tm_sec = t % 60;
-    t /= 60;
-    tm.tm_min = t % 60;
-    t /= 24;
-    tm.tm_hour = t % 24;
+    if (lastTime != t)
+    {
+      // We can use the cached tm-struct and calculate hour, minute and
+      // seconds. No locking was needed at all. This is the common case.
+      lastTm.tm_sec = t % 60;
+      t /= 60;
+      lastTm.tm_min = t % 60;
+      t /= 24;
+      lastTm.tm_hour = t % 24;
+      lastHtdate = htdate(&lastTm);
+      lastTime = t;
+    }
 
-    return htdate(&tm);
+    return lastHtdate;
   }
 
   namespace
