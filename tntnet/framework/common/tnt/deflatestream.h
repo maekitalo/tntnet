@@ -71,11 +71,11 @@ namespace tnt
 
     public:
       explicit DeflateStream(std::streambuf* sink, int level = Z_DEFAULT_COMPRESSION)
-        : std::ostream(),
+        : std::ostream(0),
           streambuf(sink, level)
         { init(&streambuf); }
       explicit DeflateStream(std::ostream& sink, int level = Z_DEFAULT_COMPRESSION)
-        : std::ostream(),
+        : std::ostream(0),
           streambuf(sink.rdbuf(), level)
         { init(&streambuf); }
 

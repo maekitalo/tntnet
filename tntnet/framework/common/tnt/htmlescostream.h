@@ -48,11 +48,11 @@ namespace tnt
 
     public:
       HtmlEscOstream(std::ostream& sink)
-        : std::ostream(),
+        : std::ostream(0),
           streambuf(sink.rdbuf())
         { init(&streambuf); }
       HtmlEscOstream(std::streambuf* sink)
-        : std::ostream(),
+        : std::ostream(0),
           streambuf(sink)
         { init(&streambuf); }
 
