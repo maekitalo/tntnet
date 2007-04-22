@@ -338,7 +338,8 @@ And 3 scopes:
 .RS
 .TP
 .I component
-The variable is only valid in the same component
+The variable is only valid in the same component.
+This is the default scope.
 .TP
 .I page
 The variable is shared between the components in a single ecpp-file.
@@ -350,7 +351,6 @@ Variables are shared between all components. If you define the same
 variable with global-scope in different components, they must have the
 same type. This is achieved most easily defining them in a separate
 file and include them with a <%include>-block.
-This is the default scope.
 .TP
 .RE
 .PP
