@@ -103,15 +103,15 @@ namespace tnt
     public:
       explicit openssl_iostream(unsigned bufsize = 256, int timeout = -1)
         : OpensslStream(-1),
-          std::iostream(&m_buffer),
+          std::iostream(0),
           m_buffer(*this, bufsize, timeout)
-        { }
+        { init(&m_buffer); }
 
       explicit openssl_iostream(const OpensslServer& server, unsigned bufsize = 256, int timeout = -1)
         : OpensslStream(server),
-          std::iostream(&m_buffer),
+          std::iostream(0),
           m_buffer(*this, bufsize, timeout)
-        { }
+        { init(&m_buffer); }
 
       void setTimeout(int timeout)  { m_buffer.setTimeout(timeout); }
       int getTimeout() const        { return m_buffer.getTimeout(); }

@@ -128,15 +128,15 @@ namespace tnt
     public:
       explicit GnuTls_iostream(unsigned bufsize = 256, int timeout = -1)
         : GnuTlsStream(-1),
-          std::iostream(&m_buffer),
+          std::iostream(0),
           m_buffer(*this, bufsize, timeout)
-        { }
+        { init(&m_buffer); }
 
       explicit GnuTls_iostream(const GnuTlsServer& server, unsigned bufsize = 256, int timeout = -1)
         : GnuTlsStream(server),
-          std::iostream(&m_buffer),
+          std::iostream(0),
           m_buffer(*this, bufsize, timeout)
-        { }
+        { init(&m_buffer); }
 
       void setTimeout(int timeout)  { m_buffer.setTimeout(timeout); }
       int getTimeout() const        { return m_buffer.getTimeout(); }
