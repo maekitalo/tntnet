@@ -98,6 +98,7 @@ namespace tnt
     getRequest().setPeerAddr(socket.getPeeraddr());
     getRequest().setServerAddr(sockaddr);
     getRequest().setSsl(false);
+    touch();
   }
 
   std::iostream& Tcpjob::getStream()
@@ -148,6 +149,7 @@ namespace tnt
     getRequest().setSsl(true);
 
     setRead();
+    touch();
   }
 
   std::iostream& SslTcpjob::getStream()
@@ -200,6 +202,7 @@ namespace tnt
     getRequest().setSsl(true);
 
     setRead();
+    touch();
   }
 
   std::iostream& GnuTlsTcpjob::getStream()
