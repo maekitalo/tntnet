@@ -24,7 +24,6 @@
 #include <string>
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/thread.h>
-#include <cxxtools/pool.h>
 #include <tnt/comploader.h>
 #include <tnt/tntnet.h>
 #include <tnt/scope.h>
@@ -40,11 +39,7 @@ namespace tnt
 
       Tntnet& application;
 
-      typedef cxxtools::Pool<Comploader> ComploaderPoolType;
-      static ComploaderPoolType comploaderPool;
-
-      ComploaderPoolType::objectptr_type comploaderObject;
-      Comploader& comploader;
+      Comploader comploader;
 
       Scope threadScope;
 

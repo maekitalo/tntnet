@@ -41,17 +41,16 @@ namespace tnt
 
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual void drop();
   };
 
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class ErrorFactory : public tnt::SingletonComponentFactory
+  class ErrorFactory : public tnt::ComponentFactory
   {
     public:
       ErrorFactory(const std::string& componentName)
-        : tnt::SingletonComponentFactory(componentName)
+        : tnt::ComponentFactory(componentName)
         { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
@@ -63,7 +62,7 @@ namespace tnt
     return new Error();
   }
 
-  TNT_COMPONENTFACTORY(error, ErrorFactory)
+  static ErrorFactory errorFactory("error");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition
@@ -89,11 +88,6 @@ namespace tnt
     reply.throwError(msg);
 
     return DECLINED;
-  }
-
-  void Error::drop()
-  {
-    factory.drop(this);
   }
 
 }

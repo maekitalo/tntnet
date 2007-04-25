@@ -44,11 +44,11 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class RedirectFactory : public tnt::SingletonComponentFactory
+  class RedirectFactory : public tnt::ComponentFactory
   {
     public:
       RedirectFactory(const std::string& componentName)
-        : tnt::SingletonComponentFactory(componentName)
+        : tnt::ComponentFactory(componentName)
         { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
@@ -60,7 +60,7 @@ namespace tnt
     return new Redirect();
   }
 
-  TNT_COMPONENTFACTORY(redirect, RedirectFactory)
+  static RedirectFactory redirectFactory("redired");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition
@@ -71,8 +71,4 @@ namespace tnt
     return reply.redirect(request.getPathInfo());
   }
 
-  void Redirect::drop()
-  {
-    factory.drop(this);
-  }
 }

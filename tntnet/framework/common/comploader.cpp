@@ -110,17 +110,7 @@ Comploader::Comploader()
   }
 }
 
-Comploader::~Comploader()
-{
-  for (componentmap_type::iterator i = componentmap.begin();
-       i != componentmap.end(); ++i)
-  {
-    log_debug("drop " << i->first << " (" << i->second << ')');
-    i->second->drop();
-  }
-}
-
-cxxtools::RWLock Comploader::libraryMonitor;
+cxxtools::RWLock Comploader::monitor;
 Comploader::librarymap_type Comploader::librarymap;
 const Tntconfig* Comploader::config = 0;
 Comploader::search_path_type Comploader::search_path;
@@ -131,7 +121,7 @@ Component& Comploader::fetchComp(const Compident& ci,
 {
   log_debug("fetchComp \"" << ci << '"');
 
-  cxxtools::RdLock lock(componentMonitor);
+  cxxtools::RdLock lock(monitor);
 
   // lookup Component
   componentmap_type::iterator it = componentmap.find(ci);
@@ -141,7 +131,7 @@ Component& Comploader::fetchComp(const Compident& ci,
     // Component
     lock.unlock();
 
-    cxxtools::WrLock wrlock(componentMonitor);
+    cxxtools::WrLock wrlock(monitor);
 
     // doublecheck after getting writelock
     it = componentmap.find(ci);
@@ -210,78 +200,54 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib \"" << libname << '"');
 
-  cxxtools::RdLock lock(libraryMonitor);
   librarymap_type::iterator it = librarymap.find(libname);
+  it = librarymap.find(libname);
   if (it == librarymap.end())
   {
-    log_debug("library not found - get write-lock");
+    log_debug("load library \"" << libname << '"');
+    ComponentLibrary::factoryMapType factoryMap;
+    currentFactoryMap = &factoryMap;
+    ValueResetter<ComponentLibrary::factoryMapType*> valueResetter(currentFactoryMap, 0);
 
-    lock.unlock();
+    // load library
+    log_info("load library \"" << libname << '"');
+    ComponentLibrary lib;
 
-    cxxtools::WrLock wrlock(libraryMonitor);
-
-    // doublecheck after writelock
-    it = librarymap.find(libname);
-    if (it == librarymap.end())
+    bool found = false;
+    for (search_path_type::const_iterator p = search_path.begin();
+         p != search_path.end(); ++p)
     {
-      log_debug("load library \"" << libname << '"');
-      ComponentLibrary::factoryMapType factoryMap;
-      currentFactoryMap = &factoryMap;
-      ValueResetter<ComponentLibrary::factoryMapType*> valueResetter(currentFactoryMap, 0);
-
-      // load library
-      log_info("load library \"" << libname << '"');
-      ComponentLibrary lib;
-
-      bool found = false;
-      for (search_path_type::const_iterator p = search_path.begin();
-           p != search_path.end(); ++p)
+      try
       {
-        try
-        {
-          log_debug("load library \"" << libname << "\" from " << *p << " dir");
-          lib = ComponentLibrary(*p, libname);
-          found = true;
-          break;
-        }
-        catch (const cxxtools::dl::DlopenError&)
-        {
-        }
+        log_debug("load library \"" << libname << "\" from " << *p << " dir");
+        lib = ComponentLibrary(*p, libname);
+        found = true;
+        break;
       }
-
-      if (!found)
+      catch (const cxxtools::dl::DlopenError&)
       {
-        try
-        {
-          log_debug("load library \"" << libname << "\" from current dir");
-          lib = ComponentLibrary(".", libname);
-        }
-        catch (const cxxtools::dl::DlopenError& e)
-        {
-          log_debug("library \"" << e.getLibname() << "\" in current dir not found - search lib-path");
-          lib = ComponentLibrary(libname);
-        }
       }
-
-      lib.factoryMap = factoryMap;
-      it = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
     }
-    else
+
+    if (!found)
     {
-      log_debug("library got after writelock");
+      try
+      {
+        log_debug("load library \"" << libname << "\" from current dir");
+        lib = ComponentLibrary(".", libname);
+      }
+      catch (const cxxtools::dl::DlopenError& e)
+      {
+        log_debug("library \"" << e.getLibname() << "\" in current dir not found - search lib-path");
+        lib = ComponentLibrary(libname);
+      }
     }
+
+    lib.factoryMap = factoryMap;
+    it = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
   }
 
   return it->second;
-}
-
-void Comploader::cleanup()
-{
-  while (!componentmap.empty())
-  {
-    componentmap.begin()->second->drop();
-    componentmap.erase(componentmap.begin());
-  }
 }
 
 void Comploader::configure(const Tntconfig& config_)

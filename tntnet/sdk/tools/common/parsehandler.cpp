@@ -56,10 +56,6 @@ namespace tnt
     {
     }
 
-    void ParseHandler::onDeclare(const std::string& code)
-    {
-    }
-
     void ParseHandler::onInit(const std::string& code)
     {
     }
@@ -85,10 +81,6 @@ namespace tnt
     }
 
     void ParseHandler::onEndCall(const std::string& comp)
-    {
-    }
-
-    void ParseHandler::onDeclareShared(const std::string& code)
     {
     }
 

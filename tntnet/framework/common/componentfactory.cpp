@@ -29,10 +29,15 @@ namespace tnt
   const std::string factorySuffix = "__factory";
 
   ComponentFactory::ComponentFactory(const std::string& componentName)
-    : configured(false)
+    : theComponent(0)
   {
     log_debug("create componentfactory for " << componentName);
     Comploader::registerFactory(componentName, this);
+  }
+
+  ComponentFactory::~ComponentFactory()
+  {
+    delete theComponent;
   }
 
   void ComponentFactory::doConfigure(const tnt::Tntconfig& config)
@@ -42,46 +47,12 @@ namespace tnt
   Component* ComponentFactory::create(const tnt::Compident& ci,
     const tnt::Urlmapper& um, tnt::Comploader& cl)
   {
-    if (!configured)
+    if (theComponent == 0)
     {
       doConfigure(cl.getConfig());
-      configured = true;
+      theComponent = doCreate(ci, um, cl);
     }
 
-    return doCreate(ci, um, cl);
-  }
-
-  void ComponentFactory::drop(Component* comp)
-  {
-    log_debug("delete component " << comp);
-    delete comp;
-  }
-
-  Component* SingletonComponentFactory::create(const tnt::Compident& ci,
-    const tnt::Urlmapper& um, tnt::Comploader& cl)
-  {
-      cxxtools::MutexLock lock(mutex);
-      if (theComponent == 0)
-      {
-        theComponent = ComponentFactory::create(ci, um, cl);
-        refs = 1;
-      }
-      else
-        ++refs;
-
-      return theComponent;
-  }
-
-  void SingletonComponentFactory::drop(Component* comp)
-  {
-    cxxtools::MutexLock lock(mutex);
-    if (--refs <= 0)
-    {
-      log_debug("delete component " << comp);
-      delete theComponent;
-      theComponent = 0;
-    }
-    else
-      log_debug("component " << comp << " references left = " << refs);
+    return theComponent;
   }
 }

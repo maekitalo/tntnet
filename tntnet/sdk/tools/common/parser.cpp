@@ -678,11 +678,6 @@ namespace tnt
                 log_debug("onPre(\"" << code << "\")");
                 handler.onPre(code);
               }
-              else if (tag == "declare")
-              {
-                log_debug("onDeclare(\"" << code << "\")");
-                handler.onDeclare(code);
-              }
               else if (tag == "init")
               {
                 log_debug("onInit(\"" << code << "\")");
@@ -692,11 +687,6 @@ namespace tnt
               {
                 log_debug("onCleanup(\"" << code << "\")");
                 handler.onCleanup(code);
-              }
-              else if (tag == "declare_shared")
-              {
-                log_debug("onDeclareShared(\"" << code << "\")");
-                handler.onDeclareShared(code);
               }
               else if (tag == "shared")
               {

@@ -37,8 +37,7 @@ namespace tnt
     // Generator
     //
     Generator::Generator(const std::string& classname)
-      : singleton(true),
-        raw(false),
+      : raw(false),
         maincomp(classname),
         haveCloseComp(false),
         closeComp(classname),
@@ -135,15 +134,6 @@ namespace tnt
       pre += m.str();
     }
 
-    void Generator::onDeclare(const std::string& code)
-    {
-      singleton = false;
-      std::ostringstream m;
-      printLine(m);
-      m << code << '\n';
-      declare += m.str();
-    }
-
     void Generator::onInit(const std::string& code)
     {
       std::ostringstream m;
@@ -184,11 +174,6 @@ namespace tnt
     void Generator::onEndCall(const std::string& comp)
     {
       currentComp->addEndCall(curline, curfile, comp);
-    }
-
-    void Generator::onDeclareShared(const std::string& code)
-    {
-      declare_shared += code;
     }
 
     void Generator::onShared(const std::string& code)
@@ -279,8 +264,6 @@ namespace tnt
              "#include <tnt/convert.h>\n";
       if (!componentclass.empty())
         out << "#include \"" << componentclass << ".h\"\n";
-      if (!baseclass.empty())
-        out << "#include \"" << baseclass << ".h\"\n";
     }
 
     void Generator::getPre(std::ostream& out) const
@@ -301,13 +284,6 @@ namespace tnt
       out << "} // namespace\n\n";
     }
 
-    void Generator::getDeclareShared(std::ostream& out) const
-    {
-      out << "// <%declare_shared>\n"
-          << declare_shared 
-          << "// </%declare_shared>\n";
-    }
-
     void Generator::getClassDeclaration(std::ostream& out) const
     {
       out << "class " << maincomp.getName() << " : public ";
@@ -315,14 +291,9 @@ namespace tnt
         out << "tnt::EcppComponent";
       else
         out << componentclass;
-      if (!baseclass.empty())
-        out << ", public " << baseclass;
       out << "\n"
              "{\n"
              "    " << maincomp.getName() << "& main()  { return *this; }\n\n" 
-             "    // <%declare>\n"
-          << declare
-          << "    // </%declare>\n\n"
              "  protected:\n"
              "    ~" << maincomp.getName() << "();\n\n"
              "  public:\n"
@@ -331,8 +302,6 @@ namespace tnt
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
                "                    cxxtools::QueryParams& qparam);\n";
-      out << "    void drop();\n\n";
-
       if (!attr.empty())
         out << "    std::string getAttribute(const std::string& name,\n"
                "      const std::string& def = std::string()) const;\n\n";
@@ -364,8 +333,7 @@ namespace tnt
              "#include <tnt/httpheader.h>\n"
              "#include <tnt/http.h>\n"
              "#include <tnt/data.h>\n"
-             "#include <tnt/componentfactory.h>\n"
-             "#include <tnt/componentguard.h>\n";
+             "#include <tnt/componentfactory.h>\n";
       if (hasScopevars())
         out << "#include <tnt/objecttemplate.h>\n"
                "#include <tnt/objectptr.h>\n";
@@ -385,37 +353,38 @@ namespace tnt
 
     void Generator::getFactoryDeclaration(std::ostream& code) const
     {
-      const char* factoryBase = singleton ? "tnt::SingletonComponentFactory" : "tnt::ComponentFactory";
-      code << "class " << maincomp.getName() << "Factory : public " << factoryBase << "\n"
-              "{\n"
-              "  public:\n"
-              "    " << maincomp.getName() << "Factory(const std::string& componentName)\n"
-              "      : " << factoryBase << "(componentName)\n"
-              "      { }\n"
-              "    virtual tnt::Component* doCreate(const tnt::Compident& ci,\n"
-              "      const tnt::Urlmapper& um, tnt::Comploader& cl);\n";
-      if (!configs.empty())
-        code << "    virtual void doConfigure(const tnt::Tntconfig& config);\n";
-      code << "};\n"
-              "\n"
-              "tnt::Component* " << maincomp.getName() << "Factory::doCreate(const tnt::Compident& ci,\n"
-              "  const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
-              "{\n"
-              "  return new " << maincomp.getName() << "(ci, um, cl);\n"
-              "}\n\n";
-      if (!configs.empty())
+      if (configs.empty())
       {
-        code << "void " << maincomp.getName() << "Factory::doConfigure(const tnt::Tntconfig& config)\n"
+        code << "static tnt::ComponentFactoryImpl<" << maincomp.getName() << "> "
+             << maincomp.getName() << "Factory(\"" << maincomp.getName() << "\");\n\n";
+      }
+      else
+      {
+        code << "class " << maincomp.getName() << "Factory : public tnt::ComponentFactoryImpl<" << maincomp.getName() << ">\n"
+                "{\n"
+                "  public:\n"
+                "    " << maincomp.getName() << "Factory()\n"
+                "      : tnt::ComponentFactoryImpl<" << maincomp.getName() << ">(\"" << maincomp.getName() << "\")\n"
+                "      { }\n"
+                "    tnt::Component* doCreate(const tnt::Compident& ci,\n"
+                "      const tnt::Urlmapper& um, tnt::Comploader& cl);\n"
+                "    virtual void doConfigure(const tnt::Tntconfig& config);\n"
+                "};\n\n"
+                "tnt::Component* " << maincomp.getName() << "Factory::doCreate(const tnt::Compident& ci,\n"
+                "  const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+                "{\n"
+                "  return new " << maincomp.getName() << "(ci, um, cl);\n"
+                "}\n\n"
+                "void " << maincomp.getName() << "Factory::doConfigure(const tnt::Tntconfig& config)\n"
                 "{\n"
                 "  // <%config>\n";
         for (variable_declarations::const_iterator it = configs.begin();
              it != configs.end(); ++it)
           it->getConfigInit(code, maincomp.getName());
         code << "  // </%config>\n"
-                "}\n\n";
+                "}\n\n"
+                "static " << maincomp.getName() << "Factory factory;\n\n";
       }
-
-      code << maincomp.getName() << "Factory factory(\"" << maincomp.getName() << "\");\n\n";
     }
 
     void Generator::getCppBody(std::ostream& code) const
@@ -499,7 +468,7 @@ namespace tnt
       code << "// <%shared>\n"
            << shared
            << "// </%shared>\n\n";
-      if (!singleton && !configs.empty())
+      if (!configs.empty())
         code << "bool config_init = false;\n";
       code << "// <%config>\n";
       for (variable_declarations::const_iterator it = configs.begin();
@@ -602,10 +571,6 @@ namespace tnt
 
       if (haveCloseComp)
         closeComp.getDefinition(code, externData);
-      code << "void " << classname << "::drop()\n"
-              "{\n"
-              "  factory.drop(this);\n"
-              "}\n\n";
 
       if (!attr.empty())
       {
@@ -644,7 +609,6 @@ namespace tnt
       getPre(header);
       header << '\n';
       getNamespaceStart(header);
-      getDeclareShared(header);
       getClassDeclaration(header);
       getNamespaceEnd(header);
 
@@ -684,7 +648,6 @@ namespace tnt
 
       code << "template <typename T> inline void use(const T&) { }\n\n";
 
-      getDeclareShared(code);
       getClassDeclaration(code);
 
       getCppBody(code);

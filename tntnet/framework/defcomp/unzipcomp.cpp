@@ -44,7 +44,6 @@ namespace tnt
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual void drop();
   };
 
   ////////////////////////////////////////////////////////////////////////
@@ -66,7 +65,7 @@ namespace tnt
     return new Unzip();
   }
 
-  TNT_COMPONENTFACTORY(unzip, UnzipFactory)
+  static UnzipFactory unzipFactory("unzip");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition
@@ -102,11 +101,6 @@ namespace tnt
     }
 
     return HTTP_OK;
-  }
-
-  void Unzip::drop()
-  {
-    factory.drop(this);
   }
 
 }

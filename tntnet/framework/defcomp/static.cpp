@@ -49,7 +49,7 @@ namespace tnt
     Static::documentRoot = config.getValue(Static::configDocumentRoot);
   }
 
-  TNT_COMPONENTFACTORY(static, StaticFactory)
+  static StaticFactory staticFactory("static");
 
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
@@ -131,11 +131,6 @@ namespace tnt
     reply.out() << in.rdbuf() << std::flush;
 
     return HTTP_OK;
-  }
-
-  void Static::drop()
-  {
-    factory.drop(this);
   }
 
 }

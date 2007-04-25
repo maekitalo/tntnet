@@ -30,11 +30,11 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class MimeFactory : public tnt::SingletonComponentFactory
+  class MimeFactory : public tnt::ComponentFactory
   {
     public:
       MimeFactory(const std::string& componentName)
-        : tnt::SingletonComponentFactory(componentName)
+        : tnt::ComponentFactory(componentName)
         { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
@@ -53,7 +53,7 @@ namespace tnt
       Mime::handler = new MimeHandler(config);
   }
 
-  TNT_COMPONENTFACTORY(mime, MimeFactory)
+  static MimeFactory mimeFactory("mime");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition
@@ -74,9 +74,4 @@ namespace tnt
     return DECLINED;
   }
 
-  void Mime::drop()
-  {
-    factory.drop(this);
-  }
 }
-

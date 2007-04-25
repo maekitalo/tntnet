@@ -45,17 +45,16 @@ namespace tnt
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual void drop();
   };
 
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class StaticFactory : public tnt::SingletonComponentFactory
+  class StaticFactory : public tnt::ComponentFactory
   {
     public:
       StaticFactory(const std::string& componentName)
-        : tnt::SingletonComponentFactory(componentName)
+        : tnt::ComponentFactory(componentName)
         { }
       virtual tnt::Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);

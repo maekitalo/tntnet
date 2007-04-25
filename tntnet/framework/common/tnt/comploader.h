@@ -81,11 +81,10 @@ namespace tnt
       typedef std::list<std::string> search_path_type;
 
       // loaded libraries
-      static cxxtools::RWLock libraryMonitor;
+      static cxxtools::RWLock monitor;
       static librarymap_type librarymap;
 
       // map soname/compname to compinstance
-      cxxtools::RWLock componentMonitor;
       componentmap_type componentmap;
       static const Tntconfig* config;
       static search_path_type search_path;
@@ -93,7 +92,6 @@ namespace tnt
 
     public:
       Comploader();
-      virtual ~Comploader();
 
       virtual Component& fetchComp(const Compident& compident,
         const Urlmapper& rootmapper);
@@ -103,8 +101,6 @@ namespace tnt
 
       // lookup library; load if needed
       virtual ComponentLibrary& fetchLib(const std::string& libname);
-
-      void cleanup();  // delete components
 
       static const Tntconfig& getConfig()        { return *config; }
       static void configure(const Tntconfig& config);

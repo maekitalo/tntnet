@@ -43,22 +43,18 @@ namespace tnt
     class Generator : public tnt::ecpp::ParseHandler
     {
         bool debug;
-        bool singleton;
         bool raw;
         std::string mimetype;
         std::string componentclass;
-        std::string baseclass;
 
         typedef std::list<tnt::ecppc::Variable> variable_declarations;
 
         variable_declarations configs;
 
         std::string pre;
-        std::string declare;
         std::string init;
         std::string cleanup;
         std::string shared;
-        std::string declare_shared;
 
         tnt::ecppc::Component maincomp;
 
@@ -104,7 +100,6 @@ namespace tnt
         void getPre(std::ostream& out) const;
         void getNamespaceStart(std::ostream& out) const;
         void getNamespaceEnd(std::ostream& out) const;
-        void getDeclareShared(std::ostream& out) const;
         void getClassDeclaration(std::ostream& out) const;
 
         void getCppIncludes(std::ostream& out) const;
@@ -119,17 +114,11 @@ namespace tnt
         void setDebug(bool sw)                       { debug = sw; }
         bool isDebug() const                         { return debug; }
 
-        void setSingleton(bool sw)                   { singleton = sw; }
-        bool isSingleton() const                     { return singleton; }
-
         void setMimetype(const std::string& type)    { mimetype = type; }
         const std::string& getMimetype()             { return mimetype; }
 
         void setComponentclass(const std::string& c) { componentclass = c; }
         const std::string& getComponentclass()       { return componentclass; }
-
-        void setBaseclass(const std::string& c)      { baseclass = c; }
-        const std::string& getBaseclass()            { return baseclass; }
 
         void setRawMode(bool sw = true)              { raw = sw; }
         bool isRawMode() const                       { return raw; }
@@ -152,7 +141,6 @@ namespace tnt
         virtual void onHtmlExpression(const std::string& expr);
         virtual void onCpp(const std::string& cpp);
         virtual void onPre(const std::string& code);
-        virtual void onDeclare(const std::string& code);
         virtual void onInit(const std::string& code);
         virtual void onCleanup(const std::string& code);
         virtual void onArg(const std::string& name,
@@ -163,7 +151,6 @@ namespace tnt
           const comp_args_type& args, const std::string&  pass_cgi,
           const std::string& cppargs);
         virtual void onEndCall(const std::string& comp);
-        virtual void onDeclareShared(const std::string& code);
         virtual void onShared(const std::string& code);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
         virtual void onComp(const std::string& code);

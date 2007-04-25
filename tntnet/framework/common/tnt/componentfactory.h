@@ -21,32 +21,17 @@
 #ifndef TNT_COMPONENTFACTORY_H
 #define TNT_COMPONENTFACTORY_H
 
-#include <tnt/component.h>
-#include <tnt/comploader.h>
-#include <cxxtools/thread.h>
-
-#define TNT_COMPONENTFACTORY(componentName, factoryType) \
-  extern "C" { \
-    factoryType componentName ## __factory( #componentName );   \
-  } \
-  static factoryType& factory = componentName ## __factory;
-
-#define TNT_COMPONENT(componentName) \
-  extern "C" { \
-    tnt::ComponentFactoryImpl<componentName> componentName ## __factory( \
-        #componentName );   \
-  }
-
-#define TNT_SINGLETONCOMPONENT(componentName) \
-  extern "C" { \
-    tnt::ComponentFactoryImpl<componentName, \
-      tnt::SingletonComponentFactory> componentName ## __factory( \
-        #componentName );   \
-  }
+#include <string>
 
 namespace tnt
 {
   extern const std::string factorySuffix;
+
+  class Component;
+  class Compident;
+  class Comploader;
+  class Urlmapper;
+  class Tntconfig;
 
   class ComponentFactory
   {
@@ -54,7 +39,7 @@ namespace tnt
       ComponentFactory(const ComponentFactory&);
       ComponentFactory& operator= (const ComponentFactory&);
 
-      bool configured;
+      Component* theComponent;
 
     protected:
       virtual Component* doCreate(const tnt::Compident& ci,
@@ -63,61 +48,24 @@ namespace tnt
 
     public:
       ComponentFactory(const std::string& componentName_);
+      ~ComponentFactory();
 
       virtual Component* create(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl);
-      virtual void drop(Component* comp);
   };
 
-  class SingletonComponentFactory : public ComponentFactory
-  {
-      cxxtools::Mutex mutex;
-      Component* theComponent;
-      unsigned refs;
-
-    protected:
-      virtual Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl) = 0;
-
-    public:
-      SingletonComponentFactory(const std::string& componentName)
-        : ComponentFactory(componentName),
-          theComponent(0),
-          refs(0)
-      { }
-
-      virtual Component* create(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl);
-      virtual void drop(Component* comp);
-  };
-
-  template <typename componentType>
-  class FactoryComponent : public componentType
-  {
-      tnt::ComponentFactory* factory;
-
-    public:
-      FactoryComponent(tnt::ComponentFactory* factory_,
-          const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)
-        : componentType(ci, um, cl),
-          factory(factory_)
-        { }
-      void drop()
-        { if (factory) factory->drop(this); }
-  };
-
-  template <typename ComponentType, typename FactoryBaseType = tnt::ComponentFactory>
-  class ComponentFactoryImpl : public FactoryBaseType
+  template <typename ComponentType>
+  class ComponentFactoryImpl : public ComponentFactory
   {
     public:
       ComponentFactoryImpl(const std::string& componentName)
-        : FactoryBaseType(componentName)
+        : ComponentFactory(componentName)
         { }
 
       virtual Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl)
       {
-        return new FactoryComponent<ComponentType>(this, ci, um, cl);
+        return new ComponentType(ci, um, cl);
       }
   };
 

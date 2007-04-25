@@ -132,7 +132,7 @@ namespace tnt
 
       if (haveEndCall)
       {
-        out << "  tnt::ComponentGuard _tnt_comp" << getNumber() << "(createComp(" << ident << "));\n"
+        out << "  tnt::Component* _tnt_comp" << getNumber() << " = createComp(" << ident << ");\n"
                "  if (_tnt_comp" << getNumber() << "->call(request, reply, " << qparam << ") != DECLINED)\n"
                "  {\n";
       }

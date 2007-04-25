@@ -58,12 +58,8 @@ namespace tnt
   unsigned Worker::minThreads = 5;
   bool Worker::enableCompression = true;
 
-  Worker::ComploaderPoolType Worker::comploaderPool;
-
   Worker::Worker(Tntnet& app)
     : application(app),
-      comploaderObject(comploaderPool.get()),
-      comploader(comploaderObject),
       threadId(0),
       state(stateStarting),
       lastWaitTime(0)
@@ -182,7 +178,6 @@ namespace tnt
 
     cxxtools::MutexLock lock(mutex);
     workers.erase(this);
-    comploader.cleanup();
 
     log_debug("delete worker " << threadId << " - " << workers.size() << " threads left - " << application.getQueue().getWaitThreadCount() << " waiting threads");
   }

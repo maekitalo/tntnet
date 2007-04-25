@@ -46,7 +46,6 @@ namespace tnt
         virtual void onHtmlExpression(const std::string& expr);
         virtual void onCpp(const std::string& code);
         virtual void onPre(const std::string& code);
-        virtual void onDeclare(const std::string& code);
         virtual void onInit(const std::string& code);
         virtual void onCleanup(const std::string& code);
         virtual void onArg(const std::string& name,
@@ -57,7 +56,6 @@ namespace tnt
           const comp_args_type& args, const std::string& pass_cgi,
           const std::string& cppargs);
         virtual void onEndCall(const std::string& comp);
-        virtual void onDeclareShared(const std::string& code);
         virtual void onShared(const std::string& code);
         virtual void onScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);

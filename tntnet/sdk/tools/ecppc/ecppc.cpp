@@ -30,8 +30,9 @@
 #include <sys/stat.h>
 #include "config.h"
 #include <cxxtools/loginit.h>
+#include <cxxtools/log.h>
 
-log_define("tntnet.ecppc");
+log_define("tntnet.ecppc")
 
 namespace tnt
 {
@@ -45,9 +46,7 @@ namespace tnt
         mimedb(argc, argv, "--mimetypes", "/etc/mime.types"),
         binary(argc, argv, 'b'),
         multibinary(argc, argv, 'b'),
-        singleton(argc, argv, 's'),
         componentclass(argc, argv, 'C'),
-        baseclass(argc, argv, 'B'),
         compress(argc, argv, 'z'),
         verbose(argc, argv, 'v'),
         debug(argc, argv, 'd'),
@@ -147,12 +146,8 @@ namespace tnt
 
       generator.setCompress(compress);
 
-      if (singleton.isSet())
-        generator.setSingleton(singleton);
       if (componentclass.isSet())
         generator.setComponentclass(componentclass);
-      if (baseclass.isSet())
-        generator.setBaseclass(baseclass);
 
       std::string obase = odir;
       if (!obase.empty())
@@ -297,8 +292,6 @@ namespace tnt
            "  -n name          classname\n"
            "  -I dir           include-directory\n"
            "  -m type          Mimetype\n"
-           "  -s               generate singleton\n"
-           "  -s-              generate no singleton\n"
            "  -b               binary\n"
            "  -bb              generate multibinary component\n"
            "  -z               compress constant data\n"
