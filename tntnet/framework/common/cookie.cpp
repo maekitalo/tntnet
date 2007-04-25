@@ -288,7 +288,7 @@ namespace tnt
       if (first)
         first = false;
       else
-        out << ", ";
+        out << "; ";
 
       const Cookie& cookie = it->second;
 
@@ -297,12 +297,12 @@ namespace tnt
 
       // print secure-attribute
       if (cookie.secureFlag)
-        out << "; " << Cookie::secure;
+        out << ", " << Cookie::secure;
 
       // print attributes
       for (Cookie::attrs_type::const_iterator a = cookie.attrs.begin();
            a != cookie.attrs.end(); ++a)
-        out << "; " << a->first << "=\"" << a->second << '"';
+        out << ", " << a->first << "=\"" << a->second << '"';
     }
 
     return out;
