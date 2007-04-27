@@ -52,7 +52,7 @@ static void doListenRetry(cxxtools::net::Server& server,
       int deferSecs = 30;
       if (::setsockopt(server.getFd(), SOL_TCP, TCP_DEFER_ACCEPT,
           &deferSecs, sizeof(deferSecs)) < 0)
-        throw cxxtools::net::Exception(errno, "setsockopt");
+        throw cxxtools::net::Exception("setsockopt");
 #endif
 
       return;

@@ -304,7 +304,10 @@ namespace tnt
           if (reply.out())
             log_debug("reply sent");
           else
+          {
+            reply.setKeepAliveCounter(0);
             log_warn("stream error");
+          }
 
           return;
         }
