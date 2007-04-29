@@ -47,6 +47,7 @@ namespace tnt
       Static::handler = new MimeHandler(config);
 
     Static::documentRoot = config.getValue(Static::configDocumentRoot);
+    Static::enableGzip = config.getBoolValue("StaticEnableGzip", Static::enableGzip);
   }
 
   static StaticFactory staticFactory("static");
@@ -54,9 +55,10 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
-  const std::string& Static::configDocumentRoot = "DocumentRoot";
+  std::string Static::configDocumentRoot = "DocumentRoot";
   std::string Static::documentRoot;
   MimeHandler* Static::handler;
+  bool Static::enableGzip = true;
 
   void Static::setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply)
   {
@@ -78,16 +80,37 @@ namespace tnt
     log_debug("file: " << file);
 
     struct stat st;
-    if (stat(file.c_str(), &st) != 0)
+
+    bool localEnableGzip = false;
+    if (request.getEncoding().accept("gzip") && enableGzip)
     {
-      log_warn("error in stat for file \"" << file << "\"");
-      return DECLINED;
+      std::string gzfile = file + ".gz";
+      if (stat(gzfile.c_str(), &st) == 0 && S_ISREG(st.st_mode))
+      {
+        log_debug("enable compression");
+        file = gzfile;
+        localEnableGzip = true;
+        reply.setHeader(httpheader::contentEncoding, "gzip");
+      }
+      else
+      {
+        log_debug("compressed file \"" << gzfile << "\" not found or not a regular file");
+      }
     }
 
-    if (!S_ISREG(st.st_mode))
+    if (!localEnableGzip)
     {
-      log_warn("no regular file \"" << file << "\"");
-      return DECLINED;
+      if (stat(file.c_str(), &st) != 0)
+      {
+        log_warn("error in stat for file \"" << file << "\"");
+        return DECLINED;
+      }
+
+      if (!S_ISREG(st.st_mode))
+      {
+        log_warn("no regular file \"" << file << "\"");
+        return DECLINED;
+      }
     }
 
     std::string lastModified = tnt::HttpMessage::htdate(st.st_ctime);
@@ -102,7 +125,7 @@ namespace tnt
 
     if (!in)
     {
-      log_warn("file \"" << file << "\" not found");
+      log_warn("error opening file \"" << file << '"');
       return DECLINED;
     }
 

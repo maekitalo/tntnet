@@ -34,10 +34,10 @@ namespace tnt
   {
       friend class StaticFactory;
 
-      static const std::string& configDocumentRoot;
-
+      static std::string configDocumentRoot;
       static std::string documentRoot;
       static MimeHandler* handler;
+      static bool enableGzip;
 
     protected:
       void setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply);

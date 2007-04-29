@@ -37,7 +37,6 @@ namespace tnt
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
-      virtual void drop();
   };
 
 }
