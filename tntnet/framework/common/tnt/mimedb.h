@@ -24,12 +24,13 @@
 #include <map>
 #include <string>
 #include <iosfwd>
+#include <tnt/stringlessignorecase.h>
 
 namespace tnt
 {
   class MimeDb
   {
-      typedef std::map<std::string, std::string> mimedb_type;
+      typedef std::map<std::string, std::string, StringLessIgnoreCase<std::string> > mimedb_type;
       mimedb_type mimeDb;
 
     public:
