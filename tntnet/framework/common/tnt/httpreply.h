@@ -84,6 +84,7 @@ namespace tnt
         { return current_outstream == &socket; }
       std::string::size_type getContentSize() const
         { return outstream.str().size(); }
+      std::ostream& getDirectStream()   { return socket; }
 
       void setMd5Sum();
 
