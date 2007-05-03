@@ -8,7 +8,6 @@ tntnet_SOURCES = \
 	poller.cpp \
 	process.cpp \
 	regex.cpp \
-	syserror.cpp \
 	worker.cpp \
 	tntnet.cpp \
 	tnt/dispatcher.h \
@@ -18,7 +17,6 @@ tntnet_SOURCES = \
 	tnt/process.h \
 	tnt/regex.h \
 	tnt/ssl.h \
-	tnt/syserror.h \
 	tnt/worker.h \
 	tnt/tntnet.h
 

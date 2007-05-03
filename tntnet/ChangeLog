@@ -4,6 +4,7 @@
 2007-04-29 tommi@tntnet.org
   - send gz-file in static@tntnet when gzip-encoding is accepted and a gz-file
     is available
+  - use sendfile(2) in static@tntnet when possible
 
 2007-04-16 tommi@tntnet.org
   - 2 other serious bugs fixed: epoll was not always waked up on new jobs.

@@ -20,7 +20,7 @@
 
 #include "tnt/poller.h"
 #include "tnt/tntnet.h"
-#include "tnt/syserror.h"
+#include <cxxtools/syserror.h>
 #include <cxxtools/log.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -41,7 +41,7 @@ namespace tnt
   {
     pollFd = ::epoll_create(256);
     if (pollFd < 0)
-      throw SysError("epoll_create");
+      throw cxxtools::SysError("epoll_create");
 
     fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
     addFd(notify_pipe.getReadFd(), EPOLLIN);
@@ -56,7 +56,7 @@ namespace tnt
     e.data.fd = fd;
     int ret = ::epoll_ctl(pollFd, EPOLL_CTL_ADD, fd, &e);
     if (ret < 0)
-      throw SysError("epoll_ctl(EPOLL_CTL_ADD)");
+      throw cxxtools::SysError("epoll_ctl(EPOLL_CTL_ADD)");
   }
 
   void Poller::removeFd(int fd)
@@ -71,7 +71,7 @@ namespace tnt
       if (errno == EBADF)
         log_warn("fd " << fd << " couldn't be removed");
       else
-        throw SysError("epoll_ctl(EPOLL_CTL_DEL)");
+        throw cxxtools::SysError("epoll_ctl(EPOLL_CTL_DEL)");
     }
   }
 
@@ -143,7 +143,7 @@ namespace tnt
       if (ret < 0)
       {
         if (errno != EINTR)
-          throw SysError("epoll_wait");
+          throw cxxtools::SysError("epoll_wait");
       }
       else if (ret == 0)
       {

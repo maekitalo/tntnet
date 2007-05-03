@@ -19,7 +19,7 @@
 
 
 #include "tnt/process.h"
-#include "tnt/syserror.h"
+#include <cxxtools/syserror.h>
 #include <cxxtools/fork.h>
 #include <pwd.h>
 #include <grp.h>
@@ -57,7 +57,7 @@ namespace
 
     int ret = ::setgid(gr->gr_gid);
     if (ret != 0)
-      throw tnt::SysError("setgid");
+      throw cxxtools::SysError("setgid");
   }
 
   void setUser(const std::string& user)
@@ -70,20 +70,20 @@ namespace
 
     int ret = ::setuid(pw->pw_uid);
     if (ret != 0)
-      throw tnt::SysError("getuid");
+      throw cxxtools::SysError("getuid");
   }
 
   void setDir(const std::string& dir)
   {
     log_debug("chdir(" << dir << ')');
     if (::chdir(dir.c_str()) == -1)
-      throw tnt::SysError("chdir");
+      throw cxxtools::SysError("chdir");
   }
 
   void setRootdir(const std::string& dir)
   {
     if (!::chroot(dir.c_str()) == -1)
-      throw tnt::SysError("chroot");
+      throw cxxtools::SysError("chroot");
   }
 
   class PidFile
@@ -115,7 +115,7 @@ namespace
         else if (errno == ERANGE)
           buf.resize(buf.size() * 2);
         else
-          throw tnt::SysError("getcwd");
+          throw cxxtools::SysError("getcwd");
       }
       pidFileName = std::string(cwd) + '/' + pidFileName;
       log_debug("pidfile=" << pidFileName);
@@ -138,13 +138,13 @@ namespace
   void closeStdHandles()
   {
     if (::freopen("/dev/null", "r", stdin) == 0)
-      throw tnt::SysError("freopen(stdin)");
+      throw cxxtools::SysError("freopen(stdin)");
 
     if (::freopen("/dev/null", "w", stdout) == 0)
-      throw tnt::SysError("freopen(stdout)");
+      throw cxxtools::SysError("freopen(stdout)");
 
     if (::freopen("/dev/null", "w", stderr) == 0)
-      throw tnt::SysError("freopen(stderr)");
+      throw cxxtools::SysError("freopen(stderr)");
   }
 
 }
@@ -169,7 +169,7 @@ namespace tnt
 
     // setsid
     if (setsid() == -1)
-      throw SysError("setsid");
+      throw cxxtools::SysError("setsid");
 
     bool first = true;
 
@@ -238,7 +238,7 @@ namespace tnt
         }
         log_debug("nothing read from monitor-pipe - restart child");
       }
-      catch (const SysError&)
+      catch (const cxxtools::SysError&)
       {
         log_debug("child exited without notification");
       }

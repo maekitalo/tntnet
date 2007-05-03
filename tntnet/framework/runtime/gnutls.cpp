@@ -225,7 +225,7 @@ namespace tnt
             throw GnuTlsException("gnutls_handshake", ret);
 
         log_debug("poll");
-        doPoll(POLLIN);
+        poll(POLLIN);
       }
     }
 
@@ -266,7 +266,7 @@ namespace tnt
             throw GnuTlsException("gnutls_record_recv", ret);
 
         log_debug("poll");
-        doPoll(POLLIN);
+        poll(POLLIN);
       }
     }
 
@@ -307,7 +307,7 @@ namespace tnt
             throw GnuTlsException("gnutls_record_send", ret);
 
         log_debug("poll");
-        doPoll(POLLIN|POLLOUT);
+        poll(POLLIN|POLLOUT);
       }
     }
 
@@ -348,7 +348,7 @@ namespace tnt
             throw GnuTlsException("gnutls_bye", ret);
 
         log_debug("poll");
-        doPoll(POLLIN);
+        poll(POLLIN);
       }
     }
   }

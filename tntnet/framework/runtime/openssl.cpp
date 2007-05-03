@@ -254,7 +254,7 @@ namespace tnt
       do
       {
         log_debug("poll");
-        doPoll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
+        poll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
                   ? POLLIN|POLLOUT : POLLIN);
 
         log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
@@ -294,7 +294,7 @@ namespace tnt
       if (s <= 0)
         break;
 
-      doPoll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
+      poll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
                   ? POLLIN|POLLOUT : POLLIN);
     }
 
@@ -342,7 +342,7 @@ namespace tnt
       do
       {
         log_debug("poll");
-        doPoll(err == SSL_ERROR_WANT_WRITE ? POLLIN|POLLOUT : POLLIN);
+        poll(err == SSL_ERROR_WANT_WRITE ? POLLIN|POLLOUT : POLLIN);
 
         log_debug("SSL_shutdown(" << ssl << ')');
         n = ::SSL_shutdown(ssl);
