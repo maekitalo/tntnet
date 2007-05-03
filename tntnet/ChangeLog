@@ -1,5 +1,7 @@
 2007-05-03 tommi@tntnet.org
   - make tnt::MimeDb non-case-sensitive
+  - building tntnet-server and cgi-lib is now optional and on by default
+    for sdk-only-builds (useful for cross-builds)
 
 2007-04-29 tommi@tntnet.org
   - send gz-file in static@tntnet when gzip-encoding is accepted and a gz-file
