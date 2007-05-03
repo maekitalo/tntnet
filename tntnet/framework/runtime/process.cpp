@@ -263,25 +263,25 @@ namespace tnt
     if (!group.empty())
     {
       log_debug("set group to \"" << group << '"');
-      setGroup(group);
+      ::setGroup(group);
     }
 
     if (!user.empty())
     {
       log_debug("set user to \"" << user << '"');
-      setUser(user);
+      ::setUser(user);
     }
 
     if (!dir.empty())
     {
       log_debug("set dir to \"" << dir << '"');
-      setDir(dir);
+      ::setDir(dir);
     }
 
     if (!rootdir.empty())
     {
       log_debug("change root to \"" << rootdir << '"');
-      setRootdir(rootdir);
+      ::setRootdir(rootdir);
     }
 
     signal(SIGTERM, sigEnd);
@@ -307,6 +307,8 @@ namespace tnt
         mainPipe.read();
 
         log_debug("child initialized");
+
+        fork.setNowait();
       }
       else
       {
