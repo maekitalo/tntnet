@@ -2,11 +2,19 @@ bin_SCRIPTS = tntnet-config
 
 SUBDIRS = \
     framework/common \
+    doc/man
+
+if MAKE_TNTNET
+SUBDIRS += \
     framework/runtime \
     framework/defcomp \
-    framework/cgi \
-    doc/man \
     etc
+endif
+
+if MAKE_CGI
+SUBDIRS += \
+    framework/cgi
+endif
 
 if MAKE_SDK
 SUBDIRS += \

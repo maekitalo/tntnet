@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 1.5.3.4, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.5.3.4.20070503-1, [Tommi Maekitalo <tommi@tntnet.org>])
 AM_INIT_AUTOMAKE
 
 abi_current=5
@@ -133,8 +133,22 @@ AM_CONDITIONAL(MAKE_GNUTLS, test x$with_gnutls = x1)
 AM_CONDITIONAL(MAKE_OPENSSL, test x$with_openssl = x1)
 
 #
-# SDK
+# optional components
 #
+AC_ARG_WITH([tntnet],
+  AS_HELP_STRING([--with-tntnet=yes|no], [build tntnet-server (default: yes)]),
+  [with_tntnet=$withval],
+  [with_tntnet=yes])
+
+AM_CONDITIONAL(MAKE_TNTNET, test x$with_tntnet = xyes)
+
+AC_ARG_WITH([cgi],
+  AS_HELP_STRING([--with-cgi=yes|no], [build cgi-library (default: yes)]),
+  [with_cgi=$withval],
+  [with_cgi=yes])
+
+AM_CONDITIONAL(MAKE_CGI, test x$with_cgi = xyes)
+
 AC_ARG_WITH([sdk],
   AS_HELP_STRING([--with-sdk=yes|no], [build sdk (default: yes)]),
   [with_sdk=$withval],
