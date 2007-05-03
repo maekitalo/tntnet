@@ -37,12 +37,15 @@ namespace tnt
         typename stringType::const_iterator it2 = s2.begin();
         while (it1 != s1.end() && it2 != s2.end())
         {
-          char c1 = std::toupper(*it1);
-          char c2 = std::toupper(*it2);
-          if (c1 < c2)
-            return true;
-          else if (c2 < c1)
-            return false;
+          if (*it1 != *it2)
+          {
+            char c1 = std::toupper(*it1);
+            char c2 = std::toupper(*it2);
+            if (c1 < c2)
+              return true;
+            else if (c2 < c1)
+              return false;
+          }
           ++it1;
           ++it2;
         }
