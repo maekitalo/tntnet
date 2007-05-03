@@ -82,6 +82,9 @@ namespace tnt
 
     setDaemon(config.getBoolValue("Daemon", false));
     setPidFile(config.getValue("PidFile", TNTNET_PID));
+    setRootdir(config.getValue("Chroot"));
+    setUser(config.getValue("User"));
+    setGroup(config.getValue("Group"));
   }
 
   void TntnetProcess::initializeLogging()
