@@ -1,7 +1,9 @@
-AC_INIT(tntnet, 1.5.3.4.20070503-1, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.5.3.5, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_CANONICAL_TARGET
+
 AM_INIT_AUTOMAKE
 
-abi_current=5
+abi_current=6
 abi_revision=1
 abi_age=0
 sonumber=${abi_current}:${abi_revision}:${abi_age}
@@ -178,6 +180,16 @@ AC_COMPILE_IFELSE(
    int i = TCP_DEFER_ACCEPT;
   ],
   AC_DEFINE(HAVE_TCP_DEFER_ACCEPT, [], [defined if TCP_DEFER_ACCEPT is defined]))
+
+case $target in
+darwin*)
+    SHARED_LIB_FLAG=-dynamiclib
+    ;;
+*)  
+    SHARED_LIB_FLAG=-shared
+    ;;
+esac
+AC_SUBST(SHARED_LIB_FLAG)
 
 AC_CONFIG_FILES([
     Makefile

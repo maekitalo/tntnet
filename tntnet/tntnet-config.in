@@ -97,7 +97,7 @@ EOF
 SUFFIXES=.ecpp .gif .jpg .css .js
 ECPPC=ecppc
 CXXFLAGS+=-I$includedir -fPIC -O2
-LDFLAGS+=-shared -L$libdir -ltntnet -lcxxtools
+LDFLAGS+=@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
 
 %.cpp: %.ecpp
 	\$(ECPPC) \$(ECPPFLAGS) \$(ECPPFLAGS_CPP) \$<
