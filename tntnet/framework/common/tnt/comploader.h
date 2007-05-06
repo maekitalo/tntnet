@@ -81,7 +81,6 @@ namespace tnt
       typedef std::list<std::string> search_path_type;
 
       // loaded libraries
-      static cxxtools::RWLock monitor;
       static librarymap_type librarymap;
 
       // map soname/compname to compinstance

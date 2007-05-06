@@ -24,6 +24,11 @@
 #include <tnt/httperror.h>
 #include <cxxtools/log.h>
 
+namespace
+{
+  cxxtools::Mutex mutex;
+}
+
 namespace tnt
 {
 
@@ -63,16 +68,8 @@ Component* ComponentLibrary::create(
 
 LangLib* ComponentLibrary::getLangLib(const std::string& lang)
 {
-  static cxxtools::RWLock monitor;
-  cxxtools::RdLock lock(monitor);
+  cxxtools::MutexLock lock(mutex);
   langlibsType::const_iterator it = langlibs.find(lang);
-  if (it != langlibs.end())
-    return it->second;
-
-  lock.unlock();
-  cxxtools::WrLock wrlock(monitor);
-
-  it = langlibs.find(lang);
   if (it != langlibs.end())
     return it->second;
 
@@ -110,7 +107,6 @@ Comploader::Comploader()
   }
 }
 
-cxxtools::RWLock Comploader::monitor;
 Comploader::librarymap_type Comploader::librarymap;
 const Tntconfig* Comploader::config = 0;
 Comploader::search_path_type Comploader::search_path;
@@ -121,33 +117,18 @@ Component& Comploader::fetchComp(const Compident& ci,
 {
   log_debug("fetchComp \"" << ci << '"');
 
-  cxxtools::RdLock lock(monitor);
+  cxxtools::MutexLock lock(mutex);
 
   // lookup Component
   componentmap_type::iterator it = componentmap.find(ci);
   if (it == componentmap.end())
   {
-    // Component not known - lookup shared lib, fetch creator and create a new
-    // Component
-    lock.unlock();
+    ComponentLibrary& lib = fetchLib(ci.libname);
+    Component* comp = lib.create(ci.compname, *this, rootmapper);
 
-    cxxtools::WrLock wrlock(monitor);
-
-    // doublecheck after getting writelock
-    it = componentmap.find(ci);
-    if (it == componentmap.end())
-    {
-      ComponentLibrary& lib = fetchLib(ci.libname);
-      Component* comp = lib.create(ci.compname, *this, rootmapper);
-
-      componentmap[ci] = comp;
-      return *comp;
-    }
-    else
-    {
-      it->second->setTop(false);
-      return *(it->second);
-    }
+    componentmap[ci] = comp;
+    comp->setTop(false);
+    return *comp;
   }
   else
   {
@@ -200,11 +181,15 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib \"" << libname << '"');
 
+  log_debug(librarymap.size() << " loaded libraries");
+  for (librarymap_type::iterator li = librarymap.begin();
+       li != librarymap.end(); ++li)
+    log_debug("loaded library " << li->first);
+  log_debug("end loaded libraries");
+
   librarymap_type::iterator it = librarymap.find(libname);
-  it = librarymap.find(libname);
   if (it == librarymap.end())
   {
-    log_debug("load library \"" << libname << '"');
     ComponentLibrary::factoryMapType factoryMap;
     currentFactoryMap = &factoryMap;
     ValueResetter<ComponentLibrary::factoryMapType*> valueResetter(currentFactoryMap, 0);
@@ -244,8 +229,11 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
     }
 
     lib.factoryMap = factoryMap;
+    log_debug("insert new library " << libname);
     it = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
   }
+  else
+    log_debug("library " << libname << " found");
 
   return it->second;
 }

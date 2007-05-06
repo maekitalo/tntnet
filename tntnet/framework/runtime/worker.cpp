@@ -57,6 +57,7 @@ namespace tnt
   unsigned Worker::maxRequestTime = 600;
   unsigned Worker::minThreads = 5;
   bool Worker::enableCompression = true;
+  Comploader Worker::comploader;
 
   Worker::Worker(Tntnet& app)
     : application(app),

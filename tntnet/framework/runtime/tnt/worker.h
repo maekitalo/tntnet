@@ -39,7 +39,7 @@ namespace tnt
 
       Tntnet& application;
 
-      Comploader comploader;
+      static Comploader comploader;
 
       Scope threadScope;
 
