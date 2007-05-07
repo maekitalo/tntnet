@@ -195,6 +195,9 @@ namespace tnt
     log_debug("gnutls_transport_set_ptr(" << getFd() << ')');
     gnutls_transport_set_ptr(session, (gnutls_transport_ptr_t)getFd());
 
+    log_debug("gnutls_transport_set_lowat(0)");
+    gnutls_transport_set_lowat(session, 0);
+
     if (getTimeout() < 0)
     {
       // blocking
@@ -202,9 +205,7 @@ namespace tnt
       {
         log_debug("gnutls_handshake");
         ret = gnutls_handshake(session);
-      } while (ret <= 0
-            && (ret == GNUTLS_E_INTERRUPTED
-             || ret == GNUTLS_E_AGAIN));
+      } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
     }
     else
     {
@@ -219,13 +220,15 @@ namespace tnt
         if (ret == 0)
           break;
 
-        if (ret < 0
-          && ret != GNUTLS_E_INTERRUPTED
-          && ret != GNUTLS_E_AGAIN)
-            throw GnuTlsException("gnutls_handshake", ret);
+        if (ret != GNUTLS_E_INTERRUPTED && ret != GNUTLS_E_AGAIN)
+          throw GnuTlsException("gnutls_handshake", ret);
 
         log_debug("poll");
-        poll(POLLIN);
+        if (poll(POLLIN) & POLLHUP)
+        {
+          log_error("eof in gnutls_handshake");
+          throw std::runtime_error("eof in gnutls_handshake");
+        }
       }
     }
 
@@ -243,9 +246,7 @@ namespace tnt
       {
         log_debug("gnutls_record_recv");
         ret = gnutls_record_recv(session, buffer, bufsize);
-      } while (ret <= 0
-            && (ret == GNUTLS_E_INTERRUPTED
-             || ret == GNUTLS_E_AGAIN));
+      } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
     }
     else
     {
@@ -253,20 +254,22 @@ namespace tnt
 
       while (true)
       {
-        log_debug("gnutls_record_recv");
+        log_debug("gnutls_record_recv (" << bufsize << ')');
         ret = gnutls_record_recv(session, buffer, bufsize);
         log_debug("gnutls_record_recv => " << ret);
 
-        if (ret > 0)
+        if (ret >= 0)
           break;
 
-        if (ret < 0
-          && ret != GNUTLS_E_INTERRUPTED
-          && ret != GNUTLS_E_AGAIN)
-            throw GnuTlsException("gnutls_record_recv", ret);
+        if (ret < 0 && ret != GNUTLS_E_INTERRUPTED && ret != GNUTLS_E_AGAIN)
+          throw GnuTlsException("gnutls_record_recv", ret);
 
         log_debug("poll");
-        poll(POLLIN);
+        if (poll(POLLIN) & POLLHUP)
+        {
+          log_debug("eof in read");
+          return ret;
+        }
       }
     }
 
@@ -284,9 +287,7 @@ namespace tnt
       {
         log_debug("gnutls_record_send");
         ret = gnutls_record_send(session, buffer, bufsize);
-      } while (ret <= 0
-            && (ret == GNUTLS_E_INTERRUPTED
-             || ret == GNUTLS_E_AGAIN));
+      } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
     }
     else
     {
@@ -301,13 +302,15 @@ namespace tnt
         if (ret > 0)
           break;
 
-        if (ret < 0
-          && ret != GNUTLS_E_INTERRUPTED
-          && ret != GNUTLS_E_AGAIN)
-            throw GnuTlsException("gnutls_record_send", ret);
+        if (ret != GNUTLS_E_INTERRUPTED && ret != GNUTLS_E_AGAIN)
+          throw GnuTlsException("gnutls_record_send", ret);
 
         log_debug("poll");
-        poll(POLLIN|POLLOUT);
+        if (poll(POLLIN|POLLOUT) & POLLHUP)
+        {
+          log_debug("eof in write");
+          return ret;
+        }
       }
     }
 
@@ -325,9 +328,7 @@ namespace tnt
       {
         log_debug("gnutls_bye");
         ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
-      } while (ret < 0
-            && (ret == GNUTLS_E_INTERRUPTED
-             || ret == GNUTLS_E_AGAIN));
+      } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
     }
     else
     {
