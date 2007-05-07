@@ -45,5 +45,6 @@ MapUrl  ^/demos/(.*)                 $1@$1
 MapUrl  ^/demos/tntnet.jpg           tntnet@hello
 
 # configure tntnet as a simple webserver
-MapUrl  (.*)/$  static@tntnet /var/www/$1/index.html
-MapUrl  ^/(.*)$ static@tntnet /var/www/$1
+DocumentRoot /var/www
+MapUrl  (.*)/$  static@tntnet /$1/index.html
+MapUrl  ^/(.*)$ static@tntnet /$1
