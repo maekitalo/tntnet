@@ -4,7 +4,7 @@ SUBDIRS = \
     framework/common \
     doc/man
 
-if MAKE_TNTNET
+if MAKE_SERVER
 SUBDIRS += \
     framework/runtime \
     framework/defcomp \

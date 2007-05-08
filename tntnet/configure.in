@@ -137,12 +137,12 @@ AM_CONDITIONAL(MAKE_OPENSSL, test x$with_openssl = x1)
 #
 # optional components
 #
-AC_ARG_WITH([tntnet],
-  AS_HELP_STRING([--with-tntnet=yes|no], [build tntnet-server (default: yes)]),
-  [with_tntnet=$withval],
-  [with_tntnet=yes])
+AC_ARG_WITH([server],
+  AS_HELP_STRING([--with-server=yes|no], [build tntnet-server (default: yes)]),
+  [with_server=$withval],
+  [with_server=yes])
 
-AM_CONDITIONAL(MAKE_TNTNET, test x$with_tntnet = xyes)
+AM_CONDITIONAL(MAKE_SERVER, test x$with_server = xyes)
 
 AC_ARG_WITH([cgi],
   AS_HELP_STRING([--with-cgi=yes|no], [build cgi-library (default: yes)]),
