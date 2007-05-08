@@ -196,7 +196,7 @@ namespace tnt
             state = (name == Cookie::secure ? state_valuee : state_eq);
           else if (ch == '=')
             state = (name == Cookie::secure ? state_valuee : state_value0);
-          else if ((ch == ',' || ch == ';') && name == Cookie::secure)
+          else if (ch == ';' && name == Cookie::secure)
             state = state_valuee;
           else
             name += ch;
@@ -226,7 +226,7 @@ namespace tnt
           break;
 
         case state_value:
-          if (ch == ';' || ch == ',')
+          if (ch == ';')
           {
             process_nv();
             state = state_0;
@@ -238,7 +238,7 @@ namespace tnt
           break;
 
         case state_valuee:
-          if (ch == ';' || ch == ',')
+          if (ch == ';')
           {
             process_nv();
             state = state_0;
@@ -257,7 +257,7 @@ namespace tnt
           break;
 
         case state_qvaluee:
-          if (ch == ';' || ch == ',')
+          if (ch == ';')
           {
             process_nv();
             state = state_0;

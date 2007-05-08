@@ -1,3 +1,10 @@
+2007-05-08 tommi@tntnet.org
+  - allow cookie-values to have commas
+
+2007-05-07 tommi@tntnet.org
+  - fix gnutls
+  - fix componentloader (crashed sometimes under load)
+
 2007-05-04 tommi@tntnet.org
   - fix tntnet-config-script for Mac-OS-X
 
