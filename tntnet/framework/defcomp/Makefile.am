@@ -11,5 +11,6 @@ tntnet_la_SOURCES = \
 	mimehandler.h \
 	static.h
 
-tntnet_la_LDFLAGS = -module -version-info @sonumber@
+tntnet_la_CXXFLAGS = $(PTHREAD_CFLAGS)
+tntnet_la_LDFLAGS = -module -version-info @sonumber@ $(PTHREAD_LIBS)
 tntnet_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la

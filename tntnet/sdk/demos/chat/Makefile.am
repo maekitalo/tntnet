@@ -1,24 +1,34 @@
 pkglib_LTLIBRARIES = chat.la
 
-chat_la_SOURCES = \
+nodist_chat_la_SOURCES = \
+	chat.cpp \
+	ajax.cpp \
+	getchat.cpp \
+	putchat.cpp \
+	sad.cpp \
+	smile.cpp \
+	wink.cpp
+
+EXTRA_DIST = \
 	chat.ecpp \
 	ajax.js \
 	getchat.ecpp \
+	global.ecpp \
 	putchat.ecpp \
 	sad.png \
 	smile.png \
 	wink.png
 
-chat_la_LDFLAGS = -module
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+chat_la_LDFLAGS = -module $(PTHREAD_LIBS)
 chat_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
-EXTRA_DIST = global.ecpp
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = chat.cpp ajax.cpp getchat.cpp putchat.cpp \
     sad.cpp smile.cpp wink.cpp \
     tntnet.conf tntnet.properties
 
-SUFFIXES=.ecpp .js .png
+SUFFIXES=.ecpp .js .png .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 .js.cpp:

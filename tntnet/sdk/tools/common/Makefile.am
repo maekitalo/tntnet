@@ -13,4 +13,5 @@ libtntnet_sdk_la_SOURCES = \
 	tnt/filename.h \
 	tnt/stringescaper.h
 
-libtntnet_sdk_la_LDFLAGS = -version-info @sonumber@ -lcxxtools
+libtntnet_sdk_la_CXXFLAGS = $(PTHREAD_CFLAGS)
+libtntnet_sdk_la_LDFLAGS = -version-info @sonumber@ -lcxxtools $(PTHREAD_LIBS)

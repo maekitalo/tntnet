@@ -1,15 +1,19 @@
 pkglib_LTLIBRARIES = upload.la
 
-upload_la_SOURCES = \
+nodist_upload_la_SOURCES = \
+	upload.cpp
+
+EXTRA_DIST = \
 	upload.ecpp
 
-upload_la_LDFLAGS = -module
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+upload_la_LDFLAGS = -module $(PTHREAD_LIBS)
 upload_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = upload.cpp tntnet.conf tntnet.properties
 
-SUFFIXES=.ecpp
+SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 

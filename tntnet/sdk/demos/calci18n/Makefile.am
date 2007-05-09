@@ -1,12 +1,21 @@
 pkglib_LTLIBRARIES = calci18n.la
 
-calci18n_la_SOURCES = \
+nodist_calci18n_la_SOURCES = \
+	calci18n.cpp \
+	en.cpp \
+	fi.cpp \
+	de.cpp
+
+EXTRA_DIST = \
 	calci18n.ecpp \
+	calci18n.txt.fi \
+	calci18n.txt.de \
 	en.png \
 	fi.png \
 	de.png
 
-calci18n_la_LDFLAGS = -module
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+calci18n_la_LDFLAGS = -module $(PTHREAD_LIBS)
 calci18n_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties calci18n.txt calci18n.fi calci18n.de
@@ -14,12 +23,11 @@ CLEANFILES = calci18n.cpp tntnet.conf tntnet.properties \
 	en.cpp calci18n.txt \
 	fi.cpp calci18n.fi fi/calci18n.tntdata \
 	de.cpp calci18n.de de/calci18n.tntdata
-EXTRA_DIST = calci18n.txt.fi calci18n.txt.de
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 ECPPL=$(top_builddir)/sdk/tools/ecppl/ecppl
 ECPPLL=$(top_builddir)/sdk/tools/ecppll/ecppll
-SUFFIXES=.ecpp
+SUFFIXES=.ecpp .cpp .png
 
 .ecpp.cpp:
 	$(ECPPC) $<

@@ -1,15 +1,19 @@
 pkglib_LTLIBRARIES = cookie.la
 
-cookie_la_SOURCES = \
+nodist_cookie_la_SOURCES = \
 	cookie.ecpp
 
-cookie_la_LDFLAGS = -module
+EXTRA_DIST = \
+	cookie.ecpp
+
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+cookie_la_LDFLAGS = -module $(PTHREAD_LIBS)
 cookie_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = cookie.cpp tntnet.conf tntnet.properties
 
-SUFFIXES=.ecpp
+SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 

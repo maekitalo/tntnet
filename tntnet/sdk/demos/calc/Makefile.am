@@ -1,15 +1,19 @@
 pkglib_LTLIBRARIES = calc.la
 
-calc_la_SOURCES = \
+nodist_calc_la_SOURCES = \
+	calc.cpp
+
+EXTRA_DIST = \
 	calc.ecpp
 
-calc_la_LDFLAGS = -module
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+calc_la_LDFLAGS = -module $(PTHREAD_LIBS)
 calc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = calc.cpp tntnet.conf tntnet.properties
 
-SUFFIXES=.ecpp
+SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 

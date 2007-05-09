@@ -1,6 +1,22 @@
 pkglib_LTLIBRARIES = controls.la
 
-controls_la_SOURCES = \
+nodist_controls_la_SOURCES = \
+	controls.cpp \
+	index.cpp \
+	treemenu.cpp \
+	page1.cpp \
+	page2.cpp \
+	page3.cpp \
+	page4.cpp \
+	styles.cpp \
+	submitlink.cpp \
+	tooltip.cpp \
+	tooltipArea.cpp \
+	treeview.cpp \
+	minus.cpp \
+	plus.cpp
+
+EXTRA_DIST = \
 	controls.ecpp \
 	index.ecpp \
 	treemenu.ecpp \
@@ -14,13 +30,14 @@ controls_la_SOURCES = \
 	tooltipArea.ecpp \
 	treeview.ecpp \
 	minus.png \
-	plus.png
+	plus.png \
+	tntnet.conf
 
-controls_la_LDFLAGS = -module
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+controls_la_LDFLAGS = -module $(PTHREAD_LIBS)
 controls_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
-EXTRA_DIST = tntnet.conf
 CLEANFILES = tntnet.properties \
 	controls.cpp \
 	index.cpp \
@@ -39,7 +56,7 @@ CLEANFILES = tntnet.properties \
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
-SUFFIXES=.ecpp .png .css
+SUFFIXES=.ecpp .png .css .cpp
 .ecpp.cpp:
 	$(ECPPC) $<
 .png.cpp:

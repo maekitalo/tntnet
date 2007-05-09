@@ -86,4 +86,5 @@ nobase_include_HEADERS = \
 	tnt/urlmapper.h \
 	tnt/zdata.h
 
-libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools -pthread
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools $(PTHREAD_LIBS)

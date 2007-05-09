@@ -1,16 +1,21 @@
 pkglib_LTLIBRARIES = sprintf.la
 
-sprintf_la_SOURCES = \
+nodist_sprintf_la_SOURCES = \
+	sprintf.cpp \
+	subcomp.cpp
+
+EXTRA_DIST = \
 	sprintf.ecpp \
 	subcomp.ecpp
 
-sprintf_la_LDFLAGS = -module
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+sprintf_la_LDFLAGS = -module $(PTHREAD_LIBS)
 sprintf_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = sprintf.cpp subcomp.cpp tntnet.conf tntnet.properties
 
-SUFFIXES=.ecpp
+SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 

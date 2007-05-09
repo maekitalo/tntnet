@@ -1,15 +1,19 @@
 pkglib_LTLIBRARIES = savepoint.la
 
-savepoint_la_SOURCES = \
+nodist_savepoint_la_SOURCES = \
 	savepoint.ecpp
 
-savepoint_la_LDFLAGS = -module
+EXTRA_DIST = \
+	savepoint.ecpp
+
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+savepoint_la_LDFLAGS = -module $(PTHREAD_LIBS)
 savepoint_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = savepoint.cpp tntnet.conf tntnet.properties
 
-SUFFIXES=.ecpp
+SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 

@@ -1,16 +1,22 @@
 pkglib_LTLIBRARIES = session.la
 
-session_la_SOURCES = \
-	session.ecpp appsession.ecpp
+nodist_session_la_SOURCES = \
+	session.cpp \
+	appsession.cpp
 
-session_la_LDFLAGS = -module
+EXTRA_DIST = \
+	session.ecpp \
+	appsession.ecpp
+
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+session_la_LDFLAGS = -module $(PTHREAD_LIBS)
 session_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = session.cpp appsession.cpp \
 	tntnet.conf tntnet.properties
 
-SUFFIXES=.ecpp
+SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 

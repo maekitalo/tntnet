@@ -1,10 +1,15 @@
 pkglib_LTLIBRARIES = hello.la
 
-hello_la_SOURCES = \
+nodist_hello_la_SOURCES = \
+	hello.cpp \
+	tntnet.cpp
+
+EXTRA_DIST = \
 	hello.ecpp \
 	tntnet.jpg
 
-hello_la_LDFLAGS = -module
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+hello_la_LDFLAGS = -module $(PTHREAD_LIBS)
 hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
@@ -12,7 +17,7 @@ CLEANFILES = hello.cpp tntnet.cpp tntnet.conf tntnet.properties
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
-SUFFIXES=.ecpp .jpg
+SUFFIXES=.ecpp .jpg .cpp
 .ecpp.cpp:
 	$(ECPPC) $<
 .jpg.cpp:

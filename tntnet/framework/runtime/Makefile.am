@@ -20,9 +20,10 @@ tntnet_SOURCES = \
 	tnt/worker.h \
 	tnt/tntnet.h
 
-tntnet_LDFLAGS = -pthread -lcxxtools
+tntnet_LDFLAGS = -lcxxtools $(PTHREAD_LIBS)
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
 tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@localstatedir@/tntnet.pid\"
+AM_CXXFLAGS=$(PTHREAD_CFLAGS)
 
 if MAKE_GNUTLS
 tntnet_SOURCES += \
