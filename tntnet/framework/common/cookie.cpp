@@ -32,13 +32,13 @@ namespace tnt
 
   const Cookie Cookies::emptyCookie;
 
-  const std::string Cookie::maxAge  = "max-age";
-  const std::string Cookie::comment = "comment";
-  const std::string Cookie::domain  = "domain";
-  const std::string Cookie::path    = "path";
-  const std::string Cookie::secure  = "secure";
-  const std::string Cookie::version = "version";
-  const std::string Cookie::expires = "expires";
+  const std::string Cookie::maxAge  = "Max-Age";
+  const std::string Cookie::comment = "Comment";
+  const std::string Cookie::domain  = "Domain";
+  const std::string Cookie::path    = "Path";
+  const std::string Cookie::secure  = "Secure";
+  const std::string Cookie::version = "Version";
+  const std::string Cookie::expires = "Expires";
 
   unsigned Cookie::getMaxAge() const
   {
@@ -206,7 +206,10 @@ namespace tnt
           if (ch == '=')
             state = state_value0;
           else if (!std::isspace(ch))
+          {
+            log_warn("invalid cookie: " << header << " - '=' expected");
             throw HttpError("400 invalid cookie: " + header);
+          }
           break;
 
         case state_value0:
@@ -231,8 +234,6 @@ namespace tnt
             process_nv();
             state = state_0;
           }
-          else if (std::isspace(ch))
-            state = state_valuee;
           else
             value += ch;
           break;
@@ -246,7 +247,10 @@ namespace tnt
           else if (std::isspace(ch))
             state = state_valuee;
           else
+          {
+            log_warn("invalid cookie: " << header << " - semicolon expected after value");
             throw HttpError("400 invalid cookie: " + header);
+          }
           break;
 
         case state_qvalue:
@@ -263,7 +267,10 @@ namespace tnt
             state = state_0;
           }
           else if (!std::isspace(ch))
+          {
+            log_warn("invalid cookie: " << header << " - semicolon expected");
             throw HttpError("400 invalid cookie: " + header);
+          }
           break;
       }
     }
@@ -271,7 +278,10 @@ namespace tnt
     if (state == state_qvaluee || state == state_value)
       process_nv();
     else if (state != state_0)
+    {
+      log_warn("invalid cookie: " << header << " - invalid state " << state);
       throw HttpError("400 invalid cookie: " + header);
+    }
 
     if (!current_cookie.value.empty())
       store_cookie();
@@ -288,7 +298,7 @@ namespace tnt
       if (first)
         first = false;
       else
-        out << "; ";
+        out << ' ';
 
       const Cookie& cookie = it->second;
 
@@ -297,12 +307,14 @@ namespace tnt
 
       // print secure-attribute
       if (cookie.secureFlag)
-        out << ", " << Cookie::secure;
+        out << "; " << Cookie::secure;
 
       // print attributes
       for (Cookie::attrs_type::const_iterator a = cookie.attrs.begin();
            a != cookie.attrs.end(); ++a)
-        out << ", " << a->first << "=\"" << a->second << '"';
+        out << "; " << a->first << "=\"" << a->second << '"';
+      if (cookie.attrs.find(Cookie::version) == cookie.attrs.end())
+        out << "; Version=\"1\"";
     }
 
     return out;
