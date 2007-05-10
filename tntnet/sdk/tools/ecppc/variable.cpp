@@ -20,7 +20,7 @@
 
 #include "tnt/ecppc/variable.h"
 #include <sstream>
-#include <locale>
+#include <cctype>
 
 namespace tnt
 {
