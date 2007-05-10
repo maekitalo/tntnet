@@ -85,7 +85,7 @@ fi
 # which indicates that we try without any flags at all, and "pthread-config"
 # which is a program returning the flags for the Pth emulation library.
 
-acx_pthread_flags="pthreads none -Kthread -kthread lthread -pthread -pthreads -mthreads -mt pthread --thread-safe pthread-config"
+acx_pthread_flags="pthreads pthread none -Kthread -kthread lthread -pthread -pthreads -mthreads -mt --thread-safe pthread-config"
 
 # The ordering *is* (sometimes) important.  Some notes on the
 # individual items follow:
