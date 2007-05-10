@@ -64,6 +64,20 @@ namespace tnt
 
   log_define("tntnet.httpmessage.parser")
 
+  bool RequestSizeMonitor::post(bool ret)
+  {
+    if (++requestSize > HttpMessage::getMaxRequestSize()
+      && HttpMessage::getMaxRequestSize() > 0)
+    {
+      requestSizeExceeded();
+      return true;
+    }
+    return ret;
+  }
+
+  void RequestSizeMonitor::requestSizeExceeded()
+  { }
+
   void HttpMessage::Parser::reset()
   {
     message.clear();

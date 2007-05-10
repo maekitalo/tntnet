@@ -28,35 +28,23 @@
 
 namespace tnt
 {
-  namespace
+  class RequestSizeMonitor
   {
-    class RequestSizeMonitor
-    {
-        size_t requestSize;
+      size_t requestSize;
 
-      protected:
-        void pre(char ch)    { }
-        bool post(bool ret)
-        {
-          if (++requestSize > HttpMessage::getMaxRequestSize()
-            && HttpMessage::getMaxRequestSize() > 0)
-          {
-            requestSizeExceeded();
-            return true;
-          }
-          return ret;
-        }
+    protected:
+      void pre(char ch)    { }
+      bool post(bool ret);
 
-        virtual void requestSizeExceeded()  { }
+      virtual void requestSizeExceeded();
 
-      public:
-        RequestSizeMonitor()
-          : requestSize(0)
-          { }
-        size_t getCurrentRequestSize() const  { return requestSize; }
-        void reset()  { requestSize = 0; }
-    };
-  }
+    public:
+      RequestSizeMonitor()
+        : requestSize(0)
+        { }
+      size_t getCurrentRequestSize() const  { return requestSize; }
+      void reset()  { requestSize = 0; }
+  };
 
   class HttpMessage::Parser
     : public tnt::Parser<HttpMessage::Parser, RequestSizeMonitor>
