@@ -7,7 +7,7 @@ nodist_calcajax_la_SOURCES = \
 
 EXTRA_DIST = \
 	calcajax.ecpp \
-	calcajax_js.js
+	calcajax_js.js \
 	docalc.ecpp
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
