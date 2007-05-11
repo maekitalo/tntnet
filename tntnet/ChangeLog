@@ -1,3 +1,7 @@
+2007-05-11 tommi@tntnet.org
+  - change newsdb-demo to use built in connectionpool of tntdb
+  - build-improvements (port to solaris/SunStudio)
+
 2007-05-08 tommi@tntnet.org
   - allow cookie-values to have commas
 
