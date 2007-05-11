@@ -10,9 +10,9 @@
 dburl = "sqlite:newsdb.db";
 
 </%config>
-<%thread>
+<%request scope="global">
 
-// Create a persistent thread-scope variable and set up a connection.
-tntdb::Connection conn(tntdb::connect(dburl));
+// fetch a connection from the tntdb connection cache
+tntdb::Connection conn(tntdb::connectCached(dburl));
 
-</%thread>
+</%request>
