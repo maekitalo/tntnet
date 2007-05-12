@@ -25,11 +25,11 @@ log_define("tntnet.mime")
 namespace tnt
 {
   const std::string MimeHandler::configMimeDb = "MimeDb";
-  const std::string MimeHandler::configDefaultType = "DefaultType";
+  const std::string MimeHandler::configDefaultContentType = "DefaultContentType";
   const std::string MimeHandler::configAddType = "AddType";
 
   MimeHandler::MimeHandler(const tnt::Tntconfig& config)
-    : default_type(config.getValue(configDefaultType, "text/html"))
+    : default_type(config.getValue(configDefaultContentType, "text/html"))
   {
     mime_map.read(config.getValue(configMimeDb, "/etc/mime.types"));
 
@@ -64,7 +64,7 @@ namespace tnt
       }
     }
 
-    log_debug("unknown type in url-path \"" << path << "\" set DefaultType " << default_type);
+    log_debug("unknown type in url-path \"" << path << "\" set DefaultContentType " << default_type);
     return default_type;
   }
 

@@ -32,7 +32,7 @@ namespace tnt
   {
     public:
       static const std::string configMimeDb;
-      static const std::string configDefaultType;
+      static const std::string configDefaultContentType;
       static const std::string configAddType;
 
     private:
