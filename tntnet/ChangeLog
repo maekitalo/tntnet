@@ -1,3 +1,8 @@
+2007-05-13 tommi@tntnet.org
+  - removed method isTop() from components, since it is not reliable in all
+    circumstances. The feature is replaced with a additional virtual
+	operator()-variant in tnt::Component.
+
 2007-05-11 tommi@tntnet.org
   - change newsdb-demo to use built in connectionpool of tntdb
   - build-improvements (port to solaris/SunStudio)

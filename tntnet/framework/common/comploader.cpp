@@ -127,14 +127,10 @@ Component& Comploader::fetchComp(const Compident& ci,
     Component* comp = lib.create(ci.compname, *this, rootmapper);
 
     componentmap[ci] = comp;
-    comp->setTop(false);
     return *comp;
   }
   else
-  {
-    it->second->setTop(false);
     return *(it->second);
-  }
 }
 
 Component* Comploader::createComp(const Compident& ci,

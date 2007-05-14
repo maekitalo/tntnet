@@ -107,6 +107,12 @@ namespace tnt
   unsigned Static::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
   {
+    return operator() (request, reply, qparams, false);
+  }
+
+  unsigned Static::operator() (tnt::HttpRequest& request,
+    tnt::HttpReply& reply, cxxtools::QueryParams& qparams, bool top)
+  {
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
@@ -179,7 +185,7 @@ namespace tnt
     log_info("send static file \"" << file << "\" size " << st.st_size << " bytes");
 
 #if HAVE_SENDFILE
-    if (isTop())
+    if (top)
     {
       try
       {
@@ -197,7 +203,7 @@ namespace tnt
         Fdfile in(file.c_str(), O_RDONLY);
         while(tcpStream)
         {
-          log_debug("sendfile " << st.st_size << '-' << offset << " bytes");
+          log_debug("sendfile " << st.st_size << " bytes");
           ssize_t s = sendfile(tcpStream.getFd(), in.getFd(), &offset, st.st_size - offset);
           log_debug("sendfile returns " << s);
           if (s < 0)
@@ -227,7 +233,7 @@ namespace tnt
       }
     }
 #else
-    if (isTop())
+    if (top)
       reply.setDirectMode();
 #endif
     std::ifstream in(file.c_str());

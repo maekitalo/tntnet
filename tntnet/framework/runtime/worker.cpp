@@ -275,7 +275,6 @@ namespace tnt
       {
         log_debug("load component " << ci);
         Component& comp = comploader.fetchComp(ci, application.getDispatcher());
-        comp.setTop();
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
@@ -283,7 +282,7 @@ namespace tnt
 
         log_debug("call component " << ci << " path " << request.getPathInfo());
         state = stateProcessingRequest;
-        unsigned http_return = comp(request, reply, request.getQueryParams());
+        unsigned http_return = comp(request, reply, request.getQueryParams(), true);
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())

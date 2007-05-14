@@ -27,6 +27,12 @@
 namespace tnt
 {
   unsigned Component::operator() (HttpRequest& request,
+    HttpReply& reply, cxxtools::QueryParams& qparam, bool top)
+  {
+    return operator() (request, reply, qparam);
+  }
+
+  unsigned Component::operator() (HttpRequest& request,
     HttpReply& reply, cxxtools::QueryParams& qparam)
   {
     return DECLINED;
