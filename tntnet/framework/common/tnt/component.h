@@ -38,10 +38,7 @@ class HttpReply;
 
 class Component
 {
-    time_t atime;
-
   public:
-    Component() : atime(0)    { }
     virtual ~Component() { }
 
     virtual unsigned operator() (HttpRequest& request,
