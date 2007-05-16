@@ -92,9 +92,15 @@ void MimeDb::read(std::istream& in)
       case state_ext0:
         if (ch == '\n')
           state = state_0;
+        else if (ch == '.')
+        {
+          ext = '.';
+          state = state_ext;
+        }
         else if (!std::isspace(ch))
         {
-          ext = ch;
+          ext = '.';
+          ext += ch;
           state = state_ext;
         }
         break;

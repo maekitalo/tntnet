@@ -20,7 +20,7 @@
 #include <mimehandler.h>
 #include <cxxtools/log.h>
 
-log_define("tntnet.mime")
+log_define("tntnet.mime.handler")
 
 namespace tnt
 {
@@ -38,11 +38,18 @@ namespace tnt
     {
       if (it->key == configAddType)
       {
+        std::string type = it->params[0];
         for (tnt::Tntconfig::params_type::size_type i = 1;
              i < it->params.size(); ++i)
         {
-          log_debug("AddType \"" << it->params[0] << "\" \"" << it->params[i] << '"');
-          mime_map.insert(mime_map_type::value_type(it->params[0], it->params[i]));
+          std::string ext = it->params[i];
+          if (ext.size() > 0)
+          {
+            if (ext[0] != '.')
+              ext.insert(0, 1, '.');
+            log_debug("AddType \"" << type << "\" \"" << ext << '"');
+            mime_map.insert(mime_map_type::value_type(ext, type));
+          }
         }
       }
     }
@@ -50,20 +57,16 @@ namespace tnt
 
   std::string MimeHandler::getMimeType(const std::string& path) const
   {
-    for (mime_map_type::const_iterator it = mime_map.begin();
-         it != mime_map.end(); ++it)
+    std::string::size_type n = path.find_last_of('.');
+    if (n != std::string::npos)
     {
-      std::string ext = it->first;
-      if (path.size() > ext.size()
-          && (path.at(path.size() - ext.size() - 1) == '.'
-            || ext.size() > 0 && ext.at(0) == '.')
-          && path.compare(path.size() - ext.size(), ext.size(), ext) == 0)
+      mime_map_type::const_iterator it = mime_map.find(std::string(path, n));
+      if (it != mime_map.end())
       {
         log_debug("url-path=\"" << path << "\" type=" << it->second);
         return it->second;
       }
     }
-
     log_debug("unknown type in url-path \"" << path << "\" set DefaultContentType " << default_type);
     return default_type;
   }
