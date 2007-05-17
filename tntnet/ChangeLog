@@ -1,3 +1,7 @@
+2007-05-17 tommi@tntnet.org
+  - fix minor protocol-error when sendfile is used (connection was closed
+    after request although the header specified to use keep-alive)
+
 2007-05-16 tommi@tntnet.org
   - AddType-configuration-variable fixed
 

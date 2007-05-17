@@ -42,6 +42,7 @@
 #include <netinet/tcp.h>
 #include <sys/poll.h>
 #include <typeinfo>
+#include <errno.h>
 #endif
 
 log_define("tntnet.static")
@@ -174,9 +175,7 @@ namespace tnt
     reply.setHeader(tnt::httpheader::lastModified, lastModified);
 
     // set Keep-Alive
-    if (request.keepAlive())
-      reply.setHeader(tnt::httpheader::connection,
-                      tnt::httpheader::connectionKeepAlive);
+    reply.setKeepAliveHeader();
 
     // set Content-Length
     reply.setContentLengthHeader(st.st_size);
@@ -187,13 +186,18 @@ namespace tnt
 #if HAVE_SENDFILE
     if (top)
     {
+      int on = 1;
+      int off = 0;
       try
       {
         cxxtools::net::iostream& tcpStream = dynamic_cast<cxxtools::net::iostream&>(reply.getDirectStream());
 
-        int sockopt = 1;
+        if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
+            &off, sizeof(off)) < 0)
+          throw cxxtools::net::Exception("setsockopt(TCP_NODELAY)");
+
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
-            &sockopt, sizeof(sockopt)) < 0)
+            &on, sizeof(on)) < 0)
           throw cxxtools::net::Exception("setsockopt(TCP_CORK)");
 
         reply.setDirectMode();
@@ -201,12 +205,17 @@ namespace tnt
 
         off_t offset = 0;
         Fdfile in(file.c_str(), O_RDONLY);
+        ssize_t s;
         while(tcpStream)
         {
-          log_debug("sendfile " << st.st_size << " bytes");
-          ssize_t s = sendfile(tcpStream.getFd(), in.getFd(), &offset, st.st_size - offset);
-          log_debug("sendfile returns " << s);
-          if (s < 0)
+          do
+          {
+            log_debug("sendfile " << st.st_size << " bytes");
+            s = sendfile(tcpStream.getFd(), in.getFd(), &offset, st.st_size - offset);
+            log_debug("sendfile returns " << s);
+          } while (s < 0 && errno == EINTR);
+
+          if (s < 0 && errno != EAGAIN)
             throw cxxtools::SysError("sendfile");
 
           if (offset >= st.st_size)
@@ -216,14 +225,12 @@ namespace tnt
           tcpStream.poll(POLLOUT);
         }
 
-        sockopt = 0;
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
-            &sockopt, sizeof(sockopt)) < 0)
+            &off, sizeof(off)) < 0)
           throw cxxtools::net::Exception("setsockopt(TCP_CORK)");
 
-        sockopt = 1;
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
-            &sockopt, sizeof(sockopt)) < 0)
+            &on, sizeof(on)) < 0)
           throw cxxtools::net::Exception("setsockopt(TCP_NODELAY)");
 
         return HTTP_OK;

@@ -111,12 +111,7 @@ namespace tnt
     tryCompress(body);
 
     if (!hasHeader(httpheader::connection))
-    {
-      if (keepAliveTimeout > 0 && keepAliveCounter > 0)
-        setKeepAliveHeader(getKeepAliveTimeout() + 999 / 1000);
-      else
-        setKeepAliveHeader(0);
-    }
+      setKeepAliveHeader();
 
     if (!hasHeader(httpheader::contentLength))
       setContentLengthHeader(body.size());
@@ -214,15 +209,15 @@ namespace tnt
     setHeader(httpheader::contentLength, s.str());
   }
 
-  void HttpReply::setKeepAliveHeader(unsigned timeout)
+  void HttpReply::setKeepAliveHeader()
   {
-    log_debug("setKeepAliveHeader(" << timeout << ')');
+    log_debug("setKeepAliveHeader()");
     removeHeader(httpheader::connection);
     removeHeader(httpheader::keepAlive);
-    if (timeout > 0 && getKeepAliveCounter() > 0)
+    if (keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
     {
       std::ostringstream s;
-      s << "timeout=" << timeout << ", max=" << getKeepAliveCounter();
+      s << "timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter();
       setHeader(httpheader::keepAlive, s.str());
 
       setHeader(httpheader::connection, httpheader::connectionKeepAlive);

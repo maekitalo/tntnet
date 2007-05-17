@@ -76,7 +76,7 @@ namespace tnt
       void resetContent()   { outstream.str(std::string()); }
 
       void setContentLengthHeader(size_t size);
-      void setKeepAliveHeader(unsigned timeout = 15);
+      void setKeepAliveHeader();
 
       virtual void setDirectMode(unsigned ret = HTTP_OK, const char* msg = "OK");
       virtual void setDirectModeNoFlush();
