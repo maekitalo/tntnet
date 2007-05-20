@@ -99,7 +99,7 @@ namespace tnt
             if (ofile.empty())
               ofile = input.substr(0, pos_dot);
 
-            extname = input.substr(pos_dot + 1);
+            extname = input.substr(pos_dot);
           }
           else
           {

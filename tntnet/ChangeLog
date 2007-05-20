@@ -1,3 +1,7 @@
+2007-05-20 tommi@tntnet.org
+  - make content-type-detection in ecppc working again (broken since
+    AddType-fix on 2007-05-16)
+
 2007-05-17 tommi@tntnet.org
   - fix minor protocol-error when sendfile is used (connection was closed
     after request although the header specified to use keep-alive)
