@@ -177,12 +177,6 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib \"" << libname << '"');
 
-  log_debug(librarymap.size() << " loaded libraries");
-  for (librarymap_type::iterator li = librarymap.begin();
-       li != librarymap.end(); ++li)
-    log_debug("loaded library " << li->first);
-  log_debug("end loaded libraries");
-
   librarymap_type::iterator it = librarymap.find(libname);
   if (it == librarymap.end())
   {
