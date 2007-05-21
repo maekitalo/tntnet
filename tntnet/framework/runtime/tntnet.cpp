@@ -258,10 +258,10 @@ namespace tnt
   {
     log_debug("worker-process");
 
-    if (listeners.size() > minthreads)
+    if (listeners.size() >= minthreads)
     {
-      log_warn("need at least one worker per listener - set MinThreads to " << listeners.size());
-      minthreads = listeners.size();
+      log_warn("at least one more worker than listeners needed - set MinThreads to " << listeners.size() + 1);
+      minthreads = listeners.size() + 1;
     }
 
     if (maxthreads < minthreads)
