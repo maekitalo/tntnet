@@ -310,7 +310,7 @@ namespace tnt
         log_info("max worker-threadcount " << maxthreads << " reached");
 
       if (threadstartdelay > 0)
-        usleep(threadstartdelay);
+        usleep(threadstartdelay * 1000);
     }
 
     log_warn("stopping Tntnet");
