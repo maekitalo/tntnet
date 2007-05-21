@@ -274,7 +274,17 @@ namespace tnt
       try
       {
         log_debug("load component " << ci);
-        Component& comp = comploader.fetchComp(ci, application.getDispatcher());
+        Component* comp;
+        try
+        {
+          comp = &comploader.fetchComp(ci, application.getDispatcher());
+        }
+        catch (const NotFoundException& e)
+        {
+          log_debug("NotFoundException catched - url " << e.getUrl() << " try next mapping");
+          continue;
+        }
+
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
@@ -282,7 +292,7 @@ namespace tnt
 
         log_debug("call component " << ci << " path " << request.getPathInfo());
         state = stateProcessingRequest;
-        unsigned http_return = comp(request, reply, request.getQueryParams(), true);
+        unsigned http_return = (*comp)(request, reply, request.getQueryParams(), true);
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())
