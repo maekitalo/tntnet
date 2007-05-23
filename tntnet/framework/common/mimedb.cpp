@@ -94,13 +94,12 @@ void MimeDb::read(std::istream& in)
           state = state_0;
         else if (ch == '.')
         {
-          ext = '.';
+          ext.clear();
           state = state_ext;
         }
         else if (!std::isspace(ch))
         {
-          ext = '.';
-          ext += ch;
+          ext = ch;
           state = state_ext;
         }
         break;
@@ -109,7 +108,7 @@ void MimeDb::read(std::istream& in)
         if (std::isspace(ch))
         {
           log_debug(ext << " => " << mime);
-          mimeDb.insert(mimedb_type::value_type(ext, mime));
+          mimeDb.insert(MimeDbType::value_type(ext, mime));
           state = ch == '\n' ? state_0 : state_ext0;
         }
         else
@@ -118,8 +117,18 @@ void MimeDb::read(std::istream& in)
   }
 }
 
+void MimeDb::addType(const std::string& ext, const std::string& mimeType)
+{
+  if (ext.size() > 0 && ext.at(0) == '.')
+    mimeDb.insert(MimeDbType::value_type(ext.substr(1), mimeType));
+  else
+    mimeDb.insert(MimeDbType::value_type(ext, mimeType));
+}
+
 std::string MimeDb::getMimetype(const std::string& fname) const
 {
+  log_debug("get mimetype for \"" << fname << '"');
+
   std::string ext;
 
   std::string::size_type p = fname.rfind('.');
@@ -128,8 +137,18 @@ std::string MimeDb::getMimetype(const std::string& fname) const
   else
     ext = fname;
 
-  const_iterator it = find(ext);
-  return it == end() ? std::string() : it->second;
+  log_debug("ext=" << ext);
+  MimeDbType::const_iterator it = mimeDb.find(ext);
+  if (it == mimeDb.end())
+  {
+    log_debug("no mimetype found for ext \"" << ext << '"');
+    return std::string();
+  }
+  else
+  {
+    log_debug("mimetype for ext \"" << ext << "\": " << it->second);
+    return it->second;
+  }
 }
 
 }

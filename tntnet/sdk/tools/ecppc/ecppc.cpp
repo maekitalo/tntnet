@@ -83,6 +83,9 @@ namespace tnt
         {
           std::cerr << "warning: no requestname passed (with -n) - using \"images\"" << std::endl;
           requestname = "images";
+
+          if (ofile.empty())
+            ofile = requestname;
         }
         else
         {
@@ -139,9 +142,11 @@ namespace tnt
       else if (!extname.empty() && !multibinary)
       {
         tnt::MimeDb db(mimedb);
-        tnt::MimeDb::const_iterator it = db.find(extname);
-        if (it != db.end())
-          generator.setMimetype(it->second);
+        std::string mimeType = db.getMimetype(extname);
+        if (mimeType.empty())
+          std::cerr << "warning: no mimetype set" << std::endl;
+        else
+          generator.setMimetype(mimeType);
       }
 
       generator.setCompress(compress);
@@ -184,7 +189,11 @@ namespace tnt
           if (mimetype.isSet())
             mime = mimetype;
           else
+          {
             mime = mimeDb.getMimetype(inputfile);
+            if (mime.empty())
+              std::cerr << "warning: no mimetype found for \"" << inputfile << '"' << std::endl;
+          }
 
           // strip path
           std::string::size_type p;
@@ -292,6 +301,7 @@ namespace tnt
            "  -n name          classname\n"
            "  -I dir           include-directory\n"
            "  -m type          Mimetype\n"
+           "  --mimetypes file read mimetypes from file (default /etc/mime.types)\n"
            "  -b               binary\n"
            "  -bb              generate multibinary component\n"
            "  -z               compress constant data\n"

@@ -32,6 +32,8 @@ ecppc \- compiler for ecpp
 .IR name ]
 .RB [ \-m
 .IR mimetype ]
+.RB [ \--mimetypes
+.IR filename ]
 .RB [ \-I
 .IR dir ]
 .RB filename
@@ -82,6 +84,8 @@ Set mimetype of output.
 This is the mimetype, sent by the component to the browser in the Content-Type-header.
 Without this parameter the mimetype is looked up from the mime-database of your system using
 the file-extension of the source-file.
+.IP "\--mimetypes file"
+Read mimetypes from file (default: /etc/mime.types).
 .IP "\-M"
 This disables normal processing and prints just the ecpp-dependencies from this component.
 The output can be included into a Makefile.

@@ -36,9 +36,8 @@ namespace tnt
       static const std::string configAddType;
 
     private:
-      typedef tnt::MimeDb mime_map_type;
-      mime_map_type mime_map;
-      std::string default_type;
+      tnt::MimeDb mimeDb;
+      std::string defaultType;
 
     public:
       MimeHandler(const tnt::Tntconfig& config);

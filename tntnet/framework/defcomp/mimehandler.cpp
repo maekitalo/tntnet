@@ -29,9 +29,9 @@ namespace tnt
   const std::string MimeHandler::configAddType = "AddType";
 
   MimeHandler::MimeHandler(const tnt::Tntconfig& config)
-    : default_type(config.getValue(configDefaultContentType, "text/html"))
+    : defaultType(config.getValue(configDefaultContentType, "text/html"))
   {
-    mime_map.read(config.getValue(configMimeDb, "/etc/mime.types"));
+    mimeDb.read(config.getValue(configMimeDb, "/etc/mime.types"));
 
     for (tnt::Tntconfig::config_entries_type::const_iterator it = config.getConfigValues().begin();
          it != config.getConfigValues().end(); ++it)
@@ -45,10 +45,8 @@ namespace tnt
           std::string ext = it->params[i];
           if (ext.size() > 0)
           {
-            if (ext[0] != '.')
-              ext.insert(0, 1, '.');
             log_debug("AddType \"" << type << "\" \"" << ext << '"');
-            mime_map.insert(mime_map_type::value_type(ext, type));
+            mimeDb.addType(ext, type);
           }
         }
       }
@@ -57,18 +55,17 @@ namespace tnt
 
   std::string MimeHandler::getMimeType(const std::string& path) const
   {
-    std::string::size_type n = path.find_last_of('.');
-    if (n != std::string::npos)
+    std::string mimeType = mimeDb.getMimetype(path);
+    if (mimeType.empty())
     {
-      mime_map_type::const_iterator it = mime_map.find(std::string(path, n));
-      if (it != mime_map.end())
-      {
-        log_debug("url-path=\"" << path << "\" type=" << it->second);
-        return it->second;
-      }
+      log_debug("unknown type in url-path \"" << path << "\" set DefaultContentType " << defaultType);
+      return defaultType;
     }
-    log_debug("unknown type in url-path \"" << path << "\" set DefaultContentType " << default_type);
-    return default_type;
+    else
+    {
+      log_debug("url-path=\"" << path << "\" type=" << mimeType);
+      return mimeType;
+    }
   }
 
 }

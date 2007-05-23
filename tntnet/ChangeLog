@@ -1,3 +1,7 @@
+2007-05-23 tommi@tntnet.org
+  - use requestname as base filename in multibinary-generation by default
+  - document option --mimetypes in ecppc
+
 2007-05-20 tommi@tntnet.org
   - make content-type-detection in ecppc working again (broken since
     AddType-fix on 2007-05-16)
