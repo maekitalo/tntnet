@@ -102,7 +102,7 @@ namespace tnt
             if (ofile.empty())
               ofile = input.substr(0, pos_dot);
 
-            extname = input.substr(pos_dot);
+            extname = input.substr(pos_dot + 1);
           }
           else
           {
@@ -144,7 +144,10 @@ namespace tnt
         tnt::MimeDb db(mimedb);
         std::string mimeType = db.getMimetype(extname);
         if (mimeType.empty())
-          std::cerr << "warning: no mimetype set" << std::endl;
+        {
+          if (extname != "ecpp")
+            std::cerr << "warning: unknown mimetype" << std::endl;
+        }
         else
           generator.setMimetype(mimeType);
       }
