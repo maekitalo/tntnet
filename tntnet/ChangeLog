@@ -1,3 +1,7 @@
+2007-05-27 tommi@tntnet.org
+  - don't warn about unknown mime-type for ecpp-files
+  - fix internationalization in subcomponents
+
 2007-05-23 tommi@tntnet.org
   - use requestname as base filename in multibinary-generation by default
   - document option --mimetypes in ecppc
