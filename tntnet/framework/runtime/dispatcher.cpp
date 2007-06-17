@@ -65,7 +65,10 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
     urlMapCacheType::key_type(vhost, compUrl, pos);
   urlMapCacheType::const_iterator um = urlMapCache.find(cacheKey);
   if (um != urlMapCache.end())
+  {
+    log_debug("map " << vhost << ':' << compUrl << " to " << um->second);
     return um->second;
+  }
 
   // no cache hit
   regmatch_formatter formatter;
@@ -94,6 +97,7 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
 
       urlMapCache.insert(urlMapCacheType::value_type(cacheKey, ci));
 
+      log_debug("map " << vhost << ' ' << compUrl << " to " << ci);
       return ci;
     }
   }
