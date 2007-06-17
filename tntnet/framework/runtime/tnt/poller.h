@@ -40,9 +40,10 @@ namespace tnt
   {
       Jobqueue& queue;
 
+      cxxtools::Pipe notify_pipe;
+
 #ifdef WITH_EPOLL
 
-      cxxtools::Pipe notify_pipe;
       int pollFd;
 
       typedef std::map<int, Jobqueue::JobPtr> jobs_type;
@@ -58,8 +59,6 @@ namespace tnt
       void append_new_jobs();
 
 #else
-
-      cxxtools::Pipe notify_pipe;
 
       typedef std::deque<Jobqueue::JobPtr> jobs_type;
 
