@@ -1,3 +1,8 @@
+2007-06-17 tommi@tntnet.org
+  - add debug-statements in dispatcher for easier debugging of
+    MapUrl-statements
+  - set cookie-path in session-scope to extend sessions to all pages
+
 2007-05-29 tommi@tntnet.org
   - fix typo in redirect-component (name is redirect, not redired)
 

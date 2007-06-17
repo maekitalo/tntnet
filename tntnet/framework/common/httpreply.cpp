@@ -245,7 +245,9 @@ namespace tnt
   void HttpReply::setCookie(const std::string& name, const Cookie& value)
   {
     log_debug("setCookie(\"" << name << "\",\"" << value.getValue() << "\")");
-    httpcookies.setCookie(name, value);
+    tnt::Cookie cookie(value);
+    cookie.setPath("/");
+    httpcookies.setCookie(name, cookie);
   }
 
   bool HttpReply::keepAlive() const
