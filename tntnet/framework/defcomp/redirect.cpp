@@ -59,7 +59,7 @@ namespace tnt
     return new Redirect();
   }
 
-  static RedirectFactory redirectFactory("redired");
+  static RedirectFactory redirectFactory("redirect");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

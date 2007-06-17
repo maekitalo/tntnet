@@ -1,3 +1,6 @@
+2007-05-29 tommi@tntnet.org
+  - fix typo in redirect-component (name is redirect, not redired)
+
 2007-05-27 tommi@tntnet.org
   - don't warn about unknown mime-type for ecpp-files
   - fix internationalization in subcomponents
