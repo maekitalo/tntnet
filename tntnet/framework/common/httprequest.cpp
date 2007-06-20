@@ -264,10 +264,29 @@ namespace tnt
     if (!locale_init)
     {
       static const std::string LANG = "LANG";
-      static const std::locale stdlocale("");
+      static std::locale stdlocale;
+      static bool stdlocale_init = false;
+
       typedef std::map<std::string, std::locale> locale_map_type;
       static locale_map_type locale_map;
       static cxxtools::Mutex locale_monitor;
+
+      if (!stdlocale_init)
+      {
+        cxxtools::MutexLock lock(locale_monitor);
+        if (!stdlocale_init)
+        {
+          stdlocale_init = true;
+          try
+          {
+            stdlocale = std::locale("");
+          }
+          catch (const std::exception& e)
+          {
+            log_warn("error initializing standard-locale - using locale \"C\"");
+          }
+        }
+      }
 
       locale_init = true;
 

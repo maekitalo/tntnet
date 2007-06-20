@@ -1,3 +1,6 @@
+2007-06-20 tommi@tntnet.org
+  - use C-locale if standard-locale ($LANG) is unknown
+
 2007-06-17 tommi@tntnet.org
   - add debug-statements in dispatcher for easier debugging of
     MapUrl-statements
