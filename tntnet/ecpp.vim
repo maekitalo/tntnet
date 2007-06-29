@@ -67,7 +67,7 @@ syn region ecppPre matchgroup=Delimiter start="<%pre>" end="</%pre>" contains=@c
 syn region ecppCleanup matchgroup=Delimiter start="<%cleanup>" end="</%cleanup>" contains=@cppTop
 syn region ecppShared matchgroup=Delimiter start="<%shared>" end="</%shared>" contains=@cppTop
 syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@cppTop
-syn region	ecppIncluded	display contained start=+"+ skip=+\\\\\|\\"+ end=+"+
+syn region ecppIncluded display contained start=+"+ skip=+\\\\\|\\"+ end=+"+
 syn match ecppIncluded display contained "<[^>]*>"
 syn region ecppInclude matchgroup=Delimiter start="<%include>" end="</%include>" contains=@ecppIncluded
 
@@ -75,10 +75,11 @@ syn region ecppInclude matchgroup=Delimiter start="<%include>" end="</%include>"
 
 syn region ecppDoc matchgroup=Delimiter start="<%doc>" end="</%doc>"
 syn region ecppComment matchgroup=Delimiter start="<#" end="#>" contains=@cCommentGroup
+syn region ecppCommentm matchgroup=Delimiter start="<%doc>" end="</%doc>" contains=@cCommentGroup
 syn region ecppTranslateTag matchgroup=Delimiter start="{" end="}"
 " syn match ecppTranslate contained "[^}]\+"
 
-syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppEndComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppPre,ecppCleanup,ecppShared,ecppDoc,ecppComment,ecppTranslateTag,ecppInclude
+syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppEndComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppPre,ecppCleanup,ecppShared,ecppDoc,ecppComment,ecppCommentm,ecppTranslateTag,ecppInclude
 
 syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contains=@htmlTop
 syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@htmlTop
@@ -97,6 +98,7 @@ if version >= 508 || !exists("did_ecpp_syn_inits")
 
 	HiLink ecppDoc Comment
 	HiLink ecppComment Comment
+	HiLink ecppCommentm Comment
 	HiLink ecppTranslateTag Identifier
     HiLink ecppIncluded		String
 

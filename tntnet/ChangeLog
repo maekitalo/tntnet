@@ -1,3 +1,7 @@
+2007-06-30 tommi@tntnet.org
+  - support for http-basic-authentification
+  - new tag <%doc>...</%doc> (long form of comment-tag)
+
 2007-06-20 tommi@tntnet.org
   - use C-locale if standard-locale ($LANG) is unknown
 

@@ -167,7 +167,9 @@ namespace tnt
         state_scopecomment,
         state_endcall0,
         state_endcall,
-        state_endcalle
+        state_endcalle,
+        state_doc,
+        state_doce
       };
 
       state_type state = state_nl;
@@ -405,6 +407,8 @@ namespace tnt
                 handler.startI18n();
                 state = state_html0;
               }
+              else if (tag == "doc")
+                state = state_doc;
               else
                 state = state_cpp;
             }
@@ -703,7 +707,8 @@ namespace tnt
                 || tag == "session"
                 || tag == "application"
                 || tag == "thread"
-                || tag == "request")
+                || tag == "request"
+                || tag == "doc")
                 ;
               else
                 throw parse_error("unknown tag " + tag, state, curline);
@@ -1605,6 +1610,28 @@ namespace tnt
               state = state_html;
             else if (!std::isspace(ch))
               throw parse_error("'>' expected", state, curline);
+            break;
+
+          case state_doc:
+            if (ch == '<')
+            {
+              etag.clear();
+              state = state_doce;
+            }
+            break;
+
+          case state_doce:
+            if (ch == '>')
+            {
+              if (etag == "/%doc")
+                state = state_html0;
+              else
+                state = state_doc;
+            }
+            else if (ch == '<')
+              etag.clear();
+            else
+              etag += ch;
             break;
 
         }  // switch(state)
