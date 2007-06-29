@@ -64,6 +64,7 @@ namespace tnt
       virtual void throwError(const std::string& errorMessage) const;
       virtual void throwNotFound(const std::string& errorMessage) const;
       unsigned redirect(const std::string& newLocation);
+      unsigned notAuthorized(const std::string& realm);
 
       void sendReply(unsigned ret, const char* msg = "OK");
       void sendReply(unsigned ret, const std::string& msg)

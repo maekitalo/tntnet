@@ -23,6 +23,7 @@
 #include <sstream>
 #include <cxxtools/log.h>
 #include <cxxtools/thread.h>
+#include <cxxtools/base64stream.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <tnt/sessionscope.h>
@@ -350,6 +351,29 @@ namespace tnt
       encodingRead = true;
     }
     return encoding;
+  }
+
+  std::string HttpRequest::getUser() const
+  {
+    if (username.empty() && hasHeader(httpheader::authorization))
+    {
+      std::istringstream authHeader(getHeader(httpheader::authorization));
+      while (authHeader && authHeader.get() != ' ')
+        ;
+      cxxtools::Base64istream in(authHeader);
+      std::getline(in, username, ':');
+      std::getline(in, password);
+
+      log_debug("username \"" << username << "\" password \"" << password << '"');
+    }
+    return username;
+  }
+
+  bool HttpRequest::verifyPassword(const std::string& password_) const
+  {
+    getUser();
+    log_debug("verify password \"" << password_ << "\" for username \"" << username << "\" password \"" << password << '"');
+    return password == password_;
   }
 
   namespace

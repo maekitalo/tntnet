@@ -79,7 +79,7 @@ namespace tnt
       void setQueryString(const std::string& queryString_)
         { queryString = queryString_; }
       /// returns true, if the message has the specified header.
-      bool hasHeader(const std::string& key)    { return header.find(key) != header.end(); }
+      bool hasHeader(const std::string& key) const { return header.find(key) != header.end(); }
       /// returns the content of the specified header or the passed default
       /// when not set.
       std::string getHeader(const std::string& key,

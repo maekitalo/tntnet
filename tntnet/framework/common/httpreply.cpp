@@ -202,6 +202,12 @@ namespace tnt
     return HTTP_MOVED_TEMPORARILY;
   }
 
+  unsigned HttpReply::notAuthorized(const std::string& realm)
+  {
+    setHeader(httpheader::wwwAuthenticate, "Basic realm=" + realm + '"');
+    return HTTP_UNAUTHORIZED;
+  }
+
   void HttpReply::setContentLengthHeader(size_t size)
   {
     std::ostringstream s;

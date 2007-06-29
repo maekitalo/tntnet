@@ -62,6 +62,9 @@ namespace tnt
       mutable Encoding encoding;
       mutable bool encodingRead;
 
+      mutable std::string username;
+      mutable std::string password;
+
       Scope* requestScope;
       Scope* applicationScope;
       Scope* threadScope;
@@ -152,6 +155,9 @@ namespace tnt
         { return getHeader(httpheader::userAgent); }
       std::string getHost() const
         { return getHeader(httpheader::host); }
+
+      std::string getUser() const;
+      bool verifyPassword(const std::string& password) const;
 
       bool keepAlive() const;
 

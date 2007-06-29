@@ -52,6 +52,8 @@ namespace tnt
     extern const std::string pragma;
     extern const std::string expires;
     extern const std::string userAgent;
+    extern const std::string wwwAuthenticate;
+    extern const std::string authorization;
   }
 }
 
