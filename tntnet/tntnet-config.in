@@ -104,11 +104,11 @@ EOF
 
   cat <<EOF
 .SUFFIXES: .ecpp .gif .jpg .css .js .cpp
-EXTRA_ENV+=	"PATH=\$\$PATH:$prefix/bin"
-ECPPC=		env \${EXTRA_ENV} ecppc
-TNTNET=		env \${EXTRA_ENV} tntnet
-CXXFLAGS+=	-I$includedir -fPIC -O2
-LDFLAGS+=	@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
+EXTRA_ENV+="PATH=\$\$PATH:$prefix/bin"
+ECPPC=env \${EXTRA_ENV} ecppc
+TNTNET=env \${EXTRA_ENV} tntnet
+CXXFLAGS+=-I$includedir -fPIC -O2
+LDFLAGS+=@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
 
 .ecpp.cpp:
 	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_CPP} \$<
@@ -130,11 +130,11 @@ EOF
 project()
 {
         P=$1
-		mkdir $P || exit 1
-		makefile $P >$P/Makefile
-		template $P >$P/tntnet.conf
-		cxxtools-config --properties tntnet >$P/tntnet.properties
-		cat >$P/$P.ecpp <<EOF
+        mkdir $P || exit 1
+        makefile $P >$P/Makefile
+        template $P >$P/tntnet.conf
+        cxxtools-config --properties tntnet >$P/tntnet.properties
+        cat >$P/$P.ecpp <<EOF
 <html>
  <head>
   <title>ecpp-application $P</title>
@@ -144,7 +144,7 @@ project()
  </body>
 </html>
 EOF
-		cat <<EOF
+        cat <<EOF
 
 Sample ecpp-project "$P" created.
 To build change to the directory "$P" and run make.
@@ -201,7 +201,7 @@ while test $# -gt 0; do
 
     --project=*)
         project $optarg
-		;;
+        ;;
 
     --project)
         project $2
