@@ -1,3 +1,7 @@
+2007-07-03 tommi@tntnet.org
+  - allow "char *var;" in scoped-variables
+  - don't listen on 0.0.0.0:80 if only ssl-listeners are configured
+
 2007-06-30 tommi@tntnet.org
   - support for http-basic-authentification
   - new tag <%doc>...</%doc> (long form of comment-tag)

@@ -1485,7 +1485,7 @@ namespace tnt
             }
             else if (std::isspace(ch))
               scopevar += ch;
-            else if (std::isspace(scopevar.at(scopevar.size() - 1)))
+            else if (!std::isalnum(scopevar.at(scopevar.size() - 1)))
             {
               scopetype += scopevar;
               scopevar = ch;
