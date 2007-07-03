@@ -156,7 +156,8 @@ namespace tnt
       std::string getHost() const
         { return getHeader(httpheader::host); }
 
-      std::string getUser() const;
+      const std::string& getUsername() const;
+      const std::string& getPassword() const;
       bool verifyPassword(const std::string& password) const;
 
       bool keepAlive() const;

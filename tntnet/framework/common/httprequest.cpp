@@ -353,7 +353,7 @@ namespace tnt
     return encoding;
   }
 
-  std::string HttpRequest::getUser() const
+  const std::string& HttpRequest::getUsername() const
   {
     if (username.empty() && hasHeader(httpheader::authorization))
     {
@@ -369,9 +369,15 @@ namespace tnt
     return username;
   }
 
+  const std::string& HttpRequest::getPassword() const
+  {
+    getUsername();
+    return password;
+  }
+
   bool HttpRequest::verifyPassword(const std::string& password_) const
   {
-    getUser();
+    getUsername();
     log_debug("verify password \"" << password_ << "\" for username \"" << username << "\" password \"" << password << '"');
     return password == password_;
   }
