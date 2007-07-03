@@ -175,7 +175,14 @@ namespace tnt
     Tntconfig::config_entries_type configListen;
     config.getConfigValues("Listen", configListen);
 
+#ifdef USE_SSL
+    Tntconfig::config_entries_type configSslListen;
+    config.getConfigValues("SslListen", configSslListen);
+
+    if (configListen.empty() && configSslListen.empty())
+#else
     if (configListen.empty())
+#endif
     {
       unsigned short int port = (getuid() == 0 ? 80 : 8000);
       log_info("no listeners defined - using ip 0.0.0.0 port " << port);
@@ -212,11 +219,9 @@ namespace tnt
     // initialize ssl-listener
     std::string defaultCertificateFile = config.getValue("SslCertificate");
     std::string defaultCertificateKey = config.getValue("SslKey");
-    configListen.clear();
-    config.getConfigValues("SslListen", configListen);
 
-    for (Tntconfig::config_entries_type::const_iterator it = configListen.begin();
-         it != configListen.end(); ++it)
+    for (Tntconfig::config_entries_type::const_iterator it = configSslListen.begin();
+         it != configSslListen.end(); ++it)
     {
       if (it->params.empty())
         throw std::runtime_error("empty SslListen-entry");
