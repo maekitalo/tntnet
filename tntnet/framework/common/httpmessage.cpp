@@ -26,8 +26,6 @@
 
 namespace tnt
 {
-  size_t HttpMessage::maxRequestSize = 0;
-
   ////////////////////////////////////////////////////////////////////////
   // HttpMessage
   //
@@ -35,14 +33,9 @@ namespace tnt
 
   void HttpMessage::clear()
   {
-    method.clear();
-    url.clear();
-    queryString.clear();
     header.clear();
-    body.clear();
     majorVersion = 1;
     minorVersion = 0;
-    contentSize = 0;
   }
 
   std::string HttpMessage::getHeader(const std::string& key, const std::string& def) const
@@ -51,9 +44,11 @@ namespace tnt
     return i == header.end() ? def : i->second;
   }
 
-  void HttpMessage::setHeader(const std::string& key, const std::string& value)
+  void HttpMessage::setHeader(const std::string& key, const std::string& value, bool replace)
   {
-    log_debug("HttpMessage::setHeader(\"" << key << "\", \"" << value << "\")");
+    log_debug("HttpMessage::setHeader(\"" << key << "\", \"" << value << "\", " << replace << ')');
+    if (replace)
+      header.erase(key);
     std::string k = key;
     if (k.size() > 0 && k.at(k.size() - 1) != ':')
       k += ':';

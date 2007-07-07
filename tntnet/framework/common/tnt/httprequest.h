@@ -41,9 +41,20 @@ namespace tnt
   class HttpRequest : public HttpMessage
   {
     public:
+      class Parser;
+      friend class Parser;
+
       typedef std::vector<std::string> args_type;
 
     private:
+      std::string body;
+      std::string method;
+      std::string url;
+      std::string queryString;
+
+      size_t contentSize;
+      static size_t maxRequestSize;
+
       std::string pathinfo;
       args_type args;
       cxxtools::QueryParams qparam;
@@ -93,6 +104,26 @@ namespace tnt
       HttpRequest& operator= (const HttpRequest& r);
 
       void clear();
+
+      /// returns the body of the message.
+      const std::string& getBody() const        { return body; }
+      /// sets the body of the message.
+      void setBody(const std::string& body_)    { body = body_; }
+      /// Returns the http-method (normally GET or POST) of a request.
+      const std::string& getMethod() const      { return method; }
+      /// sets the http-method of this request.
+      void setMethod(const std::string& m)      { method = m; }
+
+      /// returns url with get-parameters.
+      std::string getQuery() const
+        { return queryString.empty() ? url : url + '?' + queryString; }
+      /// returns the request-url without parameters.
+      const std::string& getUrl() const         { return url; }
+      /// returns get-parameters as string.
+      const std::string& getQueryString() const { return queryString; }
+      /// sets query-string
+      void setQueryString(const std::string& queryString_)
+        { queryString = queryString_; }
 
       void setPathInfo(const std::string& p)       { pathinfo = p; }
       const std::string& getPathInfo() const       { return pathinfo; }
@@ -177,6 +208,18 @@ namespace tnt
       Scope& getThreadScope();
       Sessionscope& getSessionScope();
       bool   hasSessionScope() const;
+
+      /// returns the value of the content-size-header as read from the client.
+      size_t getContentSize() const
+        { return contentSize; }
+
+      /// returns the virtual-host-header of this request.
+      std::string getVirtualHost() const
+        { return getHeader(httpheader::host); }
+
+      /// Sets a limit for a maximum request size.
+      static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }
+      static size_t getMaxRequestSize()          { return maxRequestSize; }
   };
 
   inline std::istream& operator>> (std::istream& in, HttpRequest& msg)

@@ -104,7 +104,6 @@ namespace tnt
   class Cookies
   {
       friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
-      friend class cookie_parser;
 
       typedef std::map<std::string, Cookie, StringLessIgnoreCase<std::string> > cookies_type;
       cookies_type data;

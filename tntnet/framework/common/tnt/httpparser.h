@@ -21,7 +21,7 @@
 #ifndef TNT_HTTPPARSER_H
 #define TNT_HTTPPARSER_H
 
-#include <tnt/httpmessage.h>
+#include <tnt/httprequest.h>
 #include <tnt/http.h>
 #include <tnt/parser.h>
 #include <tnt/messageheaderparser.h>
@@ -46,10 +46,10 @@ namespace tnt
       void reset()  { requestSize = 0; }
   };
 
-  class HttpMessage::Parser
-    : public tnt::Parser<HttpMessage::Parser, RequestSizeMonitor>
+  class HttpRequest::Parser
+    : public tnt::Parser<HttpRequest::Parser, RequestSizeMonitor>
   {
-      HttpMessage& message;
+      HttpRequest& message;
       Messageheader::Parser headerParser;
 
       unsigned httpCode;
@@ -75,7 +75,7 @@ namespace tnt
       virtual void requestSizeExceeded();
 
     public:
-      Parser(tnt::HttpMessage& message_)
+      Parser(tnt::HttpRequest& message_)
         : tnt::Parser<Parser, RequestSizeMonitor>(&Parser::state_cmd0),
           message(message_),
           headerParser(message_.header),

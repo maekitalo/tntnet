@@ -194,7 +194,8 @@ namespace tnt
     // create reply-object
     HttpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
-    reply.setMethod(request.getMethod());
+    if (request.getMethod() == "HEAD")
+      reply.setHeadRequest();
 
     std::locale loc = request.getLocale();
     reply.out().imbue(loc);
@@ -243,8 +244,11 @@ namespace tnt
         reply.setKeepAliveCounter(keepAliveCount);
       else
         keepAliveCount = 0;
-      reply.out() << "<html><body><h1>Error</h1><p>"
-                  << e.what() << "</p></body></html>" << std::endl;
+      for (HttpMessage::header_type::const_iterator it = e.header_begin();
+           it != e.header_end(); ++it)
+        reply.setHeader(it->first, it->second);
+
+      reply.out() << e.getBody();
       reply.sendReply(e.getErrcode(), e.getErrmsg());
     }
 

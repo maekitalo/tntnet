@@ -25,6 +25,7 @@
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <tnt/httperror.h>
 #include <tnt/unzipfile.h>
 #include <cxxtools/log.h>
 
@@ -77,7 +78,7 @@ namespace tnt
     std::string pi = request.getPathInfo();
 
     if (request.getArgsCount() < 1)
-      reply.throwError(HTTP_INTERNAL_SERVER_ERROR, "missing archive name");
+      throw tnt::HttpError(HTTP_INTERNAL_SERVER_ERROR, "missing archive name");
 
     log_debug("unzip archive \"" << request.getArg(0) << "\" file \"" << pi << '"');
 

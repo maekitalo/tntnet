@@ -1,3 +1,9 @@
+2007-07-07 tommi@tntnet.org
+  - restructure HttpMessage/HttpRequest/HttpReply and pass additional
+    http-headers with HttpError-exceptions
+  - make HttpReply::notAuthorized and HttpReply::redirect throw an exception,
+    so that it can be called in subcomponents easily
+
 2007-07-03 tommi@tntnet.org
   - allow "char *var;" in scoped-variables
   - don't listen on 0.0.0.0:80 if only ssl-listeners are configured

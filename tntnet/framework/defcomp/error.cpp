@@ -22,6 +22,7 @@
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <tnt/httperror.h>
 
 namespace tnt
 {
@@ -76,16 +77,21 @@ namespace tnt
 
     tnt::HttpRequest::args_type::const_iterator i = args.begin();
     if (i == args.end())
-      reply.throwError("400 internal error");
+      throw tnt::HttpError(HTTP_BAD_REQUEST, "internal error");
 
-    msg = *i++;
+    std::istringstream s(*i++);
+    unsigned errorcode;
+    s >> errorcode;
+    if (!s || errorcode < 300 || errorcode >= 1000)
+      throw tnt::HttpError(HTTP_INTERNAL_SERVER_ERROR, "configuration error");
+
     for ( ; i != args.end(); ++i)
     {
       msg += ' ';
       msg += *i;
     }
 
-    reply.throwError(msg);
+    throw tnt::HttpError(errorcode, msg);
 
     return DECLINED;
   }

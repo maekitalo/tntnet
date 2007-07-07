@@ -38,6 +38,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpRequest
   //
+  size_t HttpRequest::maxRequestSize = 0;
   unsigned HttpRequest::serial_ = 0;
 
   HttpRequest::HttpRequest()
@@ -141,6 +142,11 @@ namespace tnt
   void HttpRequest::clear()
   {
     HttpMessage::clear();
+    body.clear();
+    method.clear();
+    url.clear();
+    queryString.clear();
+    contentSize = 0;
     pathinfo.clear();
     args.clear();
     qparam.clear();

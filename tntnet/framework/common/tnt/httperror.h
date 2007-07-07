@@ -23,17 +23,19 @@
 
 #include <stdexcept>
 #include <string>
+#include <tnt/httpmessage.h>
 
 namespace tnt
 {
   /// HTTP-error-class
-  class HttpError : public std::exception
+  class HttpError : public std::exception, public HttpMessage
   {
       std::string msg;
+      std::string body;
 
     public:
-      HttpError(const std::string& m);
       HttpError(unsigned errcode, const std::string& msg);
+      HttpError(unsigned errcode, const std::string& msg, const std::string& b);
       ~HttpError() throw() { }
 
       const char* what() const throw ()
@@ -50,6 +52,9 @@ namespace tnt
       }
 
       std::string getErrmsg() const;
+
+      /// returns the body of the message.
+      const std::string& getBody() const        { return body; }
   };
 
   /// HTTP-error 404
@@ -58,10 +63,22 @@ namespace tnt
       std::string url;
 
     public:
-      NotFoundException(const std::string& url_);
+      explicit NotFoundException(const std::string& url_);
       ~NotFoundException() throw() { }
 
       const std::string& getUrl() const  { return url; }
+  };
+
+  class NotAuthorized : public HttpError
+  {
+    public:
+      explicit NotAuthorized(const std::string& realm);
+  };
+
+  class MovedTemporarily : public HttpError
+  {
+    public:
+      explicit MovedTemporarily(const std::string& url);
   };
 }
 

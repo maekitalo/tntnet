@@ -36,7 +36,6 @@ namespace tnt
   {
       friend class Savepoint;
 
-      std::string contentType;
       std::ostream& socket;
       std::ostringstream outstream;
       std::ostream* current_outstream;
@@ -50,6 +49,7 @@ namespace tnt
       static std::string defaultContentType;
 
       bool sendStatusLine;
+      bool headRequest;
 
       void tryCompress(std::string& body);
       void send(unsigned ret, const char* msg);
@@ -57,12 +57,11 @@ namespace tnt
     public:
       explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
 
-      void setContentType(const std::string& t)     { contentType = t; }
-      const std::string& getContentType() const     { return contentType; }
+      void setContentType(const std::string& t)     { setHeader(httpheader::contentType, t); }
+      std::string getContentType() const            { return getHeader(httpheader::contentType); }
 
-      virtual void throwError(unsigned errorCode, const std::string& errorMessage) const;
-      virtual void throwError(const std::string& errorMessage) const;
-      virtual void throwNotFound(const std::string& errorMessage) const;
+      void setHeadRequest(bool sw = true)           { headRequest = sw; }
+
       unsigned redirect(const std::string& newLocation);
       unsigned notAuthorized(const std::string& realm);
       unsigned notAuthorised(const std::string& realm) { return notAuthorized(realm); }

@@ -154,8 +154,8 @@ namespace tnt
     Comploader::configure(config);
 
     // configure http
-    HttpMessage::setMaxRequestSize(
-      config.getValue("MaxRequestSize", HttpMessage::getMaxRequestSize()));
+    HttpRequest::setMaxRequestSize(
+      config.getValue("MaxRequestSize", HttpRequest::getMaxRequestSize()));
     Job::setSocketReadTimeout(
       config.getValue("SocketReadTimeout", Job::getSocketReadTimeout()));
     Job::setSocketWriteTimeout(

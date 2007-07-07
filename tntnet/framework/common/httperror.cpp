@@ -19,6 +19,7 @@
 
 
 #include <tnt/httperror.h>
+#include <tnt/http.h>
 
 namespace tnt
 {
@@ -43,13 +44,15 @@ namespace tnt
     }
   }
 
-  HttpError::HttpError(const std::string& m)
-    : msg(m)
+  HttpError::HttpError(unsigned errcode, const std::string& m)
+    : msg(httpErrorFormat(errcode, m)),
+      body("<html><body><h1>Error</h1><p>" + m + "</p></body></html>")
   {
   }
 
-  HttpError::HttpError(unsigned errcode, const std::string& msg)
-    : msg(httpErrorFormat(errcode, msg))
+  HttpError::HttpError(unsigned errcode, const std::string& m, const std::string& b)
+    : msg(httpErrorFormat(errcode, m)),
+      body(b)
   {
   }
 
@@ -60,8 +63,22 @@ namespace tnt
   }
 
   NotFoundException::NotFoundException(const std::string& url_)
-    : HttpError("404 Not Found (" + url_ + ')'),
+    : HttpError(HTTP_NOT_FOUND, "not found (" + url_ + ')'),
       url(url_)
   {
+  }
+
+  NotAuthorized::NotAuthorized(const std::string& realm)
+    : HttpError(HTTP_UNAUTHORIZED, "not authorized", "<html><body><h1>not authorized</h1></body></html>")
+  {
+    setHeader(httpheader::wwwAuthenticate, "Basic realm=" + realm + '"');
+  }
+
+  MovedTemporarily::MovedTemporarily(const std::string& url)
+    : HttpError(HTTP_MOVED_TEMPORARILY,
+                "moved temprorarily",
+                "<html><body>moved to <a href=\"" + url + "\">" + url + "</a></body></html>")
+  {
+    setHeader(httpheader::location, url);
   }
 }

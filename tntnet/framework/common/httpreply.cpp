@@ -116,9 +116,6 @@ namespace tnt
     if (!hasHeader(httpheader::contentLength))
       setContentLengthHeader(body.size());
 
-    if (!hasHeader(httpheader::contentType))
-      setHeader(httpheader::contentType, contentType);
-
     // send header
 
     if (sendStatusLine)
@@ -146,24 +143,25 @@ namespace tnt
 
     // send body
 
-    if (getMethod() == "HEAD")
+    if (headRequest)
       log_debug("HEAD-request - empty body");
     else
     {
-      log_debug("send " << body.size()
-             << " bytes body, method=" << getMethod());
+      log_debug("send " << body.size() << " bytes body");
       socket << body;
     }
   }
 
   HttpReply::HttpReply(std::ostream& s, bool sendStatusLine_)
-    : contentType(defaultContentType),
-      socket(s),
+    : socket(s),
       current_outstream(&outstream),
       safe_outstream(outstream),
       keepAliveCounter(0),
-      sendStatusLine(sendStatusLine_)
-  { }
+      sendStatusLine(sendStatusLine_),
+      headRequest(false)
+  {
+    setHeader(httpheader::contentType, defaultContentType);
+  }
 
   void HttpReply::sendReply(unsigned ret, const char* msg)
   {
@@ -181,30 +179,15 @@ namespace tnt
     setHeader(httpheader::contentMD5, md5.getHexDigest());
   }
 
-  void HttpReply::throwError(unsigned errorCode, const std::string& errorMessage) const
-  {
-    throw HttpError(errorCode, errorMessage);
-  }
-
-  void HttpReply::throwError(const std::string& errorMessage) const
-  {
-    throw HttpError(errorMessage);
-  }
-
-  void HttpReply::throwNotFound(const std::string& errorMessage) const
-  {
-    throw NotFoundException(errorMessage);
-  }
-
   unsigned HttpReply::redirect(const std::string& newLocation)
   {
-    setHeader(httpheader::location, newLocation);
+    throw MovedTemporarily(newLocation);
     return HTTP_MOVED_TEMPORARILY;
   }
 
   unsigned HttpReply::notAuthorized(const std::string& realm)
   {
-    setHeader(httpheader::wwwAuthenticate, "Basic realm=" + realm + '"');
+    throw NotAuthorized(realm);
     return HTTP_UNAUTHORIZED;
   }
 

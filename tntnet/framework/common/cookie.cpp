@@ -20,6 +20,7 @@
 
 #include <tnt/cookie.h>
 #include <tnt/httperror.h>
+#include <tnt/http.h>
 #include <cctype>
 #include <cxxtools/log.h>
 #include <iostream>
@@ -208,7 +209,7 @@ namespace tnt
           else if (!std::isspace(ch))
           {
             log_warn("invalid cookie: " << header << " - '=' expected");
-            throw HttpError("400 invalid cookie: " + header);
+            throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
           }
           break;
 
@@ -249,7 +250,7 @@ namespace tnt
           else
           {
             log_warn("invalid cookie: " << header << " - semicolon expected after value");
-            throw HttpError("400 invalid cookie: " + header);
+            throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
           }
           break;
 
@@ -269,7 +270,7 @@ namespace tnt
           else if (!std::isspace(ch))
           {
             log_warn("invalid cookie: " << header << " - semicolon expected");
-            throw HttpError("400 invalid cookie: " + header);
+            throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
           }
           break;
       }
@@ -280,7 +281,7 @@ namespace tnt
     else if (state != state_0)
     {
       log_warn("invalid cookie: " << header << " - invalid state " << state);
-      throw HttpError("400 invalid cookie: " + header);
+      throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
     }
 
     if (!current_cookie.value.empty())

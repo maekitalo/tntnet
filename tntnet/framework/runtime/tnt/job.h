@@ -64,7 +64,7 @@ namespace tnt
       unsigned keepAliveCounter;
 
       HttpRequest request;
-      HttpMessage::Parser parser;
+      HttpRequest::Parser parser;
       time_t lastAccessTime;
 
       unsigned refs;
@@ -96,7 +96,7 @@ namespace tnt
       virtual void setWrite() = 0;
 
       HttpRequest& getRequest()         { return request; }
-      HttpMessage::Parser& getParser()  { return parser; }
+      HttpRequest::Parser& getParser()  { return parser; }
 
       unsigned decrementKeepAliveCounter()
         { return keepAliveCounter > 0 ? --keepAliveCounter : 0; }

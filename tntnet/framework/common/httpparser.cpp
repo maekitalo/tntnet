@@ -66,8 +66,8 @@ namespace tnt
 
   bool RequestSizeMonitor::post(bool ret)
   {
-    if (++requestSize > HttpMessage::getMaxRequestSize()
-      && HttpMessage::getMaxRequestSize() > 0)
+    if (++requestSize > HttpRequest::getMaxRequestSize()
+      && HttpRequest::getMaxRequestSize() > 0)
     {
       requestSizeExceeded();
       return true;
@@ -78,7 +78,7 @@ namespace tnt
   void RequestSizeMonitor::requestSizeExceeded()
   { }
 
-  void HttpMessage::Parser::reset()
+  void HttpRequest::Parser::reset()
   {
     message.clear();
     SET_STATE(state_cmd0);
@@ -88,7 +88,7 @@ namespace tnt
     headerParser.reset();
   }
 
-  bool HttpMessage::Parser::state_cmd0(char ch)
+  bool HttpRequest::Parser::state_cmd0(char ch)
   {
     if (istokenchar(ch))
     {
@@ -106,7 +106,7 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_cmd(char ch)
+  bool HttpRequest::Parser::state_cmd(char ch)
   {
     if (istokenchar(ch))
       message.method += ch;
@@ -124,7 +124,7 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_url0(char ch)
+  bool HttpRequest::Parser::state_url0(char ch)
   {
     if (ch == ' ' || ch == '\t')
     {
@@ -146,7 +146,7 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_url(char ch)
+  bool HttpRequest::Parser::state_url(char ch)
   {
     if (ch == '?')
     {
@@ -186,7 +186,7 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_urlesc(char ch)
+  bool HttpRequest::Parser::state_urlesc(char ch)
   {
     if (isHexDigit(ch))
     {
@@ -210,7 +210,7 @@ namespace tnt
     }
   }
 
-  bool HttpMessage::Parser::state_qparam(char ch)
+  bool HttpRequest::Parser::state_qparam(char ch)
   {
     if (ch == ' ' || ch == '\t')
     {
@@ -222,12 +222,11 @@ namespace tnt
     return false;
   }
 
-  bool HttpMessage::Parser::state_version(char ch)
+  bool HttpRequest::Parser::state_version(char ch)
   {
     if (ch == '/')
     {
-      message.majorVersion = 0;
-      message.minorVersion = 0;
+      message.setVersion(0, 0);
       skipWs(&Parser::state_version_major);
     }
     else if (ch == '\r')
@@ -239,12 +238,12 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_version_major(char ch)
+  bool HttpRequest::Parser::state_version_major(char ch)
   {
     if (ch == '.')
       SET_STATE(state_version_minor0);
     else if (std::isdigit(ch))
-      message.majorVersion = message.majorVersion * 10 + (ch - '0');
+      message.setVersion(message.getMajorVersion() * 10 + (ch - '0'), message.getMinorVersion());
     else if (ch == ' ' || ch == '\t')
       SET_STATE(state_version_major_sp);
     else
@@ -256,7 +255,7 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_version_major_sp(char ch)
+  bool HttpRequest::Parser::state_version_major_sp(char ch)
   {
     if (ch == '.')
       SET_STATE(state_version_minor0);
@@ -269,20 +268,20 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_version_minor0(char ch)
+  bool HttpRequest::Parser::state_version_minor0(char ch)
   {
     return ch == ' ' || ch == '\t' ? failedFlag
                                    : state_version_minor(ch);
   }
 
-  bool HttpMessage::Parser::state_version_minor(char ch)
+  bool HttpRequest::Parser::state_version_minor(char ch)
   {
     if (ch == '\n')
       SET_STATE(state_header);
     else if (ch == ' ' || ch == '\t' || ch == '\r')
       SET_STATE(state_end0);
     else if (std::isdigit(ch))
-      message.minorVersion = message.minorVersion * 10 + (ch - '0');
+      message.setVersion(message.getMajorVersion(), message.getMinorVersion() * 10 + (ch - '0'));
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in version-minor");
@@ -292,7 +291,7 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_end0(char ch)
+  bool HttpRequest::Parser::state_end0(char ch)
   {
     if (ch == '\n')
       SET_STATE(state_header);
@@ -305,7 +304,7 @@ namespace tnt
     return failedFlag;
   }
 
-  bool HttpMessage::Parser::state_header(char ch)
+  bool HttpRequest::Parser::state_header(char ch)
   {
     if (headerParser.parse(ch))
     {
@@ -322,7 +321,7 @@ namespace tnt
         std::istringstream valuestream(content_length_header);
         valuestream >> bodySize;
         if (!valuestream)
-          throw HttpError("400 missing Content-Length");
+          throw HttpError(HTTP_BAD_REQUEST, "missing Content-Length");
 
         if (getMaxRequestSize() > 0
           && getCurrentRequestSize() + bodySize > getMaxRequestSize())
@@ -348,13 +347,13 @@ namespace tnt
     return false;
   }
 
-  bool HttpMessage::Parser::state_body(char ch)
+  bool HttpRequest::Parser::state_body(char ch)
   {
     message.body += ch;
     return --bodySize == 0;
   }
 
-  void HttpMessage::Parser::requestSizeExceeded()
+  void HttpRequest::Parser::requestSizeExceeded()
   {
     log_warn("max request size " << getMaxRequestSize() << " exceeded");
     httpCode = HTTP_REQUEST_ENTITY_TOO_LARGE;
