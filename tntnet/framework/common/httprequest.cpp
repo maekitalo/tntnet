@@ -332,6 +332,12 @@ namespace tnt
     return locale;
   }
 
+  void HttpRequest::setLocale(const std::locale& loc)
+  {
+    locale_init = true;
+    locale = loc;
+  }
+
   const Cookies& HttpRequest::getCookies() const
   {
     log_debug("HttpRequest::getCookies()");

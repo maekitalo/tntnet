@@ -197,9 +197,7 @@ namespace tnt
     if (request.getMethod() == "HEAD")
       reply.setHeadRequest();
 
-    std::locale loc = request.getLocale();
-    reply.out().imbue(loc);
-    reply.sout().imbue(loc);
+    reply.setLocale(request.getLocale());
 
     if (request.keepAlive())
       reply.setKeepAliveCounter(keepAliveCount);

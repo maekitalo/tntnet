@@ -1,3 +1,7 @@
+2007-07-08 tommi@tntnet.org
+  - new methods request.setLocale(std::locale) and
+    reply.setLocale(std::locale)
+
 2007-07-07 tommi@tntnet.org
   - restructure HttpMessage/HttpRequest/HttpReply and pass additional
     http-headers with HttpError-exceptions

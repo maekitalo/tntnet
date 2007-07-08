@@ -171,6 +171,7 @@ namespace tnt
 
       const std::locale& getLocale() const;
       std::string getLang() const  { return getLocale().name(); }
+      void setLocale(const std::locale& loc);
 
       const Cookies& getCookies() const;
 

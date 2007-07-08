@@ -119,6 +119,8 @@ namespace tnt
       void setAcceptEncoding(const std::string& enc) { acceptEncoding.parse(enc); }
 
       bool keepAlive() const;
+
+      void setLocale(const std::locale& loc)    { out().imbue(loc); sout().imbue(loc); }
   };
 }
 
