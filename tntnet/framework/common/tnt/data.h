@@ -68,6 +68,9 @@ namespace tnt
       const char* data() const
       { return dataObject; }
 
+      void setData(const char* d)
+      { dataObject = d; }
+
       // number of chunks
       unsigned size() const
       { return (udata()[0] / sizeof(unsigned)) - 1; }

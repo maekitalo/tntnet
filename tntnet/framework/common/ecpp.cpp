@@ -154,19 +154,9 @@ namespace tnt
     return *it->second;
   }
 
-  const char* EcppComponent::getData(const HttpRequest& request, const cxxtools::QueryParams& qparam,
-    const char* def) const
+  const char* EcppComponent::getData(const HttpRequest& request, const char* def) const
   {
-    static const std::string LANG = "LANG";
-
-    std::string lang;
-    if (qparam.has(LANG))
-      lang = qparam.param(LANG);
-    else if (request.getQueryParams().has(LANG))
-      lang = request.getQueryParams().param(LANG);
-    else
-      lang = request.getLang();
-
+    std::string lang = request.getLang();
     if (!lang.empty())
     {
       const char* data = loader.getLangData(myident, lang);

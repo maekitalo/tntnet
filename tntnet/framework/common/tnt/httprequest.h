@@ -68,6 +68,7 @@ namespace tnt
       unsigned serial;
       static unsigned serial_;
       mutable bool locale_init;
+      mutable std::string lang;
       mutable std::locale locale;
 
       mutable Encoding encoding;
@@ -170,8 +171,14 @@ namespace tnt
       unsigned getSerial() const             { return serial; }
 
       const std::locale& getLocale() const;
-      std::string getLang() const  { return getLocale().name(); }
+      const std::string& getLang() const
+      {
+        if (!locale_init)
+          getLocale();
+        return lang;
+      }
       void setLocale(const std::locale& loc);
+      void setLang(const std::string& lang);
 
       const Cookies& getCookies() const;
 

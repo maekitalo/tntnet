@@ -266,11 +266,10 @@ namespace tnt
     return serverAddrStr;
   }
 
-  const std::locale& HttpRequest::getLocale() const
+  namespace
   {
-    if (!locale_init)
+    const std::locale& getCacheLocale(const std::string& lang)
     {
-      static const std::string LANG = "LANG";
       static std::locale stdlocale;
       static bool stdlocale_init = false;
 
@@ -295,38 +294,40 @@ namespace tnt
         }
       }
 
-      locale_init = true;
-
-      log_debug("HttpRequest::getLocale() " << qparam.dump());
-
-      std::string lang = qparam[LANG];
-
       if (lang.empty() || lang == stdlocale.name())
-        locale = stdlocale;
-      else
-      {
-        log_debug("LANG from query-parameter (" << lang << ')');
-        try
-        {
-          cxxtools::MutexLock lock(locale_monitor);
-          locale_map_type::const_iterator it = locale_map.find(lang);
-          if (it == locale_map.end())
-          {
-            locale = std::locale(lang.c_str());
-            locale_map.insert(locale_map_type::value_type(lang, locale));
-          }
-          else
-            locale = it->second;
-        }
-        catch (const std::exception& e)
-        {
-          log_warn("unknown locale " << lang << ": " << e.what());
-          locale = stdlocale;
-          locale_map.insert(locale_map_type::value_type(lang, locale));
-        }
-      }
+        return stdlocale;
 
-      log_debug("LANG=" << locale.name());
+      try
+      {
+        cxxtools::MutexLock lock(locale_monitor);
+        locale_map_type::const_iterator it = locale_map.find(lang);
+        if (it == locale_map.end())
+        {
+          std::locale loc = std::locale(lang.c_str());
+          return locale_map.insert(locale_map_type::value_type(lang, loc)).first->second;
+        }
+        else
+          return it->second;
+      }
+      catch (const std::exception& e)
+      {
+        log_warn("unknown locale " << lang << ": " << e.what());
+        locale_map.insert(locale_map_type::value_type(lang, stdlocale));
+        return stdlocale;
+      }
+    }
+  }
+
+  const std::locale& HttpRequest::getLocale() const
+  {
+    if (!locale_init)
+    {
+      static const std::string LANG = "LANG";
+      lang = qparam[LANG];
+      locale = getCacheLocale(qparam[LANG]);
+      if (lang.empty())
+        lang = locale.name();
+      locale_init = true;
     }
 
     return locale;
@@ -336,6 +337,14 @@ namespace tnt
   {
     locale_init = true;
     locale = loc;
+    lang = loc.name();
+  }
+
+  void HttpRequest::setLang(const std::string& lang_)
+  {
+    lang = lang_;
+    locale = getCacheLocale(lang_);
+    locale_init = true;
   }
 
   const Cookies& HttpRequest::getCookies() const
