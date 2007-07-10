@@ -475,6 +475,14 @@ namespace tnt
            it != configs.end(); ++it)
         it->getConfigDecl(code, classname);
       code << "// </%config>\n\n"
+              "#define SET_LANG(lang) \\\n"
+              "     do \\\n"
+              "     { \\\n"
+              "       request.setLang(lang); \\\n"
+              "       reply.setLocale(request.getLocale()); \\\n";
+      if (externData)
+        code << "       data.setData(getData(request, rawData)); \\\n";
+      code << "     } while (false)\n\n"
            << classname << "::" << classname << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
               "  : EcppComponent(ci, um, cl)";
 
