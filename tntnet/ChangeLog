@@ -1,3 +1,6 @@
+2007-07-10 tommi@tntnet.org
+  - generate macro SET_LANG to set language inside components
+
 2007-07-08 tommi@tntnet.org
   - new methods request.setLocale(std::locale) and
     reply.setLocale(std::locale)
