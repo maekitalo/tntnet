@@ -123,7 +123,7 @@ namespace tnt
       lastTm.tm_sec = t % 60;
       t /= 60;
       lastTm.tm_min = t % 60;
-      t /= 24;
+      t /= 60;
       lastTm.tm_hour = t % 24;
       lastHtdate = htdate(&lastTm);
       lastTime = t;
