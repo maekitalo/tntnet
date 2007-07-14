@@ -31,10 +31,10 @@ namespace tnt
     {
       o << "    class " << getName() << "_type : public tnt::EcppSubComponent\n"
            "    {\n"
-           "        " << outerclass->getName() << "& mainComp;\n"
-           "        " << outerclass->getName() << "& main()  { return mainComp; }\n\n"
+           "        _component_" << outerclass->getName() << "& mainComp;\n"
+           "        _component_" << outerclass->getName() << "& main()  { return mainComp; }\n\n"
            "      public:\n"
-           "        " << getName() << "_type(" << outerclass->getName() << "& m, const std::string& name)\n"
+           "        " << getName() << "_type(_component_" << outerclass->getName() << "& m, const std::string& name)\n"
            "          : EcppSubComponent(m, name),\n"
            "            mainComp(m)\n"
            "          { }\n"
@@ -52,7 +52,7 @@ namespace tnt
 
     void Subcomponent::getDefinition(std::ostream& code, bool debug, bool externData) const
     {
-      code << "unsigned " << outerclass->getName() << "::" << getName()
+      code << "unsigned _component_" << outerclass->getName() << "::" << getName()
            << "_type::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam";
       for (cppargs_type::const_iterator j = cppargs.begin();
            j != cppargs.end(); ++j)

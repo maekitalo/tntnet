@@ -1,3 +1,8 @@
+2007-07-14 tommi@tntnet.org
+  - prefix classname in generated components with "_component_" to reduce
+    possible naming-conflicts and allow components to have reserved c++-words
+	as names (like "template")
+
 2007-07-10 tommi@tntnet.org
   - generate macro SET_LANG to set language inside components
 

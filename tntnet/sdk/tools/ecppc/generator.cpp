@@ -286,18 +286,18 @@ namespace tnt
 
     void Generator::getClassDeclaration(std::ostream& out) const
     {
-      out << "class " << maincomp.getName() << " : public ";
+      out << "class _component_" << maincomp.getName() << " : public ";
       if (componentclass.empty())
         out << "tnt::EcppComponent";
       else
         out << componentclass;
       out << "\n"
              "{\n"
-             "    " << maincomp.getName() << "& main()  { return *this; }\n\n" 
+             "    _component_" << maincomp.getName() << "& main()  { return *this; }\n\n" 
              "  protected:\n"
-             "    ~" << maincomp.getName() << "();\n\n"
+             "    ~_component_" << maincomp.getName() << "();\n\n"
              "  public:\n"
-             "    " << maincomp.getName() << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
+             "    _component_" << maincomp.getName() << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
              "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam);\n";
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
@@ -355,41 +355,41 @@ namespace tnt
     {
       if (configs.empty())
       {
-        code << "static tnt::ComponentFactoryImpl<" << maincomp.getName() << "> "
+        code << "static tnt::ComponentFactoryImpl<_component_" << maincomp.getName() << "> "
              << maincomp.getName() << "Factory(\"" << maincomp.getName() << "\");\n\n";
       }
       else
       {
-        code << "class " << maincomp.getName() << "Factory : public tnt::ComponentFactoryImpl<" << maincomp.getName() << ">\n"
+        code << "class _component_" << maincomp.getName() << "Factory : public tnt::ComponentFactoryImpl<_component_" << maincomp.getName() << ">\n"
                 "{\n"
                 "  public:\n"
-                "    " << maincomp.getName() << "Factory()\n"
-                "      : tnt::ComponentFactoryImpl<" << maincomp.getName() << ">(\"" << maincomp.getName() << "\")\n"
+                "    _component_" << maincomp.getName() << "Factory()\n"
+                "      : tnt::ComponentFactoryImpl<_component_" << maincomp.getName() << ">(\"" << maincomp.getName() << "\")\n"
                 "      { }\n"
                 "    tnt::Component* doCreate(const tnt::Compident& ci,\n"
                 "      const tnt::Urlmapper& um, tnt::Comploader& cl);\n"
                 "    virtual void doConfigure(const tnt::Tntconfig& config);\n"
                 "};\n\n"
-                "tnt::Component* " << maincomp.getName() << "Factory::doCreate(const tnt::Compident& ci,\n"
+                "tnt::Component* _component_" << maincomp.getName() << "Factory::doCreate(const tnt::Compident& ci,\n"
                 "  const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
                 "{\n"
-                "  return new " << maincomp.getName() << "(ci, um, cl);\n"
+                "  return new _component_" << maincomp.getName() << "(ci, um, cl);\n"
                 "}\n\n"
-                "void " << maincomp.getName() << "Factory::doConfigure(const tnt::Tntconfig& config)\n"
+                "void _component_" << maincomp.getName() << "Factory::doConfigure(const tnt::Tntconfig& config)\n"
                 "{\n"
                 "  // <%config>\n";
         for (variable_declarations::const_iterator it = configs.begin();
              it != configs.end(); ++it)
-          it->getConfigInit(code, maincomp.getName());
+          it->getConfigInit(code, "_component_" + maincomp.getName());
         code << "  // </%config>\n"
                 "}\n\n"
-                "static " << maincomp.getName() << "Factory factory;\n\n";
+                "static _component_" << maincomp.getName() << "Factory factory;\n\n";
       }
     }
 
     void Generator::getCppBody(std::ostream& code) const
     {
-      std::string classname = maincomp.getName();
+      std::string classname = "_component_" + maincomp.getName();
 
       getFactoryDeclaration(code);
 
@@ -606,11 +606,11 @@ namespace tnt
 
     void Generator::getHeader(std::ostream& header, const std::string& filename) const
     {
-      std::string classname = maincomp.getName();
+      std::string classname = "_component_" + maincomp.getName();
 
       getIntro(header, filename);
-      header << "#ifndef ECPP_COMPONENT_" << classname << "_H\n"
-                "#define ECPP_COMPONENT_" << classname << "_H\n\n";
+      header << "#ifndef ECPP_COMPONENT_" << maincomp.getName() << "_H\n"
+                "#define ECPP_COMPONENT_" << maincomp.getName() << "_H\n\n";
 
       getHeaderIncludes(header);
       header << '\n';
