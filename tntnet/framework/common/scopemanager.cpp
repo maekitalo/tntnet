@@ -24,6 +24,7 @@
 #include "tnt/httpreply.h"
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
+#include <stdlib.h>
 
 log_define("tntnet.scopemanager")
 

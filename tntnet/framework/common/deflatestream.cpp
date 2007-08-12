@@ -21,6 +21,7 @@
 #include "tnt/deflatestream.h"
 #include <cxxtools/log.h>
 #include <sstream>
+#include <string.h>
 
 log_define("tntnet.deflatestream")
 

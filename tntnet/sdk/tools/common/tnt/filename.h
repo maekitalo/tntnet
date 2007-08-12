@@ -50,7 +50,7 @@ namespace tnt
       {
         ext = e;
         if (e.size() > 0 && e.at(0) != '.')
-          ext.insert(0U, 1U, '.');
+          ext.insert(std::string::size_type(0), std::string::size_type(1), '.');
       }
       const std::string& getExt() const        { return ext; }
 

@@ -29,6 +29,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <config.h>
+#include <stdlib.h>
 
 // fastcgi is not yet implemented!!!
 #ifdef WITH_FASTCGI

@@ -23,6 +23,7 @@
 #include <cxxtools/thread.h>
 #include <list>
 #include <sstream>
+#include <stdio.h>
 
 namespace tnt
 {

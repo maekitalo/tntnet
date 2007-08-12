@@ -31,6 +31,7 @@
 #include <tnt/query_params.h>
 #include <tnt/scope.h>
 #include <locale>
+#include <string.h>
 #include <sys/socket.h>
 
 namespace tnt
