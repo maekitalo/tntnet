@@ -276,6 +276,17 @@ See ecppl(1) and ecppll(1) for details.
 The specified file is read and compiled.
 .
 \" ---------------------------------------------------------------------
+.SS <%param>...</%param>
+\" ---------------------------------------------------------------------
+Defines parameter received from calling components.
+In contrast to query-parameters these variables can be of any type. The
+syntax (and the underlying technology) is the same like in scoped
+variables. See the description about scoped variables to see how to
+define parameters.
+The main difference is, that a parameter variable has no scope, since
+the parameter is always local to the component.
+.
+\" ---------------------------------------------------------------------
 .SS <%pre>...</%pre>
 \" ---------------------------------------------------------------------
 Defines C++-code, which is placed outside the C++-class and outside the
@@ -315,7 +326,7 @@ These variables has a lifetime and a scope. The lifetime is defined by
 the tag, used to declare the variable and the scope is passed as a
 parameter to the tag.
 .PP
-There are 4 different lifetimes for scoped variables:
+There are 5 different lifetimes for scoped variables:
 .RS
 .TP
 .I request
@@ -332,6 +343,9 @@ session-cookie is sent to the client.
 .TP
 .I thread
 The variable is valid in the current thread. The tag is \fI<%thread>\fP.
+.TP
+.I param
+The variable receives parameters. The tag is \fI<%param>\fP.
 .RE
 .sp
 And 3 scopes:

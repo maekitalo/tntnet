@@ -44,7 +44,7 @@ namespace tnt
 
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
-        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
+        tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };
 
   ////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ namespace tnt
   //
 
   unsigned Unzip::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
+    tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {
     std::string pi = request.getPathInfo();
 

@@ -266,5 +266,15 @@ namespace tnt
 #define TNT_REQUEST_GLOBAL_VAR(type, varname, key, construct) \
   TNT_VAR(Request, type, varname, key, construct)
 
+#define TNT_PARAM(type, varname, key, construct) \
+  typedef type varname##_type;          \
+  typedef tnt::ObjectTemplate<varname##_type> varname##_objecttype;          \
+  const std::string varname##_scopekey = key;          \
+  tnt::Objectptr varname##_pointer = qparam.getScope().get(varname##_scopekey);          \
+  if (varname##_pointer == 0)          \
+    varname##_pointer = qparam.getScope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
+  log_debug("param var " #type "& " #varname); \
+  type& varname = varname##_objecttype::getRef(varname##_pointer);
+
 #endif // TNT_ECPP_H
 

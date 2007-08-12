@@ -38,7 +38,7 @@ namespace tnt
            "          : EcppSubComponent(m, name),\n"
            "            mainComp(m)\n"
            "          { }\n"
-           "        unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam";
+           "        unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam";
       for (cppargs_type::const_iterator j = cppargs.begin();
            j != cppargs.end(); ++j)
       {
@@ -53,7 +53,7 @@ namespace tnt
     void Subcomponent::getDefinition(std::ostream& code, bool debug, bool externData) const
     {
       code << "unsigned _component_" << outerclass->getName() << "::" << getName()
-           << "_type::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam";
+           << "_type::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam";
       for (cppargs_type::const_iterator j = cppargs.begin();
            j != cppargs.end(); ++j)
         code << ", " << j->first;

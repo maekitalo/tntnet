@@ -27,19 +27,19 @@
 namespace tnt
 {
   unsigned Component::operator() (HttpRequest& request,
-    HttpReply& reply, cxxtools::QueryParams& qparam, bool top)
+    HttpReply& reply, tnt::QueryParams& qparam, bool top)
   {
     return operator() (request, reply, qparam);
   }
 
   unsigned Component::operator() (HttpRequest& request,
-    HttpReply& reply, cxxtools::QueryParams& qparam)
+    HttpReply& reply, tnt::QueryParams& qparam)
   {
     return DECLINED;
   }
 
   unsigned Component::endTag(HttpRequest& request,
-    HttpReply& reply, cxxtools::QueryParams& qparam)
+    HttpReply& reply, tnt::QueryParams& qparam)
   {
     return DECLINED;
   }
@@ -52,11 +52,11 @@ namespace tnt
 
   unsigned Component::call(HttpRequest& request, HttpReply& reply)
   {
-    cxxtools::QueryParams qparam;
+    tnt::QueryParams qparam;
     return call(request, reply, qparam);
   }
 
-  std::string Component::scall(HttpRequest& request, cxxtools::QueryParams& qparam)
+  std::string Component::scall(HttpRequest& request, tnt::QueryParams& qparam)
   {
     // set up new reply-object
     std::ostringstream result;
@@ -73,7 +73,7 @@ namespace tnt
 
   std::string Component::scall(HttpRequest& request)
   {
-    cxxtools::QueryParams qparam;
+    tnt::QueryParams qparam;
     return scall(request, qparam);
   }
 

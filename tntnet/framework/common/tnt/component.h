@@ -25,16 +25,12 @@
 #include <tnt/compident.h>
 #include <time.h>
 
-namespace cxxtools
-{
-  class QueryParams;
-}
-
 namespace tnt
 {
 
 class HttpRequest;
 class HttpReply;
+class QueryParams;
 
 class Component
 {
@@ -42,23 +38,23 @@ class Component
     virtual ~Component() { }
 
     virtual unsigned operator() (HttpRequest& request,
-      HttpReply& reply, cxxtools::QueryParams& qparam, bool top);
+      HttpReply& reply, tnt::QueryParams& qparam, bool top);
     virtual unsigned operator() (HttpRequest& request,
-      HttpReply& reply, cxxtools::QueryParams& qparam);
+      HttpReply& reply, tnt::QueryParams& qparam);
     virtual unsigned endTag (HttpRequest& request,
-      HttpReply& reply, cxxtools::QueryParams& qparam);
+      HttpReply& reply, tnt::QueryParams& qparam);
 
     virtual std::string getAttribute(const std::string& name,
       const std::string& def = std::string()) const;
 
     /// explicitly call operator() - sometimes more readable
-    unsigned call(HttpRequest& request, HttpReply& reply, cxxtools::QueryParams& qparam)
+    unsigned call(HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam)
       { return operator() (request, reply, qparam); }
     /// call component without parameters
     unsigned call(HttpRequest& request, HttpReply& reply);
 
     /// return output as a string rather than outputting to stream
-    std::string scall(HttpRequest& request, cxxtools::QueryParams& qparam);
+    std::string scall(HttpRequest& request, tnt::QueryParams& qparam);
     /// return output as a string rather than outputting to stream without query-parameters
     std::string scall(HttpRequest& request);
 };

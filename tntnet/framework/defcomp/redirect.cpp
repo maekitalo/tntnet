@@ -37,7 +37,7 @@ namespace tnt
 
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
-        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
+        tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };
 
   ////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace tnt
   // componentdefinition
   //
   unsigned Redirect::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, cxxtools::QueryParams&)
+    tnt::HttpReply& reply, tnt::QueryParams&)
   {
     return reply.redirect(request.getPathInfo());
   }

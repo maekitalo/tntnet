@@ -24,6 +24,7 @@
 #include <map>
 #include <string>
 #include <tnt/object.h>
+#include <tnt/objecttemplate.h>
 #include <tnt/pointer.h>
 #include <cxxtools/thread.h>
 
@@ -63,6 +64,10 @@ namespace tnt
       /// Put new Object in scope. If key already exists,
       /// o is released. Returns Object identified by key.
       Object* putNew(const std::string& key, Object* o);
+
+      template <typename ValueType>
+      Object* createNew(const std::string& key, const ValueType& value)
+        { return putNew(key, new tnt::ObjectTemplate<ValueType>(value)); }
 
       void erase(const std::string& key);
       bool empty() const  { return data.empty(); }

@@ -60,7 +60,7 @@ namespace tnt
   // componentdefinition
   //
   unsigned Fstatic::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
+    tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");

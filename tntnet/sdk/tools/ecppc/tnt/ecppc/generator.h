@@ -149,7 +149,7 @@ namespace tnt
           const std::string& value);
         virtual void onCall(const std::string& comp,
           const comp_args_type& args, const std::string&  pass_cgi,
-          const std::string& cppargs);
+          const paramargs_type& paramargs, const std::string& cppargs);
         virtual void onEndCall(const std::string& comp);
         virtual void onShared(const std::string& code);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);

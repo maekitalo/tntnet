@@ -31,17 +31,30 @@ namespace tnt
           scope_container == ecpp::application_container ? "application"
         : scope_container == ecpp::thread_container      ? "thread"
         : scope_container == ecpp::session_container     ? "session"
-        :                                                  "request";
-      std::string container =
-          scope_container == ecpp::application_container ? "APPLICATION"
-        : scope_container == ecpp::thread_container      ? "THREAD"
-        : scope_container == ecpp::session_container     ? "SESSION"
-        :                                                  "REQUEST";
-      std::string key = scope == ecpp::global_scope ? "GLOBAL"
-                      : scope == ecpp::page_scope   ? "PAGE"
-                      : "COMPONENT";
+        : scope_container == ecpp::request_container     ? "request"
+        :                                                  "param";
 
-      out << "  TNT_" << container << '_' << key << "_VAR(" << type << ", " << var
+      std::string macro;
+      if (scope_container == ecpp::param_container)
+      {
+        macro = "TNT_PARAM";
+      }
+      else
+      {
+        std::string container =
+            scope_container == ecpp::application_container ? "APPLICATION_"
+          : scope_container == ecpp::thread_container      ? "THREAD_"
+          : scope_container == ecpp::session_container     ? "SESSION_"
+          : scope_container == ecpp::request_container     ? "REQUEST_"
+          :                                                  "PARAM_";
+        std::string key = scope == ecpp::global_scope ? "GLOBAL_"
+                        : scope == ecpp::page_scope   ? "PAGE_"
+                        : scope_container != ecpp::param_container ? "COMPONENT_"
+                        : std::string();
+        macro = "TNT_" + container + key + "VAR";
+      }
+
+      out << "  " << macro << '(' << type << ", " << var
           << ", \"" << var << "\", (" << init << ")); " 
              "  // <%" << tag << "> " << type << ' ' << var;
       if (!init.empty())

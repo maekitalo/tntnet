@@ -78,6 +78,7 @@ namespace tnt
     class BodypartCall : public Bodypart
     {
         typedef ecpp::Parser::comp_args_type comp_args_type;
+        typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::set<std::string> subcomps_type;
 
         static unsigned nextNumber;
@@ -87,6 +88,7 @@ namespace tnt
         std::string comp;
         comp_args_type args;
         std::string pass_cgi;
+        paramargs_type paramargs;
         std::string cppargs;
         const subcomps_type& subcomps;
         bool haveEndCall;
@@ -102,6 +104,7 @@ namespace tnt
                      const std::string& comp_,
                      const comp_args_type& args_,
                      const std::string& pass_cgi_,
+                     const paramargs_type& paramargs_,
                      const std::string& cppargs_,
                      const subcomps_type& subcomps_)
           : Bodypart(line, file),
@@ -109,6 +112,7 @@ namespace tnt
             comp(comp_),
             args(args_),
             pass_cgi(pass_cgi_),
+            paramargs(paramargs_),
             cppargs(cppargs_),
             subcomps(subcomps_),
             haveEndCall(false)
@@ -135,6 +139,7 @@ namespace tnt
     class Body
     {
         typedef ecpp::Parser::comp_args_type comp_args_type;
+        typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef tnt::Pointer<Bodypart> body_part_pointer;
         typedef std::list<body_part_pointer> body_type;
         typedef std::set<std::string> subcomps_type;
@@ -161,6 +166,7 @@ namespace tnt
                      const std::string& comp,
                      const comp_args_type& args,
                      const std::string& pass_cgi,
+                     const paramargs_type& paramargs,
                      const std::string& cppargs);
         void addEndCall(unsigned line, const std::string& file,
                         const std::string& comp);

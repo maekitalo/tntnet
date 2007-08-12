@@ -76,7 +76,7 @@ namespace tnt
 
     void ParseHandler::onCall(const std::string& comp,
       const comp_args_type& args, const std::string& pass_cgi,
-      const std::string& cppargs)
+      const paramargs_type& paramargs, const std::string& cppargs)
     {
     }
 

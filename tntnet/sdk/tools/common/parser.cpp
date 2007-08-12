@@ -133,37 +133,40 @@ namespace tnt
         state_callname_string,
         state_callname,
         state_call_cpparg0,
-        state_call_cpparg,   // 50
+        state_call_cpparg1,  // 50
+        state_call_cpparg_pe,
+        state_call_cpparg_sp,
+        state_call_cpparg_e,
         state_callend,
         state_callarg0,
         state_callarg,
         state_callarge,
         state_callval_expr,
         state_callval_string,
-        state_callval_word,
+        state_callval_word,  // 60
         state_callval0,
         state_callvale,
-        state_comment,  // 60
+        state_comment,
         state_commente,
         state_compe0,
         state_compe,
         state_cond,
         state_condexpr,
         state_condexpre,
-        state_include0,
+        state_include0,  // 70
         state_include1,
         state_scopearg0,
-        state_scopearg,  // 70
+        state_scopearg,
         state_scopeargeq,
         state_scopeargval0,
         state_scopeargval,
         state_scopevale,
         state_scope0,
         state_scope,
-        state_scopeinit,
+        state_scopeinit,  // 80
         state_scopee,
         state_scopee0,
-        state_scopecomment0,  // 80
+        state_scopecomment0,
         state_scopecomment,
         state_endcall0,
         state_endcall,
@@ -179,8 +182,9 @@ namespace tnt
       std::string cond, expr;
       comp_args_type comp_args;
       std::string pass_cgi;
-      std::string defarg, defval;
+      std::string defarg, defval, paramname;
       cppargs_type cppargs;
+      paramargs_type paramargs;
       unsigned bracket_count = 0;
       std::string scopetype, scopevar, scopeinit;
       scope_container_type scope_container;
@@ -395,6 +399,12 @@ namespace tnt
                 scope = component_scope;
                 state = state_scope0;
               }
+              else if (tag == "param")
+              {
+                scope_container = param_container;
+                scope = component_scope;
+                state = state_scope0;
+              }
               else if (!inClose && tag == "close")
               {
                 handler.startClose();
@@ -432,6 +442,11 @@ namespace tnt
             else if (std::isspace(ch) && tag == "request")
             {
               scope_container = request_container;
+              state = state_scopearg0;
+            }
+            else if (std::isspace(ch) && tag == "param")
+            {
+              scope_container = param_container;
               state = state_scopearg0;
             }
             else
@@ -708,6 +723,7 @@ namespace tnt
                 || tag == "application"
                 || tag == "thread"
                 || tag == "request"
+                || tag == "param"
                 || tag == "doc")
                 ;
               else
@@ -1045,47 +1061,135 @@ namespace tnt
           case state_callname:
             if (ch == '&' || ch == '/' || ch == '>')
             {
-              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
-              handler.onCall(comp, comp_args, pass_cgi, defarg);
+              log_debug("onCall(\"" << comp << "comp_args (" << comp_args.size() << "), \"" << pass_cgi << "\", paramargs (" << paramargs.size() << "), defarg (" << defarg.size() << "))");
+              handler.onCall(comp, comp_args, pass_cgi, paramargs, defarg);
               comp.clear();
               comp_args.clear();
               pass_cgi.clear();
+              paramargs.clear();
               defarg.clear();
               state = ch == '>' ? state_html : state_callend;
             }
             else if (std::isspace(ch))
               state = state_callarg0;
             else if (ch == '(')
+            {
               state = state_call_cpparg0;
+              expr.clear();
+              paramargs.clear();
+            }
             else
               comp += ch;
             break;
 
           case state_call_cpparg0:
-            if (!std::isspace(ch))
+            if (ch == ')')
+              state = state_callarg;
+            else if (std::isalpha(ch) || ch == '_')
             {
-              if (ch == ')')
-                state = state_callarg;
-              else
-              {
-                defarg = ch;
-                if (ch == '(')
-                  ++bracket_count;
-                state = state_call_cpparg;
-              }
+              expr = ch;
+              state = state_call_cpparg_pe;
+            }
+            else if (!std::isspace(ch))
+            {
+              expr = ch;
+              if (ch == '(')
+                bracket_count = 1;
+              state = state_call_cpparg_e;
             }
             break;
 
-          case state_call_cpparg:
-            if (bracket_count == 0 && ch == ')')
-              state = state_callarg0;
+          case state_call_cpparg1:
+            if (ch == ')')
+              throw parse_error("')' unexpected", state, curline);
+            else if (std::isalpha(ch) || ch == '_')
+            {
+              expr = ch;
+              state = state_call_cpparg_pe;
+            }
+            else if (!std::isspace(ch))
+            {
+              expr = ch;
+              if (ch == '(')
+                bracket_count = 1;
+              state = state_call_cpparg_e;
+            }
+            break;
+
+          case state_call_cpparg_pe:
+            if (std::isalnum(ch) || ch == '_' )
+              expr += ch;
+            else if (std::isspace(ch))
+            {
+              paramname = expr;
+              state = state_call_cpparg_sp;
+            }
+            else if (ch == '=')
+            {
+              paramname = expr;
+              expr.clear();
+              bracket_count = 0;
+              state = state_call_cpparg_e;
+            }
             else
             {
-              defarg += ch;
+              expr += ch;
+              if (ch == '(')
+                bracket_count = 1;
+              state = state_call_cpparg_e;
+            }
+            break;
+
+          case state_call_cpparg_sp:
+            if (std::isspace(ch))
+              expr += ch;
+            else if (ch == '=')
+            {
+              expr.clear();
+              bracket_count = 0;
+              state = state_call_cpparg_e;
+            }
+            else
+            {
+              expr += ch;
+              paramname.clear();
+              if (ch == '(')
+                bracket_count = 1;
+              state = state_call_cpparg_e;
+            }
+            break;
+
+          case state_call_cpparg_e:
+            if (ch == ')' && bracket_count > 0)
+            {
+              --bracket_count;
+              expr += ch;
+            }
+            else if (ch == ',' || ch == ')')
+            {
+              if (paramname.empty())
+              {
+                if (!defarg.empty())
+                  defarg += ',';
+                defarg += expr;
+                expr.clear();
+                state = ch == ',' ? state_call_cpparg1 : state_callarg0;
+              }
+              else
+              {
+                if (paramargs.find(paramname) != paramargs.end())
+                  throw parse_error("duplicate parameter " + paramname, state, curline);
+                paramargs[paramname] = expr;
+                paramname.clear();
+                expr.clear();
+                state = ch == ',' ? state_call_cpparg1 : state_callarg0;
+              }
+            }
+            else
+            {
               if (ch == '(')
                 ++bracket_count;
-              else if (ch == ')')
-                --bracket_count;
+              expr += ch;
             }
             break;
 
@@ -1104,12 +1208,13 @@ namespace tnt
             }
             else if (ch == '&' || ch == '/' || ch == '>')
             {
-              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
-              handler.onCall(comp, comp_args, pass_cgi, defarg);
+              log_debug("onCall(\"" << comp << "comp_args (" << comp_args.size() << "), \"" << pass_cgi << "\", paramargs (" << paramargs.size() << "), defarg (" << defarg.size() << "))");
+              handler.onCall(comp, comp_args, pass_cgi, paramargs, defarg);
               arg.clear();
               comp.clear();
               comp_args.clear();
               pass_cgi.clear();
+              paramargs.clear();
               defarg.clear();
               state = ch == '>' ? state_html : state_callend;
             }
@@ -1128,12 +1233,12 @@ namespace tnt
               state = state_callval0;
             else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
-              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
-              handler.onCall(comp, comp_args, arg, defarg);
+              log_debug("onCall(\"" << comp << "comp_args (" << comp_args.size() << "), \"" << pass_cgi << "\", paramargs (" << paramargs.size() << "), defarg (" << defarg.size() << "))");
+              handler.onCall(comp, comp_args, arg, paramargs, defarg);
               arg.clear();
               comp.clear();
               comp_args.clear();
-              pass_cgi.clear();
+              paramargs.clear();
               defarg.clear();
               state = ch == '>' ? state_html : state_callend;
             }
@@ -1152,12 +1257,12 @@ namespace tnt
             }
             else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
             {
-              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
-              handler.onCall(comp, comp_args, arg, defarg);
+              log_debug("onCall(\"" << comp << "comp_args (" << comp_args.size() << "), \"" << pass_cgi << "\", paramargs (" << paramargs.size() << "), defarg (" << defarg.size() << "))");
+              handler.onCall(comp, comp_args, arg, paramargs, defarg);
               arg.clear();
               comp.clear();
               comp_args.clear();
-              pass_cgi.clear();
+              paramargs.clear();
               defarg.clear();
               state = ch == '>' ? state_html : state_callend;
             }
@@ -1227,11 +1332,12 @@ namespace tnt
               arg.clear();
               value.clear();
 
-              log_debug("onCall(\"" << comp << "comp_args, pass_cgi, defarg)");
-              handler.onCall(comp, comp_args, pass_cgi, defarg);
+              log_debug("onCall(\"" << comp << "comp_args (" << comp_args.size() << "), \"" << pass_cgi << "\", paramargs (" << paramargs.size() << "), defarg (" << defarg.size() << "))");
+              handler.onCall(comp, comp_args, pass_cgi, paramargs, defarg);
               comp.clear();
               comp_args.clear();
               pass_cgi.clear();
+              paramargs.clear();
               defarg.clear();
               state = state_html;
             }
@@ -1636,6 +1742,7 @@ namespace tnt
 
         }  // switch(state)
 
+        log_debug("char " << ch << " state " << state);
       }  // while(in.get(ch))
 
       if (state != state_html && state != state_html0 && state != state_nl)

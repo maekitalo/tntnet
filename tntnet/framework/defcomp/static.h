@@ -44,9 +44,9 @@ namespace tnt
 
     public:
       virtual unsigned operator() (tnt::HttpRequest& request,
-        tnt::HttpReply& reply, cxxtools::QueryParams& qparam, bool top);
+        tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
       virtual unsigned operator() (tnt::HttpRequest& request,
-        tnt::HttpReply& reply, cxxtools::QueryParams& qparam);
+        tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };
 
   ////////////////////////////////////////////////////////////////////////

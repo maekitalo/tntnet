@@ -28,7 +28,7 @@
 #include <tnt/multipart.h>
 #include <tnt/cookie.h>
 #include <tnt/encoding.h>
-#include <cxxtools/query_params.h>
+#include <tnt/query_params.h>
 #include <tnt/scope.h>
 #include <locale>
 #include <sys/socket.h>
@@ -57,7 +57,7 @@ namespace tnt
 
       std::string pathinfo;
       args_type args;
-      cxxtools::QueryParams qparam;
+      tnt::QueryParams qparam;
 
       struct sockaddr_storage peerAddr;
       struct sockaddr_storage serverAddr;
@@ -143,8 +143,8 @@ namespace tnt
       void parse(std::istream& in);
       void doPostParse();
 
-      cxxtools::QueryParams& getQueryParams()               { return qparam; }
-      const cxxtools::QueryParams& getQueryParams() const   { return qparam; }
+      tnt::QueryParams& getQueryParams()               { return qparam; }
+      const tnt::QueryParams& getQueryParams() const   { return qparam; }
 
       void setPeerAddr(const struct sockaddr_storage& p)
         { memcpy(&peerAddr, &p, sizeof(peerAddr)); peerAddrStr.clear(); }

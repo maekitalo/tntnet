@@ -33,6 +33,7 @@ namespace tnt
     {
         std::string classname;
         typedef ecpp::Parser::comp_args_type comp_args_type;
+        typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::list<Variable> variables_type;
         typedef std::list<Scopevar> scopevars_type;
 
@@ -62,8 +63,9 @@ namespace tnt
                      const std::string& comp,
                      const comp_args_type& args,
                      const std::string& pass_cgi,
+                     const paramargs_type& paramargs,
                      const std::string& cppargs)
-          { compbody.addCall(line, file, comp, args, pass_cgi, cppargs); }
+          { compbody.addCall(line, file, comp, args, pass_cgi, paramargs, cppargs); }
         void addArg(const std::string& name, const std::string& value)
         {
           args.push_back(Variable(name, value));

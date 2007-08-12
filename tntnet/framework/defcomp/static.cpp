@@ -106,13 +106,13 @@ namespace tnt
   }
 
   unsigned Static::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
+    tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {
     return operator() (request, reply, qparams, false);
   }
 
   unsigned Static::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, cxxtools::QueryParams& qparams, bool top)
+    tnt::HttpReply& reply, tnt::QueryParams& qparams, bool top)
   {
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");

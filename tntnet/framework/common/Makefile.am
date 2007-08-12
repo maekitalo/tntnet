@@ -75,6 +75,7 @@ nobase_include_HEADERS = \
 	tnt/objecttemplate.h \
 	tnt/parser.h \
 	tnt/pointer.h \
+	tnt/query_params.h \
 	tnt/savepoint.h \
 	tnt/scope.h \
 	tnt/scopemanager.h \

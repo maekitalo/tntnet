@@ -62,7 +62,7 @@ namespace tnt
   MimeHandler* Mime::handler = 0;
 
   unsigned Mime::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, cxxtools::QueryParams& qparams)
+    tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {
     if (request.getArgs().size() > 0)
       reply.setContentType(request.getArg(0));

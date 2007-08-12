@@ -1,3 +1,6 @@
+2007-08-11 tommi@tntnet.org
+  - new feature: pass named parameters of any class to subcomponents
+
 2007-07-14 tommi@tntnet.org
   - prefix classname in generated components with "_component_" to reduce
     possible naming-conflicts and allow components to have reserved c++-words

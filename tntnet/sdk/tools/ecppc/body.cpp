@@ -56,6 +56,15 @@ namespace tnt
 
     void BodypartCall::call(std::ostream& out, const std::string& qparam) const
     {
+      log_debug("call: paramargs " << paramargs.size());
+      for (paramargs_type::const_iterator it = paramargs.begin();
+           it != paramargs.end(); ++it)
+      {
+        printLine(out);
+        out << "  " << qparam << ".getScope().createNew(\"" <<
+          it->first << "\", (" << it->second << "));\n";
+      }
+
       printLine(out);
       if (std::isalpha(comp[0]))
         callByIdent(out, qparam);
@@ -152,6 +161,7 @@ namespace tnt
 
     void BodypartCall::getBody(std::ostream& out) const
     {
+      log_debug("getBody: paramargs " << paramargs.size());
       out << "  // <& " << comp << " ...\n";
 
       std::ostringstream o;
@@ -163,7 +173,7 @@ namespace tnt
         if (pass_cgi.empty())
         {
           printLine(out);
-          out << "  cxxtools::QueryParams " << queryParamName << "(qparam, false);\n";
+          out << "  tnt::QueryParams " << queryParamName << "(qparam, false);\n";
           call(out, queryParamName);
         }
         else
@@ -175,9 +185,9 @@ namespace tnt
       {
         printLine(out);
         if (pass_cgi.empty())
-          out << "  cxxtools::QueryParams " << queryParamName << "(qparam, false);\n";
+          out << "  tnt::QueryParams " << queryParamName << "(qparam, false);\n";
         else
-          out << "  cxxtools::QueryParams " << queryParamName << "(" << pass_cgi << ", true);\n";
+          out << "  tnt::QueryParams " << queryParamName << "(" << pass_cgi << ", true);\n";
 
         for (comp_args_type::const_iterator i = args.begin();
              i != args.end(); ++i)
@@ -209,10 +219,11 @@ namespace tnt
                        const std::string& comp,
                        const comp_args_type& args,
                        const std::string& pass_cgi,
+                       const paramargs_type& paramargs,
                        const std::string& cppargs)
     {
       BodypartCall* bpc = new BodypartCall(line, file,
-          comp, args, pass_cgi, cppargs, subcomps);
+          comp, args, pass_cgi, paramargs, cppargs, subcomps);
       data.push_back(body_part_pointer(bpc));
       callStack.push(bpc);
     }

@@ -32,6 +32,7 @@ namespace tnt
       public:
         typedef Parser::comp_args_type comp_args_type;
         typedef Parser::cppargs_type cppargs_type;
+        typedef Parser::paramargs_type paramargs_type;
 
         ParseHandler()
           { }
@@ -54,7 +55,7 @@ namespace tnt
           const std::string& value);
         virtual void onCall(const std::string& comp,
           const comp_args_type& args, const std::string& pass_cgi,
-          const std::string& cppargs);
+          const paramargs_type& paramargs, const std::string& cppargs);
         virtual void onEndCall(const std::string& comp);
         virtual void onShared(const std::string& code);
         virtual void onScope(scope_container_type container, scope_type scope,

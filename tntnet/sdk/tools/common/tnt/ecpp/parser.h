@@ -62,6 +62,8 @@ namespace tnt
         typedef std::multimap<std::string, std::string> comp_args_type;
         typedef std::list<std::pair<std::string, std::string> > cppargs_type;
 
+        typedef std::map<std::string, std::string> paramargs_type;
+
       private:
         void processNV(const std::string& tag, const std::string& name,
             const std::string& value);

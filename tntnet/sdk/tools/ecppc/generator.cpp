@@ -166,9 +166,9 @@ namespace tnt
 
     void Generator::onCall(const std::string& comp,
       const comp_args_type& args, const std::string& pass_cgi,
-      const std::string& cppargs)
+      const paramargs_type& paramargs, const std::string& cppargs)
     {
-      currentComp->addCall(curline, curfile, comp, args, pass_cgi, cppargs);
+      currentComp->addCall(curline, curfile, comp, args, pass_cgi, paramargs, cppargs);
     }
 
     void Generator::onEndCall(const std::string& comp)
@@ -298,10 +298,10 @@ namespace tnt
              "    ~_component_" << maincomp.getName() << "();\n\n"
              "  public:\n"
              "    _component_" << maincomp.getName() << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
-             "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam);\n";
+             "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);\n";
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
-               "                    cxxtools::QueryParams& qparam);\n";
+               "                    tnt::QueryParams& qparam);\n";
       if (!attr.empty())
         out << "    std::string getAttribute(const std::string& name,\n"
                "      const std::string& def = std::string()) const;\n\n";
@@ -510,7 +510,7 @@ namespace tnt
         code << "  rawData.release();\n";
 
       code << "}\n\n"
-              "unsigned " << classname << "::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, cxxtools::QueryParams& qparam)\n"
+              "unsigned " << classname << "::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
            << "{\n";
 
       if (isDebug())
