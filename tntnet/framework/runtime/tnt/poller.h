@@ -54,7 +54,7 @@ namespace tnt
 
       cxxtools::Mutex mutex;
 
-      void addFd(int fd, uint32_t event);
+      void addFd(int fd);
       void removeFd(int fd);
       void append_new_jobs();
 
@@ -79,6 +79,9 @@ namespace tnt
 
     public:
       Poller(Jobqueue& q);
+#ifdef WITH_EPOLL
+      ~Poller();
+#endif
 
       virtual void run();
       void doStop();

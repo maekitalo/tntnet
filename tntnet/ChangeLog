@@ -1,3 +1,6 @@
+2007-08-19 tommi@tntnet.org
+  - rebuild epoll-fd after detecting inconsitency instead of failing
+
 2007-08-11 tommi@tntnet.org
   - new feature: pass named parameters of any class to subcomponents
 

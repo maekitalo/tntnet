@@ -44,15 +44,20 @@ namespace tnt
       throw cxxtools::SysError("epoll_create");
 
     fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
-    addFd(notify_pipe.getReadFd(), EPOLLIN);
+    addFd(notify_pipe.getReadFd());
   }
 
-  void Poller::addFd(int fd, uint32_t event)
+  Poller::~Poller()
+  {
+    close(pollFd);
+  }
+
+  void Poller::addFd(int fd)
   {
     log_debug("addFd(" << fd << ')');
 
     epoll_event e;
-    e.events = event;
+    e.events = EPOLLIN;
     e.data.fd = fd;
     int ret = ::epoll_ctl(pollFd, EPOLL_CTL_ADD, fd, &e);
     if (ret < 0)
@@ -107,7 +112,7 @@ namespace tnt
       for (new_jobs_type::iterator it = new_jobs.begin();
            it != new_jobs.end(); ++it)
       {
-        addFd((*it)->getFd(), EPOLLIN);
+        addFd((*it)->getFd());
         jobs[(*it)->getFd()] = *it;
 
         int msec;
@@ -183,6 +188,9 @@ namespace tnt
 
         // no timeout - process events
         log_debug(ret << " events occured");
+
+        bool rebuildPollFd = false;
+
         for (int i = 0; i < ret; ++i)
         {
           if (events[i].data.fd == notify_pipe.getReadFd())
@@ -204,9 +212,8 @@ namespace tnt
             if (it == jobs.end())
             {
               log_fatal("internal error: job for fd " << events[i].data.fd << " not found in jobs-list");
-              removeFd(events[i].data.fd);
               ::close(events[i].data.fd);
-              throw std::runtime_error("job not found in jobs-list");
+              rebuildPollFd = true;
             }
 
             if ((events[i].events & (EPOLLERR | EPOLLHUP)) != 0)
@@ -222,6 +229,23 @@ namespace tnt
             jobs.erase(events[i].data.fd);
             removeFd(events[i].data.fd);
           }
+        }
+
+        if (rebuildPollFd)
+        {
+          // rebuild poll-stucture
+          close(pollFd);
+          pollFd = ::epoll_create(256);
+          if (pollFd < 0)
+            throw cxxtools::SysError("epoll_create");
+
+          int ret = fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
+          if (ret < 0)
+            throw cxxtools::SysError("fcntl");
+
+          addFd(notify_pipe.getReadFd());
+          for (jobs_type::iterator it = jobs.begin(); it != jobs.end(); ++it)
+            addFd(it->first);
         }
       }
     }
