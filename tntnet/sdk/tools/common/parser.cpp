@@ -29,6 +29,14 @@ log_define("tntnet.parser")
 
 namespace tnt
 {
+  namespace
+  {
+    inline bool isVariableNameChar(char ch)
+    {
+      return std::isalnum(ch) || ch == '_';
+    }
+  }
+
   namespace ecpp
   {
     static const char split_start = '{';
@@ -1117,7 +1125,7 @@ namespace tnt
             break;
 
           case state_call_cpparg_pe:
-            if (std::isalnum(ch) || ch == '_' )
+            if (isVariableNameChar(ch))
               expr += ch;
             else if (std::isspace(ch))
             {
@@ -1130,6 +1138,14 @@ namespace tnt
               expr.clear();
               bracket_count = 0;
               state = state_call_cpparg_e;
+            }
+            else if (ch == ')')
+            {
+              if (!defarg.empty())
+                defarg += ',';
+              defarg += expr;
+              expr.clear();
+              state = state_callarg0;
             }
             else
             {
@@ -1225,7 +1241,7 @@ namespace tnt
             break;
 
           case state_callarg:
-            if (std::isalnum(ch) || ch == '_')
+            if (isVariableNameChar(ch))
               arg += ch;
             else if (std::isspace(ch))
               state = state_callarge;
@@ -1249,7 +1265,7 @@ namespace tnt
           case state_callarge:
             if (ch == '=')
               state = state_callval0;
-            else if (pass_cgi.empty() && (std::isalnum(ch) || ch == '_'))
+            else if (pass_cgi.empty() && (isVariableNameChar(ch)))
             {
               pass_cgi = arg;
               arg = ch;
@@ -1591,7 +1607,7 @@ namespace tnt
             }
             else if (std::isspace(ch))
               scopevar += ch;
-            else if (!std::isalnum(scopevar.at(scopevar.size() - 1)))
+            else if (!isVariableNameChar(scopevar.at(scopevar.size() - 1)))
             {
               scopetype += scopevar;
               scopevar = ch;
@@ -1661,7 +1677,7 @@ namespace tnt
             break;
 
           case state_endcall0:
-            if (std::isalnum(ch) || ch == '_')
+            if (isVariableNameChar(ch))
             {
               comp = ch;
               state = state_endcall;
@@ -1705,7 +1721,7 @@ namespace tnt
               comp.clear();
               state = state_endcalle;
             }
-            else if (std::isalnum(ch) || ch == '_' || ch == '@')
+            else if (isVariableNameChar(ch) || ch == '@')
               comp += ch;
             else
               throw parse_error("character expected", state, curline);
@@ -1742,7 +1758,7 @@ namespace tnt
 
         }  // switch(state)
 
-        log_debug("char " << ch << " state " << state);
+        log_debug("line " << curline << " char " << ch << " state " << state << " bc " << bracket_count);
       }  // while(in.get(ch))
 
       if (state != state_html && state != state_html0 && state != state_nl)

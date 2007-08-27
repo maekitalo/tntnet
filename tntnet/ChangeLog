@@ -1,3 +1,6 @@
+2007-08-22 tommi@tntnet.org
+  - allow underscore in name of scoped variables
+
 2007-08-19 tommi@tntnet.org
   - rebuild epoll-fd after detecting inconsitency instead of failing
 
