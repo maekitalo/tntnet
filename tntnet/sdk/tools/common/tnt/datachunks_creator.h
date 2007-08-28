@@ -36,6 +36,7 @@ namespace tnt
 
     public:
       typedef chunks_type::const_reference const_reference;
+      typedef chunks_type::reference reference;
       typedef chunks_type::value_type value_type;
 
       void push_back(const std::string& data)
