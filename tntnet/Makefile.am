@@ -47,6 +47,7 @@ SUBDIRS += \
 endif
 
 EXTRA_DIST = ecpp.vim \
+    README.aix \
     doc/tntnet.pdf \
     doc/tntnet.odt \
     doc/tntnet-configuration.pdf \
