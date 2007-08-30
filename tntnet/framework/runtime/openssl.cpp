@@ -253,18 +253,30 @@ namespace tnt
       // no read, timeout > 0 - poll
       do
       {
-        log_debug("poll");
-        poll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
-                  ? POLLIN|POLLOUT : POLLIN);
+        short events;
+
+        if (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
+        {
+          log_debug("poll(POLLIN|POLLOUT)");
+          events = POLLIN|POLLOUT;
+        }
+        else
+        {
+          log_debug("poll(POLLIN)");
+          events = POLLIN;
+        }
+
+        poll(events);
 
         log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
         n = ::SSL_read(ssl, buffer, bufsize);
         log_debug("SSL_read returns " << n);
         checkSslError();
 
-      } while (n <= 0
+      } while (n < 0
          && ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
-          || err == SSL_ERROR_WANT_WRITE));
+          || err == SSL_ERROR_WANT_WRITE
+          || SSL_get_error(ssl, n) == SSL_ERROR_SYSCALL && errno == EAGAIN));
     }
     return n;
   }
