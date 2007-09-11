@@ -36,7 +36,7 @@
   // and prints it to a target-ostream. "reply.out()" gives us a ostream
   // to our client.
 
-  cxxtools::Hdostream hd(reply.out());
+  cxxtools::Hdostream hd(reply.sout());
 
   // hexdump first 1k of uploaded file
   if (it->getSize() > 1024)
