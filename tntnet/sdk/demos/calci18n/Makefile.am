@@ -15,7 +15,7 @@ EXTRA_DIST = \
 	de.png
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-calci18n_la_LDFLAGS = -module $(PTHREAD_LIBS)
+calci18n_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 calci18n_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties calci18n.txt calci18n.fi calci18n.de

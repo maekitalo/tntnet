@@ -176,11 +176,11 @@ while test $# -gt 0; do
         ;;
 
     --cxxflags)
-        echo @CXXTOOLS_CXXFLAGS@ -I$includedir
+        echo -I$includedir
         ;;
 
     --libs)
-        echo @CXXTOOLS_LDFLAGS@ -L$libdir -ltntnet -lcxxtools
+        echo -L$libdir -ltntnet -lcxxtools
         ;;
 
     --makefile=*)
@@ -207,6 +207,7 @@ while test $# -gt 0; do
         project $2
         shift
         ;;
+
     *)
         usage
         exit 1

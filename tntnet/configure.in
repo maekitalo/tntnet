@@ -51,11 +51,6 @@ AC_COMPILE_IFELSE(
   ]
   )
 
-AC_SUBST(CXXTOOLS_CONFIG)
-AC_SUBST(CXXTOOLS_CXXFLAGS)
-AC_SUBST(CXXTOOLS_LDFLAGS)
-
-AC_CHECK_HEADER([cxxtools/net.h], , AC_MSG_ERROR([cxtools not found]))
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 
 AC_ARG_WITH([epoll],
@@ -183,8 +178,11 @@ AC_COMPILE_IFELSE(
   ],
   AC_DEFINE(HAVE_TCP_DEFER_ACCEPT, [], [defined if TCP_DEFER_ACCEPT is defined]))
 
-case $target in
-darwin*)
+case "${host_cpu}-${host_os}" in
+*-aix*)
+    SHARED_LIB_FLAG=-qmkshrobj
+    ;;
+*-darwin*)
     SHARED_LIB_FLAG=-dynamiclib
     ;;
 *)  

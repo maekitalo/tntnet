@@ -88,4 +88,4 @@ nobase_include_HEADERS = \
 	tnt/zdata.h
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools $(PTHREAD_LIBS)
+libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools $(PTHREAD_LIBS) @SHARED_LIB_FLAG@

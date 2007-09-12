@@ -7,7 +7,7 @@ EXTRA_DIST = \
 	savepoint.ecpp
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-savepoint_la_LDFLAGS = -module $(PTHREAD_LIBS)
+savepoint_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 savepoint_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties

@@ -9,7 +9,7 @@ EXTRA_DIST = \
 	demos.txt
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-alldemos_la_LDFLAGS = -module $(PTHREAD_LIBS)
+alldemos_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 alldemos_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.properties

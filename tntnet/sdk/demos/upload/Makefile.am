@@ -7,7 +7,7 @@ EXTRA_DIST = \
 	upload.ecpp
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-upload_la_LDFLAGS = -module $(PTHREAD_LIBS)
+upload_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 upload_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
