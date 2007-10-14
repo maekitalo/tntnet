@@ -227,7 +227,6 @@ namespace tnt
   tnt::Objectptr varname##_pointer = request.get##scope##Scope().get(varname##_scopekey);          \
   if (varname##_pointer == 0)          \
     varname##_pointer = request.get##scope##Scope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
-  log_debug(#scope " var " #type "& " #varname); \
   type& varname = varname##_objecttype::getRef(varname##_pointer);
 
 #define TNT_SESSION_COMPONENT_VAR(type, varname, key, construct) \
@@ -273,7 +272,6 @@ namespace tnt
   tnt::Objectptr varname##_pointer = qparam.getScope().get(varname##_scopekey);          \
   if (varname##_pointer == 0)          \
     varname##_pointer = qparam.getScope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
-  log_debug("param var " #type "& " #varname); \
   type& varname = varname##_objecttype::getRef(varname##_pointer);
 
 #endif // TNT_ECPP_H
