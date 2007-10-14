@@ -26,6 +26,10 @@
 
 namespace tnt
 {
+/// This is a class, which names tntnet components.
+/// tntnet components are identified by the library, where they reside and a name
+/// inside the library. The name is actually a string constant, which was passed
+/// to the component factory ctor.
 struct Compident
 {
   std::string libname;
@@ -38,13 +42,18 @@ struct Compident
   }
 
   Compident() { }
+
+  /// Creates a component identifyer with a library and component name.
   Compident(const std::string& l, const std::string& n)
     : libname(l),
       compname(n)
   { }
 
+  /// looks for '@' and splits the passed string into libname and compname parts.
+  /// When no '@' is found, the library part is left empty.
   explicit Compident(const std::string& ident);
 
+  /// return component identifyer as a string
   std::string toString() const
   { return libname.empty() ? compname : (compname + '@' + libname); }
 
