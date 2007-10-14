@@ -181,7 +181,7 @@ namespace tnt
     reply.setContentLengthHeader(st.st_size);
 
     // send data
-    log_info("send static file \"" << file << "\" size " << st.st_size << " bytes");
+    log_info("send file \"" << file << "\" size " << st.st_size << " bytes");
 
 #if HAVE_SENDFILE
     if (top)

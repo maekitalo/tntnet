@@ -187,7 +187,7 @@ namespace tnt
          unsigned keepAliveCount)
   {
     // log message
-    log_info("process request: " << request.getMethod() << ' ' << request.getQuery()
+    log_info("request " << request.getMethod() << ' ' << request.getQuery()
       << " from client " << request.getPeerIp() << " user-Agent \"" << request.getUserAgent()
       << '"');
 
@@ -299,13 +299,13 @@ namespace tnt
         {
           if (reply.isDirectMode())
           {
-            log_info("request ready, returncode " << http_return);
+            log_info("request " << request.getMethod() << ' ' << request.getQuery() << " ready, returncode " << http_return);
             state = stateFlush;
             reply.out().flush();
           }
           else
           {
-            log_info("request ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
+            log_info("request " << request.getMethod() << ' ' << request.getQuery() << " ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
             application.getScopemanager().postCall(request, reply, ci.libname);
 
