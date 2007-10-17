@@ -424,6 +424,13 @@ namespace tnt
                                               CompareNoCase());
   }
 
+  const Contenttype& HttpRequest::getContentTypePriv() const
+  {
+    std::istringstream in(getHeader(httpheader::contentType));
+    in >> ct;
+    return ct;
+  }
+
   void HttpRequest::setApplicationScope(Scope* s)
   {
     if (applicationScope == s)

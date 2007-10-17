@@ -22,6 +22,7 @@
 #define TNT_HTTPREQUEST_H
 
 #include <tnt/httpmessage.h>
+#include <tnt/httpheader.h>
 #include <vector>
 #include <netinet/in.h>
 #include <tnt/contenttype.h>
@@ -63,7 +64,7 @@ namespace tnt
       struct sockaddr_storage peerAddr;
       struct sockaddr_storage serverAddr;
 
-      Contenttype ct;
+      mutable Contenttype ct;
       Multipart mp;
       bool ssl;
       unsigned serial;
@@ -96,6 +97,8 @@ namespace tnt
 
       mutable std::string peerAddrStr;
       mutable std::string serverAddrStr;
+
+      const Contenttype& getContentTypePriv() const;
 
     public:
       HttpRequest();
@@ -165,8 +168,9 @@ namespace tnt
         { ssl = sw; }
       bool isSsl() const
         { return ssl;  }
-      const Contenttype& getContentType() const  { return ct; }
-      bool isMultipart() const               { return ct.isMultipart(); }
+      const Contenttype& getContentType() const
+        { ct.getType().empty() && hasHeader(httpheader::contentType) ? getContentTypePriv() : ct; }
+      bool isMultipart() const               { return getContentType().isMultipart(); }
       const Multipart& getMultipart() const  { return mp; }
 
       unsigned getSerial() const             { return serial; }
