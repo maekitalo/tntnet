@@ -270,6 +270,8 @@ namespace tnt
   {
     log_debug("worker-process");
 
+    stop = false;
+
     if (listeners.empty())
     {
       unsigned short int port = (getuid() == 0 ? 80 : 8000);
