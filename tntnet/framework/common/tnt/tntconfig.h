@@ -86,6 +86,12 @@ namespace tnt
       { return config_entries; }
 
       void setConfigValue(const std::string& key, const params_type& value);
+      void setConfigValue(const std::string& key, const std::string& value)
+      {
+        params_type params;
+        params.push_back(value);
+        setConfigValue(key, params);
+      }
 
       params_type getConfigValue(
            const std::string& key,
