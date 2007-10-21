@@ -106,7 +106,7 @@ noinst_HEADERS = \
 	tnt/ssl.h \
 	tnt/tcpjob.h
 
-libtntnet_la_CXXFLAGS = $(PTHREAD_CFLAGS)
+libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\" $(PTHREAD_CFLAGS)
 libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 
 if MAKE_GNUTLS

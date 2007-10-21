@@ -205,6 +205,21 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
       }
     }
 
+#ifdef PKGLIBDIR
+    if (!found)
+    {
+      try
+      {
+        log_debug("load library \"" << libname << "\" from package lib dir");
+        lib = ComponentLibrary(PKGLIBDIR, libname);
+        found = true;
+      }
+      catch (const cxxtools::dl::DlopenError& e)
+      {
+      }
+    }
+#endif
+
     if (!found)
     {
       try

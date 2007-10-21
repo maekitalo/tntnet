@@ -1,3 +1,6 @@
+2007-10-21 tommi@tntnet.org
+  - search components in pkglibdir
+
 2007-10-17 tommi@tntnet.org
   - set content-type also in other than POST requests
 
