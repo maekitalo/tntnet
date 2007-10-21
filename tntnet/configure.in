@@ -13,7 +13,7 @@ unset CDPATH
 
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([framework/common/config.h])
-AC_CONFIG_SRCDIR([framework/runtime/tntnet.cpp])
+AC_CONFIG_SRCDIR([framework/common/tntnet.cpp])
 
 AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(inet_ntop, nsl socket resolv)
@@ -160,7 +160,8 @@ AC_ARG_WITH([demos],
   [with_demos=$withval],
   [with_demos=$with_sdk])
 
-AM_CONDITIONAL(MAKE_DEMOS, test x$with_demos = xyes)
+AM_CONDITIONAL(MAKE_DEMOS, test x$with_demos = xyes -o x$with_demos = xinstall)
+AM_CONDITIONAL(INSTALL_DEMOS, test x$with_demos = xinstall)
 
 if test x$with_sdk != xyes -a x$with_demos = xyes
 then

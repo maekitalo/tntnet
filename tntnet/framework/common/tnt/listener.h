@@ -22,7 +22,8 @@
 #define TNT_LISTENER_H
 
 #include <config.h>
-#include "tnt/job.h"
+#include "tnt/tcpjob.h"
+#include <cxxtools/tcpstream.h>
 
 namespace tnt
 {

@@ -19,6 +19,7 @@
 
 
 #include "tnt/poller.h"
+#include "tnt/pollerimpl.h"
 #include "tnt/tntnet.h"
 #include <cxxtools/syserror.h>
 #include <cxxtools/log.h>
@@ -33,9 +34,21 @@ log_define("tntnet.poller")
 
 namespace tnt
 {
-#ifdef WITH_EPOLL
+  PollerIf::~PollerIf()
+  { }
 
   Poller::Poller(Jobqueue& q)
+    : impl(new PollerImpl(q))
+  { }
+
+  void Poller::run()
+  {
+    impl->run();
+  }
+
+#ifdef WITH_EPOLL
+
+  PollerImpl::PollerImpl(Jobqueue& q)
     : queue(q),
       pollFd(-1)
   {
@@ -47,12 +60,12 @@ namespace tnt
     addFd(notify_pipe.getReadFd());
   }
 
-  Poller::~Poller()
+  PollerImpl::~PollerImpl()
   {
     close(pollFd);
   }
 
-  void Poller::addFd(int fd)
+  void PollerImpl::addFd(int fd)
   {
     log_debug("addFd(" << fd << ')');
 
@@ -64,7 +77,7 @@ namespace tnt
       throw cxxtools::SysError("epoll_ctl(EPOLL_CTL_ADD)");
   }
 
-  void Poller::removeFd(int fd)
+  void PollerImpl::removeFd(int fd)
   {
     log_debug("removeFd(" << fd << ')');
 
@@ -80,13 +93,13 @@ namespace tnt
     }
   }
 
-  void Poller::doStop()
+  void PollerImpl::doStop()
   {
     log_debug("notify stop");
     notify_pipe.write('A');
   }
 
-  void Poller::addIdleJob(Jobqueue::JobPtr job)
+  void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
   {
     log_debug("addIdleJob " << job->getFd());
 
@@ -99,7 +112,7 @@ namespace tnt
     log_debug("addIdleJob ready");
   }
 
-  void Poller::append_new_jobs()
+  void PollerImpl::append_new_jobs()
   {
     cxxtools::MutexLock lock(mutex);
     if (!new_jobs.empty())
@@ -127,7 +140,7 @@ namespace tnt
     }
   }
 
-  void Poller::run()
+  void PollerImpl::run()
   {
     epoll_event events[16];
 
@@ -253,7 +266,7 @@ namespace tnt
 
 #else
 
-  Poller::Poller(Jobqueue& q)
+  PollerImpl::PollerImpl(Jobqueue& q)
     : queue(q),
       poll_timeout(-1)
   {
@@ -265,7 +278,7 @@ namespace tnt
     pollfds[0].revents = 0;
   }
 
-  void Poller::append_new_jobs()
+  void PollerImpl::append_new_jobs()
   {
     cxxtools::MutexLock lock(mutex);
     if (!new_jobs.empty())
@@ -292,7 +305,7 @@ namespace tnt
     }
   }
 
-  void Poller::append(Jobqueue::JobPtr& job)
+  void PollerImpl::append(Jobqueue::JobPtr& job)
   {
     current_jobs.push_back(job);
 
@@ -301,7 +314,7 @@ namespace tnt
     p.events = POLLIN;
   }
 
-  void Poller::run()
+  void PollerImpl::run()
   {
     while (!Tntnet::shouldStop())
     {
@@ -339,13 +352,13 @@ namespace tnt
     }
   }
 
-  void Poller::doStop()
+  void PollerImpl::doStop()
   {
     log_debug("notify stop");
     notify_pipe.write('A');
   }
 
-  void Poller::dispatch()
+  void PollerImpl::dispatch()
   {
     log_debug("dispatch " << current_jobs.size() << " jobs");
 
@@ -383,7 +396,7 @@ namespace tnt
     }
   }
 
-  void Poller::remove(jobs_type::size_type n)
+  void PollerImpl::remove(jobs_type::size_type n)
   {
     // replace job with last job in poller-list
     jobs_type::size_type last = current_jobs.size() - 1;
@@ -397,7 +410,7 @@ namespace tnt
     current_jobs.pop_back();
   }
 
-  void Poller::addIdleJob(Jobqueue::JobPtr job)
+  void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
   {
     log_debug("addIdleJob " << job->getFd());
 

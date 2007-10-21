@@ -55,7 +55,6 @@ namespace tnt
   cxxtools::Mutex Worker::mutex;
   Worker::workers_type Worker::workers;
   unsigned Worker::maxRequestTime = 600;
-  unsigned Worker::minThreads = 5;
   bool Worker::enableCompression = true;
   Comploader Worker::comploader;
 
@@ -74,7 +73,7 @@ namespace tnt
     threadId = pthread_self();
     Jobqueue& queue = application.getQueue();
     log_debug("start thread " << threadId);
-    while (queue.getWaitThreadCount() < minThreads)
+    while (queue.getWaitThreadCount() < application.getMinThreads())
     {
       log_debug("waiting for job");
       state = stateWaitingForJob;

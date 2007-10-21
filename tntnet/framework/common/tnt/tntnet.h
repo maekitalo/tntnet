@@ -22,10 +22,10 @@
 #define TNT_TNTNET_H
 
 #include <cxxtools/arg.h>
-#include "tnt/tntconfig.h"
-#include "tnt/job.h"
-#include "tnt/poller.h"
-#include "tnt/dispatcher.h"
+#include <tnt/tntconfig.h>
+#include <tnt/job.h>
+#include <tnt/poller.h>
+#include <tnt/dispatcher.h>
 #include <tnt/scopemanager.h>
 #include <set>
 
@@ -47,7 +47,7 @@ namespace tnt
       listeners_type listeners;
 
       Poller pollerthread;
-      Dispatcher d_dispatcher;
+      Dispatcher dispatcher;
 
       ScopeManager scopemanager;
 
@@ -58,11 +58,11 @@ namespace tnt
       void timerTask();
 
     public:
-      Tntnet()
-        : pollerthread(queue)
-        { }
+      Tntnet();
 
       void init(const Tntconfig& config);
+      void listen(const std::string& ipaddr, unsigned short int port);
+      void sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ipaddr, unsigned short int port);
       void run();
 
       static void shutdown();
@@ -70,8 +70,27 @@ namespace tnt
 
       Jobqueue&   getQueue()                  { return queue; }
       Poller&     getPoller()                 { return pollerthread; }
-      const Dispatcher& getDispatcher() const { return d_dispatcher; }
+      const Dispatcher& getDispatcher() const { return dispatcher; }
       ScopeManager& getScopemanager()         { return scopemanager; }
+
+      unsigned getMinThreads() const          { return minthreads; }
+      void setMinThreads(unsigned n);
+
+      unsigned getMaxThreads() const          { return maxthreads; }
+      void setMaxThreads(unsigned n)          { maxthreads = n; }
+
+      Dispatcher::CompidentType& mapUrl(const std::string& url, const std::string& ci)
+        { return dispatcher.addUrlMapEntry(std::string(), url, Dispatcher::CompidentType(ci)); }
+      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)
+      {
+        Dispatcher::CompidentType ci(ci_);
+        ci.setPathInfo(pathinfo);
+        dispatcher.addUrlMapEntry(std::string(), url, ci);
+      }
+      Dispatcher::CompidentType& mapUrl(const std::string& url, const Dispatcher::CompidentType& ci)
+        { dispatcher.addUrlMapEntry(std::string(), url, ci); }
+      Dispatcher::CompidentType& vMapUrl(const std::string& vhost, const std::string& url, const Dispatcher::CompidentType& ci)
+        { return dispatcher.addUrlMapEntry(vhost, url, ci); }
   };
 
 }

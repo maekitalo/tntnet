@@ -104,6 +104,8 @@ namespace tnt
       static const Tntconfig& getConfig()        { return *config; }
       static void configure(const Tntconfig& config);
       static void registerFactory(const std::string& component_name, ComponentFactory* factory);
+      static void addSearchPathEntry(const std::string& path)
+        { search_path.push_back(path); }
   };
 }
 

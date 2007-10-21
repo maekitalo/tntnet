@@ -51,7 +51,6 @@ namespace tnt
       static workers_type workers;
 
       static unsigned maxRequestTime;
-      static unsigned minThreads;
       static bool enableCompression;
 
       bool processRequest(HttpRequest& request, std::iostream& socket,
@@ -73,7 +72,6 @@ namespace tnt
       static unsigned getMaxRequestTime()          { return maxRequestTime; }
 
       static workers_type::size_type getCountThreads();
-      static void setMinThreads(unsigned n)        { minThreads = n; }
 
       static void setEnableCompression(bool sw = true)  { enableCompression = sw; }
       static unsigned getEnableCompression()            { return enableCompression; }

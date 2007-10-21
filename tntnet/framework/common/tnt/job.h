@@ -21,15 +21,11 @@
 #ifndef TNT_JOB_H
 #define TNT_JOB_H
 
-#include <config.h>
 #include <deque>
 #include <cxxtools/thread.h>
-#include <cxxtools/tcpstream.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpparser.h>
 #include <tnt/pointer.h>
-#include <time.h>
-#include "tnt/ssl.h"
 
 /**
 // in tntnet (mainthread):
@@ -115,52 +111,6 @@ namespace tnt
       static unsigned getKeepAliveMax()       { return keepalive_max; }
       static unsigned getSocketBufferSize()   { return socket_buffer_size; }
   };
-
-  class Jobqueue;
-
-  class Tcpjob : public Job
-  {
-      cxxtools::net::iostream socket;
-      const cxxtools::net::Server& listener;
-      Jobqueue& queue;
-
-      void accept();
-
-    public:
-      Tcpjob(const cxxtools::net::Server& listener_, Jobqueue& queue_)
-        : socket(getSocketBufferSize(), getSocketReadTimeout()),
-          listener(listener_),
-          queue(queue_)
-        { }
-
-      std::iostream& getStream();
-      int getFd() const;
-      void setRead();
-      void setWrite();
-  };
-
-#ifdef USE_SSL
-  class SslTcpjob : public Job
-  {
-      ssl_iostream socket;
-      const SslServer& listener;
-      Jobqueue& queue;
-
-      void accept();
-
-    public:
-      SslTcpjob(const SslServer& listener_, Jobqueue& queue_)
-        : socket(getSocketBufferSize(), getSocketReadTimeout()),
-          listener(listener_),
-          queue(queue_)
-        { }
-
-      std::iostream& getStream();
-      int getFd() const;
-      void setRead();
-      void setWrite();
-  };
-#endif // USE_SSL
 
   /** Jobqueue - one per process */
   class Jobqueue

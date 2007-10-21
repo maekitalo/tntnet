@@ -108,7 +108,8 @@ Comploader::Comploader()
 }
 
 Comploader::librarymap_type Comploader::librarymap;
-const Tntconfig* Comploader::config = 0;
+static const Tntconfig emptyconfig;
+const Tntconfig* Comploader::config = &emptyconfig;
 Comploader::search_path_type Comploader::search_path;
 ComponentLibrary::factoryMapType* Comploader::currentFactoryMap = 0;
 

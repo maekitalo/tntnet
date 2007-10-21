@@ -25,7 +25,7 @@
 #include <tnt/urlmapper.h>
 #include <vector>
 #include <map>
-#include "tnt/regex.h"
+#include <tnt/regex.h>
 
 namespace tnt
 {
@@ -53,10 +53,15 @@ namespace tnt
               pathinfo_set(false)
             { }
 
+          CompidentType(const Compident& ident)
+            : Compident(ident),
+              pathinfo_set(false)
+            { }
+
           bool hasPathInfo() const
             { return pathinfo_set; }
-          void setPathInfo(const std::string& p)
-            { pathinfo = p; pathinfo_set = true; }
+          CompidentType& setPathInfo(const std::string& p)
+            { pathinfo = p; pathinfo_set = true; return *this; }
           void setArgs(const args_type& a)
             { args = a; }
           const std::string& getPathInfo() const
@@ -65,6 +70,8 @@ namespace tnt
             { return args; }
           args_type& getArgsRef()
             { return args; }
+          CompidentType& pushArg(const std::string& arg)
+            { args.push_back(arg); return *this; }
       };
 
     private:
@@ -129,7 +136,7 @@ namespace tnt
     public:
       virtual ~Dispatcher()  { }
 
-      void addUrlMapEntry(const std::string& vhost, const std::string& url,
+      CompidentType& addUrlMapEntry(const std::string& vhost, const std::string& url,
         const CompidentType& ci);
 
       Compident mapComp(const std::string& vhost, const std::string& compUrl) const;

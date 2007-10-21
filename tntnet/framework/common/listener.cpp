@@ -20,6 +20,7 @@
 
 #include "tnt/listener.h"
 #include "tnt/tntnet.h"
+#include "tnt/job.h"
 #include <cxxtools/log.h>
 #include <errno.h>
 #include <unistd.h>

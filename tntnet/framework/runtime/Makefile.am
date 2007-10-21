@@ -1,44 +1,12 @@
 bin_PROGRAMS = tntnet
 
 tntnet_SOURCES = \
-	dispatcher.cpp \
-	job.cpp \
-	listener.cpp \
 	main.cpp \
-	poller.cpp \
 	process.cpp \
-	regex.cpp \
-	worker.cpp \
-	tntnet.cpp \
-	tnt/dispatcher.h \
-	tnt/job.h \
-	tnt/listener.h \
-	tnt/poller.h \
-	tnt/process.h \
-	tnt/regex.h \
-	tnt/ssl.h \
-	tnt/worker.h \
-	tnt/tntnet.h
+	tnt/process.h
 
-tntnet_LDFLAGS = -lcxxtools $(PTHREAD_LIBS)
+tntnet_LDFLAGS = $(PTHREAD_LIBS)
 tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
 tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@localstatedir@/tntnet.pid\"
 AM_CXXFLAGS=$(PTHREAD_CFLAGS)
-
-if MAKE_GNUTLS
-tntnet_SOURCES += \
-	gcryptinit.c \
-	tnt/gcryptinit.h \
-	gnutls.cpp \
-	tnt/gnutls.h
-tntnet_LDFLAGS += `libgnutls-config --libs`
-tntnet_CXXFLAGS += `libgnutls-config --cflags`
-endif
-
-if MAKE_OPENSSL
-tntnet_SOURCES += \
-	openssl.cpp \
-	tnt/openssl.h
-tntnet_LDFLAGS += -lssl -lcrypto
-endif
 

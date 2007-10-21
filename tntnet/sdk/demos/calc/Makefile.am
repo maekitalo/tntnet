@@ -6,6 +6,10 @@ nodist_calc_la_SOURCES = \
 EXTRA_DIST = \
 	calc.ecpp
 
+if INSTALL_DEMOS
+    doc_DATA = $(EXTRA_DIST)
+endif
+
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calc_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 calc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la

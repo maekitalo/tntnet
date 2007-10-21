@@ -25,6 +25,7 @@
 #include <cxxtools/loginit.h>
 #include <sys/stat.h>
 #include "tnt/process.h"
+#include "config.h"
 
 log_define("tntnet.main")
 

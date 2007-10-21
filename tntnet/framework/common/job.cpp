@@ -19,12 +19,15 @@
 
 
 #include "tnt/job.h"
+#include "tnt/tcpjob.h"
 #include "tnt/tntnet.h"
 #include <tnt/httpreply.h>
+#include <tnt/ssl.h>
 #include <cxxtools/log.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <config.h>
 
 log_define("tntnet.job")
 
@@ -110,7 +113,7 @@ namespace tnt
       if (!Tntnet::shouldStop())
         queue.put(new Tcpjob(listener, queue));
       else
-        log_warn("tntnet stopping - no new job is generated");
+        log_info("tntnet stopping - no new job is generated");
     }
     return socket;
   }
@@ -161,7 +164,7 @@ namespace tnt
       if (!Tntnet::shouldStop())
         queue.put(new SslTcpjob(listener, queue));
       else
-        log_warn("tntnet stopping - no new ssl-job is generated");
+        log_info("tntnet stopping - no new ssl-job is generated");
     }
     return socket;
   }
@@ -214,7 +217,7 @@ namespace tnt
       if (!Tntnet::shouldStop())
         queue.put(new GnuTlsTcpjob(listener, queue));
       else
-        log_warn("tntnet stopping - no new ssl-job is generated");
+        log_info("tntnet stopping - no new ssl-job is generated");
     }
     return socket;
   }

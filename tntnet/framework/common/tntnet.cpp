@@ -105,15 +105,22 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // Tntnet
   //
+  Tntnet::Tntnet()
+    : pollerthread(queue),
+      minthreads(5),
+      maxthreads(100),
+      threadstartdelay(10),
+      timersleep(10)
+  { }
+
   bool Tntnet::stop = false;
 
   void Tntnet::init(const Tntconfig& config)
   {
-    minthreads = config.getValue<unsigned>("MinThreads", 5);
-    maxthreads = config.getValue<unsigned>("MaxThreads", 100);
-    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", 10);
-    timersleep = config.getValue<unsigned>("TimerSleep", 10);
-    Worker::setMinThreads(minthreads);
+    minthreads = config.getValue<unsigned>("MinThreads", minthreads);
+    maxthreads = config.getValue<unsigned>("MaxThreads", maxthreads);
+    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", threadstartdelay);
+    timersleep = config.getValue<unsigned>("TimerSleep", timersleep);
     Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
     Worker::setEnableCompression(config.getBoolValue("EnableCompression", Worker::getEnableCompression()));
     queue.setCapacity(config.getValue<unsigned>("QueueSize", queue.getCapacity()));
@@ -148,7 +155,7 @@ namespace tnt
       }
     }
 
-    configureDispatcher(d_dispatcher, config);
+    configureDispatcher(dispatcher, config);
 
     // configure worker (static)
     Comploader::configure(config);
@@ -175,48 +182,34 @@ namespace tnt
     Tntconfig::config_entries_type configListen;
     config.getConfigValues("Listen", configListen);
 
-#ifdef USE_SSL
-    Tntconfig::config_entries_type configSslListen;
-    config.getConfigValues("SslListen", configSslListen);
+    for (Tntconfig::config_entries_type::const_iterator it = configListen.begin();
+         it != configListen.end(); ++it)
+    {
+      if (it->params.empty())
+        throw std::runtime_error("empty Listen-entry");
 
-    if (configListen.empty() && configSslListen.empty())
-#else
-    if (configListen.empty())
-#endif
-    {
-      unsigned short int port = (getuid() == 0 ? 80 : 8000);
-      log_info("no listeners defined - using ip 0.0.0.0 port " << port);
-      listeners.insert(new tnt::Listener("0.0.0.0", port, queue));
-    }
-    else
-    {
-      for (Tntconfig::config_entries_type::const_iterator it = configListen.begin();
-           it != configListen.end(); ++it)
+      unsigned short int port = 80;
+      if (it->params.size() >= 2)
       {
-        if (it->params.empty())
-          throw std::runtime_error("empty Listen-entry");
-
-        unsigned short int port = 80;
-        if (it->params.size() >= 2)
+        std::istringstream p(it->params[1]);
+        p >> port;
+        if (!p)
         {
-          std::istringstream p(it->params[1]);
-          p >> port;
-          if (!p)
-          {
-            std::ostringstream msg;
-            msg << "invalid port " << it->params[1];
-            throw std::runtime_error(msg.str());
-          }
+          std::ostringstream msg;
+          msg << "invalid port " << it->params[1];
+          throw std::runtime_error(msg.str());
         }
-
-        std::string ip(it->params[0]);
-        log_info("listen on ip " << ip << " port " << port);
-        listeners.insert(new tnt::Listener(ip, port, queue));
       }
+
+      std::string ip(it->params[0]);
+
+      listen(ip, port);
     }
 
 #ifdef USE_SSL
     // initialize ssl-listener
+    Tntconfig::config_entries_type configSslListen;
+    config.getConfigValues("SslListen", configSslListen);
     std::string defaultCertificateFile = config.getValue("SslCertificate");
     std::string defaultCertificateKey = config.getValue("SslKey");
 
@@ -242,7 +235,7 @@ namespace tnt
       std::string certificateFile =
         it->params.size() >= 3 ? it->params[2]
                                : defaultCertificateFile;
-      std::string certificateKey =
+      std::string keyFile =
         it->params.size() >= 4 ? it->params[3] :
         it->params.size() >= 3 ? it->params[2] : defaultCertificateKey;
 
@@ -250,22 +243,46 @@ namespace tnt
         throw std::runtime_error("Ssl-certificate not configured");
 
       std::string ip(it->params[0]);
-      log_info("listen on ip " << ip << " port " << port << " (ssl)");
-      listeners.insert(new Ssllistener(certificateFile.c_str(),
-          certificateKey.c_str(), ip, port, queue));
+
+      sslListen(certificateFile, keyFile, ip, port);
     }
 #endif // USE_SSL
+  }
 
-    log_debug("listeners.size()=" << listeners.size());
+  void Tntnet::listen(const std::string& ip, unsigned short int port)
+  {
+    log_debug("listen on ip " << ip << " port " << port);
+    listeners.insert(new tnt::Listener(ip, port, queue));
+  }
+
+  void Tntnet::sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ip, unsigned short int port)
+  {
+#ifdef USE_SSL
+    log_debug("listen on ip " << ip << " port " << port << " (ssl)");
+    listeners.insert(new Ssllistener(certificateFile.c_str(),
+        keyFile.c_str(), ip, port, queue));
+#else
+    log_error("cannot add ssl listener - ssl is not compiled into tntnet");
+#endif // USE_SSL
   }
 
   void Tntnet::run()
   {
     log_debug("worker-process");
 
+    if (listeners.empty())
+    {
+      unsigned short int port = (getuid() == 0 ? 80 : 8000);
+      log_info("no listeners defined - using ip 0.0.0.0 port " << port);
+      listeners.insert(new tnt::Listener("0.0.0.0", port, queue));
+    }
+    else
+      log_debug(listeners.size() << " listeners");
+
     if (listeners.size() >= minthreads)
     {
-      log_warn("at least one more worker than listeners needed - set MinThreads to " << listeners.size() + 1);
+      log_warn("at least one more worker than listeners needed - set MinThreads to "
+        << listeners.size() + 1);
       minthreads = listeners.size() + 1;
     }
 
@@ -338,6 +355,19 @@ namespace tnt
     log_info("listeners stopped");
   }
 
+  void Tntnet::setMinThreads(unsigned n)
+  {
+    if (listeners.size() >= n)
+    {
+      log_warn("at least one more worker than listeners needed - set MinThreads to "
+        << listeners.size() + 1);
+      minthreads = listeners.size() + 1;
+    }
+    else
+      minthreads = n;
+
+  }
+
   void Tntnet::timerTask()
   {
     log_debug("timer thread");
@@ -352,7 +382,7 @@ namespace tnt
     log_warn("stopping Tntnet");
 
     queue.noWaitThreads.signal();
-    Worker::setMinThreads(0);
+    minthreads = maxthreads = 0;
     pollerthread.doStop();
   }
 

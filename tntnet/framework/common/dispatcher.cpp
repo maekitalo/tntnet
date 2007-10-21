@@ -30,12 +30,13 @@ log_define("tntnet.dispatcher")
 namespace tnt
 {
 
-void Dispatcher::addUrlMapEntry(const std::string& vhost,
+Dispatcher::CompidentType& Dispatcher::addUrlMapEntry(const std::string& vhost,
   const std::string& url, const CompidentType& ci)
 {
   cxxtools::WrLock lock(rwlock);
 
   urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, Regex(url)), ci));
+  return urlmap.back().second;
 }
 
 Compident Dispatcher::mapComp(const std::string& vhost,

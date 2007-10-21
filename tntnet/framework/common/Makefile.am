@@ -9,6 +9,7 @@ libtntnet_la_SOURCES = \
 	contenttype.cpp \
 	cookie.cpp \
 	deflatestream.cpp \
+	dispatcher.cpp \
 	ecpp.cpp \
 	encoding.cpp \
 	htmlescostream.cpp \
@@ -21,22 +22,28 @@ libtntnet_la_SOURCES = \
 	httpreply.cpp \
 	inflatestream.cpp \
 	ioapi.c \
+	job.cpp \
 	langlib.cpp \
+	listener.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
 	messageheaderparser.cpp \
 	mimedb.cpp \
 	multipart.cpp \
 	object.cpp \
+	poller.cpp \
+	regex.cpp \
 	savepoint.cpp \
 	scope.cpp \
 	scopemanager.cpp \
 	sessionscope.cpp \
 	sodata.cpp \
 	tntconfig.cpp \
+	tntnet.cpp \
 	unzip.c \
 	unzipfile.cpp \
 	urlmapper.cpp \
+	worker.cpp \
 	zdata.cpp \
 	crypt.h \
 	ioapi.h \
@@ -53,6 +60,7 @@ nobase_include_HEADERS = \
 	tnt/cookie.h \
 	tnt/data.h \
 	tnt/deflatestream.h \
+	tnt/dispatcher.h \
 	tnt/ecpp.h \
 	tnt/encoding.h \
 	tnt/htmlescostream.h \
@@ -64,6 +72,7 @@ nobase_include_HEADERS = \
 	tnt/httprequest.h \
 	tnt/httpreply.h \
 	tnt/inflatestream.h \
+	tnt/job.h \
 	tnt/langlib.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
@@ -75,7 +84,9 @@ nobase_include_HEADERS = \
 	tnt/objecttemplate.h \
 	tnt/parser.h \
 	tnt/pointer.h \
+	tnt/poller.h \
 	tnt/query_params.h \
+	tnt/regex.h \
 	tnt/savepoint.h \
 	tnt/scope.h \
 	tnt/scopemanager.h \
@@ -83,9 +94,35 @@ nobase_include_HEADERS = \
 	tnt/sodata.h \
 	tnt/stringlessignorecase.h \
 	tnt/tntconfig.h \
+	tnt/tntnet.h \
 	tnt/unzipfile.h \
 	tnt/urlmapper.h \
+	tnt/worker.h \
 	tnt/zdata.h
 
-AM_CXXFLAGS = $(PTHREAD_CFLAGS)
+noinst_HEADERS = \
+	tnt/listener.h \
+	tnt/pollerimpl.h \
+	tnt/ssl.h \
+	tnt/tcpjob.h
+
+libtntnet_la_CXXFLAGS = $(PTHREAD_CFLAGS)
 libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
+
+if MAKE_GNUTLS
+libtntnet_la_SOURCES += \
+	gcryptinit.c \
+	tnt/gcryptinit.h \
+	gnutls.cpp \
+	tnt/gnutls.h
+libtntnet_la_LDFLAGS += `libgnutls-config --libs`
+libtntnet_la_CXXFLAGS += `libgnutls-config --cflags`
+endif
+
+if MAKE_OPENSSL
+libtntnet_la_SOURCES += \
+	openssl.cpp \
+	tnt/openssl.h
+libtntnet_la_LDFLAGS += -lssl -lcrypto
+endif
+

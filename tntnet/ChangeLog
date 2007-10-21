@@ -1,3 +1,10 @@
+2007-10-17 tommi@tntnet.org
+  - set content-type also in other than POST requests
+
+2007-10-15 tommi@tntnet.org
+  - move most of tntnet into libtntnet to ease embedding tntnet in
+    applications
+
 2007-08-22 tommi@tntnet.org
   - allow underscore in name of scoped variables
 

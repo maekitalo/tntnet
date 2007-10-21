@@ -21,6 +21,8 @@
 #ifndef TNT_SSL_H
 #define TNT_SSL_H
 
+#include "config.h"
+
 #ifdef WITH_GNUTLS
 #  include "tnt/gnutls.h"
 #  define USE_SSL
