@@ -26,6 +26,7 @@
 #include <tnt/job.h>
 #include <tnt/poller.h>
 #include <tnt/dispatcher.h>
+#include <tnt/maptarget.h>
 #include <tnt/scopemanager.h>
 #include <set>
 
@@ -79,17 +80,17 @@ namespace tnt
       unsigned getMaxThreads() const          { return maxthreads; }
       void setMaxThreads(unsigned n)          { maxthreads = n; }
 
-      Dispatcher::CompidentType& mapUrl(const std::string& url, const std::string& ci)
-        { return dispatcher.addUrlMapEntry(std::string(), url, Dispatcher::CompidentType(ci)); }
+      Maptarget& mapUrl(const std::string& url, const std::string& ci)
+        { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
       void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)
       {
-        Dispatcher::CompidentType ci(ci_);
+        Maptarget ci(ci_);
         ci.setPathInfo(pathinfo);
         dispatcher.addUrlMapEntry(std::string(), url, ci);
       }
-      Dispatcher::CompidentType& mapUrl(const std::string& url, const Dispatcher::CompidentType& ci)
+      Maptarget& mapUrl(const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, ci); }
-      Dispatcher::CompidentType& vMapUrl(const std::string& vhost, const std::string& url, const Dispatcher::CompidentType& ci)
+      Maptarget& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
   };
 

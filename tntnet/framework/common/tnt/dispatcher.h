@@ -23,6 +23,7 @@
 
 #include <cxxtools/thread.h>
 #include <tnt/urlmapper.h>
+#include <tnt/maptarget.h>
 #include <vector>
 #include <map>
 #include <tnt/regex.h>
@@ -33,46 +34,7 @@ namespace tnt
   class Dispatcher : public Urlmapper
   {
     public:
-      class CompidentType : public Compident
-      {
-        public:
-          typedef std::vector<std::string> args_type;
-
-        private:
-          std::string pathinfo;
-          args_type args;
-          bool pathinfo_set;
-
-        public:
-          CompidentType()
-            : pathinfo_set(false)
-            { }
-
-          explicit CompidentType(const std::string& ident)
-            : Compident(ident),
-              pathinfo_set(false)
-            { }
-
-          CompidentType(const Compident& ident)
-            : Compident(ident),
-              pathinfo_set(false)
-            { }
-
-          bool hasPathInfo() const
-            { return pathinfo_set; }
-          CompidentType& setPathInfo(const std::string& p)
-            { pathinfo = p; pathinfo_set = true; return *this; }
-          void setArgs(const args_type& a)
-            { args = a; }
-          const std::string& getPathInfo() const
-            { return pathinfo; }
-          const args_type& getArgs() const
-            { return args; }
-          args_type& getArgsRef()
-            { return args; }
-          CompidentType& pushArg(const std::string& arg)
-            { args.push_back(arg); return *this; }
-      };
+      typedef Maptarget CompidentType;
 
     private:
       class VHostRegex

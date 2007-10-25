@@ -1,3 +1,7 @@
+2007-10-25 tommi@tntnet.org
+  - move class tnt::Dispatcher::CompidentType to tnt::MapTarget
+  - fix some warnings and errors produced by gcc when using -pedantic
+
 2007-10-21 tommi@tntnet.org
   - search components in pkglibdir
 

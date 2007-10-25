@@ -74,6 +74,7 @@ nobase_include_HEADERS = \
 	tnt/inflatestream.h \
 	tnt/job.h \
 	tnt/langlib.h \
+	tnt/maptarget.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/messageheaderparser.h \

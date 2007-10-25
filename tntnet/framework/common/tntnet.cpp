@@ -106,11 +106,11 @@ namespace tnt
   // Tntnet
   //
   Tntnet::Tntnet()
-    : pollerthread(queue),
-      minthreads(5),
+    : minthreads(5),
       maxthreads(100),
       threadstartdelay(10),
-      timersleep(10)
+      timersleep(10),
+      pollerthread(queue)
   { }
 
   bool Tntnet::stop = false;

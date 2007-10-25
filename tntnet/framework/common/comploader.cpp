@@ -172,7 +172,7 @@ namespace
       ~ValueResetter()
       { value = null; }
   };
-};
+}
 
 ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {

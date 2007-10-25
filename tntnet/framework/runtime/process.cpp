@@ -29,7 +29,7 @@
 #include <errno.h>
 #include <signal.h>
 
-log_define("tntnet.process");
+log_define("tntnet.process")
 
 namespace
 {
