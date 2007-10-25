@@ -88,7 +88,7 @@ namespace tnt
         dispatcher.addUrlMapEntry(std::string(), url, ci);
       }
       Dispatcher::CompidentType& mapUrl(const std::string& url, const Dispatcher::CompidentType& ci)
-        { dispatcher.addUrlMapEntry(std::string(), url, ci); }
+        { return dispatcher.addUrlMapEntry(std::string(), url, ci); }
       Dispatcher::CompidentType& vMapUrl(const std::string& vhost, const std::string& url, const Dispatcher::CompidentType& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
   };

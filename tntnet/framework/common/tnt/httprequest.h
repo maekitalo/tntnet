@@ -169,7 +169,7 @@ namespace tnt
       bool isSsl() const
         { return ssl;  }
       const Contenttype& getContentType() const
-        { ct.getType().empty() && hasHeader(httpheader::contentType) ? getContentTypePriv() : ct; }
+        { return ct.getType().empty() && hasHeader(httpheader::contentType) ? getContentTypePriv() : ct; }
       bool isMultipart() const               { return getContentType().isMultipart(); }
       const Multipart& getMultipart() const  { return mp; }
 
