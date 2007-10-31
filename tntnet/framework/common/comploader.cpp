@@ -107,7 +107,12 @@ Comploader::Comploader()
   }
 }
 
-Comploader::librarymap_type Comploader::librarymap;
+Comploader::librarymap_type& Comploader::getLibrarymap()
+{
+  static librarymap_type librarymap;
+  return librarymap;
+}
+
 static const Tntconfig emptyconfig;
 const Tntconfig* Comploader::config = &emptyconfig;
 Comploader::search_path_type Comploader::search_path;
@@ -178,6 +183,7 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib \"" << libname << '"');
 
+  librarymap_type& librarymap = getLibrarymap();
   librarymap_type::iterator it = librarymap.find(libname);
   if (it == librarymap.end())
   {
@@ -267,6 +273,7 @@ void Comploader::registerFactory(const std::string& component_name,
     currentFactoryMap->insert(ComponentLibrary::factoryMapType::value_type(component_name, factory));
   else
   {
+    librarymap_type& librarymap = getLibrarymap();
     log_debug("register component without library-name");
     librarymap_type::iterator it = librarymap.find(std::string());
     if (it == librarymap.end())

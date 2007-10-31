@@ -81,7 +81,7 @@ namespace tnt
       typedef std::list<std::string> search_path_type;
 
       // loaded libraries
-      static librarymap_type librarymap;
+      static librarymap_type& getLibrarymap();
 
       // map soname/compname to compinstance
       componentmap_type componentmap;
