@@ -129,15 +129,19 @@ int main(int argc, char* argv[])
 
   try
   {
-    tnt::TntnetProcess app(argc, argv);
+    std::cout << PACKAGE_STRING "\n" << std::flush;
 
-    if (argc != 1)
+    cxxtools::Arg<bool> help1(argc, argv, 'h');
+    cxxtools::Arg<bool> help2(argc, argv, '?');
+
+    if (help1 || help2)
     {
-      std::cout << PACKAGE_STRING "\n\n" <<
-                   "usage: " << argv[0] << " configurationfile (default: " TNTNET_CONF ")"
+      std::cout << "usage: " << argv[0] << " configurationfile (default: " TNTNET_CONF ")"
                 << std::endl;
-      return -1;
+      return 0;
     }
+
+    tnt::TntnetProcess app(argc, argv);
 
     app.run();
   }
