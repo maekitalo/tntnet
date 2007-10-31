@@ -230,6 +230,11 @@ namespace tnt
       {
         throw HttpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
       }
+      catch (...)
+      {
+        log_error("unknown exception");
+        throw HttpError(HTTP_INTERNAL_SERVER_ERROR, "unknown error");
+      }
     }
     catch (const HttpError& e)
     {
