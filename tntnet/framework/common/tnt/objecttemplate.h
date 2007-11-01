@@ -37,7 +37,7 @@ namespace tnt
       ObjectTemplate() { }
 
       template <typename t0>
-      ObjectTemplate(t0 p0)
+      explicit ObjectTemplate(t0 p0)
         : data(p0) { }
 
       template <typename t0, typename t1>
@@ -98,6 +98,40 @@ namespace tnt
         return static_cast<ObjectTemplate<data_type>&>(*o).data;
       }
   };
+
+  template <typename data_type>
+  class ObjectTemplate<data_type*> : public Object
+  {
+      data_type* data;
+
+    public:
+      typedef data_type*& reference;
+      typedef const data_type*& const_reference;
+
+      ObjectTemplate()
+        : data(0)  { }
+
+      explicit ObjectTemplate(data_type* p0)
+        : data(p0) { }
+
+      // explicit accessors
+      const_reference getData() const    { return data; }
+      reference getData()                { return data; }
+      void setData(const data_type& d)    { data = d; }
+
+      // implicit accessors
+      operator reference()                { return data; }
+      operator const reference() const    { return data; }
+      reference operator*()               { return data; }
+      const reference operator*() const   { return data; }
+      ObjectTemplate& operator= (const data_type& d)  { data = d; return *this; }
+
+      static reference getRef(Object* o)
+      {
+        return static_cast<ObjectTemplate<data_type*>&>(*o).data;
+      }
+  };
+
 }
 
 #endif // TNT_OBJECTTEMPLATE_H
