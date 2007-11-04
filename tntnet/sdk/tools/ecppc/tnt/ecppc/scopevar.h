@@ -39,17 +39,22 @@ namespace tnt
         std::string type;
         std::string var;
         std::string init;
+        unsigned myline;
+        std::string myfile;
 
       public:
         Scopevar()  { }
         Scopevar(scope_container_type scope_container_, scope_type scope_,
                  const std::string& type_,
-                 const std::string& var_, const std::string& init_)
+                 const std::string& var_, const std::string& init_,
+                 unsigned myline_, const std::string& myfile_)
           : scope_container(scope_container_),
             scope(scope_),
             type(type_),
             var(var_),
-            init(init_)
+            init(init_),
+            myline(myline_),
+            myfile(myfile_)
             { }
 
         scope_container_type getScopeContainer() const
@@ -57,7 +62,7 @@ namespace tnt
         scope_type getScope() const
           { return scope; }
 
-        void get(std::ostream& o) const;
+        void get(std::ostream& o, bool linenumbersEnabled) const;
     };
   }
 }

@@ -50,7 +50,7 @@ namespace tnt
            "    };\n\n";
     }
 
-    void Subcomponent::getDefinition(std::ostream& code, bool debug, bool externData) const
+    void Subcomponent::getDefinition(std::ostream& code, bool debug, bool externData, bool linenumbersEnabled) const
     {
       code << "unsigned _component_" << outerclass->getName() << "::" << getName()
            << "_type::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam";
@@ -68,15 +68,15 @@ namespace tnt
       else
         code << "  tnt::DataChunks data(rawData);\n";
 
-      Component::getBody(code);
+      Component::getBody(code, linenumbersEnabled);
       code << "}\n\n";
     }
 
-    void Subcomponent::getScopevars(std::ostream& o) const
+    void Subcomponent::getScopevars(std::ostream& o, bool linenumbersEnabled) const
     {
-      Component::getScopevars(o);
-      outerclass->getScopevars(o, ecpp::page_scope);
-      outerclass->getScopevars(o, ecpp::global_scope);
+      Component::getScopevars(o, linenumbersEnabled);
+      outerclass->getScopevars(o, ecpp::page_scope, linenumbersEnabled);
+      outerclass->getScopevars(o, ecpp::global_scope, linenumbersEnabled);
     }
   }
 }

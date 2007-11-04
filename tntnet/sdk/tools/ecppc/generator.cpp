@@ -225,9 +225,10 @@ namespace tnt
     void Generator::onScope(scope_container_type container, scope_type scope,
       const std::string& type, const std::string& var, const std::string& init)
     {
+      log_debug("onScope type=\"" << type << "\" var=\"" << var << "\" init=\"" << init << '"');
       tnt::ecppc::Component* comp = (scope == ecpp::page_scope ? &maincomp : currentComp);
 
-      comp->addScopevar(Scopevar(container, scope, type, var, init));
+      comp->addScopevar(Scopevar(container, scope, type, var, init, curline, curfile));
     }
 
     void Generator::onInclude(const std::string& file)
@@ -546,7 +547,7 @@ namespace tnt
                   "  reply.setDirectMode();\n";
 
         code << '\n';
-        maincomp.getBody(code);
+        maincomp.getBody(code, linenumbersEnabled);
         code << "}\n\n";
       }
       else
@@ -578,7 +579,7 @@ namespace tnt
       }
 
       if (haveCloseComp)
-        closeComp.getDefinition(code, externData);
+        closeComp.getDefinition(code, externData, linenumbersEnabled);
 
       if (!attr.empty())
       {
@@ -595,7 +596,7 @@ namespace tnt
 
       for (subcomps_type::const_iterator i = subcomps.begin();
            i != subcomps.end(); ++i)
-        i->getDefinition(code, isDebug(), externData);
+        i->getDefinition(code, isDebug(), externData, linenumbersEnabled);
     }
 
     void Generator::printLine(std::ostream& out) const

@@ -27,9 +27,9 @@ namespace tnt
     ////////////////////////////////////////////////////////////////////////
     // Component
     //
-    void Component::getBody(std::ostream& body) const
+    void Component::getBody(std::ostream& body, bool linenumbersEnabled) const
     {
-      getScopevars(body);
+      getScopevars(body, linenumbersEnabled);
 
       body << "  // <%args>\n";
 
@@ -52,22 +52,22 @@ namespace tnt
         it->getParamCode(body);
     }
 
-    void Component::getScopevars(std::ostream& body) const
+    void Component::getScopevars(std::ostream& body, bool linenumbersEnabled) const
     {
       for (scopevars_type::const_iterator it = scopevars.begin();
            it != scopevars.end(); ++it)
       {
-        it->get(body);
+        it->get(body, linenumbersEnabled);
       }
     }
 
-    void Component::getScopevars(std::ostream& body, ecpp::scope_type scope) const
+    void Component::getScopevars(std::ostream& body, ecpp::scope_type scope, bool linenumbersEnabled) const
     {
       for (scopevars_type::const_iterator it = scopevars.begin();
            it != scopevars.end(); ++it)
       {
         if (it->getScope() == scope)
-          it->get(body);
+          it->get(body, linenumbersEnabled);
       }
     }
   }

@@ -25,7 +25,7 @@ namespace tnt
 {
   namespace ecppc
   {
-    void Scopevar::get(std::ostream& out) const
+    void Scopevar::get(std::ostream& out, bool linenumbersEnabled) const
     {
       std::string tag =
           scope_container == ecpp::application_container ? "application"
@@ -53,6 +53,9 @@ namespace tnt
                         : std::string();
         macro = "TNT_" + container + key + "VAR";
       }
+
+      if (linenumbersEnabled)
+        out << "#line " << (myline + 1) << " \"" << myfile << "\"\n";
 
       out << "  " << macro << '(' << type << ", " << var
           << ", \"" << var << "\", (" << init << ")); " 

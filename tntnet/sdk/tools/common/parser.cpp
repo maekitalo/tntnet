@@ -1579,6 +1579,7 @@ namespace tnt
               state = state_scopecomment0;
             else if (!std::isspace(ch))
             {
+              handler.onLine(curline, curfile); //#
               scopevar = ch;
               state = state_scope;
             }

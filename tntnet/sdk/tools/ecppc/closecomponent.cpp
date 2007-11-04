@@ -27,7 +27,7 @@ namespace tnt
     ////////////////////////////////////////////////////////////////////////
     // Closecomponent
     //
-    void Closecomponent::getDefinition(std::ostream& code, bool externData) const
+    void Closecomponent::getDefinition(std::ostream& code, bool externData, bool linenumbersEnabled) const
     {
       code << "unsigned _component_" << getName() << "::endTag (tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
            "  tnt::QueryParams& qparam)\n"
@@ -38,7 +38,7 @@ namespace tnt
       else
         code << "  tnt::DataChunks data(rawData);\n";
 
-      Component::getBody(code);
+      Component::getBody(code, linenumbersEnabled);
       code << "}\n\n";
     }
   }

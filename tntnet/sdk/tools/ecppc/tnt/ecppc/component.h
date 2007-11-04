@@ -82,10 +82,10 @@ namespace tnt
           scopevars.push_back(s);
         }
 
-        void getBody(std::ostream& o) const;
+        void getBody(std::ostream& o, bool linenumbersEnabled) const;
         void getArgs(std::ostream& o) const;
-        virtual void getScopevars(std::ostream& o) const;
-        void getScopevars(std::ostream& o, ecpp::scope_type scope) const;
+        virtual void getScopevars(std::ostream& o, bool linenumbersEnabled) const;
+        void getScopevars(std::ostream& o, ecpp::scope_type scope, bool linenumbersEnabled) const;
         bool hasScopevars() const  { return !scopevars.empty(); }
     };
   }
