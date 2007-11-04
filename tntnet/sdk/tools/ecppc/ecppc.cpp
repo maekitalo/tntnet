@@ -209,6 +209,9 @@ namespace tnt
       else
       {
         std::ifstream in(inputfile);
+        if (!in)
+          throw std::runtime_error(std::string("can't read ") + inputfile);
+
         if (binary)
         {
           std::ostringstream html;
@@ -265,7 +268,11 @@ namespace tnt
     int Ecppc::runDependencies()
     {
       tnt::ecppc::Dependencygenerator generator(requestname, inputfile);
+
       std::ifstream in(inputfile);
+      if (!in)
+        throw std::runtime_error(std::string("can't read ") + inputfile);
+
       if (!binary)
         runParser(in, generator);
 
