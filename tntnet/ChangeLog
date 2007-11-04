@@ -1,3 +1,6 @@
+2007-11-04 tommi@tntnet.org
+  - allow initialization of scope variables in ecpp with "type = value;"
+
 2007-10-25 tommi@tntnet.org
   - move class tnt::Dispatcher::CompidentType to tnt::MapTarget
   - fix some warnings and errors produced by gcc when using -pedantic

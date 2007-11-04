@@ -83,6 +83,13 @@ The name of the internal subcomponent is appended to the classname
 separated by a dot (.).
 .
 \" ---------------------------------------------------------------------
+.SS special rule for line feeds after a </%something>-tag
+\" ---------------------------------------------------------------------
+A line feed immediately after a closing tag for all <%something>-blocks
+are ignored. Hence blocks followed immediately one after another does
+not generate white space in output, which is often undesirable.
+.
+\" ---------------------------------------------------------------------
 .SS error-handling
 \" ---------------------------------------------------------------------
 Error-handling is done by exception.
@@ -379,22 +386,23 @@ because they are not shared between threads.
 Scoped variables are declared with exactly the same syntax as normal
 variables in c++-code. They can be of any type and are instantiated,
 when needed. Objects, which do not have default constructors, need
-to be specified with proper constructor-parameters in brackets.
-The parameters are only used, if the variable need to be instantiated.
-This means, that paramters to e.g. application-scope variables are
-only used once. When the same component is called later in the same
-or another request, the parameters are not used any more.
+to be specified with proper constructor-parameters in brackets or
+separated by '='. The parameters are only used, if the variable need to
+be instantiated. This means, that paramters to e.g. application-scope
+variables are only used once. When the same component is called later
+in the same or another request, the parameters are not used any more.
 .SS Examples
 .RS
 <%application>
 .br
-unsigned count(0);
+unsigned count = 0;
 .br
 </%application>
 .br
 .RE
 .sp
-Specify a application-specific global variable, which is initialized with 0.
+Specify a application-specific global variable, which is initialized
+with 0.
 .PP
 .RS
 <%session>
@@ -409,7 +417,7 @@ Specify a variable with a user-defined type, which holds the state of
 the session.
 .PP
 .RS
-<%thread>
+<%thread scope="global">
 .br
 tntdb::Connection conn(dburl);
 .br
@@ -418,7 +426,8 @@ tntdb::Connection conn(dburl);
 .RE
 .sp
 Specify a persistent databaseconnection, which is initialized, when
-first needed and hold for the lifetime of the current thread.
+first needed and hold for the lifetime of the current thread. This
+variable may be used in other components.
 .PP
 .
 \" =====================================================================

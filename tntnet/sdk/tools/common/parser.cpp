@@ -172,6 +172,7 @@ namespace tnt
         state_scope0,
         state_scope,
         state_scopeinit,  // 80
+        state_scopeiniteq,
         state_scopee,
         state_scopee0,
         state_scopecomment0,
@@ -180,7 +181,7 @@ namespace tnt
         state_endcall,
         state_endcalle,
         state_doc,
-        state_doce
+        state_doce        // 90
       };
 
       state_type state = state_nl;
@@ -1605,6 +1606,11 @@ namespace tnt
               state = state_scopeinit;
               bracket_count = 0;
             }
+            else if (ch == '=')
+            {
+              state = state_scopeiniteq;
+              bracket_count = 0;
+            }
             else if (std::isspace(ch))
               scopevar += ch;
             else if (!isVariableNameChar(scopevar.at(scopevar.size() - 1)))
@@ -1635,9 +1641,12 @@ namespace tnt
             {
               // scopevar contains variable-definition
               // scopeinit contains constructorparameter
-              if (scopetype.size() > 0
+              while (scopetype.size() > 0
                 && std::isspace(scopetype.at(scopetype.size() - 1)))
                   scopetype.erase(scopetype.size() - 1);
+              while (scopevar.size() > 0
+                && std::isspace(scopevar.at(scopevar.size() - 1)))
+                  scopevar.erase(scopevar.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
               handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
@@ -1653,7 +1662,45 @@ namespace tnt
               if (ch == '(')
                 ++bracket_count;
               else if (ch == ')')
+              {
+                if (bracket_count == 0)
+                  throw parse_error("unexpected ')'", state, curline);
                 --bracket_count;
+              }
+            }
+            break;
+
+          case state_scopeiniteq:
+            if (bracket_count == 0 && ch == ';')
+            {
+              // scopevar contains variable-definition
+              // scopeinit contains constructorparameter
+              while (scopetype.size() > 0
+                && std::isspace(scopetype.at(scopetype.size() - 1)))
+                  scopetype.erase(scopetype.size() - 1);
+              while (scopevar.size() > 0
+                && std::isspace(scopevar.at(scopevar.size() - 1)))
+                  scopevar.erase(scopevar.size() - 1);
+              log_debug("onScope(" << scope_container << ", " << scope << ", "
+                  << scopetype << ", " << scopevar << ", " << scopeinit << ')');
+              handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
+
+              scopetype.clear();
+              scopevar.clear();
+              scopeinit.clear();
+              state = state_scope0;
+            }
+            else
+            {
+              scopeinit += ch;
+              if (ch == '(')
+                ++bracket_count;
+              else if (ch == ')')
+              {
+                if (bracket_count == 0)
+                  throw parse_error("unexpected ')'", state, curline);
+                --bracket_count;
+              }
             }
             break;
 
