@@ -2,7 +2,7 @@ pkglib_LTLIBRARIES = calcajax.la
 
 nodist_calcajax_la_SOURCES = \
 	calcajax.cpp \
-	calcajax_js.js \
+	calcajax_js.cpp \
 	docalc.cpp
 
 EXTRA_DIST = \
@@ -22,7 +22,7 @@ SUFFIXES=.ecpp .js .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 .js.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript $<
 
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@

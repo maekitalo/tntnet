@@ -32,9 +32,9 @@ SUFFIXES=.ecpp .js .png .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 .js.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m application/x-javascript $<
 .png.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png $<
 
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@

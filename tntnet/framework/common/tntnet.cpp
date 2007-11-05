@@ -28,6 +28,8 @@
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/log.h>
 
+#include <unistd.h>
+
 #include <config.h>
 
 #ifndef TNTNET_CONF

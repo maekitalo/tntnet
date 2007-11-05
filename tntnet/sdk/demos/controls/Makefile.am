@@ -60,9 +60,9 @@ SUFFIXES=.ecpp .png .css .cpp
 .ecpp.cpp:
 	$(ECPPC) $<
 .png.cpp:
-	$(ECPPC) -b $<
+	$(ECPPC) -b -m image/png $<
 .css.cpp:
-	$(ECPPC) -b $<
+	$(ECPPC) -b -m text/css $<
 
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@

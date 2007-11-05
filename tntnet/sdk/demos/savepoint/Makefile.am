@@ -1,7 +1,7 @@
 pkglib_LTLIBRARIES = savepoint.la
 
 nodist_savepoint_la_SOURCES = \
-	savepoint.ecpp
+	savepoint.cpp
 
 EXTRA_DIST = \
 	savepoint.ecpp

@@ -1,7 +1,7 @@
 pkglib_LTLIBRARIES = cookie.la
 
 nodist_cookie_la_SOURCES = \
-	cookie.ecpp
+	cookie.cpp
 
 EXTRA_DIST = \
 	cookie.ecpp

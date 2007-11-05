@@ -74,8 +74,10 @@ namespace tnt
       if (type.empty())
       {
         o << "typedef std::vector<std::string> " << name << "_type;\n"
-          << name << "_type " << name << "(qparam.begin(\"" << name
-          << "\"), qparam.end());\n";
+          << name << "_type " << name << ";\n"
+          << "std::copy(qparam.begin(\"" << name
+          << "\"), qparam.end(), std::back_inserter(" << name
+          << "));\n";
       }
       else
       {
