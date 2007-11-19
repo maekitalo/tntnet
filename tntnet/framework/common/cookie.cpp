@@ -21,6 +21,8 @@
 #include <tnt/cookie.h>
 #include <tnt/httperror.h>
 #include <tnt/http.h>
+#include <tnt/httpmessage.h>
+#include <tnt/urlescostream.h>
 #include <cctype>
 #include <cxxtools/log.h>
 #include <iostream>
@@ -66,11 +68,15 @@ namespace tnt
   {
     cookies_type::iterator it = data.find(name);
     if (it != data.end())
+    {
       it->second.setAttr(Cookie::maxAge, "0");
+      it->second.setAttr(Cookie::expires, HttpMessage::htdate(static_cast<time_t>(0)));
+    }
     else
     {
       Cookie c;
       c.setAttr(Cookie::maxAge, "0");
+      c.setAttr(Cookie::expires, HttpMessage::htdate(static_cast<time_t>(0)));
       setCookie(name, c);
     }
   }
@@ -304,7 +310,9 @@ namespace tnt
       const Cookie& cookie = it->second;
 
       // print name (Customer="WILE_E_COYOTE")
-      out << it->first << "=\"" << cookie.getValue() << '"';
+      out << it->first << '=';
+      UrlEscOstream u(out);
+      u << cookie.getValue();
 
       // print secure-attribute
       if (cookie.secureFlag)
@@ -313,9 +321,9 @@ namespace tnt
       // print attributes
       for (Cookie::attrs_type::const_iterator a = cookie.attrs.begin();
            a != cookie.attrs.end(); ++a)
-        out << "; " << a->first << "=\"" << a->second << '"';
+        out << "; " << a->first << '=' << a->second;
       if (cookie.attrs.find(Cookie::version) == cookie.attrs.end())
-        out << "; Version=\"1\"";
+        out << "; Version=1";
     }
 
     return out;

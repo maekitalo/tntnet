@@ -156,6 +156,7 @@ namespace tnt
     : socket(s),
       current_outstream(&outstream),
       safe_outstream(outstream),
+      url_outstream(outstream),
       keepAliveCounter(0),
       sendStatusLine(sendStatusLine_),
       headRequest(false)

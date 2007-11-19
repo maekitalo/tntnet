@@ -23,6 +23,7 @@
 
 #include <tnt/httpmessage.h>
 #include <tnt/htmlescostream.h>
+#include <tnt/urlescostream.h>
 #include <tnt/encoding.h>
 #include <tnt/http.h>
 #include <sstream>
@@ -40,6 +41,7 @@ namespace tnt
       std::ostringstream outstream;
       std::ostream* current_outstream;
       HtmlEscOstream safe_outstream;
+      UrlEscOstream url_outstream;
 
       Encoding acceptEncoding;
 
@@ -74,6 +76,8 @@ namespace tnt
       std::ostream& out()   { return *current_outstream; }
       /// returns safe outputstream (unsafe html-chars are escaped)
       std::ostream& sout()  { return safe_outstream; }
+      /// returns outputstream, which url encodes output
+      std::ostream& uout()  { return url_outstream; }
       void resetContent()   { outstream.str(std::string()); }
 
       void setContentLengthHeader(size_t size);

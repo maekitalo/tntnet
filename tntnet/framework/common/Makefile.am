@@ -42,6 +42,7 @@ libtntnet_la_SOURCES = \
 	tntnet.cpp \
 	unzip.c \
 	unzipfile.cpp \
+	urlescostream.cpp \
 	urlmapper.cpp \
 	worker.cpp \
 	zdata.cpp \
@@ -97,6 +98,7 @@ nobase_include_HEADERS = \
 	tnt/tntconfig.h \
 	tnt/tntnet.h \
 	tnt/unzipfile.h \
+	tnt/urlescostream.h \
 	tnt/urlmapper.h \
 	tnt/worker.h \
 	tnt/zdata.h
