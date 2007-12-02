@@ -117,9 +117,18 @@ namespace tnt
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
-    std::string file;
-    if (!documentRoot.empty())
-      file = documentRoot + '/';
+    std::string file = request.getArgDef(1); // fetch document root from arguments first
+    if (file.empty())
+    {
+      if (!documentRoot.empty())
+        file = documentRoot;
+    }
+    else
+      log_debug("document root \"" << file << "\" got as argument");
+
+    if (!file.empty() && *file.rbegin() != '/')
+      file += '/';
+
     file += request.getPathInfo();
 
     log_debug("file: " << file);
