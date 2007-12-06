@@ -134,7 +134,7 @@ namespace tnt
     queue.put(new SslTcpjob(server, queue));
   }
 
-  void SslListener::closePorts()
+  void Ssllistener::closePorts()
   {
     server.close();
   }
