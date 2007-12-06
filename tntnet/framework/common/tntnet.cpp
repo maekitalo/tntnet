@@ -26,6 +26,7 @@
 #include "tnt/sessionscope.h"
 
 #include <cxxtools/tcpstream.h>
+#include <cxxtools/fork.h>
 #include <cxxtools/log.h>
 
 #include <unistd.h>
@@ -116,6 +117,8 @@ namespace tnt
   { }
 
   bool Tntnet::stop = false;
+  
+  Tntnet::listeners_type Tntnet::allListeners;
 
   void Tntnet::init(const Tntconfig& config)
   {
@@ -254,15 +257,19 @@ namespace tnt
   void Tntnet::listen(const std::string& ip, unsigned short int port)
   {
     log_debug("listen on ip " << ip << " port " << port);
-    listeners.insert(new tnt::Listener(ip, port, queue));
+    ListenerBase* listener = new tnt::Listener(ip, port, queue);
+    listeners.insert(listener);
+    allListeners.insert(listener);
   }
 
   void Tntnet::sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ip, unsigned short int port)
   {
 #ifdef USE_SSL
     log_debug("listen on ip " << ip << " port " << port << " (ssl)");
-    listeners.insert(new Ssllistener(certificateFile.c_str(),
-        keyFile.c_str(), ip, port, queue));
+    ListenerBase* listener = new Ssllistener(certificateFile.c_str(),
+        keyFile.c_str(), ip, port, queue);
+    listeners.insert(listener);
+    allListeners.insert(listener);
 #else
     log_error("cannot add ssl listener - ssl is not compiled into tntnet");
 #endif // USE_SSL
@@ -278,7 +285,7 @@ namespace tnt
     {
       unsigned short int port = (getuid() == 0 ? 80 : 8000);
       log_info("no listeners defined - using ip 0.0.0.0 port " << port);
-      listeners.insert(new tnt::Listener("0.0.0.0", port, queue));
+      listen("0.0.0.0", port);
     }
     else
       log_debug(listeners.size() << " listeners");
@@ -342,11 +349,11 @@ namespace tnt
     log_warn("stopping Tntnet");
 
     // join-loop
-    while (!listeners.empty())
+    while (!allListeners.empty())
     {
-      listeners_type::value_type s = *listeners.begin();
+      listeners_type::value_type s = *allListeners.begin();
       log_debug("remove listener from listener-list");
-      listeners.erase(s);
+      allListeners.erase(s);
 
       log_debug("request listener to stop");
       s->doStop();
@@ -394,4 +401,28 @@ namespace tnt
   {
     stop = true;
   }
+
+  bool Tntnet::forkProcess()
+  {
+    cxxtools::Fork process;
+    if (process.child())
+    {
+      // 1. child process
+      while (!allListeners.empty())
+      {
+        listeners_type::value_type s = *allListeners.begin();
+        allListeners.erase(s);
+        delete s;
+
+        log_debug("listener stopped");
+      }
+
+      cxxtools::Fork process2;
+      if (process2.child())
+        return true;
+
+      exit(0);
+    }
+  }
+
 }

@@ -46,6 +46,7 @@ namespace tnt
       static bool stop;
       typedef std::set<ListenerBase*> listeners_type;
       listeners_type listeners;
+      static listeners_type allListeners;
 
       Poller pollerthread;
       Dispatcher dispatcher;
@@ -92,6 +93,33 @@ namespace tnt
         { return dispatcher.addUrlMapEntry(std::string(), url, ci); }
       Maptarget& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
+
+      /** Forks a process - returns true in child and false in parent.
+       *  A double fork is done to prevent zombies and listener sockets are
+       *  closed.
+       *
+       *  usage:
+       *  \code
+       *    if (app.forkProcess())
+       *    {
+       *      // do whatever you need to do in a child process
+       *      exit(0);  // this or exec... is mandatory!!!
+       *    }
+       *  \endcode
+       */
+      bool forkProcess();
+
+      /** Starts the passed function as a separate process.
+       */
+      template <typename function>
+      void runProcess(function func)
+      {
+        if (forkProcess())
+        {
+          func();
+          exit(0);
+        }
+      }
   };
 
 }

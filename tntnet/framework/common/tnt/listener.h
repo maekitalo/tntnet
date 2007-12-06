@@ -40,6 +40,7 @@ namespace tnt
       virtual ~ListenerBase() { }
 
       void doStop();
+      virtual void closePorts();
   };
 
   class Listener : public ListenerBase
@@ -51,6 +52,8 @@ namespace tnt
 
     public:
       Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q);
+
+      virtual void closePorts();
 
       static void setBacklog(int backlog_)   { backlog = backlog_; }
       static int getBacklog()                { return backlog; }
@@ -67,6 +70,8 @@ namespace tnt
     public:
       Ssllistener(const char* certificateFile, const char* keyFile,
           const std::string& ipaddr, unsigned short int port, Jobqueue& q);
+
+      virtual void closePorts();
   };
 #endif // USE_SSL
 

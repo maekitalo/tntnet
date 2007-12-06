@@ -89,6 +89,10 @@ namespace tnt
     }
   }
 
+  void ListenerBase::closePorts() 
+  {
+  }
+
   int Listener::backlog = 16;
   unsigned Listener::listenRetry = 5;
 
@@ -99,6 +103,11 @@ namespace tnt
     log_info("listen ip=" << ipaddr << " port=" << port);
     doListenRetry(server, ipaddr.c_str(), port);
     queue.put(new Tcpjob(server, queue));
+  }
+
+  void Listener::closePorts()
+  {
+    server.close();
   }
 
 #ifdef WITH_GNUTLS
@@ -124,6 +133,12 @@ namespace tnt
     doListenRetry(server, ipaddr.c_str(), port);
     queue.put(new SslTcpjob(server, queue));
   }
+
+  void SslListener::closePorts()
+  {
+    server.close();
+  }
+
 
 #endif // USE_SSL
 
