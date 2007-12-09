@@ -117,7 +117,7 @@ namespace tnt
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
-    std::string file = request.getArgDef(1); // fetch document root from arguments first
+    std::string file = request.getArg(configDocumentRoot); // fetch document root from arguments first
     if (file.empty())
     {
       if (!documentRoot.empty())
@@ -176,8 +176,12 @@ namespace tnt
     }
 
     // set Content-Type
-    if (request.getArgs().size() > 0 && request.getArg(0).size() > 0)
-      reply.setContentType(request.getArg(0));
+    std::string contentType = request.getArg("ContentType");
+    if (!contentType.empty())
+    {
+      log_debug("content type is \"" << contentType << '"');
+      reply.setContentType(contentType);
+    }
     else
       setContentType(request, reply);
 

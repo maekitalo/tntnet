@@ -178,6 +178,16 @@ namespace tnt
     }
   }
 
+  std::string HttpRequest::getArg(const std::string& name, const std::string& def) const
+  {
+    for (args_type::const_iterator it = args.begin(); it != args.end(); ++it)
+      if (it->size() > name.size()
+        && it->compare(0, name.size(), name) == 0
+        && it->at(name.size()) == '=')
+        return it->substr(name.size() + 1);
+    return def;
+  }
+
   void HttpRequest::parse(std::istream& in)
   {
     Parser p(*this);

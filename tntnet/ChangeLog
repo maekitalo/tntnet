@@ -1,3 +1,7 @@
+2007-12-02 tommi@tntnet.org
+  - named arguments from urlmapping to components, e.g.
+    request.getArgs("DocumentRoot")
+
 2007-11-18 tommi@tntnet.org
   - fixed cookie handling (did not work in some cases on IE)
   - reply.uout() for printing url encoded data
