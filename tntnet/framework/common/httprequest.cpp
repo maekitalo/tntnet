@@ -41,7 +41,7 @@ namespace tnt
   size_t HttpRequest::maxRequestSize = 0;
   unsigned HttpRequest::serial_ = 0;
 
-  HttpRequest::HttpRequest()
+  HttpRequest::HttpRequest(Tntnet& application_)
     : ssl(false),
       locale_init(false),
       encodingRead(false),
@@ -50,13 +50,14 @@ namespace tnt
       threadScope(0),
       sessionScope(0),
       applicationScopeLocked(false),
-      sessionScopeLocked(false)
+      sessionScopeLocked(false),
+      application(application_)
   {
     memset(&peerAddr, 0, sizeof(peerAddr));
     memset(&serverAddr, 0, sizeof(peerAddr));
   }
 
-  HttpRequest::HttpRequest(const std::string& url)
+  HttpRequest::HttpRequest(Tntnet& application_, const std::string& url)
     : ssl(false),
       locale_init(false),
       requestScope(0),
@@ -64,7 +65,8 @@ namespace tnt
       threadScope(0),
       sessionScope(0),
       applicationScopeLocked(false),
-      sessionScopeLocked(false)
+      sessionScopeLocked(false),
+      application(application_)
   {
     std::istringstream s("GET " + url + " HTTP/1.1\r\n\r\n");
     parse(s);
@@ -87,7 +89,8 @@ namespace tnt
       threadScope(r.threadScope),
       sessionScope(r.sessionScope),
       applicationScopeLocked(false),
-      sessionScopeLocked(false)
+      sessionScopeLocked(false),
+      application(r.application)
   {
     if (requestScope)
       requestScope->addRef();

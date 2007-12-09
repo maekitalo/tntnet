@@ -104,6 +104,7 @@ namespace tnt
   }
 
   Cgi::Cgi(int argc, char* argv[])
+    : request(application)
   {
     cxxtools::Arg<const char*> componentNameArg(argc, argv, 'n', argv[0]);
     componentName = componentNameArg.getValue();

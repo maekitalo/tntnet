@@ -51,7 +51,7 @@ namespace tnt
       static unsigned listenRetry;
 
     public:
-      Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q);
+      Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q);
 
       virtual void closePorts();
 
@@ -68,7 +68,7 @@ namespace tnt
       Jobqueue& queue;
 
     public:
-      Ssllistener(const char* certificateFile, const char* keyFile,
+      Ssllistener(Tntnet& application, const char* certificateFile, const char* keyFile,
           const std::string& ipaddr, unsigned short int port, Jobqueue& q);
 
       virtual void closePorts();

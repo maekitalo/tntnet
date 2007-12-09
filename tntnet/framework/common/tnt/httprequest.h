@@ -38,6 +38,7 @@
 namespace tnt
 {
   class Sessionscope;
+  class Tntnet;
 
   /// HTTP-Request-message
   class HttpRequest : public HttpMessage
@@ -99,10 +100,11 @@ namespace tnt
       mutable std::string serverAddrStr;
 
       const Contenttype& getContentTypePriv() const;
+      Tntnet& application;
 
     public:
-      HttpRequest();
-      HttpRequest(const std::string& url);
+      explicit HttpRequest(Tntnet& application_);
+      HttpRequest(Tntnet& application_, const std::string& url);
       HttpRequest(const HttpRequest& r);
       ~HttpRequest();
 
@@ -230,6 +232,9 @@ namespace tnt
       /// returns the virtual-host-header of this request.
       std::string getVirtualHost() const
         { return getHeader(httpheader::host); }
+
+      Tntnet& getApplication()
+        { return application; }
 
       /// Sets a limit for a maximum request size.
       static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }

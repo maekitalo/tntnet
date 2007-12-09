@@ -111,7 +111,7 @@ namespace tnt
       accept();
       log_debug("connection accepted");
       if (!Tntnet::shouldStop())
-        queue.put(new Tcpjob(listener, queue));
+        queue.put(new Tcpjob(getRequest().getApplication(), listener, queue));
       else
         log_info("tntnet stopping - no new job is generated");
     }
@@ -162,7 +162,7 @@ namespace tnt
       accept();
       log_debug("connection accepted");
       if (!Tntnet::shouldStop())
-        queue.put(new SslTcpjob(listener, queue));
+        queue.put(new SslTcpjob(getRequest().getApplication(), listener, queue));
       else
         log_info("tntnet stopping - no new ssl-job is generated");
     }

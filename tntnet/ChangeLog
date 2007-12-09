@@ -1,3 +1,9 @@
+2007-12-09 tommi@tntnet.org
+  - tnt::Tntnet::forkProcess and runProcess to start processes.
+    with a simple fork the child process inherits the listener ports
+	and prevents restarting tntnet while the child process runs.
+  - pass application object to request
+
 2007-12-02 tommi@tntnet.org
   - named arguments from urlmapping to components, e.g.
     request.getArgs("DocumentRoot")

@@ -24,6 +24,7 @@
 #include <tnt/scopemanager.h>
 #include <tnt/tntconfig.h>
 #include <tnt/comploader.h>
+#include <tnt/tntnet.h>
 
 namespace tnt
 {
@@ -33,6 +34,7 @@ namespace tnt
       std::string componentName;
       Tntconfig config;
 
+      Tntnet application;
       HttpRequest request;
       ScopeManager scopeManager;
       Comploader comploader;

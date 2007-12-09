@@ -36,8 +36,9 @@ namespace tnt
       void accept();
 
     public:
-      Tcpjob(const cxxtools::net::Server& listener_, Jobqueue& queue_)
-        : socket(getSocketBufferSize(), getSocketReadTimeout()),
+      Tcpjob(Tntnet& app, const cxxtools::net::Server& listener_, Jobqueue& queue_)
+        : Job(app),
+          socket(getSocketBufferSize(), getSocketReadTimeout()),
           listener(listener_),
           queue(queue_)
         { }
@@ -58,8 +59,9 @@ namespace tnt
       void accept();
 
     public:
-      SslTcpjob(const SslServer& listener_, Jobqueue& queue_)
-        : socket(getSocketBufferSize(), getSocketReadTimeout()),
+      SslTcpjob(Tntnet& app, const SslServer& listener_, Jobqueue& queue_)
+        : Job(app),
+          socket(getSocketBufferSize(), getSocketReadTimeout()),
           listener(listener_),
           queue(queue_)
         { }

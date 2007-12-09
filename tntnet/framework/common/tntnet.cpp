@@ -257,7 +257,7 @@ namespace tnt
   void Tntnet::listen(const std::string& ip, unsigned short int port)
   {
     log_debug("listen on ip " << ip << " port " << port);
-    ListenerBase* listener = new tnt::Listener(ip, port, queue);
+    ListenerBase* listener = new tnt::Listener(*this, ip, port, queue);
     listeners.insert(listener);
     allListeners.insert(listener);
   }
@@ -266,7 +266,7 @@ namespace tnt
   {
 #ifdef USE_SSL
     log_debug("listen on ip " << ip << " port " << port << " (ssl)");
-    ListenerBase* listener = new Ssllistener(certificateFile.c_str(),
+    ListenerBase* listener = new Ssllistener(*this, certificateFile.c_str(),
         keyFile.c_str(), ip, port, queue);
     listeners.insert(listener);
     allListeners.insert(listener);

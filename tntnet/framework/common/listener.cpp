@@ -96,13 +96,13 @@ namespace tnt
   int Listener::backlog = 16;
   unsigned Listener::listenRetry = 5;
 
-  Listener::Listener(const std::string& ipaddr, unsigned short int port, Jobqueue& q)
+  Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q)
     : ListenerBase(ipaddr, port),
       queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port);
     doListenRetry(server, ipaddr.c_str(), port);
-    queue.put(new Tcpjob(server, queue));
+    queue.put(new Tcpjob(application, server, queue));
   }
 
   void Listener::closePorts()
@@ -121,7 +121,7 @@ namespace tnt
 #endif
 
 #ifdef USE_SSL
-  Ssllistener::Ssllistener(const char* certificateFile,
+  Ssllistener::Ssllistener(Tntnet& application, const char* certificateFile,
       const char* keyFile,
       const std::string& ipaddr, unsigned short int port,
       Jobqueue& q)
@@ -131,7 +131,7 @@ namespace tnt
   {
     log_info("listen ip=" << ipaddr << " port=" << port << " (ssl)");
     doListenRetry(server, ipaddr.c_str(), port);
-    queue.put(new SslTcpjob(server, queue));
+    queue.put(new SslTcpjob(application, server, queue));
   }
 
   void Ssllistener::closePorts()
