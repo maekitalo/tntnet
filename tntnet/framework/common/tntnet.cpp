@@ -423,6 +423,8 @@ namespace tnt
 
       exit(0);
     }
+
+    return false;
   }
 
 }

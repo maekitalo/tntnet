@@ -75,8 +75,8 @@ namespace tnt
 
     public:
       explicit Job(Tntnet& app_)
-        : request(app_),
-          keepAliveCounter(keepalive_max),
+        : keepAliveCounter(keepalive_max),
+          request(app_),
           parser(request),
           lastAccessTime(0),
           refs(0)

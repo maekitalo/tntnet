@@ -33,11 +33,10 @@ namespace tnt
     else
     {
       sink->sputc('%');
-      char hi = (ch >> 4) & 0x0f;
-      char lo = ch & 0x0f;
-      sink->sputc(hex[hi]);
-      sink->sputc(hex[lo]);
+      sink->sputc(hex[(ch >> 4) & 0x0f]);
+      sink->sputc(hex[ch & 0x0f]);
     }
+    return 0;
   }
 
   std::streambuf::int_type UrlEscStreamBuf::underflow()
