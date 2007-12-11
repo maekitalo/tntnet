@@ -215,7 +215,7 @@ namespace tnt
       accept();
       log_debug("connection accepted");
       if (!Tntnet::shouldStop())
-        queue.put(new GnuTlsTcpjob(listener, queue));
+        queue.put(new GnuTlsTcpjob(getRequest().getApplication(), listener, queue));
       else
         log_info("tntnet stopping - no new ssl-job is generated");
     }
