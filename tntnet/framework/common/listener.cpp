@@ -24,6 +24,7 @@
 #include <cxxtools/log.h>
 #include <errno.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #ifdef WITH_GNUTLS
 #  include "tnt/gnutls.h"
@@ -42,6 +43,8 @@ log_define("tntnet.listener")
 static void doListenRetry(cxxtools::net::Server& server,
   const char* ipaddr, unsigned short int port)
 {
+  fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
+
   for (unsigned n = 1; true; ++n)
   {
     try

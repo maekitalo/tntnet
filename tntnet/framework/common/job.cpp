@@ -28,6 +28,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <config.h>
+#include <fcntl.h>
 
 log_define("tntnet.job")
 
@@ -89,6 +90,8 @@ namespace tnt
   {
     log_debug("accept");
     socket.accept(listener);
+
+    fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
 
     struct sockaddr_storage s = socket.getSockAddr();
     struct sockaddr_storage sockaddr;
