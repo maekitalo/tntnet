@@ -115,17 +115,23 @@ libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools $(PTHREAD_LIBS) @
 if MAKE_GNUTLS
 libtntnet_la_SOURCES += \
 	gcryptinit.c \
+	gnutls.cpp
+
+noinst_HEADERS = \
 	tnt/gcryptinit.h \
-	gnutls.cpp \
 	tnt/gnutls.h
+
 libtntnet_la_LDFLAGS += `libgnutls-config --libs`
 libtntnet_la_CXXFLAGS += `libgnutls-config --cflags`
 endif
 
 if MAKE_OPENSSL
 libtntnet_la_SOURCES += \
-	openssl.cpp \
+	openssl.cpp
+
+noinst_HEADERS = \
 	tnt/openssl.h
+
 libtntnet_la_LDFLAGS += -lssl -lcrypto
 endif
 
