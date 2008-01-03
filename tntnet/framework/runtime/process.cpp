@@ -37,12 +37,14 @@ namespace
 
   void sigEnd(int)
   {
+    signal(SIGTERM, sigEnd);
     if (theProcess)
       theProcess->shutdown();
   }
 
   void sigReload(int)
   {
+    signal(SIGHUP, sigReload);
     if (theProcess)
       theProcess->restart();
   }
