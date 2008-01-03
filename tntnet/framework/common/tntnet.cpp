@@ -346,7 +346,7 @@ namespace tnt
         usleep(threadstartdelay * 1000);
     }
 
-    log_warn("stopping Tntnet");
+    log_info("stopping Tntnet");
 
     // join-loop
     while (!allListeners.empty())
@@ -390,7 +390,7 @@ namespace tnt
       Worker::timer();
     }
 
-    log_warn("stopping Tntnet");
+    log_info("stopping Tntnet");
 
     queue.noWaitThreads.signal();
     minthreads = maxthreads = 0;

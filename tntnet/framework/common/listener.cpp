@@ -79,7 +79,7 @@ namespace tnt
 {
   void ListenerBase::doStop()
   {
-    log_warn("stop listener " << ipaddr << ':' << port);
+    log_info("stop listener " << ipaddr << ':' << port);
     try
     {
       // connect once to wake up listener, so it will check stop-flag

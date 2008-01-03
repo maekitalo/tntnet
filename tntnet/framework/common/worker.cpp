@@ -80,7 +80,7 @@ namespace tnt
       Jobqueue::JobPtr j = queue.get();
       if (Tntnet::shouldStop())
       {
-        log_warn("stop worker");
+        log_info("stop worker");
         break;
       }
       log_debug("got job - fd=" << j->getFd());
