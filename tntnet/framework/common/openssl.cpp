@@ -303,8 +303,8 @@ namespace tnt
       if (s <= 0)
         break;
 
-      poll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
-                  ? POLLIN|POLLOUT : POLLIN);
+      poll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_READ
+                  ? POLLIN : POLLIN|POLLOUT);
     }
 
     log_debug("OpensslStream::sslWrite returns " << bufsize);
