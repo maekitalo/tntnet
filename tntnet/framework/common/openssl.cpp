@@ -143,13 +143,10 @@ namespace tnt
     installCertificates(certificateFile, privateKeyFile);
   }
 
-  OpensslServer::~OpensslServer()
+  void SslCtxReleaser<SSL_CTX>::destroy(SSL_CTX* ctx)
   {
-    if (ctx)
-    {
-      log_debug("SSL_CTX_free(ctx)");
-      SSL_CTX_free(ctx);
-    }
+    log_debug("SSL_CTX_free(ctx)");
+    SSL_CTX_free(ctx);
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -162,7 +159,8 @@ namespace tnt
   }
 
   OpensslStream::OpensslStream(const OpensslServer& server)
-    : ssl(0)
+    : ctx(server.getSslContext()),
+      ssl(0)
   {
     openssl_init();
     accept(server);
@@ -196,7 +194,7 @@ namespace tnt
 
     log_debug("tcp-connection established - build ssltunnel");
 
-    log_debug("SSL_new(" << server.getSslContext() << ')');
+    log_debug("SSL_new(" << server.getSslContext().getPointer() << ')');
     ssl = SSL_new( server.getSslContext() );
     checkSslError();
 

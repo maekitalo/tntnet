@@ -22,6 +22,7 @@
 #define TNT_OPENSSL_H
 
 #include <cxxtools/tcpstream.h>
+#include <cxxtools/smartptr.h>
 #include <openssl/ssl.h>
 
 namespace tnt
@@ -40,21 +41,37 @@ namespace tnt
       { return code; }
   };
 
+  // destroy policy for smart pointer
+  template <typename ctx>
+  class SslCtxReleaser;
+
+  template <>
+  class SslCtxReleaser<SSL_CTX>
+  {
+    protected:
+      void destroy(SSL_CTX* ctx);
+  };
+
+  typedef cxxtools::SmartPtr<SSL_CTX, cxxtools::ExternalRefCounted, SslCtxReleaser> SslCtxPtr;
+
   class OpensslServer : public cxxtools::net::Server
   {
-      SSL_CTX* ctx;
+    public:
+
+    private:
+      SslCtxPtr ctx;
       void installCertificates(const char* certificateFile, const char* privateKeyFile);
 
     public:
       OpensslServer(const char* certificateFile);
       OpensslServer(const char* certificateFile, const char* privateKeyFile);
-      ~OpensslServer();
 
-      SSL_CTX* getSslContext() const  { return ctx; }
+      SslCtxPtr getSslContext() const        { return ctx; }
   };
 
   class OpensslStream : public cxxtools::net::Stream
   {
+      SslCtxPtr ctx;
       SSL* ssl;
 
     public:
