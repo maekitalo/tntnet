@@ -19,6 +19,7 @@
 
 
 #include "tnt/openssl.h"
+#include "tnt/tntnet.h"
 #include <cxxtools/thread.h>
 #include <openssl/err.h>
 #include <cxxtools/log.h>
@@ -169,7 +170,7 @@ namespace tnt
 
   OpensslStream::~OpensslStream()
   {
-    if (ssl)
+    if (ssl && !Tntnet::shouldStop())
     {
       try
       {
@@ -189,6 +190,9 @@ namespace tnt
   {
     log_debug("accept");
     Stream::accept(server);
+
+    if (Tntnet::shouldStop())
+      return;
 
     log_debug("tcp-connection established - build ssltunnel");
 

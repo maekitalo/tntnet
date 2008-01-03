@@ -19,6 +19,7 @@
 
 
 #include "tnt/gnutls.h"
+#include "tnt/tntnet.h"
 #include <cxxtools/thread.h>
 #include <cxxtools/log.h>
 #include <sstream>
@@ -172,6 +173,9 @@ namespace tnt
   {
     log_debug("accept");
     cxxtools::net::Stream::accept(server);
+
+    if (Tntnet::shouldStop())
+      return;
 
     log_debug("gnutls_init(session, GNUTLS_SERVER)");
     int ret = gnutls_init(&session, GNUTLS_SERVER);
