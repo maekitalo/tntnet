@@ -81,6 +81,9 @@ namespace tnt
       unsigned getMaxThreads() const          { return maxthreads; }
       void setMaxThreads(unsigned n)          { maxthreads = n; }
 
+      unsigned getTimersleep() const          { return timersleep; }
+      void setTimersleep(unsigned sec)        { timersleep = sec; }
+
       Maptarget& mapUrl(const std::string& url, const std::string& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
       void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)
