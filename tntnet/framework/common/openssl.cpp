@@ -177,7 +177,7 @@ namespace tnt
       }
       catch (const std::exception& e)
       {
-        log_error("error closing ssl-connection: " << e.what());
+        log_debug("error closing ssl-connection: " << e.what());
       }
 
       log_debug("SSL_free(" << ssl << ')');
@@ -253,20 +253,8 @@ namespace tnt
       // no read, timeout > 0 - poll
       do
       {
-        short events;
-
-        if (SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE)
-        {
-          log_debug("poll(POLLIN|POLLOUT)");
-          events = POLLIN|POLLOUT;
-        }
-        else
-        {
-          log_debug("poll(POLLIN)");
-          events = POLLIN;
-        }
-
-        poll(events);
+        poll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
+                    ? POLLIN|POLLOUT : POLLIN);
 
         log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
         n = ::SSL_read(ssl, buffer, bufsize);
@@ -276,7 +264,7 @@ namespace tnt
       } while (n < 0
          && ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
           || err == SSL_ERROR_WANT_WRITE
-          || SSL_get_error(ssl, n) == SSL_ERROR_SYSCALL && errno == EAGAIN));
+          || err == SSL_ERROR_SYSCALL && errno == EAGAIN));
     }
     return n;
   }
@@ -297,10 +285,19 @@ namespace tnt
       n = SSL_write(ssl, buffer, s);
       checkSslError();
 
+      int err;
       if (n > 0)
       {
         buffer += n;
         s -= n;
+      }
+      else if (n < 0
+              && (err = SSL_get_error(ssl, n)) != SSL_ERROR_WANT_READ
+              && err != SSL_ERROR_WANT_WRITE
+              && (err != SSL_ERROR_SYSCALL || errno != EAGAIN))
+      {
+        log_debug("error " << err << " occured in SSL_write; n=" << n);
+        throw OpensslException("error from TLS/SSL I/O operation", err);
       }
 
       if (s <= 0)
