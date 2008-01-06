@@ -117,7 +117,7 @@ libtntnet_la_SOURCES += \
 	gcryptinit.c \
 	gnutls.cpp
 
-noinst_HEADERS = \
+noinst_HEADERS += \
 	tnt/gcryptinit.h \
 	tnt/gnutls.h
 
@@ -129,7 +129,7 @@ if MAKE_OPENSSL
 libtntnet_la_SOURCES += \
 	openssl.cpp
 
-noinst_HEADERS = \
+noinst_HEADERS += \
 	tnt/openssl.h
 
 libtntnet_la_LDFLAGS += -lssl -lcrypto
