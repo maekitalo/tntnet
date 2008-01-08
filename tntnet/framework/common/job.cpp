@@ -146,6 +146,8 @@ namespace tnt
     socket.accept(listener);
     log_debug("connection accepted (ssl)");
 
+    fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
+
     struct sockaddr_storage s = socket.getSockAddr();
     struct sockaddr_storage sockaddr;
     memcpy(&sockaddr, &s, sizeof(sockaddr));
