@@ -268,7 +268,7 @@ namespace tnt
 
     if (waitThreads == 0)
     {
-      log_info("no waiting threads left");
+      log_debug("no waiting threads left");
       noWaitThreads.signal();
     }
 
