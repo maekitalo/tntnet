@@ -76,7 +76,7 @@ namespace tnt
 
   MovedTemporarily::MovedTemporarily(const std::string& url)
     : HttpError(HTTP_MOVED_TEMPORARILY,
-                "moved temprorarily",
+                "moved temporarily",
                 "<html><body>moved to <a href=\"" + url + "\">" + url + "</a></body></html>")
   {
     setHeader(httpheader::location, url);
