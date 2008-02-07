@@ -24,15 +24,19 @@
 #include <map>
 #include <string>
 #include <tnt/object.h>
-#include <tnt/objecttemplate.h>
-#include <tnt/pointer.h>
 #include <cxxtools/thread.h>
+#include <cxxtools/smartptr.h>
 
 namespace tnt
 {
   class Scope
   {
-      typedef std::map<std::string, Pointer<Object> > container_type;
+    public:
+      typedef cxxtools::SmartPtr<Object> pointer_type;
+
+    private:
+      typedef std::map<std::string, pointer_type> container_type;
+
       container_type data;
       mutable cxxtools::Mutex mutex;
       cxxtools::Mutex refmutex;
@@ -55,21 +59,13 @@ namespace tnt
       bool has(const std::string& key) const
         { return data.find(key) != data.end(); }
 
-      Object* get(const std::string& key);
+      pointer_type get(const std::string& key);
 
       /// Put new Object in scope. If key already exists,
       /// it is replaced and old Object released.
-      void replace(const std::string& key, Object* o);
+      void put(const std::string& key, pointer_type o);
 
-      /// Put new Object in scope. If key already exists,
-      /// o is released. Returns Object identified by key.
-      Object* putNew(const std::string& key, Object* o);
-
-      template <typename ValueType>
-      Object* createNew(const std::string& key, const ValueType& value)
-        { return putNew(key, new tnt::ObjectTemplate<ValueType>(value)); }
-
-      void erase(const std::string& key);
+      void erase(const std::string& key)  { data.erase(key); }
       bool empty() const  { return data.empty(); }
       void clear()        { data.clear(); }
 

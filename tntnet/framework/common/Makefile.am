@@ -30,7 +30,6 @@ libtntnet_la_SOURCES = \
 	messageheaderparser.cpp \
 	mimedb.cpp \
 	multipart.cpp \
-	object.cpp \
 	poller.cpp \
 	regex.cpp \
 	savepoint.cpp \
@@ -83,9 +82,7 @@ nobase_include_HEADERS = \
 	tnt/multipart.h \
 	tnt/object.h \
 	tnt/objectptr.h \
-	tnt/objecttemplate.h \
 	tnt/parser.h \
-	tnt/pointer.h \
 	tnt/poller.h \
 	tnt/query_params.h \
 	tnt/regex.h \

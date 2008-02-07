@@ -21,30 +21,32 @@
 #ifndef TNT_OBJECT_H
 #define TNT_OBJECT_H
 
-#include <cxxtools/thread.h>
+#include <cxxtools/refcounted.h>
 
 namespace tnt
 {
-  class Object
+  class Object : public cxxtools::RefCounted
   {
-      unsigned refs;
-
-      // non-copyable
-      Object(const Object&);
-      Object& operator=(const Object&);
-
-    protected:
-      virtual ~Object()  {}
-
     public:
-      Object()
-        : refs(0)
+      virtual ~Object()
       { }
-
-      virtual unsigned addRef();
-      virtual unsigned release();
   };
 
+  template <typename data_type>
+  class PointerObject : public Object
+  {
+      data_type* ptr;
+
+    public:
+      explicit PointerObject(data_type* ptr_ = 0)
+        : ptr(ptr_)
+        { }
+      ~PointerObject()
+        { delete ptr; }
+      void set(data_type* ptr_)
+        { delete ptr; ptr = ptr_; }
+      data_type* get()  { return ptr; }
+  };
 }
 
 #endif // TNT_OBJECT_H

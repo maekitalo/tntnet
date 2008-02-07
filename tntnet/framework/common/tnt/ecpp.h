@@ -220,59 +220,64 @@ namespace tnt
   }
 }
 
-#define TNT_VAR(scope, type, varname, key, construct) \
-  typedef type varname##_type;          \
-  typedef tnt::ObjectTemplate<varname##_type> varname##_objecttype;          \
-  const std::string varname##_scopekey = key;          \
-  tnt::Objectptr varname##_pointer = request.get##scope##Scope().get(varname##_scopekey);          \
-  if (varname##_pointer == 0)          \
-    varname##_pointer = request.get##scope##Scope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
-  type& varname = varname##_objecttype::getRef(varname##_pointer);
+#define TNT_VAR(scope, type, varname, key, construct)                          \
+  type* varname##_pointer;                                                     \
+  {                                                                            \
+    const std::string varname##_scopekey = key;                                \
+    tnt::Scope& _scope = scope;                                                \
+    tnt::Scope::pointer_type _ptr = _scope.get(varname##_scopekey);            \
+    if (_ptr.getPointer())                                                     \
+      varname##_pointer = static_cast<tnt::PointerObject<type>*>(              \
+        _ptr.getPointer())->get();                                             \
+    else                                                                       \
+    {                                                                          \
+      tnt::PointerObject<type>* _poptr = new tnt::PointerObject<type>();       \
+      _ptr = _poptr;                                                           \
+      _poptr->set(varname##_pointer = new type construct);                     \
+      _scope.put(varname##_scopekey, _ptr);                                    \
+    }                                                                          \
+  }                                                                            \
+  type& varname = *varname##_pointer;
+
 
 #define TNT_SESSION_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(Session, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getSessionScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_SESSION_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(Session, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getSessionScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_SESSION_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(Session, type, varname, key, construct)
+  TNT_VAR(request.getSessionScope(), type, varname, key, construct)
 
 #define TNT_APPLICATION_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(Application, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getApplicationScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_APPLICATION_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(Application, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getApplicationScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_APPLICATION_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(Application, type, varname, key, construct)
+  TNT_VAR(request.getApplicationScope(), type, varname, key, construct)
 
 #define TNT_THREAD_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(Thread, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getThreadScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_THREAD_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(Thread, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getThreadScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_THREAD_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(Thread, type, varname, key, construct)
+  TNT_VAR(request.getThreadScope(), type, varname, key, construct)
 
 #define TNT_REQUEST_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(Request, type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getRequestScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_REQUEST_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(Request, type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+  TNT_VAR(request.getRequestScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
 
 #define TNT_REQUEST_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(Request, type, varname, key, construct)
+  TNT_VAR(request.getRequestScope(), type, varname, key, construct)
 
 #define TNT_PARAM(type, varname, key, construct) \
-  typedef type varname##_type;          \
-  typedef tnt::ObjectTemplate<varname##_type> varname##_objecttype;          \
-  const std::string varname##_scopekey = key;          \
-  tnt::Objectptr varname##_pointer = qparam.getScope().get(varname##_scopekey);          \
-  if (varname##_pointer == 0)          \
-    varname##_pointer = qparam.getScope().putNew(varname##_scopekey, new varname##_objecttype construct);          \
-  type& varname = varname##_objecttype::getRef(varname##_pointer);
+  TNT_VAR(qparam.getScope(), type, varname, key, construct)
 
 #endif // TNT_ECPP_H
 

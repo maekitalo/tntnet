@@ -58,56 +58,18 @@ namespace tnt
       refmutex.unlock();
   }
 
-  Object* Scope::get(const std::string& key)
+  Scope::pointer_type Scope::get(const std::string& key)
   {
     container_type::iterator it = data.find(key);
-
-    log_debug("Scope::get(\"" << key << "\") Scope=" << this
-           << " => " << (it == data.end() ? (void*)0 : (void*)it->second.getPtr()));
-
-    return it == data.end() ? 0 : it->second.getPtr();
+    Scope::pointer_type ret = (it == data.end() ? Scope::pointer_type(0) : it->second);
+    log_debug("Scope::get(\"" << key << ") => " << ret.getPointer());
+    return ret;
   }
 
-  void Scope::replace(const std::string& key, Object* o)
+  void Scope::put(const std::string& key, Scope::pointer_type o)
   {
-    log_debug("Scope::replace(\"" << key << ", " << o << "\") Scope=" << this);
-
-    o->addRef();
-    container_type::iterator it = data.find(key);
-    if (it == data.end())
-      data.insert(container_type::value_type(key, o));
-    else
-    {
-      it->second->release();
-      it->second = o;
-    }
+    log_debug("Scope::put(\"" << key << ", " << o.getPointer() << "\") Scope=" << this);
+    data.insert(container_type::value_type(key, o));
   }
 
-  Object* Scope::putNew(const std::string& key, Object* o)
-  {
-    log_debug("Scope::putNew(\"" << key << "\", " << o << ") Scope=" << this);
-
-    container_type::iterator it = data.find(key);
-    if (it == data.end())
-    {
-      data.insert(container_type::value_type(key, o));
-      return o;
-    }
-    else
-    {
-      o->addRef();
-      o->release();
-      return it->second.getPtr();
-    }
-  }
-
-  void Scope::erase(const std::string& key)
-  {
-    container_type::iterator it = data.find(key);
-    if (it != data.end())
-    {
-      it->second->release();
-      data.erase(it);
-    }
-  }
 }
