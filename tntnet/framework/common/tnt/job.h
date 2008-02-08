@@ -22,10 +22,11 @@
 #define TNT_JOB_H
 
 #include <deque>
-#include <cxxtools/thread.h>
 #include <tnt/httprequest.h>
 #include <tnt/httpparser.h>
-#include <tnt/pointer.h>
+#include <cxxtools/thread.h>
+#include <cxxtools/refcounted.h>
+#include <cxxtools/smartptr.h>
 
 /**
 // in tntnet (mainthread):
@@ -57,7 +58,7 @@ namespace tnt
   class Tntnet;
 
   /** Job - one per request */
-  class Job
+  class Job : public cxxtools::RefCounted
   {
       unsigned keepAliveCounter;
 
@@ -65,7 +66,6 @@ namespace tnt
       HttpRequest::Parser parser;
       time_t lastAccessTime;
 
-      unsigned refs;
       cxxtools::Mutex mutex;
 
       static unsigned socket_read_timeout;
@@ -78,17 +78,11 @@ namespace tnt
         : keepAliveCounter(keepalive_max),
           request(app_),
           parser(request),
-          lastAccessTime(0),
-          refs(0)
+          lastAccessTime(0)
         { }
-
-    protected:
       virtual ~Job();
 
     public:
-      unsigned addRef();
-      unsigned release();
-
       virtual std::iostream& getStream() = 0;
       virtual int getFd() const = 0;
       virtual void setRead() = 0;
@@ -119,7 +113,7 @@ namespace tnt
   class Jobqueue
   {
     public:
-      typedef Pointer<Job> JobPtr;
+      typedef cxxtools::SmartPtr<Job> JobPtr;
 
       cxxtools::Condition noWaitThreads;
 

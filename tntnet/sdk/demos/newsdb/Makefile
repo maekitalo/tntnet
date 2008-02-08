@@ -2,7 +2,7 @@ newsdb.so: index.o news.o newscss.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
 SUFFIXES=.ecpp .gif .jpg
-ECPPC=/usr/local/bin/ecppc
+ECPPC=../../tools/ecppc/ecppc
 CXXFLAGS+=`tntnet-config --cxxflags` -fPIC -O2
 LDFLAGS+=-shared `tntnet-config --libs` -ltntdb
 

@@ -21,7 +21,8 @@
 #ifndef TNT_ECPPC_BODY_H
 #define TNT_ECPPC_BODY_H
 
-#include <tnt/pointer.h>
+#include <cxxtools/smartptr.h>
+#include <cxxtools/refcounted.h>
 #include <string>
 #include <list>
 #include <set>
@@ -34,28 +35,21 @@ namespace tnt
   {
     class Body;
 
-    class Bodypart
+    class Bodypart : public cxxtools::RefCounted
     {
-        unsigned refs;
-
         unsigned curline;
         std::string curfile;
         static bool linenumbersEnabled;
 
       public:
         Bodypart()
-          : refs(0),
-            curline(0)
+          : curline(0)
           { }
         Bodypart(unsigned line, const std::string& file)
-          : refs(0),
-            curline(line),
+          : curline(line),
             curfile(file)
           { }
         virtual ~Bodypart();
-
-        void addRef()  { ++refs; }
-        void release() { if (--refs <= 0) delete this; }
 
         virtual void getBody(std::ostream& out) const = 0;
         void printLine(std::ostream& out) const;
@@ -140,7 +134,7 @@ namespace tnt
     {
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
-        typedef tnt::Pointer<Bodypart> body_part_pointer;
+        typedef cxxtools::SmartPtr<Bodypart> body_part_pointer;
         typedef std::list<body_part_pointer> body_type;
         typedef std::set<std::string> subcomps_type;
         body_type data;
