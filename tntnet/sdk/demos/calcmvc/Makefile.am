@@ -31,4 +31,4 @@ SUFFIXES=.ecpp .cpp
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@
 tntnet.conf:
-	/bin/sh $(top_builddir)/tntnet-config --config=calcmvc >$@
+	( /bin/sh $(top_builddir)/tntnet-config --config=calcmvc; echo CompPath .libs ) >$@

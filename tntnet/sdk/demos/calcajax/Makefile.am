@@ -27,4 +27,4 @@ SUFFIXES=.ecpp .js .cpp
 tntnet.properties:
 	@CXXTOOLS_CONFIG@ --properties tntnet >$@
 tntnet.conf:
-	/bin/sh $(top_builddir)/tntnet-config --config=calcajax >$@
+	( /bin/sh $(top_builddir)/tntnet-config --config=calcajax; echo CompPath .libs ) >$@
