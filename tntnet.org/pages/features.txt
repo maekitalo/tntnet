@@ -1,0 +1,28 @@
+/** \page features Features
+
+@htmlinclude sidebar.html
+
+\htmlonly
+
+    <div id="content">
+        <ul>
+            <li> template-language to embed c++-code in html similar to PHP, JSP, ASP or Mason </li>
+            <li> component-concept allows modularisation of webapplications </li>
+            <li> multithreaded with a dynamic worker-pool for best performance </li>
+            <li> compile a web-application including graphics in one single shared library for easy deployment </li>
+            <li> web-applications are native code </li>
+            <li> html-form parameters are parsed and are easily accessible </li>
+            <li> automatic session-handling </li>
+            <li> use external C++-classes and libraries </li>
+            <li> support for file-uploads </li>
+            <li> support for i18n of webapplications - single codebase for different languages </li>
+            <li> enhanced security, because no compiler or interpreter nor source-code is needed on the server </li>
+            <li> ssl-support </li>
+        </ul>
+        <br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br>
+    </div>
+
+\endhtmlonly
+
+*/

@@ -1,0 +1,24 @@
+/** \page license License
+
+@htmlinclude sidebar.html
+
+\htmlonly
+
+    <div id="content">
+
+        <p>
+            Tntnet is licensed under the <b>GNU Library General
+            Public License (LGPL)</b> for all platforms. The intent in licensing
+            it in this way is to provide it for use in all projects both open
+            and proprietary. The full body of the license is provided for
+            your inspection
+            <a href="http://www.gnu.org/licenses/lgpl.html#TOC1">here</a>.
+        </p>
+
+        <br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br>
+    </div>
+
+\endhtmlonly
+
+*/

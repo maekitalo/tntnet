@@ -1,0 +1,24 @@
+/** \page people Tntnet Developers
+
+@htmlinclude sidebar.html
+
+\htmlonly
+
+<div id="content">
+
+<b>Tommi Maekitalo</b>
+<p>
+Tommi has many years of experience with C++ development in general and network, system and database programming in particular. Tommi is the founder of the TNT web application server (www.tntnet.org). He currently works for Deutsche Börse Systems in Germany.
+</p>
+
+<b>Marc Duerner</b>
+<p>
+Marc is a software engineer at Eckhardt+Partner GmBH and has commited a significant amout of code to the cxxtools. His interests include object-oriented and generic program design and multi-platform development. Marc earned a PhD in Chemistry from Sheffield Hallam University in 2004.
+</p>
+        <br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br>
+</div>
+
+\endhtmlonly
+
+*/

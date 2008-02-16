@@ -1,0 +1,37 @@
+/** \mainpage High Performance Web Services in C++
+
+@htmlinclude sidebar.html
+
+\htmlonly
+
+    <div id="content">
+        <h2>What is Tntnet?</h2>
+        <p>
+            Tntnet is a modular, multithreaded, high performance webapplicationserver for C++.
+            To create webapplications Tntnet has a template-language called ecpp similar to php, jsp or mason, where you can embed c++-code inside a html-page to generate active content. The ecpp-files are precompiled to c++-classes called components and compiled and linked into a shared library. This process is done at compiletime. 
+        </p>
+        <h2>Why is it so fast?</h2>
+        <p>
+            Because the webapplications are compiled into native code, they are very fast and compact. The webserver 
+            Tntnet needs only the compiled componentlibrary. Components can call other components. So you can create 
+            buildingblocks of html-parts and call them in other pages like subprocesses.
+        </p>
+        <h2>What can it do?</h2>
+        <p>
+            Requests are parsed by tntnet and the request-information is easily accessible to the components. It supports GET and POST-parameters and Mime-multipart-requests for file-upload.
+            The templatelanguage has also support for internationalized applications. You can easily create webapplications for different languages.
+        </p>
+        <p>
+            Other features are: cookies, HTTP-upload, automatic request-parameter parsing and conversion, automatic sessionmanagement, scoped variables (application, request and session), internationalisation, keep-alive.
+            Logging is done through cxxtools, which provides a unique API for log4cpp, log4cxx or simple logging to files or console.
+            Tntnet is fully multithreaded and much work has been gone into making it scalable. It uses a dynamic pool of workerthreads, which answers requests from http-clients.
+        </p>
+        <p>
+            Ssl is supported via the gnutls- or openssl-library.
+        </p>
+
+    </div>
+
+\endhtmlonly
+
+*/

@@ -1,0 +1,63 @@
+/** \page news News
+
+@htmlinclude sidebar.html
+
+\htmlonly
+
+    <div id="content">
+        <h3>2007-12-16, New stable versions, cxxtools 1.4.6, tntnet 1.6.1, tntdb 0.9.5</h3>
+        <p>The features released in the development releases are considered stable
+        now.</p>
+
+        <p>Cxxtools have got some feature enhancements like support for signal-slot
+        and wrappers for atomic functions. Locking in logger-classes is reduced, so
+        that threads do not need to wait for other threads when logging. Logging may be
+        passed to a subprocess, which can run under a different user, when the main
+        process starts as root.</p>
+
+        <p>Tntdb has support for blobs. And this time the archive is complete. The
+        0.9.4 release lacked some important files, so if you had problems with that it
+        was purely my fault ;-).</p>
+
+        <p>The main enhancement in tntnet was the move of most of the tntnet-code into
+        the library, so it is easy to use tntnet in applications. Also a wrapper for
+        fork was added, since it is somewhat dangerous to start subprocesses without
+        that, since subprocesses will block restarts, since they inherit listener
+        ports. To fork subprocesses in tntnet-applications use this:
+        </p>
+
+        <pre>
+        if (request.getApplication().forkProcess())
+        {
+            // here we are in child process
+            exit(0);  // this or exec... is mandatory!!!
+        }
+        </pre>
+        <br/>
+
+        <h3>2007-11-17, New development version of tntnet 1.6.0.6</h3>
+
+        <p>After some small fixes tntnet compiles with the Sun Studio compiler.
+        A chapter about stand alone webapplications with tntnet was added into the
+        documentation. After changing fonts in the documents, filesizes got much
+        smaller.</p>
+        <br/>
+
+        <h3>2007-11-16, New development versions of cxxtools 1.4.5.3</h3>
+
+        <p>This adds functions for handling endianess and wrappers for fast atomic
+        operations for various processors.</p>
+        <br/>
+
+        <h3>2007-10-21, new development versions of cxxtools 1.4.5.1 and tntnet 1.6.0.4</h3>
+
+        <p>Cxxtools gets a fast template based signal-slot implementation from Marc.
+        Libltdl is replaced by a simple dlopen-wrapper. The smart pointer gets an
+        additional destroy policy.</p>
+        <br/>
+
+    </div>
+
+\endhtmlonly
+
+*/

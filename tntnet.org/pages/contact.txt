@@ -1,0 +1,35 @@
+/** \page contact Contact
+
+@htmlinclude sidebar.html
+
+\htmlonly
+
+    <div id="content">
+        <h2>Mailing-list</h2>
+
+        <p>
+        There is a mailing list tntnet-general@lists.sourceforge.net. To subscribe use the subcription-page at <a href="http://lists.sourceforge.net/lists/listinfo/tntnet-general">sourceforge.net</a>.
+        </p>
+
+        <p>The mailing list is also accessable by web via <a href="http://gmane.org/">gmane</a> service at <a href="http://dir.gmane.org/gmane.comp.web.server.tntnet">http://dir.gmane.org/gmane.comp.web.server.tntnet</a>.
+        </p>
+
+        <h2>IRC</h2>
+
+        <p>
+        Discussion about Tntnet is done at freenode-channel #tntnet.
+        </p>
+
+        <h2>Developer:</h2>
+
+        <p>
+        Tommi M&auml;kitalo<br>
+        e-mail: <a href="mailto:tommi@tntnet.org">tommi@tntnet.org</a>
+        </p>
+        <br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br>
+    </div>
+
+\endhtmlonly
+
+*/
