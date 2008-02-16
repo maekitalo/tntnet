@@ -24,9 +24,9 @@
 #include <tnt/messageattribute.h>
 #include <map>
 
-/// Content-type-field like rfc2045
 namespace tnt
 {
+  /// Content-type-field like rfc2045
   class Contenttype : public MessageattributeParser
   {
     public:
