@@ -6,45 +6,47 @@ BODY,TD {
        font-size: 90%;
 }
 H1 {
-       color: rgb(110, 133, 123);
-	background-color: #f0f0f0;
-	border: 1px solid #CCCCCC;
+       color: #308040;
+       background-color: #f0f0f0;
+       border: 1px solid #CCCCCC;
        padding-bottom:7px;
        padding-top:7px;
        text-align: center;
        font-size: 180%;
-       	-moz-border-radius: 12px 12px 12px 12px;
+       -moz-border-radius: 12px 12px 12px 12px;
 }
 H2 {
-	font-size: 150%;
-	color: rgb(110, 133, 123);
-    padding-left: 24px;
-    background: url(section_head.png) no-repeat left center;
-    position: relative;
+       font-size: 150%;
+       color: #308040;
+       padding-left: 24px;
+       background: url(section_head.png) no-repeat left center;
+       position: relative;
 }
 H3 {
        font-size: 120%;
-       color: rgb(110, 133, 123);
+       color: #308040;
 }
-CAPTION { font-weight: bold }
+CAPTION {
+        font-weight: bold
+}
 DIV.qindex {
-	width: 100%;
-	background-color: #f0f0f0;
-	border: 1px solid #CCCCCC;
-	text-align: center;
-	margin: 2px;
-	padding: 2px;
-	line-height: 140%;
+       width: 100%;
+       background-color: #f0f0f0;
+       border: 1px solid #CCCCCC;
+       text-align: center;
+       margin: 2px;
+       padding: 2px;
+       line-height: 140%;
 }
 
 /* Do not display navigation on top of class doc */
 DIV.nav {
-	display:none;
-	width: 100%;
-	text-align: center;
-	margin: 2px;
-	padding: 2px;
-	line-height: 140%;
+       display:none;
+       width: 100%;
+       text-align: center;
+       margin: 2px;
+       padding: 2px;
+       line-height: 140%;
 }
 DIV.navtab {
        background-color: #e8eef2;
@@ -59,54 +61,54 @@ TD.navtab {
        font-size: 70%;
 }
 A.qindexH {
-    text-decoration: none;
-    color: #ffffff;
+        text-decoration: none;
+        color: #ffffff;
 }
 A.qindexH:hover {
-    text-decoration: none;
-    color: #ffffff;
+        text-decoration: none;
+        color: #ffffff;
 }
 A.qindexH:visited {
-    text-decoration: none;
-    color: #ffffff;
+        text-decoration: none;
+        color: #ffffff;
 }
 A.qindex {
        text-decoration: none;
        font-weight: bold;
-       color: rgb(110, 133, 123);
+       color: #308040;
 }
 A.qindex:visited {
        text-decoration: none;
        font-weight: bold;
-       color: rgb(110, 133, 123)
+       color: #308040
 }
 A.qindex:hover {
-	text-decoration: none;
-	background-color: #C30014;
+       text-decoration: none;
+       background-color: #C30014;
 }
 A.qindexHL {
-	text-decoration: none;
-	font-weight: bold;
-	background-color: #6666cc;
-	color: #ffffff;
-	border: 1px double #9295C2;
+       text-decoration: none;
+       font-weight: bold;
+       background-color: #6666cc;
+       color: #ffffff;
+       border: 1px double #9295C2;
 }
 A.qindexHL:hover {
-	text-decoration: none;
-	background-color: #6666cc;
-	color: #ffffff;
+       text-decoration: none;
+       background-color: #6666cc;
+       color: #ffffff;
 }
 A.qindexHL:visited {
-    text-decoration: none;
-    background-color: #6666cc;
-    color: #ffffff;
+        text-decoration: none;
+        background-color: #6666cc;
+        color: #ffffff;
 }
 
 A:hover { text-decoration: none; color: #C30014 }
 
-A.el { text-decoration: none; font-weight: bold; color: rgb(110, 133, 123)  }
+A.el { text-decoration: none; font-weight: bold; color: #308040  }
 A.el:hover { text-decoration: none; font-weight: bold; color: #C30014 }
-A.el:visited { text-decoration: none; font-weight: bold; color: rgb(110, 133, 123) }
+A.el:visited { text-decoration: none; font-weight: bold; color: #308040 }
 
 A.elRef { font-weight: bold }
 A.code:link { text-decoration: none; font-weight: normal; color: #0000FF}
@@ -120,16 +122,16 @@ DL.el { margin-left: -1cm }
        font-size: 95%;
 }
 PRE.fragment {
-	border: 1px solid #CCCCCC;
-	background-color: #f0f0f0;
-	margin-top: 4px;
-	margin-bottom: 4px;
-	margin-left: 2px;
-	margin-right: 8px;
-	padding-left: 6px;
-	padding-right: 6px;
-	padding-top: 4px;
-	padding-bottom: 4px;
+       border: 1px solid #CCCCCC;
+       background-color: #f0f0f0;
+       margin-top: 4px;
+       margin-bottom: 4px;
+       margin-left: 2px;
+       margin-right: 8px;
+       padding-left: 6px;
+       padding-right: 6px;
+       padding-top: 4px;
+       padding-bottom: 4px;
 }
 DIV.ah { background-color: black; font-weight: bold; color: #ffffff; margin-bottom: 3px; margin-top: 3px }
 
@@ -141,36 +143,36 @@ DIV.groupHeader {
 }
 DIV.groupText { margin-left: 16px; font-style: italic; font-size: 90% }
 BODY {
-	background: white;
-	color: black;
-	margin-right: 20px;
-	margin-left: 20px;
+       background: white;
+       color: black;
+       margin-right: 20px;
+       margin-left: 20px;
 }
 TD.indexkey {
-	background-color: #f0f0f0;
-	font-weight: bold;
-	padding-right  : 10px;
-	padding-top    : 2px;
-	padding-left   : 10px;
-	padding-bottom : 2px;
-	margin-left    : 0px;
-	margin-right   : 0px;
-	margin-top     : 2px;
-	margin-bottom  : 2px;
-	border: 1px solid #CCCCCC;
+       background-color: #f0f0f0;
+       font-weight: bold;
+       padding-right  : 10px;
+       padding-top    : 2px;
+       padding-left   : 10px;
+       padding-bottom : 2px;
+       margin-left    : 0px;
+       margin-right   : 0px;
+       margin-top     : 2px;
+       margin-bottom  : 2px;
+       border: 1px solid #CCCCCC;
 }
 TD.indexvalue {
-	background-color: #f0f0f0;
-	font-style: italic;
-	padding-right  : 10px;
-	padding-top    : 2px;
-	padding-left   : 10px;
-	padding-bottom : 2px;
-	margin-left    : 0px;
-	margin-right   : 0px;
-	margin-top     : 2px;
-	margin-bottom  : 2px;
-	border: 1px solid #CCCCCC;
+       background-color: #f0f0f0;
+       font-style: italic;
+       padding-right  : 10px;
+       padding-top    : 2px;
+       padding-left   : 10px;
+       padding-bottom : 2px;
+       margin-left    : 0px;
+       margin-right   : 0px;
+       margin-top     : 2px;
+       margin-bottom  : 2px;
+       border: 1px solid #CCCCCC;
 }
 TR.memlist {
    background-color: #f0f0f0; 
@@ -186,296 +188,350 @@ SPAN.preprocessor  { color: #806020 }
 SPAN.stringliteral { color: #002080 }
 SPAN.charliteral   { color: #008080 }
 .mdescLeft {
-    padding: 0px 8px 4px 8px;
-	font-size: 80%;
-	font-style: italic;
-	background-color: #f0f0f0;
-	border-top: 1px none #CCCCCC;
-	border-right: 1px none #CCCCCC;
-	border-bottom: 1px none #CCCCCC;
-	border-left: 1px none #CCCCCC;
-	margin: 0px;
+        padding: 0px 8px 4px 8px;
+        font-size: 80%;
+        font-style: italic;
+        background-color: #f0f0f0;
+        border-top: 1px none #CCCCCC;
+        border-right: 1px none #CCCCCC;
+        border-bottom: 1px none #CCCCCC;
+        border-left: 1px none #CCCCCC;
+        margin: 0px;
 }
 .mdescRight {
-    padding: 0px 8px 4px 8px;
-	font-size: 80%;
-	font-style: italic;
-	background-color: #f0f0f0;
-	border-top: 1px none #CCCCCC;
-	border-right: 1px none #CCCCCC;
-	border-bottom: 1px none #CCCCCC;
-	border-left: 1px none #CCCCCC;
-	margin: 0px;
+        padding: 0px 8px 4px 8px;
+        font-size: 80%;
+        font-style: italic;
+        background-color: #f0f0f0;
+        border-top: 1px none #CCCCCC;
+        border-right: 1px none #CCCCCC;
+        border-bottom: 1px none #CCCCCC;
+        border-left: 1px none #CCCCCC;
+        margin: 0px;
 }
 .memItemLeft {
-	padding: 1px 0px 0px 8px;
-	margin: 4px;
-    font-size: 90%;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-	border-top-color: #CCCCCC;
-	border-right-color: #CCCCCC;
-	border-bottom-color: #CCCCCC;
-	border-left-color: #CCCCCC;
-	border-top-style: solid;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	background-color: #f0f0f0;
-
+        padding: 1px 0px 0px 8px;
+        margin: 4px;
+        font-size: 90%;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        border-top-color: #CCCCCC;
+        border-right-color: #CCCCCC;
+        border-bottom-color: #CCCCCC;
+        border-left-color: #CCCCCC;
+        border-top-style: solid;
+        border-right-style: none;
+        border-bottom-style: none;
+        border-left-style: none;
+        background-color: #f0f0f0;
 }
 .memItemRight {
-	padding: 1px 8px 0px 8px;
-	margin: 4px;
-    font-size: 90%;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-	border-top-color: #CCCCCC;
-	border-right-color: #CCCCCC;
-	border-bottom-color: #CCCCCC;
-	border-left-color: #CCCCCC;
-	border-top-style: solid;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	background-color: #f0f0f0;
+        padding: 1px 8px 0px 8px;
+        margin: 4px;
+        font-size: 90%;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        border-top-color: #CCCCCC;
+        border-right-color: #CCCCCC;
+        border-bottom-color: #CCCCCC;
+        border-left-color: #CCCCCC;
+        border-top-style: solid;
+        border-right-style: none;
+        border-bottom-style: none;
+        border-left-style: none;
+        background-color: #f0f0f0;
 
 }
 .memTemplItemLeft {
-	padding: 1px 0px 0px 8px;
-	margin: 4px;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-    border-top-color: #CCCCCC;
-    border-right-color: #CCCCCC;
-    border-bottom-color: #CCCCCC;
-    border-left-color: #CCCCCC;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	background-color: #f0f0f0;
-	font-size: 90%;
+        padding: 1px 0px 0px 8px;
+        margin: 4px;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        border-top-color: #CCCCCC;
+        border-right-color: #CCCCCC;
+        border-bottom-color: #CCCCCC;
+        border-left-color: #CCCCCC;
+        border-top-style: none;
+        border-right-style: none;
+        border-bottom-style: none;
+        border-left-style: none;
+        background-color: #f0f0f0;
+        font-size: 90%;
 }
 .memTemplItemRight {
-	padding: 1px 8px 0px 8px;
-	margin: 4px;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-    border-top-color: #CCCCCC;
-    border-right-color: #CCCCCC;
-    border-bottom-color: #CCCCCC;
-    border-left-color: #CCCCCC;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	background-color: #f0f0f0;
-	font-size: 90%;
+        padding: 1px 8px 0px 8px;
+        margin: 4px;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        border-top-color: #CCCCCC;
+        border-right-color: #CCCCCC;
+        border-bottom-color: #CCCCCC;
+        border-left-color: #CCCCCC;
+        border-top-style: none;
+        border-right-style: none;
+        border-bottom-style: none;
+        border-left-style: none;
+        background-color: #f0f0f0;
+        font-size: 90%;
 }
 .memTemplParams {
-	padding: 1px 0px 0px 8px;
-	margin: 4px;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-    border-top-color: #CCCCCC;
-    border-right-color: #CCCCCC;
-    border-bottom-color: #CCCCCC;
-    border-left-color: #CCCCCC;
-	border-top-style: solid;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-       color: #606060;
-	background-color: #f0f0f0;
-	font-size: 90%;
+        padding: 1px 0px 0px 8px;
+        margin: 4px;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        border-top-color: #CCCCCC;
+        border-right-color: #CCCCCC;
+        border-bottom-color: #CCCCCC;
+        border-left-color: #CCCCCC;
+        border-top-style: solid;
+        border-right-style: none;
+        border-bottom-style: none;
+        border-left-style: none;
+        color: #606060;
+        background-color: #f0f0f0;
+        font-size: 90%;
 }
-.search     { color: #003399;
-              font-weight: bold;
+.search {
+        color: #003399;
+        font-weight: bold;
 }
 FORM.search {
-              margin-bottom: 0px;
-              margin-top: 0px;
+        margin-bottom: 0px;
+        margin-top: 0px;
 }
-INPUT.search { font-size: 75%;
-               color: #000080;
-               font-weight: normal;
-               background-color: #e8eef2;
+INPUT.search {
+        font-size: 75%;
+        color: #000080;
+        font-weight: normal;
+        background-color: #e8eef2;
 }
-TD.tiny      { font-size: 75%;
+TD.tiny {
+        font-size: 75%;
 }
 a {
-	color: rgb(110, 133, 123);
+        color: #308040;
 }
 a:visited {
-	color: rgb(110, 133, 123);
+        color: #308040;
 }
-.dirtab { padding: 4px;
-          border-collapse: collapse;
-          border: 1px solid #84b0c7;
+.dirtab {
+        padding: 4px;
+        border-collapse: collapse;
+        border: 1px solid #84b0c7;
 }
-TH.dirtab { background: #e8eef2;
-            font-weight: bold;
+TH.dirtab {
+        background: #e8eef2;
+        font-weight: bold;
 }
-HR { height: 1px;
-     border: none;
-     border-top: 1px solid black;
+HR {
+        height: 1px;
+        border: none;
+        border-top: 1px solid black;
 }
 
 /* Style for detailed member documentation */
 .memtemplate {
-  font-size: 80%;
-  color: #606060;
-  font-weight: normal;
+        font-size: 80%;
+        color: #606060;
+        font-weight: normal;
 } 
 .memnav { 
-  background-color: #e8eef2;
-  border: 1px solid #84b0c7;
-  text-align: center;
-  margin: 2px;
-  margin-right: 15px;
-  padding: 2px;
+        background-color: #e8eef2;
+        border: 1px solid #84b0c7;
+        text-align: center;
+        margin: 2px;
+        margin-right: 15px;
+        padding: 2px;
 }
 .memitem {
-  background-color: #F0F0F0;
-  -moz-border-radius: 8px 8px 8px 8px;
-  padding-bottom:1px;
-  margin-bottom:27px;
-  border:1px solid gray;
+        background-color: #F0F0F0;
+        -moz-border-radius: 8px 8px 8px 8px;
+        padding-bottom:1px;
+        margin-bottom:27px;
+        border:1px solid gray;
 }
 .memname {
-  padding: 3px;
-  white-space: nowrap;
-  font-weight: bold;
+        padding: 3px;
+        white-space: nowrap;
+        font-weight: bold;
 }
 .memdoc{
-  padding-left: 10px;
+        padding-left: 10px;
 }
 .memproto {
-  background-color: #CCCCCC;
-  width: 100%;
-  font-weight: bold;
-  -moz-border-radius: 8px 8px 0px 0px;
+        background-color: #CCCCCC;
+        width: 100%;
+        font-weight: bold;
+        -moz-border-radius: 8px 8px 0px 0px;
 }
 .paramkey {
-  text-align: right;
+        text-align: right;
 }
 .paramtype {
-  white-space: nowrap;
-  font-weight: bold;
+        white-space: nowrap;
+        font-weight: bold;
 }
 .paramname {
-  color: #602020;
-  font-style: italic;
-  white-space: nowrap;
+        color: #602020;
+        font-style: italic;
+        white-space: nowrap;
 }
 /* End Styling for detailed member documentation */
 
 /* for the tree view */
 .ftvtree {
-	font-family: sans-serif;
-	margin:0.5em;
+        font-family: sans-serif;
+        margin:0.5em;
 }
-.directory { font-size: 9pt; font-weight: bold; }
-.directory h3 { margin: 0px; margin-top: 1em; font-size: 11pt; }
-.directory > h3 { margin-top: 0; }
-.directory p { margin: 0px; white-space: nowrap; }
-.directory div { display: none; margin: 0px; }
-.directory img { vertical-align: -30%; }
+.directory {
+        font-size: 9pt; font-weight: bold;
+}
+.directory h3 {
+        margin: 0px; margin-top: 1em; font-size: 11pt;
+}
+.directory > h3 {
+        margin-top: 0;
+}
+.directory p {
+        margin: 0px; white-space: nowrap;
+}
+.directory div {
+        display: none; margin: 0px;
+}
+.directory img {
+        vertical-align: -30%;
+}
 
 
 /* the main content of the page */
 #content    {
-    padding: 0em 1em 1em 1em;
-    margin-left: 18em;
+        padding: 0em 1em 1em 1em;
+        margin-left: 18em;
 }
 
 #content h2 {
-  padding-left: 24px;
-  background: url(section_head.png) no-repeat left center;
-  position: relative;
-  /*left: -26px;*/
+        padding-left: 24px;
+        background: url(section_head.png) no-repeat left center;
+        position: relative;
 }
 
 
 .sidebar    {
-    float: left;
-    width: 17em;
-    margin: 0em 0em;
-    padding: 0em 0em;
-    font-size: 100%;
-    background-color: #f0f0f0;
-    text-decoration: none;
-    font-style: none;
-    border-left: 1px solid #CCCCCC;
-    -moz-border-radius: 0px 12px 12px 0px;
+        float: left;
+        width: 17em;
+        margin: 0em 0em;
+        padding: 0em 0em;
+        font-size: 100%;
+        background-color: #f0f0f0;
+        text-decoration: none;
+        font-style: none;
+        border-left: 1px solid #CCCCCC;
+        -moz-border-radius: 0px 12px 12px 0px;
 }
 
 .sidebar-major {
-    background-color:rgb(110, 133, 123);
-    color:white;
-    padding-bottom:7px;
-    padding-top:7px;
-    padding-left:1.5em;
-    font-size: 120%;
-    -moz-border-radius: 0px 12px 12px 0px;
+        background-color:#308040;
+        color:white;
+        padding-bottom:7px;
+        padding-top:7px;
+        padding-left:1.5em;
+        font-size: 120%;
+        -moz-border-radius: 0px 12px 12px 0px;
 }
 
 .sidebar ul {
-    list-style: none;
+        list-style: none;
 }
 
 .sidebar ul li:hover {
-    list-style: disc;
+        list-style: disc;
 }
 
 .sidebar a {
-    text-decoration: none;
+        text-decoration: none;
 }
 
 .sidebar a:hover {
-    text-decoration: none;
-    color: rgb(110, 133, 123);
+        text-decoration: none;
+        color: #308040;
 }
 
 
 .docs-page-header {
-    padding:5px 10px 5px 15px;
-    color:white;
-    font-weight:bold;
-    background:rgb(110, 133, 123);
-    border: 1px solid gray;
-    border-bottom: none;
-    -moz-border-radius: 12px 12px 0px 0px;
-    height:1.1em;
+        padding:5px 10px 5px 15px;
+        color:white;
+        font-weight:bold;
+        background:#308040;
+        border: 1px solid gray;
+        border-bottom: none;
+        -moz-border-radius: 12px 12px 0px 0px;
+        height:1.1em;
 }
 
 .docs-page-body {
-    background:rgb(229, 229, 229);
-    margin:0px;
-    padding:10px;
-    border: 1px solid gray;
-    border-top: none;
-    -moz-border-radius: 0px 0px 12px 12px;
-    height:11em;
+        background:rgb(229, 229, 229);
+        margin:0px;
+        padding:10px;
+        border: 1px solid gray;
+        border-top: none;
+        -moz-border-radius: 0px 0px 12px 12px;
+        height:11em;
 }
 
 .docs-page-body ul {
-    padding:0px;
-    margin:0px;
-    margin-left:35px;
+        padding:0px;
+        margin:0px;
+        margin-left:35px;
 }
 
 .docs-page-body a {
-    text-decoration: none;
+       text-decoration: none;
+}
+
+body {
+        margin:0px;
+}
+
+div.topheader {
+        background:#78B060;
+        margin-bottom:20px;
+}
+
+div.topheader1 {
+        background:#C0E080;
+        text-align:right;
+        color:white;
+        padding:0.8em;
+}
+
+div.topheader2 {
+        margin-top:10px;
+        background:#308040;
+        font-size:30px;
+        color:white;
+        font-weight:bold;
+        padding:15px 0px 17px 20px;
+}
+
+div.logo {
+        float:right;
+        width:200px;
+        margin:3px;
+}
+
+div.topmenu {
+        color:white;
+        background:#308040;
+        border-top:1px solid rgb(140, 163, 153);
+        padding:5px 10px 5px 10px;
 }
