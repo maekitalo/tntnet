@@ -1,5 +1,7 @@
 /** \page cxxtools Cxxtools
 
+@htmlinclude sidebar.html
+
 @section Overview Overview
 
 Cxxtools is a collection of general-purpose C++ classes.
