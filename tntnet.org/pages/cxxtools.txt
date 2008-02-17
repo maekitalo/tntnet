@@ -2,113 +2,120 @@
 
 @htmlinclude sidebar.html
 
-@section Overview Overview
+\htmlonly
+    <div id="content">
 
-Cxxtools is a collection of general-purpose C++ classes.
+    <h2>Cxxtools overview</h2>
 
-It includes classes for:
-    - argument parsing
-    - logging
-    - wrappers for threading (pthreads)
-    - networking with tcp and udp including iostream-based classes
-    - std::ostream for md5-calculation
-    - std::ostream-hexdumper
-    - std::ostream, which duplicates output (like tee)
-    - wrappers for fork(2) and pipe(2)
-    - parser for ini files
-    - parser for property files
-    - policy based smartpointer
-    - wrappers for dlopen(2) and dlsym(2)
-    - std::istream based http client
-    - uuencoder-std::ostream
-    - classes to create mime messages for sending mail with attachements or as html-formatted mail
-    - template based fast signal/slot-classes
-    - template for pools
-    - parser for http-query-parameters e.g. for cgi
-    - ostream-filter for counting bytes passed through it
-    - wrappers for atomic operations
-    - std::ostream based wrapper around iconv(3)
-    - ...
+    <p>Cxxtools is a collection of general-purpose C++ classes.</p>
 
-@section CxxtoolsExamples Examples
+    <p>It includes classes for:</p>
+    <ul>
+        <li>argument parsing</li>
+        <li>logging</li>
+        <li>wrappers for threading (pthreads)</li>
+        <li>networking with tcp and udp including iostream-based classes</li>
+        <li>std::ostream for md5-calculation</li>
+        <li>std::ostream-hexdumper</li>
+        <li>std::ostream, which duplicates output (like tee)</li>
+        <li>wrappers for fork(2) and pipe(2)</li>
+        <li>parser for ini files</li>
+        <li>parser for property files</li>
+        <li>policy based smartpointer</li>
+        <li>wrappers for dlopen(2) and dlsym(2)</li>
+        <li>std::istream based http client</li>
+        <li>uuencoder-std::ostream</li>
+        <li>classes to create mime messages for sending mail with attachements or as html-formatted mail</li>
+        <li>template based fast signal/slot-classes</li>
+        <li>template for pools</li>
+        <li>parser for http-query-parameters e.g. for cgi</li>
+        <li>ostream-filter for counting bytes passed through it</li>
+        <li>wrappers for atomic operations</li>
+        <li>std::ostream based wrapper around iconv(3)</li>
+        <li>...</li>
+    </ul>
 
-<table>
-  <tr>
-    <td><a href="cxxtools/arg.cpp.html">arg.cpp</a></td>
-    <td>Argument-parser (argc, argv)</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/cgi.cpp.html">cgi.cpp</a></td>
-    <td>cgi in c++ (don't use it - use tntnet instead ;-) )</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/dir.cpp.html">dir.cpp</a></td>
-    <td>read directory</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/dlloader.cpp.html">dlloader.cpp</a></td>
-    <td>load shared library</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/dynbuffer.cpp.html">dynbuffer.cpp</a></td>
-    <td>dynamic exception-safe buffer</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/getini.cpp.html">getini.cpp</a></td>
-    <td>read ini-files</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/hd.cpp.html">hd.cpp</a></td>
-    <td>hex-dumper</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/httprequest.cpp.html">httprequest.cpp</a></td>
-    <td>http-client</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/iconv.cpp.html">iconv.cpp</a></td>
-    <td>code-converter as a std::iostream</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/log.cpp.html">log.cpp</a></td>
-    <td>logging</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/logsh.cpp.html">logsh.cpp</a></td>
-    <td>logging for shell</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/md5sum.cpp.html">md5sum.cpp</a></td>
-    <td>md5-calculation</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/multifstream.cpp.html">multifstream.cpp</a></td>
-    <td>read multiple files with a single std::istream</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/netcat.cpp.html">netcat.cpp</a></td>
-    <td>send data through a tcp-socket</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/netio.cpp.html">netio.cpp</a></td>
-    <td>simple network-benchmark-tool</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/netmsg.cpp.html">netmsg.cpp</a></td>
-    <td>send messages with udp</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/pipestream.cpp.html">pipestream.cpp</a></td>
-    <td>std::iostream on top of pipe(2)</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/pool.cpp.html">pool.cpp</a></td>
-    <td>pool of objects (e.g. connections)</td>
-  </tr>
-  <tr>
-    <td><a href="cxxtools/thread.cpp.html">thread.cpp</a></td>
-    <td>threading</td>
-  </tr>
-</table>
+    <h2>Code examples</h2>
+
+    <table>
+      <tr>
+        <td><a href="cxxtools/arg.cpp.html">arg.cpp</a></td>
+        <td>Argument-parser (argc, argv)</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/cgi.cpp.html">cgi.cpp</a></td>
+        <td>cgi in c++ (don't use it - use tntnet instead ;-) )</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/dir.cpp.html">dir.cpp</a></td>
+        <td>read directory</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/dlloader.cpp.html">dlloader.cpp</a></td>
+        <td>load shared library</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/dynbuffer.cpp.html">dynbuffer.cpp</a></td>
+        <td>dynamic exception-safe buffer</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/getini.cpp.html">getini.cpp</a></td>
+        <td>read ini-files</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/hd.cpp.html">hd.cpp</a></td>
+        <td>hex-dumper</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/httprequest.cpp.html">httprequest.cpp</a></td>
+        <td>http-client</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/iconv.cpp.html">iconv.cpp</a></td>
+        <td>code-converter as a std::iostream</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/log.cpp.html">log.cpp</a></td>
+        <td>logging</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/logsh.cpp.html">logsh.cpp</a></td>
+        <td>logging for shell</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/md5sum.cpp.html">md5sum.cpp</a></td>
+        <td>md5-calculation</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/multifstream.cpp.html">multifstream.cpp</a></td>
+        <td>read multiple files with a single std::istream</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/netcat.cpp.html">netcat.cpp</a></td>
+        <td>send data through a tcp-socket</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/netio.cpp.html">netio.cpp</a></td>
+        <td>simple network-benchmark-tool</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/netmsg.cpp.html">netmsg.cpp</a></td>
+        <td>send messages with udp</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/pipestream.cpp.html">pipestream.cpp</a></td>
+        <td>std::iostream on top of pipe(2)</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/pool.cpp.html">pool.cpp</a></td>
+        <td>pool of objects (e.g. connections)</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools/thread.cpp.html">thread.cpp</a></td>
+        <td>threading</td>
+      </tr>
+    </table>
+
+\endhtmlonly
 
 */
