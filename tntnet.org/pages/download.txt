@@ -1,0 +1,30 @@
+/** \page download Download
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id="content">
+        <h2>Download</h2>
+
+        <h3>Tntnet 1.6.1, Cxxtools 1.4.6, Tntdb 0.9.5</h3>
+        <ul>
+            <li><a href="download/tntnet-1.6.1.tar.gz">the source of tntnet 1.6.1</a></li>
+            <li><a href="download/cxxtools-1.4.6.tar.gz">the source of cxxtools 1.4.6</a></li>
+            <li><a href="download/tntdb-0.9.5.tar.gz">the source of tntdb 0.9.5</a></li>
+        </ul>
+
+        <h3>no development versions currently available</h3>
+
+        <h3>other downloads</h3>
+
+       <ul>
+            <li><a href="download/tntnet-come2linux.odp">slides from the speech at come2linux 2006 in Essen/Germany on September 9th 2006 (in german)</a></li>
+            <li><a href="download/tntnet-froscon.odp">slides from the speech at FrOSCon 2006 in Sankt Augustin/Germany on June 24th 2006 (in german)</a> also available <a href="download/tntnet-froscon.pdf">in pdf-format</a></li>
+            <li><a href="download/tntnet-freewrt.odp">slides from the speech at LinuxTag 2007 in Berlin on June 2nd 2007 (in german)</a></li>
+       </ul>
+
+    </div>
+
+\endhtmlonly
+
+*/

@@ -1,81 +1,47 @@
  /** \page docs Online Reference Documentation
     
+\htmlonly
     <div style="width:100%"> <!-- This div is a hack for IE so it does not make the table too wide -->
     
 	<table cellpadding="2" cellspacing="20" border="0" width="100%">
 	<tr>
-        <td style="width:33%; vertical-align:top;">
+        <td style="vertical-align:top;">
             <div class="docs-page-header">General</div>
             <div class="docs-page-body">
                 <ul>
                 <li><a href="news.html">News</a></li>
                 <li><a href="people.html">People</a></li>
-                <li><a href="faq.html">Frequently Asked Questions</a></li>
                 <li><a href="http://www.gnu.org/licenses/lgpl.html">License</a></li>
-                <li><a href="acknowledgements.html">Acknowledgements</a></li>
                 </ul>
             </div>
         </td>
-		<td style="width:33%; vertical-align:top;">
+		<td style="vertical-align:top;">
 				<div class="docs-page-header">Getting Started</div>
 				<div class="docs-page-body">
 					<ul>
-					<li><a href="whatsnew.html">What's new</a></li>
-					<li><a href="requirements.html">Requirements</a></li>
 					<li><a href="download.html">Download</a></li>
-					<li><a href="building.html">Building</a></li>
 					</ul>
-			</div>
-		</td>
-		<td style="width:33%; vertical-align:top;">
-			<div class="docs-page-header">Developer Resources</div>
-			<div class="docs-page-body">
-				<ul>
-				<li><a href="mailinglist.html">Mailing Lists</a></li>
-				<li><a href="project.html">Project Overview</a></li>
-				<li><a href="index.html">Recommended Reading</a></li>
-				</ul>
 			</div>
 		</td>
 	</tr>
 
 	<tr>
-		<td style="width:33%; vertical-align:top;">
+		<td style="vertical-align:top;">
 			<div class="docs-page-header">API Reference</div>
 			<div class="docs-page-body">
 				<ul>
 				<li><a href="classes.html">All Classes</a></li>
 				<li><a href="namespaces.html">Namespaces</a></li>
-                <li><a href="group__DateTime.html">Dates and Times</a></li>
-				<li><a href="group__Unicode.html">Unicode</a></li>
-				<li><a href="group__Reflection.html">Reflection</a></li>
-				<li><a href="group__UnitTests.html">Unit Testing</a></li>
-                <li><a href="group__Logging.html">Logging</a></li>
 				</ul>
 			</div>
 		</td>
-		<td style="width:33%; vertical-align:top;">
+		<td style="vertical-align:top;">
 			<div class="docs-page-header">Concepts</div>
 			<div class="docs-page-body">
 				<ul>
-                <li><a href="byteorder.html">Byteorder handling</a></li>
-				<li><a href="sigslot.html">Signals and Delegates</a></li>
-				<li><a href="group__Reflection.html">Reflection</a></li>
-                <li><a href="group__DateTime.html">Dates and Times</a></li>
-				<li><a href="plugins.html">Plugins</a></li>
-				<li><a href="unittests.html">Unit Testing</a></li>
-				</ul>
-			</div>
-		</td>
-		<td style="width:33%; vertical-align:top;">
-			<div class="docs-page-header">Tools</div>
-			<div class="docs-page-body">
-				<ul>
-				<li><a href="http://www.perforce.com/jam/jam.html">Jam Build Tool</a></li>
-				<li><a href="http://www.doxygen.org">Doxygen</a></li>
-				<li><a href="http://subversion.tigris.org/">Subversion</a></li>
-				<li><a href="http://gcc.gnu.org/">GNU Toolset</a></li>
-				<li><a href="http://www.mingw.org/">GNU for Win32</a></li>
+				<li><a href="logging.html">Logging</a></li>
+				<li><a href="images.html">Images</a></li>
+				<li><a href="upload.html">Uploading files</a></li>
 				</ul>
 			</div>
 		</td>
@@ -91,4 +57,7 @@
 	<div style="display:none">\image html section_head.png</div>
 	
 	</div>
+
+\endhtmlonly
+
 */

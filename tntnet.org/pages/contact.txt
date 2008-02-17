@@ -26,8 +26,6 @@
         Tommi M&auml;kitalo<br>
         e-mail: <a href="mailto:tommi@tntnet.org">tommi@tntnet.org</a>
         </p>
-        <br><br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br><br><br><br><br><br>
     </div>
 
 \endhtmlonly
