@@ -19,7 +19,9 @@
 				<div class="docs-page-header">Getting Started</div>
 				<div class="docs-page-body">
 					<ul>
-					<li><a href="download.html">Download</a></li>
+					    <li><a href="download.html">Download</a></li>
+                        <li><a href="examplehello.html">Example "Hello"</a></li>
+                        <li><a href="examplecalc.html">Example "Calc"</a></li>
 					</ul>
 			</div>
 		</td>
