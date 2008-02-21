@@ -23,6 +23,7 @@
 #include "tnt/tntconfig.h"
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include "tnt/process.h"
 #include "config.h"

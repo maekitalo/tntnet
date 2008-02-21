@@ -27,6 +27,7 @@
 #include <tnt/http.h>
 #include <tnt/poller.h>
 #include <cxxtools/log.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
