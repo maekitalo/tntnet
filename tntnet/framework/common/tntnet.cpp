@@ -364,6 +364,20 @@ namespace tnt
     }
 
     log_info("listeners stopped");
+
+    log_info("stop pollerthread");
+    pollerthread.doStop();
+    pollerthread.join();
+    log_info("pollerthread stopped");
+
+    while (true)
+    {
+      log_info("wait for worker threads to stop; " << getQueue().getWaitThreadCount() << " left");
+      if (getQueue().getWaitThreadCount() <= 0)
+        break;
+      usleep(100);
+    }
+    log_info("worker threads stopped");
   }
 
   void Tntnet::setMinThreads(unsigned n)
@@ -383,9 +397,15 @@ namespace tnt
   {
     log_debug("timer thread");
 
-    while (!stop)
+    while (true)
     {
-      sleep(timersleep);
+      unsigned c = timersleep;
+      while (c-- > 0 && !stop)
+        sleep(1);
+
+      if (stop)
+        break;
+
       getScopemanager().checkSessionTimeout();
       Worker::timer();
     }
@@ -394,7 +414,6 @@ namespace tnt
 
     queue.noWaitThreads.signal();
     minthreads = maxthreads = 0;
-    pollerthread.doStop();
   }
 
   void Tntnet::shutdown()

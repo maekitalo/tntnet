@@ -80,7 +80,11 @@ namespace tnt
       state = stateWaitingForJob;
       Jobqueue::JobPtr j = queue.get();
       if (Tntnet::shouldStop())
+      {
+        if (application.getQueue().getWaitThreadCount() > 0)
+          queue.put(j);
         break;
+      }
 
       log_debug("got job - fd=" << j->getFd());
 
@@ -180,7 +184,9 @@ namespace tnt
     cxxtools::MutexLock lock(mutex);
     workers.erase(this);
 
-    log_debug("delete worker " << threadId << " - " << workers.size() << " threads left - " << application.getQueue().getWaitThreadCount() << " waiting threads");
+    log_debug("delete worker " << threadId << " - " << workers.size()
+      << " threads left - " << application.getQueue().getWaitThreadCount()
+      << " waiting threads");
   }
 
   bool Worker::processRequest(HttpRequest& request, std::iostream& socket,
