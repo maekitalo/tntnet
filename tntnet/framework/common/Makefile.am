@@ -81,7 +81,6 @@ nobase_include_HEADERS = \
 	tnt/mimedb.h \
 	tnt/multipart.h \
 	tnt/object.h \
-	tnt/objectptr.h \
 	tnt/parser.h \
 	tnt/poller.h \
 	tnt/query_params.h \

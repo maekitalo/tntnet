@@ -61,8 +61,9 @@ namespace tnt
            it != paramargs.end(); ++it)
       {
         printLine(out);
-        out << "  " << qparam << ".getScope().createNew(\"" <<
-          it->first << "\", (" << it->second << "));\n";
+        out << "  " << qparam << ".getScope().put(\""
+            << it->first << "\", tnt::createPointerObject("
+            << it->second << "));\n";
       }
 
       printLine(out);

@@ -62,13 +62,13 @@ namespace tnt
   {
     container_type::iterator it = data.find(key);
     Scope::pointer_type ret = (it == data.end() ? Scope::pointer_type(0) : it->second);
-    log_debug("Scope::get(\"" << key << ") => " << ret.getPointer());
+    log_debug("Scope::get(\"" << key << "\") => " << ret.getPointer());
     return ret;
   }
 
   void Scope::put(const std::string& key, Scope::pointer_type o)
   {
-    log_debug("Scope::put(\"" << key << ", " << o.getPointer() << "\") Scope=" << this);
+    log_debug("Scope::put(\"" << key << "\", " << o.getPointer() << "\") Scope=" << this);
     data.insert(container_type::value_type(key, o));
   }
 

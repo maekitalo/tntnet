@@ -22,6 +22,7 @@
 #define TNT_OBJECT_H
 
 #include <cxxtools/refcounted.h>
+#include <cxxtools/smartptr.h>
 
 namespace tnt
 {
@@ -30,6 +31,8 @@ namespace tnt
     public:
       virtual ~Object()
       { }
+
+      typedef cxxtools::SmartPtr<Object> pointer_type;
   };
 
   template <typename data_type>
@@ -47,6 +50,19 @@ namespace tnt
         { delete ptr; ptr = ptr_; }
       data_type* get()  { return ptr; }
   };
+
+  template <typename data_type>
+  Object::pointer_type createPointerObject(const data_type& d)
+  {
+    // assign the PointerObject to a smart pointer prior calling the ctor of
+    // the created object to prevent memory leaky in case the ctor throws an
+    // exception
+    PointerObject<data_type>* ptr = new PointerObject<data_type>();
+    Object::pointer_type ret = ptr;
+    ptr->set(new data_type(d));
+    return ret;
+  }
+
 }
 
 #endif // TNT_OBJECT_H

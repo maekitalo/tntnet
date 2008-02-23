@@ -32,7 +32,7 @@ namespace tnt
   class Scope
   {
     public:
-      typedef cxxtools::SmartPtr<Object> pointer_type;
+      typedef Object::pointer_type pointer_type;
 
     private:
       typedef std::map<std::string, pointer_type> container_type;

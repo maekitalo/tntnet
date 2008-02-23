@@ -335,9 +335,7 @@ namespace tnt
              "#include <tnt/http.h>\n"
              "#include <tnt/data.h>\n"
              "#include <tnt/componentfactory.h>\n";
-      if (hasScopevars())
-        out << "#include <tnt/objecttemplate.h>\n"
-               "#include <tnt/objectptr.h>\n";
+
       if (!configs.empty())
         out << "#include <tnt/comploader.h>\n"
                "#include <tnt/tntconfig.h>\n";
