@@ -1,6 +1,5 @@
  /** \page docs Online Reference Documentation
     
-\htmlonly
     <div style="width:100%"> <!-- This div is a hack for IE so it does not make the table too wide -->
     
 	<table cellpadding="2" cellspacing="20" border="0" width="100%">
@@ -60,6 +59,6 @@
 	
 	</div>
 
-\endhtmlonly
+
 
 */
