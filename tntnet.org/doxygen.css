@@ -2,42 +2,41 @@ BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
 
 }
 BODY,TD {
-       font-family:Arial;
-       font-size: 90%;
+    font-family:Arial;
+    font-size: 90%;
 }
 H1 {
-       #color: #308040;
-       color:#154374;
-       background-color: #f0f0f0;
-       border: 1px solid #CCCCCC;
-       padding-bottom:7px;
-       padding-top:7px;
-       text-align: center;
-       font-size: 180%;
-       -moz-border-radius: 12px 12px 12px 12px;
+    color:#154374;
+    background-color: #f0f0f0;
+    border: 1px solid #CCCCCC;
+    padding-bottom:7px;
+    padding-top:7px;
+    text-align: center;
+    font-size: 180%;
+    -moz-border-radius: 12px 12px 12px 12px;
 }
 H2 {
-       font-size: 150%;
-       color: #308040;
-       padding-left: 24px;
-       background: url(section_head.png) no-repeat left center;
-       position: relative;
+    font-size: 150%;
+    color: #154374;
+    padding-left: 24px;
+    background: url(section_head.png) no-repeat left center;
+    position: relative;
 }
 H3 {
        font-size: 120%;
-       color: #308040;
+       color: #154374;
 }
 CAPTION {
         font-weight: bold
 }
 DIV.qindex {
-       width: 100%;
-       background-color: #f0f0f0;
-       border: 1px solid #CCCCCC;
-       text-align: center;
-       margin: 2px;
-       padding: 2px;
-       line-height: 140%;
+    width: 100%;
+    background-color: #f0f0f0;
+    border: 1px solid #CCCCCC;
+    text-align: center;
+    margin: 2px;
+    padding: 2px;
+    line-height: 140%;
 }
 
 /* Do not display navigation on top of class doc */
@@ -76,12 +75,12 @@ A.qindexH:visited {
 A.qindex {
        text-decoration: none;
        font-weight: bold;
-       color: #308040;
+       color: #154374;
 }
 A.qindex:visited {
        text-decoration: none;
        font-weight: bold;
-       color: #308040
+       color: #154374;
 }
 A.qindex:hover {
        text-decoration: none;
