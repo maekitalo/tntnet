@@ -106,9 +106,9 @@ A.qindexHL:visited {
 
 A:hover { text-decoration: none; color: #C30014 }
 
-A.el { text-decoration: none; font-weight: bold; color: #308040  }
+A.el { text-decoration: none; font-weight: bold; color: #154374  }
 A.el:hover { text-decoration: none; font-weight: bold; color: #C30014 }
-A.el:visited { text-decoration: none; font-weight: bold; color: #308040 }
+A.el:visited { text-decoration: none; font-weight: bold; color: #154374 }
 
 A.elRef { font-weight: bold }
 A.code:link { text-decoration: none; font-weight: normal; color: #0000FF}
@@ -319,10 +319,10 @@ TD.tiny {
         font-size: 75%;
 }
 a {
-        color: #308040;
+        color: #154374;
 }
 a:visited {
-        color: #308040;
+        color: #154374;
 }
 .dirtab {
         padding: 4px;
@@ -440,7 +440,7 @@ HR {
 }
 
 .sidebar-major {
-        background-color:#308040;
+        background-color:#003C87;
         color:white;
         padding-bottom:7px;
         padding-top:7px;
@@ -463,15 +463,16 @@ HR {
 
 .sidebar a:hover {
         text-decoration: none;
-        color: #308040;
+        color: #154374;
 }
 
 
 .docs-page-header {
         padding:5px 10px 5px 15px;
-        color:white;
+        /*color:white;*/
+		color:#FAB900;
         font-weight:bold;
-        background:#308040;
+        background:#003C87;
         border: 1px solid gray;
         border-bottom: none;
         -moz-border-radius: 12px 12px 0px 0px;
@@ -518,7 +519,8 @@ div.topheader2 {
         margin-top:10px;
         background:#003c87;
         font-size:30px;
-        color:white;
+        /*color:white;*/
+		color:#fab900;
         font-weight:bold;
         padding:15px 0px 17px 20px;
 }
@@ -530,7 +532,8 @@ div.logo {
 }
 
 div.topmenu {
-        color:white;
+        /*color:white;*/
+		color:#fab900;
         background:#003c87;
         border-top:1px solid rgb(140, 163, 153);
         padding:5px 10px 5px 10px;
