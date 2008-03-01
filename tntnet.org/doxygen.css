@@ -6,7 +6,7 @@ BODY,TD {
     font-size: 90%;
 }
 H1 {
-	color:#f7800a;
+	color:#ea7400;
 	//color: #154374;
     background-color: #f0f0f0;
     border: 1px solid #CCCCCC;
@@ -20,7 +20,7 @@ H2 {
     font-size: 150%;
 	font-weight:bold;
     //color: #154374;
-	color:#f7800a;
+	color:#ea7400;
     padding-left: 24px;
     background: url(section_head.png) no-repeat left center;
     position: relative;
@@ -431,7 +431,7 @@ HR {
 }
 
 .anchor {
-	color:#f7800a;
+	color:#ea7400;
 }
 
 .sidebar    {
@@ -467,7 +467,7 @@ HR {
 
 .sidebar a {
         text-decoration: none;
-        color:#f27b07;
+        color:#ea7400;
 }
 
 .sidebar a:hover {
@@ -498,7 +498,7 @@ HR {
 }
 
 .docs-page-body a {
-    color:#f7800a;
+    color:#ea7400;
 }
 
 .docs-page-body ul {
