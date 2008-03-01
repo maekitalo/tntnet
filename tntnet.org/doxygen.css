@@ -6,7 +6,8 @@ BODY,TD {
        font-size: 90%;
 }
 H1 {
-       color: #308040;
+       #color: #308040;
+       color:#154374;
        background-color: #f0f0f0;
        border: 1px solid #CCCCCC;
        padding-bottom:7px;
