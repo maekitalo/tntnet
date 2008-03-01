@@ -6,8 +6,8 @@ BODY,TD {
     font-size: 90%;
 }
 H1 {
-	/*color:#f7800a;*/
-	color: #154374;
+	color:#f7800a;
+	//color: #154374;
     background-color: #f0f0f0;
     border: 1px solid #CCCCCC;
     padding-bottom:7px;
@@ -19,8 +19,8 @@ H1 {
 H2 {
     font-size: 150%;
 	font-weight:bold;
-    color: #154374;
-	/*color:#f7800a;*/
+    //color: #154374;
+	color:#f7800a;
     padding-left: 24px;
     background: url(section_head.png) no-repeat left center;
     position: relative;
@@ -32,6 +32,7 @@ H3 {
 CAPTION {
         font-weight: bold
 }
+
 DIV.qindex {
     width: 100%;
     background-color: #f0f0f0;
@@ -107,7 +108,7 @@ A.qindexHL:visited {
         color: #ffffff;
 }
 
-A:hover { text-decoration: none; color: #C30014 }
+A:hover { text-decoration: none; /*color: #C30014;*/ }
 
 A.el { text-decoration: none; font-weight: bold; color: #154374  }
 A.el:hover { text-decoration: none; font-weight: bold; color: #C30014 }
@@ -429,6 +430,9 @@ HR {
         position: relative;
 }
 
+.anchor {
+	color:#f7800a;
+}
 
 .sidebar    {
         float: left;
@@ -463,6 +467,7 @@ HR {
 
 .sidebar a {
         text-decoration: none;
+        color:#f27b07;
 }
 
 .sidebar a:hover {
@@ -490,6 +495,10 @@ HR {
         border-top: none;
         -moz-border-radius: 0px 0px 12px 12px;
         height:11em;
+}
+
+.docs-page-body a {
+    color:#f7800a;
 }
 
 .docs-page-body ul {
