@@ -6,7 +6,8 @@ BODY,TD {
     font-size: 90%;
 }
 H1 {
-	color:#f7800a;
+	/*color:#f7800a;*/
+	color: #154374;
     background-color: #f0f0f0;
     border: 1px solid #CCCCCC;
     padding-bottom:7px;
@@ -18,8 +19,8 @@ H1 {
 H2 {
     font-size: 150%;
 	font-weight:bold;
-    /*color: #154374;*/
-	color:#f7800a;
+    color: #154374;
+	/*color:#f7800a;*/
     padding-left: 24px;
     background: url(section_head.png) no-repeat left center;
     position: relative;
@@ -446,7 +447,7 @@ HR {
 }
 
 .sidebar-major {
-        background-color:#003C87;
+        background-color:#003687;
         color:white;
         padding-bottom:7px;
         padding-top:7px;
@@ -509,12 +510,12 @@ body {
 }
 
 div.topheader {
-        background:#4164a5;
+        background:#3861a2;
         margin-bottom:20px;
 }
 
 div.topheader1 {
-        background:#82a0cd;
+        background:#708dc6;
         text-align:right;
         color:white;
         padding:0.8em;
@@ -522,7 +523,7 @@ div.topheader1 {
 
 div.topheader2 {
         margin-top:10px;
-        background:#003c87;
+        background:#003687;
         font-size:30px;
         color:white;
         font-weight:bold;
@@ -537,7 +538,7 @@ div.logo {
 
 div.topmenu {
         color:white;
-        background:#003c87;
+        background:#003687;
         border-top:1px solid #4164a5;
         padding:5px 10px 5px 10px;
 }
