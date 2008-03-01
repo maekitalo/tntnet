@@ -503,12 +503,12 @@ body {
 }
 
 div.topheader {
-        background:#78B060;
+        background:#4164a5;
         margin-bottom:20px;
 }
 
 div.topheader1 {
-        background:#C0E080;
+        background:#82a0cd;
         text-align:right;
         color:white;
         padding:0.8em;
@@ -516,7 +516,7 @@ div.topheader1 {
 
 div.topheader2 {
         margin-top:10px;
-        background:#308040;
+        background:#003c87;
         font-size:30px;
         color:white;
         font-weight:bold;
@@ -531,7 +531,7 @@ div.logo {
 
 div.topmenu {
         color:white;
-        background:#308040;
+        background:#003c87;
         border-top:1px solid rgb(140, 163, 153);
         padding:5px 10px 5px 10px;
 }
