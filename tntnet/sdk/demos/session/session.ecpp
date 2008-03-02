@@ -33,6 +33,16 @@
   unsigned rp(0);
 
 </%request>
+<%thread>
+
+  unsigned t(0);
+
+</%thread>
+<%thread scope="page">
+
+  unsigned tp(0);
+
+</%thread>
 
 Sessioncounter (component): <$ ++s $><br>
 Sessioncounter (application): <$ ++sa $><br>
@@ -41,6 +51,8 @@ Applicationcounter (component): <$ ++a $><br>
 Applicationcounter (page): <$ ++ap $><br>
 Requestcounter (component): <$ ++r $><br>
 Requestcounter (page): <$ ++rp $><br>
+Threadcounter (component): <$ ++t $><br>
+Threadcounter (page): <$ ++tp $><br>
 
 <div style="background-color:#ffa">
 <& subcomp &>
@@ -66,6 +78,11 @@ Requestcounter (page): <$ ++rp $><br>
     unsigned r(0);
 
   </%request>
+  <%thread>
+
+    unsigned t(0);
+
+  </%thread>
 
   <h1>Subcomponent</h1>
 
@@ -75,5 +92,7 @@ Requestcounter (page): <$ ++rp $><br>
   Applicationcounter (page): <$ ++ap $><br>
   Requestcounter (component): <$ ++r $><br>
   Requestcounter (page): <$ ++rp $><br>
+  Threadcounter (component): <$ ++t $><br>
+  Threadcounter (page): <$ ++tp $><br>
 
 </%def>
