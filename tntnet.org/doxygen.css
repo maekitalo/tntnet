@@ -486,19 +486,22 @@ HR {
 
 .news-article {
     text-align:left;
+    border: 1px solid #CCCCCC;
+    -moz-border-radius: 12px 12px 0px 0px;
 }
 
 .news-article-header {
     background-color:#f0f0f0;
-    //border: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
     -moz-border-radius: 12px 12px 0px 0px;
     padding-left:16px;
-    padding-top:6px;
-    padding-bottom:4px;
+    padding-top:4px;
+    padding-bottom:2px;
 }
 
 .news-article-header b {
-    font-size: 120%;color:#ea7400;
+    font-size: 120%;
+    color:#ea7400;
 }
 
 .news-article-header i {
@@ -506,7 +509,7 @@ HR {
 }
 
 .news-article-body {
-    padding-top:7px;
+    padding:7px;
 }
 
 .docs-page-header {
