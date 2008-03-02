@@ -475,6 +475,13 @@ HR {
         color: #154374;
 }
 
+.news-table {
+    text-align:left;
+}
+
+.news-table-date {
+    width:110; 
+}
 
 .docs-page-header {
         padding:5px 10px 5px 15px;
