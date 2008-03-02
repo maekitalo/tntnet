@@ -488,6 +488,7 @@ HR {
     text-align:left;
     border: 1px solid #CCCCCC;
     -moz-border-radius: 12px 12px 0px 0px;
+    width:100%;
 }
 
 .news-article-header {
