@@ -148,7 +148,12 @@ namespace tnt
     else
     {
       log_debug("send " << body.size() << " bytes body");
-      socket << body;
+      // We send in chunks just to leave to ostream operator from time to time.
+      // There are iostream libraries, which do have a global lock, which
+      // block other iostreams while writing.
+      const unsigned chunkSize = 65536;
+      for (unsigned n = 0; n < body.size(); n += chunkSize)
+        socket.write(body.data() + n, std::min(static_cast<unsigned>(body.size() - n), chunkSize));
     }
   }
 
