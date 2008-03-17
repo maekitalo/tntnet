@@ -163,6 +163,8 @@ namespace tnt
     }
     httpcookies.clear();
     encodingRead = false;
+    username.clear();
+    password.clear();
 
     releaseLocks();
 
