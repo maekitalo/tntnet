@@ -107,7 +107,7 @@ namespace tnt
   void OpensslServer::installCertificates(const char* certificateFile, const char* privateKeyFile)
   {
     log_debug("use certificate file " << certificateFile);
-    if (SSL_CTX_use_certificate_file(ctx, certificateFile, SSL_FILETYPE_PEM) <= 0)
+    if (SSL_CTX_use_certificate_chain_file(ctx, certificateFile) <= 0)
       checkSslError();
 
     log_debug("use private key file " << privateKeyFile);
