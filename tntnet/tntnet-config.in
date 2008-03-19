@@ -33,16 +33,16 @@ template()
   then
     cat <<EOF
 # map /webapp/comp.* or /webapp/comp to comp@webapp
-MapUrl      /(.+)/([^.]+)(\..+)?  \$2@\$1
+MapUrl      ^/(.+)/([^.]+)(\..+)?  \$2@\$1
 # map /comp.* or /comp to comp@comp
-MapUrl      /([^.]+)(\..+)?       \$1@\$1
+MapUrl      ^/([^.]+)(\..+)?       \$1@\$1
 EOF
   else
     cat <<EOF
 # map / to $1@$1
-MapUrl      /$   $1@$1
+MapUrl      ^/$   $1@$1
 # map /comp.* or /comp to comp@$1
-MapUrl      /([^.]+)(\..+)?   \$1@$1
+MapUrl      ^/([^.]+)(\..+)?   \$1@$1
 EOF
   fi
 
