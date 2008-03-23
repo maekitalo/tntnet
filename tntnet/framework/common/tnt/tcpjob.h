@@ -34,6 +34,7 @@ namespace tnt
       Jobqueue& queue;
 
       void accept();
+      void regenerateJob();
 
     public:
       Tcpjob(Tntnet& app, const cxxtools::net::Server& listener_, Jobqueue& queue_)
@@ -57,6 +58,7 @@ namespace tnt
       Jobqueue& queue;
 
       void accept();
+      void regenerateJob();
 
     public:
       SslTcpjob(Tntnet& app, const SslServer& listener_, Jobqueue& queue_)

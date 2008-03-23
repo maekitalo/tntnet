@@ -88,12 +88,12 @@ namespace tnt
 
       log_debug("got job - fd=" << j->getFd());
 
-      std::iostream& socket = j->getStream();
-      if (Tntnet::shouldStop())
-        break;
-
       try
       {
+        std::iostream& socket = j->getStream();
+        if (Tntnet::shouldStop())
+          break;
+
         bool keepAlive;
         do
         {

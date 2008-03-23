@@ -78,17 +78,22 @@ namespace tnt
   class GnuTlsStream : public cxxtools::net::Stream
   {
       gnutls_session session;
+      bool connected;
 
     public:
       GnuTlsStream()
-        : session(0)
+        : session(0),
+          connected(false)
         { }
 
       explicit GnuTlsStream(int fd)
-        : cxxtools::net::Stream(fd)
+        : cxxtools::net::Stream(fd),
+          connected(false)
         { }
 
       explicit GnuTlsStream(const GnuTlsServer& server)
+        : session(0),
+          connected(false)
         { accept(server); }
 
       ~GnuTlsStream();
@@ -96,7 +101,7 @@ namespace tnt
       void accept(const GnuTlsServer& server);
       int sslRead(char* buffer, int bufsize) const;
       int sslWrite(const char* buffer, int bufsize) const;
-      void shutdown() const;
+      void shutdown();
   };
 
   class GnuTls_streambuf : public std::streambuf

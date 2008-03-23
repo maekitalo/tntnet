@@ -85,14 +85,33 @@ namespace tnt
     touch();
   }
 
+  void Tcpjob::regenerateJob()
+  {
+    if (!Tntnet::shouldStop())
+      queue.put(new Tcpjob(getRequest().getApplication(), listener, queue));
+    else
+      log_info("tntnet stopping - no new job is generated");
+  }
+
   std::iostream& Tcpjob::getStream()
   {
     if (socket.cxxtools::net::Socket::bad())
     {
-      accept();
-      log_debug("connection accepted");
-      queue.put(new Tcpjob(getRequest().getApplication(), listener, queue));
+      try
+      {
+        accept();
+        log_debug("connection accepted");
+      }
+      catch (const std::exception& e)
+      {
+        regenerateJob();
+        log_debug("exception occured in accept: " << e.what());
+        throw;
+      }
+
+      regenerateJob();
     }
+
     return socket;
   }
 
@@ -135,17 +154,33 @@ namespace tnt
     touch();
   }
 
+  void SslTcpjob::regenerateJob()
+  {
+    if (!Tntnet::shouldStop())
+      queue.put(new SslTcpjob(getRequest().getApplication(), listener, queue));
+    else
+      log_info("tntnet stopping - no new ssl-job is generated");
+  }
+
   std::iostream& SslTcpjob::getStream()
   {
     if (socket.cxxtools::net::Socket::bad())
     {
-      accept();
-      log_debug("connection accepted");
-      if (!Tntnet::shouldStop())
-        queue.put(new SslTcpjob(getRequest().getApplication(), listener, queue));
-      else
-        log_info("tntnet stopping - no new ssl-job is generated");
+      try
+      {
+        accept();
+        log_debug("connection accepted");
+      }
+      catch (const std::exception& e)
+      {
+        regenerateJob();
+        log_debug("exception occured in accept: " << e.what());
+        throw;
+      }
+
+      regenerateJob();
     }
+
     return socket;
   }
 
@@ -165,59 +200,6 @@ namespace tnt
   }
 
 #endif // USE_SSL
-
-#ifdef USE_GNUTLS
-  ////////////////////////////////////////////////////////////////////////
-  // GnuTlsTcpjob
-  //
-  void GnuTlsTcpjob::accept()
-  {
-    log_debug("accept (ssl)");
-    accept();
-    log_debug("connection accepted (ssl)");
-
-    struct sockaddr_storage s = socket.getSockAddr();
-    struct sockaddr_storage sockaddr;
-    memcpy(&sockaddr, &s, sizeof(sockaddr));
-
-    getRequest().setPeerAddr(socket.getPeeraddr());
-    getRequest().setServerAddr(sockaddr);
-    getRequest().setSsl(true);
-
-    setRead();
-    touch();
-  }
-
-  std::iostream& GnuTlsTcpjob::getStream()
-  {
-    if (socket.cxxtools::net::Socket::bad())
-    {
-      accept();
-      log_debug("connection accepted");
-      if (!Tntnet::shouldStop())
-        queue.put(new GnuTlsTcpjob(getRequest().getApplication(), listener, queue));
-      else
-        log_info("tntnet stopping - no new ssl-job is generated");
-    }
-    return socket;
-  }
-
-  int GnuTlsTcpjob::getFd() const
-  {
-    return socket.getFd();
-  }
-
-  void GnuTlsTcpjob::setRead()
-  {
-    socket.setTimeout(getSocketReadTimeout());
-  }
-
-  void GnuTlsTcpjob::setWrite()
-  {
-    socket.setTimeout(getSocketWriteTimeout());
-  }
-
-#endif // USE_GNUTLS
 
   //////////////////////////////////////////////////////////////////////
   // Jobqueue

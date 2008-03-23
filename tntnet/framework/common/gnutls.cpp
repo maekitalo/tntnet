@@ -155,13 +155,16 @@ namespace tnt
   {
     if (session)
     {
-      try
+      if (connected)
       {
-        shutdown();
-      }
-      catch (const std::exception& e)
-      {
-        log_error("error shutting down ssl-conneciton: " << e.what());
+        try
+        {
+          shutdown();
+        }
+        catch (const std::exception& e)
+        {
+          log_error("error shutting down ssl-conneciton: " << e.what());
+        }
       }
 
       log_debug("gnutls_deinit(session)");
@@ -210,6 +213,7 @@ namespace tnt
         log_debug("gnutls_handshake");
         ret = gnutls_handshake(session);
       } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
+      connected = true;
     }
     else
     {
@@ -222,7 +226,10 @@ namespace tnt
         log_debug("gnutls_handshake => " << ret);
 
         if (ret == 0)
+        {
+          connected = true;
           break;
+        }
 
         if (ret != GNUTLS_E_INTERRUPTED && ret != GNUTLS_E_AGAIN)
           throw GnuTlsException("gnutls_handshake", ret);
@@ -321,7 +328,7 @@ namespace tnt
     return ret;
   }
 
-  void GnuTlsStream::shutdown() const
+  void GnuTlsStream::shutdown()
   {
     int ret;
 
@@ -333,6 +340,7 @@ namespace tnt
         log_debug("gnutls_bye");
         ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
       } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
+      connected = false;
     }
     else
     {
@@ -345,7 +353,10 @@ namespace tnt
         log_debug("gnutls_bye => " << ret);
 
         if (ret == 0)
+        {
+          connected = false;
           break;
+        }
 
         if (ret < 0
           && ret != GNUTLS_E_INTERRUPTED
