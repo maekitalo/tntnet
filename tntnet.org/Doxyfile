@@ -417,7 +417,13 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ./pages/main.txt ./pages/docs.txt ./pages/license.txt ./pages/news.txt ./pages/features.txt ./pages/people.txt ./pages/contact.txt ./pages/sigslot.txt ./pages/byteorder.txt ./pages/subversion.txt ./pages/download.txt ./pages/logging.txt ./pages/cxxtools.txt ./pages/tntdb.txt ./pages/tntreader.txt ../tntnet/framework/common ../cxxtools/include ../tntdb/include ./pages/howto/upload.txt ./pages/howto/images.txt
+INPUT                  = ./pages/main.txt ./pages/docs.txt ./pages/license.txt \
+    ./pages/news.txt ./pages/features.txt ./pages/people.txt ./pages/contact.txt \
+    ./pages/sigslot.txt ./pages/byteorder.txt ./pages/subversion.txt \
+    ./pages/download.txt ./pages/logging.txt ./pages/cxxtools.txt ./pages/tntdb.txt \
+    ./pages/tntreader.txt ../tntnet/framework/common ../cxxtools/include \
+    ../tntdb/include ./pages/howto/upload.txt ./pages/howto/images.txt \
+    ./pages/example/hello.ecpp.txt ./pages/example/calc.ecpp.txt
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
