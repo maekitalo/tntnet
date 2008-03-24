@@ -15,6 +15,23 @@ Tntdb is a c++-class-library for easy database-access. It implements a simple da
     <li>safe - use prepared statements with named parameters</li>
     <li>fast - only a thin layer</li>
 </ul>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+</div>
 
 \endhtmlonly
 
