@@ -116,6 +116,8 @@
       </tr>
     </table>
 
+</div>
+
 \endhtmlonly
 
 */

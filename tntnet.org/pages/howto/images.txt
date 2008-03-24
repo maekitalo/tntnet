@@ -1,0 +1,121 @@
+/** \page howto_images HowtoImages
+
+@htmlinclude sidebar.html
+
+\htmlonly
+<div id="content">
+
+<h2>Sending images with Tntnet</h2>
+
+<p>This document describes, how to send images with Tntnet</p>
+
+<p>In webapplications there is often the need to send images to the client. The images are used as background in webpages, product-photos in a webshop, logos of your company or just photos from your last journey.</p>
+
+<p>Tntnet offers several methods sending images. Which method you choose depends on your needs.</p>
+
+<p>The main problem, when sending images is, that the webserver needs to send the right content-type-header. But this is almost no problem with Tntnet.</p>
+
+<h2>Statically compiled images</h2>
+
+<p>The most simple way to use images in your application is to compile these images into your application. The ecpp-compiler has a special mode, which does exactly that. With the switch <i>-b</i>, you tell the ecpp-compiler, that the source file is binary and the component needs to send the file as is, whithout further processing. Keep in mind, that a image might contain some bytecombinations like e.g. '<$' or '<{, which ecppc would otherwise interpret as a start-tag for some special handling.</p>
+
+<p>Compiling a image generates a tntnet-component using the same name, as the image without suffix (e.g. <i>ecppc -b mylogo.gif</i> generates a component with the name <i>mylogo</i> in the file mylogo.cpp).</p>
+
+<p>The switch <i>-b</i> has also other effects. Ecppc will look into the mime-database (normally /etc/mime.types) to find out the right mime-type and generates the right content-type-header.</p>
+
+<p>Also it handles images as static content and tries to convince the browser to cache the result. This is done by sending a last-modified-header, which is generated from the modified-date from the source-file. Normally the browser will send a header "If-modified-since"-header with this date and if the server answer with return-code 304 (not-modified), as Tntnet will do, the browser will cache the result.</p>
+
+<p>There is a disadvantages of doing it that way: The memory-overhead is quite significant, because for every image a c++-class is generated. Depending of the platform, the overhead is several k-bytes.</p>
+
+<h2>Multi-image-classes</h2>
+
+<p>Many webapplications has many small images. The memory-overhead accumulates for every image. To prevent this, the ecpp-compiler ecppc has onother mode: multibinary components. This is enabled with the switch -bb. Passing multiple images to ecppc using this switch, generates a single component with the default name <i>images</i>. The name can be overridden with <i>-n</i></p>
+
+<p>When called, the component needs the actual image-name as a parameter. This is passed through the path-info-parameter in MapUrl in your tntnet.conf. You need to add a line in tntnet.conf, which passes the right image-name to the component.</p>
+
+<p>Here is a example:</p>
+
+<pre>
+MapUrl  /(.*).jpg  images@myapp  $1
+</pre>
+
+<p>The result is, that the url "/logo.jpg" is passed to the component <i>images@myapp</i> with the path-info <i>logo</i>. The multi-binary image-component looks, if it has a image with the name logo and sends it, if found. If it is not found, it returns DECLINED, which tells Tntnet to try the next MapUrl-entry.</p>
+
+<p>If you mix jpg- and png-images in this multi-binary image-component, the component won't make any distinction between them. This might result in the unusual effect, that this "/logo.jpg" might result in sending logo.png with the content-type "image/png", but this normally don't confuse the browser. It just looks unusual.</p>
+
+<h2>Sending images from other sources</h2>
+
+<p>The methods above are suitable for static images. But if you have e.g. a photo-album or a webshop with images from your products, it is not very feasible to compile every image into your binary. If you images change, you need to compile and deploy a new application and the application grow with each image, you put into your application. There need to be another way to do it.</p>
+
+<p>When a request arrives, Tntnet just looks for suitable MapUrl-rules and calls whichever component matches the rule. It is up to the component to generate the content and manipulate the http-headers. You may write a component, which sets the content-type to something else than the default "text/html" and write the data directly to the outputstream. There are 2 things, you need to know: How to set the content-type and how to send data to the outputstream.</p>
+
+<p>Luckily both tasks are not that difficult. To set the content-type, use the method <i>setContentType(const std::string&)</i> from your reply-object like this:</p>
+
+<pre>
+&lt;%cpp&gt;
+  reply.setContentType("image/jpg");
+&lt;/%cpp&gt;
+</pre>
+
+<p>The second problem is also easily solved. You may either use the tags <i>&lt;$$ ... $&gt;</i> or use the method <i>out()</i> from your reply-object, which returns a reference to the std::ostream&amp;, which receives the data. Keep in mind, that <i>&lt;$ ... $&gt;</i> will translate some special characters like &lt; into the corresponding html-entity, which would be fatal for your binary-data. The double-$-symbol prevents this.</p>
+
+<p>Here is a example, how to use this technic:</p>
+
+<pre>
+&lt;%cpp&gt;
+  std::string myimagedata;
+  // fill myimagedata with a jpg-image e.g. by reading it from a database
+  reply.setContentType("image/jpg");
+  reply.out() &lt;&lt; myimagedata;
+&lt;/%cpp&gt;
+</pre>
+
+<p>If you really read the image from a std::ifstream, it will be easier to copy the ifstream-data directly to the output-stream, which is easily done with the standard-operator <i>std::ostream&amp; operator&lt;&lt; (std::ostream&amp;, std::streambuf*)</i> like this:</p>
+
+<pre>
+&lt;%cpp&gt;
+  std.:ifstream imagefile("logo.jpg");
+  if (!imagefile)
+    return DECLINED;  // decline processing, if file can't be opened
+  reply.setContentType("image/jpg");
+  reply.out() &lt;&lt; imagefile.rdbuf();  // rdbuf() returns a std::streambuf* to the file
+&lt;/%cpp&gt;
+</pre>
+
+<p>A warning at the end: you have to be very careful, not to add any whitespace from your component. Everything outside of some ecpp-tags like &lt;cpp&gt; will be sent as is. In the examples above the &lt;cpp&gt;-tag has to be on the first line and the corresponding end-tag on the very last line. You normally need a &lt;pre&gt;-block for your #include-statements for including e.g. &lt;fstream&gt;, but you need to make sure, there is no blank line between these blocks.</p>
+
+<p>All &lt;/something&gt;-end-tags have a special rule: They ignore a following linefeed. These examples produce the same output:</p>
+
+<pre>
+&lt;%cpp&gt;
+  reply.out() &lt;&lt; "hello "
+&lt;/%cpp&gt;
+&lt;%cpp&gt;
+  reply.out() &lt;&lt; "world
+&lt;/%cpp&gt;
+</pre>
+
+<pre>
+&lt;%cpp&gt;
+  reply.out() &lt;&lt; "hello "
+&lt;/%cpp&gt;&lt;%cpp&gt;
+  reply.out() &lt;&lt; "world
+&lt;/%cpp&gt;
+</pre>
+
+But this adds a line-feed between the two fameous words:
+<pre>
+&lt;{
+  reply.out() &lt;&lt; "hello "
+}&lt;
+&lt;{
+  reply.out() &lt;&lt; "world
+}&lt;
+</pre>
+
+<p>This is not important for html-output, but for binary-data this will be significant.</p>
+
+</div>
+\endhtmlonly
+
+*/

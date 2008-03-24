@@ -19,8 +19,11 @@
 				<div class="docs-page-body">
 					<ul>
 					    <li><a href="download.html">Download</a></li>
-                        <li><a href="examplehello.html">Example "Hello"</a></li>
-                        <li><a href="examplecalc.html">Example "Calc"</a></li>
+                        <li><a href="example/hello.html">Example "Hello"</a></li>
+                        <li><a href="example/calc.html">Example "Calc"</a></li>
+					    <li><a href="download/tntnet-1.6.1/doc/quick-start-guide.pdf">Tntnet quick start guide (pdf)</a></li>
+					    <li><a href="download/tntnet-1.6.1/doc/tntnet.pdf">Tntnet users guide (pdf)</a></li>
+					    <li><a href="download/tntnet-1.6.1/doc/tntnet-configuration.pdf">Tntnet configuration guide (pdf)</a></li>
 					</ul>
 			</div>
 		</td>
@@ -40,9 +43,9 @@
 			<div class="docs-page-header">Concepts</div>
 			<div class="docs-page-body">
 				<ul>
-				<li><a href="logging.html">Logging</a></li>
-				<li><a href="images.html">Images</a></li>
-				<li><a href="upload.html">Uploading files</a></li>
+				    <li><a href="logging.html">Logging</a></li>
+                    <li><a href="howto_upload.html">Howto upload files with Tntnet</a></li>
+                    <li><a href="howto_images.html">Howto send images with Tntnet</a></li>
 				</ul>
 			</div>
 		</td>

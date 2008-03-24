@@ -1,0 +1,21 @@
+/** \page tntdb Tntdb
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id="content">
+    <h2>Tntdb overview</h2>
+
+    <p>
+Tntdb is a c++-class-library for easy database-access. It implements a simple database independent layer, which loads drivers at runtime. Currently drivers for postgresql, sqlite3, mysql and oracle are provided. </p>
+
+<p>The main goals are: </p>
+<ul>
+    <li>easy to use</li>
+    <li>safe - use prepared statements with named parameters</li>
+    <li>fast - only a thin layer</li>
+</ul>
+
+\endhtmlonly
+
+*/

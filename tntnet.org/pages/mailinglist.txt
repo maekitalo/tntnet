@@ -1,0 +1,14 @@
+/** \page mailinglist Mailinglist
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id="content">
+
+    <h2>Mailinglist</h2>
+
+    <p>A mailinglist for tntnet and related projects is available in <a href="http://lists.sourceforge.net/lists/listinfo/tntnet-general">sourceforge</a></p>
+
+\endhtmlonly
+
+*/
