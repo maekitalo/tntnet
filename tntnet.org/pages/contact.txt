@@ -24,7 +24,16 @@
 
         <p>
         Tommi M&auml;kitalo<br>
-        e-mail: <a href="mailto:tommi@tntnet.org">tommi@tntnet.org</a>
+<script type="text/javascript">
+    <!--
+ function m(u, t, d)
+ {
+   var e = u + '@' + d + "." + t;
+   document.write("e-mail: <a href=\"mailto:" + e + "\">" + e + "</a>");
+ }
+ m("tommi.maekitalo", "org", "tntnet");
+    //-->
+</script>
         </p>
     </div>
 
