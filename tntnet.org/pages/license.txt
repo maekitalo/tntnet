@@ -6,6 +6,8 @@
 
     <div id="content">
 
+        <h2>License</h2>
+
         <p>
             Tntnet is licensed under the <b>GNU Library General
             Public License (LGPL)</b> for all platforms. The intent in licensing
