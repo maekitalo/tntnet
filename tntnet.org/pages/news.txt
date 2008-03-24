@@ -8,39 +8,18 @@
     <table cellspacing="0" class="news-article">
         <tr>
             <th class="news-article-header" >
-                <b>New stable versions, cxxtools 1.4.6, tntnet 1.6.1, tntdb 0.9.5</b>
+                <b>stable version tntdb 1.0.0</b>
                 <br/>
-                <i>Posted on December 12, 2007</i>
+                <i>Posted on February 24, 2008</i>
             </th>
         </tr>
         <tr>
             <td class="news-article-body">
-                The features released in the development releases are considered stable
-                now.
-        
-                Cxxtools have got some feature enhancements like support for signal-slot
-                and wrappers for atomic functions. Locking in logger-classes is reduced, so
-                that threads do not need to wait for other threads when logging. Logging may be
-                passed to a subprocess, which can run under a different user, when the main
-                process starts as root.
-        
-                Tntdb has support for blobs. And this time the archive is complete. The
-                0.9.4 release lacked some important files, so if you had problems with that it
-                was purely my fault ;-).
-        
-                The main enhancement in tntnet was the move of most of the tntnet-code into
-                the library, so it is easy to use tntnet in applications. Also a wrapper for
-                fork was added, since it is somewhat dangerous to start subprocesses without
-                that, since subprocesses will block restarts, since they inherit listener
-                ports. To fork subprocesses in tntnet-applications use this:
-        
-                <pre>
-    if (request.getApplication().forkProcess())
-    {
-        // here we are in child process
-        exit(0);  // this or exec... is mandatory!!!
-    }
-                </pre>
+<p><a href="tntdb.html">Tntdb</a> has reached version 1.0.0. That means, that tntdb does not have
+any known bugs and the API as well as the ABI will be kept as stable as
+possible.</p>
+
+
             </td>
         </tr>
     </table>
@@ -50,59 +29,1454 @@
     <table cellspacing="0" class="news-article">
         <tr>
             <th class="news-article-header" >
-                <b>New development version of tntnet 1.6.0.6</b>
+                <b>new stable versions, cxxtools 1.4.6, tntnet 1.6.1, tntdb 0.9.5</b>
                 <br/>
-                <i>Posted on November 11, 2007</i>
+                <i>Posted on December 16, 2007</i>
             </th>
         </tr>
         <tr>
             <td class="news-article-body">
-                After some small fixes tntnet compiles with the Sun Studio compiler.
-                A chapter about stand alone webapplications with tntnet was added into the
-                documentation. After changing fonts in the documents, filesizes got much
-                smaller.
+<p>The features released in the development releases are considered stable
+now.</p>
+
+<p>Cxxtools have got some feature enhancements like support for signal-slot
+and wrappers for atomic functions. Locking in logger-classes is reduced, so
+that threads do not need to wait for other threads when logging. Logging may be
+passed to a subprocess, which can run under a different user, when the main
+process starts as root.</p>
+
+<p>Tntdb has support for blobs. And this time the archive is complete. The
+0.9.4 release lacked some important files, so if you had problems with that it
+was purely my fault ;-).</p>
+
+<p>The main enhancement in tntnet was the move of most of the tntnet-code into
+the library, so it is easy to use tntnet in applications. Also a wrapper for
+fork was added, since it is somewhat dangerous to start subprocesses without
+that, since subprocesses will block restarts, since they inherit listener
+ports. To fork subprocesses in tntnet-applications use this:
+</p>
+
+<pre>
+  if (request.getApplication().forkProcess())
+  {
+    // here we are in child process
+    exit(0);  // this or exec... is mandatory!!!
+  }
+</pre>
+
+
             </td>
         </tr>
     </table>
-    
+
     <br/>
-    
+
     <table cellspacing="0" class="news-article">
         <tr>
             <th class="news-article-header" >
-                <b>New development versions of cxxtools 1.4.5.3</b>
+                <b>new development version of tntnet 1.6.0.6</b>
+                <br/>
+                <i>Posted on November 17, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>After some small fixes tntnet compiles with the Sun Studio compiler.
+A chapter about stand alone webapplications with tntnet was added into the
+documentation. After changing fonts in the documents, filesizes got much
+smaller.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>new development versions of cxxtools 1.4.5.3</b>
                 <br/>
                 <i>Posted on November 16, 2007</i>
             </th>
         </tr>
         <tr>
             <td class="news-article-body">
-                This adds functions for handling endianess and wrappers for fast atomic
-                operations for various processors.
-            </td>
-        </tr>
-    </table>
-    
-    <br/>
-    
-    <table cellspacing="0" class="news-article">
-        <tr>
-            <th class="news-article-header" >
-                <b>New development versions of cxxtools 1.4.5.1 and tntnet 1.6.0.4</b>
-                <br/>
-                <i>Posted on October, 10 2007</i>
-            </th>
-        </tr>
-        <tr>
-            <td class="news-article-body">
-                Cxxtools gets a fast template based signal-slot implementation from Marc.
-                Libltdl is replaced by a simple dlopen-wrapper. The smart pointer gets an
-                additional destroy policy.
+<p>This adds functions for handling endianess and wrappers for fast atomic
+operations for various processors.</p>
+
+
             </td>
         </tr>
     </table>
 
     <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>new development versions of cxxtools 1.4.5.1 and tntnet 1.6.0.4</b>
+                <br/>
+                <i>Posted on October 21, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>Cxxtools gets a fast template based signal-slot implementation from Marc.
+Libltdl is replaced by a simple dlopen-wrapper. The smart pointer gets an
+additional destroy policy.</p>
+
+<p>Most of the code of tntnet is moved to libtntnet to make it possible to
+embed tntnet in applications.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>tntdb updated to 0.6.4</b>
+                <br/>
+                <i>Posted on October 06, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>Tntdb has got a driver for oracle. Now it supports sqlite, mysql, postgresql
+and oracle. The driver is not compiled by default, but must be activated by
+passing --with-oracle to the configure-script.
+</p>
+
+<p>Another fine update is support for decimals (thank you Mark Write).</p>
+
+<p>And for those of you, who misses tntdb 0.6.3: I once packed a 0.6.3, but I
+discovered some bugs before announcement, so I decided just to skip it.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>new develpment version 1.6.0.3 of tntnet</b>
+                <br/>
+                <i>Posted on August 28, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>This version adds a parameter-scope to components, which receives named
+parameters of any type when called. Also the generated class gets a prefix, so
+that reserved words like "template" are now allowed for component names.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>new develpment version 1.6.0.2 of tntnet</b>
+                <br/>
+                <i>Posted on July 13, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>In this version the locale can be set in components with SET_LANG
+(e.g. SET_LANG("de_DE") ). Http-classes are restructured.
+HttpReply::notAuthorized and HttpReply::redirect throw exceptions to make it
+easy to call them in subcomponents.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>new version 1.4.5 of cxxtools</b>
+                <br/>
+                <i>Posted on July 09, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>A policy-based smart-pointer-class is included here. I have used this implementation
+in tntdb for some time and copied it to many projects since then. Therefore I decided
+to finally include it into my toolbox. The default policy is intrusive reference counted,
+which is the safest model. The objects held need to have methods "addRef" and "release".
+This is easily done by using cxxtools::RefCounted as a (additional?) base-class.</p>
+
+<p>I have rewritten the parser for ini-files. The new parser is much cleaner. The
+parser is separated from the data-structure, which makes it possible to use the
+parser separately. The interface to the class has changed heavily, so you need to
+port your application to the new class, if you have used this part of cxxtools.</p>
+
+<p>I also wrote a parser for property-files, which are quite popular in the java-world.
+They have the advantage to support hieracial structures, while beeing still easily
+readable and writable.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version tntnet 1.6.0.1</b>
+                <br/>
+                <i>Posted on July 01, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+This version adds support for HTTP basic authetication. A new tag &lt;%doc&gt; for block-comments in templates is added. Tntnet uses now standard locale instead of failing to run, if locale passed in LANG is invalid. Sessions are now valid in all urls instead of being url-specific. This was actually a bug, because it was intended initially the way, it is now.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>stable version 1.6.0 of Tntnet, version 1.4.4 of cxxtools</b>
+                <br/>
+                <i>Posted on May 28, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Here is the most stable version of Tntnet. Since Tntnet has matured since
+1.5.3 more than ever before, I decided to take a jump in the version-number.
+Thank you for the users, which greatly has helped me finding bugs and giving
+feedback for improvements.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version tntnet 1.5.3.7</b>
+                <br/>
+                <i>Posted on May 24, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+I decided to take another round before stable version. Tntnet has got some
+bugfixes in mime-type-detection. Also a minor protocol-bug when sending static
+pages is fixed.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>cooperation with FreeWRT</b>
+                <br/>
+                <i>Posted on May 12, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+We have started a cooperation with <a href="http://www.freewrt.org/">FreeWRT</a> to
+port Tntnet to this nice embedded platform. This will show, how embedded systems with
+less powerful CPUs will profit from the low cpu-usage of Tntnet. We will be at
+<a href="http://www.linuxtag.de/2007/">Linuxtag</a> in Berlin from May 30th to June 2nd 2007
+to show some results of our efforts. A presentation on June 2nd is also planned.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development versions cxxtools 1.4.3.5 and tntnet 1.5.3.4</b>
+                <br/>
+                <i>Posted on April 18, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Some serious bugs were fixed, wich resulted in a crash or hang in tntnet under high load. Some code-adjustements has been made to compile both with for Sun Studio under Solaris.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.3.3 of tntnet</b>
+                <br/>
+                <i>Posted on March 29, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+License is changed from GPL to LGPL, which allows creation of closed source webapplications. Poll is replaced with epoll on platforms where available, which improves performance significantly on boxes with high load. Urls are now decoded. Listener-threads are removed, which removes a context-switch when new connections arrive. A racing-condition is fixed, which caused tntnet to segfault on MP-boxes under high load.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.4.3.4 of cxxtools</b>
+                <br/>
+                <i>Posted on March 25, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Improve Pool-class: replace semaphore with condition and make maximum size
+settable.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.4.3.3 of cxxtools</b>
+                <br/>
+                <i>Posted on February 21, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+fix bug in cxxtools::net::Stream: partial write from os was reported as eof instead of polling socket.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.3.2 of tntnet</b>
+                <br/>
+                <i>Posted on January 26, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+A redesign of the main-application-class is the major part of this release.
+Process-handling is now in a separate class and uses the new fork(2)- and pipe(2)-wrappers
+of cxxtools 1.4.3.2.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.4.3.2 of cxxtools</b>
+                <br/>
+                <i>Posted on January 25, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+I was active this time. New small bugfixes and new features were added. These are:
+<ul>
+ <li>new wrappers for fork(2) and pipe(2)</li>
+ <li>cxxtools::Pipestream: a std::iostream using pipe(2) (look at demo/pipestream.cpp for useage for these 3 features</li>
+ <li>support for udp-broadcast</li>
+ <li>offset is settable in cxxtools::Hdostream</li>
+ <li>cxxtools::Condition::timedwait</li>
+</ul>
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.3.1 of tntnet</b>
+                <br/>
+                <i>Posted on January 10, 2007</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+I've done some tweaks and enhancements in Tntnet, which improoves usability as well as performance.
+The most major improvements are:
+<ul>
+ <li>VMapUrl for virtual host specific url-mapping</li>
+ <li>use epoll instead of poll when available, which improves scalability</li>
+ <li>option "-I dir" to specify include-directory for ecppc</li>
+ <li>building of sdk and demos can be supressed, when building tntnet</li>
+ <li>remove global factory-symbol, which removes naming-conflicts in different shared libraries</li>
+</ul>
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.4.3.1 of cxxtools</b>
+                <br/>
+                <i>Posted on December 06, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+This releases some minor fixes, I have fixed last months.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Release version 1.5.3 of tntnet</b>
+                <br/>
+                <i>Posted on September 23, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Major bug-fix to 1.5.2: POST-requests did not work at all in the default
+configuration.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Release version 0.9.0 of tntdb</b>
+                <br/>
+                <i>Posted on September 15, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+The jump in the version number indicates, that tntdb has proven
+to be stable. License changed to LGPL, so that it is usable in
+close-source applications. Compared to the previous version only
+some minor bugfixes has happened.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Release version 1.5.2 of tntnet</b>
+                <br/>
+                <i>Posted on September 12, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+It is just time to declare tntnet 1.5.2 stable. The most notable
+change is a complete set of man-pages.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Development version 1.5.2pre4 of Tntnet</b>
+                <br/>
+                <i>Posted on August 14, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Tntnet has man-pages now.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>New version 0.6.3 of Tntdb</b>
+                <br/>
+                <i>Posted on July 23, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>The main reason for this is a license-change. Postgresql is linked against
+OpenSSL and the license of tntdb is extended to allow this.
+The Sqlite3-driver got some minor fixes.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Development version 1.5.2pre3 of Tntnet</b>
+                <br/>
+                <i>Posted on July 09, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>Tntnet has now thread-scoped variables as a addition to applicatin-
+session- and request-scope. Just declare a section &lt;%thread&gt; and
+put your variables there. This is useful, e.g. for databaseconnections.
+Escpecially for sqlite3, where connections can't be used in other threads,
+than the one, who issued sqlite3_open.
+</p>
+
+<p>Tntnet handles http-headers and cookies case-insensitive know. It was
+a bug, not to do it.</p>
+
+<p>Components aren't deleted any more before the thread ends. Until know
+Tntnet had a special cleaner thread, which deleted components,
+which aren't used any more. This was not that useful, because components
+don't eat much memory and it is really a waste of time to do asyncronous
+cleanup without gaining much.</p>
+
+<p>Tntnet has new demos: calcajax and chat shows, how to use ajax with
+Tntnet; alldemos shows a (configurable) page with links to all other demos.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Release version 1.4.2 of cxxtools</b>
+                <br/>
+                <i>Posted on June 29, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>Cxxtools is now updated to 1.4.2. Not too much changes here, but
+a big step: cxxtools is LGPL now! You can link it with your closed source
+or differently licensed software.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.2pre2 of Tntnet</b>
+                <br/>
+                <i>Posted on June 12, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>Since Tntnet is GPL and OpenSSL is not, I decided to port Tntnet to gnutls,
+which is LGPL. This version let you choose at configure-time, which ssl-library
+to use if any.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.2pre1 of Tntnet, version 1.4.2pre1 of cxxtools</b>
+                <br/>
+                <i>Posted on May 31, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>These are bugfix-releases. Applications based on cxxtools (like Tntnet)
+failed to start on systems without IPv6. Some warnings are removed. Tntnet
+compiles now with OpenSSL on OpenBSD.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>stable version 1.5.1 of Tntnet, version 1.4.1 of cxxtools</b>
+                <br/>
+                <i>Posted on May 16, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>The latest development-versions 1.5.1pre4 of Tntnet and 1.4.1pre2 of
+cxxtools are released (almost) unchanged.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.1pre4 of Tntnet, version 1.4.1pre2 of cxxtools</b>
+                <br/>
+                <i>Posted on May 10, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>This releases adds support for IPv6. You can just pass IPv6-addresses to
+socket-classes. License-statements were added in files to make Cxxtools and
+Tntnet ready for debian</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.1pre3 of Tntnet, version 1.4.1pre1 of cxxtools and
+version 0.6.2 of Tntdb</b>
+                <br/>
+                <i>Posted on April 12, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>Logging with Cxxtools is optimized. This results in a 30% speed-up. A new
+std::ostream-derived class cxxtools::Streamcounter is included, which just counts the
+characters, which are printed. The rolling-file-appender uses it to monitor filesize,
+which make flushdelay to work with it.
+</p>
+
+<p>In Tntdb 0.6.2 the mysql-driver got some bugfixes. Fetching some datatypes (e.g. timestamp)
+resulted in a crash, because the Mysql-API returns too small lengths (or I misunderstand
+the API;-) ).
+</p>
+
+<p>Tntnet extends the license to allow linking with openssl. Some ANSI-C++-violations
+are fixed. A new demo newsdb is added, which demonstrates, how to access a database with
+Tntdb from a web application. The documentation was reformatted to use only standard fonts,
+which reduces the size of the tarball.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.1pre2 of Tntnet and new version 0.6.1 of Tntdb</b>
+                <br/>
+                <i>Posted on March 27, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Here is another development-version of Tntnet. This version teaches the
+precompiler to generate #line-directives. Error-messages of the c++-compiler
+now point directly into to ecpp-source instead of the (intermediate) output of the
+precompiler.
+</p>
+
+<p>
+Tntdb 0.6.1 fixes some minor bugs and makes some small improvements.
+The postgresql-driver allows now cursors outside transactions. Passing
+date-, datetime- and time-classes to statements may be null.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version 1.5.1pre1 of Tntnet</b>
+                <br/>
+                <i>Posted on March 23, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+SSL and internationalization didn't work at all in 1.5.0. This release fixes it. An updated quick-start-guide is included. Some unused code has been removed. Building of static libraries is suppressed, because it does not make sense with Tntnet.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.5.0, cxxtools 1.4.0</b>
+                <br/>
+                <i>Posted on March 04, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+ I finally declared Tntnet 1.5.0 and cxxtools 1.4.0 as stable, just because
+ they are. Tntnet 1.5.0 is faster than ever and has gone through many
+ stability- and speed-tests, which makes it rock-solid and incredibly fast.
+</p>
+
+<p>
+ Cxxtools got a new logging-feature, which speeds up logging quite
+ significantly. The parameter "flushdelay" enables a background-thread,
+ which flushes the outputfile asynchronously. The logentries don't trigger
+ a flush, so may logentries are written with one system-call.
+ This results in a 15% speed-up of Tntnet in simple cases. Without it
+ dynamic pages are just as fast as static pages in apache2. With
+ delayed flush Tntnet is well ahead of apache2.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>tntdb version 0.6.0, Tntnet version 1.5.0pre7, cxxtools 1.4.0pre5</b>
+                <br/>
+                <i>Posted on January 25, 2006</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+  This version adds a driver for sqlite3, a connectionpool, a introductio
+  and lots of smaller fixes and improvements.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.5.0pre6 and cxxtools 1.4.0pre4</b>
+                <br/>
+                <i>Posted on December 14, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+  This is a major upgrade for Tntnet. Tntnet now supports end-tags in
+  componentcalls. With this it is easier to build components, which wrap some
+  html-content.
+  Tntnet now supports gzip-encoding.
+</p>
+
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>tntdb version 0.5.2</b>
+                <br/>
+                <i>Posted on November 12, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+  Make databasedrivers optional at configure-time.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.5.0pre5 and cxxtools 1.4.0pre3</b>
+                <br/>
+                <i>Posted on November 08, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+  Thread-class in cxxtools is now split into DetachedThread and AttachedThread.
+  In Tntnet the workers are derived from DetachedThread. This fixes a major
+  bug, which could trigger a unnecesery emergency-restart.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.5.0pre4</b>
+                <br/>
+                <i>Posted on November 04, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>New health-check - if a thread takes too long for processing (default: 10
+   minutes), the thread is considered hanging and Tntnet is restarted
+   automatically.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>tntdb version 0.5.1</b>
+                <br/>
+                <i>Posted on November 01, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>This version has some minor bugfixes in the mysql-driver (handling
+MYSQL_TYPE_LONGLONG is working now).
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>tntdb version 0.5</b>
+                <br/>
+                <i>Posted on October 24, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>Tntdb is a c++-library for easy access to databases. It supports dynamic
+loading of drivers. Currently drivers for postgresql and mysql are available.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.5.0pre3</b>
+                <br/>
+                <i>Posted on October 18, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<ul>
+ <li>fixed bug in generation of components with compressed data.</li>
+</ul>
+
+<p>
+This is hopefully the last prerelease before 1.5.0.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.5.0pre2</b>
+                <br/>
+                <i>Posted on September 26, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<ul>
+ <li>one level of indirection of factory-pointer removed (binary incompatible
+     to 1.5.0pre1!).</li>
+ <li>detection of cxxtools- and zlib-headers fixed. Missing headers trigger a
+     error at configure-time.</li>
+</ul>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.5.0pre1 and cxxtools 1.4.0pre1</b>
+                <br/>
+                <i>Posted on September 22, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+Namingconvention: all classnames starting uppercase, methodnames lowercase.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.4.0 and cxxtools 1.3.1</b>
+                <br/>
+                <i>Posted on June 17, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+Unsafe html-characters in c++-expressions is escaped before sent to browser.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.4.0pre3</b>
+                <br/>
+                <i>Posted on June 11, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+Simplified api for calling subcomponents in c++-mode. Ecpp-compiler ecppc can
+now automatically generate dependencies for Makefile (with -M).
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.4.0pre2</b>
+                <br/>
+                <i>Posted on June 01, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+Removed boost dependency. Tntnet uses now the POSIX.2-regex instead of
+boost-regex. This greatly simplifies installation and also reduces
+binary-size. Also a memory-leak in 1.4.0pre1 was fixed.
+</p>
+
+<p>
+There is a users-guide (in open-office-format) and a yet unfinished
+configuration-guide.
+</p>
+
+<p>
+I tested this release successfully with gcc-4.0.1, which greatly improves
+performance (about 20% faster compared to 3.3.4).
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.4.0pre1</b>
+                <br/>
+                <i>Posted on May 27, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+This version adds automatic session-handling through cookies and scoped
+variables. Statevariables can be of any (almost) any type.
+</p>
+
+<p>
+And I'm finally writing documentation. I'm not good in writing and I would
+appreciate any help I can help. Please contact me at tommi@Tntnet.org.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.3.1</b>
+                <br/>
+                <i>Posted on May 18, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+This is a bugfix-release. There was a probem with
+tnt::httprequest::getPeerAddr().
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>cxxtools version 1.3.0</b>
+                <br/>
+                <i>Posted on February 19, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+The socket-classes got some improvements. It handles timeout better now.
+</p>
+
+<p>
+cxxtools-config is a configuration-script, to help compile against cxxtools
+(escpecially cxxtools-log) easier. It also has the ability to generate a
+suitable configurationfile for the underlying logging-library.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>log4shell 0.1 - comand-line-interface to log4cxx</b>
+                <br/>
+                <i>Posted on January 01, 2005</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+log4shell is a quick hack, which enables shell-scripts to log with
+log4cxx.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet and cxxtools version 1.2.2</b>
+                <br/>
+                <i>Posted on December 30, 2004</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<ul>
+ <li> improved and simplified logging-library in cxxtools </li>
+ <li> minor protocol-fix in Tntnet </li>
+</ul>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.2.1</b>
+                <br/>
+                <i>Posted on December 11, 2004</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+<ul>
+ <li> use cxxtools-1.2.1-logging </li>
+ <li> typed arguments </li>
+ <li> added quick-start-guide (incomplete) </li>
+</ul>
+</p>
+
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>cxxtools version 1.2.1</b>
+                <br/>
+                <i>Posted on December 05, 2004</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<h3>changes</h3>
+
+<p>
+<ul>
+ <li> removed obsolete timeclass.cpp</li>
+ <li> switched dl-classes to libtool for better portability </li>
+ <li> skip iconvstream if libiconv is not installed </li>
+ <li> new library: logging-wrapper for log4cplus (log4cxx-support will follow) </li>
+ <li> simple lightweight logging-library as a alternative for log4cplus </li>
+ <li> tested with FreeBSD 5.3/gcc 3.4.2</li>
+</ul>
+
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.2.0</b>
+                <br/>
+                <i>Posted on November 26, 2004</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Some feature enhancements and bugfixes. Needs cxxtools &gt;=1.2.0.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>cxxtools version 1.2.0</b>
+                <br/>
+                <i>Posted on November 25, 2004</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Code-cleanup. All classes are in namespace cxxtools now.
+Most classes have doxygen-style comments.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.1.2</b>
+                <br/>
+                <i>Posted on November 09, 2004</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+Much improved build-system. Minor feature enhancements.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>Tntnet version 1.1.1</b>
+                <br/>
+                <i>Posted on October 17, 2004</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>
+I recreated version 1.1.1 due to build-problems in last version.
+</p>
+
+<p>
+2004-10-17
+</p>
+<p>
+New version 1.1.1. Now autoconfigurated. Installation with the usual "configure; make; make install".
+</p>
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
 </div>
 
 \endhtmlonly

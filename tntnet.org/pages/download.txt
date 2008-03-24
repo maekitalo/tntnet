@@ -6,14 +6,17 @@
     <div id="content">
         <h2>Download</h2>
 
-        <h3>Tntnet 1.6.1, Cxxtools 1.4.6, Tntdb 0.9.5</h3>
+        <h3>stable versions</h3>
         <ul>
             <li><a href="download/tntnet-1.6.1.tar.gz">the source of tntnet 1.6.1</a></li>
-            <li><a href="download/cxxtools-1.4.6.tar.gz">the source of cxxtools 1.4.6</a></li>
-            <li><a href="download/tntdb-0.9.5.tar.gz">the source of tntdb 0.9.5</a></li>
+            <li><a href="download/cxxtools-1.4.7.tar.gz">the source of cxxtools 1.4.7</a></li>
+            <li><a href="download/tntdb-1.0.0.tar.gz">the source of tntdb 1.0.0</a></li>
         </ul>
 
-        <h3>no development versions currently available</h3>
+        <h3>development versions</h3>
+        <ul>
+            <li><a href="download/tntnet-1.6.1.2.tar.gz">the source of tntnet 1.6.1.2</a></li>
+        </ul>
 
         <h3>other downloads</h3>
 
