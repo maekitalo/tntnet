@@ -22,6 +22,16 @@ TntReader is licensed under the GPL.</p>
         <pre>
             svn co https://tntzenoreader.svn.sourceforge.net/svnroot/tntzenoreader/trunk tntzenoreader
         </pre>
+
+	Note: After checking out the source, you need to run the autogen.sh-script to generate the configure-file.
+    </p>
+
+    <h2>Links</h2>
+
+    <ul>
+      <li><a href="http://de.wikipedia.org/wiki/Wikipedia:DVD/Download">Download the german wikipedia archive</a></li>
+      <li><a href="http://wiki.directmedia.de/ZenoReader/Library">Documentation about the zeno file format</a></li>
+      <li><a href="download/Wikipedia-Testdaten.zip">small example zeno file for testing</a></li>
     </p>
 
    <br/>
