@@ -42,7 +42,7 @@ namespace tnt
 
       while (true)
       {
-        log_debug("read");
+        log_debug("read fd=" << fdInfo.fd << "; size=" << bufsize);
         ssize_t n = ::read(fdInfo.fd, buffer, bufsize);
         log_debug("read returns " << n << " errno=" << errno);
 
@@ -81,7 +81,7 @@ namespace tnt
 
       while (true)
       {
-        log_debug("write");
+        log_debug("write fd=" << fdInfo.fd << "; size=" << bufsize);
         ssize_t n = ::write(fdInfo.fd, buffer, bufsize);
         log_debug("write returns " << n);
 
