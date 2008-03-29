@@ -85,6 +85,7 @@ namespace tnt
       ~OpensslStream();
 
       void accept(const OpensslServer& server);
+      void handshake(const OpensslServer& server);
 
       int sslRead(char* buffer, int bufsize) const;
       int sslWrite(const char* buffer, int bufsize) const;

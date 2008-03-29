@@ -1,3 +1,8 @@
+2008-03-29 tommi@tntnet.org
+  - fix error and timeout handling in gnutls
+  - improve gnutls performance by letting handshake happen in parallel
+    between sockets
+
 2008-03-23 tommi@tntnet.org
   - fix error handling in accept; accept in gnutls may throw exceptions,
     which tntnet did not catch. This resulted in a break of the accept-

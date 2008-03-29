@@ -34,6 +34,84 @@ namespace tnt
   namespace
   {
     cxxtools::Mutex mutex;
+
+    // read with timeout; assume non-blocking of underlying fd
+    ssize_t pull_func(gnutls_transport_ptr_t ptr, void* buffer, size_t bufsize)
+    {
+      const GnuTlsStream::FdInfo& fdInfo = *static_cast<const GnuTlsStream::FdInfo*>(ptr);
+
+      while (true)
+      {
+        log_debug("read");
+        ssize_t n = ::read(fdInfo.fd, buffer, bufsize);
+        log_debug("read returns " << n << " errno=" << errno);
+
+        if (n > 0)
+          return n;
+        else if (n == 0 || errno == ECONNRESET)
+          return 0;
+        else if (errno == EAGAIN)
+        {
+          // poll
+          struct pollfd fds;
+          fds.fd = fdInfo.fd;
+          fds.events = POLLIN;
+
+          log_debug("poll; timeout " << fdInfo.timeout);
+          int p = ::poll(&fds, 1, fdInfo.timeout);
+          if (p == 0)
+          {
+            errno = EAGAIN;
+            return -1;
+          }
+          else if (p < 0)
+            return p;
+        }
+        else if (errno != EINTR)
+          return -1;
+      }
+
+      return -1;
+    }
+
+    // write with timeout; assume non-blocking of underlying fd
+    ssize_t push_func(gnutls_transport_ptr_t ptr, const void* buffer, size_t bufsize)
+    {
+      const GnuTlsStream::FdInfo& fdInfo = *static_cast<const GnuTlsStream::FdInfo*>(ptr);
+
+      while (true)
+      {
+        log_debug("write");
+        ssize_t n = ::write(fdInfo.fd, buffer, bufsize);
+        log_debug("write returns " << n);
+
+        if (n > 0)
+          return n;
+        else if (n == 0 || errno == ECONNRESET)
+          return 0;
+        else if (errno == EAGAIN)
+        {
+          // poll
+          struct pollfd fds;
+          fds.fd = fdInfo.fd;
+          fds.events = POLLOUT;
+
+          int p = ::poll(&fds, 1, fdInfo.timeout);
+          if (p == 0)
+          {
+            errno = EAGAIN;
+            return -1;
+          }
+          else if (p < 0)
+            return p;
+        }
+        else if (errno != EINTR)
+          return -1;
+      }
+
+      return -1;
+    }
+
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -163,7 +241,7 @@ namespace tnt
         }
         catch (const std::exception& e)
         {
-          log_error("error shutting down ssl-conneciton: " << e.what());
+          log_debug("error shutting down ssl-conneciton: " << e.what());
         }
       }
 
@@ -176,10 +254,10 @@ namespace tnt
   {
     log_debug("accept");
     cxxtools::net::Stream::accept(server);
+  }
 
-    if (Tntnet::shouldStop())
-      return;
-
+  void GnuTlsStream::handshake(const GnuTlsServer& server)
+  {
     log_debug("gnutls_init(session, GNUTLS_SERVER)");
     int ret = gnutls_init(&session, GNUTLS_SERVER);
     if (ret != 0)
@@ -199,11 +277,17 @@ namespace tnt
     log_debug("gnutls_dh_set_prime_bits(session, 1024)");
     gnutls_dh_set_prime_bits(session, 1024);
 
-    log_debug("gnutls_transport_set_ptr(" << getFd() << ')');
-    gnutls_transport_set_ptr(session, (gnutls_transport_ptr_t)getFd());
+    fdInfo.fd = getFd();
+    fdInfo.timeout = getTimeout();
 
-    log_debug("gnutls_transport_set_lowat(0)");
-    gnutls_transport_set_lowat(session, 0);
+    log_debug("gnutls_transport_set_ptr(ptr)");
+    gnutls_transport_set_ptr(session, static_cast<gnutls_transport_ptr_t>(&fdInfo));
+
+    log_debug("gnutls_transport_set_pull_function()");
+    gnutls_transport_set_pull_function(session, pull_func);
+
+    log_debug("gnutls_transport_set_push_function()");
+    gnutls_transport_set_push_function(session, push_func);
 
     if (getTimeout() < 0)
     {
@@ -213,35 +297,23 @@ namespace tnt
         log_debug("gnutls_handshake");
         ret = gnutls_handshake(session);
       } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
-      connected = true;
     }
     else
     {
       // non-blocking/with timeout
 
-      while (true)
-      {
-        log_debug("gnutls_handshake");
-        ret = gnutls_handshake(session);
-        log_debug("gnutls_handshake => " << ret);
+      fdInfo.timeout = 10000;
 
-        if (ret == 0)
-        {
-          connected = true;
-          break;
-        }
+      log_debug("gnutls_handshake");
+      ret = gnutls_handshake(session);
+      log_debug("gnutls_handshake => " << ret);
 
-        if (ret != GNUTLS_E_INTERRUPTED && ret != GNUTLS_E_AGAIN)
-          throw GnuTlsException("gnutls_handshake", ret);
-
-        log_debug("poll");
-        if (poll(POLLIN) & POLLHUP)
-        {
-          log_error("eof in gnutls_handshake");
-          throw std::runtime_error("eof in gnutls_handshake");
-        }
-      }
+      if (ret != 0)
+        throw GnuTlsException("gnutls_handshake", ret);
     }
+
+    connected = true;
+    fdInfo.timeout = getTimeout();
 
     log_debug("ssl-handshake was completed");
   }
@@ -249,6 +321,8 @@ namespace tnt
   int GnuTlsStream::sslRead(char* buffer, int bufsize) const
   {
     int ret;
+
+    fdInfo.timeout = getTimeout();
 
     if (getTimeout() < 0)
     {
@@ -258,6 +332,9 @@ namespace tnt
         log_debug("gnutls_record_recv");
         ret = gnutls_record_recv(session, buffer, bufsize);
       } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
+
+      if (ret < 0)
+        throw GnuTlsException("gnutls_record_recv", ret);
     }
     else
     {
@@ -269,18 +346,18 @@ namespace tnt
         ret = gnutls_record_recv(session, buffer, bufsize);
         log_debug("gnutls_record_recv => " << ret);
 
+        // report GNUTLS_E_REHANDSHAKE as eof
+        if (ret == GNUTLS_E_REHANDSHAKE)
+          return 0;
+
         if (ret >= 0)
           break;
 
-        if (ret < 0 && ret != GNUTLS_E_INTERRUPTED && ret != GNUTLS_E_AGAIN)
-          throw GnuTlsException("gnutls_record_recv", ret);
+        if (ret == GNUTLS_E_AGAIN)
+          throw cxxtools::net::Timeout();
 
-        log_debug("poll");
-        if (poll(POLLIN) & POLLHUP)
-        {
-          log_debug("eof in read");
-          return ret;
-        }
+        if (ret < 0 && ret != GNUTLS_E_INTERRUPTED)
+          throw GnuTlsException("gnutls_record_recv", ret);
       }
     }
 
@@ -290,6 +367,8 @@ namespace tnt
   int GnuTlsStream::sslWrite(const char* buffer, int bufsize) const
   {
     int ret;
+
+    fdInfo.timeout = getTimeout();
 
     if (getTimeout() < 0)
     {
@@ -313,15 +392,11 @@ namespace tnt
         if (ret > 0)
           break;
 
-        if (ret != GNUTLS_E_INTERRUPTED && ret != GNUTLS_E_AGAIN)
-          throw GnuTlsException("gnutls_record_send", ret);
+        if (ret == GNUTLS_E_AGAIN)
+          throw cxxtools::net::Timeout();
 
-        log_debug("poll");
-        if (poll(POLLIN|POLLOUT) & POLLHUP)
-        {
-          log_debug("eof in write");
-          return ret;
-        }
+        if (ret != GNUTLS_E_INTERRUPTED)
+          throw GnuTlsException("gnutls_record_send", ret);
       }
     }
 
@@ -331,6 +406,8 @@ namespace tnt
   void GnuTlsStream::shutdown()
   {
     int ret;
+
+    fdInfo.timeout = 1000;
 
     if (getTimeout() < 0)
     {

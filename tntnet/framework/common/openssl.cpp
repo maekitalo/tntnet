@@ -176,7 +176,7 @@ namespace tnt
       }
       catch (const std::exception& e)
       {
-        log_debug("error closing ssl-connection: " << e.what());
+        log_debug("error shutting down ssl-conneciton: " << e.what());
       }
 
       log_debug("SSL_free(" << ssl << ')');
@@ -188,10 +188,10 @@ namespace tnt
   {
     log_debug("accept");
     Stream::accept(server);
+  }
 
-    if (Tntnet::shouldStop())
-      return;
-
+  void OpensslStream::handshake(const OpensslServer& server)
+  {
     log_debug("tcp-connection established - build ssltunnel");
 
     log_debug("SSL_new(" << server.getSslContext().getPointer() << ')');

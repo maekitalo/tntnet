@@ -34,6 +34,7 @@ namespace tnt
       Jobqueue& queue;
 
       void accept();
+      void handshake();
       void regenerateJob();
 
     public:
@@ -58,6 +59,7 @@ namespace tnt
       Jobqueue& queue;
 
       void accept();
+      void handshake();
       void regenerateJob();
 
     public:

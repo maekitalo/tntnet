@@ -32,6 +32,11 @@ namespace tnt
       static std::string formatMessage(const std::string& function, int code_);
 
     public:
+      explicit GnuTlsException(const std::string& message)
+        : std::runtime_error(message),
+          code(0)
+      { }
+
       GnuTlsException(const std::string& function, int code_)
         : std::runtime_error(formatMessage(function, code_)),
           code(code_)
@@ -77,8 +82,17 @@ namespace tnt
 
   class GnuTlsStream : public cxxtools::net::Stream
   {
+    public:
+      struct FdInfo
+      {
+        int fd;
+        int timeout;
+      };
+
+    private:
       gnutls_session session;
       bool connected;
+      mutable FdInfo fdInfo;
 
     public:
       GnuTlsStream()
@@ -99,6 +113,7 @@ namespace tnt
       ~GnuTlsStream();
 
       void accept(const GnuTlsServer& server);
+      void handshake(const GnuTlsServer& server);
       int sslRead(char* buffer, int bufsize) const;
       int sslWrite(const char* buffer, int bufsize) const;
       void shutdown();

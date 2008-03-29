@@ -139,6 +139,12 @@ namespace tnt
     log_debug("accept (ssl)");
     socket.accept(listener);
     log_debug("connection accepted (ssl)");
+  }
+
+  void SslTcpjob::handshake()
+  {
+    socket.handshake(listener);
+    log_debug("ssl handshake ready");
 
     fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
 
@@ -173,12 +179,15 @@ namespace tnt
       }
       catch (const std::exception& e)
       {
+        log_debug("error occured in accept: " << e.what());
         regenerateJob();
-        log_debug("exception occured in accept: " << e.what());
         throw;
       }
 
       regenerateJob();
+
+      if (!Tntnet::shouldStop())
+        handshake();
     }
 
     return socket;
