@@ -20,6 +20,9 @@
 
 #include "tnt/ecppc/dependencygenerator.h"
 #include <sstream>
+#include <cxxtools/log.h>
+
+log_define("tntnet.ecppc.dependency")
 
 namespace tnt
 {
@@ -30,11 +33,15 @@ namespace tnt
     //
     void Dependencygenerator::onInclude(const std::string& file)
     {
+      log_trace("onInclude(\"" << file << "\")");
+
       dependencies.push_back(file);
     }
 
     void Dependencygenerator::getDependencies(std::ostream& out, bool useHeader) const
     {
+      log_trace("getDependencies");
+
       out << classname << ".cpp";
       if (useHeader)
         out << ' ' << classname << ".h";

@@ -84,7 +84,7 @@ namespace tnt
           std::cerr << "warning: no requestname passed (with -n) - using \"images\"" << std::endl;
           requestname = "images";
 
-          if (ofile.empty())
+          if (ofile.empty() && !generateDependencies)
             ofile = requestname;
         }
         else
@@ -99,7 +99,7 @@ namespace tnt
             else if (pos_slash < pos_dot)
               requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
 
-            if (ofile.empty())
+            if (ofile.empty() && !generateDependencies)
               ofile = input.substr(0, pos_dot);
 
             extname = input.substr(pos_dot + 1);
@@ -267,6 +267,8 @@ namespace tnt
 
     int Ecppc::runDependencies()
     {
+      log_trace("runDependencies");
+
       tnt::ecppc::Dependencygenerator generator(requestname, inputfile);
 
       std::ifstream in(inputfile);
