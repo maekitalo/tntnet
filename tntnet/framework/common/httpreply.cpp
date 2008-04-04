@@ -96,7 +96,7 @@ namespace tnt
     }
   }
 
-  void HttpReply::send(unsigned ret, const char* msg)
+  void HttpReply::send(unsigned ret, const char* msg, bool ready)
   {
     std::string body = outstream.str();
 
@@ -108,13 +108,16 @@ namespace tnt
     if (!hasHeader(httpheader::server))
       setHeader(httpheader::server, httpheader::serverName);
 
-    tryCompress(body);
+    if (ready)
+    {
+      tryCompress(body);
 
-    if (!hasHeader(httpheader::connection))
-      setKeepAliveHeader();
+      if (!hasHeader(httpheader::connection))
+        setKeepAliveHeader();
 
-    if (!hasHeader(httpheader::contentLength))
-      setContentLengthHeader(body.size());
+      if (!hasHeader(httpheader::contentLength))
+        setContentLengthHeader(body.size());
+    }
 
     // send header
 
@@ -173,7 +176,7 @@ namespace tnt
   {
     if (!isDirectMode())
     {
-      send(ret, msg);
+      send(ret, msg, true);
       socket.flush();
     }
   }
@@ -225,7 +228,7 @@ namespace tnt
   {
     if (!isDirectMode())
     {
-      send(ret, msg);
+      send(ret, msg, false);
       current_outstream = &socket;
       safe_outstream.setSink(socket);
     }

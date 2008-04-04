@@ -54,7 +54,7 @@ namespace tnt
       bool headRequest;
 
       void tryCompress(std::string& body);
-      void send(unsigned ret, const char* msg);
+      void send(unsigned ret, const char* msg, bool ready);
 
     public:
       explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
