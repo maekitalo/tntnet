@@ -29,13 +29,13 @@ namespace tnt
     //
     void Component::getBody(std::ostream& body, bool linenumbersEnabled) const
     {
-      getScopevars(body, linenumbersEnabled);
-
       body << "  // <%args>\n";
 
       getArgs(body);
 
       body << "  // </%args>\n\n";
+
+      getScopevars(body, linenumbersEnabled);
 
       body << "  // <%cpp>\n";
 
