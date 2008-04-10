@@ -1,3 +1,8 @@
+2008-04-05 tommi@tntnet.org
+  - define %args-variables before scoped variables, so it is possible to use
+    %args variables to initialize scoped variables.
+  - fix shutdown
+
 2008-04-04 tommi@tntnet.org
   - default output for ecppc -M is stdout, not the basename of the source
   - don't set content-type- and keep-alive-headers when switching to direct

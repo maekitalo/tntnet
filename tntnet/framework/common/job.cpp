@@ -87,10 +87,10 @@ namespace tnt
 
   void Tcpjob::regenerateJob()
   {
-    if (!Tntnet::shouldStop())
-      queue.put(new Tcpjob(getRequest().getApplication(), listener, queue));
+    if (Tntnet::shouldStop())
+      queue.put(this);
     else
-      log_info("tntnet stopping - no new job is generated");
+      queue.put(new Tcpjob(getRequest().getApplication(), listener, queue));
   }
 
   std::iostream& Tcpjob::getStream()
@@ -162,10 +162,10 @@ namespace tnt
 
   void SslTcpjob::regenerateJob()
   {
-    if (!Tntnet::shouldStop())
-      queue.put(new SslTcpjob(getRequest().getApplication(), listener, queue));
+    if (Tntnet::shouldStop())
+      queue.put(this);
     else
-      log_info("tntnet stopping - no new ssl-job is generated");
+      queue.put(new SslTcpjob(getRequest().getApplication(), listener, queue));
   }
 
   std::iostream& SslTcpjob::getStream()
