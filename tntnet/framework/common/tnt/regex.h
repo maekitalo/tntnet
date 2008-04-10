@@ -37,6 +37,8 @@ namespace tnt
 
     public:
       unsigned size() const;
+      regoff_t offsetBegin(unsigned n) const   { return matchbuf[n].rm_so; }
+      regoff_t offsetEnd(unsigned n) const     { return matchbuf[n].rm_eo; }
       std::string get(unsigned n) const;
       std::string format(const std::string& s) const;
   };
