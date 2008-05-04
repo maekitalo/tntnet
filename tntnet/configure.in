@@ -1,10 +1,10 @@
-AC_INIT(tntnet, 1.6.1.2, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.6.3, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
 
-abi_current=7
-abi_revision=1
+abi_current=8
+abi_revision=0
 abi_age=0
 sonumber=${abi_current}:${abi_revision}:${abi_age}
 AC_SUBST(sonumber)
