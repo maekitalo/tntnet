@@ -53,6 +53,8 @@ namespace tnt
     stream.opaque = 0;
     stream.total_out = 0;
     stream.total_in = 0;
+    stream.next_in = Z_NULL;
+    stream.avail_in = 0;
 
     checkError(::inflateInit(&stream), stream);
     setp(obuffer, obuffer + bufsize);
