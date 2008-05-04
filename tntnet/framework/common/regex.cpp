@@ -63,10 +63,7 @@ namespace tnt
           if (ch == '$')
             state = state_var0;
           else if (ch == '\\')
-          {
-            ret = std::string(s.begin(), it);
             state = state_esc;
-          }
           break;
 
         case state_esc:
@@ -141,7 +138,7 @@ namespace tnt
     if (ret != 0)
     {
       char errbuf[256];
-      regerror(ret, &expr, errbuf, sizeof(errbuf));
+      regerror(ret, expr.getPointer(), errbuf, sizeof(errbuf));
       throw std::runtime_error(errbuf);
     }
   }
@@ -155,7 +152,7 @@ namespace tnt
   bool Regex::match(const std::string& str_, RegexSMatch& smatch, int eflags) const
   {
     smatch.str = str_;
-    int ret = regexec(&expr, str_.c_str(),
+    int ret = regexec(expr.getPointer(), str_.c_str(),
         sizeof(smatch.matchbuf) / sizeof(regmatch_t), smatch.matchbuf, eflags);
 
     if (ret ==REG_NOMATCH)
@@ -165,8 +162,4 @@ namespace tnt
     return true;
   }
 
-  void Regex::free()
-  {
-    regfree(&expr);
-  }
 }
