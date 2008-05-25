@@ -1,5 +1,6 @@
 <%pre>
 #include <cxxtools/hdstream.h>
+#include <cxxtools/md5stream.h>
 </%pre>
 <html>
  <body>
@@ -24,10 +25,17 @@
   if (it != mp.end())
   {
     // we got a const-iterator to the uploaded data
-    
+
+    cxxtools::Md5stream md5stream;
+    std::copy(it->getBodyBegin(),
+              it->getBodyEnd(),
+              std::ostreambuf_iterator<char>(md5stream));
 }>
 
-    <p><$ it->getSize() $> bytes received; data:</p>
+    <p>
+    <$ it->getSize() $> bytes received<br>
+    md5sum: <$ md5stream.getHexDigest() $><br>
+    data:<br>
 
 <pre>
 <{
@@ -57,6 +65,7 @@
 
 }>
 </pre>
+    </p>
 <{
   }
 }>
