@@ -248,6 +248,14 @@ namespace tnt
     httpcookies.setCookie(name, cookie);
   }
 
+  void HttpReply::clearCookie(const std::string& name)
+  {
+    log_debug("clearCookie(\"" << name << "\")");
+    tnt::Cookie cookie;
+    cookie.setPath("/");
+    httpcookies.clearCookie(name, cookie);
+  }
+
   bool HttpReply::keepAlive() const
   {
     if (getKeepAliveCounter() <= 0

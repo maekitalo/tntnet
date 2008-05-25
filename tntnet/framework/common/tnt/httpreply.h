@@ -98,8 +98,7 @@ namespace tnt
         { setCookie(name, Cookie(value, seconds)); }
       void setCookies(const Cookies& c)
         { httpcookies = c; }
-      void clearCookie(const std::string& name)
-        { httpcookies.clearCookie(name); }
+      void clearCookie(const std::string& name);
       void clearCookie(const std::string& name, const Cookie& c)
         { httpcookies.clearCookie(name, c); }
       bool hasCookies() const
