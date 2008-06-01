@@ -113,15 +113,16 @@ namespace tnt
         state_cppetag,
         state_cppstring,  // 20
         state_cppstringesc,
-        state_cppchar,
-        state_cppcharesc,
-        state_cppchare,
+        state_cppcomment0,
+        state_cppcomment,
+        state_cppcommentc,
+        state_cppcommentce,
         state_nl,
         state_cpp1,
         state_args0,
         state_args0comment,
-        state_argsvar,
-        state_argsvare,  // 30
+        state_argsvar,  // 30
+        state_argsvare,
         state_argsval,
         state_argsvalstring,
         state_argscomment0,
@@ -130,8 +131,8 @@ namespace tnt
         state_attr0,
         state_attr0comment,
         state_attrvar,
-        state_attrvare,
-        state_attrval,  // 40
+        state_attrvare,  // 40
+        state_attrval,
         state_attrvalstring,
         state_attrcomment0,
         state_attrcomment,
@@ -140,8 +141,8 @@ namespace tnt
         state_callname_expr,
         state_callname_string,
         state_callname,
-        state_call_cpparg0,
-        state_call_cpparg1,  // 50
+        state_call_cpparg0,  // 50
+        state_call_cpparg1,
         state_call_cpparg_pe,
         state_call_cpparg_sp,
         state_call_cpparg_e,
@@ -150,8 +151,8 @@ namespace tnt
         state_callarg,
         state_callarge,
         state_callval_expr,
-        state_callval_string,
-        state_callval_word,  // 60
+        state_callval_string,  // 60
+        state_callval_word,
         state_callval0,
         state_callvale,
         state_comment,
@@ -160,8 +161,8 @@ namespace tnt
         state_compe,
         state_cond,
         state_condexpr,
-        state_condexpre,
-        state_include0,  // 70
+        state_condexpre,  // 70
+        state_include0,
         state_include1,
         state_scopearg0,
         state_scopearg,
@@ -170,8 +171,8 @@ namespace tnt
         state_scopeargval,
         state_scopevale,
         state_scope0,
-        state_scope,
-        state_scopeinit,  // 80
+        state_scope,  // 80
+        state_scopeinit,
         state_scopeiniteq,
         state_scopee,
         state_scopee0,
@@ -180,8 +181,8 @@ namespace tnt
         state_endcall0,
         state_endcall,
         state_endcalle,
-        state_doc,
-        state_doce        // 90
+        state_doc,  // 90
+        state_doce
       };
 
       state_type state = state_nl;
@@ -606,18 +607,37 @@ namespace tnt
               throw parse_error("def", state, curline);
             break;
 
+          case state_cppcomment0:
+            if (ch == '/')
+            {
+              code += "//";
+              state = state_cppcomment;
+              break;
+            }
+            else if (state == '*')
+            {
+              code += "/*";
+              state = state_cppcommentc;
+              break;
+            }
+
+            code += '/';
+            state = state_cpp;
+
+            // no break
+
           case state_cpp:
             if (ch == '<')
               state = state_cppe0;
             else if (ch == '}')
               state = state_cppse;
+            else if (ch == '/')
+              state = state_cppcomment0;
             else
             {
               code += ch;
               if (ch == '"')
                 state = state_cppstring;
-              else if (ch == '\'')
-                state = state_cppchar;
             }
             break;
 
@@ -634,22 +654,21 @@ namespace tnt
             state = state_cppstring;
             break;
 
-          case state_cppchar:
+          case state_cppcomment:
             code += ch;
-            if (ch == '\\')
-              state = state_cppcharesc;
-            else
-              state = state_cppchare;
+            if (ch == '\n')
+              state = state_cpp;
             break;
 
-          case state_cppcharesc:
+          case state_cppcommentc:
             code += ch;
-            state = state_cppchare;
+            if (ch == '*')
+              state = state_cppcommentce;
             break;
 
-          case state_cppchare:
+          case state_cppcommentce:
             code += ch;
-            if (ch == '\'')
+            if (ch == '/')
               state = state_cpp;
             break;
 
