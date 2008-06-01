@@ -19,6 +19,8 @@
 
 
 #include "tnt/ecppc/scopevar.h"
+#include <tnt/stringescaper.h>
+#include <iterator>
 #include <iostream>
 
 namespace tnt
@@ -60,8 +62,18 @@ namespace tnt
       out << "  " << macro << '(' << type << ", " << var
           << ", \"" << var << "\", (" << init << ")); " 
              "  // <%" << tag << "> " << type << ' ' << var;
+
       if (!init.empty())
-        out << '(' << init << ')';
+      {
+        out << '(';
+        std::transform(
+          init.begin(),
+          init.end(),
+          std::ostream_iterator<const char*>(out),
+          stringescaper(false));
+        out << ')';
+      }
+
       out << '\n';
     }
 
