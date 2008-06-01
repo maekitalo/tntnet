@@ -1,3 +1,7 @@
+2008-05-31 tommi@tntnet.org
+  - allow multiline initialization in scope variables
+  - handle ' and " in c++-comments correctly in ecpp parser
+
 2008-05-25 tommi@tntnet.org
   - fix clearCookie (set cookie path as in setCookie; was broken since
     2007-06-17)
