@@ -22,6 +22,7 @@
 #include <tnt/stringescaper.h>
 #include <iterator>
 #include <iostream>
+#include <algorithm>
 
 namespace tnt
 {
