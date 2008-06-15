@@ -248,8 +248,10 @@ namespace tnt
 
         return HTTP_OK;
       }
-      catch (std::bad_cast)
+      catch (const std::bad_cast& e)
       {
+        log_debug("stream is no tcpstream - don't use sendfile");
+        reply.setDirectMode();
       }
     }
 #else
