@@ -1,3 +1,7 @@
+2008-06-16 tommi@tntnet.org
+  - add shortcut methods for configuring tntnet to tnt::Tntnet-class to
+    ease configuration when tntnet is used as a library
+
 2008-05-31 tommi@tntnet.org
   - allow multiline initialization in scope variables
   - handle ' and " in c++-comments correctly in ecpp parser

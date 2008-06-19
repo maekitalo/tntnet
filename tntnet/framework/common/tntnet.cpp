@@ -122,17 +122,17 @@ namespace tnt
 
   void Tntnet::init(const Tntconfig& config)
   {
-    minthreads = config.getValue<unsigned>("MinThreads", minthreads);
-    maxthreads = config.getValue<unsigned>("MaxThreads", maxthreads);
-    threadstartdelay = config.getValue<unsigned>("ThreadStartDelay", threadstartdelay);
-    timersleep = config.getValue<unsigned>("TimerSleep", timersleep);
-    Worker::setMaxRequestTime(config.getValue<unsigned>("MaxRequestTime", Worker::getMaxRequestTime()));
-    Worker::setEnableCompression(config.getBoolValue("EnableCompression", Worker::getEnableCompression()));
-    queue.setCapacity(config.getValue<unsigned>("QueueSize", queue.getCapacity()));
-    Sessionscope::setDefaultTimeout(config.getValue<unsigned>("SessionTimeout", Sessionscope::getDefaultTimeout()));
-    Listener::setBacklog(config.getValue<int>("ListenBacklog", Listener::getBacklog()));
-    Listener::setListenRetry(config.getValue<int>("ListenRetry", Listener::getListenRetry()));
-    Dispatcher::setMaxUrlMapCache(config.getValue<unsigned>("MaxUrlMapCache", Dispatcher::getMaxUrlMapCache()));
+    setMinThreads(        config.getValue("MinThreads",            getMinThreads()));
+    setMaxThreads(        config.getValue("MaxThreads",            getMaxThreads()));
+    setThreadStartDelay(  config.getValue("ThreadStartDelay",      getThreadStartDelay()));
+    setTimerSleep(        config.getValue("TimerSleep",            getTimerSleep()));
+    setMaxRequestTime(    config.getValue("MaxRequestTime",        getMaxRequestTime()));
+    setEnableCompression( config.getBoolValue("EnableCompression", getEnableCompression()));
+    setQueueSize(         config.getValue("QueueSize",             getQueueSize()));
+    setSessionTimeout(    config.getValue("SessionTimeout",        getSessionTimeout()));
+    setListenBacklog(     config.getValue("ListenBacklog",         getListenBacklog()));
+    setListenRetry(       config.getValue("ListenRetry",           getListenRetry()));
+    setMaxUrlMapCache(    config.getValue("MaxUrlMapCache",        getMaxUrlMapCache()));
 
     Tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -166,22 +166,14 @@ namespace tnt
     Comploader::configure(config);
 
     // configure http
-    HttpRequest::setMaxRequestSize(
-      config.getValue("MaxRequestSize", HttpRequest::getMaxRequestSize()));
-    Job::setSocketReadTimeout(
-      config.getValue("SocketReadTimeout", Job::getSocketReadTimeout()));
-    Job::setSocketWriteTimeout(
-      config.getValue("SocketWriteTimeout", Job::getSocketWriteTimeout()));
-    Job::setKeepAliveMax(
-      config.getValue("KeepAliveMax", Job::getKeepAliveMax()));
-    Job::setSocketBufferSize(
-      config.getValue("BufferSize", Job::getSocketBufferSize()));
-    HttpReply::setMinCompressSize(
-      config.getValue("MinCompressSize", HttpReply::getMinCompressSize()));
-    HttpReply::setKeepAliveTimeout(
-      config.getValue("KeepAliveTimeout", HttpReply::getKeepAliveTimeout()));
-    HttpReply::setDefaultContentType(
-      config.getValue("DefaultContentType", HttpReply::getDefaultContentType()));
+    setMaxRequestSize(    config.getValue("MaxRequestSize",      getMaxRequestSize()));
+    setSocketReadTimeout( config.getValue("SocketReadTimeout",   getSocketReadTimeout()));
+    setSocketWriteTimeout(config.getValue("SocketWriteTimeout",  getSocketWriteTimeout()));
+    setKeepAliveMax(      config.getValue("KeepAliveMax",        getKeepAliveMax()));
+    setSocketBufferSize(  config.getValue("BufferSize",          getSocketBufferSize()));
+    setMinCompressSize(   config.getValue("MinCompressSize",     getMinCompressSize()));
+    setKeepAliveTimeout(  config.getValue("KeepAliveTimeout",    getKeepAliveTimeout()));
+    setDefaultContentType(config.getValue("DefaultContentType",  getDefaultContentType()));
 
     // initialize listeners
     Tntconfig::config_entries_type configListen;
@@ -419,6 +411,151 @@ namespace tnt
   void Tntnet::shutdown()
   {
     stop = true;
+  }
+
+  unsigned Tntnet::getMaxRequestTime()
+  {
+    return Worker::getMaxRequestTime();
+  }
+
+  void Tntnet::setMaxRequestTime(unsigned sec)
+  {
+    Worker::setMaxRequestTime(sec);
+  }
+
+  bool Tntnet::getEnableCompression()
+  {
+    return Worker::getEnableCompression();
+  }
+
+  void Tntnet::setEnableCompression(bool sw)
+  {
+    Worker::setEnableCompression(sw);
+  }
+
+  unsigned Tntnet::getSessionTimeout()
+  {
+    return Sessionscope::getDefaultTimeout();
+  }
+
+  void Tntnet::setSessionTimeout(unsigned sec)
+  {
+    Sessionscope::setDefaultTimeout(sec);
+  }
+
+  int Tntnet::getListenBacklog()
+  {
+    return Listener::getBacklog();
+  }
+
+  void Tntnet::setListenBacklog(int n)
+  {
+    Listener::setBacklog(n);
+  }
+
+  unsigned Tntnet::getListenRetry()
+  {
+    return Listener::getListenRetry();
+  }
+
+  void Tntnet::setListenRetry(int n)
+  {
+    Listener::setListenRetry(n);
+  }
+
+  unsigned Tntnet::getMaxUrlMapCache()
+  {
+    return Dispatcher::getMaxUrlMapCache();
+  }
+
+  void Tntnet::setMaxUrlMapCache(int n)
+  {
+    Dispatcher::setMaxUrlMapCache(n);
+  }
+
+  size_t Tntnet::getMaxRequestSize()
+  {
+    return HttpRequest::getMaxRequestSize();
+  }
+
+  void Tntnet::setMaxRequestSize(size_t s)
+  {
+    HttpRequest::setMaxRequestSize(s);
+  }
+
+  unsigned Tntnet::getSocketReadTimeout()
+  {
+    return Job::getSocketReadTimeout(); 
+  }
+
+  void Tntnet::setSocketReadTimeout(unsigned ms)
+  {
+    Job::setSocketReadTimeout(ms);
+  }
+
+  unsigned Tntnet::getSocketWriteTimeout()
+  {
+    return Job::getSocketWriteTimeout(); 
+  }
+
+  void Tntnet::setSocketWriteTimeout(unsigned ms)
+  {
+    Job::setSocketWriteTimeout(ms);
+  }
+
+  unsigned Tntnet::getKeepAliveMax()
+  {
+    return Job::getKeepAliveMax(); 
+  }
+
+  void Tntnet::setKeepAliveMax(unsigned ms)
+  {
+    Job::setKeepAliveMax(ms);
+  }
+
+  unsigned Tntnet::getSocketBufferSize()
+  {
+    return Job::getSocketBufferSize(); 
+  }
+
+  void Tntnet::setSocketBufferSize(unsigned ms)
+  {
+    Job::setSocketBufferSize(ms);
+  }
+
+  unsigned Tntnet::getMinCompressSize()
+  {
+    return HttpReply::getMinCompressSize();
+  }
+
+  void Tntnet::setMinCompressSize(unsigned s)
+  {
+    HttpReply::setMinCompressSize(s);
+  }
+
+  unsigned Tntnet::getKeepAliveTimeout()
+  {
+    return HttpReply::getKeepAliveTimeout();
+  }
+
+  void Tntnet::setKeepAliveTimeout(unsigned s)
+  {
+    HttpReply::setKeepAliveTimeout(s);
+  }
+
+  const std::string& Tntnet::getDefaultContentType()
+  {
+    return HttpReply::getDefaultContentType();
+  }
+
+  void Tntnet::setDefaultContentType(const std::string& s)
+  {
+    HttpReply::setDefaultContentType(s);
+  }
+
+  void Tntnet::addSearchPathEntry(const std::string& path)
+  {
+    Comploader::addSearchPathEntry(path);
   }
 
   bool Tntnet::forkProcess()
