@@ -11,7 +11,7 @@ EXTRA_DIST = \
 	docalc.ecpp
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-calcajax_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
+calcajax_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@ @MODULE_LDFLAGS@
 calcajax_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties

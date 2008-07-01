@@ -9,7 +9,7 @@ EXTRA_DIST = \
 	subcomp.ecpp
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-sprintf_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
+sprintf_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@ @MODULE_LDFLAGS@
 sprintf_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties

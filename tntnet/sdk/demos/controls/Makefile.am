@@ -34,7 +34,7 @@ EXTRA_DIST = \
 	tntnet.conf
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-controls_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
+controls_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@ @MODULE_LDFLAGS@
 controls_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties

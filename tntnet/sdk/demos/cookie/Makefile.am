@@ -7,7 +7,7 @@ EXTRA_DIST = \
 	cookie.ecpp
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-cookie_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
+cookie_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@ @MODULE_LDFLAGS@
 cookie_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties

@@ -188,6 +188,14 @@ case "${host_cpu}-${host_os}" in
 esac
 AC_SUBST(SHARED_LIB_FLAG)
 
+# host specific flags
+case $host_os in
+aix4.3.*|aix[5-9]*)
+    MODULE_LDFLAGS="-Wl,-brtl"
+    ;;
+esac
+AC_SUBST(MODULE_LDFLAGS)
+
 AC_CONFIG_FILES([
     Makefile
     framework/common/Makefile
