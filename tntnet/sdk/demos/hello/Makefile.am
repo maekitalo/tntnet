@@ -9,7 +9,7 @@ EXTRA_DIST = \
 	tntnet.jpg
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-hello_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@ @MODULE_LDFLAGS@
+hello_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties

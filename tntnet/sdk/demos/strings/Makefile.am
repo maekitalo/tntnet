@@ -7,7 +7,7 @@ EXTRA_DIST = \
 	strings.ecpp
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-strings_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@ @MODULE_LDFLAGS@
+strings_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 strings_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.conf tntnet.properties
