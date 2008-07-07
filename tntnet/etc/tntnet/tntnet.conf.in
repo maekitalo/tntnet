@@ -37,11 +37,11 @@ include @sysconfdir@/tntnet/mime.conf
 
 # make demos callable
 MapUrl  ^/demos/controls$            redirect@tntnet /demos/controls/
-MapUrl  ^/demos/controls/(.*)\..*    $1@controls
+MapUrl  ^/demos/controls/(.+)\..*    $1@controls
 MapUrl  ^/demos/controls/$           index@controls  index
-MapUrl  ^/demos/controls/(.*)        index@controls  $1
-MapUrl  ^/demos/(.*)\..*             $1@$1    $1
-MapUrl  ^/demos/(.*)                 $1@$1
+MapUrl  ^/demos/controls/(.+)        index@controls  $1
+MapUrl  ^/demos/(.+)\..*             $1@$1    $1
+MapUrl  ^/demos/(.+)                 $1@$1
 MapUrl  ^/demos/tntnet.jpg           tntnet@hello
 
 # configure tntnet as a simple webserver
