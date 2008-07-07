@@ -71,7 +71,7 @@ namespace tnt
   NotAuthorized::NotAuthorized(const std::string& realm)
     : HttpError(HTTP_UNAUTHORIZED, "not authorized", "<html><body><h1>not authorized</h1></body></html>")
   {
-    setHeader(httpheader::wwwAuthenticate, "Basic realm=" + realm + '"');
+    setHeader(httpheader::wwwAuthenticate, "Basic realm=\"" + realm + '"');
   }
 
   MovedTemporarily::MovedTemporarily(const std::string& url)
