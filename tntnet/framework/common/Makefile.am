@@ -54,6 +54,7 @@ nobase_include_HEADERS = \
 	tnt/comploader.h \
 	tnt/component.h \
 	tnt/componentfactory.h \
+	tnt/configurator.h \
 	tnt/contentdisposition.h \
 	tnt/contenttype.h \
 	tnt/convert.h \

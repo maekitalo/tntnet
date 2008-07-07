@@ -18,14 +18,18 @@
  */
 
 
-#include <iostream>
+#include "tnt/process.h"
 #include "tnt/tntnet.h"
 #include "tnt/tntconfig.h"
+
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
+#include <cxxtools/arg.h>
+
 #include <stdlib.h>
 #include <sys/stat.h>
-#include "tnt/process.h"
+#include <iostream>
+
 #include "config.h"
 
 log_define("tntnet.main")

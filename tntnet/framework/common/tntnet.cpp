@@ -24,6 +24,8 @@
 #include "tnt/http.h"
 #include "tnt/httpreply.h"
 #include "tnt/sessionscope.h"
+#include "tnt/tntconfig.h"
+#include "tnt/configurator.h"
 
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/fork.h>
@@ -122,17 +124,18 @@ namespace tnt
 
   void Tntnet::init(const Tntconfig& config)
   {
-    setMinThreads(        config.getValue("MinThreads",            getMinThreads()));
-    setMaxThreads(        config.getValue("MaxThreads",            getMaxThreads()));
-    setThreadStartDelay(  config.getValue("ThreadStartDelay",      getThreadStartDelay()));
-    setTimerSleep(        config.getValue("TimerSleep",            getTimerSleep()));
-    setMaxRequestTime(    config.getValue("MaxRequestTime",        getMaxRequestTime()));
-    setEnableCompression( config.getBoolValue("EnableCompression", getEnableCompression()));
-    setQueueSize(         config.getValue("QueueSize",             getQueueSize()));
-    setSessionTimeout(    config.getValue("SessionTimeout",        getSessionTimeout()));
-    setListenBacklog(     config.getValue("ListenBacklog",         getListenBacklog()));
-    setListenRetry(       config.getValue("ListenRetry",           getListenRetry()));
-    setMaxUrlMapCache(    config.getValue("MaxUrlMapCache",        getMaxUrlMapCache()));
+    Configurator c(*this);
+    c.setMinThreads(        config.getValue("MinThreads",            c.getMinThreads()));
+    c.setMaxThreads(        config.getValue("MaxThreads",            c.getMaxThreads()));
+    c.setThreadStartDelay(  config.getValue("ThreadStartDelay",      c.getThreadStartDelay()));
+    c.setTimerSleep(        config.getValue("TimerSleep",            c.getTimerSleep()));
+    c.setMaxRequestTime(    config.getValue("MaxRequestTime",        c.getMaxRequestTime()));
+    c.setEnableCompression( config.getBoolValue("EnableCompression", c.getEnableCompression()));
+    c.setQueueSize(         config.getValue("QueueSize",             c.getQueueSize()));
+    c.setSessionTimeout(    config.getValue("SessionTimeout",        c.getSessionTimeout()));
+    c.setListenBacklog(     config.getValue("ListenBacklog",         c.getListenBacklog()));
+    c.setListenRetry(       config.getValue("ListenRetry",           c.getListenRetry()));
+    c.setMaxUrlMapCache(    config.getValue("MaxUrlMapCache",        c.getMaxUrlMapCache()));
 
     Tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);
@@ -166,14 +169,14 @@ namespace tnt
     Comploader::configure(config);
 
     // configure http
-    setMaxRequestSize(    config.getValue("MaxRequestSize",      getMaxRequestSize()));
-    setSocketReadTimeout( config.getValue("SocketReadTimeout",   getSocketReadTimeout()));
-    setSocketWriteTimeout(config.getValue("SocketWriteTimeout",  getSocketWriteTimeout()));
-    setKeepAliveMax(      config.getValue("KeepAliveMax",        getKeepAliveMax()));
-    setSocketBufferSize(  config.getValue("BufferSize",          getSocketBufferSize()));
-    setMinCompressSize(   config.getValue("MinCompressSize",     getMinCompressSize()));
-    setKeepAliveTimeout(  config.getValue("KeepAliveTimeout",    getKeepAliveTimeout()));
-    setDefaultContentType(config.getValue("DefaultContentType",  getDefaultContentType()));
+    c.setMaxRequestSize(    config.getValue("MaxRequestSize",      c.getMaxRequestSize()));
+    c.setSocketReadTimeout( config.getValue("SocketReadTimeout",   c.getSocketReadTimeout()));
+    c.setSocketWriteTimeout(config.getValue("SocketWriteTimeout",  c.getSocketWriteTimeout()));
+    c.setKeepAliveMax(      config.getValue("KeepAliveMax",        c.getKeepAliveMax()));
+    c.setSocketBufferSize(  config.getValue("BufferSize",          c.getSocketBufferSize()));
+    c.setMinCompressSize(   config.getValue("MinCompressSize",     c.getMinCompressSize()));
+    c.setKeepAliveTimeout(  config.getValue("KeepAliveTimeout",    c.getKeepAliveTimeout()));
+    c.setDefaultContentType(config.getValue("DefaultContentType",  c.getDefaultContentType()));
 
     // initialize listeners
     Tntconfig::config_entries_type configListen;
@@ -411,151 +414,6 @@ namespace tnt
   void Tntnet::shutdown()
   {
     stop = true;
-  }
-
-  unsigned Tntnet::getMaxRequestTime()
-  {
-    return Worker::getMaxRequestTime();
-  }
-
-  void Tntnet::setMaxRequestTime(unsigned sec)
-  {
-    Worker::setMaxRequestTime(sec);
-  }
-
-  bool Tntnet::getEnableCompression()
-  {
-    return Worker::getEnableCompression();
-  }
-
-  void Tntnet::setEnableCompression(bool sw)
-  {
-    Worker::setEnableCompression(sw);
-  }
-
-  unsigned Tntnet::getSessionTimeout()
-  {
-    return Sessionscope::getDefaultTimeout();
-  }
-
-  void Tntnet::setSessionTimeout(unsigned sec)
-  {
-    Sessionscope::setDefaultTimeout(sec);
-  }
-
-  int Tntnet::getListenBacklog()
-  {
-    return Listener::getBacklog();
-  }
-
-  void Tntnet::setListenBacklog(int n)
-  {
-    Listener::setBacklog(n);
-  }
-
-  unsigned Tntnet::getListenRetry()
-  {
-    return Listener::getListenRetry();
-  }
-
-  void Tntnet::setListenRetry(int n)
-  {
-    Listener::setListenRetry(n);
-  }
-
-  unsigned Tntnet::getMaxUrlMapCache()
-  {
-    return Dispatcher::getMaxUrlMapCache();
-  }
-
-  void Tntnet::setMaxUrlMapCache(int n)
-  {
-    Dispatcher::setMaxUrlMapCache(n);
-  }
-
-  size_t Tntnet::getMaxRequestSize()
-  {
-    return HttpRequest::getMaxRequestSize();
-  }
-
-  void Tntnet::setMaxRequestSize(size_t s)
-  {
-    HttpRequest::setMaxRequestSize(s);
-  }
-
-  unsigned Tntnet::getSocketReadTimeout()
-  {
-    return Job::getSocketReadTimeout(); 
-  }
-
-  void Tntnet::setSocketReadTimeout(unsigned ms)
-  {
-    Job::setSocketReadTimeout(ms);
-  }
-
-  unsigned Tntnet::getSocketWriteTimeout()
-  {
-    return Job::getSocketWriteTimeout(); 
-  }
-
-  void Tntnet::setSocketWriteTimeout(unsigned ms)
-  {
-    Job::setSocketWriteTimeout(ms);
-  }
-
-  unsigned Tntnet::getKeepAliveMax()
-  {
-    return Job::getKeepAliveMax(); 
-  }
-
-  void Tntnet::setKeepAliveMax(unsigned ms)
-  {
-    Job::setKeepAliveMax(ms);
-  }
-
-  unsigned Tntnet::getSocketBufferSize()
-  {
-    return Job::getSocketBufferSize(); 
-  }
-
-  void Tntnet::setSocketBufferSize(unsigned ms)
-  {
-    Job::setSocketBufferSize(ms);
-  }
-
-  unsigned Tntnet::getMinCompressSize()
-  {
-    return HttpReply::getMinCompressSize();
-  }
-
-  void Tntnet::setMinCompressSize(unsigned s)
-  {
-    HttpReply::setMinCompressSize(s);
-  }
-
-  unsigned Tntnet::getKeepAliveTimeout()
-  {
-    return HttpReply::getKeepAliveTimeout();
-  }
-
-  void Tntnet::setKeepAliveTimeout(unsigned s)
-  {
-    HttpReply::setKeepAliveTimeout(s);
-  }
-
-  const std::string& Tntnet::getDefaultContentType()
-  {
-    return HttpReply::getDefaultContentType();
-  }
-
-  void Tntnet::setDefaultContentType(const std::string& s)
-  {
-    HttpReply::setDefaultContentType(s);
-  }
-
-  void Tntnet::addSearchPathEntry(const std::string& path)
-  {
-    Comploader::addSearchPathEntry(path);
   }
 
   bool Tntnet::forkProcess()
