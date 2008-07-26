@@ -8,6 +8,83 @@
     <table cellspacing="0" class="news-article">
         <tr>
             <th class="news-article-header" >
+                <b>stable versions cxxtools 1.4.8, tntnet 1.6.3 and tntdb 1.0.1</b>
+                <br/>
+                <i>Posted on June 03, 2008</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>These versions mainly fix some bugs found in the last weeks.<p>
+
+<p>The regex-wrapper classes from tntnet are now copied to cxxtools and are
+fully functional now. Cxxtools also got a set of conversion functions as easy
+to use wrappers around std::stringstream. The so-number is increased to
+indicate binary incompatiblity to older versions (at least <= 1.4.6)</p>
+
+<p>Clearing cookies was broken since about a year. This is fixed now. Quotes
+and double quotes in c++ comments in ecpp files was not handled correctly.
+Initialization of scoped variables may expand to multiple lines now (this was
+actually intended behaviour before, but incorrectly implemented). Here also the
+so-number was increased.</p>
+
+<p>The sqlite-driver of tntdb had 2 small bugs. Setting strings in statements
+did not lead to equality when compared to columns. Using multiple cursors for
+one statement crashed tntdb when the cursors were released in reverse order.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>stable version tntnet 1.6.2</b>
+                <br/>
+                <i>Posted on April 20, 2008</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>A shutdown bug is fixed. And all the small fixes from the development
+branch is released here in the stable version. The major ones are the fixes
+of GnuTLS and http-auth.
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development version tntnet 1.6.1.3</b>
+                <br/>
+                <i>Posted on April 04, 2008</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>This version brings some bugfixes. GnuTLS-support is much more robust and
+also faster now. OpenSsl supports certificate chains. Http-Auth does not cache
+usernames and passwords in keep-alive requests any more.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
                 <b>stable version tntdb 1.0.0</b>
                 <br/>
                 <i>Posted on February 24, 2008</i>

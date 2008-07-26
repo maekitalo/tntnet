@@ -1,5 +1,43 @@
 <h1>News</h1>
 
+<h2>stable versions cxxtools 1.4.8, tntnet 1.6.3 and tntdb 1.0.1</h2>
+
+<p>2008-06-03</p>
+
+<p>These versions mainly fix some bugs found in the last weeks.<p>
+
+<p>The regex-wrapper classes from tntnet are now copied to cxxtools and are
+fully functional now. Cxxtools also got a set of conversion functions as easy
+to use wrappers around std::stringstream. The so-number is increased to
+indicate binary incompatiblity to older versions (at least <= 1.4.6)</p>
+
+<p>Clearing cookies was broken since about a year. This is fixed now. Quotes
+and double quotes in c++ comments in ecpp files was not handled correctly.
+Initialization of scoped variables may expand to multiple lines now (this was
+actually intended behaviour before, but incorrectly implemented). Here also the
+so-number was increased.</p>
+
+<p>The sqlite-driver of tntdb had 2 small bugs. Setting strings in statements
+did not lead to equality when compared to columns. Using multiple cursors for
+one statement crashed tntdb when the cursors were released in reverse order.
+</p>
+
+<h2>stable version tntnet 1.6.2</h2>
+
+<p>2008-04-20</p>
+
+<p>A shutdown bug is fixed. And all the small fixes from the development
+branch is released here in the stable version. The major ones are the fixes
+of GnuTLS and http-auth.
+
+<h2>development version tntnet 1.6.1.3</h2>
+
+<p>2008-04-04</p>
+
+<p>This version brings some bugfixes. GnuTLS-support is much more robust and
+also faster now. OpenSsl supports certificate chains. Http-Auth does not cache
+usernames and passwords in keep-alive requests any more.</p>
+
 <h2>stable version tntdb 1.0.0</h2>
 
 <p>2008-02-24</p>

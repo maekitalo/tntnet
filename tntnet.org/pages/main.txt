@@ -31,6 +31,12 @@
             Ssl is supported via the gnutls- or openssl-library.
         </p>
  
+        <h2>Warning</h2>
+
+	<p>
+	    The Ubuntu package of cxxtools (version 1.4.3.6) is broken. Tntnet consumes 100% CPU when installed. You can fix it by removing the entry "flushdelay=100" from "/etc/tntnet/tntnet.properties". Or use the current stable cxxtools and tntnet from here.
+	</p>
+
         <h2>Latest News</h2>
 
         <table class="news-table">
@@ -39,23 +45,23 @@
                 <th>Headline</th>
             </tr>
             <tr>
+                <td valign="top" class="news-table-date"><b>03&nbsp;Jun&nbsp;2008</b></td>
+                <td><a href="news.html">stable versions cxxtools 1.4.8, tntnet 1.6.3 and tntdb 1.0.1</a></td>
+            </tr>
+
+            <tr>
+                <td valign="top" class="news-table-date"><b>20&nbsp;Apr&nbsp;2008</b></td>
+                <td><a href="news.html">stable version tntnet 1.6.2</a></td>
+            </tr>
+
+            <tr>
+                <td valign="top" class="news-table-date"><b>04&nbsp;Apr&nbsp;2008</b></td>
+                <td><a href="news.html">development version tntnet 1.6.1.3</a></td>
+            </tr>
+
+            <tr>
                 <td valign="top" class="news-table-date"><b>24&nbsp;Feb&nbsp;2008</b></td>
                 <td><a href="news.html">stable version tntdb 1.0.0</a></td>
-            </tr>
-
-            <tr>
-                <td valign="top" class="news-table-date"><b>16&nbsp;Dec&nbsp;2007</b></td>
-                <td><a href="news.html">new stable versions, cxxtools 1.4.6, tntnet 1.6.1, tntdb 0.9.5</a></td>
-            </tr>
-
-            <tr>
-                <td valign="top" class="news-table-date"><b>17&nbsp;Nov&nbsp;2007</b></td>
-                <td><a href="news.html">new development version of tntnet 1.6.0.6</a></td>
-            </tr>
-
-            <tr>
-                <td valign="top" class="news-table-date"><b>16&nbsp;Nov&nbsp;2007</b></td>
-                <td><a href="news.html">new development versions of cxxtools 1.4.5.3</a></td>
             </tr>
 
         </table>
