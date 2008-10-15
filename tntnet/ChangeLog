@@ -1,3 +1,6 @@
+2008-10-15 tommi@tntnet.org
+  - make shutdown of tntnet cleaner and faster by using conditions
+
 2008-07-04 tommi@tntnet.org
   - move shortcut methods into a separate class tnt::Configurator. This also
     ensures binary compatibility with previous releases

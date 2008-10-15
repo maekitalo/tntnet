@@ -81,8 +81,8 @@ namespace tnt
       Jobqueue::JobPtr j = queue.get();
       if (Tntnet::shouldStop())
       {
-        if (application.getQueue().getWaitThreadCount() > 0)
-          queue.put(j);
+        // put job back to queue to wake up next worker if any left
+        queue.put(j);
         break;
       }
 
@@ -177,7 +177,7 @@ namespace tnt
 
     time(&lastWaitTime);
 
-    log_info("end worker-thread " << threadId);
+    log_info("end worker thread " << threadId);
 
     state = stateStopping;
 

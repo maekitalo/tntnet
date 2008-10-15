@@ -103,6 +103,15 @@ namespace
       }
     }
   }
+
+  typedef std::set<tnt::Tntnet*> TntnetInstancesType;
+  cxxtools::Mutex allTntnetInstancesMutex;
+  TntnetInstancesType allRunningTntnetInstances;
+
+  // these belong actually into the Tntnet-class itself, but we don't want to
+  // break binary compatibility
+  cxxtools::Mutex timeStopMutex;
+  cxxtools::Condition timerStopCondition;
 }
 
 namespace tnt
@@ -316,6 +325,11 @@ namespace tnt
     cxxtools::MethodThread<Tntnet, cxxtools::AttachedThread> timerThread(*this, &Tntnet::timerTask);
     timerThread.create();
 
+    {
+      cxxtools::MutexLock lock(allTntnetInstancesMutex);
+      allRunningTntnetInstances.insert(this);
+    }
+
     // mainloop
     cxxtools::Mutex mutex;
     while (!stop)
@@ -343,12 +357,17 @@ namespace tnt
 
     log_info("stopping Tntnet");
 
-    // join-loop
-    while (!allListeners.empty())
     {
-      listeners_type::value_type s = *allListeners.begin();
+      cxxtools::MutexLock lock(allTntnetInstancesMutex);
+      allRunningTntnetInstances.erase(this);
+    }
+
+    log_info("stop listeners");
+    while (!listeners.empty())
+    {
+      listeners_type::value_type s = *listeners.begin();
       log_debug("remove listener from listener-list");
-      allListeners.erase(s);
+      listeners.erase(s);
 
       log_debug("request listener to stop");
       s->doStop();
@@ -358,21 +377,24 @@ namespace tnt
       log_debug("listener stopped");
     }
 
-    log_info("listeners stopped");
-
-    log_info("stop pollerthread");
+    log_info("stop poller thread");
     pollerthread.doStop();
     pollerthread.join();
-    log_info("pollerthread stopped");
 
-    while (true)
+    log_info("stop timer thread");
+    timerThread.join();
+
+    if (Worker::getCountThreads() > 0)
     {
-      log_info("wait for worker threads to stop; " << getQueue().getWaitThreadCount() << " left");
-      if (getQueue().getWaitThreadCount() <= 0)
-        break;
-      usleep(100);
+      log_info("wait for " << Worker::getCountThreads() << " worker threads to stop");
+      while (Worker::getCountThreads() > 0)
+      {
+        log_debug("wait for worker threads to stop; " << getQueue().getWaitThreadCount() << " left");
+        usleep(100);
+      }
     }
-    log_info("worker threads stopped");
+
+    log_info("all threads stopped");
   }
 
   void Tntnet::setMinThreads(unsigned n)
@@ -394,26 +416,33 @@ namespace tnt
 
     while (true)
     {
-      unsigned c = timersleep;
-      while (c-- > 0 && !stop)
-        sleep(1);
-
-      if (stop)
-        break;
+      {
+        cxxtools::MutexLock timeStopLock(timeStopMutex);
+        if (stop || timerStopCondition.timedwait(timeStopLock, timersleep * 1000))
+          break;
+      }
 
       getScopemanager().checkSessionTimeout();
       Worker::timer();
     }
-
-    log_info("stopping Tntnet");
-
-    queue.noWaitThreads.signal();
-    minthreads = maxthreads = 0;
   }
 
   void Tntnet::shutdown()
   {
     stop = true;
+
+    {
+      cxxtools::MutexLock timeStopLock(timeStopMutex);
+      timerStopCondition.broadcast();
+    }
+
+    cxxtools::MutexLock lock(allTntnetInstancesMutex);
+    for (TntnetInstancesType::iterator it = allRunningTntnetInstances.begin();
+      it != allRunningTntnetInstances.end(); ++it)
+    {
+      (*it)->queue.noWaitThreads.signal();
+      (*it)->minthreads = (*it)->maxthreads = 0;
+    }
   }
 
   bool Tntnet::forkProcess()
