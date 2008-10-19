@@ -59,6 +59,7 @@ PropertyFile        tntnet.properties
 
 # set limit to prevent DoS-attacks (default 0=no limit)
 #MaxRequestSize     65536
+#MaxRequestTime     600  # request timeout for the watchdog, when tntnet runs as a daemon
 #User               tntnet
 #Group              tntnet
 #Dir                /

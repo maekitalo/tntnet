@@ -33,6 +33,19 @@ namespace tnt
   class ListenerBase;
   class Tntconfig;
 
+  /**
+   @brief Main application class for stand alone webapplication.
+
+   This is the class to use to run a webapplication as a stand alone
+   application. Using this a application runs itself as a webserver instead of
+   using a tntnet application server.
+
+   To create a application you need to:
+     * instantiate a Tntnet class
+     * call listen and/or sslListen for each ip address to listen on
+     * set up your url mappings using mapUrl or vMapUrl
+     * call run()
+   */
   class Tntnet
   {
       unsigned minthreads;
@@ -59,19 +72,38 @@ namespace tnt
       void timerTask();
 
     public:
+      /// Initialize a default Tntnet-application without mappings.
       Tntnet();
 
+      /// Read settings from a Tntconfig object.
       void init(const Tntconfig& config);
+      /// Set up a listener on the specified ip address and port.
+      /// Listening on the port does not actually happen here but when the
+      /// application is started using the run-method.
       void listen(const std::string& ipaddr, unsigned short int port);
+      /// Set up a ssl listener on the specified ip address and port.
+      /// Listening on the port does not actually happen here but when the
+      /// application is started using the run-method.
       void sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ipaddr, unsigned short int port);
+      /// Starts all needed threads and the application loop.
+      /// If no listeners are set up using listen or sslListen, a default
+      /// listener is instantiated. By default it listens on the ip address
+      /// 0.0.0.0 (i.e. all addresses). The port 80 is used, when started as
+      /// root user, port 8000 otherwise.
       void run();
 
+      /// Shut down all instances of tntnet servers.
       static void shutdown();
+      /// Tells, if a shutdown request was initiated.
       static bool shouldStop()   { return stop; }
 
+      /// Returns the queue, which helds active http requests.
       Jobqueue&   getQueue()                  { return queue; }
+      /// Returns a reference to the poller thread object.
       Poller&     getPoller()                 { return pollerthread; }
+      /// Returns a reference to the dispatcher object.
       const Dispatcher& getDispatcher() const { return dispatcher; }
+      /// Returns a reference to the scope manager object.
       ScopeManager& getScopemanager()         { return scopemanager; }
 
       /// Returns the minimum number of worker threads.
@@ -99,6 +131,9 @@ namespace tnt
       /// Sets the maximum number of jobs waiting for processing.
       void setQueueSize(unsigned n)           { queue.setCapacity(n); }
 
+      /// Adds a mapping from a url to a component.
+      /// The url is specified using a regular expression and the mapped target
+      /// may contain back references to the expression using $1, $2, ... .
       Maptarget& mapUrl(const std::string& url, const std::string& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
       void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)

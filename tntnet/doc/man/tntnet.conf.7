@@ -254,6 +254,20 @@ The value defaults to 0, which means, that there is no limit at all.
 .br
 MaxRequestSize 65536
 .
+.SS MaxRequestTime \fIseconds\fP
+In daemon mode tntnet has a watchdog, which restarts tntnet when the maximum
+request time is exceeded. This happens, when a request is in a endless loop or
+otherwise hangs. Restarting tntnet looses all active sessions and the currently
+running requests. Therefore the timeout should be well long enough for the
+longes request.
+
+The default value is 600 seconds, which is normally much longer than a http
+request should run. If the Timeout is set to 0, the watchdog is deactivated.
+.PP
+.B Example
+.br
+MaxRequestTime 1200
+.
 .SS MinThreads \fInumber\fP
 Tntnet uses a dynamic pool of worker-threads, which wait for incoming requests. MinThreads specifies, how many worker threads there have to be. This defaults to 5.
 .PP
