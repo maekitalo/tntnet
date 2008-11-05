@@ -159,6 +159,14 @@ namespace tnt
     }
   }
 
+  namespace
+  {
+    void throwInvalidCookie(const std::string& cookie)
+    {
+      throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + cookie);
+    }
+  }
+
   void CookieParser::parse(const std::string& header)
   {
     // Cookie: $Version="1"; Customer="WILE_E_COYOTE"; $Path="/acme"
@@ -202,7 +210,16 @@ namespace tnt
           if (std::isspace(ch))
             state = (name == Cookie::secure ? state_valuee : state_eq);
           else if (ch == '=')
-            state = (name == Cookie::secure ? state_valuee : state_value0);
+          {
+            if (name == Cookie::secure)
+              state = state_valuee;
+            else
+            {
+              value.clear();
+              value.reserve(32);
+              state = state_value0;
+            }
+          }
           else if (ch == ';' && name == Cookie::secure)
             state = state_valuee;
           else
@@ -211,25 +228,23 @@ namespace tnt
 
         case state_eq:
           if (ch == '=')
+          {
+            value.clear();
+            value.reserve(32);
             state = state_value0;
+          }
           else if (!std::isspace(ch))
           {
             log_warn("invalid cookie: " << header << " - '=' expected");
-            throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
+            throwInvalidCookie(header);
           }
           break;
 
         case state_value0:
           if (ch == '"')
-          {
-            value.clear();
-            value.reserve(32);
             state = state_qvalue;
-          }
           else if (!std::isspace(ch))
           {
-            value.clear();
-            value.reserve(32);
             value += ch;
             state = state_value;
           }
@@ -256,7 +271,7 @@ namespace tnt
           else
           {
             log_warn("invalid cookie: " << header << " - semicolon expected after value");
-            throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
+            throwInvalidCookie(header);
           }
           break;
 
@@ -276,18 +291,18 @@ namespace tnt
           else if (!std::isspace(ch))
           {
             log_warn("invalid cookie: " << header << " - semicolon expected");
-            throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
+            throwInvalidCookie(header);
           }
           break;
       }
     }
 
-    if (state == state_qvaluee || state == state_value)
+    if (state == state_qvaluee || state == state_value || state == state_value0)
       process_nv();
     else if (state != state_0)
     {
       log_warn("invalid cookie: " << header << " - invalid state " << state);
-      throw HttpError(HTTP_BAD_REQUEST, "invalid cookie: " + header);
+      throwInvalidCookie(header);
     }
 
     if (!current_cookie.value.empty())
