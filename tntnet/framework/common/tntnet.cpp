@@ -124,7 +124,8 @@ namespace tnt
       maxthreads(100),
       threadstartdelay(10),
       timersleep(10),
-      pollerthread(queue)
+      pollerthread(cxxtools::callable(poller, &Poller::run)),
+      poller(queue)
   { }
 
   bool Tntnet::stop = false;
@@ -319,11 +320,11 @@ namespace tnt
 
     // create poller-thread
     log_debug("start poller thread");
-    pollerthread.create();
+    pollerthread.start();
 
     log_debug("start timer thread");
-    cxxtools::MethodThread<Tntnet, cxxtools::AttachedThread> timerThread(*this, &Tntnet::timerTask);
-    timerThread.create();
+    cxxtools::AttachedThread timerThread(cxxtools::callable(*this, &Tntnet::timerTask));
+    timerThread.start();
 
     {
       cxxtools::MutexLock lock(allTntnetInstancesMutex);
@@ -378,7 +379,7 @@ namespace tnt
     }
 
     log_info("stop poller thread");
-    pollerthread.doStop();
+    poller.doStop();
     pollerthread.join();
 
     log_info("stop timer thread");

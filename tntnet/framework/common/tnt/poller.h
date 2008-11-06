@@ -27,7 +27,7 @@
 
 namespace tnt
 {
-  class PollerIf : public cxxtools::NonCopyable
+  class PollerIf : private cxxtools::NonCopyable
   {
     public:
       virtual ~PollerIf();
@@ -36,16 +36,16 @@ namespace tnt
       virtual void addIdleJob(Jobqueue::JobPtr job) = 0;
   };
 
-  class Poller : public cxxtools::AttachedThread
+  class Poller
   {
       PollerIf* impl;
 
     public:
-      Poller(Jobqueue& q);
+      explicit Poller(Jobqueue& q);
       ~Poller()
         { delete impl; }
 
-      virtual void run();
+      void run();
       void doStop()                          { impl->doStop(); }
       void addIdleJob(Jobqueue::JobPtr job)  { impl->addIdleJob(job); }
   };

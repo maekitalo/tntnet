@@ -25,7 +25,7 @@
 #include <map>
 #include <set>
 #include <tnt/unzipfile.h>
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 
 namespace tnt
 {

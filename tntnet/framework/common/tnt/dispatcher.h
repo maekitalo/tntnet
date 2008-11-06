@@ -21,7 +21,7 @@
 #ifndef TNT_DISPATCHER_H
 #define TNT_DISPATCHER_H
 
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <tnt/urlmapper.h>
 #include <tnt/maptarget.h>
 #include <vector>

@@ -60,7 +60,8 @@ namespace tnt
       listeners_type listeners;
       static listeners_type allListeners;
 
-      Poller pollerthread;
+      cxxtools::AttachedThread pollerthread;
+      Poller poller;
       Dispatcher dispatcher;
 
       ScopeManager scopemanager;
@@ -100,7 +101,7 @@ namespace tnt
       /// Returns the queue, which helds active http requests.
       Jobqueue&   getQueue()                  { return queue; }
       /// Returns a reference to the poller thread object.
-      Poller&     getPoller()                 { return pollerthread; }
+      Poller&     getPoller()                 { return poller; }
       /// Returns a reference to the dispatcher object.
       const Dispatcher& getDispatcher() const { return dispatcher; }
       /// Returns a reference to the scope manager object.

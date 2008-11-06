@@ -374,7 +374,7 @@ namespace tnt
         log_fatal("requesttime " << maxRequestTime << " seconds in thread "
           << threadId << " exceeded - exit process");
         log_info("current state: " << state);
-        exit(111);
+        ::exit(111);
       }
     }
   }

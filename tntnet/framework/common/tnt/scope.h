@@ -24,7 +24,7 @@
 #include <map>
 #include <string>
 #include <tnt/object.h>
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <cxxtools/smartptr.h>
 
 namespace tnt
