@@ -34,6 +34,7 @@
 #include <locale>
 #include <errno.h>
 #include <sys/poll.h>
+#include <cxxtools/dlloader.h>
 
 log_define("tntnet.worker")
 

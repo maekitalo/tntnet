@@ -23,6 +23,8 @@
 #include <tnt/tntconfig.h>
 #include <tnt/httperror.h>
 #include <cxxtools/log.h>
+#include <cxxtools/dlloader.h>
+#include <stdlib.h>
 
 namespace
 {
@@ -36,6 +38,42 @@ namespace tnt
 // ComponentLibrary
 //
 log_define("tntnet.comploader")
+
+void* ComponentLibrary::dlopen(const std::string& name)
+{
+  log_debug("dlopen " << name << " with flag " << (RTLD_NOW|RTLD_LOCAL));
+
+  void* ret = ::dlopen((name + ".so").c_str(), RTLD_NOW|RTLD_LOCAL);
+  if (ret != 0)
+  {
+    log_debug("library \"" << name << ".so\" successfully opened");
+    return ret;
+  }
+
+  ret = ::dlopen((name + ".a").c_str(), RTLD_NOW|RTLD_LOCAL);
+  if (ret != 0)
+  {
+    log_debug("library \"" << name << ".a\" successfully opened");
+    return ret;
+  }
+
+  ret = ::dlopen((name + ".dll").c_str(), RTLD_NOW|RTLD_LOCAL);
+  if (ret != 0)
+  {
+    log_debug("library \"" << name << ".dll\" successfully opened");
+    return ret;
+  }
+
+  ret = ::dlopen(name.c_str(), RTLD_NOW|RTLD_LOCAL);
+  if (ret == 0)
+  {
+    log_warn("failed to load library \"" << name << '"');
+    throw cxxtools::dl::DlopenError(name);
+  }
+
+  log_debug("library \"" << name << "\" successfully opened");
+  return ret;
+}
 
 ComponentLibrary::~ComponentLibrary()
 {

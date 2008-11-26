@@ -21,7 +21,7 @@
 #ifndef TNT_COMPLOADER_H
 #define TNT_COMPLOADER_H
 
-#include <cxxtools/dlloader.h>
+#include <cxxtools/smartptr.h>
 #include <cxxtools/thread.h>
 #include <tnt/urlmapper.h>
 #include <tnt/langlib.h>
@@ -29,6 +29,7 @@
 #include <list>
 #include <string>
 #include <utility>
+#include <dlfcn.h>
 
 namespace tnt
 {
@@ -36,9 +37,21 @@ namespace tnt
   class ComponentFactory;
   class Tntconfig;
 
-  class ComponentLibrary : public cxxtools::dl::Library
+  class ComponentLibrary
   {
       friend class Comploader;
+
+      template <typename objectType>
+      class Dlcloser
+      {
+        protected:
+          void destroy(objectType* ptr)
+          { ::dlclose(ptr); }
+      };
+
+      typedef void* HandleType;
+      typedef cxxtools::SmartPtr<HandleType, cxxtools::RefLinked, Dlcloser> HandlePointer;
+      HandlePointer handlePtr;
 
       typedef std::map<std::string, ComponentFactory*> factoryMapType;
       factoryMapType factoryMap;
@@ -48,18 +61,20 @@ namespace tnt
       typedef std::map<std::string, LangLib*> langlibsType;
       langlibsType langlibs;
 
+      void* dlopen(const std::string& name);
+
     public:
       ComponentLibrary()
         { }
 
       ComponentLibrary(const std::string& path_, const std::string& name)
-        : cxxtools::dl::Library((path_ + '/' + name).c_str()),
+        : handlePtr(new HandleType(dlopen((path_ + '/' + name)))),
           libname(name),
           path(path_)
         { }
 
       ComponentLibrary(const std::string& name)
-        : cxxtools::dl::Library(name.empty() ? 0 : name.c_str()),
+        : handlePtr(new HandleType(dlopen(name))),
           libname(name)
         { }
 
