@@ -43,6 +43,7 @@ libtntnet_la_SOURCES = \
 	unzipfile.cpp \
 	urlescostream.cpp \
 	urlmapper.cpp \
+	util.cpp \
 	worker.cpp \
 	zdata.cpp \
 	crypt.h \
@@ -104,7 +105,8 @@ noinst_HEADERS = \
 	tnt/listener.h \
 	tnt/pollerimpl.h \
 	tnt/ssl.h \
-	tnt/tcpjob.h
+	tnt/tcpjob.h \
+	tnt/util.h
 
 libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\" $(PTHREAD_CFLAGS)
 libtntnet_la_LDFLAGS = -version-info @sonumber@ -lz -lcxxtools $(PTHREAD_LIBS) @SHARED_LIB_FLAG@

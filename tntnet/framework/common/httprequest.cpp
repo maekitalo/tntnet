@@ -20,9 +20,10 @@
 
 #include <tnt/httprequest.h>
 #include <tnt/httpparser.h>
+#include <tnt/util.h>
 #include <sstream>
 #include <cxxtools/log.h>
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <cxxtools/base64stream.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -563,7 +564,7 @@ namespace tnt
   Scope& HttpRequest::getThreadScope()
   {
     if (threadScope == 0)
-      throw std::runtime_error("threadscope not set");
+      throwRuntimeError("threadscope not set");
     return *threadScope;
   }
 

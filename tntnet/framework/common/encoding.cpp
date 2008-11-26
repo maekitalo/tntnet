@@ -19,9 +19,9 @@
 
 
 #include "tnt/encoding.h"
+#include "tnt/util.h"
 #include <cctype>
 #include <cxxtools/log.h>
-#include <stdexcept>
 
 log_define("tntnet.encoding")
 
@@ -78,14 +78,14 @@ namespace tnt
           if (ch == 'q')
             state = state_qualityeq;
           else if (!std::isspace(ch))
-            throw std::runtime_error("invalid encoding-string \"" + header + '"');
+            throwRuntimeError("invalid encoding-string \"" + header + '"');
           break;
 
         case state_qualityeq:
           if (ch == '=')
             state = state_quality;
           else if (!std::isspace(ch))
-            throw std::runtime_error("invalid encoding-string \"" + header + '"');
+            throwRuntimeError("invalid encoding-string \"" + header + '"');
           break;
 
         case state_quality:
@@ -95,7 +95,7 @@ namespace tnt
             state = state_qualitypoint;
           }
           else
-            throw std::runtime_error("invalid encoding-string \"" + header + '"');
+            throwRuntimeError("invalid encoding-string \"" + header + '"');
           break;
 
         case state_qualitypoint:
@@ -108,7 +108,7 @@ namespace tnt
             state = state_0;
           }
           else
-            throw std::runtime_error("invalid encoding-string \"" + header + '"');
+            throwRuntimeError("invalid encoding-string \"" + header + '"');
           break;
 
         case state_qualitytenth:

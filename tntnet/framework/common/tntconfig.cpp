@@ -19,6 +19,7 @@
 
 
 #include <tnt/tntconfig.h>
+#include <tnt/util.h>
 #include <stdexcept>
 #include <fstream>
 #include <stack>
@@ -176,10 +177,10 @@ namespace tnt
       if (!*inp)
       {
         delete inp;
-        throw std::runtime_error("cannot open include file " + params[0]);
+        throwRuntimeError("cannot open include file " + params[0]);
       }
       else if (istreams.size() > 5)
-        throw std::runtime_error("too many include-levels");
+        throwRuntimeError("too many include-levels");
 
       istreams.push(inp);
       return true;
@@ -225,7 +226,7 @@ namespace tnt
     }
 
     if (state != state_start)
-      throw std::runtime_error("parse error while reading config");
+      throwRuntimeError("parse error while reading config");
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -240,7 +241,7 @@ namespace tnt
       std::string msg;
       msg = "error opening ";
       msg += configfile;
-      throw std::runtime_error(msg);
+      throwRuntimeError(msg);
     }
     load(in);
   }

@@ -19,6 +19,7 @@
 
 
 #include <tnt/contenttype.h>
+#include <tnt/util.h>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -45,7 +46,7 @@ namespace tnt
           << in.tellg()
           << ": "
           << ct;
-      throw std::runtime_error(msg.str());
+      throwRuntimeError(msg.str());
     }
 
     if (in.get() != std::ios::traits_type::eof())
@@ -55,7 +56,7 @@ namespace tnt
           << in.tellg()
           << ": "
           << ct;
-      throw std::runtime_error(msg.str());
+      throwRuntimeError(msg.str());
     }
   }
 

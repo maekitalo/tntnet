@@ -31,23 +31,31 @@ log_define("tntnet.ssl")
 
 namespace tnt
 {
-  static void checkSslError()
+  namespace
   {
-    log_debug("ERR_get_error");
-    unsigned long code = ERR_get_error();
-    if (code != 0)
+    void throwOpensslException(const char* what, unsigned long code)
     {
-      char buffer[120];
-      log_debug("ERR_error_string");
-      if (ERR_error_string(code, buffer))
+      throwOpensslException(what, code);
+    }
+
+    void checkSslError()
+    {
+      log_debug("ERR_get_error");
+      unsigned long code = ERR_get_error();
+      if (code != 0)
       {
-        log_debug("SSL-Error " << code << ": \"" << buffer << '"');
-        throw OpensslException(buffer, code);
-      }
-      else
-      {
-        log_debug("unknown SSL-Error " << code);
-        throw OpensslException("unknown SSL-Error", code);
+        char buffer[120];
+        log_debug("ERR_error_string");
+        if (ERR_error_string(code, buffer))
+        {
+          log_debug("SSL-Error " << code << ": \"" << buffer << '"');
+          throwOpensslException(buffer, code);
+        }
+        else
+        {
+          log_debug("unknown SSL-Error " << code);
+          throwOpensslException("unknown SSL-Error", code);
+        }
       }
     }
   }
@@ -116,7 +124,7 @@ namespace tnt
 
     log_debug("check private key");
     if (!SSL_CTX_check_private_key(ctx))
-      throw OpensslException("private key does not match the certificate public key", 0);
+      throwOpensslException("private key does not match the certificate public key", 0);
 
     log_debug("private key ok");
   }
@@ -299,7 +307,7 @@ namespace tnt
               && (err != SSL_ERROR_SYSCALL || errno != EAGAIN))
       {
         log_debug("error " << err << " occured in SSL_write; n=" << n);
-        throw OpensslException("error from TLS/SSL I/O operation", err);
+        throwOpensslException("error from TLS/SSL I/O operation", err);
       }
 
       if (s <= 0)

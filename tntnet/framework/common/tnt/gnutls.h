@@ -29,7 +29,7 @@ namespace tnt
   class GnuTlsException : public std::runtime_error
   {
       unsigned long code;
-      static std::string formatMessage(const std::string& function, int code_);
+      static std::string formatMessage(const char* function, int code_);
 
     public:
       explicit GnuTlsException(const std::string& message)
@@ -37,7 +37,7 @@ namespace tnt
           code(0)
       { }
 
-      GnuTlsException(const std::string& function, int code_)
+      GnuTlsException(const char* function, int code_)
         : std::runtime_error(formatMessage(function, code_)),
           code(code_)
       { }

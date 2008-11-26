@@ -20,6 +20,7 @@
 
 #include <tnt/multipart.h>
 #include <tnt/httpheader.h>
+#include <tnt/util.h>
 #include <sstream>
 #include <stdexcept>
 #include <streambuf>
@@ -91,7 +92,7 @@ namespace tnt
     std::istream in(&buf);
     in >> header;
     if (!in)
-      throw std::runtime_error("error in parsing message-header");
+      throwRuntimeError("error in parsing message-header");
     in.sync();
 
     bodyBegin = b;

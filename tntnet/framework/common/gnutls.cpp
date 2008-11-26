@@ -117,7 +117,7 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // GnuTlsException
   //
-  std::string GnuTlsException::formatMessage(const std::string& function,
+  std::string GnuTlsException::formatMessage(const char* function,
     int code)
   {
     std::ostringstream msg;

@@ -64,8 +64,11 @@ namespace tnt
 
       void setHeadRequest(bool sw = true)           { headRequest = sw; }
 
+      /// Throws an exception, which results in a redirect.
       unsigned redirect(const std::string& newLocation);
+      /// Throws an exception, which results in a login dialog in the browser.
       unsigned notAuthorized(const std::string& realm);
+      /// alias for notAuthorized
       unsigned notAuthorised(const std::string& realm) { return notAuthorized(realm); }
 
       void sendReply(unsigned ret, const char* msg = "OK");

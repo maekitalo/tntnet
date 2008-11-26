@@ -20,6 +20,7 @@
 
 #include <tnt/sodata.h>
 #include <tnt/component.h>
+#include <tnt/util.h>
 
 #include <cxxtools/thread.h>
 #include <cxxtools/dlloader.h>
@@ -73,7 +74,7 @@ namespace tnt
         int z_ret = uncompress((Bytef*)data, &destlen, (const Bytef*)*zdata, zdatalen);
         if (z_ret != Z_OK)
         {
-          throw std::runtime_error(std::string("error uncompressing data: ") +
+          throwRuntimeError(std::string("error uncompressing data: ") +
             (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
              z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
              z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));

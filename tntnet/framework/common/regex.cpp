@@ -19,7 +19,7 @@
 
 
 #include "tnt/regex.h"
-#include <stdexcept>
+#include "tnt/util.h"
 #include <locale>
 #include <cctype>
 
@@ -139,7 +139,7 @@ namespace tnt
     {
       char errbuf[256];
       regerror(ret, expr.getPointer(), errbuf, sizeof(errbuf));
-      throw std::runtime_error(errbuf);
+      throwRuntimeError(errbuf);
     }
   }
 

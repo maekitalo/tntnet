@@ -22,6 +22,7 @@
 #include <tnt/componentfactory.h>
 #include <tnt/tntconfig.h>
 #include <tnt/httperror.h>
+#include <tnt/util.h>
 #include <cxxtools/log.h>
 #include <cxxtools/dlloader.h>
 #include <stdlib.h>
@@ -139,7 +140,7 @@ Comploader::Comploader()
          it != configLoad.end(); ++it)
     {
       if (it->params.empty())
-        throw std::runtime_error("missing libraryname in Load-command");
+        throwRuntimeError("missing libraryname in Load-command");
       fetchLib(it->params[0]);
     }
   }

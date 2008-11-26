@@ -18,7 +18,8 @@
  */
 
 
-#include "tnt/mimedb.h"
+#include <tnt/mimedb.h>
+#include <tnt/util.h>
 #include <cctype>
 #include <iostream>
 #include <fstream>
@@ -72,7 +73,7 @@ void MimeDb::read(std::istream& in)
         else if (ch == '#')
           state = state_comment;
         else if (!std::isspace(ch))
-          throw std::runtime_error("parse error in mimedb");
+          throwRuntimeError("parse error in mimedb");
         break;
 
       case state_comment:

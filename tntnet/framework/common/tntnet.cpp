@@ -26,6 +26,7 @@
 #include "tnt/sessionscope.h"
 #include "tnt/tntconfig.h"
 #include "tnt/configurator.h"
+#include "tnt/util.h"
 
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/fork.h>
@@ -64,7 +65,7 @@ namespace
         {
           std::ostringstream msg;
           msg << "invalid number of parameters (" << args.size() << ") in MapUrl";
-          throw std::runtime_error(msg.str());
+          tnt::throwRuntimeError(msg.str());
         }
 
         std::string url = args[0];
@@ -85,7 +86,7 @@ namespace
         {
           std::ostringstream msg;
           msg << "invalid number of parameters (" << args.size() << ") in VMapUrl";
-          throw std::runtime_error(msg.str());
+          tnt::throwRuntimeError(msg.str());
         }
 
         std::string vhost = args[0];
@@ -112,6 +113,7 @@ namespace
   // break binary compatibility
   cxxtools::Mutex timeStopMutex;
   cxxtools::Condition timerStopCondition;
+
 }
 
 namespace tnt
@@ -196,7 +198,7 @@ namespace tnt
          it != configListen.end(); ++it)
     {
       if (it->params.empty())
-        throw std::runtime_error("empty Listen-entry");
+        throwRuntimeError("empty Listen-entry");
 
       unsigned short int port = 80;
       if (it->params.size() >= 2)
@@ -207,7 +209,7 @@ namespace tnt
         {
           std::ostringstream msg;
           msg << "invalid port " << it->params[1];
-          throw std::runtime_error(msg.str());
+          throwRuntimeError(msg.str());
         }
       }
 
@@ -227,7 +229,7 @@ namespace tnt
          it != configSslListen.end(); ++it)
     {
       if (it->params.empty())
-        throw std::runtime_error("empty SslListen-entry");
+        throwRuntimeError("empty SslListen-entry");
 
       unsigned short int port = 443;
       if (it->params.size() >= 2)
@@ -238,7 +240,7 @@ namespace tnt
         {
           std::ostringstream msg;
           msg << "invalid port " << it->params[1];
-          throw std::runtime_error(msg.str());
+          throwRuntimeError(msg.str());
         }
       }
 
@@ -250,7 +252,7 @@ namespace tnt
         it->params.size() >= 3 ? it->params[2] : defaultCertificateKey;
 
       if (certificateFile.empty())
-        throw std::runtime_error("Ssl-certificate not configured");
+        throwRuntimeError("Ssl-certificate not configured");
 
       std::string ip(it->params[0]);
 
