@@ -33,7 +33,7 @@ namespace tnt
 Dispatcher::CompidentType& Dispatcher::addUrlMapEntry(const std::string& vhost,
   const std::string& url, const CompidentType& ci)
 {
-  cxxtools::WrLock lock(rwlock);
+  cxxtools::WriteLock lock(mutex);
 
   urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, Regex(url)), ci));
   return urlmap.back().second;

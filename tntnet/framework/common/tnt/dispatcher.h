@@ -58,7 +58,7 @@ namespace tnt
 
       typedef std::vector<std::pair<VHostRegex, CompidentType> > urlmap_type;
       urlmap_type urlmap;   // map url to soname/compname
-      mutable cxxtools::RWLock rwlock;
+      mutable cxxtools::ReadWriteMutex mutex;
 
       class UrlMapCacheKey
       {
@@ -113,7 +113,7 @@ namespace tnt
       class PosType
       {
           const Dispatcher& dis;
-          cxxtools::RdLock lock;
+          cxxtools::ReadLock lock;
           urlmap_type::const_iterator pos;
           std::string vhost;
           std::string url;
@@ -123,7 +123,7 @@ namespace tnt
           PosType(const Dispatcher& d, const std::string& v,
             const std::string& u)
             : dis(d),
-              lock(dis.rwlock),
+              lock(dis.mutex),
               pos(dis.urlmap.begin()),
               vhost(v),
               url(u),

@@ -338,13 +338,9 @@ namespace tnt
         else
           log_debug("component " << ci << " returned DECLINED");
       }
-      catch (const cxxtools::dl::DlopenError& e)
+      catch (const LibraryNotFound& e)
       {
-        log_warn("DlopenError catched - libname " << e.getLibname());
-      }
-      catch (const cxxtools::dl::SymbolNotFound& e)
-      {
-        log_warn("SymbolNotFound catched - symbol " << e.getSymbol());
+        log_warn("library " << e.getLibname() << " not found");
       }
     }
 

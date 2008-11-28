@@ -37,6 +37,17 @@ namespace tnt
   class ComponentFactory;
   class Tntconfig;
 
+  /// @internal
+  class LibraryNotFound
+  {
+      std::string libname;
+    public:
+      explicit LibraryNotFound(const std::string& libname_)
+        : libname(libname_)
+        { }
+      const std::string& getLibname() const  { return libname; }
+  };
+
   class ComponentLibrary
   {
       friend class Comploader;
@@ -62,23 +73,24 @@ namespace tnt
       langlibsType langlibs;
 
       void* dlopen(const std::string& name);
+      void init(const std::string& name);
 
     public:
       ComponentLibrary()
         { }
 
       ComponentLibrary(const std::string& path_, const std::string& name)
-        : handlePtr(new HandleType(dlopen((path_ + '/' + name)))),
-          libname(name),
+        : libname(name),
           path(path_)
-        { }
+        { init(path_ + '/' + name); }
 
       ComponentLibrary(const std::string& name)
-        : handlePtr(new HandleType(dlopen(name))),
-          libname(name)
-        { }
+        : libname(name)
+        { init(name); }
 
       ~ComponentLibrary();
+
+      operator const void* () const  { return handlePtr.getPointer(); }
 
       Component* create(const std::string& component_name, Comploader& cl,
         const Urlmapper& rootmapper);

@@ -33,7 +33,7 @@ namespace tnt
 
   const char* LangLib::getData(const std::string& compname)
   {
-    cxxtools::RdLock lock(monitor);
+    cxxtools::ReadLock lock(mutex);
     dataMapType::const_iterator it = dataMap.find(compname);
     if (it == dataMap.end())
     {
@@ -44,7 +44,7 @@ namespace tnt
       }
 
       lock.unlock();
-      cxxtools::WrLock wrlock(monitor);
+      cxxtools::WriteLock wrlock(mutex);
 
       try
       {

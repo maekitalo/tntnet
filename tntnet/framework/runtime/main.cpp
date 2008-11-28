@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <iostream>
+#include <stdexcept>
 
 #include "config.h"
 

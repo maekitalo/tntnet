@@ -42,7 +42,7 @@ log_define("tntnet.comploader")
 
 void* ComponentLibrary::dlopen(const std::string& name)
 {
-  log_debug("dlopen " << name << " with flag " << (RTLD_NOW|RTLD_LOCAL));
+  log_debug("dlopen <" << name << '>');
 
   void* ret = ::dlopen((name + ".so").c_str(), RTLD_NOW|RTLD_LOCAL);
   if (ret != 0)
@@ -67,13 +67,18 @@ void* ComponentLibrary::dlopen(const std::string& name)
 
   ret = ::dlopen(name.c_str(), RTLD_NOW|RTLD_LOCAL);
   if (ret == 0)
-  {
     log_warn("failed to load library \"" << name << '"');
-    throw cxxtools::dl::DlopenError(name);
-  }
+  else
+    log_debug("library \"" << name << "\" successfully opened");
 
-  log_debug("library \"" << name << "\" successfully opened");
   return ret;
+}
+
+void ComponentLibrary::init(const std::string& name)
+{
+  void* handle = dlopen(name);
+  if (handle)
+    handlePtr = new HandleType(handle);
 }
 
 ComponentLibrary::~ComponentLibrary()
@@ -234,50 +239,35 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
     log_info("load library \"" << libname << '"');
     ComponentLibrary lib;
 
-    bool found = false;
     for (search_path_type::const_iterator p = search_path.begin();
-         p != search_path.end(); ++p)
+         !lib && p != search_path.end(); ++p)
     {
-      try
-      {
-        log_debug("load library \"" << libname << "\" from " << *p << " dir");
-        lib = ComponentLibrary(*p, libname);
-        found = true;
-        break;
-      }
-      catch (const cxxtools::dl::DlopenError&)
-      {
-      }
+      log_debug("load library \"" << libname << "\" from " << *p << " dir");
+      lib = ComponentLibrary(*p, libname);
     }
 
 #ifdef PKGLIBDIR
-    if (!found)
+    if (!lib)
     {
-      try
-      {
-        log_debug("load library \"" << libname << "\" from package lib dir");
-        lib = ComponentLibrary(PKGLIBDIR, libname);
-        found = true;
-      }
-      catch (const cxxtools::dl::DlopenError& e)
-      {
-      }
+      log_debug("load library \"" << libname << "\" from package lib dir <" << PKGLIBDIR << '>');
+      lib = ComponentLibrary(PKGLIBDIR, libname);
     }
 #endif
 
-    if (!found)
+    if (!lib)
     {
-      try
-      {
-        log_debug("load library \"" << libname << "\" from current dir");
-        lib = ComponentLibrary(".", libname);
-      }
-      catch (const cxxtools::dl::DlopenError& e)
-      {
-        log_debug("library \"" << e.getLibname() << "\" in current dir not found - search lib-path");
-        lib = ComponentLibrary(libname);
-      }
+      log_debug("load library \"" << libname << "\" from current dir");
+      lib = ComponentLibrary(".", libname);
     }
+
+    if (!lib)
+    {
+      log_debug("library \"" << libname << "\" in current dir not found - search lib-path");
+      lib = ComponentLibrary(libname);
+    }
+
+    if (!lib)
+      throw LibraryNotFound(libname);
 
     lib.factoryMap = factoryMap;
     log_debug("insert new library " << libname);

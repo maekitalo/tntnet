@@ -37,7 +37,7 @@ namespace tnt
       typedef std::set<std::string> notFoundType;
       dataMapType dataMap;
       notFoundType notFound;
-      cxxtools::RWLock monitor;
+      cxxtools::ReadWriteMutex mutex;
 
     public:
       LangLib()
