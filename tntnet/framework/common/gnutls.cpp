@@ -20,7 +20,7 @@
 
 #include "tnt/gnutls.h"
 #include "tnt/tntnet.h"
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <cxxtools/log.h>
 #include <sstream>
 #include "tnt/gcryptinit.h"

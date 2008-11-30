@@ -22,7 +22,6 @@
 #define TNT_POLLER_H
 
 #include <tnt/job.h>
-#include <cxxtools/thread.h>
 #include <cxxtools/noncopyable.h>
 
 namespace tnt

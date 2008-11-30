@@ -22,7 +22,6 @@
 #define TNT_COMPLOADER_H
 
 #include <cxxtools/smartptr.h>
-#include <cxxtools/thread.h>
 #include <tnt/urlmapper.h>
 #include <tnt/langlib.h>
 #include <map>

@@ -20,7 +20,7 @@
 
 #include "tnt/openssl.h"
 #include "tnt/tntnet.h"
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <openssl/err.h>
 #include <cxxtools/log.h>
 #include <unistd.h>

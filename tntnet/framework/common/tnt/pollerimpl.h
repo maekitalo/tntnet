@@ -23,7 +23,7 @@
 
 #include <config.h>
 #include "tnt/job.h"
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <cxxtools/pipe.h>
 
 #ifdef WITH_EPOLL

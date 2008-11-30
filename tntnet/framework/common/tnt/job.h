@@ -24,7 +24,8 @@
 #include <deque>
 #include <tnt/httprequest.h>
 #include <tnt/httpparser.h>
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
+#include <cxxtools/condition.h>
 #include <cxxtools/refcounted.h>
 #include <cxxtools/smartptr.h>
 

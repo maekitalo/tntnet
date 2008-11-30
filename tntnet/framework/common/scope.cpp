@@ -19,7 +19,6 @@
 
 
 #include <tnt/scope.h>
-#include <cxxtools/thread.h>
 #include <cxxtools/log.h>
 
 namespace tnt

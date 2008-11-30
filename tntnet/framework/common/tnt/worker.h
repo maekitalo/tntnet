@@ -24,6 +24,7 @@
 #include <string>
 #include <cxxtools/tcpstream.h>
 #include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <tnt/comploader.h>
 #include <tnt/tntnet.h>
 #include <tnt/scope.h>

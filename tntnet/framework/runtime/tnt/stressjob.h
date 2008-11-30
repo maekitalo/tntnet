@@ -22,7 +22,7 @@
 
 #include <tnt/job.h>
 #include <string>
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <iostream>
 
 /**

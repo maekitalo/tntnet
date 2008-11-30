@@ -22,7 +22,7 @@
 #include <tnt/util.h>
 #include <zlib.h>
 #include <stdexcept>
-#include <cxxtools/thread.h>
+#include <cxxtools/mutex.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.data")
