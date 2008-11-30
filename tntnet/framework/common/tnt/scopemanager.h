@@ -22,6 +22,7 @@
 #define TNT_SCOPEMANAGER_H
 
 #include <map>
+#include <string>
 #include <cxxtools/mutex.h>
 
 namespace tnt
