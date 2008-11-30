@@ -33,21 +33,8 @@ if ! test -x "$CXXTOOLS_CONFIG"; then
   AC_MSG_ERROR([cxxtools configuration script was not found])
 fi
 
-AC_MSG_CHECKING([for cxxtools usability])
-AC_COMPILE_IFELSE(
-  [#include <cxxtools/net.h>
-   #include <cxxtools/pipe.h>
-   void t() { cxxtools::net::Socket s;
-              struct sockaddr_storage t = s.getSockAddr(); }
-  ],
-  AC_MSG_RESULT(yes),
-  [
-    AC_MSG_RESULT(no)
-    AC_MSG_ERROR(please check your cxxtools-installation - maybe you need an upgrade)
-  ]
-  )
-
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
+AC_CHECK_HEADER([cxxtools/condition.h], , AC_MSG_ERROR([cxxtools headers not found]))
 
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
