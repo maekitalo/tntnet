@@ -60,8 +60,6 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // EcppComponent
   //
-  cxxtools::RWLock equivMonitor;
-
   EcppComponent::EcppComponent(const Compident& ci, const Urlmapper& um,
     Comploader& cl)
     : myident(ci),
