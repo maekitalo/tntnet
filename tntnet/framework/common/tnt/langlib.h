@@ -26,10 +26,12 @@
 #include <set>
 #include <tnt/unzipfile.h>
 #include <cxxtools/mutex.h>
+#include <cxxtools/refcounted.h>
+#include <cxxtools/smartptr.h>
 
 namespace tnt
 {
-  class LangLib
+  class LangLib : public cxxtools::RefCounted
   {
       unzipFile file;
       std::string lang;
@@ -46,6 +48,8 @@ namespace tnt
       LangLib(const std::string lib, const std::string& lang_);
 
       const char* getData(const std::string& compname);
+
+      typedef cxxtools::SmartPtr<LangLib> PtrType;
   };
 }
 

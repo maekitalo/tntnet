@@ -68,7 +68,7 @@ namespace tnt
 
       std::string libname;
       std::string path;
-      typedef std::map<std::string, LangLib*> langlibsType;
+      typedef std::map<std::string, LangLib::PtrType> langlibsType;
       langlibsType langlibs;
 
       void* dlopen(const std::string& name);
@@ -87,13 +87,11 @@ namespace tnt
         : libname(name)
         { init(name); }
 
-      ~ComponentLibrary();
-
       operator const void* () const  { return handlePtr.getPointer(); }
 
       Component* create(const std::string& component_name, Comploader& cl,
         const Urlmapper& rootmapper);
-      LangLib* getLangLib(const std::string& lang);
+      LangLib::PtrType getLangLib(const std::string& lang);
 
       const std::string& getName() const  { return libname; }
       void registerFactory(const std::string& component_name, ComponentFactory* factory)

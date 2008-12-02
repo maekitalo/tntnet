@@ -81,13 +81,6 @@ void ComponentLibrary::init(const std::string& name)
     handlePtr = new HandleType(handle);
 }
 
-ComponentLibrary::~ComponentLibrary()
-{
-  for (langlibsType::iterator it = langlibs.begin();
-       it != langlibs.end(); ++it)
-    delete it->second;
-}
-
 Component* ComponentLibrary::create(
   const std::string& component_name, Comploader& cl,
   const Urlmapper& rootmapper)
@@ -110,14 +103,14 @@ Component* ComponentLibrary::create(
   return factory->create(ci, rootmapper, cl);
 }
 
-LangLib* ComponentLibrary::getLangLib(const std::string& lang)
+LangLib::PtrType ComponentLibrary::getLangLib(const std::string& lang)
 {
   cxxtools::MutexLock lock(mutex);
   langlibsType::const_iterator it = langlibs.find(lang);
   if (it != langlibs.end())
     return it->second;
 
-  LangLib* l = 0;
+  LangLib::PtrType l;
   try
   {
     std::string n = (path.empty() ? libname : (path + '/' + libname));
@@ -198,7 +191,7 @@ const char* Comploader::getLangData(const Compident& ci,
 {
   log_debug("getLangData(" << ci << ", \"" << lang << "\")");
   ComponentLibrary& lib = fetchLib(ci.libname);
-  LangLib* langLib = lib.getLangLib(lang);
+  LangLib::PtrType langLib = lib.getLangLib(lang);
   if (langLib)
     return langLib->getData(ci.compname);
   else
