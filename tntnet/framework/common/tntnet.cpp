@@ -421,7 +421,7 @@ namespace tnt
     {
       {
         cxxtools::MutexLock timeStopLock(timeStopMutex);
-        if (stop || timerStopCondition.timedwait(timeStopLock, timersleep * 1000))
+        if (stop || timerStopCondition.wait(timeStopLock, timersleep * 1000))
           break;
       }
 

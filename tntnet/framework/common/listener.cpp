@@ -22,9 +22,12 @@
 #include "tnt/tntnet.h"
 #include "tnt/job.h"
 #include <cxxtools/log.h>
-#include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#ifdef HAVE_TCP_DEFER_ACCEPT
+#  include <cxxtools/systemerror.h>
+#endif
 
 #ifdef WITH_GNUTLS
 #  include "tnt/gnutls.h"
@@ -56,15 +59,15 @@ static void doListenRetry(cxxtools::net::Server& server,
       int deferSecs = 30;
       if (::setsockopt(server.getFd(), SOL_TCP, TCP_DEFER_ACCEPT,
           &deferSecs, sizeof(deferSecs)) < 0)
-        throw cxxtools::net::Exception("setsockopt(TCP_DEFER_ACCEPT)");
+        throw cxxtools::SystemError("setsockopt(TCP_DEFER_ACCEPT)");
 #endif
 
       return;
     }
-    catch (const cxxtools::net::Exception& e)
+    catch (const cxxtools::net::AddressInUse& e)
     {
-      log_debug("cxxtools::net::Exception caught: errno=" << e.getErrno() << " msg=" << e.what());
-      if (e.getErrno() != EADDRINUSE || n > tnt::Listener::getListenRetry())
+      log_debug("cxxtools::net::AddressInUse");
+      if (n > tnt::Listener::getListenRetry())
       {
         log_debug("rethrow exception");
         throw;

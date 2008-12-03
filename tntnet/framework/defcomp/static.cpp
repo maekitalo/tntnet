@@ -28,6 +28,7 @@
 #include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
+#include <cxxtools/systemerror.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <config.h>
@@ -35,7 +36,6 @@
 #if HAVE_SENDFILE
 #include <fcntl.h>
 #include <sys/sendfile.h>
-#include <cxxtools/syserror.h>
 #include <cxxtools/tcpstream.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -60,7 +60,7 @@ namespace tnt
           : fd(open(pathname, flags))
         {
           if (fd < 0)
-            throw cxxtools::SysError("open");
+            throw cxxtools::SystemError("open");
         }
 
         ~Fdfile()
@@ -207,11 +207,11 @@ namespace tnt
 
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
             &off, sizeof(off)) < 0)
-          throw cxxtools::net::Exception("setsockopt(TCP_NODELAY)");
+          throw cxxtools::SystemError("setsockopt(TCP_NODELAY)");
 
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
             &on, sizeof(on)) < 0)
-          throw cxxtools::net::Exception("setsockopt(TCP_CORK)");
+          throw cxxtools::SystemError("setsockopt(TCP_CORK)");
 
         reply.setDirectMode();
         tcpStream.flush();
@@ -229,7 +229,7 @@ namespace tnt
           } while (s < 0 && errno == EINTR);
 
           if (s < 0 && errno != EAGAIN)
-            throw cxxtools::SysError("sendfile");
+            throw cxxtools::SystemError("sendfile");
 
           if (offset >= st.st_size)
             break;
@@ -240,11 +240,11 @@ namespace tnt
 
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
             &off, sizeof(off)) < 0)
-          throw cxxtools::net::Exception("setsockopt(TCP_CORK)");
+          throw cxxtools::SystemError("setsockopt(TCP_CORK)");
 
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
             &on, sizeof(on)) < 0)
-          throw cxxtools::net::Exception("setsockopt(TCP_NODELAY)");
+          throw cxxtools::SystemError("setsockopt(TCP_NODELAY)");
 
         return HTTP_OK;
       }

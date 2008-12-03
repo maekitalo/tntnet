@@ -165,14 +165,9 @@ namespace tnt
         log_debug("timeout - put job in poller");
         application.getPoller().addIdleJob(j);
       }
-      catch (const cxxtools::net::Exception& e)
-      {
-        if (e.getErrno() != ENOENT)
-          log_warn("unexpected exception: " << e.what());
-      }
       catch (const std::exception& e)
       {
-        log_warn("unexpected exception: " << e.what());
+        log_debug("unexpected exception: " << e.what());
       }
     }
 
