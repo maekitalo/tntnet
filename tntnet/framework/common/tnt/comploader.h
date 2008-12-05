@@ -47,17 +47,17 @@ namespace tnt
       const std::string& getLibname() const  { return libname; }
   };
 
+  template <typename objectType>
+  class Dlcloser
+  {
+    protected:
+      void destroy(objectType* ptr)
+      { ::dlclose(*ptr); }
+  };
+
   class ComponentLibrary
   {
       friend class Comploader;
-
-      template <typename objectType>
-      class Dlcloser
-      {
-        protected:
-          void destroy(objectType* ptr)
-          { ::dlclose(ptr); }
-      };
 
       typedef void* HandleType;
       typedef cxxtools::SmartPtr<HandleType, cxxtools::RefLinked, Dlcloser> HandlePointer;
