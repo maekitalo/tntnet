@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/poll.h>
+#include <pthread.h>
 
 log_define("tntnet.ssl")
 

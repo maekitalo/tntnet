@@ -31,10 +31,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <locale>
-#include <errno.h>
 #include <sys/poll.h>
 #include <cxxtools/dlloader.h>
+#include <pthread.h>
 
 log_define("tntnet.worker")
 
