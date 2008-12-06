@@ -120,7 +120,7 @@ namespace tnt
     if (lastTime != t)
     {
       // We can use the cached tm-struct and calculate hour, minute and
-      // seconds. No locking was needed at all. This is the common case.
+      // seconds. This is the common case.
       lastTm.tm_sec = t % 60;
       t /= 60;
       lastTm.tm_min = t % 60;
