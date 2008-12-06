@@ -60,7 +60,7 @@ namespace tnt
       friend class Comploader;
 
       typedef void* HandleType;
-      typedef cxxtools::SmartPtr<HandleType, cxxtools::RefLinked, Dlcloser> HandlePointer;
+      typedef cxxtools::SmartPtr<HandleType, cxxtools::ExternalRefCounted, Dlcloser> HandlePointer;
       HandlePointer handlePtr;
 
       typedef std::map<std::string, ComponentFactory*> factoryMapType;
