@@ -109,18 +109,15 @@ namespace tnt
 
     cxxtools::MutexLock lock(mutex);
 
-    if (day != lastDay)
-    {
-      // Day differs, we calculate new date.
-
-      gmtime_r(&t, &lastTm);
-      lastDay = day;
-    }
-
     if (lastTime != t)
     {
-      // We can use the cached tm-struct and calculate hour, minute and
-      // seconds. This is the common case.
+      if (day != lastDay)
+      {
+        // Day differs, we calculate new date.
+        gmtime_r(&t, &lastTm);
+        lastDay = day;
+      }
+
       lastTm.tm_sec = t % 60;
       t /= 60;
       lastTm.tm_min = t % 60;
