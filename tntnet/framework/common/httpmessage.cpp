@@ -105,12 +105,12 @@ namespace tnt
 
     time_t t;
     time(&t);
-    time_t day = t / (24*60*60);
 
     cxxtools::MutexLock lock(mutex);
 
     if (lastTime != t)
     {
+      time_t day = t / (24*60*60);
       if (day != lastDay)
       {
         // Day differs, we calculate new date.
