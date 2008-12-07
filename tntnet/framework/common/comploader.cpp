@@ -29,7 +29,7 @@
 
 namespace
 {
-  cxxtools::Mutex mutex;
+  cxxtools::ReadWriteMutex mutex;
 }
 
 namespace tnt
@@ -67,7 +67,7 @@ void* ComponentLibrary::dlopen(const std::string& name)
 
   ret = ::dlopen(name.c_str(), RTLD_NOW|RTLD_LOCAL);
   if (ret == 0)
-    log_warn("failed to load library \"" << name << '"');
+    log_debug("failed to load library \"" << name << '"');
   else
     log_debug("library \"" << name << "\" successfully opened");
 
@@ -105,10 +105,13 @@ Component* ComponentLibrary::create(
 
 LangLib::PtrType ComponentLibrary::getLangLib(const std::string& lang)
 {
-  cxxtools::MutexLock lock(mutex);
+  cxxtools::ReadLock rlock(mutex);
   langlibsType::const_iterator it = langlibs.find(lang);
   if (it != langlibs.end())
     return it->second;
+
+  rlock.unlock();
+  cxxtools::WriteLock wlock(mutex);
 
   LangLib::PtrType l;
   try
@@ -160,20 +163,27 @@ Component& Comploader::fetchComp(const Compident& ci,
 {
   log_debug("fetchComp \"" << ci << '"');
 
-  cxxtools::MutexLock lock(mutex);
+  cxxtools::ReadLock rlock(mutex);
+  cxxtools::WriteLock wlock(mutex, false);
 
   // lookup Component
   componentmap_type::iterator it = componentmap.find(ci);
   if (it == componentmap.end())
   {
-    ComponentLibrary& lib = fetchLib(ci.libname);
-    Component* comp = lib.create(ci.compname, *this, rootmapper);
+    rlock.unlock();
+    wlock.lock();
+    componentmap_type::iterator it = componentmap.find(ci);
+    if (it == componentmap.end())
+    {
+      ComponentLibrary& lib = fetchLib(ci.libname);
+      Component* comp = lib.create(ci.compname, *this, rootmapper);
 
-    componentmap[ci] = comp;
-    return *comp;
+      componentmap[ci] = comp;
+      return *comp;
+    }
   }
-  else
-    return *(it->second);
+
+  return *(it->second);
 }
 
 Component* Comploader::createComp(const Compident& ci,
