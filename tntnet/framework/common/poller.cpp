@@ -54,7 +54,7 @@ namespace tnt
   {
     pollFd = ::epoll_create(256);
     if (pollFd < 0)
-      throw cxxtools::SysError("epoll_create");
+      throw cxxtools::SystemError("epoll_create");
 
     fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
     addFd(notify_pipe.getReadFd());
@@ -74,10 +74,10 @@ namespace tnt
     e.data.fd = fd;
     int ret = ::epoll_ctl(pollFd, EPOLL_CTL_ADD, fd, &e);
     if (ret < 0)
-      throw cxxtools::SysError("epoll_ctl(EPOLL_CTL_ADD)");
+      throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_ADD)");
   }
 
-  void PollerImpl::removeFd(int fd)
+  bool PollerImpl::removeFd(int fd)
   {
     log_debug("removeFd(" << fd << ')');
 
@@ -86,11 +86,16 @@ namespace tnt
     int ret = ::epoll_ctl(pollFd, EPOLL_CTL_DEL, fd, &e);
     if (ret < 0)
     {
-      if (errno == EBADF)
+      if (errno == EBADF || errno == ENOENT)
+      {
         log_debug("fd " << fd << " couldn't be removed");
+        return false;
+      }
       else
-        throw cxxtools::SysError("epoll_ctl(EPOLL_CTL_DEL)");
+        throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_DEL)");
     }
+
+    return true;
   }
 
   void PollerImpl::doStop()
@@ -161,7 +166,7 @@ namespace tnt
       if (ret < 0)
       {
         if (errno != EINTR)
-          throw cxxtools::SysError("epoll_wait");
+          throw cxxtools::SystemError("epoll_wait");
       }
       else if (ret == 0)
       {
@@ -228,33 +233,40 @@ namespace tnt
               ::close(events[i].data.fd);
               rebuildPollFd = true;
             }
-
-            if ((events[i].events & (EPOLLERR | EPOLLHUP)) != 0)
-            {
-              log_debug("remove fd " << it->first << " from queue");
-            }
             else
             {
-              log_debug("put fd " << it->first << " back in queue");
-              queue.put(it->second);
-            }
+              Jobqueue::JobPtr j = it->second;
+              int ev = events[i].events;  
+              jobs.erase(it);
 
-            jobs.erase(events[i].data.fd);
-            removeFd(events[i].data.fd);
+              if (!removeFd(events[i].data.fd))
+                rebuildPollFd = true;
+
+              if (ev & (EPOLLIN | EPOLLOUT) != 0)
+              {
+                log_debug("put fd " << it->first << " back in queue");
+                queue.put(j);
+              }
+              else
+              {
+                log_debug("remove fd " << it->first << " from queue");
+              }
+            }
           }
         }
 
         if (rebuildPollFd)
         {
-          // rebuild poll-stucture
+          // rebuild poll-structure
+          log_warn("need to rebuild poll structure");
           close(pollFd);
           pollFd = ::epoll_create(256);
           if (pollFd < 0)
-            throw cxxtools::SysError("epoll_create");
+            throw cxxtools::SystemError("epoll_create");
 
           int ret = fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
           if (ret < 0)
-            throw cxxtools::SysError("fcntl");
+            throw cxxtools::SystemError("fcntl");
 
           addFd(notify_pipe.getReadFd());
           for (jobs_type::iterator it = jobs.begin(); it != jobs.end(); ++it)

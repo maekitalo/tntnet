@@ -55,7 +55,7 @@ namespace tnt
       cxxtools::Mutex mutex;
 
       void addFd(int fd);
-      void removeFd(int fd);
+      bool removeFd(int fd);
       void append_new_jobs();
 
 #else
