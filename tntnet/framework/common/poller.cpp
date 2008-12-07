@@ -242,7 +242,7 @@ namespace tnt
               if (!removeFd(events[i].data.fd))
                 rebuildPollFd = true;
 
-              if (ev & (EPOLLIN | EPOLLOUT) != 0)
+              if (ev & EPOLLIN)
               {
                 log_debug("put fd " << it->first << " back in queue");
                 queue.put(j);
