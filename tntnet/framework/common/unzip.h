@@ -1,37 +1,30 @@
-/* unzip.h -- IO for uncompress .zip files using zlib
-   Version 1.00, September 10th, 2003
-
+/*
  * Copyright (C) 1998-2003 Gilles Vollant
-
-   This unzip package allow extract file from .ZIP file, compatible with PKZip 2.04g
-     WinZip, InfoZip tools and compatible.
-   Encryption and multi volume ZipFile (span) are not supported.
-   Old compressions used by old PKZip 1.x are not supported
-
-
-   I WAIT FEEDBACK at mail info@winimage.com
-   Visit also http://www.winimage.com/zLibDll/unzip.htm for evolution
-
-   Condition of use and distribution are the same than zlib :
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
-
-
-*/
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * As a special exception, you may use this file as part of a free
+ * software library without restriction. Specifically, if other files
+ * instantiate templates or use macros or inline functions from this
+ * file, or you compile this file and link it with other files to
+ * produce an executable, this file does not by itself cause the
+ * resulting executable to be covered by the GNU General Public
+ * License. This exception does not however invalidate any other
+ * reasons why the executable file might be covered by the GNU Library
+ * General Public License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 /* for more info about .ZIP format, see
       http://www.info-zip.org/pub/infozip/doc/appnote-981119-iz.zip

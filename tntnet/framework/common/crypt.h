@@ -1,31 +1,30 @@
-/* crypt.h -- base code for crypt/uncrypt ZIPfile
-
-
-   Version 1.00, September 10th, 2003
-
+/*
  * Copyright (C) 1998-2003 Gilles Vollant
-
-   This code is a modified version of crypting code in Infozip distribution
-
-   The encryption/decryption parts of this source code (as opposed to the
-   non-echoing password parts) were originally written in Europe.  The
-   whole source package can be freely distributed, including from the USA.
-   (Prior to January 2000, re-export from the US was a violation of US law.)
-
-   This encryption code is a direct transcription of the algorithm from
-   Roger Schlafly, described by Phil Katz in the file appnote.txt.  This
-   file (appnote.txt) is distributed with the PKZIP program (even in the
-   version without encryption capabilities).
-
-   If you don't need crypting in your application, just define symbols
-   NOCRYPT and NOUNCRYPT.
-
-   This code support the "Traditional PKWARE Encryption".
-
-   The new AES encryption added on Zip format by Winzip (see the page
-   http://www.winzip.com/aes_info.htm ) and PKWare PKZip 5.x Strong
-   Encryption is not supported.
-*/
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * As a special exception, you may use this file as part of a free
+ * software library without restriction. Specifically, if other files
+ * instantiate templates or use macros or inline functions from this
+ * file, or you compile this file and link it with other files to
+ * produce an executable, this file does not by itself cause the
+ * resulting executable to be covered by the GNU General Public
+ * License. This exception does not however invalidate any other
+ * reasons why the executable file might be covered by the GNU Library
+ * General Public License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #define CRC32(c, b) ((*(pcrc_32_tab+(((int)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
 
