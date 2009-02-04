@@ -35,6 +35,8 @@
 #include <tnt/dispatcher.h>
 #include <tnt/maptarget.h>
 #include <tnt/scopemanager.h>
+#include <cxxtools/condition.h>
+#include <cxxtools/mutex.h>
 #include <set>
 
 namespace tnt
@@ -80,6 +82,9 @@ namespace tnt
       Tntnet& operator= (const Tntnet&);
 
       void timerTask();
+
+      static cxxtools::Condition timerStopCondition;
+      static cxxtools::Mutex timeStopMutex;
 
     public:
       /// Initialize a default Tntnet-application without mappings.

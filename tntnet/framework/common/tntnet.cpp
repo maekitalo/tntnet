@@ -118,11 +118,6 @@ namespace
   cxxtools::Mutex allTntnetInstancesMutex;
   TntnetInstancesType allRunningTntnetInstances;
 
-  // these belong actually into the Tntnet-class itself, but we don't want to
-  // break binary compatibility
-  cxxtools::Mutex timeStopMutex;
-  cxxtools::Condition timerStopCondition;
-
 }
 
 namespace tnt
@@ -140,6 +135,9 @@ namespace tnt
   { }
 
   bool Tntnet::stop = false;
+  cxxtools::Mutex Tntnet::timeStopMutex;
+  cxxtools::Condition Tntnet::timerStopCondition;
+
   
   Tntnet::listeners_type Tntnet::allListeners;
 
