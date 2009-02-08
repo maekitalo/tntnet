@@ -105,9 +105,8 @@ EOF
 
   cat <<EOF
 .SUFFIXES: .ecpp .gif .jpg .css .js .cpp
-EXTRA_ENV+="PATH=\$\$PATH:$prefix/bin"
-ECPPC=env \${EXTRA_ENV} ecppc
-TNTNET=env \${EXTRA_ENV} tntnet
+ECPPC=$prefix/bin/ecppc
+TNTNET=$prefix/bin/tntnet
 CXXFLAGS+=-I$includedir -fPIC -O2
 LDFLAGS+=@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
 
