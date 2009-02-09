@@ -47,7 +47,7 @@ struct Compident
   bool operator< (const Compident& ci) const
   {
     return libname < ci.libname
-      || libname == ci.libname && compname < ci.compname;
+      || (libname == ci.libname && compname < ci.compname);
   }
 
   Compident() { }
