@@ -84,9 +84,9 @@ namespace tnt
       static unsigned socket_buffer_size;
 
     public:
-      explicit Job(Tntnet& app_)
+      explicit Job(Tntnet& app_, const SocketIf* socketIf_ = 0)
         : keepAliveCounter(keepalive_max),
-          request(app_),
+          request(app_, socketIf_),
           parser(request),
           lastAccessTime(0)
         { }

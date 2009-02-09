@@ -37,8 +37,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <tnt/sessionscope.h>
-#include <errno.h>
-#include <string.h>
+#include <tnt/socketif.h>
 #include <pthread.h>
 #include "config.h"
 
@@ -52,8 +51,8 @@ namespace tnt
   size_t HttpRequest::maxRequestSize = 0;
   unsigned HttpRequest::serial_ = 0;
 
-  HttpRequest::HttpRequest(Tntnet& application_)
-    : ssl(false),
+  HttpRequest::HttpRequest(Tntnet& application_, const SocketIf* socketIf_)
+    : socketIf(socketIf_),
       locale_init(false),
       encodingRead(false),
       requestScope(0),
@@ -64,12 +63,10 @@ namespace tnt
       sessionScopeLocked(false),
       application(application_)
   {
-    memset(&peerAddr, 0, sizeof(peerAddr));
-    memset(&serverAddr, 0, sizeof(peerAddr));
   }
 
-  HttpRequest::HttpRequest(Tntnet& application_, const std::string& url)
-    : ssl(false),
+  HttpRequest::HttpRequest(Tntnet& application_, const std::string& url, const SocketIf* socketIf_)
+    : socketIf(socketIf_),
       locale_init(false),
       requestScope(0),
       applicationScope(0),
@@ -87,11 +84,9 @@ namespace tnt
     : pathinfo(r.pathinfo),
       args(r.args),
       qparam(r.qparam),
-      peerAddr(r.peerAddr),
-      serverAddr(r.serverAddr),
+      socketIf(r.socketIf),
       ct(r.ct),
       mp(r.mp),
-      ssl(r.ssl),
       serial(r.serial),
       locale_init(r.locale_init),
       locale(r.locale),
@@ -128,11 +123,9 @@ namespace tnt
     pathinfo = r.pathinfo;
     args = r.args;
     qparam = r.qparam;
-    peerAddr = r.peerAddr;
-    serverAddr = r.serverAddr;
     ct = r.ct;
     mp = r.mp;
-    ssl = r.ssl;
+    socketIf = r.socketIf;
     serial = r.serial;
     locale_init = r.locale_init;
     locale = r.locale;
@@ -257,39 +250,6 @@ namespace tnt
       cxxtools::MutexLock lock(monitor);
       serial = ++serial_;
     }
-  }
-
-  namespace
-  {
-    void formatIp(const sockaddr_storage& addr, std::string& str)
-    {
-#ifdef HAVE_INET_NTOP
-      const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
-      char strbuf[INET6_ADDRSTRLEN + 1];
-      const char* p = inet_ntop(sa->sin_family, &sa->sin_addr, strbuf, sizeof(strbuf));
-      str = (p == 0 ? "-" : strbuf);
-#else
-      static cxxtools::Mutex monitor;
-      cxxtools::MutexLock lock(monitor);
-
-      const char* p = inet_ntoa(peerAddr.sin_addr);
-      str = (p == 0 ? "-" : strbuf);
-#endif
-    }
-  }
-
-  std::string HttpRequest::getPeerIp() const
-  {
-    if (peerAddrStr.empty())
-      formatIp(peerAddr, peerAddrStr);
-    return peerAddrStr;
-  }
-
-  std::string HttpRequest::getServerIp() const
-  {
-    if (serverAddrStr.empty())
-      formatIp(serverAddr, serverAddrStr);
-    return serverAddrStr;
   }
 
   namespace

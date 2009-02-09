@@ -43,6 +43,29 @@ log_define("tntnet.job")
 
 namespace tnt
 {
+  namespace
+  {
+    void formatIp(const sockaddr_storage& addr, std::string& str)
+    {
+#ifdef HAVE_INET_NTOP
+      const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
+      char strbuf[INET6_ADDRSTRLEN + 1];
+      const char* p = inet_ntop(sa->sin_family, &sa->sin_addr, strbuf, sizeof(strbuf));
+      str = (p == 0 ? "-" : strbuf);
+#else
+      static cxxtools::Mutex monitor;
+      cxxtools::MutexLock lock(monitor);
+
+      const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
+      const char* p = inet_ntoa(sa->sin_addr);
+      if (p)
+        str = p;
+      else
+        str.clear();
+#endif
+    }
+  }
+
   unsigned Job::socket_read_timeout = 10;
   unsigned Job::socket_write_timeout = 10000;
   unsigned Job::keepalive_max = 1000;
@@ -73,24 +96,35 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // Tcpjob
   //
+
+  std::string Tcpjob::getPeerIp() const
+  {
+    std::string ret;
+    formatIp(socket.getPeeraddr(), ret);
+    return ret;
+  }
+
+  std::string Tcpjob::getServerIp() const
+  {
+    std::string ret;
+    formatIp(socket.getSockAddr(), ret);
+    return ret;
+  }
+
+  bool Tcpjob::isSsl() const
+  {
+    return false;
+  }
+
   void Tcpjob::accept()
   {
     log_debug("accept");
-    socket.accept(listener);
 
+    socket.accept(listener);
     fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
 
-    struct sockaddr_storage s = socket.getSockAddr();
-    struct sockaddr_storage sockaddr;
-    memcpy(&sockaddr, &s, sizeof(sockaddr));
+    log_debug("connection accepted from " << getPeerIp());
 
-    char buffer[INET6_ADDRSTRLEN];
-    log_debug("connection accepted from "
-      << inet_ntop(AF_INET6, &(socket.getPeeraddr()), buffer, sizeof(buffer)));
-
-    getRequest().setPeerAddr(socket.getPeeraddr());
-    getRequest().setServerAddr(sockaddr);
-    getRequest().setSsl(false);
     touch();
   }
 
@@ -143,11 +177,31 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // SslTcpjob
   //
+
+  std::string SslTcpjob::getPeerIp() const
+  {
+    std::string ret;
+    formatIp(socket.getPeeraddr(), ret);
+    return ret;
+  }
+
+  std::string SslTcpjob::getServerIp() const
+  {
+    std::string ret;
+    formatIp(socket.getSockAddr(), ret);
+    return ret;
+  }
+
+  bool SslTcpjob::isSsl() const
+  {
+    return true;
+  }
+
   void SslTcpjob::accept()
   {
     log_debug("accept (ssl)");
     socket.accept(listener);
-    log_debug("connection accepted (ssl)");
+    log_debug("connection accepted (ssl) from " << getPeerIp());
   }
 
   void SslTcpjob::handshake()
@@ -156,14 +210,6 @@ namespace tnt
     log_debug("ssl handshake ready");
 
     fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
-
-    struct sockaddr_storage s = socket.getSockAddr();
-    struct sockaddr_storage sockaddr;
-    memcpy(&sockaddr, &s, sizeof(sockaddr));
-
-    getRequest().setPeerAddr(socket.getPeeraddr());
-    getRequest().setServerAddr(sockaddr);
-    getRequest().setSsl(true);
 
     setRead();
     touch();

@@ -32,8 +32,7 @@
 
 #include <tnt/httpmessage.h>
 #include <tnt/httpheader.h>
-#include <vector>
-#include <netinet/in.h>
+#include <tnt/socketif.h>
 #include <tnt/contenttype.h>
 #include <tnt/multipart.h>
 #include <tnt/cookie.h>
@@ -41,12 +40,12 @@
 #include <tnt/query_params.h>
 #include <tnt/scope.h>
 #include <locale>
-#include <string.h>
-#include <sys/socket.h>
+#include <vector>
 
 namespace tnt
 {
   class Sessionscope;
+  class SocketIf;
   class Tntnet;
 
   /// HTTP-Request-message
@@ -71,12 +70,10 @@ namespace tnt
       args_type args;
       tnt::QueryParams qparam;
 
-      struct sockaddr_storage peerAddr;
-      struct sockaddr_storage serverAddr;
+      const SocketIf* socketIf;
 
       mutable Contenttype ct;
       Multipart mp;
-      bool ssl;
       unsigned serial;
       static unsigned serial_;
       mutable bool locale_init;
@@ -112,8 +109,8 @@ namespace tnt
       Tntnet& application;
 
     public:
-      explicit HttpRequest(Tntnet& application_);
-      HttpRequest(Tntnet& application_, const std::string& url);
+      explicit HttpRequest(Tntnet& application_, const SocketIf* socketIf = 0);
+      HttpRequest(Tntnet& application_, const std::string& url, const SocketIf* socketIf = 0);
       HttpRequest(const HttpRequest& r);
       ~HttpRequest();
 
@@ -162,24 +159,10 @@ namespace tnt
       tnt::QueryParams& getQueryParams()               { return qparam; }
       const tnt::QueryParams& getQueryParams() const   { return qparam; }
 
-      void setPeerAddr(const struct sockaddr_storage& p)
-        { memcpy(&peerAddr, &p, sizeof(peerAddr)); peerAddrStr.clear(); }
-      const struct sockaddr_storage& getPeerAddr() const
-        { return peerAddr; }
-      std::string getPeerIp() const;
+      std::string getPeerIp() const    { return socketIf ? socketIf->getPeerIp()   : std::string(); }
+      std::string getServerIp() const  { return socketIf ? socketIf->getServerIp() : std::string(); }
+      bool isSsl() const  { return socketIf && socketIf->isSsl(); }
 
-      void setServerAddr(const struct sockaddr_storage& p)
-        { memcpy(&serverAddr, &p, sizeof(serverAddr)); serverAddrStr.clear(); }
-      const struct sockaddr_storage& getServerAddr() const
-        { return serverAddr; }
-      std::string getServerIp() const;
-      unsigned short int getServerPort() const
-        { return ntohs(reinterpret_cast <const struct sockaddr_in *> (&serverAddr)->sin_port); }
-
-      void setSsl(bool sw = true)
-        { ssl = sw; }
-      bool isSsl() const
-        { return ssl;  }
       const Contenttype& getContentType() const
         { return ct.getType().empty() && hasHeader(httpheader::contentType) ? getContentTypePriv() : ct; }
       bool isMultipart() const               { return getContentType().isMultipart(); }

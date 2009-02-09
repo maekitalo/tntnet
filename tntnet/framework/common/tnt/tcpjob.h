@@ -33,10 +33,11 @@
 #include <tnt/job.h>
 #include <cxxtools/tcpstream.h>
 #include <tnt/ssl.h>
+#include <tnt/socketif.h>
 
 namespace tnt
 {
-  class Tcpjob : public Job
+  class Tcpjob : public Job, private SocketIf
   {
       cxxtools::net::iostream socket;
       const cxxtools::net::Server& listener;
@@ -46,9 +47,13 @@ namespace tnt
       void handshake();
       void regenerateJob();
 
+      virtual std::string getPeerIp() const;
+      virtual std::string getServerIp() const;
+      virtual bool isSsl() const;
+
     public:
       Tcpjob(Tntnet& app, const cxxtools::net::Server& listener_, Jobqueue& queue_)
-        : Job(app),
+        : Job(app, this),
           socket(getSocketBufferSize(), getSocketReadTimeout()),
           listener(listener_),
           queue(queue_)
@@ -61,7 +66,7 @@ namespace tnt
   };
 
 #ifdef USE_SSL
-  class SslTcpjob : public Job
+  class SslTcpjob : public Job, private SocketIf
   {
       ssl_iostream socket;
       const SslServer& listener;
@@ -71,9 +76,13 @@ namespace tnt
       void handshake();
       void regenerateJob();
 
+      virtual std::string getPeerIp() const;
+      virtual std::string getServerIp() const;
+      virtual bool isSsl() const;
+
     public:
       SslTcpjob(Tntnet& app, const SslServer& listener_, Jobqueue& queue_)
-        : Job(app),
+        : Job(app, this),
           socket(getSocketBufferSize(), getSocketReadTimeout()),
           listener(listener_),
           queue(queue_)
