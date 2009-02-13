@@ -31,7 +31,6 @@ libtntnet_la_SOURCES = \
 	mimedb.cpp \
 	multipart.cpp \
 	poller.cpp \
-	regex.cpp \
 	savepoint.cpp \
 	scope.cpp \
 	scopemanager.cpp \
@@ -85,7 +84,6 @@ nobase_include_HEADERS = \
 	tnt/parser.h \
 	tnt/poller.h \
 	tnt/query_params.h \
-	tnt/regex.h \
 	tnt/savepoint.h \
 	tnt/scope.h \
 	tnt/scopemanager.h \

@@ -35,7 +35,7 @@
 #include <tnt/maptarget.h>
 #include <vector>
 #include <map>
-#include <tnt/regex.h>
+#include <cxxtools/regex.h>
 
 namespace tnt
 {
@@ -49,18 +49,18 @@ namespace tnt
       class VHostRegex
       {
           std::string vhost;
-          Regex regex;
+          cxxtools::Regex regex;
 
         public:
-          VHostRegex(const std::string& vhost_, const Regex& regex_)
+          VHostRegex(const std::string& vhost_, const cxxtools::Regex& regex_)
             : vhost(vhost_),
               regex(regex_)
               { }
 
           bool match(const std::string& vhost_, const std::string& str_,
-            RegexSMatch& smatch, int eflags = 0) const
+            cxxtools::RegexSMatch& smatch, int eflags = 0) const
           {
-            return (vhost.empty() || Regex(vhost).match(vhost_))
+            return (vhost.empty() || cxxtools::Regex(vhost).match(vhost_))
                 && regex.match(str_, smatch);
           }
       };

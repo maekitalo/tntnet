@@ -44,7 +44,7 @@ Dispatcher::CompidentType& Dispatcher::addUrlMapEntry(const std::string& vhost,
 {
   cxxtools::WriteLock lock(mutex);
 
-  urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, Regex(url)), ci));
+  urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, cxxtools::Regex(url)), ci));
   return urlmap.back().second;
 }
 
@@ -59,7 +59,7 @@ namespace {
   class regmatch_formatter : public std::unary_function<const std::string&, std::string>
   {
     public:
-      RegexSMatch what;
+      cxxtools::RegexSMatch what;
       std::string operator() (const std::string& s) const
       { return what.format(s); }
   };
