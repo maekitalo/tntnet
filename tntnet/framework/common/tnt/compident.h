@@ -44,6 +44,11 @@ struct Compident
   std::string libname;
   std::string compname;
 
+private:
+  mutable std::string compident;
+
+public:
+
   bool operator< (const Compident& ci) const
   {
     return libname < ci.libname
@@ -63,8 +68,8 @@ struct Compident
   explicit Compident(const std::string& ident);
 
   /// return component identifyer as a string
-  std::string toString() const
-  { return libname.empty() ? compname : (compname + '@' + libname); }
+  const std::string& toString() const
+  { return libname.empty() ? compname : (compident.empty() ? (compident = compname + '@' + libname) : compident); }
 
   bool empty() const
     { return libname.empty() && compname.empty(); }
