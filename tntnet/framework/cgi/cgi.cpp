@@ -82,22 +82,21 @@ namespace tnt
       request.setPathInfo(pathInfo);
   }
 
-  void Cgi::getRemoteAddr()
+  std::string Cgi::getPeerIp() const
   {
-    struct sockaddr_in6 addr;
-    memset(&addr, 0, sizeof(addr));
+    const char* addr = getenv("REMOTE_ADDR");
+    return addr ? addr : std::string();
+  }
 
-    addr.sin6_family = AF_INET6;
+  std::string Cgi::getServerIp() const
+  {
+    const char* addr = getenv("SERVER_ADDR");
+    return addr ? addr : std::string();
+  }
 
-    const char* remotePort = getenv("REMOTE_PORT");
-    if (remotePort)
-      addr.sin6_port = stringTo<uint16_t>(remotePort);
-
-    const char* remoteAddr = getenv("REMOTE_ADDR");
-    if (remoteAddr)
-      inet_pton(AF_INET6, remoteAddr, &addr);
-
-    request.setPeerAddr(*reinterpret_cast <sockaddr_storage *> (&addr));
+  bool Cgi::isSsl() const
+  {
+    return getenv("HTTPS");
   }
 
   void Cgi::readBody()
@@ -113,7 +112,7 @@ namespace tnt
   }
 
   Cgi::Cgi(int argc, char* argv[])
-    : request(application)
+    : request(application, this)
   {
     cxxtools::Arg<const char*> componentNameArg(argc, argv, 'n', argv[0]);
     componentName = componentNameArg.getValue();
@@ -203,7 +202,6 @@ namespace tnt
     getHeader("HTTP_ACCEPT_CHARSET", httpheader::acceptCharset);
     getHeader("HTTP_ACCEPT_LANGUAGE", httpheader::acceptLanguage);
     getHeader("HTTP_HOST", httpheader::host);
-    getRemoteAddr();
 
     readBody();
 

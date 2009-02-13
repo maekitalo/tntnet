@@ -38,7 +38,7 @@
 namespace tnt
 {
   /// enable cgi-interface for components
-  class Cgi
+  class Cgi : private SocketIf
   {
       std::string componentName;
       Tntconfig config;
@@ -53,9 +53,12 @@ namespace tnt
       void getMethod();
       void getQueryString();
       void getPathInfo();
-      void getRemoteAddr();
       void readBody();
       void execute();
+
+      virtual std::string getPeerIp() const;
+      virtual std::string getServerIp() const;
+      virtual bool isSsl() const;
 
     public:
       Cgi(int argc, char* argv[]);
