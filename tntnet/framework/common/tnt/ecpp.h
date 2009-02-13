@@ -234,17 +234,10 @@ namespace tnt
   {                                                                            \
     const std::string varname##_scopekey = key;                                \
     tnt::Scope& _scope = scope;                                                \
-    tnt::Scope::pointer_type _ptr = _scope.get(varname##_scopekey);            \
-    if (_ptr.getPointer())                                                     \
-      varname##_pointer = static_cast<tnt::PointerObject< type >*>(            \
-        _ptr.getPointer())->get();                                             \
-    else                                                                       \
-    {                                                                          \
-      tnt::PointerObject< type >* _poptr = new tnt::PointerObject< type >();   \
-      _ptr = _poptr;                                                           \
-      _poptr->set(varname##_pointer = new type construct);                     \
-      _scope.put(varname##_scopekey, _ptr);                                    \
-    }                                                                          \
+    varname##_pointer = _scope.get< type >(varname##_scopekey);                \
+    if ( ! varname##_pointer )                                                 \
+      _scope.put< type >(varname##_scopekey,                                   \
+          varname##_pointer = new type construct);                             \
   }                                                                            \
   type& varname = *varname##_pointer;
 

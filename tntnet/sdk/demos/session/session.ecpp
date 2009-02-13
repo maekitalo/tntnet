@@ -1,3 +1,19 @@
+<%pre>
+
+class MyClass
+{
+  public:
+    MyClass()
+    {
+      log_debug("MyClass ctor");
+    }
+    ~MyClass()
+    {
+      log_debug("MyClass dtor");
+    }
+};
+
+</%pre>
 <%session>
 
   unsigned s(0);
@@ -11,6 +27,7 @@
 <%session scope="page">
 
   unsigned sp(0);
+  MyClass myObject;
 
 </%session>
 <%application>
@@ -43,6 +60,23 @@
   unsigned tp(0);
 
 </%thread>
+<%cpp>
+
+MyClass* p = request.getSessionScope().get<MyClass>("foo");
+if (p)
+{
+  log_debug("instance of MyClass found");
+}
+else
+{
+  log_debug("create instance of MyClass");
+  p = new MyClass();
+
+  log_debug("put instance of MyClass into session scope");
+  request.getSessionScope().put<MyClass>("foo", p); // ownership is transfered to the scope here
+}
+
+</%cpp>
 
 Sessioncounter (component): <$ ++s $><br>
 Sessioncounter (application): <$ ++sa $><br>

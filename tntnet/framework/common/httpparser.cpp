@@ -57,9 +57,9 @@ namespace tnt
 
     inline bool isHexDigit(char ch)
     {
-      return ch >= '0' && ch <= '9'
-          || ch >= 'A' && ch <= 'Z'
-          || ch >= 'a' && ch <= 'z';
+      return (ch >= '0' && ch <= '9')
+          || (ch >= 'A' && ch <= 'Z')
+          || (ch >= 'a' && ch <= 'z');
     }
 
     inline unsigned valueOfHexDigit(char ch)

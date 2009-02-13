@@ -42,10 +42,13 @@ namespace tnt
       { }
 
       typedef cxxtools::SmartPtr<Object> pointer_type;
+
+      template <typename data_type>
+      data_type* cast();
   };
 
-  template <typename data_type>
-  class PointerObject : public Object
+  template <typename data_type, template <class> class destroyPolicy = cxxtools::DefaultDestroyPolicy>
+  class PointerObject : public Object, public destroyPolicy<data_type>
   {
       data_type* ptr;
 
@@ -54,9 +57,9 @@ namespace tnt
         : ptr(ptr_)
         { }
       ~PointerObject()
-        { delete ptr; }
+        { destroy(ptr); }
       void set(data_type* ptr_)
-        { delete ptr; ptr = ptr_; }
+        { destroy(ptr); ptr = ptr_; }
       data_type* get()  { return ptr; }
   };
 
@@ -72,6 +75,11 @@ namespace tnt
     return ret;
   }
 
+  template <typename data_type>
+  data_type* Object::cast()
+  {
+    return static_cast<PointerObject<data_type>*>(this)->get();
+  }
 }
 
 #endif // TNT_OBJECT_H

@@ -51,6 +51,8 @@ namespace tnt
       cxxtools::Mutex refmutex;
       unsigned refs;
 
+      void privatePut(const std::string& key, pointer_type o);
+
       // non-copyable
       Scope(const Scope&);
       Scope& operator=(const Scope&);
@@ -68,11 +70,32 @@ namespace tnt
       bool has(const std::string& key) const
         { return data.find(key) != data.end(); }
 
-      pointer_type get(const std::string& key);
+      template <typename T> T* get(const std::string& key)
+        {
+          container_type::iterator it = data.find(key);
+          return it == data.end() ? 0 : it->second->cast<T>();
+        }
 
       /// Put new Object in scope. If key already exists,
       /// it is replaced and old Object released.
-      void put(const std::string& key, pointer_type o);
+      template <typename T, template <class> class destroyPolicy>
+      void put(const std::string& key, T* o)
+      {
+        try
+        {
+          tnt::PointerObject<T>* ptr = new tnt::PointerObject<T, destroyPolicy>(o);
+          privatePut(key, ptr);
+        }
+        catch (const std::bad_alloc&)
+        {
+          destroyPolicy<T>::destroy(o);
+          throw;
+        }
+      }
+
+      template <typename T>
+      void put(const std::string& key, T* o)
+      { put<T, cxxtools::DefaultDestroyPolicy>(key, o); }
 
       void erase(const std::string& key)  { data.erase(key); }
       bool empty() const  { return data.empty(); }
