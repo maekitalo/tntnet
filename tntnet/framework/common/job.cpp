@@ -43,29 +43,6 @@ log_define("tntnet.job")
 
 namespace tnt
 {
-  namespace
-  {
-    void formatIp(const sockaddr_storage& addr, std::string& str)
-    {
-#ifdef HAVE_INET_NTOP
-      const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
-      char strbuf[INET6_ADDRSTRLEN + 1];
-      const char* p = inet_ntop(sa->sin_family, &sa->sin_addr, strbuf, sizeof(strbuf));
-      str = (p == 0 ? "-" : strbuf);
-#else
-      static cxxtools::Mutex monitor;
-      cxxtools::MutexLock lock(monitor);
-
-      const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(&addr);
-      const char* p = inet_ntoa(sa->sin_addr);
-      if (p)
-        str = p;
-      else
-        str.clear();
-#endif
-    }
-  }
-
   unsigned Job::socket_read_timeout = 10;
   unsigned Job::socket_write_timeout = 10000;
   unsigned Job::keepalive_max = 1000;
@@ -99,16 +76,12 @@ namespace tnt
 
   std::string Tcpjob::getPeerIp() const
   {
-    std::string ret;
-    formatIp(socket.getPeeraddr(), ret);
-    return ret;
+    return socket.getPeerAddr();
   }
 
   std::string Tcpjob::getServerIp() const
   {
-    std::string ret;
-    formatIp(socket.getSockAddr(), ret);
-    return ret;
+    return socket.getSockAddr();
   }
 
   bool Tcpjob::isSsl() const
@@ -180,16 +153,12 @@ namespace tnt
 
   std::string SslTcpjob::getPeerIp() const
   {
-    std::string ret;
-    formatIp(socket.getPeeraddr(), ret);
-    return ret;
+    return socket.getPeerAddr();
   }
 
   std::string SslTcpjob::getServerIp() const
   {
-    std::string ret;
-    formatIp(socket.getSockAddr(), ret);
-    return ret;
+    return socket.getSockAddr();
   }
 
   bool SslTcpjob::isSsl() const
