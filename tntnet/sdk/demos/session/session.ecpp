@@ -73,7 +73,7 @@ else
   p = new MyClass();
 
   log_debug("put instance of MyClass into session scope");
-  request.getSessionScope().put<MyClass>("foo", p); // ownership is transfered to the scope here
+  request.getSessionScope().put("foo", p); // ownership is transfered to the scope here
 }
 
 </%cpp>
