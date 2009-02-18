@@ -108,7 +108,7 @@ namespace tnt
       unsigned m_bufsize;
 
     public:
-      explicit openssl_streambuf(OpensslStream& stream, unsigned bufsize = 256, int timeout = -1);
+      explicit openssl_streambuf(OpensslStream& stream, unsigned bufsize = 8192, int timeout = -1);
       ~openssl_streambuf()
       { delete[] m_buffer; }
 
@@ -128,13 +128,13 @@ namespace tnt
       openssl_streambuf m_buffer;
 
     public:
-      explicit openssl_iostream(unsigned bufsize = 256, int timeout = -1)
+      explicit openssl_iostream(unsigned bufsize = 8192, int timeout = -1)
         : OpensslStream(-1),
           std::iostream(0),
           m_buffer(*this, bufsize, timeout)
         { init(&m_buffer); }
 
-      explicit openssl_iostream(const OpensslServer& server, unsigned bufsize = 256, int timeout = -1)
+      explicit openssl_iostream(const OpensslServer& server, unsigned bufsize = 8192, int timeout = -1)
         : OpensslStream(server),
           std::iostream(0),
           m_buffer(*this, bufsize, timeout)

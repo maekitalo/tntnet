@@ -150,12 +150,12 @@ namespace tnt
       GnuTls_streambuf m_buffer;
 
     public:
-      explicit GnuTls_iostream(unsigned bufsize = 256, int timeout = -1)
+      explicit GnuTls_iostream(unsigned bufsize = 8192, int timeout = -1)
         : std::iostream(0),
           m_buffer(*this, bufsize, timeout)
         { init(&m_buffer); }
 
-      explicit GnuTls_iostream(const GnuTlsServer& server, unsigned bufsize = 256, int timeout = -1)
+      explicit GnuTls_iostream(const GnuTlsServer& server, unsigned bufsize = 8192, int timeout = -1)
         : GnuTlsStream(server),
           std::iostream(0),
           m_buffer(*this, bufsize, timeout)
