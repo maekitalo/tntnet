@@ -109,11 +109,6 @@ namespace tnt
           connected(false)
         { }
 
-      explicit GnuTlsStream(int fd)
-        : cxxtools::net::Stream(fd),
-          connected(false)
-        { }
-
       explicit GnuTlsStream(const GnuTlsServer& server)
         : session(0),
           connected(false)
@@ -156,8 +151,7 @@ namespace tnt
 
     public:
       explicit GnuTls_iostream(unsigned bufsize = 256, int timeout = -1)
-        : GnuTlsStream(-1),
-          std::iostream(0),
+        : std::iostream(0),
           m_buffer(*this, bufsize, timeout)
         { init(&m_buffer); }
 

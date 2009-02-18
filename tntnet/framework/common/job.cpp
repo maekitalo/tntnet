@@ -111,7 +111,7 @@ namespace tnt
 
   std::iostream& Tcpjob::getStream()
   {
-    if (socket.cxxtools::net::Socket::bad())
+    if (!socket.isConnected())
     {
       try
       {
@@ -194,7 +194,7 @@ namespace tnt
 
   std::iostream& SslTcpjob::getStream()
   {
-    if (socket.cxxtools::net::Socket::bad())
+    if (!socket.isConnected())
     {
       try
       {
