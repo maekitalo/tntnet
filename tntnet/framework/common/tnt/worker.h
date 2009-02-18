@@ -37,13 +37,14 @@
 #include <tnt/comploader.h>
 #include <tnt/tntnet.h>
 #include <tnt/scope.h>
+#include <tnt/threadcontext.h>
 
 namespace tnt
 {
   class HttpRequest;
   class HttpReply;
 
-  class Worker : public cxxtools::DetachedThread
+  class Worker : public cxxtools::DetachedThread, private ThreadContext
   {
       static cxxtools::Mutex mutex;
 
@@ -66,6 +67,10 @@ namespace tnt
       bool processRequest(HttpRequest& request, std::iostream& socket,
         unsigned keepAliveCount);
       void healthCheck(time_t currentTime);
+
+      // thread context methods
+      void touch();       // wake watchdog timer
+      Scope& getScope();
 
     public:
       Worker(Tntnet& app);

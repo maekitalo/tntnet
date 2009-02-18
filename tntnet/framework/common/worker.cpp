@@ -278,7 +278,7 @@ namespace tnt
     if (!HttpRequest::checkUrl(url))
       throw HttpError(HTTP_BAD_REQUEST, "illegal url");
 
-    request.setThreadScope(threadScope);
+    request.setThreadContext(this);
 
     Dispatcher::PosType pos(application.getDispatcher(), request.getHost(),
       request.getUrl());
@@ -377,6 +377,16 @@ namespace tnt
         ::exit(111);
       }
     }
+  }
+
+  void Worker::touch()
+  {
+    time(&lastWaitTime);
+  }
+
+  Scope& Worker::getScope()
+  {
+    return threadScope;
   }
 
   Worker::workers_type::size_type Worker::getCountThreads()

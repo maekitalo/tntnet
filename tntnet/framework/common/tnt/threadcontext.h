@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ * Copyright (C) 2009 Tommi Maekitalo
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -26,55 +26,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TNT_CGI_H
-#define TNT_CGI_H
-
-#include <tnt/httprequest.h>
-#include <tnt/scopemanager.h>
-#include <tnt/tntconfig.h>
-#include <tnt/comploader.h>
-#include <tnt/tntnet.h>
-#include <tnt/threadcontext.h>
+#ifndef TNT_THREADCONTEXT_H
+#define TNT_THREADCONTEXT_H
 
 namespace tnt
 {
-  /// enable cgi-interface for components
-  class Cgi : private SocketIf, private ThreadContext
+  class Scope;
+
+  class ThreadContext
   {
-      std::string componentName;
-      Tntconfig config;
-
-      Tntnet application;
-      HttpRequest request;
-      ScopeManager scopeManager;
-      Comploader comploader;
-      Scope threadScope;
-
-      void getHeader(const char* env, const std::string& headername);
-      void getMethod();
-      void getQueryString();
-      void getPathInfo();
-      void readBody();
-      void execute();
-
-      // SocketIf methods
-      virtual std::string getPeerIp() const;
-      virtual std::string getServerIp() const;
-      virtual bool isSsl() const;
-
-      // thread context methods
-      void touch();       // wake watchdog timer
-      Scope& getScope();
-
     public:
-      Cgi(int argc, char* argv[]);
-      bool isFastCgi() const;
-      bool isCgi() const  { return !isFastCgi(); }
-      int run();
-      int runCgi();
-      int runFCgi();
+      virtual void touch() = 0;       // wake watchdog timer
+      virtual Scope& getScope() = 0;
   };
 }
 
-#endif // TNT_CGI_H
-
+#endif // TNT_THREADCONTEXT_H

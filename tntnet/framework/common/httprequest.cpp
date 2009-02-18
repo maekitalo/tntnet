@@ -57,8 +57,8 @@ namespace tnt
       encodingRead(false),
       requestScope(0),
       applicationScope(0),
-      threadScope(0),
       sessionScope(0),
+      threadContext(0),
       applicationScopeLocked(false),
       sessionScopeLocked(false),
       application(application_)
@@ -70,8 +70,8 @@ namespace tnt
       locale_init(false),
       requestScope(0),
       applicationScope(0),
-      threadScope(0),
       sessionScope(0),
+      threadContext(0),
       applicationScopeLocked(false),
       sessionScopeLocked(false),
       application(application_)
@@ -92,8 +92,8 @@ namespace tnt
       locale(r.locale),
       requestScope(r.requestScope),
       applicationScope(r.applicationScope),
-      threadScope(r.threadScope),
       sessionScope(r.sessionScope),
+      threadContext(r.threadContext),
       applicationScopeLocked(false),
       sessionScopeLocked(false),
       application(r.application)
@@ -131,8 +131,8 @@ namespace tnt
     locale = r.locale;
     requestScope = r.requestScope;
     applicationScope = r.applicationScope;
-    threadScope = r.threadScope;
     sessionScope = r.sessionScope;
+    threadContext = r.threadContext;
     applicationScopeLocked = false;
     sessionScopeLocked = false;
 
@@ -178,13 +178,13 @@ namespace tnt
       applicationScope = 0;
     }
 
-    threadScope = 0;
-
     if (sessionScope)
     {
       sessionScope->release();
       sessionScope = 0;
     }
+
+    threadContext = 0;
   }
 
   std::string HttpRequest::getArg(const std::string& name, const std::string& def) const
@@ -433,11 +433,6 @@ namespace tnt
     applicationScope = s;
   }
 
-  void HttpRequest::setThreadScope(Scope* s)
-  {
-    threadScope = s;
-  }
-
   void HttpRequest::setSessionScope(Sessionscope* s)
   {
     if (sessionScope == s)
@@ -533,9 +528,9 @@ namespace tnt
 
   Scope& HttpRequest::getThreadScope()
   {
-    if (threadScope == 0)
-      throwRuntimeError("threadscope not set");
-    return *threadScope;
+    if (threadContext == 0)
+      throwRuntimeError("threadcontext not set");
+    return threadContext->getScope();
   }
 
   Scope& HttpRequest::getApplicationScope()

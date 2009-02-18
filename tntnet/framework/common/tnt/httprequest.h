@@ -39,6 +39,7 @@
 #include <tnt/encoding.h>
 #include <tnt/query_params.h>
 #include <tnt/scope.h>
+#include <tnt/threadcontext.h>
 #include <locale>
 #include <vector>
 
@@ -88,8 +89,8 @@ namespace tnt
 
       Scope* requestScope;
       Scope* applicationScope;
-      Scope* threadScope;
       Sessionscope* sessionScope;
+      ThreadContext* threadContext;
 
       bool applicationScopeLocked;
       bool sessionScopeLocked;
@@ -204,12 +205,11 @@ namespace tnt
       void setApplicationScope(Scope* s);
       void setApplicationScope(Scope& s)  { setApplicationScope(&s); }
 
-      void setThreadScope(Scope* s);
-      void setThreadScope(Scope& s)       { setThreadScope(&s); }
-
       void setSessionScope(Sessionscope* s);
       void setSessionScope(Sessionscope& s)      { setSessionScope(&s); }
       void clearSession();
+
+      void setThreadContext(ThreadContext* ctx)    { threadContext = ctx; }
 
       Scope& getRequestScope();
       Scope& getApplicationScope();
@@ -227,6 +227,9 @@ namespace tnt
 
       Tntnet& getApplication()
         { return application; }
+
+      /// rewind watchdog timer.
+      void touch()                               { threadContext->touch(); }
 
       /// Sets a limit for a maximum request size.
       static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }

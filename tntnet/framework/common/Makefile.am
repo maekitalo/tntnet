@@ -90,6 +90,7 @@ nobase_include_HEADERS = \
 	tnt/sessionscope.h \
 	tnt/socketif.h \
 	tnt/stringlessignorecase.h \
+	tnt/threadcontext.h \
 	tnt/tntconfig.h \
 	tnt/tntnet.h \
 	tnt/unzipfile.h \

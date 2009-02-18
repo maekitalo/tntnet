@@ -99,6 +99,14 @@ namespace tnt
     return getenv("HTTPS");
   }
 
+  void Cgi::touch()
+  { }
+
+  Scope& Cgi::getScope()
+  {
+    return threadScope;
+  }
+
   void Cgi::readBody()
   {
     const char* contentLength = getenv("CONTENT_LENGTH");
@@ -152,7 +160,7 @@ namespace tnt
     log_debug("fetch component " << compident);
     Component& comp = comploader.fetchComp(compident, Urlmapper());
 
-    request.setThreadScope(threadScope);
+    request.setThreadContext(this);
     scopeManager.preCall(request, compident.libname);
 
     log_debug("call component");
