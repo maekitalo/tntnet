@@ -86,10 +86,6 @@ namespace tnt
     public:
       OpensslStream();
 
-      explicit OpensslStream(int fd)
-        : cxxtools::net::Stream(fd)
-        { }
-
       explicit OpensslStream(const OpensslServer& server);
       ~OpensslStream();
 
@@ -129,8 +125,7 @@ namespace tnt
 
     public:
       explicit openssl_iostream(unsigned bufsize = 8192, int timeout = -1)
-        : OpensslStream(-1),
-          std::iostream(0),
+        : std::iostream(0),
           m_buffer(*this, bufsize, timeout)
         { init(&m_buffer); }
 
