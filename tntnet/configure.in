@@ -141,12 +141,20 @@ AC_ARG_WITH([demos],
   [with_demos=$withval],
   [with_demos=$with_sdk])
 
-AM_CONDITIONAL(MAKE_DEMOS, test x$with_demos = xyes -o x$with_demos = xinstall)
-AM_CONDITIONAL(INSTALL_DEMOS, test x$with_demos = xinstall)
+AM_CONDITIONAL(MAKE_DEMOS, test "$with_demos" = "yes" -o "$with_demos" = "install")
+AM_CONDITIONAL(INSTALL_DEMOS, test "$with_demos" = "install")
 
-if test x$with_sdk != xyes -a x$with_demos = xyes
+if test "$with_demos" = "yes"
 then
-  AC_MSG_ERROR([demos can't be built without building sdk])
+  if test "$with_sdk" != "yes"
+  then
+    AC_MSG_ERROR([demos can't be built without building sdk])
+  fi
+
+  AC_CHECK_PROG(ZIP, zip, 1)
+  if ! test "$ZIP"; then
+    AC_MSG_ERROR([zip program not found (needed for calci18n demo)])
+  fi
 fi
 
 #
