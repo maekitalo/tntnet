@@ -38,6 +38,7 @@
 #include <fstream>
 #include <cxxtools/log.h>
 #include <cxxtools/systemerror.h>
+#include <cxxtools/ioerror.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <config.h>
@@ -80,6 +81,31 @@ namespace tnt
 
         int getFd() const  { return fd; }
     };
+
+    void pollout(int fd, int timeout)
+    {
+      struct pollfd fds;
+      fds.fd = fd;
+      fds.events = POLLOUT;
+
+      log_debug("poll timeout " << timeout);
+
+      int p = ::poll(&fds, 1, timeout);
+
+      log_debug("poll returns " << p << " revents " << fds.revents);
+
+      if (p < 0)
+      {
+        log_error("error in poll; errno=" << errno);
+        throw cxxtools::SystemError("poll");
+      }
+      else if (p == 0)
+      {
+        log_debug("poll timeout (" << timeout << ')');
+        throw cxxtools::IOTimeout();
+      }
+    }
+
   }
 #endif
 
@@ -244,7 +270,7 @@ namespace tnt
             break;
 
           log_debug("poll");
-          tcpStream.poll(POLLOUT);
+          pollout(tcpStream.getFd(), tcpStream.getTimeout());
         }
 
         if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,

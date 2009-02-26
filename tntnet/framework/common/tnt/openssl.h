@@ -63,7 +63,7 @@ namespace tnt
 
   typedef cxxtools::SmartPtr<SSL_CTX, cxxtools::ExternalRefCounted, SslCtxReleaser> SslCtxPtr;
 
-  class OpensslServer : public cxxtools::net::Server
+  class OpensslServer : public cxxtools::net::TcpServer
   {
     public:
 

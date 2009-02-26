@@ -32,6 +32,7 @@
 #include <cxxtools/mutex.h>
 #include <openssl/err.h>
 #include <cxxtools/log.h>
+#include <cxxtools/ioerror.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/poll.h>
@@ -267,7 +268,7 @@ namespace tnt
       if (getTimeout() == 0)
       {
         log_debug("read-timeout");
-        throw cxxtools::net::Timeout();
+        throw cxxtools::IOTimeout();
       }
 
       // no read, timeout > 0 - poll
@@ -365,7 +366,7 @@ namespace tnt
       if (getTimeout() == 0)
       {
         log_debug("shutdown-timeout");
-        throw cxxtools::net::Timeout();
+        throw cxxtools::IOTimeout();
       }
 
       do

@@ -31,6 +31,7 @@
 #include "tnt/tntnet.h"
 #include "tnt/job.h"
 #include <cxxtools/log.h>
+#include <cxxtools/net.h>
 #include <unistd.h>
 #include <fcntl.h>
 
