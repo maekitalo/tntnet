@@ -49,6 +49,8 @@
 
 #ifdef HAVE_TCP_DEFER_ACCEPT
 #  include <netinet/tcp.h>
+#  include <sys/types.h>
+#  include <sys/socket.h>
 #endif
 
 log_define("tntnet.listener")
