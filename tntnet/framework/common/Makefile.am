@@ -118,8 +118,7 @@ noinst_HEADERS += \
 	tnt/gcryptinit.h \
 	tnt/gnutls.h
 
-libtntnet_la_LDFLAGS += `libgnutls-config --libs`
-libtntnet_la_CXXFLAGS += `libgnutls-config --cflags`
+libtntnet_la_LDFLAGS += -lgnutls -lgcrypt
 endif
 
 if MAKE_OPENSSL
