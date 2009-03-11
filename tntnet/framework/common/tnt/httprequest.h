@@ -42,6 +42,7 @@
 #include <tnt/threadcontext.h>
 #include <locale>
 #include <vector>
+#include <cxxtools/atomicity.h>
 
 namespace tnt
 {
@@ -75,8 +76,8 @@ namespace tnt
 
       mutable Contenttype ct;
       Multipart mp;
-      unsigned serial;
-      static unsigned serial_;
+      cxxtools::atomic_t serial;
+      static cxxtools::atomic_t serial_;
       mutable bool locale_init;
       mutable std::string lang;
       mutable std::locale locale;
@@ -169,7 +170,7 @@ namespace tnt
       bool isMultipart() const               { return getContentType().isMultipart(); }
       const Multipart& getMultipart() const  { return mp; }
 
-      unsigned getSerial() const             { return serial; }
+      cxxtools::atomic_t getSerial() const   { return serial; }
 
       const std::locale& getLocale() const;
       const std::string& getLang() const

@@ -49,7 +49,7 @@ namespace tnt
   // HttpRequest
   //
   size_t HttpRequest::maxRequestSize = 0;
-  unsigned HttpRequest::serial_ = 0;
+  cxxtools::atomic_t HttpRequest::serial_ = 0;
 
   HttpRequest::HttpRequest(Tntnet& application_, const SocketIf* socketIf_)
     : socketIf(socketIf_),
@@ -235,21 +235,15 @@ namespace tnt
             }
           }
         }
-        else
+        else if (ct.getType() == "application"
+              && ct.getSubtype() == "x-www-form-urlencoded")
         {
           qparam.parse_url(getBody());
         }
       }
-      else if (ct.getType() == "application"
-            && ct.getSubtype() == "x-www-form-urlencoded")
-        qparam.parse_url(getBody());
     }
 
-    {
-      static cxxtools::Mutex monitor;
-      cxxtools::MutexLock lock(monitor);
-      serial = ++serial_;
-    }
+    serial = cxxtools::atomicIncrement(serial_);
   }
 
   namespace
