@@ -31,7 +31,7 @@
 #define TNT_TCPJOB_H
 
 #include <tnt/job.h>
-#include <cxxtools/tcpstream.h>
+#include <cxxtools/net/tcpstream.h>
 #include <tnt/ssl.h>
 #include <tnt/socketif.h>
 

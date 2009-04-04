@@ -31,7 +31,6 @@
 #define TNT_WORKER_H
 
 #include <string>
-#include <cxxtools/tcpstream.h>
 #include <cxxtools/thread.h>
 #include <cxxtools/mutex.h>
 #include <tnt/comploader.h>

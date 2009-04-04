@@ -32,7 +32,7 @@
 
 #include <config.h>
 #include "tnt/tcpjob.h"
-#include <cxxtools/tcpstream.h>
+#include <cxxtools/net/tcpstream.h>
 
 namespace tnt
 {

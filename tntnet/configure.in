@@ -33,7 +33,7 @@ if ! test -x "$CXXTOOLS_CONFIG"; then
 fi
 
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
-AC_CHECK_HEADER([cxxtools/condition.h], , AC_MSG_ERROR([cxxtools headers not found]))
+AC_CHECK_HEADER([cxxtools/net/tcpstream.h], , AC_MSG_ERROR([cxxtools headers not found]))
 
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),

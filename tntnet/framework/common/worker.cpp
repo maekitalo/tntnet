@@ -42,7 +42,7 @@
 #include <arpa/inet.h>
 #include <sys/poll.h>
 #include <cxxtools/dlloader.h>
-#include <cxxtools/net.h>
+#include <cxxtools/net/net.h>
 #include <pthread.h>
 
 log_define("tntnet.worker")

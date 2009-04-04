@@ -37,7 +37,7 @@
 #include "tnt/configurator.h"
 #include "tnt/util.h"
 
-#include <cxxtools/tcpstream.h>
+#include <cxxtools/net/tcpstream.h>
 #include <cxxtools/fork.h>
 #include <cxxtools/log.h>
 

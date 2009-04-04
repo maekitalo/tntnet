@@ -30,7 +30,7 @@
 #ifndef TNT_GNUTLS_H
 #define TNT_GNUTLS_H
 
-#include <cxxtools/tcpstream.h>
+#include <cxxtools/net/tcpstream.h>
 #include <gnutls/gnutls.h>
 
 namespace tnt

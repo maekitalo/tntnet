@@ -35,7 +35,7 @@
 #include "tnt/gcryptinit.h"
 #include <sys/poll.h>
 #include <errno.h>
-#include <cxxtools/net.h>
+#include <cxxtools/net/net.h>
 
 log_define("tntnet.ssl")
 

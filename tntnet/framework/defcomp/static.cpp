@@ -46,7 +46,7 @@
 #if HAVE_SENDFILE
 #include <fcntl.h>
 #include <sys/sendfile.h>
-#include <cxxtools/tcpstream.h>
+#include <cxxtools/net/tcpstream.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>

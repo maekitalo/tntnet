@@ -30,7 +30,7 @@
 #ifndef TNT_OPENSSL_H
 #define TNT_OPENSSL_H
 
-#include <cxxtools/tcpstream.h>
+#include <cxxtools/net/tcpstream.h>
 #include <cxxtools/smartptr.h>
 #include <openssl/ssl.h>
 
