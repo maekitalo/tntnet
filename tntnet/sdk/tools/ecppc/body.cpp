@@ -71,7 +71,7 @@ namespace tnt
       {
         printLine(out);
         out << "  " << qparam << ".getScope().put(\""
-            << it->first << "\", tnt::createPointerObject("
+            << it->first << "\", ("
             << it->second << "));\n";
       }
 
