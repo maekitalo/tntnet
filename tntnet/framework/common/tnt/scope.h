@@ -34,10 +34,19 @@
 #include <string>
 #include <tnt/object.h>
 #include <cxxtools/mutex.h>
-#include <cxxtools/smartptr.h>
 
 namespace tnt
 {
+  namespace
+  {
+    template <typename objectType>
+    class NullDestroyPolicy
+    {
+      public:
+        static void destroy(objectType* ptr) { }
+    };
+  }
+
   class Scope
   {
     public:
@@ -83,7 +92,7 @@ namespace tnt
       {
         try
         {
-          tnt::PointerObject<T>* ptr = new tnt::PointerObject<T, destroyPolicy>(o);
+          tnt::PointerObject<T, destroyPolicy>* ptr = new tnt::PointerObject<T, destroyPolicy>(o);
           privatePut(key, ptr);
         }
         catch (const std::bad_alloc&)
@@ -96,6 +105,15 @@ namespace tnt
       template <typename T>
       void put(const std::string& key, T* o)
       { put<T, cxxtools::DefaultDestroyPolicy>(key, o); }
+
+      template <typename T>
+      void put(const std::string& key, T* o, bool transferOwnership)
+      {
+        if (transferOwnership)
+          put<T, cxxtools::DefaultDestroyPolicy>(key, o);
+        else
+          put<T, NullDestroyPolicy>(key, o);
+      }
 
       void erase(const std::string& key)  { data.erase(key); }
       bool empty() const  { return data.empty(); }
