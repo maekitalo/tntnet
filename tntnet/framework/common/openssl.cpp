@@ -46,7 +46,7 @@ namespace tnt
   {
     void throwOpensslException(const char* what, unsigned long code)
     {
-      throwOpensslException(what, code);
+      throw OpensslException(what, code);
     }
 
     void checkSslError()
