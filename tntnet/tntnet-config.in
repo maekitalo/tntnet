@@ -113,15 +113,15 @@ LDFLAGS+=@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
 .ecpp.cpp:
 	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_CPP} \$<
 .gif.cpp:
-	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_GIF} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m image/gif \${ECPPFLAGS_GIF} -b \$<
 .jpg.cpp:
-	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_JPG} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m image/jpg \${ECPPFLAGS_JPG} -b \$<
 .png.cpp:
-	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_PNG} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m image/png \${ECPPFLAGS_PNG} -b \$<
 .css.cpp:
-	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_CSS} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m text/css \${ECPPFLAGS_CSS} -b \$<
 .js.cpp:
-	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_JS} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m application/javascript \${ECPPFLAGS_JS} -b \$<
 .cpp.o:
 	\${CXX} \${CPPFLAGS} \${CXXFLAGS} -c \$<
 EOF
