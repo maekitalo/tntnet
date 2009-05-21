@@ -30,6 +30,7 @@
 #ifndef TNT_MESSAGEHEADER_H
 #define TNT_MESSAGEHEADER_H
 
+#include <istream>
 #include <string>
 #include <map>
 #include <tnt/stringlessignorecase.h>

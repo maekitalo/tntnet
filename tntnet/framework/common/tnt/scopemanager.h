@@ -30,6 +30,7 @@
 #ifndef TNT_SCOPEMANAGER_H
 #define TNT_SCOPEMANAGER_H
 
+#include <string>
 #include <map>
 #include <string>
 #include <cxxtools/mutex.h>

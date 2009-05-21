@@ -31,6 +31,7 @@
 #define TNT_ECPPC_VARIABLE_H
 
 #include <string>
+#include <ostream>
 
 namespace tnt
 {

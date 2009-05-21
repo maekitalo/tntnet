@@ -212,6 +212,7 @@ namespace tnt
   void HttpReply::setContentLengthHeader(size_t size)
   {
     std::ostringstream s;
+    s.imbue(std::locale::classic());
     s << size;
     setHeader(httpheader::contentLength, s.str());
   }
@@ -224,6 +225,7 @@ namespace tnt
     if (keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
     {
       std::ostringstream s;
+      s.imbue(std::locale::classic());
       s << "timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter();
       setHeader(httpheader::keepAlive, s.str());
 

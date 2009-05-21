@@ -32,6 +32,7 @@
 #include "tnt/tntnet.h"
 #include <cxxtools/syserror.h>
 #include <cxxtools/log.h>
+#include <ios>
 #include <unistd.h>
 #include <fcntl.h>
 #ifdef WITH_EPOLL

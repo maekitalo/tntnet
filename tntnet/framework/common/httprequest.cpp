@@ -389,7 +389,7 @@ namespace tnt
     {
       public:
         bool operator() (char c1, char c2) const
-          { return tolower(c1) == tolower(c2); }
+        { return std::tolower(c1) == std::tolower(c2); }
     };
   }
 
