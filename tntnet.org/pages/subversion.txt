@@ -19,7 +19,7 @@
         <p>svn co https://tntdb.svn.sourceforge.net/svnroot/tntdb/trunk/tntdb tntdb</p>
 
         <h3>TntReader</h3>
-        <p>svn co https://tntzenoreader.svn.sourceforge.net/svnroot/tntzenoreader/trunk/tntzenoreader tntzenoreader</p>
+        <p>svn co https://tntzenoreader.svn.sourceforge.net/svnroot/tntzenoreader/trunk tntzenoreader</p>
 
         <br/>
         <br/>
