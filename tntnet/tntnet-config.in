@@ -83,7 +83,7 @@ PropertyFile        tntnet.properties
 #EnableCompression  no
 #MimeDb             /etc/mime.types
 #MinCompressSize    1024  # in bytes
-#DefaultContentType "text/html; charset=iso-8859-1"
+#DefaultContentType "text/html; charset=UTF-8"
 EOF
 }
 

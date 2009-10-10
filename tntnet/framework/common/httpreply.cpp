@@ -47,7 +47,7 @@ namespace tnt
   //
   unsigned HttpReply::keepAliveTimeout = 15000;
   unsigned HttpReply::minCompressSize = 1024;
-  std::string HttpReply::defaultContentType = "text/html; charset=iso-8859-1";
+  std::string HttpReply::defaultContentType = "text/html; charset=UTF-8";
 
   namespace
   {
