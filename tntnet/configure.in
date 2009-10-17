@@ -81,12 +81,12 @@ esac
 # SSL
 #
 AC_ARG_WITH([ssl],
-  AS_HELP_STRING([--with-ssl=gnutls|openssl|no], [build with SSL support (default is gnutls)]),
+  AS_HELP_STRING([--with-ssl=gnutls|openssl|no], [build with SSL support (default is openssl)]),
   [ssl_option=$withval],
-  [ssl_option=gnutls])
+  [ssl_option=openssl])
 
 case "$ssl_option" in
-    gnutls|yes)
+    gnutls)
         AC_CHECK_HEADER([gnutls/gnutls.h], [
             AC_MSG_RESULT([building with GnuTLS support])
             AC_DEFINE(WITH_GNUTLS, [], [Define to build with gnutls])
@@ -94,7 +94,7 @@ case "$ssl_option" in
           ],
           [AC_MSG_ERROR(gnutls-headers not not found)])
         ;;
-    openssl)
+    openssl|yes)
         AC_CHECK_HEADER([openssl/ssl.h], [
             AC_MSG_RESULT([building with OpenSSL support])
             AC_DEFINE(WITH_OPENSSL, [], [Define to build with openssl])
@@ -157,6 +157,24 @@ then
     AC_MSG_ERROR([zip program not found (needed for calci18n demo)])
   fi
 fi
+
+AC_ARG_WITH([stressjob],
+  AS_HELP_STRING([--with-stressjob=yes|no], [support for stressjob for testing]),
+  [stressjob_option=$withval],
+  [stressjob_option=no])
+
+case "$stressjob_option" in
+    yes)
+        AC_DEFINE(WITH_STRESSJOB, [], [Define if stressjob option is set])
+        ;;
+    no)
+        ;;
+    *)
+        AC_MSG_ERROR([unknown stressjob-value $stressjob_option])
+        ;;
+esac
+
+AM_CONDITIONAL(MAKE_STRESSJOB, test "$stressjob_option" = "yes")
 
 #
 # others

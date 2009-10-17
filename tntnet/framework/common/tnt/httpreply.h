@@ -62,7 +62,7 @@ namespace tnt
       bool sendStatusLine;
       bool headRequest;
 
-      void tryCompress(std::string& body);
+      bool tryCompress(std::string& body);
       void send(unsigned ret, const char* msg, bool ready);
 
     public:

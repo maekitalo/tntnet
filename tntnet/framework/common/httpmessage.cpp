@@ -136,7 +136,9 @@ namespace tnt
       lastTime = t;
     }
 
-    return lastHtdate;
+    // we do a copy of lastHtdate first to make sure we have the lock
+    std::string ret = lastHtdate;
+    return ret;
   }
 
   namespace

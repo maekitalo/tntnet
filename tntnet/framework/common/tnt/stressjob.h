@@ -33,6 +33,7 @@
 #include <string>
 #include <cxxtools/mutex.h>
 #include <iostream>
+#include <tnt/socketif.h>
 
 /**
  * This defines a job, which makes a local request to stresstest tntnet
@@ -67,17 +68,21 @@ namespace tnt
           { rdbuf(&streambuf); }
   };
 
-  class StressJob : public Job
+  class StressJob : public Job, private SocketIf
   {
       StressHttpClient client;
       bool init;
-      Jobqueue& queue;
+      Tntnet& app;
       std::string url;
       static cxxtools::Mutex mutex;
       static unsigned count;
 
+      virtual std::string getPeerIp() const;
+      virtual std::string getServerIp() const;
+      virtual bool isSsl() const;
+
     public:
-      StressJob(Jobqueue& queue_, const std::string& url_);
+      StressJob(Tntnet& app_, const std::string& url_);
       std::iostream& getStream();
       int getFd() const;
       void setRead();

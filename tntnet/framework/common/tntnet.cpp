@@ -36,6 +36,9 @@
 #include "tnt/tntconfig.h"
 #include "tnt/configurator.h"
 #include "tnt/util.h"
+#ifdef WITH_STRESSJOB
+#include "tnt/stressjob.h"
+#endif
 
 #include <cxxtools/net/tcpstream.h>
 #include <cxxtools/fork.h>
@@ -266,6 +269,15 @@ namespace tnt
       sslListen(certificateFile, keyFile, ip, port);
     }
 #endif // USE_SSL
+
+#ifdef WITH_STRESSJOB
+    std::string stressJob = config.getValue("StressJob");
+    if (!stressJob.empty())
+    {
+      log_debug("create stress job for url \"" << stressJob << '"');
+      queue.put(new StressJob(*this, stressJob));
+    }
+#endif
   }
 
   void Tntnet::listen(const std::string& ip, unsigned short int port)

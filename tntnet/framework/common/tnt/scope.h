@@ -34,6 +34,7 @@
 #include <string>
 #include <tnt/object.h>
 #include <cxxtools/mutex.h>
+#include <cxxtools/refcounted.h>
 
 namespace tnt
 {
@@ -47,7 +48,7 @@ namespace tnt
     };
   }
 
-  class Scope
+  class Scope : public cxxtools::RefCounted
   {
     public:
       typedef Object::pointer_type pointer_type;
@@ -57,8 +58,6 @@ namespace tnt
 
       container_type data;
       mutable cxxtools::Mutex mutex;
-      cxxtools::Mutex refmutex;
-      unsigned refs;
 
       void privatePut(const std::string& key, pointer_type o);
 
@@ -72,9 +71,6 @@ namespace tnt
 
       void lock()   { mutex.lock(); }
       void unlock() { mutex.unlock(); }
-
-      void addRef();
-      void release();
 
       bool has(const std::string& key) const
         { return data.find(key) != data.end(); }

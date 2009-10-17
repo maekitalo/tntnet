@@ -131,3 +131,10 @@ noinst_HEADERS += \
 libtntnet_la_LDFLAGS += -lssl -lcrypto
 endif
 
+if MAKE_STRESSJOB
+libtntnet_la_SOURCES += \
+	stressjob.cpp
+noinst_HEADERS += \
+	tnt/stressjob.h
+endif
+

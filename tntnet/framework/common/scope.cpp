@@ -35,35 +35,14 @@ namespace tnt
   log_define("tntnet.scope")
 
   Scope::Scope()
-    : refs(1)
   {
+    addRef();
     log_debug("new Scope " << this);
   }
 
   Scope::~Scope()
   {
     log_debug("Scope " << this << " deleted");
-  }
-
-  void Scope::addRef()
-  {
-    cxxtools::MutexLock lock(refmutex);
-    log_debug("Scope::addRef(); this=" << this << " refs=" << refs);
-    ++refs;
-  }
-
-  void Scope::release()
-  {
-    refmutex.lock();
-    log_debug("Scope::release(); this=" << this << " refs=" << refs);
-    if (--refs == 0)
-    {
-      refmutex.unlock();
-      log_debug("delete Scope " << this);
-      delete this;
-    }
-    else
-      refmutex.unlock();
   }
 
   void Scope::privatePut(const std::string& key, Scope::pointer_type o)

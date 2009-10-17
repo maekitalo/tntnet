@@ -82,51 +82,36 @@ namespace tnt
     }
   }
 
-  void HttpReply::tryCompress(std::string& body)
+  bool HttpReply::tryCompress(std::string& body)
   {
-    if (body.size() >= minCompressSize && !hasHeader(httpheader::contentEncoding))
+    if (body.size() >= minCompressSize
+      && !hasHeader(httpheader::contentEncoding)
+      && acceptEncoding.accept("gzip"))
     {
-      if (acceptEncoding.accept("gzip"))
+      log_debug("gzip");
+
+      std::string cbody = doCompress(body);
+
+      std::string::size_type oldSize = body.size();
+      // only send compressed data, if the data is compressed more than 1/8th
+      if (oldSize - (oldSize >> 3) > cbody.size())
       {
-        log_debug("gzip");
+        body = cbody;
+        log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
 
-        std::string cbody = doCompress(body);
-
-        std::string::size_type oldSize = body.size();
-        // only send compressed data, if the data is compressed more than 1/8th
-        if (oldSize - (oldSize >> 3) > cbody.size())
-        {
-          body = cbody;
-          log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
-
-          setHeader(httpheader::contentEncoding, "gzip");
-        }
+        return true;
       }
     }
+
+    return false;
   }
 
   void HttpReply::send(unsigned ret, const char* msg, bool ready)
   {
     std::string body = outstream.str();
 
-    // complete headers
-
-    if (!hasHeader(httpheader::date))
-      setHeader(httpheader::date, htdateCurrent());
-
-    if (!hasHeader(httpheader::server))
-      setHeader(httpheader::server, httpheader::serverName);
-
-    if (ready)
-    {
-      tryCompress(body);
-
-      if (!hasHeader(httpheader::connection))
-        setKeepAliveHeader();
-
-      if (!hasHeader(httpheader::contentLength))
-        setContentLengthHeader(body.size());
-    }
+    std::ostream hsocket(socket.rdbuf());
+    hsocket.imbue(std::locale::classic());
 
     // send header
 
@@ -134,24 +119,75 @@ namespace tnt
     {
       log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
              << ' ' << ret << ' ' << msg);
-      socket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
-             << ' ' << ret << ' ' << msg << "\r\n";
+      hsocket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
+              << ' ' << ret << ' ' << msg << "\r\n";
+    }
+
+    if (!hasHeader(httpheader::date))
+    {
+      std::string current = htdateCurrent();
+      log_debug(httpheader::date << ' ' << current);
+      hsocket << httpheader::date << ' ' << current << "\r\n";
+    }
+
+    if (!hasHeader(httpheader::server))
+    {
+      log_debug(httpheader::server << ' ' << httpheader::serverName);
+      hsocket << httpheader::server << ' ' << httpheader::serverName << "\r\n";
+    }
+
+    if (ready)
+    {
+      if (tryCompress(body))
+      {
+        log_debug(httpheader::contentEncoding << " gzip");
+        hsocket << httpheader::contentEncoding << " gzip\r\n";
+      }
+
+      if (!hasHeader(httpheader::contentLength))
+      {
+        log_debug(httpheader::contentLength << ' ' << body.size());
+        hsocket << httpheader::contentLength << ' ' << body.size() << "\r\n";
+      }
+
+      if (!hasHeader(httpheader::contentType))
+      {
+        log_debug(httpheader::contentType << ' ' << defaultContentType);
+        hsocket << httpheader::contentType << ' ' << defaultContentType << "\r\n";
+      }
+
+      if (!hasHeader(httpheader::connection))
+      {
+        log_debug("setKeepAliveHeader()");
+        if (keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
+        {
+          log_debug(httpheader::keepAlive << " timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter());
+          log_debug(httpheader::connection << ' ' << httpheader::connectionKeepAlive);
+          hsocket << httpheader::keepAlive << " timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter() << "\r\n"
+                  << httpheader::connection << ' ' << httpheader::connectionKeepAlive << "\r\n";
+        }
+        else
+        {
+          log_debug(httpheader::connection << ' ' << httpheader::connectionClose);
+          hsocket << httpheader::connection << ' ' << httpheader::connectionClose << "\r\n";
+        }
+      }
     }
 
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
     {
       log_debug(it->first << ' ' << it->second);
-      socket << it->first << ' ' << it->second << "\r\n";
+      hsocket << it->first << ' ' << it->second << "\r\n";
     }
 
     if (hasCookies())
     {
       log_debug(httpheader::setCookie << ' ' << httpcookies);
-      socket << httpheader::setCookie << ' ' << httpcookies << "\r\n";
+      hsocket << httpheader::setCookie << ' ' << httpcookies << "\r\n";
     }
 
-    socket << "\r\n";
+    hsocket << "\r\n";
 
     // send body
 
@@ -165,7 +201,7 @@ namespace tnt
       // block other iostreams while writing.
       const unsigned chunkSize = 65536;
       for (unsigned n = 0; n < body.size(); n += chunkSize)
-        socket.write(body.data() + n, std::min(static_cast<unsigned>(body.size() - n), chunkSize));
+        hsocket.write(body.data() + n, std::min(static_cast<unsigned>(body.size() - n), chunkSize));
     }
   }
 
@@ -178,7 +214,6 @@ namespace tnt
       sendStatusLine(sendStatusLine_),
       headRequest(false)
   {
-    setHeader(httpheader::contentType, defaultContentType);
   }
 
   void HttpReply::sendReply(unsigned ret, const char* msg)
@@ -269,11 +304,14 @@ namespace tnt
 
   bool HttpReply::keepAlive() const
   {
-    if (getKeepAliveCounter() <= 0
-        || getKeepAliveTimeout() <= 0)
-      return false;
-
-    header_type::const_iterator it = header.find(httpheader::connection);
-    return it != header.end() && it->second == httpheader::connectionKeepAlive;
+    if (isDirectMode())
+    {
+      header_type::const_iterator it = header.find(httpheader::connection);
+      return it != header.end() && it->second == httpheader::connectionKeepAlive;
+    }
+    else
+    {
+      return keepAliveTimeout > 0 && getKeepAliveCounter() > 0;
+    }
   }
 }

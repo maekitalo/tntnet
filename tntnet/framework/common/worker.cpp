@@ -143,26 +143,29 @@ namespace tnt
               j->setRead();
               j->clear();
 
-              // if there is something to do and no threads waiting, we take
-              // the next job just to improve resposiveness.
-              if (queue.getWaitThreadCount() == 0
-                && !queue.empty())
+              if (!socket.rdbuf()->in_avail())
               {
-                log_debug("put job back into queue");
-                queue.put(j, true);
-                keepAlive = false;
-              }
-              else
-              {
-                struct pollfd fd;
-                fd.fd = j->getFd();
-                fd.events = POLLIN;
-                log_debug("wait for next request (timeout " << Job::getSocketReadTimeout() << ')');
-                if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
+                if (queue.getWaitThreadCount() == 0
+                  && !queue.empty())
                 {
-                  log_debug("pass job to poll-thread");
-                  application.getPoller().addIdleJob(j);
+                  // if there is something to do and no threads waiting, we take
+                  // the next job just to improve responsiveness.
+                  log_debug("put job back into queue");
+                  queue.put(j, true);
                   keepAlive = false;
+                }
+                else
+                {
+                  struct pollfd fd;
+                  fd.fd = j->getFd();
+                  fd.events = POLLIN;
+                  log_debug("wait for next request (timeout " << Job::getSocketReadTimeout() << ')');
+                  if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
+                  {
+                    log_debug("pass job to poll-thread");
+                    application.getPoller().addIdleJob(j);
+                    keepAlive = false;
+                  }
                 }
               }
             }

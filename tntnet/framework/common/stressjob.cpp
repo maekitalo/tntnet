@@ -27,9 +27,10 @@
  */
 
 #include <tnt/stressjob.h>
+#include <tnt/tntnet.h>
 #include <cxxtools/log.h>
 
-log_define("tntnet.testjob");
+log_define("tntnet.testjob")
 
 namespace tnt
 {
@@ -58,10 +59,11 @@ namespace tnt
   cxxtools::Mutex StressJob::mutex;
   unsigned StressJob::count = 0;
 
-  StressJob::StressJob(Jobqueue& queue_, const std::string& url_)
-    : client(url_),
+  StressJob::StressJob(Tntnet& app_, const std::string& url_)
+    : Job(app_, this),
+      client(url_),
       init(false),
-      queue(queue_),
+      app(app_),
       url(url_)
   {
     cxxtools::MutexLock lock(mutex);
@@ -69,13 +71,26 @@ namespace tnt
       log_info(count << " dummy-jobs processed");
   }
 
+  std::string StressJob::getPeerIp() const
+  {
+      return std::string();
+  }
+
+  std::string StressJob::getServerIp() const
+  {
+      return std::string();
+  }
+
+  bool StressJob::isSsl() const
+  {
+      return false;
+  }
+
   std::iostream& StressJob::getStream()
   {
     if (!init)
     {
-      if (count % 100000 == 0)
-        usleep(1000000);
-      queue.put(new StressJob(queue, url));
+      app.getQueue().put(new StressJob(app, url));
       init = true;
     }
     return client;
