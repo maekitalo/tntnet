@@ -43,6 +43,7 @@ SUBDIRS += \
     sdk/demos/session \
     sdk/demos/sprintf \
     sdk/demos/strings \
+    sdk/demos/rajax-jquery \
     sdk/demos/upload
 endif
 

@@ -200,6 +200,8 @@ case "${host_cpu}-${host_os}" in
 esac
 AC_SUBST(SHARED_LIB_FLAG)
 
+AC_CONFIG_FILES([tntnet-config], [chmod +x tntnet-config])
+
 AC_CONFIG_FILES([
     Makefile
     framework/common/Makefile
@@ -225,12 +227,10 @@ AC_CONFIG_FILES([
     sdk/demos/session/Makefile
     sdk/demos/sprintf/Makefile
     sdk/demos/strings/Makefile
+    sdk/demos/rajax-jquery/Makefile
     sdk/demos/upload/Makefile
     doc/man/Makefile
     etc/Makefile
-    tntnet-config
     ])
 
 AC_OUTPUT
-
-chmod +x tntnet-config

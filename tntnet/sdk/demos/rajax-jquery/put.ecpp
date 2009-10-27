@@ -1,0 +1,13 @@
+<%args>
+value;
+</%args>
+<%pre>
+
+#include "message.h"
+
+</%pre>
+<%cpp>
+
+message.set(value);
+
+</%cpp>
