@@ -44,6 +44,8 @@ namespace tnt
   {
       friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
       friend class CookieParser;
+      friend class HttpReply;
+      void write(std::ostream& out, const std::string& name) const;
 
     public:
       static const std::string maxAge;
@@ -92,6 +94,8 @@ namespace tnt
 
       void setAttr(const std::string& name, const std::string& value_)
         { attrs[name] = value_; }
+      bool hasAttr(const std::string& name) const
+        { return attrs.find(name) != attrs.end(); }
 
       unsigned    getMaxAge() const;
       std::string getComment() const { return getAttr(comment); }
@@ -108,11 +112,20 @@ namespace tnt
       void setVersion(const std::string& value_) { setAttr(version, value_); }
       void setExpires(const std::string& value_) { setAttr(expires, value_); }
       void setSecure(bool f = true)              { secureFlag = f; }
+
+      bool hasMaxAge() const                     { return hasAttr(maxAge); }
+      bool hasComment() const                    { return hasAttr(comment); }
+      bool hasDomain() const                     { return hasAttr(domain); }
+      bool hasPath() const                       { return hasAttr(path); }
+      bool hasVersion() const                    { return hasAttr(version); }
+      bool hasExpires() const                    { return hasAttr(expires); }
+
   };
 
   class Cookies
   {
       friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
+      friend class HttpReply;
 
       typedef std::map<std::string, Cookie, StringLessIgnoreCase<std::string> > cookies_type;
       cookies_type data;

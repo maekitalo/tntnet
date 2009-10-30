@@ -318,6 +318,25 @@ namespace tnt
       store_cookie();
   }
 
+  void Cookie::write(std::ostream& out, const std::string& name) const
+  {
+    // print name (Customer="WILE_E_COYOTE")
+    out << name << '=';
+    UrlEscOstream u(out);
+    u << getValue();
+
+    // print secure-attribute
+    if (secureFlag)
+      out << "; " << Cookie::secure;
+
+    // print attributes
+    for (Cookie::attrs_type::const_iterator a = attrs.begin();
+         a != attrs.end(); ++a)
+      out << "; " << a->first << '=' << a->second;
+    if (attrs.find(Cookie::version) == attrs.end())
+      out << ";Version=1";
+  }
+
   std::ostream& operator<< (std::ostream& out, const Cookies& c)
   {
     // Set-Cookie: Customer="WILE_E_COYOTE"; Version="1"; Path="/acme"
@@ -329,25 +348,10 @@ namespace tnt
       if (first)
         first = false;
       else
-        out << ' ';
+        out << ',';
 
-      const Cookie& cookie = it->second;
+      it->second.write(out, it->first);
 
-      // print name (Customer="WILE_E_COYOTE")
-      out << it->first << '=';
-      UrlEscOstream u(out);
-      u << cookie.getValue();
-
-      // print secure-attribute
-      if (cookie.secureFlag)
-        out << "; " << Cookie::secure;
-
-      // print attributes
-      for (Cookie::attrs_type::const_iterator a = cookie.attrs.begin();
-           a != cookie.attrs.end(); ++a)
-        out << "; " << a->first << '=' << a->second;
-      if (cookie.attrs.find(Cookie::version) == cookie.attrs.end())
-        out << "; Version=1";
     }
 
     return out;

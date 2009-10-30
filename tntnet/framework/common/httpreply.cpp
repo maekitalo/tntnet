@@ -184,7 +184,14 @@ namespace tnt
     if (hasCookies())
     {
       log_debug(httpheader::setCookie << ' ' << httpcookies);
-      hsocket << httpheader::setCookie << ' ' << httpcookies << "\r\n";
+
+      for (Cookies::cookies_type::const_iterator it = httpcookies.data.begin();
+        it != httpcookies.data.end(); ++it)
+      {
+        hsocket << httpheader::setCookie << ' ';
+        it->second.write(hsocket, it->first);
+        hsocket << "\r\n";
+      }
     }
 
     hsocket << "\r\n";
@@ -290,7 +297,8 @@ namespace tnt
   {
     log_debug("setCookie(\"" << name << "\",\"" << value.getValue() << "\")");
     tnt::Cookie cookie(value);
-    cookie.setPath("/");
+    if (!cookie.hasPath())
+      cookie.setPath("/");
     httpcookies.setCookie(name, cookie);
   }
 
