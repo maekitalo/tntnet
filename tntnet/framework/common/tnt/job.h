@@ -68,15 +68,13 @@ namespace tnt
   class Tntnet;
 
   /** Job - one per request */
-  class Job : public cxxtools::RefCounted
+  class Job : public cxxtools::AtomicRefCounted
   {
       unsigned keepAliveCounter;
 
       HttpRequest request;
       HttpRequest::Parser parser;
       time_t lastAccessTime;
-
-      cxxtools::Mutex mutex;
 
       static unsigned socket_read_timeout;
       static unsigned socket_write_timeout;
@@ -92,7 +90,6 @@ namespace tnt
         { }
       virtual ~Job();
 
-    public:
       virtual std::iostream& getStream() = 0;
       virtual int getFd() const = 0;
       virtual void setRead() = 0;

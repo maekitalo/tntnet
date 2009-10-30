@@ -48,7 +48,7 @@ namespace tnt
     };
   }
 
-  class Scope : public cxxtools::RefCounted
+  class Scope : public cxxtools::AtomicRefCounted
   {
     public:
       typedef Object::pointer_type pointer_type;
