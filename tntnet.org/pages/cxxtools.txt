@@ -39,79 +39,98 @@
 
     <table>
       <tr>
-        <td><a href="cxxtools/arg.cpp.html">arg.cpp</a></td>
+        <td><a href="cxxtools_arg.html">arg.cpp</a></td>
         <td>Argument-parser (argc, argv)</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/cgi.cpp.html">cgi.cpp</a></td>
+        <td><a href="cxxtools_cgi.cpp.html">cgi.cpp</a></td>
         <td>cgi in c++ (don't use it - use tntnet instead ;-) )</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/dir.cpp.html">dir.cpp</a></td>
+        <td><a href="cxxtools_dir.cpp.html">dir.cpp</a></td>
         <td>read directory</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/dlloader.cpp.html">dlloader.cpp</a></td>
+        <td><a href="cxxtools_dlloader.cpp.html">dlloader.cpp</a></td>
         <td>load shared library</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/dynbuffer.cpp.html">dynbuffer.cpp</a></td>
-        <td>dynamic exception-safe buffer</td>
-      </tr>
-      <tr>
-        <td><a href="cxxtools/getini.cpp.html">getini.cpp</a></td>
+        <td><a href="cxxtools_getini.cpp.html">getini.cpp</a></td>
         <td>read ini-files</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/hd.cpp.html">hd.cpp</a></td>
+        <td><a href="cxxtools_hd.cpp.html">hd.cpp</a></td>
         <td>hex-dumper</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/httprequest.cpp.html">httprequest.cpp</a></td>
+        <td><a href="cxxtools_httprequest.cpp.html">httprequest.cpp</a></td>
         <td>http-client</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/iconv.cpp.html">iconv.cpp</a></td>
+        <td><a href="cxxtools_httpserver.cpp.html">httpserver.cpp</a></td>
+        <td>http-server</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools_iconv.cpp.html">iconv.cpp</a></td>
         <td>code-converter as a std::iostream</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/log.cpp.html">log.cpp</a></td>
+        <td><a href="cxxtools_log.cpp.html">log.cpp</a></td>
         <td>logging</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/logsh.cpp.html">logsh.cpp</a></td>
+        <td><a href="cxxtools_logsh.cpp.html">logsh.cpp</a></td>
         <td>logging for shell</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/md5sum.cpp.html">md5sum.cpp</a></td>
+        <td><a href="cxxtools_md5sum.cpp.html">md5sum.cpp</a></td>
         <td>md5-calculation</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/multifstream.cpp.html">multifstream.cpp</a></td>
-        <td>read multiple files with a single std::istream</td>
-      </tr>
-      <tr>
-        <td><a href="cxxtools/netcat.cpp.html">netcat.cpp</a></td>
+        <td><a href="cxxtools_netcat.cpp.html">netcat.cpp</a></td>
         <td>send data through a tcp-socket</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/netio.cpp.html">netio.cpp</a></td>
+        <td><a href="cxxtools_netio.cpp.html">netio.cpp</a></td>
         <td>simple network-benchmark-tool</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/netmsg.cpp.html">netmsg.cpp</a></td>
+        <td><a href="cxxtools_netmsg.cpp.html">netmsg.cpp</a></td>
         <td>send messages with udp</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/pipestream.cpp.html">pipestream.cpp</a></td>
+        <td><a href="cxxtools_pipestream.cpp.html">pipestream.cpp</a></td>
         <td>std::iostream on top of pipe(2)</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/pool.cpp.html">pool.cpp</a></td>
+        <td><a href="cxxtools_pool.cpp.html">pool.cpp</a></td>
         <td>pool of objects (e.g. connections)</td>
       </tr>
       <tr>
-        <td><a href="cxxtools/thread.cpp.html">thread.cpp</a></td>
+        <td><a href="cxxtools_rpcecho.cpp.html">rpcecho.cpp</a></td>
+        <td>XML-RPC server and client</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools_signals.cpp.html">signals.cpp</a></td>
+        <td>fast and secure signal slot framework</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools_uuencode.cpp.html">uuencode.cpp</a></td>
+        <td>Uuencoder</td>
+      </tr>
+      <tr>
+        <td><a href="cxxtools_thread.cpp.html">thread.cpp</a></td>
+        <td>threading</td>
+      </tr>
+    </table>
+
+</div>
+
+\endhtmlonly
+
+*/
+      <tr>
+        <td><a href="cxxtools_thread.cpp.html">thread.cpp</a></td>
         <td>threading</td>
       </tr>
     </table>

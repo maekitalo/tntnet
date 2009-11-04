@@ -1,0 +1,151 @@
+/** \page cxxtools_logbench.cpp logbench.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: logbench.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/log.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/loginit.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/smartptr.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/refcounted.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;vector&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;stdexcept&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/arg.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/thread.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;sys/time.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iomanip&gt;</font>
+
+<b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"log"</font><font color="#990000">)</font>
+
+<b><font color="#0000FF">namespace</font></b> bench
+<font color="#FF0000">{</font>
+  <b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"bench"</font><font color="#990000">)</font>
+
+  <b><font color="#0000FF">class</font></b> <font color="#008080">Logtester</font> <font color="#990000">:</font> <b><font color="#0000FF">public</font></b> cxxtools<font color="#990000">::</font>RefCounted
+  <font color="#FF0000">{</font>
+      cxxtools<font color="#990000">::</font><font color="#008080">AttachedThread</font> thread<font color="#990000">;</font>
+      <font color="#009900">unsigned</font> <font color="#009900">long</font> count<font color="#990000">;</font>
+      <font color="#009900">unsigned</font> <font color="#009900">long</font> loops<font color="#990000">;</font>
+      <font color="#009900">unsigned</font> <font color="#009900">long</font> enabled<font color="#990000">;</font>
+
+    <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+      <b><font color="#000000">Logtester</font></b><font color="#990000">(</font><font color="#009900">unsigned</font> <font color="#009900">long</font> count_<font color="#990000">,</font>
+                <font color="#009900">unsigned</font> <font color="#009900">long</font> loops_<font color="#990000">,</font>
+                <font color="#009900">unsigned</font> <font color="#009900">long</font> enabled_<font color="#990000">)</font>
+        <font color="#990000">:</font> <b><font color="#000000">thread</font></b><font color="#990000">(</font> cxxtools<font color="#990000">::</font><b><font color="#000000">callable</font></b><font color="#990000">(*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>Logtester<font color="#990000">::</font>run<font color="#990000">)</font> <font color="#990000">),</font>
+          <b><font color="#000000">count</font></b><font color="#990000">(</font>count_<font color="#990000">),</font>
+          <b><font color="#000000">loops</font></b><font color="#990000">(</font>loops_<font color="#990000">),</font>
+          <b><font color="#000000">enabled</font></b><font color="#990000">(</font>enabled_<font color="#990000">)</font>
+          <font color="#FF0000">{</font> <font color="#FF0000">}</font>
+
+      <font color="#009900">void</font> <b><font color="#000000">start</font></b><font color="#990000">()</font>
+      <font color="#FF0000">{</font> thread<font color="#990000">.</font><b><font color="#000000">start</font></b><font color="#990000">();</font> <font color="#FF0000">}</font>
+
+      <font color="#009900">void</font> <b><font color="#000000">join</font></b><font color="#990000">()</font>
+      <font color="#FF0000">{</font> thread<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font> <font color="#FF0000">}</font>
+
+      <font color="#009900">void</font> <b><font color="#000000">setCount</font></b><font color="#990000">(</font><font color="#009900">unsigned</font> <font color="#009900">long</font> count_<font color="#990000">)</font>   <font color="#FF0000">{</font> count <font color="#990000">=</font> count_<font color="#990000">;</font> <font color="#FF0000">}</font>
+      <font color="#009900">void</font> <b><font color="#000000">setLoops</font></b><font color="#990000">(</font><font color="#009900">unsigned</font> <font color="#009900">long</font> loops_<font color="#990000">)</font>   <font color="#FF0000">{</font> loops <font color="#990000">=</font> loops_<font color="#990000">;</font> <font color="#FF0000">}</font>
+      <font color="#009900">void</font> <b><font color="#000000">setEnabled</font></b><font color="#990000">(</font><font color="#009900">bool</font> sw <font color="#990000">=</font> <b><font color="#0000FF">true</font></b><font color="#990000">)</font>       <font color="#FF0000">{</font> enabled <font color="#990000">=</font> sw<font color="#990000">;</font> <font color="#FF0000">}</font>
+
+      <font color="#009900">void</font> <b><font color="#000000">run</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font><font color="#990000">;</font>
+
+  <font color="#009900">void</font> Logtester<font color="#990000">::</font><b><font color="#000000">run</font></b><font color="#990000">()</font>
+  <font color="#FF0000">{</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">unsigned</font> <font color="#009900">long</font> l <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> l <font color="#990000">&lt;</font> loops<font color="#990000">;</font> <font color="#990000">++</font>l<font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>enabled<font color="#990000">)</font>
+        <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">unsigned</font> <font color="#009900">long</font> i <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> count<font color="#990000">;</font> <font color="#990000">++</font>i<font color="#990000">)</font>
+          <b><font color="#000000">log_fatal</font></b><font color="#990000">(</font><font color="#FF0000">"fatal message"</font><font color="#990000">);</font>
+      <b><font color="#0000FF">else</font></b>
+        <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">unsigned</font> <font color="#009900">long</font> i <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> count<font color="#990000">;</font> <font color="#990000">++</font>i<font color="#990000">)</font>
+          <b><font color="#000000">log_debug</font></b><font color="#990000">(</font><font color="#FF0000">"info message"</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">enable</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'e'</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;double&gt;</font> <b><font color="#000000">total</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'T'</font><font color="#990000">,</font> <font color="#993399">5.0</font><font color="#990000">);</font> <i><font color="#9A1900">// minimum runtime</font></i>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;long&gt;</font> <b><font color="#000000">loops</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'l'</font><font color="#990000">,</font> <font color="#993399">1000</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned&gt;</font> <b><font color="#000000">numthreads</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'t'</font><font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">);</font>
+
+    <font color="#009900">unsigned</font> <font color="#009900">long</font> count <font color="#990000">=</font> <font color="#993399">1</font><font color="#990000">;</font>
+    <font color="#009900">double</font> T<font color="#990000">;</font>
+
+    <b><font color="#000000">log_init</font></b><font color="#990000">();</font>
+
+    <b><font color="#0000FF">typedef</font></b> std<font color="#990000">::</font><font color="#008080">vector&lt;cxxtools::SmartPtr&lt;bench::Logtester&gt; &gt;</font> Threads<font color="#990000">;</font>
+    <font color="#008080">Threads</font> threads<font color="#990000">;</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">unsigned</font> t <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> t <font color="#990000">&lt;</font> numthreads<font color="#990000">;</font> <font color="#990000">++</font>t<font color="#990000">)</font>
+      threads<font color="#990000">.</font><b><font color="#000000">push_back</font></b><font color="#990000">(</font><b><font color="#0000FF">new</font></b> bench<font color="#990000">::</font><b><font color="#000000">Logtester</font></b><font color="#990000">(</font>count<font color="#990000">,</font> loops<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">()</font> <font color="#990000">/</font> numthreads<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">(),</font> enable<font color="#990000">));</font>
+
+    <b><font color="#0000FF">while</font></b> <font color="#990000">(</font>count <font color="#990000">&gt;</font> <font color="#993399">0</font><font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"count="</font> <font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>count <font color="#990000">*</font> loops<font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'</font><font color="#CC33CC">\t</font><font color="#FF0000">'</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>flush<font color="#990000">;</font>
+
+      <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>Threads<font color="#990000">::</font><font color="#008080">iterator</font> it <font color="#990000">=</font> threads<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font> it <font color="#990000">!=</font> threads<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>it<font color="#990000">)</font>
+        <font color="#990000">(*</font>it<font color="#990000">)-&gt;</font><b><font color="#000000">setCount</font></b><font color="#990000">(</font>count<font color="#990000">);</font>
+
+      <b><font color="#0000FF">struct</font></b> <font color="#008080">timeval</font> tv0<font color="#990000">;</font>
+      <b><font color="#0000FF">struct</font></b> <font color="#008080">timeval</font> tv1<font color="#990000">;</font>
+
+      <b><font color="#000000">gettimeofday</font></b><font color="#990000">(&amp;</font>tv0<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">);</font>
+
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>threads<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">()</font> <font color="#990000">==</font> <font color="#993399">1</font><font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+        <font color="#990000">(*</font>threads<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">())-&gt;</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+      <font color="#FF0000">}</font>
+      <b><font color="#0000FF">else</font></b>
+      <font color="#FF0000">{</font>
+        <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>Threads<font color="#990000">::</font><font color="#008080">iterator</font> it <font color="#990000">=</font> threads<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font> it <font color="#990000">!=</font> threads<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>it<font color="#990000">)</font>
+          <font color="#990000">(*</font>it<font color="#990000">)-&gt;</font><b><font color="#000000">start</font></b><font color="#990000">();</font>
+        <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>Threads<font color="#990000">::</font><font color="#008080">iterator</font> it <font color="#990000">=</font> threads<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font> it <font color="#990000">!=</font> threads<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>it<font color="#990000">)</font>
+          <font color="#990000">(*</font>it<font color="#990000">)-&gt;</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+      <font color="#FF0000">}</font>
+
+      <b><font color="#000000">gettimeofday</font></b><font color="#990000">(&amp;</font>tv1<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">);</font>
+
+      <font color="#009900">double</font> t0 <font color="#990000">=</font> tv0<font color="#990000">.</font>tv_sec <font color="#990000">+</font> tv0<font color="#990000">.</font>tv_usec <font color="#990000">/</font> <font color="#993399">1e6</font><font color="#990000">;</font>
+      <font color="#009900">double</font> t1 <font color="#990000">=</font> tv1<font color="#990000">.</font>tv_sec <font color="#990000">+</font> tv1<font color="#990000">.</font>tv_usec <font color="#990000">/</font> <font color="#993399">1e6</font><font color="#990000">;</font>
+      T <font color="#990000">=</font> t1 <font color="#990000">-</font> t0<font color="#990000">;</font>
+
+      std<font color="#990000">::</font>cout<font color="#990000">.</font><b><font color="#000000">precision</font></b><font color="#990000">(</font><font color="#993399">6</font><font color="#990000">);</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" T="</font> <font color="#990000">&lt;&lt;</font> T <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'</font><font color="#CC33CC">\t</font><font color="#FF0000">'</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font><b><font color="#000000">setprecision</font></b><font color="#990000">(</font><font color="#993399">12</font><font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>count <font color="#990000">/</font> T <font color="#990000">*</font> loops<font color="#990000">)</font>
+        <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" msg/s"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>T <font color="#990000">&gt;=</font> total<font color="#990000">)</font>
+        <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+
+      count <font color="#990000">&lt;&lt;=</font> <font color="#993399">1</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

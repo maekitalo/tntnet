@@ -1,0 +1,149 @@
+/** \page cxxtools_netio.cpp netio.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: netio.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/net/tcpstream.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/arg.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/dynbuffer.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/loginit.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;sys/time.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;stdlib.h&gt;</font>
+
+<b><font color="#0000FF">const</font></b> <font color="#009900">unsigned</font> BUFSIZE <font color="#990000">=</font> <font color="#993399">65536</font><font color="#990000">;</font>
+
+<i><font color="#9A1900">////////////////////////////////////////////////////////////////////////</font></i>
+<i><font color="#9A1900">// Server</font></i>
+<i><font color="#9A1900">//</font></i>
+<font color="#009900">int</font> <b><font color="#000000">server</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned short&gt;</font> <b><font color="#000000">port</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'p'</font><font color="#990000">,</font> <font color="#993399">1234</font><font color="#990000">);</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;const char*&gt;</font> <b><font color="#000000">ip</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'i'</font><font color="#990000">,</font> <font color="#FF0000">"0.0.0.0"</font><font color="#990000">);</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">verbose</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'v'</font><font color="#990000">);</font>
+
+  cxxtools<font color="#990000">::</font>net<font color="#990000">::</font><font color="#008080">Server</font> <b><font color="#000000">server</font></b><font color="#990000">(</font>ip<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">(),</font> port<font color="#990000">);</font>
+
+  <b><font color="#0000FF">while</font></b> <font color="#990000">(</font><font color="#993399">1</font><font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font>net<font color="#990000">::</font><font color="#008080">Stream</font> <b><font color="#000000">worker</font></b><font color="#990000">(</font>server<font color="#990000">);</font>
+
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"connection accepted"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+    <font color="#009900">char</font> buffer<font color="#990000">[</font>BUFSIZE<font color="#990000">];</font>
+    <i><font color="#9A1900">// NOTE: use std::streamsize, not Stream::size_type</font></i>
+    std<font color="#990000">::</font><font color="#008080">streamsize</font> count <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+    std<font color="#990000">::</font><font color="#008080">streamsize</font> n <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+    <b><font color="#0000FF">while</font></b> <font color="#990000">(</font> <font color="#990000">(</font>n <font color="#990000">=</font> worker<font color="#990000">.</font><b><font color="#000000">read</font></b><font color="#990000">(</font>buffer<font color="#990000">,</font> BUFSIZE<font color="#990000">))</font> <font color="#990000">&gt;</font> <font color="#993399">0</font><font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      count <font color="#990000">+=</font> n<font color="#990000">;</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>verbose<font color="#990000">)</font>
+        std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'.'</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>flush<font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>verbose<font color="#990000">)</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl
+                <font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>count <font color="#990000">/</font> <font color="#993399">1024</font><font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" Kbytes received"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"test ready "</font> <font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>count <font color="#990000">/</font> <font color="#993399">1024</font><font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" Kbytes received"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<i><font color="#9A1900">////////////////////////////////////////////////////////////////////////</font></i>
+<i><font color="#9A1900">// Client</font></i>
+<i><font color="#9A1900">//</font></i>
+<font color="#009900">void</font> <b><font color="#000000">run_test</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>net<font color="#990000">::</font>Stream<font color="#990000">&amp;</font> conn<font color="#990000">,</font> <font color="#009900">unsigned</font> bs<font color="#990000">,</font> <b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> buffer<font color="#990000">,</font> <font color="#009900">unsigned</font> secs<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"bs "</font> <font color="#990000">&lt;&lt;</font> bs <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>flush<font color="#990000">;</font>
+
+  <font color="#008080">timeval</font> start<font color="#990000">;</font>
+  <b><font color="#000000">gettimeofday</font></b><font color="#990000">(&amp;</font>start<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">);</font>
+  <font color="#008080">timeval</font> end <font color="#990000">=</font> start<font color="#990000">;</font>
+  end<font color="#990000">.</font>tv_sec <font color="#990000">+=</font> secs<font color="#990000">;</font>
+
+  <font color="#008080">timeval</font> current<font color="#990000">;</font>
+
+  <i><font color="#9A1900">// NOTE: use std::streamsize, not Stream::size_type</font></i>
+  std<font color="#990000">::</font><font color="#008080">streamsize</font> count <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+  <b><font color="#0000FF">while</font></b> <font color="#990000">(</font><font color="#993399">1</font><font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    <b><font color="#000000">gettimeofday</font></b><font color="#990000">(&amp;</font>current<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>current<font color="#990000">.</font>tv_sec <font color="#990000">&gt;</font> end<font color="#990000">.</font>tv_sec
+      <font color="#990000">||</font> current<font color="#990000">.</font>tv_sec <font color="#990000">==</font> end<font color="#990000">.</font>tv_sec
+        <font color="#990000">&amp;&amp;</font> current<font color="#990000">.</font>tv_usec <font color="#990000">&gt;=</font> end<font color="#990000">.</font>tv_usec<font color="#990000">)</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+
+    count <font color="#990000">+=</font> conn<font color="#990000">.</font><b><font color="#000000">write</font></b><font color="#990000">(</font>buffer<font color="#990000">,</font> bs<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  <font color="#009900">double</font> dstart <font color="#990000">=</font> start<font color="#990000">.</font>tv_sec <font color="#990000">+</font> start<font color="#990000">.</font>tv_usec <font color="#990000">/</font> <font color="#993399">1e6</font><font color="#990000">;</font>
+  <font color="#009900">double</font> dend <font color="#990000">=</font> current<font color="#990000">.</font>tv_sec <font color="#990000">+</font> current<font color="#990000">.</font>tv_usec <font color="#990000">/</font> <font color="#993399">1e6</font><font color="#990000">;</font>
+  <font color="#009900">double</font> dur <font color="#990000">=</font> dend <font color="#990000">-</font> dstart<font color="#990000">;</font>
+  <font color="#009900">double</font> bps <font color="#990000">=</font> count <font color="#990000">/</font> dur<font color="#990000">;</font>
+
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" kBps="</font> <font color="#990000">&lt;&lt;</font> <b><font color="#0000FF">static_cast</font></b><font color="#990000">&lt;</font><font color="#009900">unsigned</font><font color="#990000">&gt;(</font>bps <font color="#990000">/</font> <font color="#993399">1024</font><font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">int</font> <b><font color="#000000">client</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned short&gt;</font> <b><font color="#000000">port</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'p'</font><font color="#990000">,</font> <font color="#993399">1234</font><font color="#990000">);</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;const char*&gt;</font> <b><font color="#000000">ip</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'i'</font><font color="#990000">,</font> <font color="#FF0000">"127.0.0.1"</font><font color="#990000">);</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned&gt;</font> <b><font color="#000000">secs</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'t'</font><font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">);</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned&gt;</font> <b><font color="#000000">bufsize</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'t'</font><font color="#990000">,</font> BUFSIZE<font color="#990000">);</font>
+  cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned&gt;</font> <b><font color="#000000">B</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'B'</font><font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">);</font>
+
+  cxxtools<font color="#990000">::</font>net<font color="#990000">::</font><font color="#008080">Stream</font> <b><font color="#000000">conn</font></b><font color="#990000">(</font>ip<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">(),</font> port<font color="#990000">);</font>
+
+  cxxtools<font color="#990000">::</font><font color="#008080">Dynbuffer&lt;char&gt;</font> <b><font color="#000000">buffer</font></b><font color="#990000">(</font>bufsize<font color="#990000">);</font>
+  std<font color="#990000">::</font><b><font color="#000000">generate</font></b><font color="#990000">(</font>buffer<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">(),</font> buffer<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">(),</font> rand<font color="#990000">);</font>
+
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"test"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>B<font color="#990000">.</font><b><font color="#000000">isSet</font></b><font color="#990000">())</font>
+    <b><font color="#000000">run_test</font></b><font color="#990000">(</font>conn<font color="#990000">,</font> B<font color="#990000">,</font> buffer<font color="#990000">.</font><b><font color="#000000">data</font></b><font color="#990000">(),</font> secs<font color="#990000">);</font>
+  <b><font color="#0000FF">else</font></b>
+  <font color="#FF0000">{</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">unsigned</font> bs<font color="#990000">=</font><font color="#993399">256</font><font color="#990000">;</font> bs <font color="#990000">&lt;=</font> bufsize<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">();</font> bs <font color="#990000">&lt;&lt;=</font> <font color="#993399">1</font><font color="#990000">)</font>
+      <b><font color="#000000">run_test</font></b><font color="#990000">(</font>conn<font color="#990000">,</font> bs<font color="#990000">,</font> buffer<font color="#990000">.</font><b><font color="#000000">data</font></b><font color="#990000">(),</font> secs<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<i><font color="#9A1900">////////////////////////////////////////////////////////////////////////</font></i>
+<i><font color="#9A1900">// main</font></i>
+<i><font color="#9A1900">//</font></i>
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    <b><font color="#000000">log_init</font></b><font color="#990000">();</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">isServer</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'s'</font><font color="#990000">);</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>isServer<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#000000">server</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">);</font>
+    <b><font color="#0000FF">else</font></b>
+      <b><font color="#0000FF">return</font></b> <b><font color="#000000">client</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

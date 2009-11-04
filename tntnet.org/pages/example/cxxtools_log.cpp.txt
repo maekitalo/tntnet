@@ -1,0 +1,84 @@
+/** \page cxxtools_log.cpp log.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: log.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/log.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/loginit.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;stdexcept&gt;</font>
+
+<b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"global"</font><font color="#990000">)</font>  <i><font color="#9A1900">// global definition</font></i>
+
+<b><font color="#0000FF">namespace</font></b> ns
+<font color="#FF0000">{</font>
+  <b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"namespace"</font><font color="#990000">)</font>  <i><font color="#9A1900">// namespace scope definition</font></i>
+  <font color="#009900">void</font> <b><font color="#000000">main1</font></b><font color="#990000">()</font>
+  <font color="#FF0000">{</font>
+    <i><font color="#9A1900">// this is logged at category "namespace"</font></i>
+
+    <b><font color="#000000">log_trace</font></b><font color="#990000">(</font><font color="#FF0000">"main"</font><font color="#990000">);</font>
+
+    <b><font color="#000000">log_fatal</font></b><font color="#990000">(</font><font color="#FF0000">"fatal message in namespace ns"</font><font color="#990000">);</font>
+    <b><font color="#000000">log_error</font></b><font color="#990000">(</font><font color="#FF0000">"error message in namespace ns"</font><font color="#990000">);</font>
+    <b><font color="#000000">log_warn</font></b><font color="#990000">(</font><font color="#FF0000">"warn message in namespace ns"</font><font color="#990000">);</font>
+    <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"info message in namespace ns"</font><font color="#990000">);</font>
+    <b><font color="#000000">log_debug</font></b><font color="#990000">(</font><font color="#FF0000">"debug message in namespace ns"</font><font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">cl</font>
+<font color="#FF0000">{</font>
+    <b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"class.cl"</font><font color="#990000">)</font>  <i><font color="#9A1900">// class-scope definition</font></i>
+
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">cl</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">log_debug</font></b><font color="#990000">(</font><font color="#FF0000">"constructor here"</font><font color="#990000">);</font>  <i><font color="#9A1900">// this is logged at category "class.cl"</font></i>
+    <font color="#FF0000">}</font>
+    <font color="#990000">~</font><b><font color="#000000">cl</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">log_debug</font></b><font color="#990000">(</font><font color="#FF0000">"destructor here"</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    <b><font color="#000000">log_init</font></b><font color="#990000">();</font>
+
+    <i><font color="#9A1900">// this is logged at category "global"</font></i>
+    <b><font color="#000000">log_fatal</font></b><font color="#990000">(</font><font color="#FF0000">"fatal message "</font> <font color="#990000">&lt;&lt;</font> <font color="#993399">1</font><font color="#990000">);</font>
+    <b><font color="#000000">log_error</font></b><font color="#990000">(</font><font color="#FF0000">"error message "</font> <font color="#990000">&lt;&lt;</font> <font color="#993399">2</font><font color="#990000">);</font>
+    <b><font color="#000000">log_warn</font></b><font color="#990000">(</font><font color="#FF0000">"warn message "</font> <font color="#990000">&lt;&lt;</font> <font color="#993399">3</font><font color="#990000">);</font>
+    <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"info message "</font> <font color="#990000">&lt;&lt;</font> <font color="#993399">4</font><font color="#990000">);</font>
+    <b><font color="#000000">log_debug</font></b><font color="#990000">(</font><font color="#FF0000">"debug message "</font> <font color="#990000">&lt;&lt;</font> <font color="#993399">5</font><font color="#990000">);</font>
+
+    ns<font color="#990000">::</font><b><font color="#000000">main1</font></b><font color="#990000">();</font>
+
+    <font color="#008080">cl</font> c<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

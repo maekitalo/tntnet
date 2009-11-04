@@ -1,0 +1,167 @@
+/** \page cxxtools_pool.cpp pool.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: pool.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/thread.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/pool.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/log.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/loginit.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;unistd.h&gt;</font>
+
+<b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"pooldemo"</font><font color="#990000">)</font>
+
+<i><font color="#9A1900">// define a dummy dbconnection-object</font></i>
+<b><font color="#0000FF">class</font></b> <font color="#008080">Connection</font>
+<font color="#FF0000">{</font>
+    std<font color="#990000">::</font><font color="#008080">string</font> db<font color="#990000">;</font>
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">Connection</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"create connection"</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    <b><font color="#000000">Connection</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>string<font color="#990000">&amp;</font> db_<font color="#990000">)</font>
+      <font color="#990000">:</font> <b><font color="#000000">db</font></b><font color="#990000">(</font>db_<font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"create connection to </font><font color="#CC33CC">\"</font><font color="#FF0000">"</font> <font color="#990000">&lt;&lt;</font> db <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'"'</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    <font color="#990000">~</font><b><font color="#000000">Connection</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"destroy connection"</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    <font color="#009900">void</font> <b><font color="#000000">doSomething</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<i><font color="#9A1900">// define a custom connector for passing the connection string</font></i>
+<b><font color="#0000FF">class</font></b> <font color="#008080">Connector</font>
+<font color="#FF0000">{</font>
+    std<font color="#990000">::</font><font color="#008080">string</font> db<font color="#990000">;</font>
+
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">Connector</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>string<font color="#990000">&amp;</font> db_<font color="#990000">)</font>
+      <font color="#990000">:</font> <b><font color="#000000">db</font></b><font color="#990000">(</font>db_<font color="#990000">)</font>
+      <font color="#FF0000">{</font> <font color="#FF0000">}</font>
+    Connection<font color="#990000">*</font> <b><font color="#0000FF">operator</font></b><font color="#990000">()</font> <font color="#990000">()</font>
+      <font color="#FF0000">{</font> <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Connection</font></b><font color="#990000">(</font>db<font color="#990000">);</font> <font color="#FF0000">}</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<i><font color="#9A1900">// define a connection-pool-type</font></i>
+<b><font color="#0000FF">typedef</font></b> cxxtools<font color="#990000">::</font><font color="#008080">Pool&lt;Connection, Connector&gt;</font> ConnectionPoolType<font color="#990000">;</font>
+
+<i><font color="#9A1900">// define a thread, which fetches a connection from a pool</font></i>
+<i><font color="#9A1900">// and does something</font></i>
+<b><font color="#0000FF">class</font></b> <font color="#008080">MyThread</font>
+<font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">AttachedThread</font> thread<font color="#990000">;</font>
+    ConnectionPoolType<font color="#990000">&amp;</font> pool<font color="#990000">;</font>
+    <font color="#009900">unsigned</font> threadNum<font color="#990000">;</font>
+    <font color="#009900">unsigned</font> sec<font color="#990000">;</font>
+
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#0000FF">explicit</font></b> <b><font color="#000000">MyThread</font></b> <font color="#990000">(</font>ConnectionPoolType<font color="#990000">&amp;</font> pool_<font color="#990000">,</font> <font color="#009900">unsigned</font> threadNum_<font color="#990000">,</font> <font color="#009900">unsigned</font> sec_ <font color="#990000">=</font> <font color="#993399">1</font><font color="#990000">)</font>
+      <font color="#990000">:</font> <b><font color="#000000">thread</font></b><font color="#990000">(</font> cxxtools<font color="#990000">::</font><b><font color="#000000">callable</font></b><font color="#990000">(*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>MyThread<font color="#990000">::</font>run<font color="#990000">)</font> <font color="#990000">),</font>
+        <b><font color="#000000">pool</font></b><font color="#990000">(</font>pool_<font color="#990000">),</font>
+        <b><font color="#000000">threadNum</font></b><font color="#990000">(</font>threadNum_<font color="#990000">),</font>
+        <b><font color="#000000">sec</font></b><font color="#990000">(</font>sec_<font color="#990000">)</font>
+      <font color="#FF0000">{</font> <font color="#FF0000">}</font>
+
+      <font color="#009900">void</font> <b><font color="#000000">create</font></b><font color="#990000">()</font>
+      <font color="#FF0000">{</font> thread<font color="#990000">.</font><b><font color="#000000">start</font></b><font color="#990000">();</font> <font color="#FF0000">}</font>
+
+      <font color="#009900">void</font> <b><font color="#000000">join</font></b><font color="#990000">()</font>
+      <font color="#FF0000">{</font> thread<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font> <font color="#FF0000">}</font>
+
+    <font color="#009900">void</font> <b><font color="#000000">run</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"start thread "</font> <font color="#990000">&lt;&lt;</font> threadNum<font color="#990000">);</font>
+
+      <b><font color="#000000">sleep</font></b><font color="#990000">(</font>sec<font color="#990000">);</font>
+
+      <i><font color="#9A1900">// We fetch a object from the pool, and call a method pool.get() does</font></i>
+      <i><font color="#9A1900">// not return a connection, but a proxy object, so we have to take</font></i>
+      <i><font color="#9A1900">// care not to assign the object to a Connection, but use that proxy</font></i>
+      <i><font color="#9A1900">// directy.</font></i>
+      <i><font color="#9A1900">//</font></i>
+      <i><font color="#9A1900">// This would be wrong:</font></i>
+      <i><font color="#9A1900">//   Connection conn = *pool.get(); // convert the proxy-object</font></i>
+      <i><font color="#9A1900">//   conn.doSomething(threadNum);  // the connection is back in the pool here :-(</font></i>
+      <i><font color="#9A1900">//</font></i>
+      <i><font color="#9A1900">// The reason is, that the proxy object is destroyed too early.</font></i>
+      <i><font color="#9A1900">// The proxy object puts the connection back to the free-list of the</font></i>
+      <i><font color="#9A1900">// pool, before we use the connection.</font></i>
+      <i><font color="#9A1900">//</font></i>
+      <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"doSomething in thread "</font> <font color="#990000">&lt;&lt;</font> threadNum<font color="#990000">);</font>
+      pool<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">()-&gt;</font><b><font color="#000000">doSomething</font></b><font color="#990000">();</font>
+      <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"doSomething ends in thread "</font> <font color="#990000">&lt;&lt;</font> threadNum<font color="#990000">);</font>
+
+      <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"thread ready "</font> <font color="#990000">&lt;&lt;</font> threadNum<font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    <b><font color="#000000">log_init_info</font></b><font color="#990000">();</font>
+
+    <font color="#008080">ConnectionPoolType</font> <b><font color="#000000">connectionPool</font></b><font color="#990000">(</font><font color="#993399">3</font><font color="#990000">,</font> <b><font color="#000000">Connector</font></b><font color="#990000">(</font><font color="#FF0000">"mydb"</font><font color="#990000">));</font>
+
+    <font color="#008080">MyThread</font> <b><font color="#000000">th1</font></b><font color="#990000">(</font>connectionPool<font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">);</font>
+    <font color="#008080">MyThread</font> <b><font color="#000000">th2</font></b><font color="#990000">(</font>connectionPool<font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">);</font>
+    <font color="#008080">MyThread</font> <b><font color="#000000">th3</font></b><font color="#990000">(</font>connectionPool<font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">);</font>
+    <font color="#008080">MyThread</font> <b><font color="#000000">th4</font></b><font color="#990000">(</font>connectionPool<font color="#990000">,</font> <font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">);</font>
+    <font color="#008080">MyThread</font> <b><font color="#000000">th5</font></b><font color="#990000">(</font>connectionPool<font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">,</font> <font color="#993399">4</font><font color="#990000">);</font>
+
+    th1<font color="#990000">.</font><b><font color="#000000">create</font></b><font color="#990000">();</font>
+    th2<font color="#990000">.</font><b><font color="#000000">create</font></b><font color="#990000">();</font>
+    th3<font color="#990000">.</font><b><font color="#000000">create</font></b><font color="#990000">();</font>
+    th4<font color="#990000">.</font><b><font color="#000000">create</font></b><font color="#990000">();</font>
+    th5<font color="#990000">.</font><b><font color="#000000">create</font></b><font color="#990000">();</font>
+
+    <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"threads created"</font><font color="#990000">);</font>
+
+    th1<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+
+    <i><font color="#9A1900">// Thread 1 is ready and the connection is put back into the pool.</font></i>
+    <i><font color="#9A1900">// We release all free connections here. At least one connection</font></i>
+    <i><font color="#9A1900">// from thread 1 is released.</font></i>
+    <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"pool drop"</font><font color="#990000">);</font>
+    connectionPool<font color="#990000">.</font><b><font color="#000000">drop</font></b><font color="#990000">();</font>
+
+    th2<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+    th4<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+    th3<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+    th5<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+
+    <b><font color="#000000">log_info</font></b><font color="#990000">(</font><font color="#FF0000">"threads joined"</font><font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

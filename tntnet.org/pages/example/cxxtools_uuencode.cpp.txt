@@ -1,0 +1,46 @@
+/** \page cxxtools_uuencode.cpp uuencode.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: uuencode.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/arg.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/uuencode.h&gt;</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;const char*&gt;</font> <b><font color="#000000">fname</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'f'</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned&gt;</font> <b><font color="#000000">mode</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'m'</font><font color="#990000">,</font> <font color="#993399">0644</font><font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">UuencodeOstream</font> <b><font color="#000000">out</font></b><font color="#990000">(</font>std<font color="#990000">::</font>cout<font color="#990000">);</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>fname<font color="#990000">)</font>
+      out<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">(</font>fname<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">(),</font> mode<font color="#990000">);</font>
+
+    out <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>cin<font color="#990000">.</font><b><font color="#000000">rdbuf</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

@@ -1,0 +1,77 @@
+/** \page cxxtools_arg-set.cpp arg-set.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: arg-set.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/arg.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+
+<font color="#009900">void</font> <b><font color="#000000">print_int</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> txt<font color="#990000">,</font> <font color="#009900">int</font> i<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> txt <font color="#990000">&lt;&lt;</font> <font color="#FF0000">": "</font> <font color="#990000">&lt;&lt;</font> i <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> <b><font color="#000000">print_charp</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> txt<font color="#990000">,</font> <b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> p<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> txt <font color="#990000">&lt;&lt;</font> <font color="#FF0000">": "</font> <font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>p <font color="#990000">?</font> p <font color="#990000">:</font> <font color="#FF0000">"NULL"</font><font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> <b><font color="#000000">print_string</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> txt<font color="#990000">,</font> <b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>string<font color="#990000">&amp;</font> s<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> txt <font color="#990000">&lt;&lt;</font> <font color="#FF0000">": "</font> <font color="#990000">&lt;&lt;</font> s <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;int&gt;</font> <b><font color="#000000">int_param</font></b><font color="#990000">(</font><font color="#993399">5</font><font color="#990000">);</font> <i><font color="#9A1900">// default-value 5</font></i>
+    int_param<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'i'</font><font color="#990000">);</font>
+    int_param<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">"--int"</font><font color="#990000">);</font>
+
+    <b><font color="#000000">print_int</font></b><font color="#990000">(</font><font color="#FF0000">"option -i|--int"</font><font color="#990000">,</font> int_param<font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;const char*&gt;</font> <b><font color="#000000">charp_param</font></b><font color="#990000">(</font><font color="#FF0000">"hi"</font><font color="#990000">);</font> <i><font color="#9A1900">// default-value</font></i>
+    charp_param<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'p'</font><font color="#990000">);</font>
+    charp_param<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">"--charp"</font><font color="#990000">);</font>
+
+    <b><font color="#000000">print_charp</font></b><font color="#990000">(</font><font color="#FF0000">"option -p|--charp"</font><font color="#990000">,</font> charp_param<font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;std::string&gt;</font> <b><font color="#000000">string_param</font></b><font color="#990000">(</font><font color="#FF0000">"hi"</font><font color="#990000">);</font> <i><font color="#9A1900">// default-value</font></i>
+    string_param<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'s'</font><font color="#990000">);</font>
+    string_param<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">"--string"</font><font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;std::string&gt;</font> string_arg<font color="#990000">;</font>
+    string_arg<font color="#990000">.</font><b><font color="#000000">setNoOpt</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">);</font>
+
+    <b><font color="#000000">print_string</font></b><font color="#990000">(</font><font color="#FF0000">"option -s|--string"</font><font color="#990000">,</font> string_param<font color="#990000">);</font>
+    <b><font color="#000000">print_string</font></b><font color="#990000">(</font><font color="#FF0000">"string-Arg"</font><font color="#990000">,</font> string_arg<font color="#990000">);</font>
+
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"unprocessed arguments:</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font><font color="#990000">;</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">int</font> i <font color="#990000">=</font> <font color="#993399">1</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> argc<font color="#990000">;</font> <font color="#990000">++</font>i<font color="#990000">)</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'</font><font color="#CC33CC">\t</font><font color="#FF0000">'</font> <font color="#990000">&lt;&lt;</font> i <font color="#990000">&lt;&lt;</font> <font color="#FF0000">": "</font> <font color="#990000">&lt;&lt;</font> argv<font color="#990000">[</font>i<font color="#990000">]</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    <b><font color="#0000FF">return</font></b> <font color="#993399">1</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

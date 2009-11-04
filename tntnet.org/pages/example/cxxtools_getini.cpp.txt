@@ -1,0 +1,89 @@
+/** \page cxxtools_getini.cpp getini.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: getini.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;exception&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;fstream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iterator&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;stdexcept&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/inifile.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/loginit.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/log.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/arg.h&gt;</font>
+
+<b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"cxxtools.getini"</font><font color="#990000">)</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#000000">log_init</font></b><font color="#990000">();</font>
+
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">quiet</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'q'</font><font color="#990000">);</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>argc <font color="#990000">&lt;=</font> <font color="#993399">1</font><font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"usage: "</font> <font color="#990000">&lt;&lt;</font> argv<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">]</font>
+        <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" inifile [-q] [section [key [default]]]"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+      <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+
+    <b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> fname <font color="#990000">=</font> argv<font color="#990000">[</font><font color="#993399">1</font><font color="#990000">];</font>
+    std<font color="#990000">::</font><font color="#008080">ifstream</font> <b><font color="#000000">in</font></b><font color="#990000">(</font>fname<font color="#990000">);</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>in<font color="#990000">)</font>
+      <b><font color="#0000FF">throw</font></b> std<font color="#990000">::</font><b><font color="#000000">runtime_error</font></b><font color="#990000">(</font>std<font color="#990000">::</font><b><font color="#000000">string</font></b><font color="#990000">(</font><font color="#FF0000">"error reading input file </font><font color="#CC33CC">\"</font><font color="#FF0000">"</font><font color="#990000">)</font> <font color="#990000">+</font> fname <font color="#990000">+</font> <font color="#FF0000">'"'</font><font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">IniFile</font> <b><font color="#000000">ini</font></b><font color="#990000">(</font>in<font color="#990000">);</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>argc <font color="#990000">&lt;=</font> <font color="#993399">2</font><font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      <i><font color="#9A1900">// list sections</font></i>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>quiet<font color="#990000">)</font>
+        std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"sections in "</font> <font color="#990000">&lt;&lt;</font> fname <font color="#990000">&lt;&lt;</font> <font color="#FF0000">": "</font><font color="#990000">;</font>
+      ini<font color="#990000">.</font><b><font color="#000000">getSections</font></b><font color="#990000">(</font>std<font color="#990000">::</font>ostream_iterator<font color="#990000">&lt;</font>std<font color="#990000">::</font>string<font color="#990000">&gt;(</font>std<font color="#990000">::</font>cout<font color="#990000">,</font> <font color="#FF0000">"</font><font color="#CC33CC">\t</font><font color="#FF0000">"</font><font color="#990000">));</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+      <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+
+    <b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> section <font color="#990000">=</font> argv<font color="#990000">[</font><font color="#993399">2</font><font color="#990000">];</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>argc <font color="#990000">&lt;=</font> <font color="#993399">3</font><font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      <i><font color="#9A1900">// list keys</font></i>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>quiet<font color="#990000">)</font>
+        std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"keys in "</font> <font color="#990000">&lt;&lt;</font> fname <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" ["</font> <font color="#990000">&lt;&lt;</font> section <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"]: "</font><font color="#990000">;</font>
+      ini<font color="#990000">.</font><b><font color="#000000">getKeys</font></b><font color="#990000">(</font>section<font color="#990000">,</font> std<font color="#990000">::</font>ostream_iterator<font color="#990000">&lt;</font>std<font color="#990000">::</font>string<font color="#990000">&gt;(</font>std<font color="#990000">::</font>cout<font color="#990000">,</font> <font color="#FF0000">"</font><font color="#CC33CC">\t</font><font color="#FF0000">"</font><font color="#990000">));</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+      <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+
+    <b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> key <font color="#990000">=</font> argv<font color="#990000">[</font><font color="#993399">3</font><font color="#990000">];</font>
+    <b><font color="#0000FF">const</font></b> <font color="#009900">char</font><font color="#990000">*</font> defvalue <font color="#990000">=</font> argv<font color="#990000">[</font><font color="#993399">4</font><font color="#990000">]</font> <font color="#990000">?</font> argv<font color="#990000">[</font><font color="#993399">4</font><font color="#990000">]</font> <font color="#990000">:</font> <font color="#FF0000">""</font><font color="#990000">;</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>quiet<font color="#990000">)</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"value of "</font> <font color="#990000">&lt;&lt;</font> fname <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" ["</font> <font color="#990000">&lt;&lt;</font> section <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"]."</font> <font color="#990000">&lt;&lt;</font> key <font color="#990000">&lt;&lt;</font> <font color="#FF0000">": "</font><font color="#990000">;</font>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> ini<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">(</font>section<font color="#990000">,</font> key<font color="#990000">,</font> defvalue<font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

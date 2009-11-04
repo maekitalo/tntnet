@@ -1,0 +1,168 @@
+/** \page cxxtools_rpcecho.cpp rpcecho.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: rpcecho.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<i><font color="#9A1900">/*</font></i>
+
+<i><font color="#9A1900">This demo implements a rpc server and a rpc client.</font></i>
+
+<i><font color="#9A1900">To run the demo start the server with "rpcecho -S". It listens by default on</font></i>
+<i><font color="#9A1900">port 7002. It waits for incoming xmlrpc requests. The only service function</font></i>
+<i><font color="#9A1900">is echo, which takes a string as a parameter just returns that string.</font></i>
+
+<i><font color="#9A1900">To use the server run rpcecho with a text e.g. "rpcecho hello". It sends the</font></i>
+<i><font color="#9A1900">text to the server and prints the return string to standard out. You may pass</font></i>
+<i><font color="#9A1900">with -f &lt;filename&gt; a file, which will be sent to the server instead.</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/arg.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/loginit.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/service.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/http/server.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/remoteprocedure.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/httpclient.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/clock.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;fstream&gt;</font>
+
+<i><font color="#9A1900">////////////////////////////////////////////////////////////////////////</font></i>
+<i><font color="#9A1900">// This defines a xmlrpc service. A xmlrpc service defines functions, which</font></i>
+<i><font color="#9A1900">// can be called remotely.</font></i>
+<i><font color="#9A1900">//</font></i>
+<b><font color="#0000FF">class</font></b> <font color="#008080">EchoServerService</font> <font color="#990000">:</font> <b><font color="#0000FF">public</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Service
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">EchoServerService</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"echo"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>EchoServerService<font color="#990000">::</font>echo<font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    std<font color="#990000">::</font><font color="#008080">string</font> <b><font color="#000000">echo</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>string<font color="#990000">&amp;</font> message<font color="#990000">,</font> <font color="#009900">bool</font> tostdout<font color="#990000">);</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+std<font color="#990000">::</font><font color="#008080">string</font> EchoServerService<font color="#990000">::</font><b><font color="#000000">echo</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>string<font color="#990000">&amp;</font> message<font color="#990000">,</font> <font color="#009900">bool</font> tostdout<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>tostdout<font color="#990000">)</font>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> message <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+  <b><font color="#0000FF">return</font></b> message<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<i><font color="#9A1900">////////////////////////////////////////////////////////////////////////</font></i>
+<i><font color="#9A1900">// main</font></i>
+<i><font color="#9A1900">//</font></i>
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    <b><font color="#000000">log_init</font></b><font color="#990000">();</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">server</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'S'</font><font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;std::string&gt;</font> <b><font color="#000000">ip</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'i'</font><font color="#990000">,</font> server<font color="#990000">.</font><b><font color="#000000">isSet</font></b><font color="#990000">()</font> <font color="#990000">?</font> <font color="#FF0000">"0.0.0.0"</font> <font color="#990000">:</font> <font color="#FF0000">"127.0.0.1"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned short&gt;</font> <b><font color="#000000">port</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'p'</font><font color="#990000">,</font> <font color="#993399">7002</font><font color="#990000">);</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>server<font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"run rpcecho server"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+      <i><font color="#9A1900">// the http server is instantiated with a ip address and a port number</font></i>
+      cxxtools<font color="#990000">::</font>http<font color="#990000">::</font><font color="#008080">Server</font> <b><font color="#000000">server</font></b><font color="#990000">(</font>ip<font color="#990000">,</font> port<font color="#990000">);</font>
+
+      <i><font color="#9A1900">// we create an instance of the service class</font></i>
+      <font color="#008080">EchoServerService</font> service<font color="#990000">;</font>
+      <i><font color="#9A1900">// ... and register it under a url</font></i>
+      server<font color="#990000">.</font><b><font color="#000000">addService</font></b><font color="#990000">(</font><font color="#FF0000">"/myservice"</font><font color="#990000">,</font> service<font color="#990000">);</font>
+
+      <i><font color="#9A1900">// now run the server</font></i>
+      server<font color="#990000">.</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+    <font color="#FF0000">}</font>
+    <b><font color="#0000FF">else</font></b>
+    <font color="#FF0000">{</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"run rpcecho client"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+      <i><font color="#9A1900">// take option -n &lt;number&gt; to specify, how often the request should be called (1 by default)</font></i>
+      cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned&gt;</font> <b><font color="#000000">number</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'c'</font><font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">);</font>
+      cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">doEcho</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'e'</font><font color="#990000">);</font>
+
+      <i><font color="#9A1900">// define a xlmrpc client</font></i>
+      cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font><font color="#008080">HttpClient</font> <b><font color="#000000">client</font></b><font color="#990000">(</font>ip<font color="#990000">,</font> port<font color="#990000">,</font> <font color="#FF0000">"/myservice"</font><font color="#990000">);</font>
+
+      <i><font color="#9A1900">// define remote procedure with std::string return value and a std::string and a bool parameter:</font></i>
+      cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font><font color="#008080">RemoteProcedure&lt;std::string, std::string, bool&gt;</font> <b><font color="#000000">echo</font></b><font color="#990000">(</font>client<font color="#990000">,</font> <font color="#FF0000">"echo"</font><font color="#990000">);</font>
+
+      <i><font color="#9A1900">// optionally pass a filename with -f</font></i>
+      cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;const char*&gt;</font> <b><font color="#000000">filename</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'f'</font><font color="#990000">);</font>
+
+      <i><font color="#9A1900">// option -n - do not output return value (good for benchmarking)</font></i>
+      cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">noout</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'n'</font><font color="#990000">);</font>
+
+      cxxtools<font color="#990000">::</font><font color="#008080">Clock</font> clock<font color="#990000">;</font>
+      clock<font color="#990000">.</font><b><font color="#000000">start</font></b><font color="#990000">();</font>
+
+      <font color="#009900">unsigned</font> size <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>filename<font color="#990000">.</font><b><font color="#000000">isSet</font></b><font color="#990000">())</font>
+      <font color="#FF0000">{</font>
+        <i><font color="#9A1900">// read a file into a stringstream</font></i>
+        std<font color="#990000">::</font><font color="#008080">ifstream</font> <b><font color="#000000">in</font></b><font color="#990000">(</font>filename<font color="#990000">);</font>
+        std<font color="#990000">::</font><font color="#008080">ostringstream</font> data<font color="#990000">;</font>
+        data <font color="#990000">&lt;&lt;</font> in<font color="#990000">.</font><b><font color="#000000">rdbuf</font></b><font color="#990000">();</font>  <i><font color="#9A1900">// read file into stringstream</font></i>
+
+        <i><font color="#9A1900">// send data from file to server and print reply to std::cout</font></i>
+        <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">unsigned</font> n <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> n <font color="#990000">&lt;</font> number<font color="#990000">;</font> <font color="#990000">++</font>n<font color="#990000">)</font>
+        <font color="#FF0000">{</font>
+          std<font color="#990000">::</font><font color="#008080">string</font> v <font color="#990000">=</font> <b><font color="#000000">echo</font></b><font color="#990000">(</font>data<font color="#990000">.</font><b><font color="#000000">str</font></b><font color="#990000">(),</font> doEcho<font color="#990000">);</font>
+          size <font color="#990000">+=</font> v<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">();</font>
+          <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>noout<font color="#990000">)</font>
+            std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> v<font color="#990000">;</font>
+        <font color="#FF0000">}</font>
+      <font color="#FF0000">}</font>
+      <b><font color="#0000FF">else</font></b>
+      <font color="#FF0000">{</font>
+        <i><font color="#9A1900">// no filename given, so send just the parameters to the server.</font></i>
+
+        <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">unsigned</font> n <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> n <font color="#990000">&lt;</font> number<font color="#990000">;</font> <font color="#990000">++</font>n<font color="#990000">)</font>
+        <font color="#FF0000">{</font>
+          <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">int</font> a <font color="#990000">=</font> <font color="#993399">1</font><font color="#990000">;</font> a <font color="#990000">&lt;</font> argc<font color="#990000">;</font> <font color="#990000">++</font>a<font color="#990000">)</font>
+          <font color="#FF0000">{</font>
+            std<font color="#990000">::</font><font color="#008080">string</font> v <font color="#990000">=</font> <b><font color="#000000">echo</font></b><font color="#990000">(</font>argv<font color="#990000">[</font>a<font color="#990000">],</font> doEcho<font color="#990000">);</font>
+            size <font color="#990000">+=</font> v<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">();</font>
+            <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>noout<font color="#990000">)</font>
+              std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> v <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'</font><font color="#CC33CC">\n</font><font color="#FF0000">'</font><font color="#990000">;</font>
+          <font color="#FF0000">}</font>
+        <font color="#FF0000">}</font>
+      <font color="#FF0000">}</font>
+
+      cxxtools<font color="#990000">::</font><font color="#008080">Timespan</font> t <font color="#990000">=</font> clock<font color="#990000">.</font><b><font color="#000000">stop</font></b><font color="#990000">();</font>
+      <font color="#009900">double</font> T <font color="#990000">=</font> t<font color="#990000">.</font><b><font color="#000000">toUSecs</font></b><font color="#990000">()</font> <font color="#990000">/</font> <font color="#993399">1e6</font><font color="#990000">;</font>
+      <font color="#009900">unsigned</font> kbytes <font color="#990000">=</font> size <font color="#990000">/</font> <font color="#993399">1024.0</font><font color="#990000">;</font>
+      std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> T <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" s, "</font> <font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>number<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">()</font> <font color="#990000">/</font> T<font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" msg/s</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font>
+                <font color="#990000">&lt;&lt;</font> kbytes <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" kbytes, "</font> <font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>kbytes <font color="#990000">/</font> T<font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> <font color="#FF0000">" kbytes/s</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

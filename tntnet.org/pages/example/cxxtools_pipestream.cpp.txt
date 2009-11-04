@@ -1,0 +1,82 @@
+/** \page cxxtools_pipestream.cpp pipestream.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: pipestream.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<i><font color="#9A1900">/**</font></i>
+<i><font color="#9A1900"> * This demo shows, how to create a child-process, use a pipe to signal</font></i>
+<i><font color="#9A1900"> * from child to parent and another pipe to send a datastream.</font></i>
+<i><font color="#9A1900"> */</font></i>
+
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/pipestream.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/fork.h&gt;</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    <i><font color="#9A1900">// create pipe, where child signals, that he is initialized</font></i>
+    cxxtools<font color="#990000">::</font><font color="#008080">Pipe</font> pipe<font color="#990000">;</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">Pipestream</font> pstream<font color="#990000">;</font>
+
+    <i><font color="#9A1900">// fork child-process</font></i>
+    cxxtools<font color="#990000">::</font><font color="#008080">Fork</font> fork<font color="#990000">;</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>fork<font color="#990000">.</font><b><font color="#000000">parent</font></b><font color="#990000">())</font>
+    <font color="#FF0000">{</font>
+      pipe<font color="#990000">.</font><b><font color="#000000">closeWriteFd</font></b><font color="#990000">();</font>
+      pstream<font color="#990000">.</font><b><font color="#000000">closeWriteFd</font></b><font color="#990000">();</font>
+
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"waiting for child to become ready"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+      <font color="#009900">char</font> ch<font color="#990000">;</font>
+      pipe<font color="#990000">.</font><b><font color="#000000">out</font></b><font color="#990000">().</font><b><font color="#000000">read</font></b><font color="#990000">(&amp;</font>ch<font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">);</font> <i><font color="#9A1900">// wait for child to get ready</font></i>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"child is ready - he sent '"</font> <font color="#990000">&lt;&lt;</font> ch <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'</font><font color="#CC33CC">\'</font><font color="#FF0000">'</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+
+      <i><font color="#9A1900">// now we copy everything, the child sends through the stream</font></i>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> pstream<font color="#990000">.</font><b><font color="#000000">rdbuf</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>flush<font color="#990000">;</font>
+
+      fork<font color="#990000">.</font><b><font color="#000000">wait</font></b><font color="#990000">();</font>
+
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"child terminated normally"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+    <b><font color="#0000FF">else</font></b> <i><font color="#9A1900">// child</font></i>
+    <font color="#FF0000">{</font>
+      pipe<font color="#990000">.</font><b><font color="#000000">closeReadFd</font></b><font color="#990000">();</font>
+      pstream<font color="#990000">.</font><b><font color="#000000">closeReadFd</font></b><font color="#990000">();</font>
+
+      <i><font color="#9A1900">// we do some long initialization:</font></i>
+      <font color="#990000">::</font><b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">);</font>
+
+      <font color="#009900">char</font> ch <font color="#990000">=</font> <font color="#FF0000">'a'</font><font color="#990000">;</font>
+      pipe<font color="#990000">.</font><b><font color="#000000">in</font></b><font color="#990000">().</font><b><font color="#000000">write</font></b><font color="#990000">(&amp;</font>ch<font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">);</font>
+
+      <i><font color="#9A1900">// make another break</font></i>
+      <font color="#990000">::</font><b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">);</font>
+
+      pstream <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"Hello World!"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

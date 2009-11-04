@@ -1,0 +1,142 @@
+/** \page cxxtools_httprequest.cpp httprequest.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: httprequest.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;exception&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/http/client.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/http/request.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/arg.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/eventloop.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/loginit.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/log.h&gt;</font>
+
+<b><font color="#000000">log_define</font></b><font color="#990000">(</font><font color="#FF0000">"cxxtools.demo.httprequest"</font><font color="#990000">)</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">AsyncRequester</font> <font color="#990000">:</font> <b><font color="#0000FF">public</font></b> cxxtools<font color="#990000">::</font>Connectable
+<font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> _client<font color="#990000">;</font>
+    <font color="#009900">char</font><font color="#990000">**</font> _argv<font color="#990000">;</font>
+
+    cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Request _request<font color="#990000">;</font>
+    cxxtools<font color="#990000">::</font>EventLoop _loop<font color="#990000">;</font>
+
+    std<font color="#990000">::</font><font color="#008080">size_t</font> <b><font color="#000000">onBodyAvailable</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> client<font color="#990000">);</font>
+    <font color="#009900">void</font> <b><font color="#000000">onReady</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> client<font color="#990000">);</font>
+    <font color="#009900">void</font> <b><font color="#000000">onError</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> client<font color="#990000">,</font> <b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">);</font>
+
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">AsyncRequester</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> client<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">**</font> argv<font color="#990000">)</font>
+      <font color="#990000">:</font> <b><font color="#000000">_client</font></b><font color="#990000">(</font>client<font color="#990000">),</font>
+        <b><font color="#000000">_argv</font></b><font color="#990000">(</font>argv<font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">connect</font></b><font color="#990000">(</font>_client<font color="#990000">.</font>bodyAvailable<font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>AsyncRequester<font color="#990000">::</font>onBodyAvailable<font color="#990000">);</font>
+      <b><font color="#000000">connect</font></b><font color="#990000">(</font>_client<font color="#990000">.</font>replyFinished<font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>AsyncRequester<font color="#990000">::</font>onReady<font color="#990000">);</font>
+      <b><font color="#000000">connect</font></b><font color="#990000">(</font>_client<font color="#990000">.</font>errorOccured<font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>AsyncRequester<font color="#990000">::</font>onError<font color="#990000">);</font>
+      _client<font color="#990000">.</font><b><font color="#000000">setSelector</font></b><font color="#990000">(</font>_loop<font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    <font color="#009900">void</font> <b><font color="#000000">run</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(*</font>_argv<font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+        _request<font color="#990000">.</font><b><font color="#000000">url</font></b><font color="#990000">(*</font>_argv<font color="#990000">++);</font>
+        _client<font color="#990000">.</font><b><font color="#000000">beginExecute</font></b><font color="#990000">(</font>_request<font color="#990000">);</font>
+        _loop<font color="#990000">.</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+      <font color="#FF0000">}</font>
+    <font color="#FF0000">}</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+std<font color="#990000">::</font><font color="#008080">size_t</font> AsyncRequester<font color="#990000">::</font><b><font color="#000000">onBodyAvailable</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> client<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <font color="#009900">char</font> buffer<font color="#990000">[</font><font color="#993399">8192</font><font color="#990000">];</font>
+  std<font color="#990000">::</font><font color="#008080">streamsize</font> n <font color="#990000">=</font> client<font color="#990000">.</font><b><font color="#000000">in</font></b><font color="#990000">().</font><b><font color="#000000">readsome</font></b><font color="#990000">(</font>buffer<font color="#990000">,</font> <b><font color="#0000FF">sizeof</font></b><font color="#990000">(</font>buffer<font color="#990000">));</font>
+  std<font color="#990000">::</font>cout<font color="#990000">.</font><b><font color="#000000">write</font></b><font color="#990000">(</font>buffer<font color="#990000">,</font> n<font color="#990000">);</font>
+
+  <b><font color="#0000FF">return</font></b> n<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> AsyncRequester<font color="#990000">::</font><b><font color="#000000">onReady</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> client<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(*</font>_argv<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    _request<font color="#990000">.</font><b><font color="#000000">url</font></b><font color="#990000">(*</font>_argv<font color="#990000">++);</font>
+    client<font color="#990000">.</font><b><font color="#000000">beginExecute</font></b><font color="#990000">(</font>_request<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">else</font></b>
+  <font color="#FF0000">{</font>
+    _loop<font color="#990000">.</font><b><font color="#000000">exit</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> AsyncRequester<font color="#990000">::</font><b><font color="#000000">onError</font></b><font color="#990000">(</font>cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Client<font color="#990000">&amp;</font> client<font color="#990000">,</font> <b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#000000">log_warn</font></b><font color="#990000">(</font><font color="#FF0000">"error occured: "</font> <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">());</font>
+  <b><font color="#0000FF">throw</font></b><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    <b><font color="#000000">log_init</font></b><font color="#990000">();</font>
+
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;std::string&gt;</font> <b><font color="#000000">user</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'u'</font><font color="#990000">);</font> <i><font color="#9A1900">// passed as "username:password"</font></i>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;std::string&gt;</font> <b><font color="#000000">server</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'s'</font><font color="#990000">,</font> <font color="#FF0000">"127.0.0.1"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;unsigned short int&gt;</font> <b><font color="#000000">port</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'p'</font><font color="#990000">,</font> <font color="#993399">80</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">Arg&lt;bool&gt;</font> <b><font color="#000000">async</font></b><font color="#990000">(</font>argc<font color="#990000">,</font> argv<font color="#990000">,</font> <font color="#FF0000">'a'</font><font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font>http<font color="#990000">::</font><font color="#008080">Client</font> <b><font color="#000000">client</font></b><font color="#990000">(</font>server<font color="#990000">,</font> port<font color="#990000">);</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>user<font color="#990000">.</font><b><font color="#000000">isSet</font></b><font color="#990000">())</font>
+    <font color="#FF0000">{</font>
+      std<font color="#990000">::</font>string<font color="#990000">::</font><font color="#008080">size_type</font> p <font color="#990000">=</font> user<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">().</font><b><font color="#000000">find</font></b><font color="#990000">(</font><font color="#FF0000">':'</font><font color="#990000">);</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>p <font color="#990000">!=</font> std<font color="#990000">::</font>string<font color="#990000">::</font>npos<font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+        client<font color="#990000">.</font><b><font color="#000000">auth</font></b><font color="#990000">(</font>user<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">().</font><b><font color="#000000">substr</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">,</font> p<font color="#990000">),</font>
+                    user<font color="#990000">.</font><b><font color="#000000">getValue</font></b><font color="#990000">().</font><b><font color="#000000">substr</font></b><font color="#990000">(</font>p <font color="#990000">+</font> <font color="#993399">1</font><font color="#990000">));</font>
+      <font color="#FF0000">}</font>
+      <b><font color="#0000FF">else</font></b>
+      <font color="#FF0000">{</font>
+        client<font color="#990000">.</font><b><font color="#000000">auth</font></b><font color="#990000">(</font>user<font color="#990000">,</font> std<font color="#990000">::</font><b><font color="#000000">string</font></b><font color="#990000">());</font>
+      <font color="#FF0000">}</font>
+    <font color="#FF0000">}</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>async<font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      <font color="#008080">AsyncRequester</font> <b><font color="#000000">ar</font></b><font color="#990000">(</font>client<font color="#990000">,</font> argv <font color="#990000">+</font> <font color="#993399">1</font><font color="#990000">);</font>
+      ar<font color="#990000">.</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+    <font color="#FF0000">}</font>
+    <b><font color="#0000FF">else</font></b>
+    <font color="#FF0000">{</font>
+      <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">int</font> a <font color="#990000">=</font> <font color="#993399">1</font><font color="#990000">;</font> a <font color="#990000">&lt;</font> argc<font color="#990000">;</font> <font color="#990000">++</font>a<font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+        std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> client<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">(</font>argv<font color="#990000">[</font>a<font color="#990000">]);</font>
+      <font color="#FF0000">}</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"ERROR: "</font> <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/

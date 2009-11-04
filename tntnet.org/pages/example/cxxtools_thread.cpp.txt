@@ -1,0 +1,132 @@
+/** \page cxxtools_thread.cpp thread.cpp
+
+@htmlinclude sidebar.html
+
+\htmlonly
+    <div id=content>
+
+<h2>Example: thread.cpp application</h2>
+
+<!-- Generator: GNU source-highlight 3.1
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/function.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/thread.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/mutex.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/condition.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;string&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;unistd.h&gt;</font>
+
+cxxtools<font color="#990000">::</font><font color="#008080">Mutex</font> coutMutex<font color="#990000">;</font>
+cxxtools<font color="#990000">::</font><font color="#008080">Mutex</font> conditionMutex<font color="#990000">;</font>
+cxxtools<font color="#990000">::</font><font color="#008080">Condition</font> running<font color="#990000">;</font>
+
+<b><font color="#000080">#define</font></b> <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font>expr<font color="#990000">)</font> <font color="#990000">\</font>
+  <b><font color="#0000FF">do</font></b> <font color="#FF0000">{</font> <font color="#990000">\</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">MutexLock</font> <b><font color="#000000">lock</font></b><font color="#990000">(</font>coutMutex<font color="#990000">);</font> <font color="#990000">\</font>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <b><font color="#000000">time</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> <font color="#FF0000">' '</font> <font color="#990000">&lt;&lt;</font> expr <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font> <font color="#990000">\</font>
+  <font color="#FF0000">}</font> <b><font color="#0000FF">while</font></b> <font color="#990000">(</font><b><font color="#0000FF">false</font></b><font color="#990000">)</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">myDetachedThread</font> <font color="#990000">:</font> <b><font color="#0000FF">public</font></b> cxxtools<font color="#990000">::</font>DetachedThread
+<font color="#FF0000">{</font>
+    <font color="#990000">~</font><b><font color="#000000">myDetachedThread</font></b><font color="#990000">();</font>
+
+  <b><font color="#0000FF">protected</font></b><font color="#990000">:</font>
+    <font color="#009900">void</font> <b><font color="#000000">run</font></b><font color="#990000">();</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+myDetachedThread<font color="#990000">::~</font><b><font color="#000000">myDetachedThread</font></b><font color="#990000">()</font>
+<font color="#FF0000">{</font>
+  <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"myDetachedThread::~myDetachedThread() called"</font><font color="#990000">);</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> myDetachedThread<font color="#990000">::</font><b><font color="#000000">run</font></b><font color="#990000">()</font>
+<font color="#FF0000">{</font>
+  <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"myDetachedThread is starting"</font><font color="#990000">);</font>
+
+  cxxtools<font color="#990000">::</font><font color="#008080">MutexLock</font> <b><font color="#000000">lock</font></b><font color="#990000">(</font>conditionMutex<font color="#990000">);</font>
+  running<font color="#990000">.</font><b><font color="#000000">broadcast</font></b><font color="#990000">();</font>
+  lock<font color="#990000">.</font><b><font color="#000000">unlock</font></b><font color="#990000">();</font>
+
+  <font color="#990000">::</font><b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">);</font>
+  <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"myDetachedThread waits"</font><font color="#990000">);</font>
+  <font color="#990000">::</font><b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">2</font><font color="#990000">);</font>
+  <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"myDetachedThread is ready"</font><font color="#990000">);</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> <b><font color="#000000">someFunction</font></b><font color="#990000">()</font>
+<font color="#FF0000">{</font>
+  <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"someFunction()"</font><font color="#990000">);</font>
+  <font color="#990000">::</font><b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">);</font>
+  <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"someFunction() ends"</font><font color="#990000">);</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">AClass</font>
+<font color="#FF0000">{</font>
+    std<font color="#990000">::</font><font color="#008080">string</font> id<font color="#990000">;</font>
+
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">AClass</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>string<font color="#990000">&amp;</font> id_<font color="#990000">)</font>
+      <font color="#990000">:</font> <b><font color="#000000">id</font></b><font color="#990000">(</font>id_<font color="#990000">)</font>
+      <font color="#FF0000">{</font> <font color="#FF0000">}</font>
+    <font color="#990000">~</font><b><font color="#000000">AClass</font></b><font color="#990000">()</font>
+      <font color="#FF0000">{</font> <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"AClass::~AClass of object </font><font color="#CC33CC">\"</font><font color="#FF0000">"</font> <font color="#990000">&lt;&lt;</font> id <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'"'</font><font color="#990000">);</font> <font color="#FF0000">}</font>
+
+    <font color="#009900">void</font> <b><font color="#000000">run</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"aFunction() of object </font><font color="#CC33CC">\"</font><font color="#FF0000">"</font> <font color="#990000">&lt;&lt;</font> id <font color="#990000">&lt;&lt;</font> <font color="#FF0000">'"'</font><font color="#990000">);</font>
+      <font color="#990000">::</font><b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">);</font>
+      <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"aFunction() of object </font><font color="#CC33CC">\"</font><font color="#FF0000">"</font> <font color="#990000">&lt;&lt;</font> id <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"</font><font color="#CC33CC">\"</font><font color="#FF0000"> ends"</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">()</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">MutexLock</font> <b><font color="#000000">lock</font></b><font color="#990000">(</font>conditionMutex<font color="#990000">);</font>
+
+    <i><font color="#9A1900">// detached threads are created on the heap.</font></i>
+    <i><font color="#9A1900">// They are deleted automatically when the thread ends.</font></i>
+    cxxtools<font color="#990000">::</font>Thread<font color="#990000">*</font> d <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> myDetachedThread<font color="#990000">;</font>
+    d<font color="#990000">-&gt;</font><b><font color="#000000">create</font></b><font color="#990000">();</font>
+    running<font color="#990000">.</font><b><font color="#000000">wait</font></b><font color="#990000">(</font>lock<font color="#990000">);</font>
+    <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"myDetachedThread is running"</font><font color="#990000">);</font>
+
+    <i><font color="#9A1900">// run a function as a attached thread</font></i>
+    cxxtools<font color="#990000">::</font><font color="#008080">AttachedThread</font> <b><font color="#000000">th</font></b><font color="#990000">(</font> cxxtools<font color="#990000">::</font><b><font color="#000000">callable</font></b><font color="#990000">(</font>someFunction<font color="#990000">)</font> <font color="#990000">);</font>
+    th<font color="#990000">.</font><b><font color="#000000">start</font></b><font color="#990000">();</font>
+
+    <i><font color="#9A1900">// run a method of a object as a thread</font></i>
+    <font color="#008080">AClass</font> <b><font color="#000000">aInstance</font></b><font color="#990000">(</font><font color="#FF0000">"a instance"</font><font color="#990000">);</font>
+    <font color="#008080">AClass</font> <b><font color="#000000">aInstance2</font></b><font color="#990000">(</font><font color="#FF0000">"a instance 2"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">AttachedThread</font> <b><font color="#000000">aclassThread</font></b><font color="#990000">(</font> cxxtools<font color="#990000">::</font><b><font color="#000000">callable</font></b><font color="#990000">(</font>aInstance<font color="#990000">,</font> <font color="#990000">&amp;</font>AClass<font color="#990000">::</font>run<font color="#990000">)</font> <font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><font color="#008080">AttachedThread</font> <b><font color="#000000">aclassThread2</font></b><font color="#990000">(</font> cxxtools<font color="#990000">::</font><b><font color="#000000">callable</font></b><font color="#990000">(</font>aInstance2<font color="#990000">,</font> <font color="#990000">&amp;</font>AClass<font color="#990000">::</font>run<font color="#990000">)</font> <font color="#990000">);</font>
+    aclassThread<font color="#990000">.</font><b><font color="#000000">start</font></b><font color="#990000">();</font>
+    aclassThread2<font color="#990000">.</font><b><font color="#000000">start</font></b><font color="#990000">();</font>
+    <font color="#990000">::</font><b><font color="#000000">sleep</font></b><font color="#990000">(</font><font color="#993399">2</font><font color="#990000">);</font>
+    aclassThread<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+    aclassThread2<font color="#990000">.</font><b><font color="#000000">join</font></b><font color="#990000">();</font>
+
+    <i><font color="#9A1900">// The detached thread is killed, if it does not come to an end before main.</font></i>
+    <i><font color="#9A1900">// The attached thread blocks the main-program, until it is ready.</font></i>
+    <b><font color="#000000">PRINTLN</font></b><font color="#990000">(</font><font color="#FF0000">"main stops"</font><font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"ERROR: "</font> <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"main stopped"</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+
+</div>
+
+\endhtmlonly
+
+*/
