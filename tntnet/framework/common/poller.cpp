@@ -111,7 +111,8 @@ namespace tnt
   void PollerImpl::doStop()
   {
     log_debug("notify stop");
-    notify_pipe.write('A');
+    const char A = 'A';
+    notify_pipe.in().write(&A, 1);
   }
 
   void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
@@ -121,7 +122,8 @@ namespace tnt
     {
       cxxtools::MutexLock lock(mutex);
       new_jobs.insert(job);
-      notify_pipe.write('A');
+      const char A = 'A';
+      notify_pipe.in().write(&A, 1);
     }
 
     log_debug("addIdleJob ready");
@@ -231,7 +233,7 @@ namespace tnt
 
             log_debug("read notify-pipe");
             char buffer[64];
-            ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
+            ssize_t n = notify_pipe.out().read(buffer, sizeof(buffer));
             log_debug("read returns " << n);
           }
           else

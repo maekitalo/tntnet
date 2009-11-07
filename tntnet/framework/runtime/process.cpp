@@ -201,7 +201,8 @@ namespace tnt
         if (first)
         {
           log_debug("signal initialization ready");
-          mainPipe.write('1');
+          const char A = '1';
+          mainPipe.in().write(&A, 1);
           log_debug("close write-fd of main-pipe");
           mainPipe.closeWriteFd();
         }
@@ -219,7 +220,8 @@ namespace tnt
         else
         {
           log_debug("signal shutdown");
-          monitorPipe.write('s');
+          const char A = 's';
+          monitorPipe.in().write(&A, 1);
         }
         return;
       }
@@ -241,7 +243,7 @@ namespace tnt
       {
         log_debug("monitor child");
         char dummy;
-        size_t c = monitorPipe.read(&dummy, 1);
+        size_t c = monitorPipe.out().read(&dummy, 1);
         if (c > 0)
         {
           log_debug("child terminated normally");
@@ -315,7 +317,8 @@ namespace tnt
         mainPipe.closeWriteFd();
 
         log_debug("wait for child to initialize");
-        mainPipe.read();
+        char dummy;
+        mainPipe.out().read(&dummy, 1);
 
         log_debug("child initialized");
 
