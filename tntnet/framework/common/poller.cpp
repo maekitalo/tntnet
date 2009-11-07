@@ -359,7 +359,7 @@ namespace tnt
 
           log_debug("read notify-pipe");
           char buffer[64];
-          ssize_t n = notify_pipe.read(&buffer, sizeof(buffer));
+          ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
           log_debug("read returns " << n);
           pollfds[0].revents = 0;
         }
