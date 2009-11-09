@@ -55,7 +55,6 @@ namespace tnt
   {
     parser.reset();
     request.clear();
-    touch();
   }
 
   int Job::msecToTimeout(time_t currentTime) const
@@ -97,8 +96,6 @@ namespace tnt
     fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
 
     log_debug("connection accepted from " << getPeerIp());
-
-    touch();
   }
 
   void Tcpjob::regenerateJob()
@@ -181,7 +178,6 @@ namespace tnt
     fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
 
     setRead();
-    touch();
   }
 
   void SslTcpjob::regenerateJob()
