@@ -27,6 +27,6 @@ SUFFIXES=.ecpp .cpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc $(ECPPFLAGS) $(ECPPFLAGS_CPP) $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config --properties comp >$@
 tntnet.conf:
-	( /bin/sh $(top_builddir)/tntnet-config --config=comp; echo CompPath .libs ) >$@
+	( $(SHELL) $(top_builddir)/tntnet-config --config=comp; echo CompPath .libs ) >$@

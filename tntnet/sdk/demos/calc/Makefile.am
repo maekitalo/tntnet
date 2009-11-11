@@ -18,6 +18,6 @@ SUFFIXES=.ecpp .cpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config --properties calc >$@
 tntnet.conf:
-	( /bin/sh $(top_builddir)/tntnet-config --config=calc; echo CompPath .libs ) >$@
+	( $(SHELL) $(top_builddir)/tntnet-config --config=calc; echo CompPath .libs ) >$@

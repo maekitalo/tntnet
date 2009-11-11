@@ -9,8 +9,6 @@ abi_age=0
 sonumber=${abi_current}:${abi_revision}:${abi_age}
 AC_SUBST(sonumber)
 
-unset CDPATH
-
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([framework/common/config.h])
 AC_CONFIG_SRCDIR([framework/common/tntnet.cpp])
@@ -23,14 +21,6 @@ AC_PROG_LIBTOOL
 
 AC_LANG(C++)
 ACX_PTHREAD
-
-#
-# Cxxtools
-#
-AC_PATH_PROGS(CXXTOOLS_CONFIG, cxxtools-config)
-if ! test -x "$CXXTOOLS_CONFIG"; then
-  AC_MSG_ERROR([cxxtools configuration script was not found])
-fi
 
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADER([cxxtools/net/tcpstream.h], , AC_MSG_ERROR([cxxtools headers not found]))

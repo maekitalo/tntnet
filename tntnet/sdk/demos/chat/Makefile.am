@@ -37,6 +37,6 @@ SUFFIXES=.ecpp .js .png .cpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config --properties chat >$@
 tntnet.conf:
-	( /bin/sh $(top_builddir)/tntnet-config --config=chat; echo CompPath .libs ) >$@
+	( $(SHELL) $(top_builddir)/tntnet-config --config=chat; echo CompPath .libs ) >$@

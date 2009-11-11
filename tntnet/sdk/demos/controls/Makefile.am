@@ -65,4 +65,4 @@ SUFFIXES=.ecpp .png .css .cpp
 	$(ECPPC) -b -m text/css $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config --properties controls >$@

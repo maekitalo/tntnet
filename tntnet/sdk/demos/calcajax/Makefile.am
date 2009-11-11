@@ -25,6 +25,6 @@ SUFFIXES=.ecpp .js .cpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config --properties calcajax >$@
 tntnet.conf:
-	( /bin/sh $(top_builddir)/tntnet-config --config=calcajax; echo CompPath .libs ) >$@
+	( $(SHELL) $(top_builddir)/tntnet-config --config=calcajax; echo CompPath .libs ) >$@

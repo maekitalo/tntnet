@@ -19,6 +19,7 @@ Known values for OPTION are:
   --cxxflags        print pre-processor and compiler flags
   --config[=app]    print default configuration-file
   --makefile[=app]  print simple makefile for a ecpp-project
+  --properties=app  print a properties file
   --project=app     create a simple ecpp-project-directory
   --help            display this help and exit
   --version         output version information
@@ -87,6 +88,36 @@ PropertyFile        tntnet.properties
 EOF
 }
 
+properties()
+{
+  cat <<EOF
+# sample logging-properties for tntnet application $1
+#
+# print logging-messages with:
+#   log_fatal("some fatal message");
+#   log_error("some error message");
+#   log_warn("some warn message");
+#   log_info("some info message");
+#   log_debug("some debug message");
+#
+rootLogger=INFO
+
+# define logger-categories
+logger.tntnet=INFO
+logger.component.$1=INFO
+
+# uncomment if you want to log to a file
+#file=tntnet.log
+#maxfilesize=1MB
+#maxbackupindex=2
+#host=localhost:1234  # send log-messages with udp
+#disabled=1  # disable logging
+#logprocess=1  # log through separate process
+#logprocesuser=someuser  # change to user in log process
+#logprocesgroup=somegroup  # change to group in log process
+EOF
+}
+
 makefile()
 {
   if test ! -z "$1"
@@ -133,7 +164,7 @@ project()
         mkdir $P || exit 1
         makefile $P >$P/Makefile
         template $P >$P/tntnet.conf
-        cxxtools-config --properties tntnet >$P/tntnet.properties
+        properties $P >$P/tntnet.properties
         cat >$P/$P.ecpp <<EOF
 <html>
  <head>
@@ -197,6 +228,15 @@ while test $# -gt 0; do
 
     --config)
         template
+        ;;
+
+    --properties=*)
+        properties $optarg
+        ;;
+
+    --properties)
+        properties $2
+        shift
         ;;
 
     --project=*)

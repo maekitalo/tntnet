@@ -27,6 +27,6 @@ SUFFIXES=.ecpp .js .cpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript -b $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config --properties message >$@
 tntnet.conf:
-	( /bin/sh $(top_builddir)/tntnet-config --config=message; echo CompPath .libs ) >$@
+	( $(SHELL) $(top_builddir)/tntnet-config --config=message; echo CompPath .libs ) >$@

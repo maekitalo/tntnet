@@ -35,9 +35,9 @@ SUFFIXES=.ecpp .cpp .png
 	$(ECPPC) -b $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config  --properties calci18n >$@
 tntnet.conf:
-	( /bin/sh $(top_builddir)/tntnet-config --config=calci18n; echo CompPath .libs ) >$@
+	( $(SHELL) $(top_builddir)/tntnet-config  --config=calci18n; echo CompPath .libs ) >$@
 
 calci18n.txt: calci18n.ecpp
 	$(ECPPL) -o calci18n.txt calci18n.ecpp

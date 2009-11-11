@@ -24,6 +24,6 @@ SUFFIXES=.ecpp .jpg .cpp
 	$(ECPPC) -b -m image/jpeg $<
 
 tntnet.properties:
-	@CXXTOOLS_CONFIG@ --properties tntnet >$@
+	$(SHELL) $(top_builddir)/tntnet-config --properties hello >$@
 tntnet.conf:
-	( /bin/sh $(top_builddir)/tntnet-config --config=hello; echo CompPath .libs ) >$@
+	( $(SHELL) $(top_builddir)/tntnet-config --config=hello; echo CompPath .libs ) >$@
