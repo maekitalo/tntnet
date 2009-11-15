@@ -40,26 +40,32 @@ namespace tnt
   class StringLessIgnoreCase : public std::binary_function<stringType, stringType, bool>
   {
     public:
-      bool operator()(const stringType& s1, const stringType& s2) const
+      static int compare(const stringType& s1, const stringType& s2)
       {
         typename stringType::const_iterator it1 = s1.begin();
         typename stringType::const_iterator it2 = s2.begin();
         while (it1 != s1.end() && it2 != s2.end())
         {
-          if (*it1 != *it2)
-          {
-            char c1 = std::toupper(*it1);
-            char c2 = std::toupper(*it2);
-            if (c1 < c2)
-              return true;
-            else if (c2 < c1)
-              return false;
-          }
-          ++it1;
-          ++it2;
+            if (*it1 != *it2)
+            {
+                char c1 = std::toupper(*it1);
+                char c2 = std::toupper(*it2);
+                if (c1 < c2)
+                    return -1;
+                else if (c2 < c1)
+                    return 1;
+            }
+            ++it1;
+            ++it2;
         }
-        return it1 == s1.end() ? (it2 != s2.end()) : (it2 == s2.end());
+
+        return it1 == s1.end() ? (it2 != s2.end()) ? -1 : 0
+                               : (it2 == s2.end()) ? 1 : 0;
+
       }
+
+      bool operator()(const stringType& s1, const stringType& s2) const
+        { return compare(s1, s2) < 0; }
   };
 
 }
