@@ -92,8 +92,7 @@ namespace tnt
   {
     log_debug("accept");
 
-    socket.accept(listener);
-    fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
+    socket.accept(listener, true);
 
     log_debug("connection accepted from " << getPeerIp());
   }

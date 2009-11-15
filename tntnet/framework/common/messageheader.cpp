@@ -35,22 +35,28 @@ namespace tnt
 {
   log_define("tntnet.messageheader")
 
-  std::istream& operator>> (std::istream& in, Messageheader& data)
+  void Messageheader::setHeader(const std::string& key, const std::string& value, bool replace)
   {
-    data.parse(in);
-    return in;
+    log_debug("Messageheader::setHeader(\"" << key << "\", \"" << value << "\", " << replace << ')');
+    if (replace)
+      data.erase(key);
+    std::string k = key;
+    if (k.size() > 0 && k.at(k.size() - 1) != ':')
+      k += ':';
+    data.insert(map_type::value_type(k, value));
   }
 
-  void Messageheader::parse(std::istream& in)
+  std::istream& operator>> (std::istream& in, Messageheader& data)
   {
-    Parser p(*this);
+    Messageheader::Parser p(data);
     p.parse(in);
+    return in;
   }
 
   Messageheader::return_type Messageheader::onField(const std::string& name, const std::string& value)
   {
     log_debug(name << ' ' << value);
-    insert(value_type(name, value));
+    data.insert(map_type::value_type(name, value));
     return OK;
   }
 }

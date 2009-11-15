@@ -330,6 +330,11 @@ namespace tnt
     }
 
     // initialize worker-process
+
+    // set FD_CLOEXEC
+    for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
+      (*it)->initialize();
+
     // create worker-threads
     log_info("create " << minthreads << " worker threads");
     for (unsigned i = 0; i < minthreads; ++i)
@@ -465,31 +470,6 @@ namespace tnt
       (*it)->queue.noWaitThreads.signal();
       (*it)->minthreads = (*it)->maxthreads = 0;
     }
-  }
-
-  bool Tntnet::forkProcess()
-  {
-    cxxtools::Fork process;
-    if (process.child())
-    {
-      // 1. child process
-      while (!allListeners.empty())
-      {
-        listeners_type::value_type s = *allListeners.begin();
-        allListeners.erase(s);
-        delete s;
-
-        log_debug("listener stopped");
-      }
-
-      cxxtools::Fork process2;
-      if (process2.child())
-        return true;
-
-      exit(0);
-    }
-
-    return false;
   }
 
 }

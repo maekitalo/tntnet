@@ -58,8 +58,6 @@ log_define("tntnet.listener")
 static void doListenRetry(cxxtools::net::Server& server,
   const char* ipaddr, unsigned short int port)
 {
-  fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
-
   for (unsigned n = 1; true; ++n)
   {
     try
@@ -107,7 +105,7 @@ namespace tnt
     }
   }
 
-  void ListenerBase::closePorts() 
+  void ListenerBase::initialize()
   {
   }
 
@@ -123,9 +121,9 @@ namespace tnt
     queue.put(new Tcpjob(application, server, queue));
   }
 
-  void Listener::closePorts()
+  void Listener::initialize()
   {
-    server.close();
+    fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
   }
 
 #ifdef WITH_GNUTLS
@@ -152,11 +150,10 @@ namespace tnt
     queue.put(new SslTcpjob(application, server, queue));
   }
 
-  void Ssllistener::closePorts()
+  void Ssllistener::initialize()
   {
-    server.close();
+    fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
   }
-
 
 #endif // USE_SSL
 

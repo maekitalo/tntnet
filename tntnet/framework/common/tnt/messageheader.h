@@ -38,11 +38,16 @@
 namespace tnt
 {
   /// Standard-message-header like rfc822
-  class Messageheader : public std::multimap<std::string, std::string, StringLessIgnoreCase<std::string> >
+  class Messageheader
   {
+      typedef std::multimap<std::string, std::string, StringLessIgnoreCase<std::string> > map_type;
+      map_type data;
+
     public:
       class Parser;
       friend class Parser;
+
+      typedef map_type::const_iterator const_iterator;
 
     protected:
       enum return_type
@@ -57,7 +62,14 @@ namespace tnt
     public:
       virtual ~Messageheader()   { }
 
-      void parse(std::istream& in);
+      const_iterator begin() const     { return data.begin(); }
+      const_iterator end() const       { return data.end(); }
+
+      bool hasHeader(const std::string& key) const         { return data.find(key) != data.end(); }
+      void removeHeader(const std::string& key)            { data.erase(key); }
+      void clear()                                         { data.clear(); }
+      const_iterator find(const std::string& key) const    { return data.find(key); }
+      void setHeader(const std::string& key, const std::string& value, bool replace);
   };
 
   std::istream& operator>> (std::istream& in, Messageheader& data);

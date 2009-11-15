@@ -63,7 +63,7 @@ namespace tnt
       virtual void clear();
 
       /// returns true, if the message has the specified header.
-      bool hasHeader(const std::string& key) const { return header.find(key) != header.end(); }
+      bool hasHeader(const std::string& key) const { return header.hasHeader(key); }
       /// returns the content of the specified header or the passed default
       /// when not set.
       std::string getHeader(const std::string& key,
@@ -88,10 +88,11 @@ namespace tnt
         { return header.end(); }
 
       /// Adds the specified header to the message.
-      void setHeader(const std::string& key, const std::string& value, bool replace = true);
+      void setHeader(const std::string& key, const std::string& value, bool replace = true)
+        { header.setHeader(key, value, replace); }
       /// Removes the header with the specified name from the message.
       void removeHeader(const std::string& key)
-        { header.erase(key); }
+        { header.removeHeader(key); }
 
       /// Returns all headers as a string.
       std::string dumpHeader() const;

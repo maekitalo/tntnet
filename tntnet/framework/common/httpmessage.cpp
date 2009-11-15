@@ -54,17 +54,6 @@ namespace tnt
     return i == header.end() ? def : i->second;
   }
 
-  void HttpMessage::setHeader(const std::string& key, const std::string& value, bool replace)
-  {
-    log_debug("HttpMessage::setHeader(\"" << key << "\", \"" << value << "\", " << replace << ')');
-    if (replace)
-      header.erase(key);
-    std::string k = key;
-    if (k.size() > 0 && k.at(k.size() - 1) != ':')
-      k += ':';
-    header.insert(header_type::value_type(k, value));
-  }
-
   std::string HttpMessage::dumpHeader() const
   {
     std::ostringstream h;
