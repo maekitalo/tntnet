@@ -72,26 +72,18 @@ namespace tnt
         throw std::runtime_error("cannot open include file \"" + file + '"');
       }
 
-      try
-      {
-        std::string curfileSave = curfile;
-        unsigned curlineSave = curline;
-        curfile = fullname;
-        curline = 0;
+      std::string curfileSave = curfile;
+      unsigned curlineSave = curline;
+      curfile = fullname;
+      curline = 0;
 
-        log_debug("onInclude(\"" << fullname << "\")");
-        handler.onInclude(fullname);
+      log_debug("onInclude(\"" << fullname << "\")");
+      handler.onInclude(fullname);
 
-        parsePriv(inp);
+      parsePriv(inp);
 
-        curfile = curfileSave;
-        curline = curlineSave;
-      }
-      catch (const std::exception&)
-      {
-        std::cerr << "file " << file << std::endl;
-        throw;
-      }
+      curfile = curfileSave;
+      curline = curlineSave;
 
       log_debug("onIncludeEnd(\"" << fullname << "\")");
       handler.onIncludeEnd(fullname);
@@ -616,7 +608,7 @@ namespace tnt
               state = state_html0;
             }
             else if (!std::isspace(ch))
-              throw parse_error("def", state, curline);
+              throw parse_error("def", state, curfile, curline);
             break;
 
           case state_cppcomment0:
@@ -752,7 +744,7 @@ namespace tnt
               if (tag != etag)
                 throw parse_error("invalid end-tag - "
                   + tag + " expected, "
-                  + etag + " found", state, curline);
+                  + etag + " found", state, curfile, curline);
               else if (tag == "pre")
               {
                 log_debug("onPre(\"" << code << "\")");
@@ -788,7 +780,7 @@ namespace tnt
                 || tag == "doc")
                 ;
               else
-                throw parse_error("unknown tag " + tag, state, curline);
+                throw parse_error("unknown tag " + tag, state, curfile, curline);
               code.clear();
               state = state_html0;
             }
@@ -867,7 +859,7 @@ namespace tnt
             if (ch == '/')
               state = state_argscomment;
             else
-              throw parse_error("7", state, curline);
+              throw parse_error("7", state, curfile, curline);
             break;
 
           case state_argsvar:
@@ -904,7 +896,7 @@ namespace tnt
               arg.clear();
               state = state_args0;
               if (ch == '\n')
-                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
+                std::cerr << curfile << ':' << curline << ": warning: old syntax: ';' missing" << std::endl;
             }
             else if (!std::isspace(ch))
             {
@@ -931,7 +923,7 @@ namespace tnt
               value.clear();
               state = state_args0;
               if (ch == '\n')
-                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
+                std::cerr << curfile << ':' << curline << ": warning: old syntax: ';' missing" << std::endl;
             }
             else if (ch == '"')
             {
@@ -954,7 +946,7 @@ namespace tnt
             if (ch == '/')
               state = state_argscomment;
             else
-              throw parse_error("6", state, curline);
+              throw parse_error("6", state, curfile, curline);
             break;
 
           case state_argscomment:
@@ -970,7 +962,7 @@ namespace tnt
               value.clear();
               state = state_argscomment;
               if (ch == '\n')
-                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
+                std::cerr << curfile << ':' << curline << ": warning: old syntax: ';' missing" << std::endl;
             }
             else
             {
@@ -996,7 +988,7 @@ namespace tnt
             if (ch == '/')
               state = state_attrcomment;
             else
-              throw parse_error("7", state, curline);
+              throw parse_error("7", state, curfile, curline);
             break;
 
           case state_attrvar:
@@ -1015,26 +1007,26 @@ namespace tnt
             if (ch == '=')
             {
               if (arg.empty())
-                throw parse_error("name expected", state, curline);
+                throw parse_error("name expected", state, curfile, curline);
               value.clear();
               state = state_attrval;
             }
             else if (!std::isspace(ch))
-              throw parse_error("'=' expected", state, curline);
+              throw parse_error("'=' expected", state, curfile, curline);
             break;
 
           case state_attrval:
             if (ch == '\n' || ch == ';')
             {
               if (value.empty())
-                throw parse_error("value expected", state, curline);
+                throw parse_error("value expected", state, curfile, curline);
               log_debug("onAttr(\"" << arg << "\", \"" << value << "\")");
               handler.onAttr(arg, value);
               arg.clear();
               value.clear();
               state = state_attr0;
               if (ch == '\n')
-                std::cerr << "old syntax: ';' missing in line " << curline << std::endl;
+                std::cerr << curfile << ':' << curline << ": warning: old syntax: ';' missing" << std::endl;
             }
             else if (ch == '"')
             {
@@ -1057,7 +1049,7 @@ namespace tnt
             if (ch == '/')
               state = state_attrcomment;
             else
-              throw parse_error("6", state, curline);
+              throw parse_error("6", state, curfile, curline);
             break;
 
           case state_attrcomment:
@@ -1069,7 +1061,7 @@ namespace tnt
             if (ch == '/')
             {
               if (value.empty())
-                throw parse_error("value expected", state, curline);
+                throw parse_error("value expected", state, curfile, curline);
               log_debug("onAttr(\"" << arg << "\", \"" << value << "\")");
               handler.onAttr(arg, value);
               arg.clear();
@@ -1116,7 +1108,7 @@ namespace tnt
             if (ch == '"')
               state = state_callarg0;
             else if (std::isspace(ch))
-              throw parse_error("invalid componentname", state, curline);
+              throw parse_error("invalid componentname", state, curfile, curline);
             break;
 
           case state_callname:
@@ -1162,7 +1154,7 @@ namespace tnt
 
           case state_call_cpparg1:
             if (ch == ')')
-              throw parse_error("')' unexpected", state, curline);
+              throw parse_error("')' unexpected", state, curfile, curline);
             else if (std::isalpha(ch) || ch == '_')
             {
               expr = ch;
@@ -1247,7 +1239,7 @@ namespace tnt
               else
               {
                 if (paramargs.find(paramname) != paramargs.end())
-                  throw parse_error("duplicate parameter " + paramname, state, curline);
+                  throw parse_error("duplicate parameter " + paramname, state, curfile, curline);
                 paramargs[paramname] = expr;
                 paramname.clear();
                 expr.clear();
@@ -1266,7 +1258,7 @@ namespace tnt
             if (ch == '>')
               state = state_html;
             else
-              throw parse_error("3", state, curline);
+              throw parse_error("3", state, curfile, curline);
             break;
 
           case state_callarg0:
@@ -1290,7 +1282,7 @@ namespace tnt
             else if (ch == '(' && arg.empty() && pass_cgi.empty())
               state = state_call_cpparg0;
             else if (!std::isspace(ch))
-              throw parse_error(std::string("invalid argumentname (") + ch + ')', state, curline);
+              throw parse_error(std::string("invalid argumentname (") + ch + ')', state, curfile, curline);
             break;
 
           case state_callarg:
@@ -1312,7 +1304,7 @@ namespace tnt
               state = ch == '>' ? state_html : state_callend;
             }
             else
-              throw parse_error(std::string("invalid argumentname (") + ch + ')', state, curline);
+              throw parse_error(std::string("invalid argumentname (") + ch + ')', state, curfile, curline);
             break;
 
           case state_callarge:
@@ -1336,7 +1328,7 @@ namespace tnt
               state = ch == '>' ? state_html : state_callend;
             }
             else if (!std::isspace(ch))
-              throw parse_error("5", state, curline);
+              throw parse_error("5", state, curfile, curline);
             break;
 
           case state_callval0:
@@ -1411,7 +1403,7 @@ namespace tnt
               state = state_html;
             }
             else
-              throw parse_error("ivalid value", state, curline);
+              throw parse_error("ivalid value", state, curfile, curline);
             break;
 
           case state_comment:
@@ -1568,14 +1560,14 @@ namespace tnt
             {
               state = state_scopeargval0;
               if (tagarg != "scope")
-                throw parse_error("argument \"scope\" expected", state, curline);
+                throw parse_error("argument \"scope\" expected", state, curfile, curline);
               tagarg.clear();
             }
             else if (std::isspace(ch))
             {
               state = state_scopeargeq;
               if (tagarg != "scope")
-                throw parse_error("argument \"scope\" expected", state, curline);
+                throw parse_error("argument \"scope\" expected", state, curfile, curline);
               tagarg.clear();
             }
             else
@@ -1586,14 +1578,14 @@ namespace tnt
             if (ch == '=')
               state = state_scopeargval0;
             else if (!std::isspace(ch))
-              throw parse_error("\"=\" expected", state, curline);
+              throw parse_error("\"=\" expected", state, curfile, curline);
             break;
 
           case state_scopeargval0:
             if (ch == '"')
               state = state_scopeargval;
             else if (!std::isspace(ch))
-              throw parse_error("argument expected", state, curline);
+              throw parse_error("argument expected", state, curfile, curline);
             break;
 
           case state_scopeargval:
@@ -1606,13 +1598,13 @@ namespace tnt
               else if (value == "component")
                 scope = component_scope;
               else
-                throw parse_error("global|page|component expected", state, curline);
+                throw parse_error("global|page|component expected", state, curfile, curline);
 
               value.clear();
               state = state_scopevale;
             }
             else if (ch == '\n')
-              throw parse_error("'\"' expected", state, curline);
+              throw parse_error("'\"' expected", state, curfile, curline);
             else
               value += ch;
             break;
@@ -1621,7 +1613,7 @@ namespace tnt
             if (ch == '>')
               state = state_scope0;
             else if (!std::isspace(ch))
-              throw parse_error("'>' expected", state, curline);
+              throw parse_error("'>' expected", state, curfile, curline);
             break;
 
           case state_scope0:
@@ -1717,7 +1709,7 @@ namespace tnt
               else if (ch == ')')
               {
                 if (bracket_count == 0)
-                  throw parse_error("unexpected ')'", state, curline);
+                  throw parse_error("unexpected ')'", state, curfile, curline);
                 --bracket_count;
               }
             }
@@ -1751,7 +1743,7 @@ namespace tnt
               else if (ch == ')')
               {
                 if (bracket_count == 0)
-                  throw parse_error("unexpected ')'", state, curline);
+                  throw parse_error("unexpected ')'", state, curfile, curline);
                 --bracket_count;
               }
             }
@@ -1761,14 +1753,14 @@ namespace tnt
             if (ch == ';')
               state = state_scope0;
             else if (!std::isspace(ch))
-              throw parse_error("invalid scopedefinition", state, curline);
+              throw parse_error("invalid scopedefinition", state, curfile, curline);
             break;
 
           case state_scopecomment0:
             if (ch == '/')
               state = state_scopecomment;
             else
-              throw parse_error("invalid scopedefinition - '/' expexted", state, curline);
+              throw parse_error("invalid scopedefinition - '/' expexted", state, curfile, curline);
             break;
 
           case state_scopecomment:
@@ -1797,7 +1789,7 @@ namespace tnt
             }
             else if (!std::isspace(ch))
               throw parse_error(std::string("character expected, \'") + ch
-                + "\' found", state, curline);
+                + "\' found", state, curfile, curline);
             break;
 
           case state_endcall:
@@ -1824,14 +1816,14 @@ namespace tnt
             else if (isVariableNameChar(ch) || ch == '@')
               comp += ch;
             else
-              throw parse_error("character expected", state, curline);
+              throw parse_error("character expected", state, curfile, curline);
             break;
 
           case state_endcalle:
             if (ch == '>')
               state = state_html;
             else if (!std::isspace(ch))
-              throw parse_error("'>' expected", state, curline);
+              throw parse_error("'>' expected", state, curfile, curline);
             break;
 
           case state_doc:
@@ -1862,13 +1854,13 @@ namespace tnt
       }  // while(in.get(ch))
 
       if (state != state_html && state != state_html0 && state != state_nl)
-        throw parse_error("parse error", state, curline);
+        throw parse_error("parse error", state, curfile, curline);
 
       if (inComp)
-        throw parse_error("</%def> missing", state, curline);
+        throw parse_error("</%def> missing", state, curfile, curline);
 
       if (inClose)
-        throw parse_error("</%close> missing", state, curline);
+        throw parse_error("</%close> missing", state, curfile, curline);
 
       if (!html.empty())
       {
@@ -1892,11 +1884,11 @@ namespace tnt
         handler.onConfig(name, value);
     }
 
-    parse_error::parse_error(const std::string& txt, int state, unsigned curline)
+    parse_error::parse_error(const std::string& txt, int state, const std::string& file, unsigned curline)
       : runtime_error(std::string())
     {
       std::ostringstream m;
-      m << "ERROR: " << txt << " in state " << state << " at line " << curline;
+      m << file << ':' << curline << ": error: " << txt << " (state " << state << ')';
       msg = m.str();
     }
 

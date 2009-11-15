@@ -83,7 +83,7 @@ namespace tnt
         std::string msg;
 
       public:
-        parse_error(const std::string& msg, int state, unsigned line);
+        parse_error(const std::string& msg, int state, const std::string& file, unsigned line);
         ~parse_error() throw()
         { }
         const char* what() const throw();
