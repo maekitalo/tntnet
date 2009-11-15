@@ -327,10 +327,14 @@ namespace tnt
       std::string content_length_header = message.getHeader(httpheader::contentLength);
       if (!content_length_header.empty())
       {
-        std::istringstream valuestream(content_length_header);
-        valuestream >> bodySize;
-        if (!valuestream)
-          throw HttpError(HTTP_BAD_REQUEST, "missing Content-Length");
+        bodySize = 0;
+        for (std::string::const_iterator c = content_length_header.begin();
+            c != content_length_header.end(); ++c)
+        {
+          if (*c > '9' || *c < '0')
+            throw HttpError(HTTP_BAD_REQUEST, "invalid Content-Length");
+          bodySize = bodySize * 10 + *c - '0';
+        }
 
         if (getMaxRequestSize() > 0
           && getCurrentRequestSize() + bodySize > getMaxRequestSize())
