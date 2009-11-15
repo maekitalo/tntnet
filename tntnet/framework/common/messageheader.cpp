@@ -41,7 +41,7 @@ namespace tnt
     return in;
   }
 
-  void Messageheader::parse(std::istream& in, size_t maxHeaderSize)
+  void Messageheader::parse(std::istream& in)
   {
     Parser p(*this);
     p.parse(in);

@@ -57,7 +57,7 @@ namespace tnt
     public:
       virtual ~Messageheader()   { }
 
-      void parse(std::istream& in, size_t maxHeaderSize = 0);
+      void parse(std::istream& in);
   };
 
   std::istream& operator>> (std::istream& in, Messageheader& data);
