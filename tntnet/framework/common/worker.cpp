@@ -44,6 +44,7 @@
 #include <cxxtools/dlloader.h>
 #include <cxxtools/net/net.h>
 #include <pthread.h>
+#include <string.h>
 
 log_define("tntnet.worker")
 
@@ -226,7 +227,7 @@ namespace tnt
     // create reply-object
     HttpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
-    if (request.getMethod() == "HEAD")
+    if (::strcmp(request.getMethod(), "HEAD") == 0)
       reply.setHeadRequest();
 
     reply.setLocale(request.getLocale());

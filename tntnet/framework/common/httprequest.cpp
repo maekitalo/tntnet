@@ -39,6 +39,7 @@
 #include <tnt/sessionscope.h>
 #include <tnt/socketif.h>
 #include <pthread.h>
+#include <string.h>
 #include "config.h"
 
 namespace tnt
@@ -210,7 +211,7 @@ namespace tnt
   void HttpRequest::doPostParse()
   {
     qparam.parse_url(getQueryString());
-    if (getMethod() == "POST")
+    if (::strcmp(getMethod(), "POST") == 0)
     {
       std::istringstream in(getHeader(httpheader::contentType));
       in >> ct;
