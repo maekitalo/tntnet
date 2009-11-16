@@ -29,6 +29,7 @@
 
 #include <tnt/httprequest.h>
 #include <tnt/httpparser.h>
+#include <tnt/httperror.h>
 #include <tnt/util.h>
 #include <sstream>
 #include <cxxtools/log.h>
@@ -188,6 +189,13 @@ namespace tnt
     }
 
     threadContext = 0;
+  }
+
+  void HttpRequest::setMethod(const char* m)
+  {
+    if (strlen(m) >= 7)
+      throw HttpError(HTTP_BAD_REQUEST, "invalid method");
+    strcpy(method, m);
   }
 
   std::string HttpRequest::getArg(const std::string& name, const std::string& def) const

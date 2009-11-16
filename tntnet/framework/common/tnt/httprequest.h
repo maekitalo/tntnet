@@ -127,6 +127,8 @@ namespace tnt
       void setBody(const std::string& body_)    { body = body_; }
       /// Returns the http-method (normally GET or POST) of a request.
       const char* getMethod() const             { return method; }
+      /// sets the http-method of this request.
+      void setMethod(const char* method);
 
       /// returns url with get-parameters.
       std::string getQuery() const
