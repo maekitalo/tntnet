@@ -101,9 +101,8 @@ namespace tnt
   {
     if (istokenchar(ch))
     {
-      message.method.clear();
-      message.method.reserve(16);
-      message.method += ch;
+      message.method[0] = ch;
+      message.methodLen = 1;
       SET_STATE(state_cmd);
     }
     else if (ch != ' ' && ch != '\t')
@@ -118,9 +117,14 @@ namespace tnt
   bool HttpRequest::Parser::state_cmd(char ch)
   {
     if (istokenchar(ch))
-      message.method += ch;
+    {
+      if (message.methodLen >= sizeof(message.method) - 1)
+        throw HttpError(HTTP_BAD_REQUEST, "invalid method field");
+      message.method[message.methodLen++] = ch;
+    }
     else if (ch == ' ')
     {
+      message.method[message.methodLen] = '\0';
       log_debug("method=" << message.method);
       SET_STATE(state_url0);
     }

@@ -81,7 +81,8 @@ namespace tnt
   }
 
   HttpRequest::HttpRequest(const HttpRequest& r)
-    : pathinfo(r.pathinfo),
+    : methodLen(0),
+      pathinfo(r.pathinfo),
       args(r.args),
       qparam(r.qparam),
       socketIf(r.socketIf),
@@ -150,7 +151,8 @@ namespace tnt
   {
     HttpMessage::clear();
     body.clear();
-    method.clear();
+    methodLen = 0;
+    method[0] = '\0';
     url.clear();
     queryString.clear();
     contentSize = 0;

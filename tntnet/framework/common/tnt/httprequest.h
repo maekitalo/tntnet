@@ -61,7 +61,8 @@ namespace tnt
 
     private:
       std::string body;
-      std::string method;
+      unsigned methodLen;
+      char method[8];
       std::string url;
       std::string queryString;
 
@@ -125,9 +126,7 @@ namespace tnt
       /// sets the body of the message.
       void setBody(const std::string& body_)    { body = body_; }
       /// Returns the http-method (normally GET or POST) of a request.
-      const std::string& getMethod() const      { return method; }
-      /// sets the http-method of this request.
-      void setMethod(const std::string& m)      { method = m; }
+      const char* getMethod() const             { return method; }
 
       /// returns url with get-parameters.
       std::string getQuery() const

@@ -113,62 +113,80 @@ namespace tnt
 
           keepAlive = false;
           state = stateParsing;
-          j->getParser().parse(socket);
-          state = statePostParsing;
-
-          if (socket.eof())
-            log_debug("eof");
-          else if (j->getParser().failed())
+          try
           {
-            state = stateSendError;
-            log_warn("bad request");
-            socket << "HTTP/1.0 500 bad request\r\n"
-                      "Content-Type: text/html\r\n"
-                      "\r\n"
-                      "<html><body><h1>Error</h1><p>bad request</p></body></html>"
-                   << std::endl;
-          }
-          else if (socket.fail())
-            log_debug("socket failed");
-          else
-          {
-            j->getRequest().doPostParse();
+            j->getParser().parse(socket);
+            state = statePostParsing;
 
-            j->setWrite();
-            keepAlive = processRequest(j->getRequest(), socket,
-              j->decrementKeepAliveCounter());
-
-            if (keepAlive)
+            if (socket.eof())
+              log_debug("eof");
+            else if (j->getParser().failed())
             {
-              j->setRead();
-              j->clear();
+              state = stateSendError;
+              log_warn("bad request");
+              socket << "HTTP/1.0 500 bad request\r\n"
+                        "Content-Type: text/html\r\n"
+                        "\r\n"
+                        "<html><body><h1>Error</h1><p>bad request</p></body></html>"
+                     << std::endl;
+            }
+            else if (socket.fail())
+              log_debug("socket failed");
+            else
+            {
+              j->getRequest().doPostParse();
 
-              if (!socket.rdbuf()->in_avail())
+              j->setWrite();
+              keepAlive = processRequest(j->getRequest(), socket,
+                j->decrementKeepAliveCounter());
+
+              if (keepAlive)
               {
-                if (queue.getWaitThreadCount() == 0
-                  && !queue.empty())
+                j->setRead();
+                j->clear();
+
+                if (!socket.rdbuf()->in_avail())
                 {
-                  // if there is something to do and no threads waiting, we take
-                  // the next job just to improve responsiveness.
-                  log_debug("put job back into queue");
-                  queue.put(j, true);
-                  keepAlive = false;
-                }
-                else
-                {
-                  struct pollfd fd;
-                  fd.fd = j->getFd();
-                  fd.events = POLLIN;
-                  log_debug("wait for next request (timeout " << Job::getSocketReadTimeout() << ')');
-                  if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
+                  if (queue.getWaitThreadCount() == 0
+                    && !queue.empty())
                   {
-                    log_debug("pass job to poll-thread");
-                    application.getPoller().addIdleJob(j);
+                    // if there is something to do and no threads waiting, we take
+                    // the next job just to improve responsiveness.
+                    log_debug("put job back into queue");
+                    queue.put(j, true);
                     keepAlive = false;
+                  }
+                  else
+                  {
+                    struct pollfd fd;
+                    fd.fd = j->getFd();
+                    fd.events = POLLIN;
+                    log_debug("wait for next request (timeout " << Job::getSocketReadTimeout() << ')');
+                    if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
+                    {
+                      log_debug("pass job to poll-thread");
+                      application.getPoller().addIdleJob(j);
+                      keepAlive = false;
+                    }
                   }
                 }
               }
             }
+          }
+          catch (const HttpError& e)
+          {
+            keepAlive = false;
+            state = stateSendError;
+            log_warn("http-Error: " << e.what());
+            HttpReply reply(socket);
+            reply.setVersion(1, 0);
+            reply.setKeepAliveCounter(0);
+            for (HttpMessage::header_type::const_iterator it = e.header_begin();
+                 it != e.header_end(); ++it)
+              reply.setHeader(it->first, it->second);
+
+            reply.out() << e.getBody() << '\n';
+            reply.sendReply(e.getErrcode(), e.getErrmsg());
           }
         } while (keepAlive);
       }
@@ -179,7 +197,7 @@ namespace tnt
       }
       catch (const std::exception& e)
       {
-        log_debug("unexpected exception: " << e.what());
+        log_warn("unexpected exception: " << e.what());
       }
     }
 
@@ -265,7 +283,7 @@ namespace tnt
            it != e.header_end(); ++it)
         reply.setHeader(it->first, it->second);
 
-      reply.out() << e.getBody();
+      reply.out() << e.getBody() << '\n';
       reply.sendReply(e.getErrcode(), e.getErrmsg());
     }
 
