@@ -74,9 +74,9 @@ namespace tnt
     tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {
     if (request.getArgs().size() > 0)
-      reply.setContentType(request.getArg(0));
+      reply.setContentType(request.getArg(0).c_str());
     else if (handler)
-      reply.setContentType(handler->getMimeType(request.getPathInfo()));
+      reply.setContentType(handler->getMimeType(request.getPathInfo()).c_str());
 
     // we do not produce any content, so we pass the request
     // to the next handler:

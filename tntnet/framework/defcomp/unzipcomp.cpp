@@ -98,7 +98,7 @@ namespace tnt
 
       // set Content-Type
       if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
-        reply.setContentType(request.getArg(1));
+        reply.setContentType(request.getArg(1).c_str());
       else
         setContentType(request, reply);
 

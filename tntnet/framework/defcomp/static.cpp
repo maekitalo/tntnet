@@ -137,7 +137,7 @@ namespace tnt
   void Static::setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply)
   {
     if (handler)
-      reply.setContentType(handler->getMimeType(request.getPathInfo()));
+      reply.setContentType(handler->getMimeType(request.getPathInfo()).c_str());
   }
 
   unsigned Static::operator() (tnt::HttpRequest& request,
@@ -215,7 +215,7 @@ namespace tnt
     if (!contentType.empty())
     {
       log_debug("content type is \"" << contentType << '"');
-      reply.setContentType(contentType);
+      reply.setContentType(contentType.c_str());
     }
     else
       setContentType(request, reply);
