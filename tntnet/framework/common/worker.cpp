@@ -220,14 +220,14 @@ namespace tnt
          unsigned keepAliveCount)
   {
     // log message
-    log_info("request " << request.getMethod() << ' ' << request.getQuery()
+    log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery()
       << " from client " << request.getPeerIp() << " user-Agent \"" << request.getUserAgent()
       << '"');
 
     // create reply-object
     HttpReply reply(socket);
     reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
-    if (::strcmp(request.getMethod(), "HEAD") == 0)
+    if (request.isMethodHEAD())
       reply.setHeadRequest();
 
     reply.setLocale(request.getLocale());
@@ -337,13 +337,13 @@ namespace tnt
         {
           if (reply.isDirectMode())
           {
-            log_info("request " << request.getMethod() << ' ' << request.getQuery() << " ready, returncode " << http_return);
+            log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return);
             state = stateFlush;
             reply.out().flush();
           }
           else
           {
-            log_info("request " << request.getMethod() << ' ' << request.getQuery() << " ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
+            log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
             application.getScopemanager().postCall(request, reply, ci.libname);
 

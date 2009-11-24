@@ -30,20 +30,105 @@
 #include <tnt/messageheader.h>
 #include <tnt/messageheaderparser.h>
 #include <cxxtools/log.h>
+#include <stdexcept>
+#include <tnt/stringlessignorecase.h>
 
 namespace tnt
 {
   log_define("tntnet.messageheader")
 
-  void Messageheader::setHeader(const std::string& key, const std::string& value, bool replace)
+  const unsigned Messageheader::MAXHEADERSIZE;
+
+  char* Messageheader::findEnd()
+  {
+    char* p = rawdata;
+    while (*p)
+    {
+      p += std::strlen(p) + 1; // skip key
+      p += std::strlen(p) + 1; // skip value
+    }
+
+    return p;
+  }
+
+  bool Messageheader::compareHeader(const char* key, const char* value) const
+  {
+    const_iterator it = find(key);
+    return it == end() ? false
+                       : tnt::StringCompareIgnoreCase<const char*>(
+                           it->second, value) == 0;
+  }
+
+  void Messageheader::removeHeader(const char* key)
+  {
+    if (!*key)
+      throw std::runtime_error("empty key not allowed in messageheader");
+
+    char* p = findEnd();
+
+    const_iterator it = begin();
+    while (it != end())
+    {
+      if (StringCompareIgnoreCase<const char*>(key, it->first) == 0)
+      {
+        unsigned slen = it->second - it->first + std::strlen(it->second);
+
+        std::memcpy(
+            rawdata + (it->first - rawdata),
+            it->first + slen,
+            p - it->first + slen);
+
+        p -= slen;
+
+        it.fixup();
+      }
+      else
+        ++it;
+    }
+  }
+
+  Messageheader::const_iterator Messageheader::find(const char* key) const
+  {
+    for (const_iterator it = begin(); it != end(); ++it)
+    {
+      if (StringCompareIgnoreCase<const char*>(key, it->first) == 0)
+        return it;
+    }
+
+    return end();
+  }
+
+  void Messageheader::setHeader(const char* key, const char* value, bool replace)
   {
     log_debug("Messageheader::setHeader(\"" << key << "\", \"" << value << "\", " << replace << ')');
+
+    if (!*key)
+      throw std::runtime_error("empty key not allowed in messageheader");
+
     if (replace)
-      data.erase(key);
-    std::string k = key;
-    if (k.size() > 0 && k.at(k.size() - 1) != ':')
-      k += ':';
-    data.insert(map_type::value_type(k, value));
+      removeHeader(key);
+
+    char* p = findEnd();
+
+    size_t lk = strlen(key);     // length of key
+    size_t lk2 = key[lk-1] == ':' ? lk + 1 : lk;  // length of key including trailing ':'
+    size_t lv = strlen(value);   // length of value
+
+    if (p - rawdata + lk2 + lv + 3 > MAXHEADERSIZE)
+      throw std::runtime_error("message header too big");
+
+    std::strcpy(p, key);   // copy key
+    p += lk2;
+    *(p - 2) = ':';        // make sure, key is prepended by ':'
+    *(p - 1) = '\0';
+    std::strcpy(p, value); // copy value
+    p[lv + 1] = '\0';      // put new message end marker in place
+  }
+
+  Messageheader::return_type Messageheader::onField(const char* name, const char* value)
+  {
+    log_debug(name << ' ' << value);
+    return OK;
   }
 
   std::istream& operator>> (std::istream& in, Messageheader& data)
@@ -53,10 +138,4 @@ namespace tnt
     return in;
   }
 
-  Messageheader::return_type Messageheader::onField(const std::string& name, const std::string& value)
-  {
-    log_debug(name << ' ' << value);
-    data.insert(map_type::value_type(name, value));
-    return OK;
-  }
 }

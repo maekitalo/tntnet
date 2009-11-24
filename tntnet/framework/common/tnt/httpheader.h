@@ -36,33 +36,33 @@ namespace tnt
 {
   namespace httpheader
   {
-    extern const std::string contentType;
-    extern const std::string contentLength;
-    extern const std::string connection;
-    extern const std::string connectionClose;
-    extern const std::string connectionKeepAlive;
-    extern const std::string lastModified;
-    extern const std::string server;
-    extern const std::string serverName;
-    extern const std::string location;
-    extern const std::string accept;
-    extern const std::string acceptLanguage;
-    extern const std::string acceptEncoding;
-    extern const std::string acceptCharset;
-    extern const std::string contentEncoding;
-    extern const std::string date;
-    extern const std::string keepAlive;
-    extern const std::string ifModifiedSince;
-    extern const std::string host;
-    extern const std::string cacheControl;
-    extern const std::string contentMD5;
-    extern const std::string setCookie;
-    extern const std::string cookie;
-    extern const std::string pragma;
-    extern const std::string expires;
-    extern const std::string userAgent;
-    extern const std::string wwwAuthenticate;
-    extern const std::string authorization;
+    extern const char* contentType;
+    extern const char* contentLength;
+    extern const char* connection;
+    extern const char* connectionClose;
+    extern const char* connectionKeepAlive;
+    extern const char* lastModified;
+    extern const char* server;
+    extern const char* serverName;
+    extern const char* location;
+    extern const char* accept;
+    extern const char* acceptLanguage;
+    extern const char* acceptEncoding;
+    extern const char* acceptCharset;
+    extern const char* contentEncoding;
+    extern const char* date;
+    extern const char* keepAlive;
+    extern const char* ifModifiedSince;
+    extern const char* host;
+    extern const char* cacheControl;
+    extern const char* contentMD5;
+    extern const char* setCookie;
+    extern const char* cookie;
+    extern const char* pragma;
+    extern const char* expires;
+    extern const char* userAgent;
+    extern const char* wwwAuthenticate;
+    extern const char* authorization;
   }
 }
 

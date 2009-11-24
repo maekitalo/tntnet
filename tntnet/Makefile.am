@@ -4,6 +4,7 @@ bin_SCRIPTS = tntnet-config
 
 SUBDIRS = \
     framework/common \
+    utest \
     doc/man
 
 if MAKE_SERVER

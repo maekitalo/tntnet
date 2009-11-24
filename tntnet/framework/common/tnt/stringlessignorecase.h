@@ -36,36 +36,44 @@
 
 namespace tnt
 {
+  template <typename stringType>
+  int StringCompareIgnoreCase(const stringType& s1, const stringType& s2)
+  {
+    typename stringType::const_iterator it1 = s1.begin();
+    typename stringType::const_iterator it2 = s2.begin();
+    while (it1 != s1.end() && it2 != s2.end())
+    {
+        if (*it1 != *it2)
+        {
+            char c1 = std::toupper(*it1);
+            char c2 = std::toupper(*it2);
+            if (c1 < c2)
+                return -1;
+            else if (c2 < c1)
+                return 1;
+        }
+        ++it1;
+        ++it2;
+    }
+
+    return it1 == s1.end() ? (it2 != s2.end()) ? -1 : 0
+                           : 1;
+  }
+
+  template <>
+  int StringCompareIgnoreCase<const char*>(const char* const& s1, const char* const& s2);
+
+  inline int StringCompareIgnoreCase(const std::string& s1, const std::string& s2)
+  {
+    return StringCompareIgnoreCase<std::string>(s1, s2);
+  }
+
   template <typename stringType = std::string>
   class StringLessIgnoreCase : public std::binary_function<stringType, stringType, bool>
   {
     public:
-      static int compare(const stringType& s1, const stringType& s2)
-      {
-        typename stringType::const_iterator it1 = s1.begin();
-        typename stringType::const_iterator it2 = s2.begin();
-        while (it1 != s1.end() && it2 != s2.end())
-        {
-            if (*it1 != *it2)
-            {
-                char c1 = std::toupper(*it1);
-                char c2 = std::toupper(*it2);
-                if (c1 < c2)
-                    return -1;
-                else if (c2 < c1)
-                    return 1;
-            }
-            ++it1;
-            ++it2;
-        }
-
-        return it1 == s1.end() ? (it2 != s2.end()) ? -1 : 0
-                               : (it2 == s2.end()) ? 1 : 0;
-
-      }
-
       bool operator()(const stringType& s1, const stringType& s2) const
-        { return compare(s1, s2) < 0; }
+        { return StringCompareIgnoreCase(s1, s2) < 0; }
   };
 
 }

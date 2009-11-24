@@ -48,7 +48,7 @@ namespace tnt
     minorVersion = 0;
   }
 
-  std::string HttpMessage::getHeader(const std::string& key, const std::string& def) const
+  const char* HttpMessage::getHeader(const char* key, const char* def) const
   {
     header_type::const_iterator i = header.find(key);
     return i == header.end() ? def : i->second;

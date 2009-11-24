@@ -63,11 +63,11 @@ namespace tnt
       virtual void clear();
 
       /// returns true, if the message has the specified header.
+      bool hasHeader(const char* key) const        { return header.hasHeader(key); }
       bool hasHeader(const std::string& key) const { return header.hasHeader(key); }
       /// returns the content of the specified header or the passed default
       /// when not set.
-      std::string getHeader(const std::string& key,
-        const std::string& def = std::string()) const;
+      const char* getHeader(const char* key, const char* def = "") const;
 
       /// returns the http-major-version-number.
       unsigned short getMajorVersion() const

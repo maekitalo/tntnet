@@ -43,7 +43,7 @@ namespace tnt
       Contentdisposition cd;
 
     protected:
-      return_type onField(const std::string& name, const std::string& value);
+      return_type onField(const char* name, const char* value);
 
     public:
       const Contentdisposition& getContentDisposition() const

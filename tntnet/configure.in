@@ -219,6 +219,7 @@ AC_CONFIG_FILES([
     sdk/demos/strings/Makefile
     sdk/demos/rajax-jquery/Makefile
     sdk/demos/upload/Makefile
+    utest/Makefile
     doc/man/Makefile
     etc/Makefile
     ])

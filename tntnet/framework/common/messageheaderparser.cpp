@@ -28,6 +28,8 @@
 
 
 #include <tnt/messageheaderparser.h>
+#include <tnt/httperror.h>
+#include <tnt/http.h>
 #include <cctype>
 #include <cxxtools/log.h>
 
@@ -53,9 +55,9 @@ namespace tnt
   {
     if (ch >= 33 && ch <= 126 && ch != ':')
     {
-      fieldname.clear();
-      fieldname.reserve(16);
-      fieldname += ch;
+      fieldnamePtr = headerdataPtr;
+      checkHeaderspace(1);
+      *headerdataPtr++ = ch;
       SET_STATE(state_fieldname);
     }
     else if (ch == '\n')
@@ -86,13 +88,25 @@ namespace tnt
   {
     if (ch == ':')            // Field-name:
     {
-      fieldname += ch;
+      checkHeaderspace(2);
+      *headerdataPtr++ = ch;
+      *headerdataPtr++ = '\0';
+      fieldbodyPtr = headerdataPtr;
       SET_STATE(state_fieldbody0);
     }
     else if (ch >= 33 && ch <= 126)
-      fieldname += ch;
+    {
+      checkHeaderspace(1);
+      *headerdataPtr++ = ch;
+    }
     else if (std::isspace(ch))
+    {
+      checkHeaderspace(2);
+      *headerdataPtr++ = ':';
+      *headerdataPtr++ = '\0';
+      fieldbodyPtr = headerdataPtr;
       SET_STATE(state_fieldnamespace);
+    }
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in fieldname");
@@ -106,12 +120,6 @@ namespace tnt
   {
     if (ch == ':')                   // "Field-name :"
       SET_STATE(state_fieldbody0);
-    else if (ch >= 33 && ch <= 126)  // "Field-name blah..."
-    {
-      fieldbody.reserve(32);
-      fieldbody += ch;
-      SET_STATE(state_fieldbody);
-    }
     else if (!std::isspace(ch))
     {
       log_warn("invalid character " << chartoprint(ch) << " in fieldname-space");
@@ -124,14 +132,21 @@ namespace tnt
   bool Messageheader::Parser::state_fieldbody0(char ch)
   {
     if (ch == '\r')
+    {
+      checkHeaderspace(1);
+      *headerdataPtr++ = '\0';
       SET_STATE(state_fieldbody_cr);
+    }
     else if (ch == '\n')
+    {
+      checkHeaderspace(1);
+      *headerdataPtr++ = '\0';
       SET_STATE(state_fieldbody_crlf);
+    }
     else if (!std::isspace(ch))
     {
-      fieldbody.clear();
-      fieldbody.reserve(32);
-      fieldbody += ch;
+      checkHeaderspace(1);
+      *headerdataPtr++ = ch;
       SET_STATE(state_fieldbody);
     }
     return false;
@@ -140,11 +155,22 @@ namespace tnt
   bool Messageheader::Parser::state_fieldbody(char ch)
   {
     if (ch == '\r')
+    {
+      checkHeaderspace(1);
+      *headerdataPtr++ = '\0';
       SET_STATE(state_fieldbody_cr);
+    }
     else if (ch == '\n')
+    {
+      checkHeaderspace(1);
+      *headerdataPtr++ = '\0';
       SET_STATE(state_fieldbody_crlf);
+    }
     else
-      fieldbody += ch;
+    {
+      checkHeaderspace(1);
+      *headerdataPtr++ = ch;
+    }
     return false;
   }
 
@@ -167,8 +193,8 @@ namespace tnt
       SET_STATE(state_end_cr);
     else if (ch == '\n')
     {
-      log_debug("header " << fieldname << ": " << fieldbody);
-      switch (header.onField(fieldname, fieldbody))
+      log_debug("header " << fieldnamePtr << ": " << fieldbodyPtr);
+      switch (header.onField(fieldnamePtr, fieldbodyPtr))
       {
         case OK:
         case END:  return true;
@@ -177,18 +203,20 @@ namespace tnt
                    log_warn("invalid character " << chartoprint(ch) << " in fieldbody");
                    break;
       }
-      fieldname.clear();
-      fieldbody.clear();
+
       return true;
     }
     else if (std::isspace(ch))
     {
-      fieldbody += ch;
+      // continuation line
+      checkHeaderspace(1);
+      *(headerdataPtr - 1) = '\n';
+      *headerdataPtr++ = ch;
       SET_STATE(state_fieldbody);
     }
     else if (ch >= 33 && ch <= 126)
     {
-      switch (header.onField(fieldname, fieldbody))
+      switch (header.onField(fieldnamePtr, fieldbodyPtr))
       {
         case OK:   SET_STATE(state_fieldname);
                    break;
@@ -198,10 +226,10 @@ namespace tnt
         case END:  return true;
                    break;
       }
-      fieldbody.clear();
-      fieldname.clear();
-      fieldname.reserve(16);
-      fieldname += ch;
+
+      fieldnamePtr = headerdataPtr;
+      checkHeaderspace(1);
+      *headerdataPtr++ = ch;
     }
     return false;
   }
@@ -210,14 +238,13 @@ namespace tnt
   {
     if (ch == '\n')
     {
-      if (header.onField(fieldname, fieldbody) == FAIL)
+      if (header.onField(fieldnamePtr, fieldbodyPtr) == FAIL)
       {
-        log_warn("invalid header " << fieldname << ' ' << fieldbody);
+        log_warn("invalid header " << fieldnamePtr << ' ' << fieldbodyPtr);
         failedFlag = true;
       }
 
-      fieldname.clear();
-      fieldbody.clear();
+      *headerdataPtr = '\0';
       return true;
     }
     else
@@ -229,9 +256,16 @@ namespace tnt
     return false;
   }
 
+  void Messageheader::Parser::checkHeaderspace(unsigned chars) const
+  {
+    if (headerdataPtr + chars >= header.rawdata + sizeof(header.rawdata))
+      throw HttpError(HTTP_REQUEST_ENTITY_TOO_LARGE, "header too large");
+  }
+
   void Messageheader::Parser::reset()
   {
     failedFlag = false;
+    headerdataPtr = header.rawdata;
     SET_STATE(state_0);
   }
 }

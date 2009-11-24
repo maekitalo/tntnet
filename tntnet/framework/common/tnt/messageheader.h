@@ -32,22 +32,80 @@
 
 #include <istream>
 #include <string>
-#include <map>
-#include <tnt/stringlessignorecase.h>
+#include <cstring>
 
 namespace tnt
 {
   /// Standard-message-header like rfc822
   class Messageheader
   {
-      typedef std::multimap<std::string, std::string, StringLessIgnoreCase<std::string> > map_type;
-      map_type data;
+    public:
+      static const unsigned MAXHEADERSIZE = 4096;
+
+    private:
+      char rawdata[MAXHEADERSIZE];  // key_1\0value_1\0key_2\0value_2\0...key_n\0value_n\0\0
+      char* findEnd();
 
     public:
       class Parser;
       friend class Parser;
 
-      typedef map_type::const_iterator const_iterator;
+      typedef std::pair<const char*, const char*> value_type;
+
+      class const_iterator
+        : public std::iterator<std::forward_iterator_tag, value_type>
+      {
+          friend class Messageheader;
+
+          value_type current_value;
+
+          void fixup()
+          {
+            if (*current_value.first)
+              current_value.second = current_value.first + std::strlen(current_value.first) + 1;
+            else
+              current_value.first = current_value.second = 0;
+          }
+
+          void moveForward()
+          {
+            current_value.first = current_value.second + std::strlen(current_value.second) + 1;
+            fixup();
+          }
+
+        public:
+          const_iterator()
+            : current_value(0, 0)
+            { }
+
+          explicit const_iterator(const char* p)
+            : current_value(p, p)
+          {
+            fixup();
+          }
+
+          bool operator== (const const_iterator& it) const
+          { return current_value.first == it.current_value.first; }
+
+          bool operator!= (const const_iterator& it) const
+          { return current_value.first != it.current_value.first; }
+
+          const_iterator& operator++()
+          {
+            moveForward();
+            return *this;
+          }
+
+          const_iterator operator++(int)
+          {
+            const_iterator ret = *this;
+            moveForward();
+            return ret;
+          }
+
+          const value_type& operator* () const   { return current_value; }
+          const value_type* operator-> () const  { return &current_value; }
+      };
 
     protected:
       enum return_type
@@ -57,19 +115,43 @@ namespace tnt
         END
       };
 
-      virtual return_type onField(const std::string& name, const std::string& value);
+      virtual return_type onField(const char* name, const char* value);
 
     public:
+      Messageheader()
+        { clear(); }
+
       virtual ~Messageheader()   { }
 
-      const_iterator begin() const     { return data.begin(); }
-      const_iterator end() const       { return data.end(); }
+      const_iterator begin() const
+        { return const_iterator(rawdata); }
+      const_iterator end() const
+        { return const_iterator(); }
 
-      bool hasHeader(const std::string& key) const         { return data.find(key) != data.end(); }
-      void removeHeader(const std::string& key)            { data.erase(key); }
-      void clear()                                         { data.clear(); }
-      const_iterator find(const std::string& key) const    { return data.find(key); }
-      void setHeader(const std::string& key, const std::string& value, bool replace);
+      const_iterator find(const char* key) const;
+      const_iterator find(const std::string& key) const
+        { return find(key.c_str()); }
+
+      bool hasHeader(const char* key) const
+        { return find(key) != end(); }
+      bool hasHeader(const std::string& key) const
+        { return hasHeader(key.c_str()); }
+
+      bool compareHeader(const char* key, const char* value) const;
+      bool compareHeader(const std::string& key, const std::string& value) const
+        { return compareHeader(key.c_str(), value.c_str()); }
+
+      void removeHeader(const char* key);
+      void removeHeader(const std::string& key)
+        { removeHeader(key.c_str()); }
+
+      void clear()
+        { rawdata[0] = rawdata[1] = '\0'; }
+
+      void setHeader(const char* key, const char* value, bool replace);
+
+      void setHeader(const std::string& key, const std::string& value, bool replace)
+        { setHeader(key.c_str(), value.c_str(), replace); }
   };
 
   std::istream& operator>> (std::istream& in, Messageheader& data);

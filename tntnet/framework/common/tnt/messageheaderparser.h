@@ -38,8 +38,9 @@ namespace tnt
   class Messageheader::Parser : public tnt::Parser<Messageheader::Parser>
   {
       Messageheader& header;
-      std::string fieldname;
-      std::string fieldbody;
+      char* headerdataPtr;
+      char* fieldnamePtr;
+      char* fieldbodyPtr;
 
       bool state_0(char ch);
       bool state_cr(char ch);
@@ -51,10 +52,13 @@ namespace tnt
       bool state_fieldbody_crlf(char ch);
       bool state_end_cr(char ch);
 
+      void checkHeaderspace(unsigned chars) const;
+
     public:
-      Parser(Messageheader& header_)
+      explicit Parser(Messageheader& header_)
         : tnt::Parser<Parser>(&Parser::state_0),
-          header(header_)
+          header(header_),
+          headerdataPtr(header.rawdata)
           { }
 
       void reset();

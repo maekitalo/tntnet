@@ -40,7 +40,6 @@
 #include <tnt/sessionscope.h>
 #include <tnt/socketif.h>
 #include <pthread.h>
-#include <string.h>
 #include "config.h"
 
 namespace tnt
@@ -219,7 +218,7 @@ namespace tnt
   void HttpRequest::doPostParse()
   {
     qparam.parse_url(getQueryString());
-    if (::strcmp(getMethod(), "POST") == 0)
+    if (isMethodPOST())
     {
       std::istringstream in(getHeader(httpheader::contentType));
       in >> ct;
@@ -394,25 +393,11 @@ namespace tnt
     return password == password_;
   }
 
-  namespace
-  {
-    class CompareNoCase
-    {
-      public:
-        bool operator() (char c1, char c2) const
-        { return std::tolower(c1) == std::tolower(c2); }
-    };
-  }
-
   bool HttpRequest::keepAlive() const
   {
-    header_type::const_iterator it = header.find(httpheader::connection);
-    return it == header.end() ? getMajorVersion() == 1 && getMinorVersion() == 1
-                              : it->second.size() >= httpheader::connectionKeepAlive.size()
-                                && std::equal(it->second.begin(),
-                                              it->second.end(),
-                                              httpheader::connectionKeepAlive.begin(),
-                                              CompareNoCase());
+    return header.compareHeader(
+        httpheader::connection,
+        httpheader::connectionKeepAlive);
   }
 
   const Contenttype& HttpRequest::getContentTypePriv() const

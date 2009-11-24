@@ -33,6 +33,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <streambuf>
+#include <tnt/stringlessignorecase.h>
 
 namespace
 {
@@ -81,10 +82,10 @@ namespace
 
 namespace tnt
 {
-  Partheader::return_type Partheader::onField(const std::string& name,
-    const std::string& value)
+  Partheader::return_type Partheader::onField(const char* name,
+    const char* value)
   {
-    if (name == "Content-Disposition:")
+    if (tnt::StringCompareIgnoreCase<const char*>(name, "Content-Disposition:") == 0)
     {
       std::istringstream in(value);
       in >> cd;

@@ -34,32 +34,32 @@ namespace tnt
 {
   namespace httpheader
   {
-    const std::string contentType = "Content-Type:";
-    const std::string contentLength = "Content-Length:";
-    const std::string connection = "Connection:";
-    const std::string connectionClose = "close";
-    const std::string connectionKeepAlive = "Keep-Alive";
-    const std::string lastModified = "Last-Modified:";
-    const std::string server = "Server:";
-    const std::string serverName = "Tntnet/" VERSION;
-    const std::string location = "Location:";
-    const std::string accept = "Accept:";
-    const std::string acceptLanguage = "Accept-Language:";
-    const std::string acceptEncoding = "Accept-Encoding:";
-    const std::string acceptCharset = "Accept-Charset:";
-    const std::string contentEncoding = "Content-Encoding:";
-    const std::string date = "Date:";
-    const std::string keepAlive = "Keep-Alive:";
-    const std::string ifModifiedSince = "If-Modified-Since:";
-    const std::string host = "Host:";
-    const std::string cacheControl = "Cache-Control:";
-    const std::string contentMD5 = "Content-MD5:";
-    const std::string setCookie = "Set-Cookie:";
-    const std::string cookie = "Cookie:";
-    const std::string pragma = "Pragma:";
-    const std::string expires = "Expires:";
-    const std::string userAgent = "User-Agent:";
-    const std::string wwwAuthenticate = "WWW-Authenticate:";
-    const std::string authorization = "Authorization:";
+    const char* contentType = "Content-Type:";
+    const char* contentLength = "Content-Length:";
+    const char* connection = "Connection:";
+    const char* connectionClose = "close";
+    const char* connectionKeepAlive = "Keep-Alive";
+    const char* lastModified = "Last-Modified:";
+    const char* server = "Server:";
+    const char* serverName = "Tntnet/" VERSION;
+    const char* location = "Location:";
+    const char* accept = "Accept:";
+    const char* acceptLanguage = "Accept-Language:";
+    const char* acceptEncoding = "Accept-Encoding:";
+    const char* acceptCharset = "Accept-Charset:";
+    const char* contentEncoding = "Content-Encoding:";
+    const char* date = "Date:";
+    const char* keepAlive = "Keep-Alive:";
+    const char* ifModifiedSince = "If-Modified-Since:";
+    const char* host = "Host:";
+    const char* cacheControl = "Cache-Control:";
+    const char* contentMD5 = "Content-MD5:";
+    const char* setCookie = "Set-Cookie:";
+    const char* cookie = "Cookie:";
+    const char* pragma = "Pragma:";
+    const char* expires = "Expires:";
+    const char* userAgent = "User-Agent:";
+    const char* wwwAuthenticate = "WWW-Authenticate:";
+    const char* authorization = "Authorization:";
   }
 }

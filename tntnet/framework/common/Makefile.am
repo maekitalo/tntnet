@@ -35,6 +35,7 @@ libtntnet_la_SOURCES = \
 	scope.cpp \
 	scopemanager.cpp \
 	sessionscope.cpp \
+	stringlessignorecase.cpp \
 	tntconfig.cpp \
 	tntnet.cpp \
 	unzip.c \

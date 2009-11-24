@@ -43,11 +43,12 @@
 #include <locale>
 #include <vector>
 #include <cxxtools/atomicity.h>
+#include <string>
+#include <cstring>
 
 namespace tnt
 {
   class Sessionscope;
-  class SocketIf;
   class Tntnet;
 
   /// HTTP-Request-message
@@ -126,7 +127,11 @@ namespace tnt
       /// sets the body of the message.
       void setBody(const std::string& body_)    { body = body_; }
       /// Returns the http-method (normally GET or POST) of a request.
-      const char* getMethod() const             { return method; }
+      std::string getMethod() const             { return method; }
+      const char* getMethod_cstr() const        { return method; }
+      bool isMethodGET() const                  { return std::strcmp(method, "GET") == 0; }
+      bool isMethodPOST() const                 { return std::strcmp(method, "POST") == 0; }
+      bool isMethodHEAD() const                 { return std::strcmp(method, "HEAD") == 0; }
       /// sets the http-method of this request.
       void setMethod(const char* method);
 
