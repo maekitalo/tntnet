@@ -118,7 +118,6 @@ namespace tnt
   {
     if (istokenchar(ch))
     {
-      log_debug("methodtokenchar=" << chartoprint(ch));
       if (message.methodLen >= sizeof(message.method) - 1)
       {
         log_debug("invalid method field; method=" << std::string(message.method, message.methodLen) << ", len=" << message.methodLen);
