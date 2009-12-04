@@ -49,43 +49,52 @@ namespace tnt
 //
 log_define("tntnet.comploader")
 
-void* ComponentLibrary::dlopen(const std::string& name)
+void* ComponentLibrary::dlopen(const std::string& name, bool global)
 {
-  log_debug("dlopen <" << name << '>');
+  log_debug("dlopen <" << name << ">, " << global);
 
-  void* ret = ::dlopen((name + ".so").c_str(), RTLD_NOW|RTLD_LOCAL);
+  int flags = global ? RTLD_NOW|RTLD_GLOBAL : RTLD_NOW|RTLD_LOCAL;
+  std::string n = name;
+  if (!n.empty() && n[0] == '!')
+  {
+    flags = RTLD_NOW|RTLD_GLOBAL;
+    n.erase(0, 1);
+    log_debug("dlopen => <" << n << '>');
+  }
+
+  void* ret = ::dlopen((n + ".so").c_str(), flags);
   if (ret != 0)
   {
-    log_debug("library \"" << name << ".so\" successfully opened");
+    log_debug("library \"" << n << ".so\" successfully opened");
     return ret;
   }
 
-  ret = ::dlopen((name + ".a").c_str(), RTLD_NOW|RTLD_LOCAL);
+  ret = ::dlopen((n + ".a").c_str(), flags);
   if (ret != 0)
   {
-    log_debug("library \"" << name << ".a\" successfully opened");
+    log_debug("library \"" << n << ".a\" successfully opened");
     return ret;
   }
 
-  ret = ::dlopen((name + ".dll").c_str(), RTLD_NOW|RTLD_LOCAL);
+  ret = ::dlopen((n + ".dll").c_str(), flags);
   if (ret != 0)
   {
-    log_debug("library \"" << name << ".dll\" successfully opened");
+    log_debug("library \"" << n << ".dll\" successfully opened");
     return ret;
   }
 
-  ret = ::dlopen(name.c_str(), RTLD_NOW|RTLD_LOCAL);
+  ret = ::dlopen(n.c_str(), flags);
   if (ret == 0)
-    log_debug("failed to load library \"" << name << '"');
+    log_debug("failed to load library \"" << n << '"');
   else
-    log_debug("library \"" << name << "\" successfully opened");
+    log_debug("library \"" << n << "\" successfully opened");
 
   return ret;
 }
 
-void ComponentLibrary::init(const std::string& name)
+void ComponentLibrary::init(const std::string& name, bool global)
 {
-  void* handle = dlopen(name);
+  void* handle = dlopen(name, global);
   if (handle)
     handlePtr = new HandleType(handle);
 }
@@ -239,8 +248,16 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
 {
   log_debug("fetchLib \"" << libname << '"');
 
+  std::string n = libname;
+  bool global = false;
+  if (!n.empty() && n[0] == '!')
+  {
+    global = true;
+    n.erase(0, 1);
+  }
+
   librarymap_type& librarymap = getLibrarymap();
-  librarymap_type::iterator it = librarymap.find(libname);
+  librarymap_type::iterator it = librarymap.find(n);
   if (it == librarymap.end())
   {
     ComponentLibrary::factoryMapType factoryMap;
@@ -248,45 +265,45 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
     ValueResetter<ComponentLibrary::factoryMapType*> valueResetter(currentFactoryMap, 0);
 
     // load library
-    log_info("load library \"" << libname << '"');
+    log_info("load library \"" << n << '"');
     ComponentLibrary lib;
 
     for (search_path_type::const_iterator p = search_path.begin();
          !lib && p != search_path.end(); ++p)
     {
-      log_debug("load library \"" << libname << "\" from " << *p << " dir");
-      lib = ComponentLibrary(*p, libname);
+      log_debug("load library \"" << n << "\" from " << *p << " dir");
+      lib = ComponentLibrary(*p, n, global);
     }
 
 #ifdef PKGLIBDIR
     if (!lib)
     {
-      log_debug("load library \"" << libname << "\" from package lib dir <" << PKGLIBDIR << '>');
-      lib = ComponentLibrary(PKGLIBDIR, libname);
+      log_debug("load library \"" << n << "\" from package lib dir <" << PKGLIBDIR << '>');
+      lib = ComponentLibrary(PKGLIBDIR, n, global);
     }
 #endif
 
     if (!lib)
     {
-      log_debug("load library \"" << libname << "\" from current dir");
-      lib = ComponentLibrary(".", libname);
+      log_debug("load library \"" << n << "\" from current dir");
+      lib = ComponentLibrary(".", n, global);
     }
 
     if (!lib)
     {
-      log_debug("library \"" << libname << "\" in current dir not found - search lib-path");
-      lib = ComponentLibrary(libname);
+      log_debug("library \"" << n << "\" in current dir not found - search lib-path");
+      lib = ComponentLibrary(n, global);
     }
 
     if (!lib)
-      throw LibraryNotFound(libname);
+      throw LibraryNotFound(n);
 
     lib.factoryMap = factoryMap;
-    log_debug("insert new library " << libname);
-    it = librarymap.insert(librarymap_type::value_type(libname, lib)).first;
+    log_debug("insert new library " << n);
+    it = librarymap.insert(librarymap_type::value_type(n, lib)).first;
   }
   else
-    log_debug("library " << libname << " found");
+    log_debug("library " << n << " found");
 
   return it->second;
 }
