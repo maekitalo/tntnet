@@ -40,8 +40,8 @@ namespace tnt
     {
 
       public:
-        Closecomponent(const std::string& classname)
-          : Component(classname)
+        Closecomponent(const std::string& componentName)
+          : Component(componentName)
           { }
         virtual ~Closecomponent() {}
 

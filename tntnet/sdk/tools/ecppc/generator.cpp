@@ -45,11 +45,11 @@ namespace tnt
     ////////////////////////////////////////////////////////////////////////
     // Generator
     //
-    Generator::Generator(const std::string& classname)
+    Generator::Generator(const std::string& componentName)
       : raw(false),
-        maincomp(classname),
+        maincomp(componentName),
         haveCloseComp(false),
-        closeComp(classname),
+        closeComp(componentName),
         currentComp(&maincomp),
         externData(false),
         compress(false),
@@ -296,18 +296,18 @@ namespace tnt
 
     void Generator::getClassDeclaration(std::ostream& out) const
     {
-      out << "class _component_" << maincomp.getName() << " : public ";
+      out << "class _component_ : public ";
       if (componentclass.empty())
         out << "tnt::EcppComponent";
       else
         out << componentclass;
       out << "\n"
              "{\n"
-             "    _component_" << maincomp.getName() << "& main()  { return *this; }\n\n" 
+             "    _component_& main()  { return *this; }\n\n" 
              "  protected:\n"
-             "    ~_component_" << maincomp.getName() << "();\n\n"
+             "    ~_component_();\n\n"
              "  public:\n"
-             "    _component_" << maincomp.getName() << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
+             "    _component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
              "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);\n";
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
@@ -363,42 +363,39 @@ namespace tnt
     {
       if (configs.empty())
       {
-        code << "static tnt::ComponentFactoryImpl<_component_" << maincomp.getName() << "> "
-             << maincomp.getName() << "Factory(\"" << maincomp.getName() << "\");\n\n";
+        code << "static tnt::ComponentFactoryImpl<_component_> Factory(\"" << maincomp.getName() << "\");\n\n";
       }
       else
       {
-        code << "class _component_" << maincomp.getName() << "Factory : public tnt::ComponentFactoryImpl<_component_" << maincomp.getName() << ">\n"
+        code << "class _component_Factory : public tnt::ComponentFactoryImpl<_component_>\n"
                 "{\n"
                 "  public:\n"
-                "    _component_" << maincomp.getName() << "Factory()\n"
-                "      : tnt::ComponentFactoryImpl<_component_" << maincomp.getName() << ">(\"" << maincomp.getName() << "\")\n"
+                "    _component_Factory()\n"
+                "      : tnt::ComponentFactoryImpl<_component_>(\"" << maincomp.getName() << "\")\n"
                 "      { }\n"
                 "    tnt::Component* doCreate(const tnt::Compident& ci,\n"
                 "      const tnt::Urlmapper& um, tnt::Comploader& cl);\n"
                 "    virtual void doConfigure(const tnt::Tntconfig& config);\n"
                 "};\n\n"
-                "tnt::Component* _component_" << maincomp.getName() << "Factory::doCreate(const tnt::Compident& ci,\n"
+                "tnt::Component* _component_Factory::doCreate(const tnt::Compident& ci,\n"
                 "  const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
                 "{\n"
-                "  return new _component_" << maincomp.getName() << "(ci, um, cl);\n"
+                "  return new _component_(ci, um, cl);\n"
                 "}\n\n"
-                "void _component_" << maincomp.getName() << "Factory::doConfigure(const tnt::Tntconfig& config)\n"
+                "void _component_Factory::doConfigure(const tnt::Tntconfig& config)\n"
                 "{\n"
                 "  // <%config>\n";
         for (variable_declarations::const_iterator it = configs.begin();
              it != configs.end(); ++it)
-          it->getConfigInit(code, "_component_" + maincomp.getName());
+          it->getConfigInit(code);
         code << "  // </%config>\n"
                 "}\n\n"
-                "static _component_" << maincomp.getName() << "Factory factory;\n\n";
+                "static _component_Factory factory;\n\n";
       }
     }
 
     void Generator::getCppBody(std::ostream& code) const
     {
-      std::string classname = "_component_" + maincomp.getName();
-
       getFactoryDeclaration(code);
 
       if (compress)
@@ -479,7 +476,7 @@ namespace tnt
       code << "// <%config>\n";
       for (variable_declarations::const_iterator it = configs.begin();
            it != configs.end(); ++it)
-        it->getConfigDecl(code, classname);
+        it->getConfigDecl(code);
       code << "// </%config>\n\n"
               "#define SET_LANG(lang) \\\n"
               "     do \\\n"
@@ -489,7 +486,7 @@ namespace tnt
       if (externData)
         code << "       data.setData(getData(request, rawData)); \\\n";
       code << "     } while (false)\n\n"
-           << classname << "::" << classname << "(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+           << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
               "  : EcppComponent(ci, um, cl)";
 
       // initialize subcomponents
@@ -506,7 +503,7 @@ namespace tnt
            << init
            << "  // </%init>\n"
               "}\n\n"
-           << classname << "::~" << classname << "()\n"
+              "_component_::~_component_()\n"
               "{\n"
               "  // <%cleanup>\n"
            << cleanup
@@ -516,11 +513,11 @@ namespace tnt
         code << "  rawData.release();\n";
 
       code << "}\n\n"
-              "unsigned " << classname << "::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
+              "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
            << "{\n";
 
       if (isDebug())
-        code << "  log_trace(\"" << classname << " \" << qparam.getUrl());\n\n";
+        code << "  log_trace(\"" << maincomp.getName() << " \" << qparam.getUrl());\n\n";
 
       if (raw)
         code << "  reply.setKeepAliveHeader();\n\n";
@@ -589,7 +586,7 @@ namespace tnt
       if (!attr.empty())
       {
         code << "// <%attr>\n"
-                "std::string " << classname << "::getAttribute(const std::string& name, const std::string& def) const\n"
+                "std::string _component_::getAttribute(const std::string& name, const std::string& def) const\n"
                 "{\n";
         for (attr_type::const_iterator it = attr.begin();
              it != attr.end(); ++it)
@@ -612,8 +609,6 @@ namespace tnt
 
     void Generator::getHeader(std::ostream& header, const std::string& filename) const
     {
-      std::string classname = "_component_" + maincomp.getName();
-
       getIntro(header, filename);
       header << "#ifndef ECPP_COMPONENT_" << maincomp.getName() << "_H\n"
                 "#define ECPP_COMPONENT_" << maincomp.getName() << "_H\n\n";
@@ -636,7 +631,7 @@ namespace tnt
       getCppIncludes(code);
 
       code << "#include \"" << maincomp.getName() << ".h\"\n\n"
-              "log_define(\"component." << maincomp.getName() << "\")\n\n";
+              "log_define(\"component." << maincomp.getLogCategory() << "\")\n\n";
 
       getNamespaceStart(code);
 
@@ -653,7 +648,7 @@ namespace tnt
       getHeaderIncludes(code);
       getCppIncludes(code);
 
-      code << "log_define(\"component." << maincomp.getName() << "\")\n\n";
+      code << "log_define(\"component." << maincomp.getLogCategory() << "\")\n\n";
 
       getPre(code);
       code << '\n';

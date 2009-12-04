@@ -36,6 +36,16 @@ namespace tnt
     ////////////////////////////////////////////////////////////////////////
     // Component
     //
+
+    std::string Component::getLogCategory() const
+    {
+      std::string logCategory = componentName;
+      std::string::size_type pos;
+      while ((pos = logCategory.find('/')) != std::string::npos)
+        logCategory[pos] = '.';
+      return logCategory;
+    }
+
     void Component::getBody(std::ostream& body, bool linenumbersEnabled) const
     {
       body << "  // <%args>\n";

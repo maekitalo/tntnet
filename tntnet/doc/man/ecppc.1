@@ -91,11 +91,13 @@ This disables normal processing and prints just the ecpp-dependencies from this 
 The output can be included into a Makefile.
 Ecpp-dependencies are introduces by the \fi<%include>\fP-tag.
 .IP "\-n name"
-Set the classname of the component.
-Normally this is derived from the source-file-name by removing the .ecpp-extension.
+Set the name of the component.
+Normally this is derived from the source-file-name by removing the path and .ecpp-extension.
 .IP "\-o filename"
 Write the generated file to the specified file instead of deriving the filename from the source-file-name.
 The outputfilename is normally the source-file where the extension is replaced by \fI.cpp\fP.
+.IP "\-p"
+Keep path name when deriving name of component from input file name.
 .IP "\-s"
 Generate singleton.
 Normally

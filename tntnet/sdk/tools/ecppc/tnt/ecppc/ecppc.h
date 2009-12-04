@@ -56,6 +56,7 @@ namespace tnt
         cxxtools::Arg<std::string> mimedb;
         cxxtools::Arg<bool> binary;
         cxxtools::Arg<bool> multibinary;
+        cxxtools::Arg<bool> keepPath;
         cxxtools::Arg<std::string> componentclass;
         cxxtools::Arg<bool> compress;
         cxxtools::Arg<bool> verbose;

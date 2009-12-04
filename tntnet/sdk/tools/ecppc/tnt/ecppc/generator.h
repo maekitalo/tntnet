@@ -118,7 +118,7 @@ namespace tnt
         void printLine(std::ostream& out) const;
 
       public:
-        Generator(const std::string& classname);
+        Generator(const std::string& componentName);
 
         void setDebug(bool sw)                       { debug = sw; }
         bool isDebug() const                         { return debug; }

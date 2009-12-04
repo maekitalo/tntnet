@@ -55,6 +55,7 @@ namespace tnt
         mimedb(argc, argv, "--mimetypes", "/etc/mime.types"),
         binary(argc, argv, 'b'),
         multibinary(argc, argv, 'b'),
+        keepPath(argc, argv, 'p'),
         componentclass(argc, argv, 'C'),
         compress(argc, argv, 'z'),
         verbose(argc, argv, 'v'),
@@ -100,10 +101,10 @@ namespace tnt
         {
           std::string input = inputfile;
           std::string::size_type pos_dot = input.find_last_of(".");
-          std::string::size_type pos_slash = input.find_last_of("\\/");
           if (pos_dot != std::string::npos)
           {
-            if (pos_slash == std::string::npos)
+            std::string::size_type pos_slash;
+            if (keepPath || (pos_slash = input.find_last_of("\\/")) == std::string::npos)
               requestname = input.substr(0, pos_dot);
             else if (pos_slash < pos_dot)
               requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
@@ -120,7 +121,7 @@ namespace tnt
 
           if (requestname.empty())
           {
-            std::cerr << "cannot derive classname from filename. Use -n" << std::endl;
+            std::cerr << "cannot derive component name from filename. Use -n" << std::endl;
             return -1;
           }
         }
@@ -207,10 +208,13 @@ namespace tnt
               std::cerr << "warning: no mimetype found for \"" << inputfile << '"' << std::endl;
           }
 
-          // strip path
-          std::string::size_type p;
-          if ((p = inputfile.find_last_of('/')) != std::string::npos)
-            inputfile.erase(0, p + 1);
+          if (!keepPath)
+          {
+            // strip path
+            std::string::size_type p;
+            if ((p = inputfile.find_last_of('/')) != std::string::npos)
+              inputfile.erase(0, p + 1);
+          }
 
           generator.addImage(inputfile, content.str(), mime, st.st_ctime);
         }
@@ -319,7 +323,7 @@ namespace tnt
            "ecppc-compiler\n\n"
            "usage: " << progname << " [options] ecpp-source\n\n"
            "  -o filename      outputfile\n"
-           "  -n name          classname\n"
+           "  -n name          componentname\n"
            "  -I dir           include-directory\n"
            "  -m type          Mimetype\n"
            "  --mimetypes file read mimetypes from file (default /etc/mime.types)\n"
@@ -330,6 +334,7 @@ namespace tnt
            "  -t               generate traces\n"
            "  -M               generate dependency for Makefile\n"
            "  -h               generate separate header-file\n" 
+           "  -p               keep path when generating component name from filename\n"
            "  -L               disable generation of #line-directives\n";
       msg = o.str();
     }

@@ -40,7 +40,7 @@ namespace tnt
   {
     class Component
     {
-        std::string classname;
+        std::string componentName;
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::list<Variable> variables_type;
@@ -51,19 +51,20 @@ namespace tnt
         Body compbody;
 
       protected:
-        Component(const Component& main, const std::string& classname_,
+        Component(const Component& main, const std::string& componentName_,
           const std::string& ns_ = std::string())
-          : classname(classname_),
+          : componentName(componentName_),
             compbody(main.compbody, 1)
           { }
 
       public:
-        explicit Component(const std::string& classname_)
-          : classname(classname_)
+        explicit Component(const std::string& componentName_)
+          : componentName(componentName_)
           { }
         virtual ~Component() {}
 
-        const std::string& getName() const  { return classname; }
+        const std::string& getName() const  { return componentName; }
+        std::string getLogCategory() const;
 
         void addHtml(const std::string& code)
           { compbody.addHtml(code); }
