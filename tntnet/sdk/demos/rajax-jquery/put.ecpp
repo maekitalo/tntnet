@@ -8,6 +8,7 @@ value;
 </%pre>
 <%cpp>
 
+log_info("set value to \"" << value << '"');
 message.set(value);
 
 </%cpp>

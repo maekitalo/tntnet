@@ -10,7 +10,10 @@ value;
 <%cpp>
 
 if (!value.empty())
+{
+  log_info("set value to \"" << value << '"');
   message.set(value);
+}
 
 </%cpp>
 <html>
