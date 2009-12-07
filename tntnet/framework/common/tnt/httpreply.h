@@ -69,6 +69,7 @@ namespace tnt
       explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
 
       void setContentType(const char* t)            { setHeader(httpheader::contentType, t); }
+      void setContentType(const std::string& t)     { setHeader(httpheader::contentType, t); }
       const char* getContentType() const            { return getHeader(httpheader::contentType); }
 
       void setHeadRequest(bool sw = true)           { headRequest = sw; }
