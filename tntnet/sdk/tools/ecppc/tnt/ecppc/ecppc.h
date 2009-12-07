@@ -61,7 +61,6 @@ namespace tnt
         cxxtools::Arg<bool> compress;
         cxxtools::Arg<bool> verbose;
         cxxtools::Arg<bool> debug;
-        cxxtools::Arg<bool> trace;
         cxxtools::Arg<bool> generateDependencies;
         cxxtools::Arg<bool> generateHeader;
         cxxtools::Arg<bool> disableLinenumbers;

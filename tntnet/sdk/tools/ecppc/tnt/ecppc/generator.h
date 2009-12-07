@@ -51,7 +51,6 @@ namespace tnt
     //
     class Generator : public tnt::ecpp::ParseHandler
     {
-        bool debug;
         bool raw;
         std::string mimetype;
         std::string componentclass;
@@ -119,9 +118,6 @@ namespace tnt
 
       public:
         Generator(const std::string& componentName);
-
-        void setDebug(bool sw)                       { debug = sw; }
-        bool isDebug() const                         { return debug; }
 
         void setMimetype(const std::string& type)    { mimetype = type; }
         const std::string& getMimetype()             { return mimetype; }

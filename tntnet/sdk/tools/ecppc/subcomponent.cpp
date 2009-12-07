@@ -59,7 +59,7 @@ namespace tnt
            "    };\n\n";
     }
 
-    void Subcomponent::getDefinition(std::ostream& code, bool debug, bool externData, bool linenumbersEnabled) const
+    void Subcomponent::getDefinition(std::ostream& code, bool externData, bool linenumbersEnabled) const
     {
       code << "unsigned _component_::" << getName()
            << "_type::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam";
@@ -67,10 +67,8 @@ namespace tnt
            j != cppargs.end(); ++j)
         code << ", " << j->first;
       code << ")\n"
-              "{\n";
-
-      if (debug)
-        code << "  log_trace(\"" << outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n";
+              "{\n"
+              "  log_trace(\"" << outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n";
 
       if (externData)
         code << "  tnt::DataChunks data(getData(request, rawData));\n";

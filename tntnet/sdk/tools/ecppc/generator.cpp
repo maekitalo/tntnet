@@ -514,10 +514,8 @@ namespace tnt
 
       code << "}\n\n"
               "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
-           << "{\n";
-
-      if (isDebug())
-        code << "  log_trace(\"" << maincomp.getName() << " \" << qparam.getUrl());\n\n";
+           << "{\n"
+              "  log_trace(\"" << maincomp.getName() << " \" << qparam.getUrl());\n\n";
 
       if (raw)
         code << "  reply.setKeepAliveHeader();\n\n";
@@ -598,7 +596,7 @@ namespace tnt
 
       for (subcomps_type::const_iterator i = subcomps.begin();
            i != subcomps.end(); ++i)
-        i->getDefinition(code, isDebug(), externData, linenumbersEnabled);
+        i->getDefinition(code, externData, linenumbersEnabled);
     }
 
     void Generator::printLine(std::ostream& out) const
@@ -634,9 +632,6 @@ namespace tnt
               "log_define(\"component." << maincomp.getLogCategory() << "\")\n\n";
 
       getNamespaceStart(code);
-
-      code << "template <typename T> inline void use(const T&) { }\n\n";
-
       getCppBody(code);
       getNamespaceEnd(code);
     }

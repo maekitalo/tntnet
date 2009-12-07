@@ -39,8 +39,6 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpMessage
   //
-  log_define("tntnet.httpmessage")
-
   void HttpMessage::clear()
   {
     header.clear();

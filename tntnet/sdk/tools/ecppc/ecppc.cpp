@@ -60,7 +60,6 @@ namespace tnt
         compress(argc, argv, 'z'),
         verbose(argc, argv, 'v'),
         debug(argc, argv, 'd'),
-        trace(argc, argv, 't'),
         generateDependencies(argc, argv, 'M'),
         generateHeader(argc, argv, 'h'),
         disableLinenumbers(argc, argv, 'L')
@@ -143,7 +142,6 @@ namespace tnt
       tnt::ecppc::Generator generator(requestname);
 
       // initialize
-      generator.setDebug(trace);
       generator.enableLinenumbers(!disableLinenumbers);
       Bodypart::enableLinenumbers(!disableLinenumbers);
 
@@ -331,7 +329,6 @@ namespace tnt
            "  -bb              generate multibinary component\n"
            "  -z               compress constant data\n"
            "  -v               verbose\n"
-           "  -t               generate traces\n"
            "  -M               generate dependency for Makefile\n"
            "  -h               generate separate header-file\n" 
            "  -p               keep path when generating component name from filename\n"
