@@ -57,6 +57,8 @@ namespace tnt
     public:
       class Parser;
       friend class Parser;
+      friend class SessionUnlocker;
+      friend class ApplicationUnlocker;
 
       typedef std::vector<std::string> args_type;
 
@@ -104,7 +106,7 @@ namespace tnt
       void releaseApplicationScopeLock();
       void releaseSessionScopeLock();
 
-      void releaseLocks() { releaseSessionScopeLock(); }
+      void releaseLocks() { releaseApplicationScopeLock(); }
 
       mutable std::string peerAddrStr;
       mutable std::string serverAddrStr;

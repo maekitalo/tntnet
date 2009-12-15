@@ -50,6 +50,7 @@ libtntnet_la_SOURCES = \
 	unzip.h
 
 nobase_include_HEADERS = \
+	tnt/applicationunlocker.h \
 	tnt/compident.h \
 	tnt/comploader.h \
 	tnt/component.h \
@@ -89,6 +90,7 @@ nobase_include_HEADERS = \
 	tnt/scope.h \
 	tnt/scopemanager.h \
 	tnt/sessionscope.h \
+	tnt/sessionunlocker.h \
 	tnt/socketif.h \
 	tnt/stringlessignorecase.h \
 	tnt/threadcontext.h \

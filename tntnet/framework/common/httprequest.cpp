@@ -483,6 +483,8 @@ namespace tnt
   {
     log_trace("releaseApplicationScopeLock; thread " << pthread_self());
 
+    releaseSessionScopeLock();
+
     if (applicationScope && applicationScopeLocked)
     {
       log_debug("unlock applicationscope");
@@ -496,8 +498,6 @@ namespace tnt
   void HttpRequest::releaseSessionScopeLock()
   {
     log_trace("releaseSessionScopeLock; thread " << pthread_self());
-
-    releaseApplicationScopeLock();
 
     if (sessionScope && sessionScopeLocked)
     {
