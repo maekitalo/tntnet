@@ -71,13 +71,15 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
   const std::string& compUrl, Dispatcher::urlmap_type::const_iterator& pos) const
 {
   // check cache
+  cxxtools::ReadLock lock(urlMapCacheMutex);
   urlMapCacheType::key_type cacheKey =
     urlMapCacheType::key_type(vhost, compUrl, pos);
   urlMapCacheType::const_iterator um = urlMapCache.find(cacheKey);
   if (um != urlMapCache.end())
   {
-    log_debug("map " << vhost << ": " << compUrl << " to " << um->second);
-    return um->second;
+    log_debug("map " << vhost << ": " << compUrl << " to " << um->second.ci);
+    pos = um->second.pos;
+    return um->second.ci;
   }
 
   // no cache hit
@@ -105,7 +107,9 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
         urlMapCache.clear();
       }
 
-      urlMapCache.insert(urlMapCacheType::value_type(cacheKey, ci));
+      lock.unlock();
+      cxxtools::WriteLock wlock(urlMapCacheMutex);
+      urlMapCache.insert(urlMapCacheType::value_type(cacheKey, UrlMapCacheValue(ci, pos)));
 
       log_debug("map " << vhost << ": " << compUrl << " to " << ci);
       return ci;

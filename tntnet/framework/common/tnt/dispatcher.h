@@ -96,7 +96,20 @@ namespace tnt
           }
       };
 
-      typedef std::map<UrlMapCacheKey, CompidentType> urlMapCacheType;
+      struct UrlMapCacheValue
+      {
+        CompidentType ci;
+        urlmap_type::const_iterator pos;
+
+        UrlMapCacheValue() { }
+        UrlMapCacheValue(CompidentType ci_, urlmap_type::const_iterator pos_)
+          : ci(ci_),
+            pos(pos_)
+          { }
+      };
+
+      typedef std::map<UrlMapCacheKey, UrlMapCacheValue> urlMapCacheType;
+      mutable cxxtools::ReadWriteMutex urlMapCacheMutex;
       mutable urlMapCacheType urlMapCache;
       static urlMapCacheType::size_type maxUrlMapCache;
 
