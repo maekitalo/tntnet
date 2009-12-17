@@ -21,7 +21,7 @@
 #define MESSAGE_H
 
 #include "modificationtracker.h"
-#include <string>
+#include <cxxtools/string.h>
 
 // This declares the global message object.
 // The actual definition is done in rajax.ecpp.
@@ -30,7 +30,7 @@
 // scope would lock the application while the request runs, but we need to do
 // our own syncronization in the ModificationTracker class.
 
-typedef ModificationTracker<std::string> MessageType;
+typedef ModificationTracker<cxxtools::String> MessageType;
 extern MessageType message;
 
 #endif // MESSAGE_H

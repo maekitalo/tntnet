@@ -1,5 +1,6 @@
 <%pre>
 #include "message.h"
+#include <cxxtools/utf8codec.h>
 
 MessageType message;
 
@@ -12,7 +13,7 @@ value;
 if (!value.empty())
 {
   log_info("set value to \"" << value << '"');
-  message.set(value);
+  message.set(cxxtools::Utf8Codec::decode(value));
 }
 
 </%cpp>

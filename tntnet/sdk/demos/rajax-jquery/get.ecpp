@@ -13,7 +13,7 @@ unsigned timeout = 0;
 log_debug("serial=" << serial << " timeout=" << timeout);
 MessageType::ValueSerial value = message.get(serial, timeout);
 
-log_debug("return serial=" << value.first << " value=\"" << value.second << '"');
+log_debug("return serial=" << value.second << " value=\"" << value.first.narrow() << '"');
 
 cxxtools::JsonSerializer serializer;
 serializer.begin(reply.out())
