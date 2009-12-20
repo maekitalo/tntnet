@@ -40,7 +40,7 @@ namespace tnt
   class Tcpjob : public Job, private SocketIf
   {
       cxxtools::net::iostream socket;
-      const cxxtools::net::Server& listener;
+      const cxxtools::net::TcpServer& listener;
       Jobqueue& queue;
 
       void accept();
@@ -52,7 +52,7 @@ namespace tnt
       virtual bool isSsl() const;
 
     public:
-      Tcpjob(Tntnet& app, const cxxtools::net::Server& listener_, Jobqueue& queue_)
+      Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener_, Jobqueue& queue_)
         : Job(app, this),
           socket(getSocketBufferSize(), getSocketReadTimeout()),
           listener(listener_),

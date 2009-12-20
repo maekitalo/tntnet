@@ -55,7 +55,7 @@
 
 log_define("tntnet.listener")
 
-static void doListenRetry(cxxtools::net::Server& server,
+static void doListenRetry(cxxtools::net::TcpServer& server,
   const char* ipaddr, unsigned short int port)
 {
   for (unsigned n = 1; true; ++n)
@@ -96,12 +96,12 @@ namespace tnt
     try
     {
       // connect once to wake up listener, so it will check stop-flag
-      cxxtools::net::Stream(ipaddr, port);
+      cxxtools::net::TcpSocket(ipaddr, port);
     }
     catch (const std::exception& e)
     {
       log_warn("error waking up listener: " << e.what() << " try 127.0.0.1");
-      cxxtools::net::Stream("127.0.0.1", port);
+      cxxtools::net::TcpSocket("127.0.0.1", port);
     }
   }
 

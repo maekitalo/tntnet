@@ -78,7 +78,7 @@ namespace tnt
       SslCtxPtr getSslContext() const        { return ctx; }
   };
 
-  class OpensslStream : public cxxtools::net::Stream
+  class OpensslStream : public cxxtools::net::TcpSocket
   {
       SslCtxPtr ctx;
       SSL* ssl;

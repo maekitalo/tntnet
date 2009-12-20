@@ -54,7 +54,7 @@ namespace tnt
 
   class Listener : public ListenerBase
   {
-      cxxtools::net::Server server;
+      cxxtools::net::TcpServer server;
       Jobqueue& queue;
       static int backlog;
       static unsigned listenRetry;

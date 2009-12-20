@@ -206,7 +206,7 @@ namespace tnt
   void OpensslStream::accept(const OpensslServer& server)
   {
     log_trace("accept");
-    cxxtools::net::Stream::accept(server);
+    cxxtools::net::TcpSocket::accept(server);
   }
 
   void OpensslStream::handshake(const OpensslServer& server)

@@ -263,7 +263,7 @@ namespace tnt
   void GnuTlsStream::accept(const GnuTlsServer& server)
   {
     log_debug("accept");
-    cxxtools::net::Stream::accept(server);
+    cxxtools::net::TcpSocket::accept(server);
   }
 
   void GnuTlsStream::handshake(const GnuTlsServer& server)

@@ -79,7 +79,7 @@ namespace tnt
       operator gnutls_certificate_credentials() const { return x509_cred; }
   };
 
-  class GnuTlsServer : public cxxtools::net::Server
+  class GnuTlsServer : public cxxtools::net::TcpServer
   {
       GnuTlsX509Cred cred;
 
@@ -89,7 +89,7 @@ namespace tnt
       gnutls_certificate_credentials getCred() const  { return cred; }
   };
 
-  class GnuTlsStream : public cxxtools::net::Stream
+  class GnuTlsStream : public cxxtools::net::TcpSocket
   {
     public:
       struct FdInfo
