@@ -2,25 +2,20 @@ ACLOCAL_AMFLAGS = -I m4
 
 bin_SCRIPTS = tntnet-config
 
-SUBDIRS = \
-    framework/common \
-    utest \
-    doc/man
-
 if MAKE_SERVER
-SUBDIRS += \
+SERVERDIRS = \
     framework/runtime \
     framework/defcomp \
     etc
 endif
 
 if MAKE_CGI
-SUBDIRS += \
+CGIDIRS = \
     framework/cgi
 endif
 
 if MAKE_SDK
-SUBDIRS += \
+SDKDIRS = \
     sdk/tools/common \
     sdk/tools/ecppc \
     sdk/tools/ecppl \
@@ -28,7 +23,7 @@ SUBDIRS += \
 endif
 
 if MAKE_DEMOS
-SUBDIRS += \
+DEMOSDIRS = \
     sdk/demos \
     sdk/demos/calc \
     sdk/demos/calcajax \
@@ -47,6 +42,19 @@ SUBDIRS += \
     sdk/demos/rajax-jquery \
     sdk/demos/upload
 endif
+
+if MAKE_UNITTEST
+  UNITTESTDIR = utest
+endif
+
+SUBDIRS = \
+    framework/common \
+    doc/man \
+    $(UNITTESTDIR) \
+    $(SERVERDIRS) \
+    $(CGIDIRS) \
+    $(SDKDIRS) \
+    $(DEMOSDIRS)
 
 EXTRA_DIST = ecpp.vim \
     doc/tntnet.pdf \

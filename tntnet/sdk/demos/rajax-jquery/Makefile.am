@@ -1,5 +1,9 @@
 pkglib_LTLIBRARIES = message.la
 
+noinst_HEADERS = \
+    message.h \
+    modificationtracker.h
+
 nodist_message_la_SOURCES = \
 	get.cpp \
 	jquery.cpp \

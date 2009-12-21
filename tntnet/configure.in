@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 1.7.0pre1.20091107-2, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 1.6.991, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
@@ -189,6 +189,13 @@ case "${host_cpu}-${host_os}" in
     ;;
 esac
 AC_SUBST(SHARED_LIB_FLAG)
+
+AC_ARG_ENABLE([unittest],
+  AS_HELP_STRING([--disable-unittest], [disable unittest]),
+  [enable_unittest=$enableval],
+  [enable_unittest=enable_unittest])
+
+AM_CONDITIONAL(MAKE_UNITTEST, test "$enable_unittest" = "enable_unittest")
 
 AC_CONFIG_FILES([tntnet-config], [chmod +x tntnet-config])
 
