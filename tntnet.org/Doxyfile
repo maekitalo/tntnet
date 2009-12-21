@@ -572,56 +572,10 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = ./pages/main.txt \
-                         ./pages/docs.txt \
-                         ./pages/license.txt \
-                         ./pages/news.txt \
-                         ./pages/features.txt \
-                         ./pages/people.txt \
-                         ./pages/contact.txt \
-                         ./pages/sigslot.txt \
-                         ./pages/byteorder.txt \
-                         ./pages/subversion.txt \
-                         ./pages/download.txt \
-                         ./pages/logging.txt \
-                         ./pages/cxxtools.txt \
-                         ./pages/tntdb.txt \
-                         ./pages/tntreader.txt \
+INPUT                  = ./pages \
                          ../tntnet/framework/common \
                          ../cxxtools/include \
-                         ../tntdb/include \
-                         ./pages/howto/upload.txt \
-                         ./pages/howto/images.txt \
-                         ./pages/example/hello.ecpp.txt \
-                         ./pages/example/calc.ecpp.txt \
-                         pages/example/arg.cpp.txt \
-                         pages/example/cxxtools_arg.cpp.txt \
-                         pages/example/cxxtools_arg-set.cpp.txt \
-                         pages/example/cxxtools_cgi.cpp.txt \
-                         pages/example/cxxtools_cxxlog.cpp.txt \
-                         pages/example/cxxtools_dir.cpp.txt \
-                         pages/example/cxxtools_dlloader.cpp.txt \
-                         pages/example/cxxtools_dynbuffer.cpp.txt \
-                         pages/example/cxxtools_getini.cpp.txt \
-                         pages/example/cxxtools_hd.cpp.txt \
-                         pages/example/cxxtools_httprequest.cpp.txt \
-                         pages/example/cxxtools_httpserver.cpp.txt \
-                         pages/example/cxxtools_iconv.cpp.txt \
-                         pages/example/cxxtools_logbench.cpp.txt \
-                         pages/example/cxxtools_log.cpp.txt \
-                         pages/example/cxxtools_logsh.cpp.txt \
-                         pages/example/cxxtools_md5sum.cpp.txt \
-                         pages/example/cxxtools_mime.cpp.txt \
-                         pages/example/cxxtools_multifstream.cpp.txt \
-                         pages/example/cxxtools_netcat.cpp.txt \
-                         pages/example/cxxtools_netio.cpp.txt \
-                         pages/example/cxxtools_netmsg.cpp.txt \
-                         pages/example/cxxtools_pipestream.cpp.txt \
-                         pages/example/cxxtools_pool.cpp.txt \
-                         pages/example/cxxtools_rpcecho.cpp.txt \
-                         pages/example/cxxtools_signals.cpp.txt \
-                         pages/example/cxxtools_thread.cpp.txt \
-                         pages/example/cxxtools_uuencode.cpp.txt
+                         ../tntdb/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -639,7 +593,8 @@ INPUT_ENCODING         = UTF-8
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py *.f90
 
 FILE_PATTERNS          = *.hh \
-                         *.h
+                         *.h \
+                         *.txt
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
