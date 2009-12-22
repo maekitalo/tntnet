@@ -2,7 +2,9 @@ bin_PROGRAMS = tntnet
 
 tntnet_SOURCES = \
 	main.cpp \
-	process.cpp \
+	process.cpp
+
+nobase_include_HEADERS = \
 	tnt/process.h
 
 tntnet_LDFLAGS = $(PTHREAD_LIBS)

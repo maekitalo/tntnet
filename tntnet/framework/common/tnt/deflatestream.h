@@ -33,7 +33,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <zlib.h>
-#include <cxxtools/dynbuffer.h>
+#include <vector>
 
 namespace tnt
 {
@@ -53,7 +53,7 @@ namespace tnt
   class DeflateStreamBuf : public std::streambuf
   {
       z_stream stream;
-      cxxtools::Dynbuffer<char_type> obuffer;
+      std::vector<char_type> obuffer;
       std::streambuf* sink;
 
     public:

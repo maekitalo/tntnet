@@ -33,13 +33,14 @@
 #include <config.h>
 #include "tnt/job.h"
 #include <cxxtools/mutex.h>
-#include <cxxtools/pipe.h>
+#include <cxxtools/posix/pipe.h>
 
 #ifdef WITH_EPOLL
 #  include <map>
 #  include <set>
 #else
-#  include <cxxtools/dynbuffer.h>
+#  include <deque>
+#  include <vector>
 #  include <sys/poll.h>
 #endif
 
@@ -49,7 +50,7 @@ namespace tnt
   {
       Jobqueue& queue;
 
-      cxxtools::Pipe notify_pipe;
+      cxxtools::posix::Pipe notify_pipe;
 
 #ifdef WITH_EPOLL
 
@@ -70,9 +71,10 @@ namespace tnt
 #else
 
       typedef std::deque<Jobqueue::JobPtr> jobs_type;
+      typedef std::vector<pollfd> pollfds_type;
 
       jobs_type current_jobs;
-      cxxtools::Dynbuffer<pollfd> pollfds;
+      pollfds_type pollfds;
 
       jobs_type new_jobs;
 

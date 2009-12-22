@@ -20,7 +20,6 @@ libtntnet_la_SOURCES = \
 	httpparser.cpp \
 	httprequest.cpp \
 	httpreply.cpp \
-	inflatestream.cpp \
 	ioapi.c \
 	job.cpp \
 	langlib.cpp \
@@ -73,7 +72,6 @@ nobase_include_HEADERS = \
 	tnt/httpparser.h \
 	tnt/httprequest.h \
 	tnt/httpreply.h \
-	tnt/inflatestream.h \
 	tnt/job.h \
 	tnt/langlib.h \
 	tnt/maptarget.h \

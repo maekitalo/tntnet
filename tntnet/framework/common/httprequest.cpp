@@ -41,6 +41,7 @@
 #include <tnt/socketif.h>
 #include <pthread.h>
 #include "config.h"
+#include <tnt/stringlessignorecase.h>
 
 namespace tnt
 {
@@ -395,9 +396,14 @@ namespace tnt
 
   bool HttpRequest::keepAlive() const
   {
-    return header.compareHeader(
-        httpheader::connection,
-        httpheader::connectionKeepAlive);
+    // request is keep alive when either a connection header is explicitely set to keep alive
+    // or the http version is 1.1
+    Messageheader::const_iterator it = header.find(httpheader::connection);
+
+    return it == header.end()
+               ? getMinorVersion() >= 1 && getMajorVersion() >= 1
+               : tnt::StringCompareIgnoreCase<const char*>(it->second,
+                    httpheader::connectionKeepAlive) == 0;
   }
 
   const Contenttype& HttpRequest::getContentTypePriv() const

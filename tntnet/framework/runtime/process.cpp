@@ -174,7 +174,7 @@ namespace tnt
       theProcess = 0;
   }
 
-  void Process::runMonitor(cxxtools::Pipe& mainPipe)
+  void Process::runMonitor(cxxtools::posix::Pipe& mainPipe)
   {
     log_debug("run monitor");
 
@@ -186,7 +186,7 @@ namespace tnt
 
     while (true)
     {
-      cxxtools::Pipe monitorPipe;
+      cxxtools::posix::Pipe monitorPipe;
 
       cxxtools::Fork fork;
 
@@ -307,7 +307,7 @@ namespace tnt
 
       // We receive the writing-end of the notify pipe.
       // After successful initialization we need to write a byte to this fd.
-      cxxtools::Pipe mainPipe;
+      cxxtools::posix::Pipe mainPipe;
       cxxtools::Fork fork;
       if (fork.parent())
       {

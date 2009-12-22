@@ -294,10 +294,10 @@ namespace tnt
   {
     fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
 
-    pollfds.reserve(16);
-    pollfds[0].fd = notify_pipe.getReadFd();
-    pollfds[0].events = POLLIN;
-    pollfds[0].revents = 0;
+    pollfds.push_back(pollfd());
+    pollfds.back().fd = notify_pipe.getReadFd();
+    pollfds.back().events = POLLIN;
+    pollfds.back().revents = 0;
   }
 
   void PollerImpl::append_new_jobs()
@@ -307,8 +307,6 @@ namespace tnt
     {
       // append new jobs to current
       log_debug("add " << new_jobs.size() << " new jobs to poll-list");
-
-      pollfds.reserve(current_jobs.size() + new_jobs.size() + 1);
 
       time_t currentTime;
       time(&currentTime);
@@ -331,9 +329,9 @@ namespace tnt
   {
     current_jobs.push_back(job);
 
-    pollfd& p = *(pollfds.data() + current_jobs.size());
-    p.fd = job->getFd();
-    p.events = POLLIN;
+    pollfds.push_back(pollfd());
+    pollfds.back().fd = job->getFd();
+    pollfds.back().events = POLLIN;
   }
 
   void PollerImpl::run()
@@ -346,7 +344,7 @@ namespace tnt
       try
       {
         log_debug("poll timeout=" << poll_timeout);
-        ::poll(pollfds.data(), current_jobs.size() + 1, poll_timeout);
+        ::poll(&pollfds[0], pollfds.size(), poll_timeout);
         poll_timeout = -1;
 
         if (pollfds[0].revents != 0)
@@ -429,6 +427,7 @@ namespace tnt
       current_jobs[n] = current_jobs[last];
     }
 
+    pollfds.pop_back();
     current_jobs.pop_back();
   }
 

@@ -30,7 +30,6 @@
 #include <tnt/urlmapper.h>
 #include <tnt/httpreply.h>
 #include <tnt/convert.h>
-#include <cxxtools/dynbuffer.h>
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
 #include <cxxtools/arg.h>
@@ -113,9 +112,9 @@ namespace tnt
     unsigned length = contentLength ? stringTo<unsigned>(contentLength) : 0;
     if (length > 0)
     {
-      cxxtools::DynBuffer buffer(length);
-      std::cin.get(buffer.data(), length);
-      request.setBody(std::string(buffer.data(), std::cin.gcount()));
+      std::vector<char> buffer(length);
+      std::cin.get(&buffer[0], length);
+      request.setBody(std::string(&buffer[0], std::cin.gcount()));
     }
   }
 

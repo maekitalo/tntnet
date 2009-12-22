@@ -34,7 +34,6 @@
 #include <tnt/httperror.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
-#include <cxxtools/dynbuffer.h>
 #include <zlib.h>
 #include <netinet/in.h>
 

@@ -30,7 +30,7 @@
 #ifndef TNT_PROCESS_H
 #define TNT_PROCESS_H
 
-#include <cxxtools/pipe.h>
+#include <cxxtools/posix/pipe.h>
 #include <string>
 
 namespace tnt
@@ -46,8 +46,8 @@ namespace tnt
 
       bool exitRestart;
 
-      int mkDaemon(cxxtools::Pipe& pipe);
-      void runMonitor(cxxtools::Pipe& mainPipe);
+      int mkDaemon(cxxtools::posix::Pipe& pipe);
+      void runMonitor(cxxtools::posix::Pipe& mainPipe);
       void initWorker();
 
     protected:

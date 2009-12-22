@@ -68,12 +68,11 @@ namespace tnt
     stream.avail_in = 0;
     stream.avail_out = 0;
 
-    //checkError(::deflateInit(&stream, level), stream);
     int strategy = Z_DEFAULT_STRATEGY;
     level = 6;
     checkError(::deflateInit2(&stream, level, Z_DEFLATED, -MAX_WBITS, 8, strategy), stream);
 
-    setp(obuffer.begin(), obuffer.end());
+    setp(&obuffer[0], &obuffer[0] + obuffer.size());
   }
 
   DeflateStreamBuf::~DeflateStreamBuf()
@@ -86,18 +85,16 @@ namespace tnt
     log_debug("DeflateStreamBuf::overflow");
 
     // initialize input-stream
-    stream.next_in = (Bytef*)obuffer.data();
-    stream.avail_in = pptr() - obuffer.data();
+    stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
+    stream.avail_in = pptr() - &obuffer[0];
 
     // initialize zbuffer for deflated data
     char zbuffer[8192];
-    stream.next_out = (Bytef*)zbuffer;
+    stream.next_out = reinterpret_cast<Bytef*>(zbuffer);
     stream.avail_out = sizeof(zbuffer);
 
     // deflate
-    log_debug("pre:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
     checkError(::deflate(&stream, Z_NO_FLUSH), stream);
-    log_debug("post:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
 
     // copy zbuffer to sink / consume deflated data
     std::streamsize count = sizeof(zbuffer) - stream.avail_out;
@@ -110,10 +107,10 @@ namespace tnt
 
     // move remaining characters to start of obuffer
     if (stream.avail_in > 0)
-      memmove(obuffer.data(), stream.next_in, stream.avail_in);
+      memmove(&obuffer[0], stream.next_in, stream.avail_in);
 
     // reset outbuffer
-    setp(obuffer.begin() + stream.avail_in, obuffer.end());
+    setp(&obuffer[0] + stream.avail_in, &obuffer[0] + obuffer.size());
     if (c != traits_type::eof())
       sputc(traits_type::to_char_type(c));
 
@@ -130,7 +127,7 @@ namespace tnt
     log_debug("DeflateStreamBuf::sync");
 
     // initialize input-stream for
-    stream.next_in = (Bytef*)obuffer.data();
+    stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
     stream.avail_in = pptr() - pbase();
     char zbuffer[8192];
     while (stream.avail_in > 0)
@@ -139,9 +136,7 @@ namespace tnt
       stream.next_out = (Bytef*)zbuffer;
       stream.avail_out = sizeof(zbuffer);
 
-      log_debug("pre:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
       checkError(::deflate(&stream, Z_SYNC_FLUSH), stream);
-      log_debug("post:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
 
       // copy zbuffer to sink
       std::streamsize count = sizeof(zbuffer) - stream.avail_out;
@@ -154,7 +149,7 @@ namespace tnt
     };
 
     // reset outbuffer
-    setp(obuffer.begin(), obuffer.end());
+    setp(&obuffer[0], &obuffer[0] + obuffer.size());
     return 0;
   }
 
@@ -162,7 +157,7 @@ namespace tnt
   {
     char zbuffer[8192];
     // initialize input-stream for
-    stream.next_in = (Bytef*)obuffer.data();
+    stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
     stream.avail_in = pptr() - pbase();
     while (true)
     {
@@ -170,9 +165,7 @@ namespace tnt
       stream.next_out = (Bytef*)zbuffer;
       stream.avail_out = sizeof(zbuffer);
 
-      log_debug("pre:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
       int ret = checkError(::deflate(&stream, Z_FINISH), stream);
-      log_debug("post:avail_out=" << stream.avail_out << " avail_in=" << stream.avail_in);
 
       // copy zbuffer to sink
       std::streamsize count = sizeof(zbuffer) - stream.avail_out;
@@ -187,7 +180,7 @@ namespace tnt
     };
 
     // reset outbuffer
-    setp(obuffer.begin(), obuffer.end());
+    setp(&obuffer[0], &obuffer[0] + obuffer.size());
     return 0;
   }
 
