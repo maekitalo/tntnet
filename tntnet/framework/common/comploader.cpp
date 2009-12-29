@@ -49,11 +49,11 @@ namespace tnt
 //
 log_define("tntnet.comploader")
 
-void* ComponentLibrary::dlopen(const std::string& name, bool global)
+void* ComponentLibrary::dlopen(const std::string& name, bool local)
 {
-  log_debug("dlopen <" << name << ">, " << global);
+  log_debug("dlopen <" << name << ">, " << local);
 
-  int flags = global ? RTLD_NOW|RTLD_GLOBAL : RTLD_NOW|RTLD_LOCAL;
+  int flags = local ? RTLD_NOW|RTLD_LOCAL: RTLD_NOW|RTLD_GLOBAL;
   std::string n = name;
   if (!n.empty() && n[0] == '!')
   {
@@ -92,9 +92,9 @@ void* ComponentLibrary::dlopen(const std::string& name, bool global)
   return ret;
 }
 
-void ComponentLibrary::init(const std::string& name, bool global)
+void ComponentLibrary::init(const std::string& name, bool local)
 {
-  void* handle = dlopen(name, global);
+  void* handle = dlopen(name, local);
   if (handle)
     handlePtr = new HandleType(handle);
 }
@@ -249,10 +249,10 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
   log_debug("fetchLib \"" << libname << '"');
 
   std::string n = libname;
-  bool global = false;
+  bool local = false;
   if (!n.empty() && n[0] == '!')
   {
-    global = true;
+    local = true;
     n.erase(0, 1);
   }
 
@@ -272,27 +272,27 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
          !lib && p != search_path.end(); ++p)
     {
       log_debug("load library \"" << n << "\" from " << *p << " dir");
-      lib = ComponentLibrary(*p, n, global);
+      lib = ComponentLibrary(*p, n, local);
     }
 
 #ifdef PKGLIBDIR
     if (!lib)
     {
       log_debug("load library \"" << n << "\" from package lib dir <" << PKGLIBDIR << '>');
-      lib = ComponentLibrary(PKGLIBDIR, n, global);
+      lib = ComponentLibrary(PKGLIBDIR, n, local);
     }
 #endif
 
     if (!lib)
     {
       log_debug("load library \"" << n << "\" from current dir");
-      lib = ComponentLibrary(".", n, global);
+      lib = ComponentLibrary(".", n, local);
     }
 
     if (!lib)
     {
       log_debug("library \"" << n << "\" in current dir not found - search lib-path");
-      lib = ComponentLibrary(n, global);
+      lib = ComponentLibrary(n, local);
     }
 
     if (!lib)

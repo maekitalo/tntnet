@@ -80,21 +80,21 @@ namespace tnt
       typedef std::map<std::string, LangLib::PtrType> langlibsType;
       langlibsType langlibs;
 
-      void* dlopen(const std::string& name, bool global);
-      void init(const std::string& name, bool global);
+      void* dlopen(const std::string& name, bool local);
+      void init(const std::string& name, bool local);
 
     public:
       ComponentLibrary()
         { }
 
-      ComponentLibrary(const std::string& path_, const std::string& name, bool global)
+      ComponentLibrary(const std::string& path_, const std::string& name, bool local)
         : libname(name),
           path(path_)
-        { init(path_ + '/' + name, global); }
+        { init(path_ + '/' + name, local); }
 
-      ComponentLibrary(const std::string& name, bool global)
+      ComponentLibrary(const std::string& name, bool local)
         : libname(name)
-        { init(name, global); }
+        { init(name, local); }
 
       operator const void* () const  { return handlePtr.getPointer(); }
 
