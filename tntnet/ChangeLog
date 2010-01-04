@@ -1,3 +1,119 @@
+2009-12-30 tommi@tntnet.org
+ - make RTLD_LOCAL the default loading mechanism
+
+2009-12-22 tommi@tntnet.org
+ - do not use deprecated cxxtools::Dynbuffer but std::vector instead
+ - remove unused class inflatestream
+ - cxxtools::Pipe is moved to cxxtools::posix::Pipe
+ - fix bug, where tntnet did not use keep alive when in HTTP 1.1 the connection header was ommitted
+2009-12-21 tommi@tntnet.org
+ - make unit test optional
+
+2009-12-17 tommi@tntnet.org
+ - handle utf8 correctly
+
+2009-12-16 tommi@tntnet.org
+ - fix bug, where a component, which followed a not matched MapUrl declined a
+   request was called twice when the request was repeated
+ - add proper locking to the url map cache
+
+2009-12-15 tommi@tntnet.org
+ - new classes tnt::SessionUnlocker and tnt::ApplicationUnlocker
+
+2009-12-04 tommi@tntnet.org
+ - load component libraries with RTLD_GLOBAL if library name is prefixed with ! in tntnet.conf
+
+2009-12-04 tommi@tntnet.org
+ - Do not use the file name of ecpp files as class names of generated components
+   any more but let component names contain aribtrary characters (except \0).
+   Ecppc gets the -p switch to include the full path of the source file into the
+   component name.
+
+2009-11-24 tommi@tntnet.org
+ - optimization: use fixed size buffer of 4k for message header to reduce allocations
+ - add some unit tests
+
+2009-11-17 tommi@tntnet.org
+ - send http error detected in parse state
+ - use a fixed buffer of 8 bytes (7 + '\0'-terminator) for http method instead of std::string
+
+2009-11-15 tommi@tntnet.org
+ - add current file name to error messages and format messages like gcc
+
+2009-11-15 tommi@tntnet.org
+ - set FD_CLOEXEC properly for listeners
+ - let cxxtools set FD_CLOEXEC for accepted sockets (needs up to date cxxtools)
+ - do not derive Messageheader from std:multimap but delegate calls instead to a member multimap
+ - remove tnt::Tntnet::forkProcess and tnt::Tntnet::runProcess methods (they are obsolete with FD_CLOEXEC set)
+
+2009-11-15 tommi@tntnet.org
+ - read of http body slightly optimized: do not use stringstream to convert content length to number
+
+2009-11-11 tommi@tntnet.org
+ - don't use cxxtools-config script any more
+
+2009-11-07 tommi@tntnet.org
+ - bugfix: wrong buffer for notification of poller was used, which may lead to a buffer overflow in very rare cases
+
+2009-10-30 tommi@tntnet.org
+ - make refcounting of tnt::Scope and tnt::Job thread safe
+
+2009-10-30 tommi@tntnet.org
+ - Send one set-cookie header per cookie instead of comma separated list.
+ - The comma separated list as specified in rfc 2109 just don't work. This is actually a bug in the rfc.
+
+2009-10-27 tommi@tntnet.org
+ - new demo for reverse ajax, jquery and json
+
+2009-10-17 tommi@tntnet.org
+ - default to openssl instead of gnutls
+ - add optional stressjob for stresstesting tntnet
+ - process all requests read into input buffer (bugfix)
+ - use cxxtools::RefCounted for reference counting Scope class
+ - optimize sending reply: do not add missing headers to request before sending but send directly
+
+2009-10-10 tommi@tntnet.org
+ - change default charset from iso-8859-1 to UTF-8
+
+2009-05-30 tommi@tntnet.org
+ - allow comma in typenames of scoped variables (needed for templates with multiple type arguments)
+
+2009-05-21 tommi@tntnet.org
+ - add some missing includes and other fixes for solaris
+
+2009-05-21 tommi@tntnet.org
+ - set mime type explicitely when compiling other than ecpp-files
+
+2009-04-13 tommi@tntnet.org
+ - allow objects in scopes without transfering ownership and use that in <%param>-scope
+
+2009-03-11 tommi@tntnet.org
+ - bugfix: content-type field was not checked correctly for POST-requests
+
+2009-02-18 tommi@tntnet.org
+ - new method request.touch() to rearm the watchdog in daemon mode
+
+2009-02-18 tommi@tntnet.org
+ - increase default buffer size for ssl connections
+
+2009-02-13 tommi@tntnet.org
+ - remove regex-class since we have it in cxxtools already
+
+2009-02-10 tommi@tntnet.org
+ - decouple httprequest from network definitions by using a interface to determine server- and peer-addresses
+
+2008-12-07 tommi@tntnet.org
+ - be more robust on epoll failures
+
+2008-12-07 tommi@tntnet.org
+ - use read write mutex instead of mutex in component loader for better scalability
+
+2008-12-06 tommi@tntnet.org
+ - use more lightweight smart pointer for library handle
+
+2008-11-26 tommi@tntnet.org
+ - use RTLD_LOCAL-flag when loading components to improve separation between applications
+
 2008-10-15 tommi@tntnet.org
   - make shutdown of tntnet cleaner and faster by using conditions
 
