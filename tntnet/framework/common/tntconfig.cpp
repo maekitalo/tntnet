@@ -34,12 +34,9 @@
 #include <stack>
 #include <cctype>
 #include <cxxtools/multifstream.h>
-#include <cxxtools/log.h>
 
 namespace tnt
 {
-  log_define("tntnet.tntconfig")
-
   //////////////////////////////////////////////////////////////////////
   // ConfigParser
   //
@@ -243,7 +240,6 @@ namespace tnt
   //
   void Tntconfig::load(const char* configfile)
   {
-    log_debug("load configuration \"" << configfile << '"');
     std::ifstream in(configfile);
     if (!in)
     {
@@ -293,30 +289,25 @@ namespace tnt
        const std::string& key,
        const params_type::value_type& def) const
   {
-    log_debug("getValue(\"" << key << "\", \"" << def << "\")");
     for (config_entries_type::const_iterator it = config_entries.begin();
          it != config_entries.end(); ++it)
+    {
       if (it->key == key && it->params.size() > 0)
-      {
-        log_debug("getValue returns \"" << it->params[0] << '"');
         return it->params[0];
-      }
+    }
 
-    log_debug("getValue returns default \"" << def << '"');
     return def;
   }
 
   bool Tntconfig::hasValue(const std::string& key) const
   {
-    log_debug("hasValue(\"" << key << "\")");
     for (config_entries_type::const_iterator it = config_entries.begin();
          it != config_entries.end(); ++it)
+    {
       if (it->key == key && it->params.size() > 0)
-      {
-        log_debug("hasValue returns true");
         return true;
-      }
-    log_debug("hasValue returns false");
+    }
+
     return false;
   }
 

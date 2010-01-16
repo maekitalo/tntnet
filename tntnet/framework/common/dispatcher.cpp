@@ -44,7 +44,8 @@ Dispatcher::CompidentType& Dispatcher::addUrlMapEntry(const std::string& vhost,
 {
   cxxtools::WriteLock lock(mutex);
 
-  urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, cxxtools::Regex(url)), ci));
+  log_debug("map vhost <" << vhost << "> url <" << url << "> to <" << ci << '>');
+  urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, url), ci));
   return urlmap.back().second;
 }
 
@@ -71,15 +72,20 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
   const std::string& compUrl, Dispatcher::urlmap_type::const_iterator& pos) const
 {
   // check cache
-  cxxtools::ReadLock lock(urlMapCacheMutex);
-  urlMapCacheType::key_type cacheKey =
-    urlMapCacheType::key_type(vhost, compUrl, pos);
-  urlMapCacheType::const_iterator um = urlMapCache.find(cacheKey);
-  if (um != urlMapCache.end())
+  cxxtools::ReadLock lock(urlMapCacheMutex, false);
+  urlMapCacheType::key_type cacheKey;
+
+  if (maxUrlMapCache > 0)
   {
-    log_debug("map " << vhost << ": " << compUrl << " to " << um->second.ci);
-    pos = um->second.pos;
-    return um->second.ci;
+    lock.lock();
+    cacheKey = urlMapCacheType::key_type(vhost, compUrl, pos);
+    urlMapCacheType::const_iterator um = urlMapCache.find(cacheKey);
+    if (um != urlMapCache.end())
+    {
+      log_debug("vhost <" << vhost << "> url <" << compUrl << "> match regex <" << pos->first.getRegex() << "> (cached) => " << um->second.ci);
+      pos = um->second.pos;
+      return um->second.ci;
+    }
   }
 
   // no cache hit
@@ -100,19 +106,26 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
       std::transform(src.getArgs().begin(), src.getArgs().end(),
         std::back_inserter(ci.getArgsRef()), formatter);
 
-      // clear cache after maxUrlMapCache distict requests
-      if (urlMapCache.size() >= maxUrlMapCache)
+      if (maxUrlMapCache > 0)
       {
-        log_warn("clear url-map-cache");
-        urlMapCache.clear();
+        // clear cache after maxUrlMapCache distict requests
+        if (urlMapCache.size() >= maxUrlMapCache)
+        {
+          log_warn("clear url-map-cache");
+          urlMapCache.clear();
+        }
+
+        lock.unlock();
+        cxxtools::WriteLock wlock(urlMapCacheMutex);
+        urlMapCache.insert(urlMapCacheType::value_type(cacheKey, UrlMapCacheValue(ci, pos)));
       }
 
-      lock.unlock();
-      cxxtools::WriteLock wlock(urlMapCacheMutex);
-      urlMapCache.insert(urlMapCacheType::value_type(cacheKey, UrlMapCacheValue(ci, pos)));
-
-      log_debug("map " << vhost << ": " << compUrl << " to " << ci);
+      log_debug("vhost <" << vhost << "> url <" << compUrl << "> match regex <" << pos->first.getRegex() << "> => " << ci);
       return ci;
+    }
+    else
+    {
+      log_debug("vhost <" << vhost << "> url <" << compUrl << "> does not match regex <" << pos->first.getRegex() << '>');
     }
   }
 

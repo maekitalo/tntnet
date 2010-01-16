@@ -77,8 +77,6 @@ namespace tnt
 
   void PollerImpl::addFd(int fd)
   {
-    log_debug("addFd(" << fd << ')');
-
     epoll_event e;
     e.events = EPOLLIN;
     e.data.fd = fd;
@@ -89,18 +87,13 @@ namespace tnt
 
   bool PollerImpl::removeFd(int fd)
   {
-    log_debug("removeFd(" << fd << ')');
-
     epoll_event e;
     e.data.fd = fd;
     int ret = ::epoll_ctl(pollFd, EPOLL_CTL_DEL, fd, &e);
     if (ret < 0)
     {
       if (errno == EBADF || errno == ENOENT)
-      {
-        log_debug("fd " << fd << " couldn't be removed");
         return false;
-      }
       else
         throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_DEL)");
     }
@@ -110,21 +103,14 @@ namespace tnt
 
   void PollerImpl::doStop()
   {
-    log_debug("notify stop");
     notify_pipe.write('A');
   }
 
   void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
   {
-    log_debug("addIdleJob " << job->getFd());
-
-    {
-      cxxtools::MutexLock lock(mutex);
-      new_jobs.insert(job);
-      notify_pipe.write('A');
-    }
-
-    log_debug("addIdleJob ready");
+    cxxtools::MutexLock lock(mutex);
+    new_jobs.insert(job);
+    notify_pipe.write('A');
   }
 
   void PollerImpl::append_new_jobs()
@@ -133,8 +119,6 @@ namespace tnt
     if (!new_jobs.empty())
     {
       // append new jobs to current
-      log_debug("add " << new_jobs.size() << " new jobs to poll-list");
-
       time_t currentTime;
       time(&currentTime);
       for (new_jobs_type::iterator it = new_jobs.begin();
@@ -170,7 +154,6 @@ namespace tnt
       if (jobs.size() == 0)
         poll_timeout = -1;
 
-      log_debug("epoll_wait with timeout " << poll_timeout << " ms");
       int ret = ::epoll_wait(pollFd, events, 16, poll_timeout);
 
       if (ret < 0)
@@ -182,8 +165,6 @@ namespace tnt
       {
         // timeout reached - check for timed out requests and get next timeout
 
-        log_debug("timeout reached");
-
         poll_timeout = -1;
         time_t currentTime;
         time(&currentTime);
@@ -192,7 +173,6 @@ namespace tnt
           int msec = it->second->msecToTimeout(currentTime);
           if (msec <= 0)
           {
-            log_debug("keep-alive-timeout reached");
             jobs_type::iterator it2 = it++;
             jobs.erase(it2);
           }
@@ -215,7 +195,6 @@ namespace tnt
         pollTime = currentTime;
 
         // no timeout - process events
-        log_debug(ret << " events occured");
 
         bool rebuildPollFd = false;
 
@@ -229,10 +208,8 @@ namespace tnt
               break;
             }
 
-            log_debug("read notify-pipe");
             char buffer[64];
             ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
-            log_debug("read returns " << n);
           }
           else
           {
@@ -253,14 +230,7 @@ namespace tnt
                 rebuildPollFd = true;
 
               if (ev & EPOLLIN)
-              {
-                log_debug("put fd " << it->first << " back in queue");
                 queue.put(j);
-              }
-              else
-              {
-                log_debug("remove fd " << it->first << " from queue");
-              }
             }
           }
         }
@@ -306,8 +276,6 @@ namespace tnt
     if (!new_jobs.empty())
     {
       // append new jobs to current
-      log_debug("add " << new_jobs.size() << " new jobs to poll-list");
-
       time_t currentTime;
       time(&currentTime);
       for (jobs_type::iterator it = new_jobs.begin();
@@ -343,7 +311,6 @@ namespace tnt
 
       try
       {
-        log_debug("poll timeout=" << poll_timeout);
         ::poll(&pollfds[0], pollfds.size(), poll_timeout);
         poll_timeout = -1;
 
@@ -355,10 +322,8 @@ namespace tnt
             break;
           }
 
-          log_debug("read notify-pipe");
           char buffer[64];
           ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
-          log_debug("read returns " << n);
           pollfds[0].revents = 0;
         }
 
@@ -374,40 +339,29 @@ namespace tnt
 
   void PollerImpl::doStop()
   {
-    log_debug("notify stop");
     notify_pipe.write('A');
   }
 
   void PollerImpl::dispatch()
   {
-    log_debug("dispatch " << current_jobs.size() << " jobs");
-
     time_t currentTime;
     time(&currentTime);
     for (unsigned i = 0; i < current_jobs.size(); )
     {
       if (pollfds[i + 1].revents & POLLIN)
       {
-        log_debug("job found " << pollfds[i + 1].fd);
-
         // put job into work-queue
         queue.put(current_jobs[i]);
         remove(i);
       }
       else if (pollfds[i + 1].revents != 0)
-      {
-        log_debug("pollevent " << std::hex << pollfds[i + 1].revents << " on fd "  << pollfds[i + 1].fd);
         remove(i);
-      }
       else
       {
         // check timeout
         int msec = current_jobs[i]->msecToTimeout(currentTime);
         if (msec <= 0)
-        {
-          log_debug("keep-alive-timeout reached");
           remove(i);
-        }
         else if (poll_timeout < 0 || msec < poll_timeout)
           poll_timeout = msec;
 
@@ -433,18 +387,12 @@ namespace tnt
 
   void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
   {
-    log_debug("addIdleJob " << job->getFd());
-
     {
       cxxtools::MutexLock lock(mutex);
       new_jobs.push_back(job);
     }
 
-    log_debug("notify " << job->getFd());
-
     notify_pipe.write('A');
-
-    log_debug("addIdleJob ready");
   }
 #endif // #else HAVE_EPOLL
 

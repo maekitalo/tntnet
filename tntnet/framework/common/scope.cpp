@@ -28,26 +28,20 @@
 
 
 #include <tnt/scope.h>
-#include <cxxtools/log.h>
 
 namespace tnt
 {
-  log_define("tntnet.scope")
-
   Scope::Scope()
   {
     addRef();
-    log_debug("new Scope " << this);
   }
 
   Scope::~Scope()
   {
-    log_debug("Scope " << this << " deleted");
   }
 
   void Scope::privatePut(const std::string& key, Scope::pointer_type o)
   {
-    log_trace("Scope::put(\"" << key << "\", " << o.getPointer() << "\") Scope=" << this);
     data.insert(container_type::value_type(key, o));
   }
 

@@ -87,7 +87,6 @@ namespace tnt
     log_debug("start thread " << threadId);
     while (queue.getWaitThreadCount() < application.getMinThreads())
     {
-      log_debug("waiting for job");
       state = stateWaitingForJob;
       Jobqueue::JobPtr j = queue.get();
       if (Tntnet::shouldStop())
@@ -96,8 +95,6 @@ namespace tnt
         queue.put(j);
         break;
       }
-
-      log_debug("got job - fd=" << j->getFd());
 
       try
       {
@@ -109,8 +106,6 @@ namespace tnt
         do
         {
           time(&lastWaitTime);
-
-          log_debug("read request");
 
           keepAlive = false;
           state = stateParsing;
@@ -162,7 +157,6 @@ namespace tnt
                     struct pollfd fd;
                     fd.fd = j->getFd();
                     fd.events = POLLIN;
-                    log_debug("wait for next request (timeout " << Job::getSocketReadTimeout() << ')');
                     if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
                     {
                       log_debug("pass job to poll-thread");
@@ -193,7 +187,6 @@ namespace tnt
       }
       catch (const cxxtools::net::Timeout& e)
       {
-        log_debug("timeout - put job in poller");
         application.getPoller().addIdleJob(j);
       }
       catch (const std::exception& e)
@@ -204,14 +197,12 @@ namespace tnt
 
     time(&lastWaitTime);
 
-    log_info("end worker thread " << threadId);
-
     state = stateStopping;
 
     cxxtools::MutexLock lock(mutex);
     workers.erase(this);
 
-    log_debug("delete worker " << threadId << " - " << workers.size()
+    log_debug("end worker thread " << threadId << " - " << workers.size()
       << " threads left - " << application.getQueue().getWaitThreadCount()
       << " waiting threads");
   }
@@ -296,10 +287,11 @@ namespace tnt
     state = stateDispatch;
     const std::string& url = request.getUrl();
 
-    log_debug("dispatch " << request.getQuery());
-
     if (!HttpRequest::checkUrl(url))
+    {
+      log_info("illegal url <" << url << '>');
       throw HttpError(HTTP_BAD_REQUEST, "illegal url");
+    }
 
     request.setThreadContext(this);
 
@@ -313,7 +305,6 @@ namespace tnt
       Dispatcher::CompidentType ci = pos.getNext();
       try
       {
-        log_debug("load component " << ci);
         Component* comp;
         try
         {
@@ -330,7 +321,6 @@ namespace tnt
 
         application.getScopemanager().preCall(request, ci.libname);
 
-        log_debug("call component " << ci << " path " << request.getPathInfo());
         state = stateProcessingRequest;
         unsigned http_return = (*comp)(request, reply, request.getQueryParams(), true);
         if (http_return != DECLINED)

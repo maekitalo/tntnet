@@ -65,29 +65,29 @@ void* ComponentLibrary::dlopen(const std::string& name, bool local)
   void* ret = ::dlopen((n + ".so").c_str(), flags);
   if (ret != 0)
   {
-    log_debug("library \"" << n << ".so\" successfully opened");
+    log_info("library \"" << n << ".so\"");
     return ret;
   }
 
   ret = ::dlopen((n + ".a").c_str(), flags);
   if (ret != 0)
   {
-    log_debug("library \"" << n << ".a\" successfully opened");
+    log_info("library \"" << n << ".a\"");
     return ret;
   }
 
   ret = ::dlopen((n + ".dll").c_str(), flags);
   if (ret != 0)
   {
-    log_debug("library \"" << n << ".dll\" successfully opened");
+    log_info("library \"" << n << ".dll\"");
     return ret;
   }
 
   ret = ::dlopen(n.c_str(), flags);
   if (ret == 0)
-    log_debug("failed to load library \"" << n << '"');
+    log_warn("failed to load library \"" << n << '"');
   else
-    log_debug("library \"" << n << "\" successfully opened");
+    log_info("library \"" << n << "\"");
 
   return ret;
 }

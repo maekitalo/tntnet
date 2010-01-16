@@ -44,8 +44,6 @@ namespace tnt
 
   Scope* ScopeManager::getApplicationScope(const std::string& appname)
   {
-    log_debug("getApplicationScope(\"" << appname << "\")");
-
     cxxtools::MutexLock lock(applicationScopesMutex);
 
     scopes_type::iterator it = applicationScopes.find(appname);
@@ -83,8 +81,6 @@ namespace tnt
 
   bool ScopeManager::hasSessionScope(const std::string& sessioncookie)
   {
-    log_debug("hasSessionScope(\"" << sessioncookie << "\")");
-
     cxxtools::MutexLock lock(sessionScopesMutex);
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
     return it != sessionScopes.end();
@@ -92,15 +88,12 @@ namespace tnt
 
   void ScopeManager::putSessionScope(const std::string& sessioncookie, Sessionscope* s)
   {
-    log_debug("putSessionScope " << sessioncookie);
-
     s->addRef();
 
     cxxtools::MutexLock lock(sessionScopesMutex);
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
     if (it != sessionScopes.end())
     {
-      log_debug("sessionscope found - replace");
       it->second->release();
       it->second = s;
     }
@@ -111,13 +104,10 @@ namespace tnt
 
   void ScopeManager::removeApplicationScope(const std::string& appname)
   {
-    log_debug("removeApplicationScope(\"" << appname << "\")");
-
     cxxtools::MutexLock lock(applicationScopesMutex);
     scopes_type::iterator it = applicationScopes.find(appname);
     if (it != applicationScopes.end())
     {
-      log_debug("release applicationscope");
       it->second->release();
       applicationScopes.erase(it);
     }
@@ -125,13 +115,10 @@ namespace tnt
 
   void ScopeManager::removeSessionScope(const std::string& sessioncookie)
   {
-    log_debug("removeSessionScope(\"" << sessioncookie << "\")");
-
     cxxtools::MutexLock lock(sessionScopesMutex);
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
     if (it != sessionScopes.end())
     {
-      log_debug("release sessionscope");
       it->second->release();
       sessionScopes.erase(it);
     }
@@ -224,7 +211,6 @@ namespace tnt
       else
         ++it;
     }
-    log_debug(count << " sessions timed out " << sessionScopes.size() << " sessions left");
 
   }
 }

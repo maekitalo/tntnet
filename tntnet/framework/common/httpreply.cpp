@@ -157,7 +157,6 @@ namespace tnt
 
       if (!hasHeader(httpheader::connection))
       {
-        log_debug("setKeepAliveHeader()");
         if (keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
         {
           log_debug(httpheader::keepAlive << " timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter());

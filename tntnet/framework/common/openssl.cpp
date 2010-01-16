@@ -51,12 +51,10 @@ namespace tnt
 
     void checkSslError()
     {
-      log_debug("ERR_get_error");
       unsigned long code = ERR_get_error();
       if (code != 0)
       {
         char buffer[120];
-        log_debug("ERR_error_string");
         if (ERR_error_string(code, buffer))
         {
           log_debug("SSL-Error " << code << ": \"" << buffer << '"');
@@ -198,7 +196,6 @@ namespace tnt
         log_debug("error shutting down ssl-conneciton: " << e.what());
       }
 
-      log_debug("SSL_free(" << ssl << ')');
       SSL_free(ssl);
     }
   }

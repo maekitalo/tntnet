@@ -49,11 +49,13 @@ namespace tnt
       class VHostRegex
       {
           std::string vhost;
+          std::string regexstr;
           cxxtools::Regex regex;
 
         public:
-          VHostRegex(const std::string& vhost_, const cxxtools::Regex& regex_)
+          VHostRegex(const std::string& vhost_, const std::string& regex_)
             : vhost(vhost_),
+              regexstr(regex_),
               regex(regex_)
               { }
 
@@ -63,6 +65,8 @@ namespace tnt
             return (vhost.empty() || cxxtools::Regex(vhost).match(vhost_))
                 && regex.match(str_, smatch);
           }
+
+          const std::string& getRegex() const  { return regexstr; }
       };
 
       typedef std::vector<std::pair<VHostRegex, CompidentType> > urlmap_type;

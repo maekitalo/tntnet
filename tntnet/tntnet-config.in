@@ -84,6 +84,7 @@ PropertyFile        tntnet.properties
 #EnableCompression  no
 #MimeDb             /etc/mime.types
 #MinCompressSize    1024  # in bytes
+#MaxUrlMapCache     8192
 #DefaultContentType "text/html; charset=UTF-8"
 EOF
 }

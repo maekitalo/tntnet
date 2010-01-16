@@ -30,16 +30,11 @@
 #include "tnt/encoding.h"
 #include "tnt/util.h"
 #include <cctype>
-#include <cxxtools/log.h>
-
-log_define("tntnet.encoding")
 
 namespace tnt
 {
   void Encoding::parse(const std::string& header)
   {
-    log_debug("encode header \"" << header << '"');
-
     encodingMap.clear();
 
     enum {
@@ -75,7 +70,6 @@ namespace tnt
             state = state_qualityq;
           else if (ch == ',')
           {
-            log_debug("encoding=" << encoding);
             encodingMap.insert(encodingMapType::value_type(encoding, 1));
             state = state_0;
           }
@@ -112,7 +106,6 @@ namespace tnt
             state = state_qualitytenth;
           else if (ch == ';')
           {
-            log_debug("encoding=" << encoding << " quality " << quality);
             encodingMap.insert(encodingMapType::value_type(encoding, quality));
             state = state_0;
           }
@@ -124,7 +117,6 @@ namespace tnt
           if (std::isdigit(ch))
           {
             quality += ch - '0';
-            log_debug("encoding=" << encoding << " quality " << quality);
             encodingMap.insert(encodingMapType::value_type(encoding, quality));
             state = state_qualityign;
           }
@@ -142,14 +134,12 @@ namespace tnt
     switch (state)
     {
       case state_encoding:
-        log_debug("encoding=" << encoding);
         encodingMap.insert(encodingMapType::value_type(encoding, 1));
         break;
 
       case state_quality:
       case state_qualitypoint:
       case state_qualitytenth:
-        log_debug("encoding=" << encoding << " quality " << quality);
         encodingMap.insert(encodingMapType::value_type(encoding, quality));
         break;
 
@@ -162,25 +152,16 @@ namespace tnt
   {
     // check, if encoding is specified
 
-    log_debug("accept(\"" << encoding << "\")");
-
     encodingMapType::const_iterator it =  encodingMap.find(encoding);
     if (it != encodingMap.end())
-    {
-      log_debug("accept(\"" << encoding << "\") => " << it->second);
       return it->second;
-    }
 
     // check, if a wildcard-rule is specified
     it = encodingMap.find("*");
     if (it != encodingMap.end())
-    {
-      log_debug("accept(\"" << encoding << "\") => " << it->second);
       return it->second;
-    }
 
     // return 10 (accept), if encoding is identity, 0 otherwise
-    log_debug("accept(\"" << encoding << "\") => " << (encoding == "identity" ? 10 : 0));
     return encoding == "identity" ? 10 : 0;
   }
 

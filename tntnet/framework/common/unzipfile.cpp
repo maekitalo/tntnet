@@ -30,9 +30,6 @@
 #include "tnt/unzipfile.h"
 #include <sstream>
 #include "unzip.h"
-#include <cxxtools/log.h>
-
-log_define("tntnet.unzipfile")
 
 namespace tnt
 {
@@ -40,7 +37,6 @@ namespace tnt
   {
     int checkError(int ret, const char* function)
     {
-      log_debug("checkError(" << ret << ", " << function << ')');
       if (ret < 0)
       {
         switch (ret)

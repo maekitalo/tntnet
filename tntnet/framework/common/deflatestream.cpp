@@ -82,8 +82,6 @@ namespace tnt
 
   DeflateStreamBuf::int_type DeflateStreamBuf::overflow(int_type c)
   {
-    log_debug("DeflateStreamBuf::overflow");
-
     // initialize input-stream
     stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
     stream.avail_in = pptr() - &obuffer[0];
@@ -124,8 +122,6 @@ namespace tnt
 
   int DeflateStreamBuf::sync()
   {
-    log_debug("DeflateStreamBuf::sync");
-
     // initialize input-stream for
     stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
     stream.avail_in = pptr() - pbase();

@@ -100,8 +100,6 @@ namespace tnt
 
   void Messageheader::setHeader(const char* key, const char* value, bool replace)
   {
-    log_debug("Messageheader::setHeader(\"" << key << "\", \"" << value << "\", " << replace << ')');
-
     if (!*key)
       throw std::runtime_error("empty key not allowed in messageheader");
 

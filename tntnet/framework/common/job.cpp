@@ -90,10 +90,7 @@ namespace tnt
 
   void Tcpjob::accept()
   {
-    log_debug("accept");
-
     socket.accept(listener, true);
-
     log_debug("connection accepted from " << getPeerIp());
   }
 
@@ -112,7 +109,6 @@ namespace tnt
       try
       {
         accept();
-        log_debug("connection accepted");
       }
       catch (const std::exception& e)
       {
@@ -164,15 +160,12 @@ namespace tnt
 
   void SslTcpjob::accept()
   {
-    log_debug("accept (ssl)");
     socket.accept(listener);
-    log_debug("connection accepted (ssl) from " << getPeerIp());
   }
 
   void SslTcpjob::handshake()
   {
     socket.handshake(listener);
-    log_debug("ssl handshake ready");
 
     fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
 
@@ -194,11 +187,10 @@ namespace tnt
       try
       {
         accept();
-        log_debug("connection accepted");
       }
       catch (const std::exception& e)
       {
-        log_debug("error occured in accept: " << e.what());
+        log_debug("exception occured in accept (ssl): " << e.what());
         regenerateJob();
         throw;
       }
@@ -234,7 +226,6 @@ namespace tnt
   //
   void Jobqueue::put(JobPtr j, bool force)
   {
-    log_debug("Jobqueue::put");
     j->touch();
 
     cxxtools::MutexLock lock(mutex);
@@ -248,14 +239,10 @@ namespace tnt
       }
     }
 
-    log_debug("jobs.push");
     jobs.push_back(j);
 
     if (waitThreads == 0)
-    {
-      log_debug("no waiting threads left");
       noWaitThreads.signal();
-    }
 
     notEmpty.signal();
   }
@@ -267,14 +254,10 @@ namespace tnt
     // wait, until a job is available
     ++waitThreads;
 
-    log_debug("wait for job (" << jobs.size() << " jobs available)");
-
     while (jobs.empty())
       notEmpty.wait(lock);
 
     --waitThreads;
-
-    log_debug("Jobqueue: fetch job " << waitThreads << " waiting threads left; " << jobs.size() << " jobs in queue");
 
     // take next job (queue is locked)
     JobPtr j = jobs.front();
@@ -282,10 +265,8 @@ namespace tnt
 
     // if there are threads waiting, wake another
     if (!jobs.empty() && waitThreads > 0)
-    {
-      log_debug("signal another thread");
       notEmpty.signal();
-    }
+
     notFull.signal();
 
     return j;

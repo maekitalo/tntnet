@@ -226,11 +226,8 @@ namespace tnt
 
       if (in)
       {
-        log_debug(httpheader::contentType << ' ' << in.str());
-        log_debug("type=" << ct.getType() << " subtype=" << ct.getSubtype());
         if (ct.isMultipart())
         {
-          log_debug("multipart-boundary=" << ct.getBoundary());
           mp.set(ct.getBoundary(), getBody());
           for (Multipart::const_iterator it = mp.begin();
                it != mp.end(); ++it)
@@ -240,8 +237,6 @@ namespace tnt
             if (it->getFilename().empty())
             {
               std::string multipartBody(it->getBodyBegin(), it->getBodyEnd());
-              log_debug("multipart-item name=" << it->getName()
-                     << " body=" << multipartBody);
               qparam.add(it->getName(), multipartBody);
             }
           }
@@ -340,16 +335,11 @@ namespace tnt
 
   const Cookies& HttpRequest::getCookies() const
   {
-    log_debug("HttpRequest::getCookies()");
-
     if (!httpcookies.hasCookies())
     {
       header_type::const_iterator it = header.find(httpheader::cookie);
       if (it != header.end())
-      {
-        log_debug("parse cookie-header " << it->second);
         const_cast<HttpRequest*>(this)->httpcookies.set(it->second);
-      }
     }
 
     return httpcookies;
@@ -375,9 +365,8 @@ namespace tnt
       cxxtools::Base64istream in(authHeader);
       std::getline(in, username, ':');
       std::getline(in, password);
-
-      log_debug("username \"" << username << "\" password \"" << password << '"');
     }
+
     return username;
   }
 
@@ -390,7 +379,6 @@ namespace tnt
   bool HttpRequest::verifyPassword(const std::string& password_) const
   {
     getUsername();
-    log_debug("verify password \"" << password_ << "\" for username \"" << username << "\" password \"" << password << '"');
     return password == password_;
   }
 
@@ -458,61 +446,41 @@ namespace tnt
 
   void HttpRequest::ensureApplicationScopeLock()
   {
-    log_trace("ensureApplicationScopeLock; thread " << pthread_self());
-
     ensureSessionScopeLock();
     if (applicationScope && !applicationScopeLocked)
     {
-      log_debug("lock application scope; thread" << pthread_self());
       applicationScope->lock();
       applicationScopeLocked = true;
     }
-    else
-      log_debug("applicationscope locked already");
   }
 
   void HttpRequest::ensureSessionScopeLock()
   {
-    log_trace("ensureSessionScopeLock; thread " << pthread_self());
-
     if (sessionScope && !sessionScopeLocked)
     {
-      log_debug("lock sessionscope; thread " << pthread_self());
       sessionScope->lock();
       sessionScopeLocked = true;
     }
-    else
-      log_debug("sessionscope locked already");
   }
 
   void HttpRequest::releaseApplicationScopeLock()
   {
-    log_trace("releaseApplicationScopeLock; thread " << pthread_self());
-
     releaseSessionScopeLock();
 
     if (applicationScope && applicationScopeLocked)
     {
-      log_debug("unlock applicationscope");
       applicationScopeLocked = false;
       applicationScope->unlock();
     }
-    else
-      log_debug("applicationscope not locked");
   }
 
   void HttpRequest::releaseSessionScopeLock()
   {
-    log_trace("releaseSessionScopeLock; thread " << pthread_self());
-
     if (sessionScope && sessionScopeLocked)
     {
-      log_debug("unlock sessionscope");
       sessionScopeLocked = false;
       sessionScope->unlock();
     }
-    else
-      log_debug("sessionscope not locked");
   }
 
   Scope& HttpRequest::getRequestScope()
