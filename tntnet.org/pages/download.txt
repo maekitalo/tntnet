@@ -15,8 +15,8 @@
 
         <h3>development versions</h3>
         <ul>
-            <li><a href="download/tntnet-1.6.99.tar.gz">the source of tntnet 1.6.99</a></li>
-            <li><a href="download/cxxtools-1.99.4.tar.gz">the source of cxxtools 1.99.4</a></li>
+            <li><a href="download/tntnet-1.6.991.tar.gz">the source of tntnet 1.6.991</a></li>
+            <li><a href="download/cxxtools-1.99.5.tar.gz">the source of cxxtools 1.99.5</a></li>
             <li><a href="download/tntdb-1.0.99.tar.gz">the source of tntdb 1.0.99</a></li>
         </ul>
 

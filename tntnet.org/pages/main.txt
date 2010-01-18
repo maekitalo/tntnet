@@ -45,6 +45,11 @@
                 <th>Headline</th>
             </tr>
             <tr>
+                <td valign="top" class="news-table-date"><b>21&nbsp;Dec&nbsp;2009</b></td>
+                <td><a href="news.html">development versions cxxtools 1.99.5 and tntnet 1.6.991</a></td>
+            </tr>
+
+            <tr>
                 <td valign="top" class="news-table-date"><b>13&nbsp;Jun&nbsp;2009</b></td>
                 <td><a href="news.html">development versions cxxtools 1.99.4, tntnet 1.6.99 and tntdb 1.0.99</a></td>
             </tr>
@@ -57,11 +62,6 @@
             <tr>
                 <td valign="top" class="news-table-date"><b>20&nbsp;Apr&nbsp;2008</b></td>
                 <td><a href="news.html">stable version tntnet 1.6.2</a></td>
-            </tr>
-
-            <tr>
-                <td valign="top" class="news-table-date"><b>04&nbsp;Apr&nbsp;2008</b></td>
-                <td><a href="news.html">development version tntnet 1.6.1.3</a></td>
             </tr>
 
         </table>
