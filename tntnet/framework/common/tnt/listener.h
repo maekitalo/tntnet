@@ -50,6 +50,11 @@ namespace tnt
 
       void doStop();
       virtual void initialize();
+
+      const std::string& getIpaddr() const
+        { return ipaddr; }
+      unsigned short int getPort() const
+        { return port; }
   };
 
   class Listener : public ListenerBase

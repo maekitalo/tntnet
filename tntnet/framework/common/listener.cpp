@@ -116,13 +116,13 @@ namespace tnt
     : ListenerBase(ipaddr, port),
       queue(q)
   {
-    log_info("listen ip=" << ipaddr << " port=" << port);
     doListenRetry(server, ipaddr.c_str(), port);
     queue.put(new Tcpjob(application, server, queue));
   }
 
   void Listener::initialize()
   {
+    log_info("listen ip=" << getIpaddr() << " port=" << getPort());
     fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
   }
 
@@ -145,13 +145,13 @@ namespace tnt
       server(certificateFile, keyFile),
       queue(q)
   {
-    log_info("listen ip=" << ipaddr << " port=" << port << " (ssl)");
     doListenRetry(server, ipaddr.c_str(), port);
     queue.put(new SslTcpjob(application, server, queue));
   }
 
   void Ssllistener::initialize()
   {
+    log_info("listen ip=" << getIpaddr() << " port=" << getPort() << " (ssl)");
     fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
   }
 
