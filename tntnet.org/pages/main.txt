@@ -31,12 +31,6 @@
             Ssl is supported via the gnutls- or openssl-library.
         </p>
  
-        <h2>Warning</h2>
-
-	<p>
-	    The Ubuntu package of cxxtools (version 1.4.3.6) is broken. Tntnet consumes 100% CPU when installed. You can fix it by removing the entry "flushdelay=100" from "/etc/tntnet/tntnet.properties". Or use the current stable cxxtools and tntnet from here.
-	</p>
-
         <h2>Latest News</h2>
 
         <table class="news-table">
