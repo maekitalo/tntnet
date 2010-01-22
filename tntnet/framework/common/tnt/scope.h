@@ -38,15 +38,12 @@
 
 namespace tnt
 {
-  namespace
+  template <typename objectType>
+  class NullDestroyPolicy
   {
-    template <typename objectType>
-    class NullDestroyPolicy
-    {
-      public:
-        static void destroy(objectType* ptr) { }
-    };
-  }
+    public:
+      static void destroy(objectType* ptr) { }
+  };
 
   class Scope : public cxxtools::AtomicRefCounted
   {
