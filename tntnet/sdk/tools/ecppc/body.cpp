@@ -70,7 +70,7 @@ namespace tnt
            it != paramargs.end(); ++it)
       {
         printLine(out);
-        out << "  " << qparam << ".getScope().put(\""
+        out << "    " << qparam << ".getScope().put(\""
             << it->first << "\", ("
             << it->second << "), false);\n";
       }
@@ -136,11 +136,11 @@ namespace tnt
       else
       {
         // case: comp.subcomp@lib
-          callByIdent(out,
-                      "tnt::Subcompident(\"" + id.libname + "\", "
-                                   "\"" + id.compname + "\", "
-                                   "\"" + id.subname + "\")",
-                      qparam);
+        callByIdent(out,
+                    "tnt::Subcompident(\"" + id.libname + "\", "
+                                 "\"" + id.compname + "\", "
+                                 "\"" + id.subname + "\")",
+                    qparam);
       }
     }
 
@@ -151,12 +151,12 @@ namespace tnt
 
       if (haveEndCall)
       {
-        out << "  tnt::Component* _tnt_comp" << getNumber() << " = createComp(" << ident << ");\n"
-               "  if (_tnt_comp" << getNumber() << "->call(request, reply, " << qparam << ") != DECLINED)\n"
-               "  {\n";
+        out << "    tnt::Component* _tnt_comp" << getNumber() << " = createComp(" << ident << ");\n"
+               "    if (_tnt_comp" << getNumber() << "->call(request, reply, " << qparam << ") != DECLINED)\n"
+               "    {\n";
       }
       else
-        out << "  callComp(" << ident << ", request, reply, " << qparam << ");\n";
+        out << "    callComp(" << ident << ", request, reply, " << qparam << ");\n";
     }
 
     void BodypartCall::callByExpr(std::ostream& out, const std::string& qparam) const
@@ -166,53 +166,37 @@ namespace tnt
       else if (haveEndCall)
         throw std::runtime_error("end-tag not allowed in call \"" + comp + '"');
 
-      out << "  callComp(" << comp << ", request, reply, " << qparam << ");\n";
+      out << "    callComp(" << comp << ", request, reply, " << qparam << ");\n";
     }
 
     void BodypartCall::getBody(std::ostream& out) const
     {
       log_debug("getBody: paramargs " << paramargs.size());
-      out << "  // <& " << comp << " ...\n";
+      out << "  // <& " << comp << " ...\n  {\n";
 
       std::ostringstream o;
       o << "_tnt_cq" << getNumber();
       std::string queryParamName = o.str();
 
-      if (args.empty())
-      {
-        if (pass_cgi.empty())
-        {
-          printLine(out);
-          out << "  tnt::QueryParams " << queryParamName << "(qparam, false);\n";
-          call(out, queryParamName);
-        }
-        else
-        {
-          call(out, pass_cgi);
-        }
-      }
+      printLine(out);
+      if (pass_cgi.empty())
+        out << "    tnt::QueryParams " << queryParamName << "(qparam, false);\n";
       else
+        out << "    tnt::QueryParams " << queryParamName << "(" << pass_cgi << ", true);\n";
+
+      for (comp_args_type::const_iterator i = args.begin();
+           i != args.end(); ++i)
       {
         printLine(out);
-        if (pass_cgi.empty())
-          out << "  tnt::QueryParams " << queryParamName << "(qparam, false);\n";
-        else
-          out << "  tnt::QueryParams " << queryParamName << "(" << pass_cgi << ", true);\n";
-
-        for (comp_args_type::const_iterator i = args.begin();
-             i != args.end(); ++i)
-        {
-          printLine(out);
-          out << "  " << queryParamName << ".add( \"" << i->first
-              << "\", tnt::toString("
-              << i->second
-              << ", reply.out().getloc() ) );\n";
-        }
-
-        call(out, queryParamName);
+        out << "    " << queryParamName << ".add( \"" << i->first
+            << "\", tnt::toString("
+            << i->second
+            << ", reply.out().getloc() ) );\n";
       }
 
-      out << "  // &>\n";
+      call(out, queryParamName);
+
+      out << "    // &>\n  }\n";
     }
 
     void BodypartEndCall::getBody(std::ostream& out) const
