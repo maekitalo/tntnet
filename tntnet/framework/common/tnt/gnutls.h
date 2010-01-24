@@ -109,14 +109,14 @@ namespace tnt
           connected(false)
         { }
 
-      explicit GnuTlsStream(const GnuTlsServer& server)
+      explicit GnuTlsStream(const GnuTlsServer& server, bool inherit = false)
         : session(0),
           connected(false)
-        { accept(server); }
+        { accept(server, inherit); }
 
       ~GnuTlsStream();
 
-      void accept(const GnuTlsServer& server);
+      void accept(const GnuTlsServer& server, bool inherit = false);
       void handshake(const GnuTlsServer& server);
       int sslRead(char* buffer, int bufsize) const;
       int sslWrite(const char* buffer, int bufsize) const;

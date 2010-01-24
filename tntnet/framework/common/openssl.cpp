@@ -175,12 +175,12 @@ namespace tnt
     openssl_init();
   }
 
-  OpensslStream::OpensslStream(const OpensslServer& server)
+  OpensslStream::OpensslStream(const OpensslServer& server, bool inherit)
     : ctx(server.getSslContext()),
       ssl(0)
   {
     openssl_init();
-    accept(server);
+    accept(server, inherit);
   }
 
   OpensslStream::~OpensslStream()
@@ -200,10 +200,10 @@ namespace tnt
     }
   }
 
-  void OpensslStream::accept(const OpensslServer& server)
+  void OpensslStream::accept(const OpensslServer& server, bool inherit)
   {
     log_trace("accept");
-    cxxtools::net::TcpSocket::accept(server);
+    cxxtools::net::TcpSocket::accept(server, inherit);
   }
 
   void OpensslStream::handshake(const OpensslServer& server)

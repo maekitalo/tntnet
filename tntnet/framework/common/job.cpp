@@ -90,7 +90,7 @@ namespace tnt
 
   void Tcpjob::accept()
   {
-    socket.accept(listener, true);
+    socket.accept(listener, false);
     log_debug("connection accepted from " << getPeerIp());
   }
 
@@ -160,7 +160,7 @@ namespace tnt
 
   void SslTcpjob::accept()
   {
-    socket.accept(listener);
+    socket.accept(listener, false);
   }
 
   void SslTcpjob::handshake()

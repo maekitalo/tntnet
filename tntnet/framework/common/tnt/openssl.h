@@ -86,10 +86,10 @@ namespace tnt
     public:
       OpensslStream();
 
-      explicit OpensslStream(const OpensslServer& server);
+      explicit OpensslStream(const OpensslServer& server, bool inherit = false);
       ~OpensslStream();
 
-      void accept(const OpensslServer& server);
+      void accept(const OpensslServer& server, bool inherit = false);
       void handshake(const OpensslServer& server);
 
       int sslRead(char* buffer, int bufsize) const;

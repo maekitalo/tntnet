@@ -260,10 +260,10 @@ namespace tnt
     }
   }
 
-  void GnuTlsStream::accept(const GnuTlsServer& server)
+  void GnuTlsStream::accept(const GnuTlsServer& server, bool inherit)
   {
     log_debug("accept");
-    cxxtools::net::TcpSocket::accept(server);
+    cxxtools::net::TcpSocket::accept(server, inherit);
   }
 
   void GnuTlsStream::handshake(const GnuTlsServer& server)
