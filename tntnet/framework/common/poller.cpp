@@ -173,6 +173,7 @@ namespace tnt
           int msec = it->second->msecToTimeout(currentTime);
           if (msec <= 0)
           {
+            log_debug("timeout for fd " << it->second->getFd() << " reached");
             jobs_type::iterator it2 = it++;
             jobs.erase(it2);
           }
