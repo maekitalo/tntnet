@@ -31,6 +31,8 @@
 
 #include <tnt/tntnet.h>
 #include <tnt/worker.h>
+#include <tnt/sessionscope.h>
+#include <tnt/httpreply.h>
 
 namespace tnt
 {
@@ -108,18 +110,14 @@ namespace tnt
         { Sessionscope::setDefaultTimeout(sec); }
 
       /// Returns the listen backlog parameter (see also listen(2)).
-      int getListenBacklog()
-        { return Listener::getBacklog(); }
+      int getListenBacklog();
       /// Sets the listen backlog parameter (see also listen(2)).
-      void setListenBacklog(int n)
-        { Listener::setBacklog(n); }
+      void setListenBacklog(int n);
 
       /// Returns the number of retries, when a listen retried, when failing.
-      unsigned getListenRetry()
-        { return Listener::getListenRetry(); }
+      unsigned getListenRetry();
       /// Sets the number of retries, when a listen retried, when failing.
-      void setListenRetry(int n)
-        { Listener::setListenRetry(n); }
+      void setListenRetry(int n);
 
       /// Returns the maximum number of cached urlmappings.
       /// The cache stores results of the regular expressions used for defining

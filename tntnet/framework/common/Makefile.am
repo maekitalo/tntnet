@@ -5,6 +5,7 @@ libtntnet_la_SOURCES = \
 	comploader.cpp \
 	component.cpp \
 	componentfactory.cpp \
+	configurator.cpp \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	cookie.cpp \
