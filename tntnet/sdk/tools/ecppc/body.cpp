@@ -171,12 +171,15 @@ namespace tnt
 
     void BodypartCall::getBody(std::ostream& out) const
     {
-      log_debug("getBody: paramargs " << paramargs.size());
-      out << "  // <& " << comp << " ...\n  {\n";
+      log_debug("getBody: paramargs " << paramargs.size() << " number=" << getNumber() << " haveEndCall=" << haveEndCall);
+      out << "  // <& " << comp << " ...\n";
 
       std::ostringstream o;
       o << "_tnt_cq" << getNumber();
       std::string queryParamName = o.str();
+
+      if (!haveEndCall)
+        out << "  { \n";
 
       printLine(out);
       if (pass_cgi.empty())
@@ -196,7 +199,9 @@ namespace tnt
 
       call(out, queryParamName);
 
-      out << "    // &>\n  }\n";
+      out << "    // &>\n";
+      if (!haveEndCall)
+        out << "  }\n";
     }
 
     void BodypartEndCall::getBody(std::ostream& out) const
