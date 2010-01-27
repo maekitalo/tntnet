@@ -40,8 +40,6 @@ log_define("tntnet.scopemanager")
 
 namespace tnt
 {
-  static const char sessionCookiePrefix[] = "tntnet.";
-
   Scope* ScopeManager::getApplicationScope(const std::string& appname)
   {
     cxxtools::MutexLock lock(applicationScopesMutex);
@@ -127,7 +125,7 @@ namespace tnt
   void ScopeManager::preCall(HttpRequest& request, const std::string& app)
   {
     // check session-cookie
-    std::string currentSessionCookieName = sessionCookiePrefix + app;
+    std::string currentSessionCookieName = app.empty() ? std::string("tntnet") : "tntnet." + app;
     Cookie c = request.getCookie(currentSessionCookieName);
     if (c.getValue().empty())
     {
@@ -158,7 +156,7 @@ namespace tnt
 
   void ScopeManager::postCall(HttpRequest& request, HttpReply& reply, const std::string& app)
   {
-    std::string currentSessionCookieName = sessionCookiePrefix + app;
+    std::string currentSessionCookieName = app.empty() ? std::string("tntnet") : "tntnet." + app;
 
     if (request.hasSessionScope())
     {
