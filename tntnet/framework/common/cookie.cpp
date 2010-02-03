@@ -42,6 +42,33 @@ namespace tnt
 {
   log_define("tntnet.cookie")
 
+  namespace
+  {
+    bool ishexdigit(char ch)
+    {
+      return ch >= '0' && ch <= '9'
+          || ch >= 'a' && ch <= 'f'
+          || ch >= 'A' && ch <= 'F';
+    }
+
+    char hexvalue(char ch)
+    {
+      if (ch >= '0' && ch <= '9')
+        return ch - '0';
+      else if (ch >= 'A' && ch <= 'F')
+        return ch - 'A' + 10;
+      else if (ch >= 'a' && ch <= 'f')
+        return ch - 'a' + 10;
+      else
+        return '\0';
+    }
+
+    char hexvalue(char upper, char lower)
+    {
+      return (hexvalue(upper) << 4) + hexvalue(lower);
+    }
+  }
+
   const Cookie Cookies::emptyCookie;
 
   const std::string Cookie::maxAge  = "Max-Age";
@@ -187,12 +214,17 @@ namespace tnt
       state_eq,
       state_value0,
       state_value,
+      state_valueh1,
+      state_valueh2,
       state_valuee,
       state_qvalue,
+      state_qvalueh1,
+      state_qvalueh2,
       state_qvaluee
     };
 
     state_type state = state_0;
+    char h;
 
     for (std::string::const_iterator it = header.begin();
          it != header.end(); ++it)
@@ -252,6 +284,8 @@ namespace tnt
         case state_value0:
           if (ch == '"')
             state = state_qvalue;
+          else if (ch == '%')
+            state = state_valueh1;
           else if (!std::isspace(ch))
           {
             value += ch;
@@ -265,8 +299,65 @@ namespace tnt
             process_nv();
             state = state_0;
           }
+          else if (ch == '%')
+            state = state_valueh1;
+          else if (ch == '+')
+            value += ' ';
           else
             value += ch;
+          break;
+
+        case state_valueh1:
+          if (ishexdigit(ch))
+          {
+            h = ch;
+            state = state_valueh2;
+          }
+          else if (ch == ';')
+          {
+            value += '%';
+            process_nv();
+            state = state_0;
+          }
+          else if (ch == '+')
+          {
+            value += '%';
+            value += ' ';
+            state = state_value;
+          }
+          else
+          {
+            value += '%';
+            value += ch;
+            state = state_value;
+          }
+          break;
+
+        case state_valueh2:
+          if (ishexdigit(ch))
+          {
+            value += hexvalue(h, ch);
+            state = state_value;
+          }
+          else if (ch == ';')
+          {
+            value += '%';
+            value += h;
+            process_nv();
+            state = state_0;
+          }
+          else if (ch == '+')
+          {
+            value += hexvalue(h);
+            value += ' ';
+            state = state_value;
+          }
+          else
+          {
+            value += hexvalue(h);
+            value += ch;
+            state = state_value;
+          }
           break;
 
         case state_valuee:
@@ -275,6 +366,8 @@ namespace tnt
             process_nv();
             state = state_0;
           }
+          else if (ch == '+')
+            value += ' ';
           else if (std::isspace(ch))
             state = state_valuee;
           else
@@ -287,8 +380,63 @@ namespace tnt
         case state_qvalue:
           if (ch == '"')
             state = state_qvaluee;
+          else if (ch == '%')
+            state = state_qvalueh1;
+          else if (ch == '+')
+            value += ' ';
           else
             value += ch;
+          break;
+
+        case state_qvalueh1:
+          if (ishexdigit(ch))
+          {
+            h = ch;
+            state = state_qvalueh2;
+          }
+          else if (ch == '"')
+          {
+            value += '%';
+            state = state_qvaluee;
+          }
+          else if (ch == '+')
+          {
+            value += '%';
+            value += ' ';
+            state = state_qvalue;
+          }
+          else
+          {
+            value += '%';
+            value += ch;
+            state = state_qvalue;
+          }
+          break;
+
+        case state_qvalueh2:
+          if (ishexdigit(ch))
+          {
+            value += hexvalue(h, ch);
+            state = state_qvalue;
+          }
+          else if (ch == '"')
+          {
+            value += '%';
+            value += h;
+            state = state_qvaluee;
+          }
+          else if (ch == '+')
+          {
+            value += hexvalue(h);
+            value += ' ';
+            state = state_qvalue;
+          }
+          else
+          {
+            value += hexvalue(h);
+            value += ch;
+            state = state_qvalue;
+          }
           break;
 
         case state_qvaluee:

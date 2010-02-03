@@ -15,12 +15,13 @@ clearcookie;
     name = request.getCookie("name");
 
   if (!clearcookie.empty())
-
+  {
     reply.clearCookie("name");   // delete cookie from client
-
+  }
   else if (!name.empty() && request.getCookie("name").getValue() != name)
-
+  {
     reply.setCookie("name", name, 3600);  // set cookie when new or modified
+  }
 
 </%cpp>
 <html>
@@ -38,6 +39,8 @@ clearcookie;
    <input type="submit">
    <input type="submit" name="clearcookie" value="delete cookie">
   </form>
+
+  <a href='.'>reload</a>
 
  </body>
 </html>
