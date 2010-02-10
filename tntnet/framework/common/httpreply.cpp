@@ -313,7 +313,10 @@ namespace tnt
     if (isDirectMode())
     {
       header_type::const_iterator it = header.find(httpheader::connection);
-      return it != header.end() && it->second == httpheader::connectionKeepAlive;
+      return it != header.end() &&
+        tnt::StringCompareIgnoreCase<const char*>(
+            it->second,
+            httpheader::connectionKeepAlive) == 0;
     }
     else
     {
