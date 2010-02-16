@@ -286,6 +286,11 @@ namespace tnt
             state = state_qvalue;
           else if (ch == '%')
             state = state_valueh1;
+          else if (ch == ';')
+          {
+            process_nv();
+            state = state_0;
+          }
           else if (!std::isspace(ch))
           {
             value += ch;
