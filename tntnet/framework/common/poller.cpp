@@ -127,12 +127,11 @@ namespace tnt
         addFd((*it)->getFd());
         jobs[(*it)->getFd()] = *it;
 
-        int msec;
+        int msec = (*it)->msecToTimeout(currentTime);
         if (poll_timeout < 0)
-          poll_timeout = (*it)->msecToTimeout(currentTime);
-        else if ((msec = (*it)->msecToTimeout(currentTime)) < poll_timeout)
           poll_timeout = msec;
-
+        else if (msec < poll_timeout)
+          poll_timeout = msec;
       }
 
       new_jobs.clear();
@@ -283,11 +282,9 @@ namespace tnt
            it != new_jobs.end(); ++it)
       {
         append(*it);
-        int msec;
-        if (poll_timeout < 0)
-          poll_timeout = (*it)->msecToTimeout(currentTime);
-        else if ((msec = (*it)->msecToTimeout(currentTime)) < poll_timeout)
-          poll_timeout = msec;
+        int msec = (*it)->msecToTimeout(currentTime);
+        if (poll_timeout < 0 || msec < poll_timeout)
+          poll_timeout = msec
       }
 
       new_jobs.clear();

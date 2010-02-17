@@ -109,6 +109,7 @@ namespace tnt
       try
       {
         accept();
+        touch();
       }
       catch (const std::exception& e)
       {
@@ -187,6 +188,7 @@ namespace tnt
       try
       {
         accept();
+        touch();
       }
       catch (const std::exception& e)
       {
