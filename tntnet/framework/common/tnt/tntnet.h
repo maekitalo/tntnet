@@ -76,6 +76,7 @@ namespace tnt
       Dispatcher dispatcher;
 
       ScopeManager scopemanager;
+      std::string appname;
 
       // noncopyable
       Tntnet(const Tntnet&);
@@ -162,6 +163,23 @@ namespace tnt
       Maptarget& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
 
+      /** Set the app name.
+
+          The app name is used for the session cookie name if the
+          webapplication is linked directly to a stand alone application.
+          The name of the session cookie is then "tntnet." plus the library
+          name of the web application. Since there is no library name, if
+          the application is run through the Tntnet application class, this
+          application name is used instead.
+
+          Setting the application explicitely reduces potential conflicts if
+          multiple tntnet application servers are run on the same host on
+          different ports.
+       */
+      void setAppName(const std::string& appname_)
+        { appname = appname_; }
+      const std::string& getAppName() const
+        { return appname; }
   };
 
 }

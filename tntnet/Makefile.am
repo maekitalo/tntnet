@@ -27,6 +27,7 @@ DEMOSDIRS = \
     sdk/demos \
     sdk/demos/calc \
     sdk/demos/calcajax \
+    sdk/demos/calcapp \
     sdk/demos/calcmvc \
     sdk/demos/calci18n \
     sdk/demos/chat \

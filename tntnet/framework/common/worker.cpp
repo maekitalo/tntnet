@@ -305,10 +305,29 @@ namespace tnt
       Dispatcher::CompidentType ci = pos.getNext();
       try
       {
-        Component* comp;
+        Component* comp = 0;
         try
         {
-          comp = &comploader.fetchComp(ci, application.getDispatcher());
+          if (ci.libname == application.getAppName())
+          {
+            // if the libname is the app name look first, if the component is
+            // linked directly
+            try
+            {
+              Dispatcher::CompidentType cii = ci;
+              cii.libname = std::string();
+              comp = &comploader.fetchComp(cii, application.getDispatcher());
+            }
+            catch (const NotFoundException&)
+            {
+              // if the component is not found in the binary, fetchComp throws
+              // NotFoundException and comp remains 0.
+              // so we can ignore the exceptioni and just continue
+            }
+          }
+
+          if (comp == 0)
+            comp = &comploader.fetchComp(ci, application.getDispatcher());
         }
         catch (const NotFoundException& e)
         {
@@ -319,7 +338,8 @@ namespace tnt
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
-        application.getScopemanager().preCall(request, ci.libname);
+        application.getScopemanager().preCall(request,
+            ci.libname.empty() ? application.getAppName() : ci.libname);
 
         state = stateProcessingRequest;
         unsigned http_return = (*comp)(request, reply, request.getQueryParams(), true);
@@ -335,7 +355,8 @@ namespace tnt
           {
             log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
 
-            application.getScopemanager().postCall(request, reply, ci.libname);
+            application.getScopemanager().postCall(request, reply,
+                ci.libname.empty() ? application.getAppName() : ci.libname);
 
             state = stateSendReply;
             reply.sendReply(http_return);

@@ -34,8 +34,6 @@ Installation
 
 To install tntnet, you need cxxtools (http://www.tntnet.org/).
 
-This version needs at least cxxtools version 1.4.1
-
 You can find generic installation instructions in the file INSTALL.
 
 Quick start
@@ -50,7 +48,7 @@ without installing tntnet, change to the directory of the demo and run tntnet
 from the directory framework/runtime and pass the configurationfile tntnet.conf
 as a parameter:
   cd sdk/demos/hello
-  ../../../framework/runtime/tntnet tntnet.conf
+  ../../../framework/runtime/tntnet
 
 Tntnet listens on port 8000. Start your browser and enter the url:
   http://localhost:8000/hello

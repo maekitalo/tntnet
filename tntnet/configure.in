@@ -212,6 +212,7 @@ AC_CONFIG_FILES([
     sdk/demos/Makefile
     sdk/demos/calc/Makefile
     sdk/demos/calcajax/Makefile
+    sdk/demos/calcapp/Makefile
     sdk/demos/calcmvc/Makefile
     sdk/demos/calci18n/Makefile
     sdk/demos/chat/Makefile
