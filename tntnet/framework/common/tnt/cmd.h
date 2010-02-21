@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2003-2006 Tommi Maekitalo
- * 
+ * Copyright (C) 2010 Tommi Maekitalo
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -26,47 +26,60 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef TNT_CMD_H
+#define TNT_CMD_H
 
-#ifndef TNT_SCOPEMANAGER_H
-#define TNT_SCOPEMANAGER_H
-
-#include <string>
-#include <map>
-#include <string>
-#include <cxxtools/mutex.h>
+#include <iosfwd>
+#include <tnt/tntnet.h>
+#include <tnt/httprequest.h>
+#include <tnt/httpreply.h>
+#include <tnt/scope.h>
+#include <tnt/scopemanager.h>
+#include <tnt/comploader.h>
+#include <tnt/compident.h>
+#include <tnt/component.h>
 
 namespace tnt
 {
-  class Scope;
-  class Sessionscope;
-  class HttpRequest;
-  class HttpReply;
-
-  class ScopeManager
+  class Cmd
   {
+      Tntnet application;
+      HttpReply reply;
+      ScopeManager scopeManager;
+      Comploader comploader;
+      std::string sessionId;
+
+      // SocketIf methods
+      class NullSocketIf : public SocketIf
+      {
+        public:
+          std::string getPeerIp() const
+          { return std::string(); }
+          std::string getServerIp() const
+          { return std::string(); }
+          bool isSsl() const
+          { return false; }
+      } socketIf;
+
+      // thread context methods
+      class MyThreadContext : public ThreadContext
+      {
+          Scope threadScope;
+        public:
+          void touch()
+          { }
+          Scope& getScope()
+          { return threadScope; }
+      } threadContext;
+
     public:
-      typedef std::map<std::string, Scope*> scopes_type;
-      typedef std::map<std::string, Sessionscope*> sessionscopes_type;
+      explicit Cmd(std::ostream& out);
 
-    private:
-      scopes_type applicationScopes;
-      sessionscopes_type sessionScopes;
-      cxxtools::Mutex applicationScopesMutex;
-      cxxtools::Mutex sessionScopesMutex;
+      Tntnet& getApplication()       { return application; }
 
-      Scope* getApplicationScope(const std::string& appname);
-      Sessionscope* getSessionScope(const std::string& sessioncookie);
-      bool hasSessionScope(const std::string& sessioncookie);
-      void putSessionScope(const std::string& sessioncookie, Sessionscope* s);
-      void removeApplicationScope(const std::string& appname);
-      void removeSessionScope(const std::string& sessioncookie);
-
-    public:
-      void preCall(HttpRequest& request, const std::string& app);
-      void setSessionId(HttpRequest& request, const std::string& sessionId);
-      std::string postCall(HttpRequest& request, HttpReply& reply, const std::string& app);
-      void checkSessionTimeout();
+      void call(const Compident& ci, const QueryParams& = QueryParams());
   };
+
 }
 
-#endif // TNT_SCOPEMANAGER_H
+#endif // TNT_CMD_H

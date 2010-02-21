@@ -18,16 +18,16 @@
 .SH NAME
 tntnet \- web application server for c++
 .SH SYNOPSIS
-.B tntnet
-.RB [ -d ]
-.RB [ -c
-.IB file
-.RB ]
-|
-.RB [
-.BI file
-.RB ]
-.br
+.SY tntnet
+.OP -c file
+.OP --logall
+.YS
+.SY tntnet
+-C
+.OP -q query-string
+.RI [ componentId
+.IR .\|.\|. ]
+.YS
 .SH DESCRIPTION
 This manual page documents briefly the
 .B tntnet
@@ -41,17 +41,29 @@ is a web server that can generate dynamic content via precompiled C++
 modules.
 .SH OPTIONS
 A summary of options is included below.
-.TP
-.BI \-c\  file
+.IP "-c file"
 Use
 .I file
 as the configuration file.  If the
-.B \-c
+.B -c
 is omitted, the first nonoption argument is used as the config file.
-.TP
-.B \-d
-Show full debugging output, overriding any setting in the
-configuration file.
+.IP "--logall"
+Initialize logging earlier. Normally logging is initialized after starting the
+listeners and changing user so that logfiles are created with the right owner.
+For debugging reasons this option forces to do that earlier.
+.IP "-C"
+Call components and print the result to stdout instead of starting tntnet as
+a webserver
+.IP "-q query-string"
+In -C mode pass this query string to the component. The option may be repeated
+multiple times to pass name-value-pairs easily.
+.PP
+.SH EXAMPLE
+.EX
+tntnet -C -q arg1=35 -q arg2=7 -q op=/ calc@calc
+.EE
+calls the component calc@calc with query parameters and prints the result to
+stdout.
 .SH FILES
 .B /etc/tntnet/tntnet.conf
 The default configuration file.

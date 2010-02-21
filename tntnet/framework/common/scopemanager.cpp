@@ -154,37 +154,59 @@ namespace tnt
     request.setApplicationScope(getApplicationScope(app));
   }
 
-  void ScopeManager::postCall(HttpRequest& request, HttpReply& reply, const std::string& app)
+  void ScopeManager::setSessionId(HttpRequest& request, const std::string& sessionId)
+  {
+    if (sessionId.empty())
+    {
+      request.setSessionScope(0);
+    }
+    else
+    {
+      Sessionscope* sessionScope = getSessionScope(sessionId);
+      if (sessionScope != 0)
+      {
+        log_debug("session found");
+        request.setSessionScope(sessionScope);
+      }
+    }
+  }
+
+  std::string ScopeManager::postCall(HttpRequest& request, HttpReply& reply, const std::string& app)
   {
     std::string currentSessionCookieName = app.empty() ? std::string("tntnet") : "tntnet." + app;
+
+    std::string sessionId;
 
     if (request.hasSessionScope())
     {
       // request has session-scope
-      std::string cookie = request.getCookie(currentSessionCookieName);
-      if (cookie.empty() || !hasSessionScope(cookie))
+      sessionId = request.getCookie(currentSessionCookieName);
+      if (sessionId.empty() || !hasSessionScope(sessionId))
       {
-        // client has no or unknown cookie
+        // client has no or unknown sessionId
 
         cxxtools::Md5stream c;
         c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
-        cookie = c.getHexDigest();
-        log_info("create new session " << cookie);
-        reply.setCookie(currentSessionCookieName, cookie);
-        putSessionScope(cookie, &request.getSessionScope());
+        sessionId = c.getHexDigest();
+        log_info("create new session " << sessionId);
+        reply.setCookie(currentSessionCookieName, sessionId);
+        putSessionScope(sessionId, &request.getSessionScope());
       }
     }
     else
     {
-      std::string cookie = request.getCookie(currentSessionCookieName);
-      if (!cookie.empty())
+      sessionId = request.getCookie(currentSessionCookieName);
+      if (!sessionId.empty())
       {
-        // client has cookie
+        // client has sessionId
         log_debug("clear Cookie " << currentSessionCookieName);
         reply.clearCookie(currentSessionCookieName);
-        removeSessionScope(cookie);
+        removeSessionScope(sessionId);
+        sessionId.clear();
       }
     }
+
+    return sessionId;
   }
 
   void ScopeManager::checkSessionTimeout()

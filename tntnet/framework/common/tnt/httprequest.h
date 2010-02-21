@@ -168,6 +168,7 @@ namespace tnt
 
       tnt::QueryParams& getQueryParams()               { return qparam; }
       const tnt::QueryParams& getQueryParams() const   { return qparam; }
+      void setQueryParams(const tnt::QueryParams& q)   { qparam = q; }
 
       std::string getPeerIp() const    { return socketIf ? socketIf->getPeerIp()   : std::string(); }
       std::string getServerIp() const  { return socketIf ? socketIf->getServerIp() : std::string(); }

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2003-2006 Tommi Maekitalo
- * 
+ * Copyright (C) 2010 Tommi Maekitalo
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -26,47 +26,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
-#ifndef TNT_SCOPEMANAGER_H
-#define TNT_SCOPEMANAGER_H
-
-#include <string>
-#include <map>
-#include <string>
-#include <cxxtools/mutex.h>
+#include <tnt/cmd.h>
 
 namespace tnt
 {
-  class Scope;
-  class Sessionscope;
-  class HttpRequest;
-  class HttpReply;
-
-  class ScopeManager
+  Cmd::Cmd(std::ostream& out)
+    : reply(out, false)
   {
-    public:
-      typedef std::map<std::string, Scope*> scopes_type;
-      typedef std::map<std::string, Sessionscope*> sessionscopes_type;
+    reply.setDirectModeNoFlush();
+  }
 
-    private:
-      scopes_type applicationScopes;
-      sessionscopes_type sessionScopes;
-      cxxtools::Mutex applicationScopesMutex;
-      cxxtools::Mutex sessionScopesMutex;
+  void Cmd::call(const Compident& ci, const QueryParams& queryParams)
+  {
+    HttpRequest request(application, &socketIf);
+    request.setQueryParams(queryParams);
 
-      Scope* getApplicationScope(const std::string& appname);
-      Sessionscope* getSessionScope(const std::string& sessioncookie);
-      bool hasSessionScope(const std::string& sessioncookie);
-      void putSessionScope(const std::string& sessioncookie, Sessionscope* s);
-      void removeApplicationScope(const std::string& appname);
-      void removeSessionScope(const std::string& sessioncookie);
+    // set thread context for thread scope
+    request.setThreadContext(&threadContext);
 
-    public:
-      void preCall(HttpRequest& request, const std::string& app);
-      void setSessionId(HttpRequest& request, const std::string& sessionId);
-      std::string postCall(HttpRequest& request, HttpReply& reply, const std::string& app);
-      void checkSessionTimeout();
-  };
+    // sets session and application scope
+    scopeManager.preCall(request, ci.libname);
+    scopeManager.setSessionId(request, sessionId);
+
+    // fetch and call the component
+    comploader.fetchComp(ci)(request, reply, request.getQueryParams());
+
+    // sets session cookie if needed
+    sessionId = scopeManager.postCall(request, reply, application.getAppName());
+  }
+
 }
-
-#endif // TNT_SCOPEMANAGER_H

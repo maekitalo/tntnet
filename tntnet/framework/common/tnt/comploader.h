@@ -126,7 +126,7 @@ namespace tnt
       Comploader();
 
       virtual Component& fetchComp(const Compident& compident,
-        const Urlmapper& rootmapper);
+        const Urlmapper& rootmapper = Urlmapper());
       virtual Component* createComp(const Compident& compident,
         const Urlmapper& rootmapper);
       const char* getLangData(const Compident& compident, const std::string& lang);

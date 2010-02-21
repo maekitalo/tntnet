@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = libtntnet.la
 
 libtntnet_la_SOURCES = \
+	cmd.cpp \
 	compident.cpp \
 	comploader.cpp \
 	component.cpp \
@@ -51,6 +52,7 @@ libtntnet_la_SOURCES = \
 
 nobase_include_HEADERS = \
 	tnt/applicationunlocker.h \
+	tnt/cmd.h \
 	tnt/compident.h \
 	tnt/comploader.h \
 	tnt/component.h \

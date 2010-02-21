@@ -30,6 +30,7 @@
 #include "tnt/process.h"
 #include "tnt/tntnet.h"
 #include "tnt/tntconfig.h"
+#include "tnt/cmd.h"
 
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
@@ -165,9 +166,35 @@ int main(int argc, char* argv[])
       return 0;
     }
 
-    tnt::TntnetProcess app(argc, argv);
+    cxxtools::Arg<bool> cmd(argc, argv, 'C');
+    if (cmd)
+    {
+      log_init("tntnet.properties");
 
-    app.run();
+      tnt::Cmd cmdapp(std::cout);
+
+      tnt::QueryParams queryParams;
+
+      while (true)
+      {
+        cxxtools::Arg<std::string> param(argc, argv, 'q');
+        if (!param.isSet())
+          break;
+        queryParams.parse_url(param);
+      }
+
+      for (int a = 1; a < argc; ++a)
+      {
+        log_info("calling component <" << argv[a] << '>');
+        cmdapp.call(tnt::Compident(argv[a]), queryParams);
+      }
+    }
+    else
+    {
+      tnt::TntnetProcess app(argc, argv);
+
+      app.run();
+    }
   }
   catch(const std::exception& e)
   {
