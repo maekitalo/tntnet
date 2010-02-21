@@ -67,6 +67,8 @@ syn region ecppPre matchgroup=Delimiter start="<%pre>" end="</%pre>" contains=@c
 syn region ecppCleanup matchgroup=Delimiter start="<%cleanup>" end="</%cleanup>" contains=@cppTop
 syn region ecppShared matchgroup=Delimiter start="<%shared>" end="</%shared>" contains=@cppTop
 syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@cppTop
+syn region ecppSout matchgroup=Delimiter start="<%out>" end="</%out>" contains=@cppTop
+syn region ecppOut matchgroup=Delimiter start="<%sout>" end="</%sout>" contains=@cppTop
 syn region ecppIncluded display contained start=+"+ skip=+\\\\\|\\"+ end=+"+
 syn match ecppIncluded display contained "<[^>]*>"
 syn region ecppInclude matchgroup=Delimiter start="<%include>" end="</%include>" contains=@ecppIncluded
@@ -82,7 +84,6 @@ syn region ecppTranslateTag matchgroup=Delimiter start="{" end="}"
 syn cluster ecppTop contains=ecppLine,ecppExpr,ecppCondExpr,ecppCpp,ecppCpps,ecppComp,ecppEndComp,ecppArgs,ecppAttr,ecppConfig,ecppVar,ecppInit,ecppPre,ecppCleanup,ecppShared,ecppDoc,ecppComment,ecppCommentm,ecppTranslateTag,ecppInclude
 
 syn region ecppDef matchgroup=Delimiter start="<%def[^>]*>" end="</%def>" contains=@htmlTop
-syn region ecppClose matchgroup=Delimiter start="<%close>" end="</%close>" contains=@htmlTop
 "syn region ecppInt matchgroup=Delimiter start="<%i18n>" end="</%i18n>" contains=@ecppTop
 
 " Set up default highlighting. Almost all of this is done in the included

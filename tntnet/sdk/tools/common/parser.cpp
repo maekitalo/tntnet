@@ -770,6 +770,14 @@ namespace tnt
                 log_debug("onCpp(\"" << code << "\")");
                 handler.onCpp(code);
               }
+              else if (tag == "out")
+              {
+                handler.onHtmlExpression(code);
+              }
+              else if (tag == "sout")
+              {
+                handler.onExpression(code);
+              }
               else if (tag == "args" || tag == "attr" || tag == "config"
                 || tag == "include"
                 || tag == "session"
