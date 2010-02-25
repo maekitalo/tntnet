@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
     // set your settings
     app.mapUrl("^/$", "calc");
-    app.mapUrl("^/([^.]+)(\..+)?", "$1");
+    app.mapUrl("^/([^.]+)(..+)?", "$1");
 
     // set more settings; the settings from tntnet.conf are spread throughout
     // different classes. It is quite difficult to know, where to find the right
