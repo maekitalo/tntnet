@@ -403,10 +403,11 @@ namespace tnt
       {
         code << "static tnt::Zdata rawData(\n\"";
 
-        uLongf s = data.size() * data.size() / 100 + 100;
+        uLongf s = data.size() + data.size() / 100 + 100;
         std::vector<char> p(s);
+        char* buffer = &p[0];
 
-        int z_ret = ::compress(reinterpret_cast<Bytef*>(&p[0]), &s, (const Bytef*)data.ptr(), data.size());
+        int z_ret = ::compress(reinterpret_cast<Bytef*>(buffer), &s, (const Bytef*)data.ptr(), data.size());
 
         if (z_ret != Z_OK)
         {
@@ -416,7 +417,7 @@ namespace tnt
              z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
         }
 
-        std::transform(p.begin(), p.end(),
+        std::transform(buffer, buffer + s,
           std::ostream_iterator<const char*>(code),
           stringescaper());
 
