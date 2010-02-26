@@ -36,6 +36,21 @@
 
 namespace tnt
 {
+  class HttpReturn
+  {
+      unsigned returncode;
+      const char* msg;
+
+    public:
+      HttpReturn(unsigned errcode_, const char* msg_);
+
+      unsigned getReturnCode() const
+        { return returncode; }
+
+      const char* getMessage() const
+        { return msg; }
+  };
+
   /// HTTP-error-class
   class HttpError : public std::exception, public HttpMessage
   {

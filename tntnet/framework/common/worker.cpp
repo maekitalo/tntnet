@@ -342,7 +342,18 @@ namespace tnt
             ci.libname.empty() ? application.getAppName() : ci.libname);
 
         state = stateProcessingRequest;
-        unsigned http_return = (*comp)(request, reply, request.getQueryParams(), true);
+        unsigned http_return;
+        const char* http_msg = "OK";
+        try
+        {
+          http_return = (*comp)(request, reply, request.getQueryParams(), true);
+        }
+        catch (const HttpReturn& e)
+        {
+          http_return = e.getReturnCode();
+          http_msg = e.getMessage();
+        }
+
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())
@@ -359,7 +370,7 @@ namespace tnt
                 ci.libname.empty() ? application.getAppName() : ci.libname);
 
             state = stateSendReply;
-            reply.sendReply(http_return);
+            reply.sendReply(http_return, http_msg);
           }
 
           if (reply.out())

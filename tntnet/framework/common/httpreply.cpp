@@ -239,13 +239,25 @@ namespace tnt
 
   unsigned HttpReply::redirect(const std::string& newLocation)
   {
-    throw MovedTemporarily(newLocation);
+    setHeader(httpheader::location, newLocation);
+
+    outstream.str(std::string());
+    outstream << "<html><body>moved to <a href=\"" << newLocation << "\">" << newLocation << "</a></body></html>";
+
+    throw HttpReturn(HTTP_MOVED_TEMPORARILY, "moved temporarily");
+
     return HTTP_MOVED_TEMPORARILY;
   }
 
   unsigned HttpReply::notAuthorized(const std::string& realm)
   {
-    throw NotAuthorized(realm);
+    setHeader(httpheader::wwwAuthenticate, "Basic realm=\"" + realm + '"');
+
+    outstream.str(std::string());
+    outstream << "<html><body><h1>not authorized</h1></body></html>";
+
+    throw HttpReturn(HTTP_UNAUTHORIZED, "not authorized");
+
     return HTTP_UNAUTHORIZED;
   }
 

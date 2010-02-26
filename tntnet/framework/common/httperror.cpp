@@ -53,6 +53,12 @@ namespace tnt
     }
   }
 
+  HttpReturn::HttpReturn(unsigned returncode_, const char* msg_)
+    : returncode(returncode_),
+      msg(msg_)
+  {
+  }
+
   HttpError::HttpError(unsigned errcode, const std::string& m)
     : msg(httpErrorFormat(errcode, m)),
       body("<html><body><h1>Error</h1><p>" + m + "</p></body></html>")
