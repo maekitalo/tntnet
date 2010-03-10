@@ -541,6 +541,8 @@ namespace tnt
               else
                 state = state_cpp;
             }
+            else if (tag == "def" && ch == '(')
+              state = state_defarg0;
             break;
 
           case state_defarg0:
