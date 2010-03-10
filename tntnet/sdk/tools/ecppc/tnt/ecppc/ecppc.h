@@ -47,7 +47,7 @@ namespace tnt
         std::string extname;
         const char* inputfile;
 
-        typedef std::set<std::string> inputfiles_type;
+        typedef std::map<std::string, std::string> inputfiles_type;
         inputfiles_type inputfiles;
 
         std::string ofile;

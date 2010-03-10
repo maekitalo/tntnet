@@ -75,7 +75,23 @@ namespace tnt
       if (argc < 2 || argv[1][0] == '-')
         throw Usage(argv[0]);
       inputfile = argv[1];
-      std::copy(argv + 1, argv + argc, std::inserter(inputfiles, inputfiles.end()));
+      if (multibinary)
+      {
+        for (int a = 1; a < argc; ++a)
+        {
+          std::string inputfile = argv[a];
+          std::string key = inputfile;
+          if (!keepPath)
+          {
+            // strip path
+            std::string::size_type p;
+            if ((p = key.find_last_of('/')) != std::string::npos)
+              key.erase(0, p + 1);
+          }
+
+          inputfiles.insert(inputfiles_type::value_type(key, inputfile));
+        }
+      }
 
       if (debug)
         log_init_debug();
@@ -183,7 +199,8 @@ namespace tnt
         for (inputfiles_type::const_iterator it = inputfiles.begin();
              it != inputfiles.end(); ++it)
         {
-          std::string inputfile = *it;
+          std::string key = it->first;
+          std::string inputfile = it->second;
 
           struct stat st;
           if (stat(inputfile.c_str(), &st) != 0)
@@ -203,18 +220,13 @@ namespace tnt
           {
             mime = mimeDb.getMimetype(inputfile);
             if (mime.empty())
-              std::cerr << "warning: no mimetype found for \"" << inputfile << '"' << std::endl;
+            {
+              mime = "application/x-data";
+              std::cerr << "warning: no mimetype found for \"" << inputfile << "\" using " << mime << std::endl;
+            }
           }
 
-          if (!keepPath)
-          {
-            // strip path
-            std::string::size_type p;
-            if ((p = inputfile.find_last_of('/')) != std::string::npos)
-              inputfile.erase(0, p + 1);
-          }
-
-          generator.addImage(inputfile, content.str(), mime, st.st_ctime);
+          generator.addImage(key, content.str(), mime, st.st_ctime);
         }
       }
       else
