@@ -43,6 +43,49 @@ namespace tnt
 {
   namespace ecppc
   {
+    namespace
+    {
+      class BStringPrinter
+      {
+          std::ostream& out;
+          unsigned mincol, maxcol, col;
+
+        public:
+          explicit BStringPrinter(std::ostream& out_, unsigned mincol_,
+            unsigned maxcol_, unsigned col_)
+            : out(out_),
+              mincol(mincol_),
+              maxcol(maxcol_),
+              col(col_)
+            { }
+
+          void print(const char* data, unsigned count);
+          void print(char ch);
+      };
+
+      void BStringPrinter::print(const char* data, unsigned count)
+      {
+        for (unsigned n = 0; n < count; ++n)
+          print(data[n]);
+      }
+
+      void BStringPrinter::print(char ch)
+      {
+        stringescaper s;
+        const char* d = s(ch);
+        col += strlen(d);
+        if (col >= maxcol)
+        {
+          out << "\"\n";
+          for (unsigned n = 0; n < mincol; ++n)
+            out << ' ';
+          out << '"';
+          col = mincol;
+        }
+        out << d;
+      }
+    }
+
     ////////////////////////////////////////////////////////////////////////
     // Generator
     //
@@ -417,9 +460,8 @@ namespace tnt
              z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
         }
 
-        std::transform(buffer, buffer + s,
-          std::ostream_iterator<const char*>(code),
-          stringescaper());
+        BStringPrinter bs(code, 2, 120, 30);
+        bs.print(buffer, s);
 
         code << "\",\n  " << s << ", " << data.size() << ");\n";
       }
@@ -427,11 +469,8 @@ namespace tnt
       {
         code << "static const char* rawData = \"";
 
-        std::transform(
-          data.ptr(),
-          data.ptr() + data.size(),
-          std::ostream_iterator<const char*>(code),
-          stringescaper());
+        BStringPrinter bs(code, 2, 120, 30);
+        bs.print(data.ptr(), data.size());
 
         code << "\";\n\n";
       }

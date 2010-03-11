@@ -43,7 +43,7 @@ namespace tnt
       mutable char data[5];
 
     public:
-      stringescaper(bool escQuote_ = true)
+      explicit stringescaper(bool escQuote_ = true)
         : escQuote(escQuote_)
       { }
 
