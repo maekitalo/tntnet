@@ -308,7 +308,6 @@ namespace tnt
       out << "////////////////////////////////////////////////////////////////////////\n"
              "// " << filename << "\n"
              "// generated with ecppc\n"
-             "// date: " << gentime <<
              "//\n\n";
     }
 
