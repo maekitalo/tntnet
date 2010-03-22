@@ -16,6 +16,7 @@ EXTRA_DIST = \
 	calcView.ecpp \
 	calcmvc.ecpp
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calcmvc_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 calcmvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -26,7 +27,7 @@ CLEANFILES = calcController.cpp calcModel.cpp calcView.cpp calcmvc.cpp \
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties calcmvc >$@

@@ -1,3 +1,5 @@
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
+
 pkglib_LTLIBRARIES = tntnet.la
 
 tntnet_la_SOURCES = \

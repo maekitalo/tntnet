@@ -16,6 +16,7 @@ EXTRA_DIST = \
 	message.ecpp \
 	put.ecpp
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 message_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 message_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -26,9 +27,9 @@ CLEANFILES = get.cpp jquery.cpp message.cpp put.cpp tntnet.conf tntnet.propertie
 SUFFIXES=.ecpp .js .cpp
 
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 .js.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript -b $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript -b -o $@ $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties message >$@

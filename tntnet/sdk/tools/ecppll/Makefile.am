@@ -5,6 +5,6 @@ ecppll_SOURCES = \
 
 ecppll_LDADD = $(top_builddir)/sdk/tools/common/libtntnet_sdk.la
 
-AM_CPPFLAGS = -I$(top_builddir)/sdk/tools/common
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I$(top_srcdir)/sdk/tools/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 AM_LDFLAGS = -lcxxtools $(PTHREAD_LIBS)

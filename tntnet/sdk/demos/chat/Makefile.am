@@ -19,6 +19,7 @@ EXTRA_DIST = \
 	smile.png \
 	wink.png
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 chat_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 chat_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -30,11 +31,11 @@ CLEANFILES = chat.cpp ajax.cpp getchat.cpp putchat.cpp \
 
 SUFFIXES=.ecpp .js .png .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
 .js.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m application/x-javascript $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m application/x-javascript -o $@ $<
 .png.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png -o $@ $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties chat >$@

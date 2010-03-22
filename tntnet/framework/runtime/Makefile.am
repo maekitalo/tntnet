@@ -1,3 +1,5 @@
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
+
 bin_PROGRAMS = tntnet
 
 tntnet_SOURCES = \

@@ -12,6 +12,7 @@ EXTRA_DIST = \
     subcomp.ecpp \
 	extcomp.ecpp
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 comp_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 comp_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -24,7 +25,7 @@ CLEANFILES = comp.cpp subcomp.cpp extcomp.cpp \
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $(ECPPFLAGS) $(ECPPFLAGS_CPP) $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties comp >$@

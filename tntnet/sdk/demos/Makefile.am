@@ -8,6 +8,7 @@ EXTRA_DIST = \
 	tntnet.conf \
 	demos.txt
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 alldemos_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 alldemos_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -17,7 +18,7 @@ CLEANFILES = alldemos.cpp tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
 tntnet.properties:
 	$(CXXTOOLS_CONFIG) --properties tntnet >$@

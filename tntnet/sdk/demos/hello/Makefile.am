@@ -8,6 +8,7 @@ EXTRA_DIST = \
 	hello.ecpp \
 	tntnet.jpg
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 hello_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -19,9 +20,9 @@ ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
 SUFFIXES=.ecpp .jpg .cpp
 .ecpp.cpp:
-	$(ECPPC) $<
+	$(ECPPC) -o $@ $<
 .jpg.cpp:
-	$(ECPPC) -b -m image/jpeg $<
+	$(ECPPC) -b -m image/jpeg -o $@ $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties hello >$@

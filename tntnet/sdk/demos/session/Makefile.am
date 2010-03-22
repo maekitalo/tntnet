@@ -8,6 +8,7 @@ EXTRA_DIST = \
 	session.ecpp \
 	appsession.ecpp
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 session_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 session_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -18,7 +19,7 @@ CLEANFILES = session.cpp appsession.cpp \
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties session >$@

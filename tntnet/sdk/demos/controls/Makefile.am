@@ -33,6 +33,7 @@ EXTRA_DIST = \
 	plus.png \
 	tntnet.conf
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 controls_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 controls_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -58,11 +59,11 @@ ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
 SUFFIXES=.ecpp .png .css .cpp
 .ecpp.cpp:
-	$(ECPPC) $<
+	$(ECPPC) -o $@ $<
 .png.cpp:
-	$(ECPPC) -b -m image/png $<
+	$(ECPPC) -b -m image/png -o $@ $<
 .css.cpp:
-	$(ECPPC) -b -m text/css $<
+	$(ECPPC) -b -m text/css -o $@ $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties controls >$@

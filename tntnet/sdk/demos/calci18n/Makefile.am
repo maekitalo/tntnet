@@ -14,6 +14,7 @@ EXTRA_DIST = \
 	fi.png \
 	de.png
 
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calci18n_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
 calci18n_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
@@ -30,24 +31,28 @@ ECPPLL=$(top_builddir)/sdk/tools/ecppll/ecppll
 SUFFIXES=.ecpp .cpp .png
 
 .ecpp.cpp:
-	$(ECPPC) $<
+	$(ECPPC) -o $@ $<
 .png.cpp:
-	$(ECPPC) -b $<
+	$(ECPPC) -b -o $@ $<
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config  --properties calci18n >$@
 tntnet.conf:
 	( $(SHELL) $(top_builddir)/tntnet-config  --config=calci18n; echo CompPath .libs ) >$@
 
-calci18n.txt: calci18n.ecpp
+calci18n.txt: $(srcdir)/calci18n.ecpp
 	$(ECPPL) -o calci18n.txt calci18n.ecpp
 
-calci18n.fi: calci18n.ecpp calci18n.txt.fi
+calci18n.fi: $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.fi
 	[ -d fi ] || mkdir fi
 	rm -f calci18n.fi
-	( $(ECPPLL) -o fi/calci18n.tntdata calci18n.ecpp calci18n.txt.fi && cd fi && zip ../calci18n.fi calci18n.tntdata )
+	( $(ECPPLL) -o fi/calci18n.tntdata $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.fi && \
+		cd fi && \
+		zip ../calci18n.fi calci18n.tntdata )
 
-calci18n.de: calci18n.ecpp calci18n.txt.de
+calci18n.de: $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.de
 	[ -d de ] || mkdir de
 	rm -f calci18n.de
-	( $(ECPPLL) -o de/calci18n.tntdata calci18n.ecpp calci18n.txt.de && cd de && zip ../calci18n.de calci18n.tntdata )
+	( $(ECPPLL) -o de/calci18n.tntdata $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.de && \
+		cd de && \
+		zip ../calci18n.de calci18n.tntdata )
