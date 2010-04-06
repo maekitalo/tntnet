@@ -340,7 +340,6 @@ namespace tnt
            "  -z               compress constant data\n"
            "  -v               verbose\n"
            "  -M               generate dependency for Makefile\n"
-           "  -h               generate separate header-file\n" 
            "  -p               keep path when generating component name from filename\n"
            "  -L               disable generation of #line-directives\n";
       msg = o.str();
