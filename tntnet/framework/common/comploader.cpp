@@ -275,6 +275,12 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
       lib = ComponentLibrary(*p, n, local);
     }
 
+    if (!lib)
+    {
+      log_debug("load library \"" << n << "\" from current dir");
+      lib = ComponentLibrary(".", n, local);
+    }
+
 #ifdef PKGLIBDIR
     if (!lib)
     {
@@ -282,12 +288,6 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
       lib = ComponentLibrary(PKGLIBDIR, n, local);
     }
 #endif
-
-    if (!lib)
-    {
-      log_debug("load library \"" << n << "\" from current dir");
-      lib = ComponentLibrary(".", n, local);
-    }
 
     if (!lib)
     {
