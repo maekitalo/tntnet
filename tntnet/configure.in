@@ -23,7 +23,7 @@ AC_LANG(C++)
 ACX_PTHREAD
 
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
-AC_CHECK_HEADER([cxxtools/net/tcpstream.h], , AC_MSG_ERROR([cxxtools headers not found]))
+AC_CHECK_HEADER([cxxtools/net/tcpsocket.h], , AC_MSG_ERROR([cxxtools headers not found]))
 
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
@@ -172,10 +172,16 @@ AM_CONDITIONAL(MAKE_STRESSJOB, test "$stressjob_option" = "yes")
 AC_CHECK_FUNCS([setenv])
 
 AC_COMPILE_IFELSE(
-  [#include <netinet/tcp.h>
-   int i = TCP_DEFER_ACCEPT;
-  ],
-  AC_DEFINE(HAVE_TCP_DEFER_ACCEPT, [], [defined if TCP_DEFER_ACCEPT is defined]))
+  [#include <cxxtools/arg.h>
+   int main(int argc, char** argv)
+   { cxxtools::Argp<int> o(argc, argv, 'o'); } ],
+  AC_DEFINE(HAVE_CXXTOOLS_ARGP, , [defined if template cxxtools::Argp is supported]))
+
+AC_COMPILE_IFELSE(
+  [#include <cxxtools/net/tcpserver.h>
+   cxxtools::net::TcpServer s;
+   int f = s.getFd();],
+  AC_DEFINE(HAVE_CXXTOOLS_TCPSERVER_GETFD, , [defined if template cxxtools::Argp is supported]))
 
 case "${host_cpu}-${host_os}" in
 *-aix*)
@@ -184,7 +190,7 @@ case "${host_cpu}-${host_os}" in
 *-darwin*)
     SHARED_LIB_FLAG=-dynamiclib
     ;;
-*)  
+*)
     SHARED_LIB_FLAG=-shared
     ;;
 esac

@@ -56,7 +56,7 @@ namespace tnt
 
         virtual void onInclude(const std::string& file);
 
-        void getDependencies(std::ostream& out, bool useHeader) const;
+        void getDependencies(std::ostream& out) const;
     };
 
   }

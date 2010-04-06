@@ -48,9 +48,14 @@ namespace tnt
   namespace ecppc
   {
     Ecppc::Ecppc(int& argc, char* argv[])
-      : requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
+      : requestname(cxxtools::Argp<std::string>(argc, argv, 'n')),
+#ifdef HAVE_CXXTOOLS_ARGP
+        ofile(cxxtools::Argp<std::string>(argc, argv, 'o')),
+        odir(cxxtools::Argp<std::string>(argc, argv, 'O')),
+#else
         ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
+#endif
         mimetype(argc, argv, 'm'),
         mimedb(argc, argv, "--mimetypes", "/etc/mime.types"),
         binary(argc, argv, 'b'),
@@ -61,12 +66,15 @@ namespace tnt
         verbose(argc, argv, 'v'),
         debug(argc, argv, 'd'),
         generateDependencies(argc, argv, 'M'),
-        generateHeader(argc, argv, 'h'),
         disableLinenumbers(argc, argv, 'L')
     {
       while (true)
       {
+#ifdef HAVE_CXXTOOLS_ARGP
+        cxxtools::Argp<const char*> include(argc, argv, 'I', 0);
+#else
         cxxtools::Arg<const char*> include(argc, argv, 'I', 0);
+#endif
         if (!include.isSet())
           break;
         includes.push_back(include.getValue());
@@ -108,9 +116,6 @@ namespace tnt
         {
           std::cerr << "warning: no requestname passed (with -n) - using \"images\"" << std::endl;
           requestname = "images";
-
-          if (ofile.empty() && !generateDependencies)
-            ofile = requestname;
         }
         else
         {
@@ -141,6 +146,9 @@ namespace tnt
           }
         }
       }
+
+      if (ofile.empty() && !generateDependencies)
+        ofile = requestname;
 
       if (generateDependencies)
         return runDependencies();
@@ -204,7 +212,20 @@ namespace tnt
 
           struct stat st;
           if (stat(inputfile.c_str(), &st) != 0)
-            throw std::runtime_error("can't stat " + inputfile);
+          {
+            // search for input file in includes list
+            int ret;
+            for (includes_type::const_iterator incl = includes.begin();
+              incl != includes.end(); ++incl)
+            {
+              inputfile = *incl + '/' + it->second;
+              if ((ret = stat(inputfile.c_str(), &st)) != 0)
+                break;
+            }
+
+            if (ret != 0)
+              throw std::runtime_error("can't stat " + it->second);
+          }
 
           std::ifstream in(inputfile.c_str());
           if (!in)
@@ -253,37 +274,14 @@ namespace tnt
       //
       // generate Code
       //
-      if (generateHeader)
-      {
-        if (verbose)
-          std::cout << "generate " << obase << ".h" << std::endl;
-        std::ofstream hout((obase + ".h").c_str());
-        generator.getHeader(hout, ofile + ".h");
-        hout.close();
+      if (verbose)
+        std::cout << "generate " << obase << ".cpp" << std::endl;
+      std::ofstream sout((obase + ".cpp").c_str());
+      generator.getCppWoHeader(sout, ofile + ".cpp");
+      sout.close();
 
-        if (!hout)
-          throw std::runtime_error("error writing file \"" + ofile + ".h\"");
-
-        if (verbose)
-          std::cout << "generate " << obase << ".cpp" << std::endl;
-        std::ofstream sout((obase + ".cpp").c_str());
-        generator.getCpp(sout, ofile + ".cpp");
-        sout.close();
-
-        if (!sout)
-          throw std::runtime_error("error writing file \"" + ofile + ".cpp\"");
-      }
-      else
-      {
-        if (verbose)
-          std::cout << "generate " << obase << ".cpp" << std::endl;
-        std::ofstream sout((obase + ".cpp").c_str());
-        generator.getCppWoHeader(sout, ofile + ".cpp");
-        sout.close();
-
-        if (!sout)
-          throw std::runtime_error("error writing file \"" + ofile + ".cpp\"");
-      }
+      if (!sout)
+        throw std::runtime_error("error writing file \"" + ofile + ".cpp\"");
 
       return 0;
     }
@@ -302,11 +300,11 @@ namespace tnt
         runParser(in, generator);
 
       if (ofile.empty())
-        generator.getDependencies(std::cout, generateHeader);
+        generator.getDependencies(std::cout);
       else
       {
         std::ofstream out(ofile.c_str());
-        generator.getDependencies(out, generateHeader);
+        generator.getDependencies(out);
       }
 
       return 0;

@@ -47,14 +47,11 @@ namespace tnt
       dependencies.push_back(file);
     }
 
-    void Dependencygenerator::getDependencies(std::ostream& out, bool useHeader) const
+    void Dependencygenerator::getDependencies(std::ostream& out) const
     {
       log_trace("getDependencies");
 
-      out << classname << ".cpp";
-      if (useHeader)
-        out << ' ' << classname << ".h";
-      out << ": " << inputfile;
+      out << classname << ".cpp: " << inputfile;
       for (dependencies_type::const_iterator it = dependencies.begin();
            it != dependencies.end(); ++it)
         out << " \\\n  " << *it;

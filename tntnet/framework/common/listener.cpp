@@ -33,10 +33,8 @@
 #include <cxxtools/log.h>
 #include <cxxtools/net/net.h>
 #include <unistd.h>
+#ifdef HAVE_CXXTOOLS_TCPSERVER_GETFD
 #include <fcntl.h>
-
-#ifdef HAVE_TCP_DEFER_ACCEPT
-#  include <cxxtools/systemerror.h>
 #endif
 
 #ifdef WITH_GNUTLS
@@ -45,12 +43,6 @@
 
 #ifdef WITH_OPENSSL
 #  include "tnt/openssl.h"
-#endif
-
-#ifdef HAVE_TCP_DEFER_ACCEPT
-#  include <netinet/tcp.h>
-#  include <sys/types.h>
-#  include <sys/socket.h>
 #endif
 
 log_define("tntnet.listener")
@@ -63,15 +55,7 @@ static void doListenRetry(cxxtools::net::TcpServer& server,
     try
     {
       log_debug("listen " << ipaddr << ':' << port);
-      server.listen(ipaddr, port, tnt::Listener::getBacklog());
-
-#ifdef HAVE_TCP_DEFER_ACCEPT
-      int deferSecs = 30;
-      if (::setsockopt(server.getFd(), SOL_TCP, TCP_DEFER_ACCEPT,
-          &deferSecs, sizeof(deferSecs)) < 0)
-        throw cxxtools::SystemError("setsockopt(TCP_DEFER_ACCEPT)");
-#endif
-
+      server.listen(ipaddr, port, tnt::Listener::getBacklog(), cxxtools::net::TcpServer::DEFER_ACCEPT);
       return;
     }
     catch (const cxxtools::net::AddressInUse& e)
@@ -123,7 +107,9 @@ namespace tnt
   void Listener::initialize()
   {
     log_info("listen ip=" << getIpaddr() << " port=" << getPort());
+#ifdef HAVE_CXXTOOLS_TCPSERVER_GETFD
     fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
+#endif
   }
 
 #ifdef WITH_GNUTLS
@@ -152,7 +138,9 @@ namespace tnt
   void Ssllistener::initialize()
   {
     log_info("listen ip=" << getIpaddr() << " port=" << getPort() << " (ssl)");
+#ifdef HAVE_CXXTOOLS_TCPSERVER_GETFD
     fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
+#endif
   }
 
 #endif // USE_SSL

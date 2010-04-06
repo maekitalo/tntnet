@@ -143,17 +143,17 @@ CXXFLAGS+=-I$includedir -fPIC -O2
 LDFLAGS+=@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
 
 .ecpp.cpp:
-	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_CPP} \$<
+	\${ECPPC} \${ECPPFLAGS} \${ECPPFLAGS_CPP} -o \$@ \$<
 .gif.cpp:
-	\${ECPPC} \${ECPPFLAGS} -m image/gif \${ECPPFLAGS_GIF} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m image/gif \${ECPPFLAGS_GIF} -b -o \$@ \$<
 .jpg.cpp:
-	\${ECPPC} \${ECPPFLAGS} -m image/jpg \${ECPPFLAGS_JPG} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m image/jpg \${ECPPFLAGS_JPG} -b -o \$@ \$<
 .png.cpp:
-	\${ECPPC} \${ECPPFLAGS} -m image/png \${ECPPFLAGS_PNG} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m image/png \${ECPPFLAGS_PNG} -b -o \$@ \$<
 .css.cpp:
-	\${ECPPC} \${ECPPFLAGS} -m text/css \${ECPPFLAGS_CSS} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m text/css \${ECPPFLAGS_CSS} -b -o \$@ \$<
 .js.cpp:
-	\${ECPPC} \${ECPPFLAGS} -m application/javascript \${ECPPFLAGS_JS} -b \$<
+	\${ECPPC} \${ECPPFLAGS} -m application/javascript \${ECPPFLAGS_JS} -b -o \$@ \$<
 .cpp.o:
 	\${CXX} \${CPPFLAGS} \${CXXFLAGS} -c \$<
 EOF
@@ -180,7 +180,7 @@ EOF
 
 Sample ecpp-project "$P" created.
 To build change to the directory "$P" and run make.
-To run the application execute "tntnet tntnet.conf" there.
+To run the application execute "tntnet" there.
 To view the page navigate your browser to "http://localhost:8000/".
 
 EOF

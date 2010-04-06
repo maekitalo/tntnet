@@ -441,37 +441,40 @@ namespace tnt
     {
       getFactoryDeclaration(code);
 
-      if (compress)
+      if (!data.empty())
       {
-        code << "static tnt::Zdata rawData(\n\"";
-
-        uLongf s = data.size() + data.size() / 100 + 100;
-        std::vector<char> p(s);
-        char* buffer = &p[0];
-
-        int z_ret = ::compress(reinterpret_cast<Bytef*>(buffer), &s, (const Bytef*)data.ptr(), data.size());
-
-        if (z_ret != Z_OK)
+        if (compress)
         {
-          throw std::runtime_error(std::string("error compressing data: ") +
-            (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
-             z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
-             z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
+          code << "static tnt::Zdata rawData(\n\"";
+
+          uLongf s = data.size() + data.size() / 100 + 100;
+          std::vector<char> p(s);
+          char* buffer = &p[0];
+
+          int z_ret = ::compress(reinterpret_cast<Bytef*>(buffer), &s, (const Bytef*)data.ptr(), data.size());
+
+          if (z_ret != Z_OK)
+          {
+            throw std::runtime_error(std::string("error compressing data: ") +
+              (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
+               z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
+               z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
+          }
+
+          BStringPrinter bs(code, 2, 120, 30);
+          bs.print(buffer, s);
+
+          code << "\",\n  " << s << ", " << data.size() << ");\n";
         }
+        else
+        {
+          code << "static const char* rawData = \"";
 
-        BStringPrinter bs(code, 2, 120, 30);
-        bs.print(buffer, s);
+          BStringPrinter bs(code, 2, 120, 30);
+          bs.print(data.ptr(), data.size());
 
-        code << "\",\n  " << s << ", " << data.size() << ");\n";
-      }
-      else
-      {
-        code << "static const char* rawData = \"";
-
-        BStringPrinter bs(code, 2, 120, 30);
-        bs.print(data.ptr(), data.size());
-
-        code << "\";\n\n";
+          code << "\";\n\n";
+        }
       }
 
       // multi-images
@@ -688,8 +691,6 @@ namespace tnt
       code << '\n';
 
       getNamespaceStart(code);
-
-      code << "template <typename T> inline void use(const T&) { }\n\n";
 
       getClassDeclaration(code);
 
