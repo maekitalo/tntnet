@@ -39,18 +39,6 @@ namespace tnt
 
   const unsigned Messageheader::MAXHEADERSIZE;
 
-  char* Messageheader::findEnd()
-  {
-    char* p = rawdata;
-    while (*p)
-    {
-      p += std::strlen(p) + 1; // skip key
-      p += std::strlen(p) + 1; // skip value
-    }
-
-    return p;
-  }
-
   bool Messageheader::compareHeader(const char* key, const char* value) const
   {
     const_iterator it = find(key);
@@ -64,17 +52,17 @@ namespace tnt
     if (!*key)
       throw std::runtime_error("empty key not allowed in messageheader");
 
-    char* p = findEnd();
+    char* p = getEnd();
 
     const_iterator it = begin();
     while (it != end())
     {
       if (StringCompareIgnoreCase<const char*>(key, it->first) == 0)
       {
-        unsigned slen = it->second - it->first + std::strlen(it->second);
+        unsigned slen = it->second - it->first + std::strlen(it->second) + 1;
 
         std::memcpy(
-            rawdata + (it->first - rawdata),
+            const_cast<char*>(it->first),
             it->first + slen,
             p - it->first + slen);
 
@@ -85,6 +73,8 @@ namespace tnt
       else
         ++it;
     }
+
+    endOffset = p - rawdata;
   }
 
   Messageheader::const_iterator Messageheader::find(const char* key) const
@@ -98,6 +88,15 @@ namespace tnt
     return end();
   }
 
+  void Messageheader::clear()
+  {
+#ifdef DEBUG
+    std::memset(rawdata, '\xfe', sizeof(rawdata));
+#endif
+    rawdata[0] = rawdata[1] = '\0';
+    endOffset = 0;
+  }
+
   void Messageheader::setHeader(const char* key, const char* value, bool replace)
   {
     if (!*key)
@@ -106,7 +105,7 @@ namespace tnt
     if (replace)
       removeHeader(key);
 
-    char* p = findEnd();
+    char* p = getEnd();
 
     size_t lk = strlen(key);     // length of key
     size_t lk2 = key[lk-1] == ':' ? lk + 1 : lk;  // length of key including trailing ':'
@@ -121,6 +120,8 @@ namespace tnt
     *(p - 1) = '\0';
     std::strcpy(p, value); // copy value
     p[lv + 1] = '\0';      // put new message end marker in place
+
+    endOffset = (p + lv + 1) - rawdata;
   }
 
   Messageheader::return_type Messageheader::onField(const char* name, const char* value)

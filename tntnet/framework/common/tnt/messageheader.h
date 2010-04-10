@@ -44,7 +44,8 @@ namespace tnt
 
     private:
       char rawdata[MAXHEADERSIZE];  // key_1\0value_1\0key_2\0value_2\0...key_n\0value_n\0\0
-      char* findEnd();
+      unsigned endOffset;
+      char* getEnd() { return rawdata + endOffset; }
 
     public:
       class Parser;
@@ -145,8 +146,7 @@ namespace tnt
       void removeHeader(const std::string& key)
         { removeHeader(key.c_str()); }
 
-      void clear()
-        { rawdata[0] = rawdata[1] = '\0'; }
+      void clear();
 
       void setHeader(const char* key, const char* value, bool replace);
 

@@ -31,6 +31,7 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
         : cxxtools::unit::TestSuite("cxxtools-messageheader-Test")
         {
             registerMethod("testMessageheader", *this, &MessageheaderTest::testMessageheader);
+            registerMethod("testMessageheaderRemove", *this, &MessageheaderTest::testMessageheaderRemove);
             registerMethod("testMessageheaderParser", *this, &MessageheaderTest::testMessageheaderParser);
             registerMethod("testMessageheaderParserSize", *this, &MessageheaderTest::testMessageheaderParserSize);
         }
@@ -47,6 +48,35 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
             CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
             CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
             CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
+        }
+
+        void testMessageheaderRemove()
+        {
+            tnt::Messageheader mh;
+            mh.setHeader("blah:", "tntnet", false);
+            mh.setHeader("foo:", "bar", false);
+            mh.setHeader("xyz:", "abc", false);
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
+            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
+            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
+
+            mh.removeHeader("foo:");
+            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+
+            mh.removeHeader("xyz:");
+            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
+            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("xyz:"));
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+
+            mh.setHeader("xyz:", "abc", false);
+            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
         }
 
         void testMessageheaderParser()
