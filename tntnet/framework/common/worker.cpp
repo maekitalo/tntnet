@@ -42,7 +42,7 @@
 #include <arpa/inet.h>
 #include <sys/poll.h>
 #include <cxxtools/dlloader.h>
-#include <cxxtools/net/net.h>
+#include <cxxtools/ioerror.h>
 #include <pthread.h>
 #include <string.h>
 
@@ -185,7 +185,7 @@ namespace tnt
           }
         } while (keepAlive);
       }
-      catch (const cxxtools::net::Timeout& e)
+      catch (const cxxtools::IOTimeout& e)
       {
         application.getPoller().addIdleJob(j);
       }
