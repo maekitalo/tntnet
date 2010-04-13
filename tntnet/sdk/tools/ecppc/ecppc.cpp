@@ -49,36 +49,28 @@ namespace tnt
   {
     Ecppc::Ecppc(int& argc, char* argv[])
       : requestname(cxxtools::Argp<std::string>(argc, argv, 'n')),
-#ifdef HAVE_CXXTOOLS_ARGP
         ofile(cxxtools::Argp<std::string>(argc, argv, 'o')),
         odir(cxxtools::Argp<std::string>(argc, argv, 'O')),
-#else
-        ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
-        odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
-#endif
-        mimetype(argc, argv, 'm'),
-        mimedb(argc, argv, "--mimetypes", "/etc/mime.types"),
-        binary(argc, argv, 'b'),
-        multibinary(argc, argv, 'b'),
-        keepPath(argc, argv, 'p'),
-        componentclass(argc, argv, 'C'),
-        compress(argc, argv, 'z'),
-        verbose(argc, argv, 'v'),
-        debug(argc, argv, 'd'),
-        generateDependencies(argc, argv, 'M'),
-        disableLinenumbers(argc, argv, 'L')
+        mimetype(cxxtools::Argp<std::string>(argc, argv, 'm')),
+        mimedb(cxxtools::Argp<std::string>(argc, argv, "--mimetypes", "/etc/mime.types"))
     {
+
       while (true)
       {
-#ifdef HAVE_CXXTOOLS_ARGP
-        cxxtools::Argp<const char*> include(argc, argv, 'I', 0);
-#else
-        cxxtools::Arg<const char*> include(argc, argv, 'I', 0);
-#endif
+        cxxtools::Argp<std::string> include(argc, argv, 'I');
         if (!include.isSet())
           break;
-        includes.push_back(include.getValue());
+        log_debug("include: " << include.getValue());
+        includes.push_back(include);
       }
+
+      binary = cxxtools::Arg<bool>(argc, argv, 'b');
+      multibinary = cxxtools::Arg<bool>(argc, argv, 'b');
+      keepPath = cxxtools::Arg<bool>(argc, argv, 'p');
+      compress = cxxtools::Arg<bool>(argc, argv, 'z');
+      verbose = cxxtools::Arg<bool>(argc, argv, 'v');
+      generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
+      disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
 
       if (argc < 2 || argv[1][0] == '-')
         throw Usage(argv[0]);
@@ -100,11 +92,6 @@ namespace tnt
           inputfiles.insert(inputfiles_type::value_type(key, inputfile));
         }
       }
-
-      if (debug)
-        log_init_debug();
-      else
-        log_init();
     }
 
     int Ecppc::run()
@@ -169,7 +156,7 @@ namespace tnt
       generator.enableLinenumbers(!disableLinenumbers);
       Bodypart::enableLinenumbers(!disableLinenumbers);
 
-      if (mimetype.isSet())
+      if (!mimetype.empty())
         generator.setMimetype(mimetype);
       else if (!extname.empty() && !multibinary)
       {
@@ -186,9 +173,6 @@ namespace tnt
 
       generator.setCompress(compress);
 
-      if (componentclass.isSet())
-        generator.setComponentclass(componentclass);
-
       std::string obase = odir;
       if (!obase.empty())
         obase += '/';
@@ -201,7 +185,7 @@ namespace tnt
       if (multibinary)
       {
         tnt::MimeDb mimeDb;
-        if (!mimetype.isSet())
+        if (mimetype.empty())
           mimeDb.read(mimedb);
 
         for (inputfiles_type::const_iterator it = inputfiles.begin();
@@ -211,6 +195,7 @@ namespace tnt
           std::string inputfile = it->second;
 
           struct stat st;
+          log_debug("check for input file " << inputfile);
           if (stat(inputfile.c_str(), &st) != 0)
           {
             // search for input file in includes list
@@ -218,15 +203,17 @@ namespace tnt
             for (includes_type::const_iterator incl = includes.begin();
               incl != includes.end(); ++incl)
             {
-              inputfile = *incl + '/' + it->second;
-              if ((ret = stat(inputfile.c_str(), &st)) != 0)
+              std::string inputfile_ = *incl + '/' + it->second;
+              log_debug("check for input file " << inputfile_);
+              if ((ret = stat(inputfile_.c_str(), &st)) == 0)
+              {
+                inputfile = inputfile_;
                 break;
+              }
             }
-
-            if (ret != 0)
-              throw std::runtime_error("can't stat " + it->second);
           }
 
+          log_debug("read input file " << inputfile);
           std::ifstream in(inputfile.c_str());
           if (!in)
             throw std::runtime_error("can't read " + inputfile);
@@ -235,7 +222,7 @@ namespace tnt
           content << in.rdbuf();
 
           std::string mime;
-          if (mimetype.isSet())
+          if (!mimetype.empty())
             mime = mimetype;
           else
           {
@@ -353,6 +340,7 @@ int main(int argc, char* argv[])
 
   try
   {
+    log_init();
     tnt::ecppc::Ecppc app(argc, argv);
     return app.run();
   }

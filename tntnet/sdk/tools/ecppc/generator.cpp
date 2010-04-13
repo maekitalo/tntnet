@@ -315,8 +315,6 @@ namespace tnt
     {
       out << "#include <tnt/ecpp.h>\n"
              "#include <tnt/convert.h>\n";
-      if (!componentclass.empty())
-        out << "#include \"" << componentclass << ".h\"\n";
     }
 
     void Generator::getPre(std::ostream& out) const
@@ -339,12 +337,7 @@ namespace tnt
 
     void Generator::getClassDeclaration(std::ostream& out) const
     {
-      out << "class _component_ : public ";
-      if (componentclass.empty())
-        out << "tnt::EcppComponent";
-      else
-        out << componentclass;
-      out << "\n"
+      out << "class _component_ : public tnt::EcppComponent\n"
              "{\n"
              "    _component_& main()  { return *this; }\n\n" 
              "  protected:\n"

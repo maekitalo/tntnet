@@ -53,7 +53,6 @@ namespace tnt
     {
         bool raw;
         std::string mimetype;
-        std::string componentclass;
 
         typedef std::list<tnt::ecppc::Variable> variable_declarations;
 
@@ -121,9 +120,6 @@ namespace tnt
 
         void setMimetype(const std::string& type)    { mimetype = type; }
         const std::string& getMimetype()             { return mimetype; }
-
-        void setComponentclass(const std::string& c) { componentclass = c; }
-        const std::string& getComponentclass()       { return componentclass; }
 
         void setRawMode(bool sw = true)              { raw = sw; }
         bool isRawMode() const                       { return raw; }

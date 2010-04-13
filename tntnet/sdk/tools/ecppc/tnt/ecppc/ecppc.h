@@ -52,18 +52,15 @@ namespace tnt
 
         std::string ofile;
         std::string odir;
-        cxxtools::Arg<std::string> mimetype;
-        cxxtools::Arg<std::string> mimedb;
-        cxxtools::Arg<bool> binary;
-        cxxtools::Arg<bool> multibinary;
-        cxxtools::Arg<bool> keepPath;
-        cxxtools::Arg<std::string> componentclass;
-        cxxtools::Arg<bool> compress;
-        cxxtools::Arg<bool> verbose;
-        cxxtools::Arg<bool> debug;
-        cxxtools::Arg<bool> generateDependencies;
-        cxxtools::Arg<bool> generateHeader;
-        cxxtools::Arg<bool> disableLinenumbers;
+        std::string mimetype;
+        std::string mimedb;
+        bool binary;
+        bool multibinary;
+        bool keepPath;
+        bool compress;
+        bool verbose;
+        bool generateDependencies;
+        bool disableLinenumbers;
 
         typedef std::list<std::string> includes_type;
         includes_type includes;
