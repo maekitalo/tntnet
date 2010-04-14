@@ -48,16 +48,16 @@ namespace tnt
   namespace ecppc
   {
     Ecppc::Ecppc(int& argc, char* argv[])
-      : requestname(cxxtools::Argp<std::string>(argc, argv, 'n')),
-        ofile(cxxtools::Argp<std::string>(argc, argv, 'o')),
-        odir(cxxtools::Argp<std::string>(argc, argv, 'O')),
-        mimetype(cxxtools::Argp<std::string>(argc, argv, 'm')),
-        mimedb(cxxtools::Argp<std::string>(argc, argv, "--mimetypes", "/etc/mime.types"))
+      : requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
+        ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
+        odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
+        mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),
+        mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types"))
     {
 
       while (true)
       {
-        cxxtools::Argp<std::string> include(argc, argv, 'I');
+        cxxtools::Arg<std::string> include(argc, argv, 'I');
         if (!include.isSet())
           break;
         log_debug("include: " << include.getValue());
