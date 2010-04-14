@@ -331,12 +331,11 @@ namespace tnt
         return true;
       }
 
-      std::string content_length_header = message.getHeader(httpheader::contentLength);
-      if (!content_length_header.empty())
+      const char* content_length_header = message.getHeader(httpheader::contentLength);
+      if (*content_length_header)
       {
         bodySize = 0;
-        for (std::string::const_iterator c = content_length_header.begin();
-            c != content_length_header.end(); ++c)
+        for (const char* c = content_length_header; *c; ++c)
         {
           if (*c > '9' || *c < '0')
             throw HttpError(HTTP_BAD_REQUEST, "invalid Content-Length");

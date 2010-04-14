@@ -33,9 +33,20 @@
 
 namespace tnt
 {
-  void Encoding::parse(const std::string& header)
+  namespace
+  {
+    void throwInvalidHeader(const char* header)
+    {
+      throwRuntimeError(std::string("invalid encoding-string \"") + header + '"');
+    }
+  }
+
+  void Encoding::parse(const char* header)
   {
     encodingMap.clear();
+
+    if (header == 0)
+      return;
 
     enum {
       state_0,
@@ -50,9 +61,9 @@ namespace tnt
 
     std::string encoding;
     unsigned quality;
-    for (std::string::const_iterator it = header.begin(); it != header.end(); ++it)
+    for (const char* p = header; *p; ++p)
     {
-      char ch = *it;
+      char ch = *p;
       switch (state)
       {
         case state_0:
@@ -81,14 +92,14 @@ namespace tnt
           if (ch == 'q')
             state = state_qualityeq;
           else if (!std::isspace(ch))
-            throwRuntimeError("invalid encoding-string \"" + header + '"');
+            throwInvalidHeader(header);
           break;
 
         case state_qualityeq:
           if (ch == '=')
             state = state_quality;
           else if (!std::isspace(ch))
-            throwRuntimeError("invalid encoding-string \"" + header + '"');
+            throwInvalidHeader(header);
           break;
 
         case state_quality:
@@ -98,7 +109,7 @@ namespace tnt
             state = state_qualitypoint;
           }
           else
-            throwRuntimeError("invalid encoding-string \"" + header + '"');
+            throwInvalidHeader(header);
           break;
 
         case state_qualitypoint:
@@ -110,7 +121,7 @@ namespace tnt
             state = state_0;
           }
           else
-            throwRuntimeError("invalid encoding-string \"" + header + '"');
+            throwInvalidHeader(header);
           break;
 
         case state_qualitytenth:

@@ -201,9 +201,9 @@ namespace tnt
         { return getCookies().getCookie(name); }
 
       const Encoding& getEncoding() const;
-      std::string getUserAgent() const
+      const char* getUserAgent() const
         { return getHeader(httpheader::userAgent); }
-      std::string getHost() const
+      const char* getHost() const
         { return getHeader(httpheader::host); }
 
       const std::string& getUsername() const;
@@ -211,6 +211,7 @@ namespace tnt
       bool verifyPassword(const std::string& password) const;
 
       bool keepAlive() const;
+      bool acceptGzipEncoding() const           { return getEncoding().accept("gzip"); }
 
       void setApplicationScope(Scope* s);
       void setApplicationScope(Scope& s)  { setApplicationScope(&s); }

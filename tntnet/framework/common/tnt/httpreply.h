@@ -132,7 +132,6 @@ namespace tnt
       static const std::string& getDefaultContentType()        { return defaultContentType; }
 
       void setAcceptEncoding(const Encoding& enc)    { acceptEncoding = enc; }
-      void setAcceptEncoding(const std::string& enc) { acceptEncoding.parse(enc); }
 
       bool keepAlive() const;
 

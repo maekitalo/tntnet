@@ -41,7 +41,11 @@ namespace tnt
       encodingMapType encodingMap;
 
     public:
-      void parse(const std::string& header);
+      Encoding()  { }
+      explicit Encoding(const char* header)
+      { parse(header); }
+
+      void parse(const char* header);
       /**
        * returns the quality-value in the range 0..10
        */
