@@ -73,14 +73,15 @@ namespace tnt
       {
         stringescaper s;
         const char* d = s(ch);
-        col += strlen(d);
+        unsigned len = strlen(d);
+        col += len;
         if (col >= maxcol)
         {
           out << "\"\n";
           for (unsigned n = 0; n < mincol; ++n)
             out << ' ';
           out << '"';
-          col = mincol;
+          col = mincol + len;
         }
         out << d;
       }
