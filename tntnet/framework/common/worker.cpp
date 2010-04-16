@@ -213,7 +213,7 @@ namespace tnt
     // log message
     log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery()
       << " from client " << request.getPeerIp() << " user-Agent \"" << request.getUserAgent()
-      << '"');
+      << "\" user \"" << request.getUsername() << '"');
 
     // create reply-object
     HttpReply reply(socket);
