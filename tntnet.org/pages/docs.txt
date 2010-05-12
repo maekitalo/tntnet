@@ -46,6 +46,7 @@
 				    <li><a href="logging.html">Logging</a></li>
                     <li><a href="howto_upload.html">Howto upload files with Tntnet</a></li>
                     <li><a href="howto_images.html">Howto send images with Tntnet</a></li>
+                    <li><a href="howto_xmlrpc.html">Howto use xmlrpc with cxxtools</a></li>
 				</ul>
 			</div>
 		</td>

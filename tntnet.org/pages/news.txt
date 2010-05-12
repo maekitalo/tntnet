@@ -8,6 +8,45 @@
     <table cellspacing="0" class="news-article">
         <tr>
             <th class="news-article-header" >
+                <b>new article about using xmlrpc in cxxtools (> 1.99)</b>
+                <br/>
+                <i>Posted on May 12, 2010</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>A new Howto document about using xmlrpc with cxxtools is available <a href='howto_xmlrpc.html'>here</a></p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
+                <b>development versions cxxtools 1.99.5 and tntnet 1.6.991</b>
+                <br/>
+                <i>Posted on December 21, 2009</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>These versions have some improvements in compatibility, performance and usability.
+</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
                 <b>development versions cxxtools 1.99.4, tntnet 1.6.99 and tntdb 1.0.99</b>
                 <br/>
                 <i>Posted on June 13, 2009</i>

@@ -1,0 +1,380 @@
+/** \page howto_xmlrpc HowtoXmlrpc
+
+@htmlinclude sidebar.html
+
+\htmlonly
+
+<div id="content">
+<h1>XMLRPC with cxxtools</h1>
+<h2>Introduction</h2>
+<p>In larger systems we often have the requirement to use some functionality on a different process either on the same host or even via network on another host. This may be, that we need some data from another process or need to trigger some action there. For this we need some connection to the other host and a protocol, which we need to define. Luckily there are standards for this.</p>
+<p>A good starting point is http as a transport protocol which is widely accepted and flexible enough for a wide range of applications. But that is not quite enough. Http defines just a request and reply structure but no content format. This is left open for best flexibility.</p>
+<p>So we need another definition for transporting data in a http body. Since the http body is just a sequence of bytes, the operation for transforming our data structure to this byte sequence is commonly called serialization. Here we may use XML since this is a widely accepted standard.</p>
+<p>Now we have a transport protocol and a data structure defined. Next we need to define some request and reply structure, so we can tell our server, how to interpret the data and how to interpret the answer on the client side.</p>
+<p>There are different standard for this. We choose XML-RPC here, since it is very simple. It is a standard for calling functions via http on a remote host.</p>
+<p>Cxxtools has simple to use features to implement both a XML-RPC server and client in C++. Lets start with a simple example.</p>
+<h2>XMLRPC client and server</h2>
+<p>We implement a xmlrpc server first.</p>
+<p>Here is the source:</p>
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/http/server.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/service.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/eventloop.h&gt;</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#009900">CalcService</font> <font color="#990000">:</font> <b><font color="#0000FF">public</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Service
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">CalcService</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"add"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>add<font color="#990000">);</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"sub"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>sub<font color="#990000">);</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"mul"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>mul<font color="#990000">);</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"div"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>div<font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    <font color="#009900">double</font> <b><font color="#000000">add</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+    <font color="#009900">double</font> <b><font color="#000000">sub</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+    <font color="#009900">double</font> <b><font color="#000000">mul</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+    <font color="#009900">double</font> <b><font color="#000000">div</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">add</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">+</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">sub</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">-</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">mul</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">*</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">div</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>b <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">)</font>
+    <b><font color="#0000FF">throw</font></b> std<font color="#990000">::</font><b><font color="#000000">runtime_error</font></b><font color="#990000">(</font><font color="#FF0000">"division by zero"</font><font color="#990000">);</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">/</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font>EventLoop eventLoop<font color="#990000">;</font>
+    cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Server <b><font color="#000000">server</font></b><font color="#990000">(</font>eventLoop<font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">);</font>
+    CalcService calcService<font color="#990000">;</font>
+    server<font color="#990000">.</font><b><font color="#000000">addService</font></b><font color="#990000">(</font><font color="#FF0000">"/calc"</font><font color="#990000">,</font> calcService<font color="#990000">);</font>
+    eventLoop<font color="#990000">.</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+<p>This server defines a service with 4 functions, which are offered as a XMLRPC service. To do this, we need to define a service class. We define the 4 functions as methods in our service and register them by name by calling registerMethod in the constructor.</p>
+<p>To run the server we define a event loop and a http server object and add a service instance to this. At the end we start the event loop of our server, so it starts waiting for incoming service requests on the specified port (7001 in our example).</p>
+<p>The second parameter of the server object specifies the ip address, where to listen. By passing an empty string, the server listens on all local addresses.</p>
+<p>Next we create a client. Here is the source:</p>
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/http/server.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/service.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/eventloop.h&gt;</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#009900">CalcService</font> <font color="#990000">:</font> <b><font color="#0000FF">public</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Service
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">CalcService</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"add"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>add<font color="#990000">);</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"sub"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>sub<font color="#990000">);</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"mul"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>mul<font color="#990000">);</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"div"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>div<font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    <font color="#009900">double</font> <b><font color="#000000">add</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+    <font color="#009900">double</font> <b><font color="#000000">sub</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+    <font color="#009900">double</font> <b><font color="#000000">mul</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+    <font color="#009900">double</font> <b><font color="#000000">div</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">);</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">add</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">+</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">sub</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">-</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">mul</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">*</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">double</font> CalcService<font color="#990000">::</font><b><font color="#000000">div</font></b><font color="#990000">(</font><font color="#009900">double</font> a<font color="#990000">,</font> <font color="#009900">double</font> b<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>b <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">)</font>
+    <b><font color="#0000FF">throw</font></b> std<font color="#990000">::</font><b><font color="#000000">runtime_error</font></b><font color="#990000">(</font><font color="#FF0000">"division by zero"</font><font color="#990000">);</font>
+  <b><font color="#0000FF">return</font></b> a <font color="#990000">/</font> b<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font>EventLoop eventLoop<font color="#990000">;</font>
+    cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Server <b><font color="#000000">server</font></b><font color="#990000">(</font>eventLoop<font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">);</font>
+    CalcService calcService<font color="#990000">;</font>
+    server<font color="#990000">.</font><b><font color="#000000">addService</font></b><font color="#990000">(</font><font color="#FF0000">"/calc"</font><font color="#990000">,</font> calcService<font color="#990000">);</font>
+    eventLoop<font color="#990000">.</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+
+<p>We first define a xmlrpc::HttpClient instance and tell the client, where to find the service. By passing a empty string, we connect to the local host, where our server is currently running.</p>
+<p>Next we define a class of the template type cxxtools::xmlrpc::RemoteProcedure for each function. This template needs a list of types as parameters. The first type is the return type of our function. The remainder are the types of parameters. Currently templates for up to 5 parameters are defined.</p>
+<p>Now we are done by now. Simple isn't it?</p>
+<p>We compile and link both programs. Assumed, the source in in files server.cpp and client.cpp and we use gcc the commands needed are:</p>
+<pre>
+$ g++ -o client -lcxxtools-xmlrpc client.cpp
+$ g++ -o server -lcxxtools-xmlrpc server.cpp
+</pre>
+
+<p>To test it, start 2 terminals and run the server with “./server” in one terminal and run the client using “./client” in the other. You should see the result of the calculation on the client side. If you don't believe, the server is really used, try to stop the server and run the client again. It does not work. You get a error message “connection refused”. You may also want to put a std::cout to the server side, where the functions are called to verify, the server is really working. If you have more than one computer at hand, you may also want to put the server on a different host. The you have to justify the ip address in the client of course.</p>
+<p>One thing you should try is to call div(4, 0). This will really throw the runtime_error on the server and it will be propagated to the client. Note that the exception is not of type runtime_error as thrown but a cxxtools::xmlrpc::Fault, which is derived from std::exception. All exceptions on the server side are actually thrown as cxxtools::xmlrpc::Fault on the client side, since the exception classes are normally not serializable.</p>
+<h2>Serialization</h2>
+<p>Lets look a little deeper what is going on here.</p>
+<p>The client serialize the parameters into XML and send the XML together with a XMLRPC method call envelope to the server. The server deserialize the call with the parameters and dispatches to the right methods. The return value is again serialized into XML and sent back to the client.</p>
+<p>So we actually need a way to serialize and deserialize data into XML. Cxxtools makes a 2 step process out of it for most flexibility. We have a step for interpreting our data into some serialization info and a step for formatting that into XML.</p>
+<p>The second step - formatting XML is a straight forward algorithm and does not depend on the data, which need to be transformed. Therefore cxxtools has ready to go classes, which implement that. In XML-RPC this is done completely in the background, so we do not need to look further into it here.</p>
+<p>The first step - interpreting our data is specific to our data structures. So we need to specify, how to interpret our data. The data structure, which is used in cxxtools to held the serializationinfo is called cxxtools::SerializationInfo. To serialize our data we need a converter function to and from cxxtools::SerializationInfo. Cxxtools has chosen the operators &gt;&gt;= and &lt;&lt;= to call that conversion.</p>
+<p>SerializationInfo is a class, which held hierarchical information about your data. A member in a SerializationInfo has a name, a type name, a value and a vector of subnodes. Simple scalar types will fill the type name and value. Complex types use submembers to build hierarchical structures. </p>
+<p>There are may standard data types in C++ which form the atomics of our data. There are predefined serialization operators for these types. You will use them to build serialization operator for complex types.</p>
+<p>All container classes of the standard C++ library have proper predefined serialization operators. A container of some type is serializable when the contained objects are serialzable.</p>
+<p>Standard types with predefined serialization operators are: bool, char, signed char, unsigned char, int, short, long, unsigned int, unsigned short, unsigned long, float and double.</p>
+<p>Supported types from the standard library are std::string std::vector, std::list, std::deque, std::set, std::multiset, std::map, std::multimap and std::pair.</p>
+<p>Note that the deserialization operators of container classes  do not check the type, so that you may serialize a std::set and deserialize it as a std::vector. Only the value_type of the collection must be compatible.</p>
+<p>Ok - lets look at a example for a serialization and deserialization operator:</p>
+<pre><tt><b><font color="#000080">#ifndef</font></b> MYSTRUCT_H
+<b><font color="#000080">#define</font></b> MYSTRUCT_H
+
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/serializationinfo.h&gt;</font>
+
+<b><font color="#0000FF">struct</font></b> <font color="#009900">MyStruct</font>
+<font color="#FF0000">{</font>
+  <font color="#009900">int</font> _aValue<font color="#990000">;</font>
+  std<font color="#990000">::</font>string _aString<font color="#990000">;</font>
+  std<font color="#990000">::</font>list<font color="#990000">&lt;</font><font color="#009900">unsigned</font> <font color="#009900">long</font><font color="#990000">&gt;</font> _aList<font color="#990000">;</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+<b><font color="#0000FF">inline</font></b> <font color="#009900">void</font> <b><font color="#0000FF">operator</font></b> <font color="#990000">&gt;&gt;=(</font><b><font color="#0000FF">const</font></b> cxxtools<font color="#990000">::</font>SerializationInfo<font color="#990000">&amp;</font> si<font color="#990000">,</font> MyStruct<font color="#990000">&amp;</font> myStruct<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  si<font color="#990000">.</font><b><font color="#000000">getMember</font></b><font color="#990000">(</font><font color="#FF0000">"aValue) &gt;&gt;= myStruct._aValue;</font>
+<font color="#FF0000">  si.getMember("</font>aString<font color="#990000">)</font> <font color="#990000">&gt;&gt;=</font> myStruct<font color="#990000">.</font>_aString<font color="#990000">;</font>
+  si<font color="#990000">.</font><b><font color="#000000">getMember</font></b><font color="#990000">(</font><font color="#FF0000">"aList) &gt;&gt;= myStruct._aList;</font>
+<font color="#FF0000">}</font>
+
+<font color="#FF0000">inline void operator &lt;&lt;=(cxxtools::SerializationInfo&amp; si, const MySturct&amp; myStruct)</font>
+<font color="#FF0000">{</font>
+<font color="#FF0000">  si.addMember("</font>aValue<font color="#990000">)</font> <font color="#990000">&lt;&lt;=</font> myStruct<font color="#990000">.</font>_aValue<font color="#990000">;</font>
+  si<font color="#990000">.</font><b><font color="#000000">addMember</font></b><font color="#990000">(</font><font color="#FF0000">"aString) &lt;&lt;= myStruct._aString;</font>
+<font color="#FF0000">  si.addMember("</font>aList<font color="#990000">)</font> <font color="#990000">&lt;&lt;=</font> myStruct<font color="#990000">.</font>_aList<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#000080">#endif</font></b> <i><font color="#9A1900">// MYSTRUCT_H</font></i>
+
+</tt></pre>
+
+<p>That's all! Lets look at some details.</p>
+<p>First of all look at the definition of our custom type. It has no indication, that the class is serializable. We say, that the serialization system of cxxtools is non intrusive, since it does not need any changes in our custom type itself.</p>
+<p>The first operator &gt;&gt;= defines our deserialization operator. It fetches 3 members from the passed SerializationInfo object and uses the &gt;&gt;=-operator of the standard types to read the value. Note that we do not need to mention, which type our members actually are. If we later decide to change e.g. _aValue to be a long instead of a int, the operation works as well.</p>
+<p>Note also that since std::list&lt;T&gt; and the used type both are deserializable (we have predefined operator for them), the std::list&lt;unsigned long&gt; is deserialzable as well.</p>
+<p>The second operator &lt;&lt;= defines the serialization operator. It again just uses the predefined operator for standard types to add named members to our SerializationInfo.</p>
+<p>As with the underlying list we are ready to serialize and deserialize not only MyStruct but also containers of MyStruct like std::vector&lt;MyStruct&gt; or complexer types like std::map&lt;int, std::deque&lt;MyStruct&gt; &gt;.</p>
+<p>Now we are ready to use our MyStuct in e.g. XMLRPC. Note that we have not mentioned XML here at all and indeed these operators are completely independent of XML. Cxxtools has e.g. a formatter for JSON, so we can also use the very same operators to form JSON structures. In the future we may have formatters and parsers for different formats and we keep on using our serialization operators although we do not know anything about the formats.</p>
+<p>Let's try our new class. We again define the server similar to our first example:</p>
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/http/server.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/service.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">"myStruct.h"</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#009900">MyService</font> <font color="#990000">:</font> <b><font color="#0000FF">public</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Service
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">public</font></b><font color="#990000">:</font>
+    <b><font color="#000000">MyService</font></b><font color="#990000">()</font>
+    <font color="#FF0000">{</font>
+      <b><font color="#000000">registerMethod</font></b><font color="#990000">(</font><font color="#FF0000">"doubleTheValues"</font><font color="#990000">,</font> <font color="#990000">*</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#990000">&amp;</font>CalcService<font color="#990000">::</font>doubleTheValues<font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+
+    MyStruct <b><font color="#000000">doubleTheValues</font></b><font color="#990000">(</font>MyStruct myStruct<font color="#990000">);</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+
+MyStruct MyService<font color="#990000">::</font><b><font color="#000000">doubleTheValues</font></b><font color="#990000">(</font>MyStruct myStruct<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  myStruct<font color="#990000">.</font>_aValue <font color="#990000">*=</font> <font color="#993399">2</font><font color="#990000">;</font>
+  myStruct<font color="#990000">.</font>_aString <font color="#990000">+=</font> myStruct<font color="#990000">.</font>_aString<font color="#990000">;</font>
+  <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>std<font color="#990000">::</font>list<font color="#990000">&lt;</font><font color="#009900">unsigned</font> <font color="#009900">long</font><font color="#990000">&gt;::</font>iterator it <font color="#990000">=</font> myStruct<font color="#990000">.</font>_aList<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font>
+    it <font color="#990000">!=</font> myStruct<font color="#990000">.</font>_aList<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>it<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    <font color="#990000">*</font>it <font color="#990000">*=</font> <font color="#993399">2</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  <b><font color="#0000FF">return</font></b> myStruct<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font>http<font color="#990000">::</font>Server <b><font color="#000000">server</font></b><font color="#990000">(</font><font color="#FF0000">"0.0.0.0"</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">);</font>
+    MyStructService myStructService<font color="#990000">;</font>
+    server<font color="#990000">.</font><b><font color="#000000">addService</font></b><font color="#990000">(</font><font color="#FF0000">"/myService"</font><font color="#990000">,</font> myStructService<font color="#990000">);</font>
+    server<font color="#990000">.</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+<p>And a client:</p>
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;iostream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/httpclient.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;cxxtools/xmlrpc/remoteprocedure.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">"myStruct.h"</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">[])</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>HttpClient <b><font color="#000000">client</font></b><font color="#990000">(</font><font color="#FF0000">"127.0.0.1"</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">,</font> <font color="#FF0000">"/calc"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>RemoteProcedure<font color="#990000">&lt;</font>MyStruct<font color="#990000">,</font> MyStruct<font color="#990000">&gt;</font> <b><font color="#000000">dup</font></b><font color="#990000">(</font>client<font color="#990000">,</font> <font color="#FF0000">"doubleTheValues"</font><font color="#990000">);</font>
+
+    MyStruct s<font color="#990000">;</font>
+    s<font color="#990000">.</font>_aValue <font color="#990000">=</font> <font color="#993399">6</font><font color="#990000">;</font>
+    s<font color="#990000">.</font>_aString <font color="#990000">=</font> <font color="#FF0000">"Hello"</font><font color="#990000">;</font>
+    s<font color="#990000">.</font>_aList<font color="#990000">.</font><b><font color="#000000">push_back</font></b><font color="#990000">(</font><font color="#993399">45</font><font color="#990000">);</font>
+    s<font color="#990000">.</font>_aList<font color="#990000">.</font><b><font color="#000000">push_back</font></b><font color="#990000">(</font><font color="#993399">123</font><font color="#990000">);</font>
+
+    MyStruct r <font color="#990000">=</font> <b><font color="#000000">dup</font></b><font color="#990000">(</font>s<font color="#990000">);</font>
+
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"aValue = "</font> <font color="#990000">&lt;&lt;</font> r<font color="#990000">.</font>_aValue <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"aString = "</font> <font color="#990000">&lt;&lt;</font> r<font color="#990000">.</font>_aString <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>std<font color="#990000">::</font>list<font color="#990000">&lt;</font><font color="#009900">unsigned</font> <font color="#009900">long</font><font color="#990000">&gt;::</font>iterator it <font color="#990000">=</font> r<font color="#990000">.</font>_aList<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font>
+      it <font color="#990000">!=</font> r<font color="#990000">.</font>_aList<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>it<font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+      std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"aList: "</font> <font color="#990000">&lt;&lt;</font> <font color="#990000">*</font>it <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+<h2>Non blocking I/O</h2>
+<p>Frequently we have programs, which need to do more than one task at once. Of course you may always start a thread for parallel processing. But this is often not the best way to go. For I/O a better way to go is to work non blocking. And luckily cxxtools makes this quite easy. What we need is a  event loop, which handles the events from asynchronous operations.</p>
+<p>Cxxtools uses a signal-slot framework for notifications. The tasks we need to do is to set up our event loop, connect the events we are interested into to slots, start our asynchronous operations and run the event loop.</p>
+<p>Let's extend the first example. We would like to call all calculation methods in parallel. It may be that we need to collect informations from multiple hosts. They may well run in parallel so it will really reduce the total processing time.</p>
+<p>First of all we need a event loop. We define it as a global variable to make the example simple:</p>
+<font face="monospace">
+cxxtools EventLoop loop;<br>
+</font>
+
+<p>So lets start with setting up one xmlrpc client and one remote procedure per operation. We also need to pass the event loop to the client:</p>
+<pre><tt>    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>HttpClient <b><font color="#000000">addClient</font></b><font color="#990000">(</font>loop<font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">,</font> <font color="#FF0000">"/calc"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>HttpClient <b><font color="#000000">subClient</font></b><font color="#990000">(</font>loop<font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">,</font> <font color="#FF0000">"/calc"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>HttpClient <b><font color="#000000">mulClient</font></b><font color="#990000">(</font>loop<font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">,</font> <font color="#FF0000">"/calc"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>HttpClient <b><font color="#000000">divClient</font></b><font color="#990000">(</font>loop<font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <font color="#993399">7001</font><font color="#990000">,</font> <font color="#FF0000">"/calc"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>RemoteProcedure<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">&gt;</font> <b><font color="#000000">add</font></b><font color="#990000">(</font>addClient<font color="#990000">,</font> <font color="#FF0000">"add"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>RemoteProcedure<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">&gt;</font> <b><font color="#000000">sub</font></b><font color="#990000">(</font>subClient<font color="#990000">,</font> <font color="#FF0000">"sub"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>RemoteProcedure<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">&gt;</font> <b><font color="#000000">mul</font></b><font color="#990000">(</font>mulClient<font color="#990000">,</font> <font color="#FF0000">"mul"</font><font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>RemoteProcedure<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">,</font> <font color="#009900">double</font><font color="#990000">&gt;</font> <b><font color="#000000">div</font></b><font color="#990000">(</font>divClient<font color="#990000">,</font> <font color="#FF0000">"div"</font><font color="#990000">);</font>
+
+</tt></pre>
+
+<p>Notice, that we really need one client per procedure, since one client can handle only one connection to the server.</p>
+<p>Next we define some callback functions for each request:</p>
+<pre><tt><font color="#009900">void</font> <b><font color="#000000">addCallback</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Result<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">&gt;&amp;</font> r<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <font color="#009900">double</font> value <font color="#990000">=</font> r<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">();</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"4 + 5 = "</font> <font color="#990000">&lt;&lt;</font> value <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> <b><font color="#000000">subCallback</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Result<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">&gt;&amp;</font> r<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <font color="#009900">double</font> value <font color="#990000">=</font> r<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">();</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"4 - 5 = "</font> <font color="#990000">&lt;&lt;</font> value <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> <b><font color="#000000">mulCallback</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Result<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">&gt;&amp;</font> r<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <font color="#009900">double</font> value <font color="#990000">=</font> r<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">();</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"4 * 5 = "</font> <font color="#990000">&lt;&lt;</font> value <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> <b><font color="#000000">divCallback</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Result<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">&gt;&amp;</font> r<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <font color="#009900">double</font> value <font color="#990000">=</font> r<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">();</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> <font color="#FF0000">"4 / 5 = "</font> <font color="#990000">&lt;&lt;</font> value <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+<p>We need also a way to break the event loop, when we are done. We do this by defining a global counter for running tasks another callback, which just monitors the left operations and exits the event loop when we are done with all 4 operations.</p>
+<pre><tt><font color="#009900">unsigned</font> runningTasks <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+
+<font color="#009900">void</font> <b><font color="#000000">counterCallback</font></b><font color="#990000">(</font><b><font color="#0000FF">const</font></b> cxxtools<font color="#990000">::</font>xmlrpc<font color="#990000">::</font>Result<font color="#990000">&lt;</font><font color="#009900">double</font><font color="#990000">&gt;&amp;</font> r<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(--</font>runningTasks <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">)</font>
+    loop<font color="#990000">.</font><b><font color="#000000">exit</font></b><font color="#990000">();</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<p>In our main function we need to connect these callbacks with the procedures and start processing using beginCall:</p>
+
+<pre><tt>    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>add<font color="#990000">.</font>finished<font color="#990000">,</font> addCallback<font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>sub<font color="#990000">.</font>finished<font color="#990000">,</font> subCallback<font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>mul<font color="#990000">.</font>finished<font color="#990000">,</font> mulCallback<font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>div<font color="#990000">.</font>finished<font color="#990000">,</font> divCallback<font color="#990000">);</font>
+
+    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>add<font color="#990000">.</font>finished<font color="#990000">,</font> counterCallback<font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>sub<font color="#990000">.</font>finished<font color="#990000">,</font> counterCallback<font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>mul<font color="#990000">.</font>finished<font color="#990000">,</font> counterCallback<font color="#990000">);</font>
+    cxxtools<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>div<font color="#990000">.</font>finished<font color="#990000">,</font> counterCallback<font color="#990000">);</font>
+
+    add<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">(</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">);</font>
+    sub<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">(</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">);</font>
+    mul<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">(</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">);</font>
+    div<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">(</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">);</font>
+
+</tt></pre>
+<p>Then we run the loop and wait, until the program is finished:</p>
+<pre><tt>    loop<font color="#990000">.</font><b><font color="#000000">run</font></b><font color="#990000">();</font>
+
+</tt></pre>
+<p>The full example code can be found in xmlrpcAsyncClient.cpp. You may want to add a sleep for one second into the calculation methods in the server and you may notice, that in this asynchronous example all 4 methods will sleep in parallel. The client will return in 1 second instead of 4 as would happen, if you use the non asynchronous client from the first client example.</p>
+
+
+</div>
+\endhtmlonly
+
+*/
