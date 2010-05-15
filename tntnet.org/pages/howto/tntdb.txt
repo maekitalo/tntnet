@@ -1,0 +1,355 @@
+﻿/** \page howto_tntdb Howto Tntdb
+
+@htmlinclude sidebar.html
+
+\htmlonly
+<div id="content">
+
+<h2>Introduction</h2>
+<p>Tntdb is a library for simple database access. There are 2 layers for access – a database independent layer and a database driver.</p>
+<p>The database independent layer offers easy to use methods for working with the database and also greatly simplifies resource-management. The classes hold reference-counted pointers to the actual implementation. They are copyable and assignable. The user can use the classes just like simple values. The resources they reference are freed, when the last reference is deleted. This happens normally just by leaving the scope. There is normally no reason to instantiate them dynamically on the heap.</p>
+<p>The driver-layer contains the actual implementation, which does the work. These classes are database-dependent. The user normally doesn't need to deal with this.</p>
+<p>Each class is defined in a header &lt;tntdb/Classname.h&gt;.</p>
+<p>Error handling is always done with exceptions. A class tntdb::Error is the base for all exceptions. It is derived from std::runtime_error.</p>
+<h2>Connecting</h2>
+<p>A connection is represented by the class tntdb::Connection. Tntdb offers a simple function, which connects to the database: tntdb::connect. This expects a parameter of type std::string, which is the database-url. The database-url consists of the driver name and a database dependent part divided by a colon.</p>
+<p>Example:</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>connection<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connect.h&gt;</font>
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Connection conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>"sqlite<font color="#990000">:</font>mydb<font color="#990000">.</font>db"<font color="#990000">);</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<p>The example above loads the sqlite-driver-library and opens a connection to the databasefile "mydb.db". At the end of the program the class tntdb::Connection goes out of scope, which closes the connection automatically.</p>
+<p>When the database could not be opened a exception is thrown. In the above example it is unhandled, which makes the program to abort. This is not so nice, so we add exceptionhandling in the second example:</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>connection<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connect.h&gt;</font>
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    tntdb<font color="#990000">::</font>Connection conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>"postgresql<font color="#990000">:</font>dbname<font color="#990000">=</font>db"<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+</tt></pre>
+
+<p>This is a complete example, which just checks, if the database is accessible.</p>
+<p>Let's look a little deeper into the driver dependent part.</p>
+<h3>The Postgresql driver</h3>
+<p>The part after the prefix "postgresql:" is passed directly to the C-API function PQconnectdb. You can look into the C-API documentation for details. Here is a simple example:</p>
+<pre><tt>tntdb<font color="#990000">::</font>Connection conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font><font color="#FF0000">"postgresql:dbname=DS2 user=web passwd=web"</font><font color="#990000">);</font>
+</tt></pre>
+<h3>The Sqlite driver</h3>
+<p>The sqlite driver supports only sqlite3. No support for sqlite2 is available. The part after the prefix "sqlite:" is used as a file name for the database. No additional parameters are needed.</p>
+<p>Here is an example:</p>
+<pre><tt>tntdb<font color="#990000">::</font>Connection sqConn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font><font color="#FF0000">"sqlite:mydatabase.db"</font><font color="#990000">);</font>
+</tt></pre>
+<h3>The mysql driver</h3>
+<p>The part after the prefix "mysql:" is split into the parameters needed for mysql_real_connect. The string is interpreted as a list of parameters separated by semicolon. Each parameter is a name value pair separated by '='. The keys are post, flags, app, host, user, passwd, db and unix_socket. For passwd the word password is also accepted. Db may be replaced with dbname or database. All other keys throw an error. The value may be enclosed in ' or ". The backslash character disables any special meaning of the next character.</p>
+<p>Ok – this is the definition. It is much easier to understand, if you see an example:</p>
+<pre><tt>tntdb<font color="#990000">::</font>Connection myConn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font><font color="#FF0000">"mysql:db=DS2;user=web;passwd=web"</font><font color="#990000">);</font>
+</tt></pre>
+<h3>The oracle driver</h3>
+<p>The oracle driver is not compiled by default when tntdb is compiled, since it is not open source. You have to explicitly enable it with the switch to configure --with-oracle.</p>
+<p>From the string after the prefix "oracle:" the username and password is exctracted. They must be passed semicolon separated "user=username" and "passwd=password". The rest of the string is passed to the OCI function OCIServerAttach. Here is an example:</p>
+<pre><tt>tntdb<font color="#990000">::</font>Connection conn <font color="#990000">=</font>
+  tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font><font color="#FF0000">"oracle:XE;user=hr;passwd=hr"</font><font color="#990000">);</font>
+</tt></pre>
+<h2>Execute query</h2>
+<p>To execute a query without selecting data tntdb::Connection has a method execute. It expects a std::string with a sql-statement, which does not return data. It returns the number of affected rows.</p>
+<p>Example:</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>connection<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connect.h&gt;</font>
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">try</font></b>
+  <font color="#FF0000">{</font>
+    tntdb<font color="#990000">::</font>Connection conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font>"postgresql<font color="#990000">:</font>dbname<font color="#990000">=</font>db"<font color="#990000">);</font>
+    conn<font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">(</font>
+      "create table <b><font color="#000000">t1</font></b><font color="#990000">(</font>col1 <font color="#009900">int</font> not null primary key<font color="#990000">,</font>"
+      "                col2 <font color="#009900">int</font> not null<font color="#990000">)</font>"<font color="#990000">);</font>
+    conn<font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">(</font>"insert into t1 <b><font color="#000000">values</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">)</font>"<font color="#990000">);</font>
+    <font color="#009900">unsigned</font> n <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">(</font>"update t1 set col1 <font color="#990000">=</font> col1 <font color="#990000">+</font> <font color="#993399">1</font>"<font color="#990000">);</font>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> n <font color="#990000">&lt;&lt;</font> "rows updated" <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> std<font color="#990000">::</font>exception<font color="#990000">&amp;</font> e<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    std<font color="#990000">::</font>cerr <font color="#990000">&lt;&lt;</font> e<font color="#990000">.</font><b><font color="#000000">what</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<h2>Selecting data</h2>
+<p>A database is not just for storing data, but it also need to fetch the data. Tntdb offers several ways to read the data from the database. The most general is the method tntdb::Connection::select(), which expects a query and returns a object of class tntdb::Result.</p>
+<p>tntdb::Result is a collection of rows. Rows are represented by the class tntdb::Row and these rows are also collections of type tntdb::Value. Both collections (Result and Row) can be accessed with a iterator or through a index. The Value-class offers methods for returning the data in different types. Tntdb does not tell, which type the column is. Value just does its best to convert the data to the requested type. The User has to know, which data the column holds.</p>
+<p>Often there are statements, which return exactly one row or only a single value. For convenience tntdb::Connection offers the methods selectRow and selectValue. The former returns the first row of a query and the latter the first value of the first row. Both throw a exception of type tntdb::NotFound, if the query returns no rows at all.</p>
+<p>A tntdb::Value has a get-template-method to read the actual value into a variable.</p>
+<p>Example:</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>result<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/row.h&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/value.h&gt;</font>
+
+<font color="#009900">void</font> <b><font color="#000000">someFunc</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Result result <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">select</font></b><font color="#990000">(</font>"select col1<font color="#990000">,</font> col2 from table"<font color="#990000">);</font>
+  <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>tntdb<font color="#990000">::</font>Result<font color="#990000">::</font>const_iterator it <font color="#990000">=</font> result<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font>
+       it <font color="#990000">!=</font> result<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>it<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    tntdb<font color="#990000">::</font>Row row <font color="#990000">=</font> <font color="#990000">*</font>it<font color="#990000">;</font>
+    <font color="#009900">int</font> a<font color="#990000">;</font>
+    std<font color="#990000">::</font>string b<font color="#990000">;</font>
+    row<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>a<font color="#990000">);</font>  <i><font color="#9A1900">// read column 0 into variable a</font></i>
+    row<font color="#990000">[</font><font color="#993399">1</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>b<font color="#990000">);</font>  <i><font color="#9A1900">// read column 1 into variable b</font></i>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> "col1<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> a <font color="#990000">&lt;&lt;</font> "<font color="#990000">\</font>tcol2<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> b
+      <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<font color="#009900">void</font> <b><font color="#000000">someOtherFunc</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Value v <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">selectValue</font></b><font color="#990000">(</font>"select <b><font color="#000000">count</font></b><font color="#990000">(*)</font> from table"<font color="#990000">);</font>
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> "The table <font color="#FF0000">'table'</font> has " <font color="#990000">&lt;&lt;</font> v<font color="#990000">.</font><b><font color="#000000">getUnsigned</font></b><font color="#990000">()</font>
+    <font color="#990000">&lt;&lt;</font> " rows" <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<h2>Prepared statements</h2>
+<p>Most of the time the user needs to parameterize the queries.</p>
+<p>Because the query has the type std::string they can just be stringed together e.g. with std::ostringstream. But this is not recommended. The disadvantage is, that the user has to deal with special characters to avoid misinterpretation of data and especially avoid sql injection .</p>
+<p>Prepared statements solve this by parsing the statement and getting the parameters separately. This also offers sometimes significant performance-advantages, because the user can execute the same statement multiple times with different parameters. The parsing can be done either at the client-side or at the serve-side. Tntdb let the driver decide, if the database can parse the query and which placeholders the database needs.</p>
+<p>To create a prepared statement tntdb::Connection has a method prepare, which takes a query as a std::string and returns a object of type tntdb::Statement. The query can contain parameters. Parameters are named tokens in the query prefixed with a colon. A token can occur multiple times in a query. The Statement-class has setter-methods to pass parameter-values with different types.</p>
+<p>tntdb::Statement offers the same methods for databaseaccess as tntdb::Connect: execute, select, selectRow and selectValue. They work exactly like the methods in tntdb::Connect.</p>
+<p>Example:</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>statement<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+
+<font color="#009900">void</font> <b><font color="#000000">insData</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Statement st <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>
+    "insert into table <b><font color="#000000">values</font></b> <font color="#990000">(:</font>v1<font color="#990000">,</font> <font color="#990000">:</font>v2<font color="#990000">)</font>"<font color="#990000">);</font>
+
+  st<font color="#990000">.</font><b><font color="#000000">setInt</font></b><font color="#990000">(</font>"v1"<font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">)</font> <i><font color="#9A1900">// the setters return *this, so they can be</font></i>
+                     <i><font color="#9A1900">// chained easily</font></i>
+    <font color="#990000">.</font><b><font color="#000000">setString</font></b><font color="#990000">(</font>"v2"<font color="#990000">,</font> "hi"<font color="#990000">)</font>
+    <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+
+  st<font color="#990000">.</font><b><font color="#000000">setInt</font></b><font color="#990000">(</font>"v1"<font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">)</font>
+    <font color="#990000">.</font><b><font color="#000000">setString</font></b><font color="#990000">(</font>"v2"<font color="#990000">,</font> "world"<font color="#990000">)</font>
+    <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<p>You may also omit the explicit mention of the data type. There is a template method tntdb::Statement::set, which determines the right type of the column from the type of the passed parameter. If you later decide to change the type of a variable, you don't need to replace the method used to pass the value to the database. Here is the same example as above using this template method:</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>statement<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+
+<font color="#009900">void</font> <b><font color="#000000">insData</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Statement st <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>
+    "insert into table <b><font color="#000000">values</font></b> <font color="#990000">(:</font>v1<font color="#990000">,</font> <font color="#990000">:</font>v2<font color="#990000">)</font>"<font color="#990000">);</font>
+
+  st<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"v1"<font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">)</font>
+    <font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"v2"<font color="#990000">,</font> "hi"<font color="#990000">)</font>
+    <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+
+  st<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"v1"<font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">)</font>
+    <font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"v2"<font color="#990000">,</font> "world"<font color="#990000">)</font>
+    <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<h2>Working with cursors</h2>
+<p>Connections and prepared statements offer the method select(), which fetches the result and offers random-access to the data. Databases has often more data, than would fit into the memory of the program. To deal with this, the innovators of databases has created cursors. They are like pointers to a window in a resultset, but without holding (and transferring) all data in memory. Tntdb offers this functionality with const_iterators in prepared statements. The class std::Statement::const_iterator represents a database-cursor. It is a forward-only-iterator, which returns objects of type tntdb::Row, when dereferenced.</p>
+<p>The begin-method of tntdb::Statement starts a new iteration of a cursor.</p>
+<p>Example</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>statement<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+
+<font color="#009900">void</font> <b><font color="#000000">printData</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Statement st <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>"select col1<font color="#990000">,</font> col2 from table"<font color="#990000">);</font>
+  <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>tntdb<font color="#990000">::</font>Statement<font color="#990000">::</font>const_iterator cur <font color="#990000">=</font> st<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font>
+       cur <font color="#990000">!=</font> st<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>cur<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    tntdb<font color="#990000">::</font>Row row <font color="#990000">=</font> <font color="#990000">*</font>cur<font color="#990000">;</font>
+    std<font color="#990000">::</font>string col1<font color="#990000">;</font>
+    std<font color="#990000">::</font>string col2<font color="#990000">;</font>
+    row<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>col1<font color="#990000">);</font>
+    row<font color="#990000">[</font><font color="#993399">1</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>col2<font color="#990000">);</font>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> "col1<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> col1 <font color="#990000">&lt;&lt;</font> " col2<font color="#990000">=</font>
+              <font color="#990000">&lt;&lt;</font> col2 <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+
+<p>In the above example the memory-consumption is low even when the table has millions of rows. When the data would have been fetched with a tntdb::Result all rows has to fit into the main-memory.</p>
+<p>The begin-method of tntdb::Statement has a optional parameter fetchsize of type unsigned, which is passed to the driver. It may use it as a hint, how many rows it should fetch at once. The default value is 100.</p>
+<h2>Transactions</h2>
+<p>A database wouldn't be a database, if it does not offer transactions. tntdb::Connection has 3 methods to deal with it: beginTransaction, commitTransaction and rollbackTransaction. But this is not the recommended way to deal with it. Tntdb has more to offer: tntdb::Transaction. This class monitors the state of a transaction and closes the transaction automatically, when needed. This offers exception-safety without the danger of open transactions.</p>
+<p>tntdb::Transaction are instantiated (just like all tntdb-user-classes) as local variables. The constructor starts a transaction and the destructor rolls the transaction back, if the transaction is not explicitely committed. This guarantees, that the transaction is never left open (except when the rollback fails, but this normally happens only, when the connection is broken anyway and there is no way to do any harm to the database any more).</p>
+<p>Example:</p>
+<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>transaction<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+
+<font color="#009900">void</font> <b><font color="#000000">doSomeModifications</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Transaction <b><font color="#000000">trans</font></b><font color="#990000">(</font>conn<font color="#990000">);</font>
+  <i><font color="#9A1900">// do some modifications in the database here:</font></i>
+  conn<font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">(...);</font>
+  conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>"<font color="#990000">...</font>"<font color="#990000">).</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"col1"<font color="#990000">,</font> value<font color="#990000">).</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+  trans<font color="#990000">.</font><b><font color="#000000">commit</font></b><font color="#990000">();</font>
+
+<font color="#FF0000">}</font> <i><font color="#9A1900">// no explicit rollback is needed. In case of an exception, the</font></i>
+  <i><font color="#9A1900">// transaction is rolled back automatically here</font></i>
+</tt></pre>
+
+<h2>Using dates and times</h2>
+<p>Dates and times are a little special when it comes to databases. There is no standard syntax for specifying dates and times. Therefore tntdb offers 3 helper classes. tntdb::Date can hold a date, tntdb::Time a time and tntdb::Datetime both. They can be used just like built in types in tntdb. You can set host variables and retrieve the value from results returned from the database.</p>
+<p>The classes are simple helper classes which do not have any range checks or other knowledge of the nature of the data. The constructor of tntdb::Date takes 3 parameters: the year, the month and the day. The constructor takes 3 or 4 parameters: the hour, the minute, the second and a optional millisecond. Tntdb::Datetime is created using 6 or 7 parameters. First the 3 parameters of the date and then the 3 or 4 for the time.</p>
+<p>There are also 2 static methods in each of the 3 classes localtime and gmtime, which create a object with the current date or time.</p>
+<p>Lets look for some examples:</p>
+<pre><tt><font color="#009900">void</font> <b><font color="#000000">dateTimeDemos</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <i><font color="#9A1900">// insert dates and times into table:</font></i>
+  tntdb<font color="#990000">::</font>Statement ins <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>
+    "insert into <b><font color="#000000">mytable</font></b> <font color="#990000">(</font>datecolumn<font color="#990000">,</font> timecolumn<font color="#990000">,</font> datetimecolumn<font color="#990000">)</font>"
+    "  <b><font color="#000000">values</font></b><font color="#990000">(:</font>date<font color="#990000">,</font> <font color="#990000">:</font>time<font color="#990000">,</font> <font color="#990000">:</font>datetime<font color="#990000">)</font>"<font color="#990000">);</font>
+
+  ins<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"date"<font color="#990000">,</font> tntdb<font color="#990000">::</font><b><font color="#000000">Date</font></b><font color="#990000">(</font><font color="#993399">2010</font><font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">,</font> <font color="#993399">13</font><font color="#990000">))</font>
+     <font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"time"<font color="#990000">,</font> tntdb<font color="#990000">::</font><b><font color="#000000">Time</font></b><font color="#990000">(</font><font color="#993399">23</font><font color="#990000">,</font> <font color="#993399">22</font><font color="#990000">,</font> <font color="#993399">30</font><font color="#990000">))</font>
+     <font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"datetime"<font color="#990000">,</font> tntdb<font color="#990000">::</font><b><font color="#000000">Datetime</font></b><font color="#990000">(</font><font color="#993399">2010</font><font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">,</font> <font color="#993399">13</font><font color="#990000">,</font> <font color="#993399">23</font><font color="#990000">,</font> <font color="#993399">22</font><font color="#990000">,</font> <font color="#993399">30</font><font color="#990000">))</font>
+     <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+
+  <i><font color="#9A1900">// insert the current dates and times into the table</font></i>
+  ins<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"date"<font color="#990000">,</font> tntdb<font color="#990000">::</font>Date<font color="#990000">::</font><b><font color="#000000">localtime</font></b><font color="#990000">())</font>
+     <font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"time"<font color="#990000">,</font> tntdb<font color="#990000">::</font>Time<font color="#990000">::</font><b><font color="#000000">localtime</font></b><font color="#990000">())</font>
+     <font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"datetime"<font color="#990000">,</font> tntdb<font color="#990000">::</font>Datetime<font color="#990000">::</font><b><font color="#000000">localtime</font></b><font color="#990000">())</font>
+     <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+
+  <i><font color="#9A1900">// retrieve dates and times from a table:</font></i>
+  tntdb<font color="#990000">::</font>Statement sel <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>
+    "select datecolumn<font color="#990000">,</font> timecolumn<font color="#990000">,</font> datetimecolumn"
+    "  from mytable"<font color="#990000">);</font>
+  <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>tntdb<font color="#990000">::</font>Statement<font color="#990000">::</font>const_iterator cur <font color="#990000">=</font> st<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font>
+       cur <font color="#990000">!=</font> st<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>cur<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    tntdb<font color="#990000">::</font>Row row <font color="#990000">=</font> <font color="#990000">*</font>cur<font color="#990000">;</font>
+    tntdb<font color="#990000">::</font>Date mydate<font color="#990000">;</font>
+    tntdb<font color="#990000">::</font>Time mytime<font color="#990000">;</font>
+    tntdb<font color="#990000">::</font>Datetime mydatetime<font color="#990000">;</font>
+    row<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>mydate<font color="#990000">);</font>
+    row<font color="#990000">[</font><font color="#993399">1</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>mytime<font color="#990000">);</font>
+    row<font color="#990000">[</font><font color="#993399">2</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>mydatetime<font color="#990000">);</font>
+    <i><font color="#9A1900">// now we have the data from the table in our variables</font></i>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> "date<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> mydate<font color="#990000">.</font><b><font color="#000000">getIso</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> "<font color="#990000">\</font>n"
+                 "time<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> mytime<font color="#990000">.</font><b><font color="#000000">getIso</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> "<font color="#990000">\</font>n"
+                 "datetime<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> mydatetime<font color="#990000">.</font><b><font color="#000000">getIso</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+</tt></pre>
+
+<h2>Using own types</h2>
+<p>Tntdb offers also support for custom types. The setter and getter methods in tntdb are actually templates, which uses 2 operators to actually map types to the methods. Lets design a own type, which we would like to store in a database field. To make the example simple, we use a struct with public member variables. Normally you should always make the member variables private or protected and offer setter and getter methods:</p>
+<pre><tt><b><font color="#0000FF">struct</font></b> <font color="#009900">Myclass</font>
+<font color="#FF0000">{</font>
+  <font color="#009900">int</font> a<font color="#990000">;</font>
+  <font color="#009900">int</font> b<font color="#990000">;</font>
+  <b><font color="#000000">Myclass</font></b><font color="#990000">()</font> <font color="#FF0000">{</font> <font color="#FF0000">}</font> <i><font color="#9A1900">// default constructor is mostly good to have</font></i>
+  <b><font color="#000000">Myclass</font></b><font color="#990000">(</font><font color="#009900">int</font> a_<font color="#990000">,</font> <font color="#009900">int</font> b_<font color="#990000">)</font>  <i><font color="#9A1900">// ctor to initialize both members</font></i>
+    <font color="#990000">:</font> <b><font color="#000000">a</font></b><font color="#990000">(</font>a_<font color="#990000">),</font> <b><font color="#000000">b</font></b><font color="#990000">(</font>b_<font color="#990000">)</font> <font color="#FF0000">{</font> <font color="#FF0000">}</font>
+<font color="#FF0000">}</font><font color="#990000">;</font>
+</tt></pre>
+
+<p>We would like to write the class as a pair of numbers separated with ':' into a database field. So we define a operator, which formats the structure properly:</p>
+<pre><tt><font color="#009900">void</font> <b><font color="#0000FF">operator</font></b><font color="#990000">&lt;&lt;</font> <font color="#990000">(</font>tntdb<font color="#990000">::</font>Hostvar<font color="#990000">&amp;</font> hv<font color="#990000">,</font> <b><font color="#0000FF">const</font></b> Myclass<font color="#990000">&amp;</font> myclass<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  std<font color="#990000">::</font>ostringstream s<font color="#990000">;</font>
+  s <font color="#990000">&lt;&lt;</font> myclass<font color="#990000">.</font>a <font color="#990000">&lt;&lt;</font> <font color="#FF0000">':'</font> <font color="#990000">&lt;&lt;</font> myclass<font color="#990000">.</font>b<font color="#990000">;</font>
+  hv<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>s<font color="#990000">.</font><b><font color="#000000">str</font></b><font color="#990000">());</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+<p>The operator creates a std::string with the content of the class and passes it to this special helper class tntdb::Hostvar, which is defined in the header tntdb/statement.h. This is the only case, where you will explicitly use the class.</p>
+<p>To retrieve data from the database we need another operator:</p>
+<pre><tt><font color="#009900">bool</font> <b><font color="#0000FF">operator</font></b><font color="#990000">&gt;&gt;</font> <font color="#990000">(</font><b><font color="#0000FF">const</font></b> tntdb<font color="#990000">::</font>Value<font color="#990000">&amp;</font> value<font color="#990000">,</font> Myclass<font color="#990000">&amp;</font> myclass<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>value<font color="#990000">.</font><b><font color="#000000">isNull</font></b><font color="#990000">())</font>
+    <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">false</font></b><font color="#990000">;</font>
+  std<font color="#990000">::</font>string str<font color="#990000">;</font>
+  value<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">(</font>str<font color="#990000">);</font>
+  std<font color="#990000">::</font>istringstream <b><font color="#000000">in</font></b><font color="#990000">(</font>str<font color="#990000">);</font>
+  <font color="#009900">char</font> ch<font color="#990000">;</font>
+  in <font color="#990000">&gt;&gt;</font> myclass<font color="#990000">.</font>a
+     <font color="#990000">&gt;&gt;</font> ch       <i><font color="#9A1900">// skip the ':'</font></i>
+     <font color="#990000">&gt;&gt;</font> myclass<font color="#990000">.</font>b<font color="#990000">;</font>
+  <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">true</font></b><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+<p>That's all. Now we can use the class just like built ins:</p>
+<pre><tt><font color="#009900">void</font> <b><font color="#000000">customTypeDemo</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  <i><font color="#9A1900">// insert myclass into table:</font></i>
+  tntdb<font color="#990000">::</font>Statement ins <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>
+    "insert into <b><font color="#000000">mytable</font></b> <font color="#990000">(</font>mycolumn<font color="#990000">)</font>"
+    "  <b><font color="#000000">values</font></b><font color="#990000">(:</font>mycolumn<font color="#990000">)</font>"<font color="#990000">);</font>
+
+  ins<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"mycolumn"<font color="#990000">,</font> <b><font color="#000000">Myclass</font></b><font color="#990000">(</font><font color="#993399">17</font><font color="#990000">,</font> <font color="#993399">45</font><font color="#990000">))</font>
+     <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+
+  <i><font color="#9A1900">// retrieve myclass from a table:</font></i>
+  tntdb<font color="#990000">::</font>Statement sel <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>
+    "select mycolumn from mytable"<font color="#990000">);</font>
+  <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>tntdb<font color="#990000">::</font>Statement<font color="#990000">::</font>const_iterator cur <font color="#990000">=</font> st<font color="#990000">.</font><b><font color="#000000">begin</font></b><font color="#990000">();</font>
+       cur <font color="#990000">!=</font> st<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">();</font> <font color="#990000">++</font>cur<font color="#990000">)</font>
+  <font color="#FF0000">{</font>
+    tntdb<font color="#990000">::</font>Row row <font color="#990000">=</font> <font color="#990000">*</font>cur<font color="#990000">;</font>
+    Myclass myclass<font color="#990000">;</font>
+    row<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">].</font><b><font color="#000000">get</font></b><font color="#990000">(</font>myclass<font color="#990000">);</font>
+    <i><font color="#9A1900">// now we have the data from the table in our variables</font></i>
+    std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> "a<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> myclass<font color="#990000">.</font>a <font color="#990000">&lt;&lt;</font> "<font color="#990000">\</font>t"
+                 "b<font color="#990000">=</font>" <font color="#990000">&lt;&lt;</font> myclass<font color="#990000">.</font>b <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+</tt></pre>
+<h2>Using serial columns</h2>
+<p>If tables are designed, you have to create a primary key to identify uniquely a specific row in the table. Sometimes it is enough to use just a unique number. Databases has support for a automatically generated primary key. It actually depends on the database, how to create such columns. Since tntdb has no support for ddl statements (create table …), there is actually no need to abstract the creation of these columns. But in applications it is often needed to know, which number was given to the last inserted row. This is also depends on the actual database software used.</p>
+<p>Tntdb helps retrieving that last insert id. There is a method "long tntdb::Connection::lastInsertId(const std::string&et; name)"</p>
+<p>There is one problem. Some databases (postgresql, oracle) use named sequences and a single table may have multiple of them. So to fetch the actual id, we need to tell the driver, which sequence we want to know. The sequence is identified by name. Other databases (mysql, sqlite) do not have a identifier. They will simply ignore the passed name.</p>
+<p>Here is a example. We assume a table foo with 2 columns: id and name. The id is the primary auto incremented key. In postgresql or oracle the sequence is created with the name "foo_id_seq":</p>
+<pre><tt><font color="#009900">void</font> <b><font color="#000000">insertData</font></b><font color="#990000">(</font>tntdb<font color="#990000">::</font>Connection conn<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+  tntdb<font color="#990000">::</font>Statement ins <font color="#990000">=</font> conn<font color="#990000">.</font><b><font color="#000000">prepare</font></b><font color="#990000">(</font>
+    "insert into <b><font color="#000000">foo</font></b> <font color="#990000">(</font>name<font color="#990000">)</font>"
+    "  <b><font color="#000000">values</font></b><font color="#990000">(:</font>name<font color="#990000">)</font>"<font color="#990000">);</font>
+
+  ins<font color="#990000">.</font><b><font color="#000000">set</font></b><font color="#990000">(</font>"name"<font color="#990000">,</font> "some name"<font color="#990000">)</font>
+     <font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">();</font>
+
+  std<font color="#990000">::</font>cout <font color="#990000">&lt;&lt;</font> "id<font color="#990000">:</font> " <font color="#990000">&lt;&lt;</font> conn<font color="#990000">.</font><b><font color="#000000">lastInsertId</font></b><font color="#990000">(</font>"foo_id_seq"<font color="#990000">)</font> <font color="#990000">&lt;&lt;</font> std<font color="#990000">::</font>endl<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<h2>Connectionpool</h2>
+<p>In a long-running program it is often desirable not to connect and disconnect for every access. One solution is to keep a connection open somewhere and use is as needed. In a multi threaded application the user has to make sure, that there is only one thread at a time accessing the database through a single connection.</p>
+<p>To solve this, Tntdb offerers a automatic connectionpool. When the call to tntdb::connect is replaced with tntdb::connectCached a special connection is returned. This connection works just like the normal connection (it is the same class), but when destroyed, it does not close the connection, but puts the connection to a free pool. When tntdb::connectCached is called again with the same parameter, the connection is reused. When the old connection is still in use, connectCached just creates a new one.</p>
+<p>Example:</p>
+<pre><tt>std<font color="#990000">::</font>string url <font color="#990000">=</font> "mysql<font color="#990000">:</font>db<font color="#990000">=</font>mydb<font color="#990000">;</font>host<font color="#990000">=</font><font color="#993399">192.168</font><font color="#990000">.</font><font color="#993399">0.1</font>"<font color="#990000">;</font>
+tntdb<font color="#990000">::</font>Connection conn<font color="#990000">;</font>
+conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connectCached</font></b><font color="#990000">(</font>url<font color="#990000">);</font>  <i><font color="#9A1900">// connects to the db</font></i>
+conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">Connection</font></b><font color="#990000">();</font>   <i><font color="#9A1900">// puts the connection back to the pool</font></i>
+conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connectCached</font></b><font color="#990000">(</font>url<font color="#990000">);</font>  <i><font color="#9A1900">// fetches the same connection</font></i>
+                      <i><font color="#9A1900">// (if not already fetched by another thread)</font></i>
+tntdb<font color="#990000">::</font><b><font color="#000000">dropCached</font></b><font color="#990000">();</font>  <i><font color="#9A1900">// closes all free connections, but not ours,</font></i>
+  <i><font color="#9A1900">// because it is hold by 'conn'</font></i>
+conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">Connection</font></b><font color="#990000">();</font>
+tntdb<font color="#990000">::</font><b><font color="#000000">dropCached</font></b><font color="#990000">();</font>  <i><font color="#9A1900">// closes the connection, because we released it</font></i>
+</tt></pre>
+<h2>Statementcache</h2>
+<p>As told previously statement-reuse improves performance quite heavily. It is advisable to try to use prepared statements where possible. In the case of a connectionpool it is quite difficult to maintain prepared statements, because they are specific to the connection.</p>
+<p>Tntdb helps here by putting a statementcache into the connection-class. When calls to tntdb::Connection::prepare is replaced with tntdb::Connection::prepareCached, tntdb looks into the connection, if the same statement is already prepared earlier and returns this when needed and calls prepare and fills the statement-cache with this new statement otherwise.</p>
+
+</div>
+\endhtmlonly
+
+*/

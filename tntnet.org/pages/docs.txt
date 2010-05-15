@@ -48,6 +48,7 @@
                     <li><a href="howto_images.html">Howto send images with Tntnet</a></li>
                     <li><a href="howto_xmlrpc.html">Howto use xmlrpc with cxxtools</a></li>
                     <li><a href="howto_static.html">Howto send static pages with Tntnet</a></li>
+                    <li><a href="howto_tntdb.html">Howto access databases with tntdb</a></li>
         </ul>
       </div>
     </td>

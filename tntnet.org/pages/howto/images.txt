@@ -1,4 +1,4 @@
-/** \page howto_images HowtoImages
+/** \page howto_images Howto send images with Tntnet
 
 @htmlinclude sidebar.html
 
