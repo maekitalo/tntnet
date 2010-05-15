@@ -1,11 +1,10 @@
-/** \page howto_xmlrpc HowtoXmlrpc
+/** \page howto_xmlrpc XMLRPC with cxxtools
 
 @htmlinclude sidebar.html
 
 \htmlonly
 
 <div id="content">
-<h1>XMLRPC with cxxtools</h1>
 <h2>Introduction</h2>
 <p>In larger systems we often have the requirement to use some functionality on a different process either on the same host or even via network on another host. This may be, that we need some data from another process or need to trigger some action there. For this we need some connection to the other host and a protocol, which we need to define. Luckily there are standards for this.</p>
 <p>A good starting point is http as a transport protocol which is widely accepted and flexible enough for a wide range of applications. But that is not quite enough. Http defines just a request and reply structure but no content format. This is left open for best flexibility.</p>

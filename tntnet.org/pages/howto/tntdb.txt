@@ -1,4 +1,4 @@
-﻿/** \page howto_tntdb Howto Tntdb
+﻿/** \page howto_tntdb Howto access databases with Tntdb
 
 @htmlinclude sidebar.html
 

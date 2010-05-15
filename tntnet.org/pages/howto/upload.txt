@@ -1,4 +1,4 @@
-/** \page howto_upload HowtoHttpUpload
+/** \page howto_upload Howto upload files with Tntnet
 
 @htmlinclude sidebar.html
 
