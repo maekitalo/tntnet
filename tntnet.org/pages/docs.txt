@@ -2,8 +2,8 @@
     
     <div style="width:100%"> <!-- This div is a hack for IE so it does not make the table too wide -->
     
-	<table cellpadding="2" cellspacing="20" border="0" width="100%">
-	<tr>
+  <table cellpadding="2" cellspacing="20" border="0" width="100%">
+  <tr>
         <td style="vertical-align:top;">
             <div class="docs-page-header">General</div>
             <div class="docs-page-body">
@@ -14,54 +14,55 @@
                 </ul>
             </div>
         </td>
-		<td style="vertical-align:top;">
-				<div class="docs-page-header">Getting Started</div>
-				<div class="docs-page-body">
-					<ul>
-					    <li><a href="download.html">Download</a></li>
+    <td style="vertical-align:top;">
+        <div class="docs-page-header">Getting Started</div>
+        <div class="docs-page-body">
+          <ul>
+              <li><a href="download.html">Download</a></li>
                         <li><a href="exampleHello.html">Example "Hello"</a></li>
                         <li><a href="exampleCalc.html">Example "Calc"</a></li>
-					    <li><a href="download/tntnet-1.6.3/doc/quick-start-guide.pdf">Tntnet quick start guide (pdf)</a></li>
-					    <li><a href="download/tntnet-1.6.3/doc/tntnet.pdf">Tntnet users guide (pdf)</a></li>
-					    <li><a href="download/tntnet-1.6.3/doc/tntnet-configuration.pdf">Tntnet configuration guide (pdf)</a></li>
-					</ul>
-			</div>
-		</td>
-	</tr>
+              <li><a href="download/tntnet-1.6.3/doc/quick-start-guide.pdf">Tntnet quick start guide (pdf)</a></li>
+              <li><a href="download/tntnet-1.6.3/doc/tntnet.pdf">Tntnet users guide (pdf)</a></li>
+              <li><a href="download/tntnet-1.6.3/doc/tntnet-configuration.pdf">Tntnet configuration guide (pdf)</a></li>
+          </ul>
+      </div>
+    </td>
+  </tr>
 
-	<tr>
-		<td style="vertical-align:top;">
-			<div class="docs-page-header">API Reference</div>
-			<div class="docs-page-body">
-				<ul>
-				<li><a href="classes.html">All Classes</a></li>
-				<li><a href="namespaces.html">Namespaces</a></li>
-				</ul>
-			</div>
-		</td>
-		<td style="vertical-align:top;">
-			<div class="docs-page-header">Concepts</div>
-			<div class="docs-page-body">
-				<ul>
-				    <li><a href="logging.html">Logging</a></li>
+  <tr>
+    <td style="vertical-align:top;">
+      <div class="docs-page-header">API Reference</div>
+      <div class="docs-page-body">
+        <ul>
+        <li><a href="classes.html">All Classes</a></li>
+        <li><a href="namespaces.html">Namespaces</a></li>
+        </ul>
+      </div>
+    </td>
+    <td style="vertical-align:top;">
+      <div class="docs-page-header">Concepts</div>
+      <div class="docs-page-body">
+        <ul>
+            <li><a href="logging.html">Logging</a></li>
                     <li><a href="howto_upload.html">Howto upload files with Tntnet</a></li>
                     <li><a href="howto_images.html">Howto send images with Tntnet</a></li>
                     <li><a href="howto_xmlrpc.html">Howto use xmlrpc with cxxtools</a></li>
-				</ul>
-			</div>
-		</td>
-	</tr>
+                    <li><a href="howto_static.html">Howto send static pages with Tntnet</a></li>
+        </ul>
+      </div>
+    </td>
+  </tr>
 
-	</table>
-	
-	<!-- TODO This is just here to doxygen to add tntnet-logo.png to the output directory as
-	     the file is only used in pt_header.html which is not enough for doxygen to add it to the
-	     output directory. As soon as we use platinum-logo.png somewhere in the documentation we
-	     can remove this line. -->
-	<div style="display:none">\image html tntnet.png</div>
-	<div style="display:none">\image html section_head.png</div>
-	
-	</div>
+  </table>
+  
+  <!-- TODO This is just here to doxygen to add tntnet-logo.png to the output directory as
+       the file is only used in pt_header.html which is not enough for doxygen to add it to the
+       output directory. As soon as we use platinum-logo.png somewhere in the documentation we
+       can remove this line. -->
+  <div style="display:none">\image html tntnet.png</div>
+  <div style="display:none">\image html section_head.png</div>
+  
+  </div>
 
 
 

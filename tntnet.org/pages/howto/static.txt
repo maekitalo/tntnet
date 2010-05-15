@@ -1,0 +1,77 @@
+﻿/** \page howto_static Howto send static files with Tntnet
+
+@htmlinclude sidebar.html
+
+\htmlonly
+<div id="content">
+
+<h2>Introduction</h2>
+<p>Tntnet is a web application server for C++. That means, that it is easy to create dynamic web pages using C++ embedded into HTML. But this does not mean, that Tntnet can't send static pages. Static pages are almost always needed in web applications. Css, Images or Javascript libraries are seldom dynamically generated.</p>
+<p>There are several solutions to send static pages. Since there are different situations and hence different needs, it is not uncommon to use more than one solution in your application.</p>
+<p>We will discuss here the possible solutions and the strength and caveats of each of them.</p>
+<h2>Using the binary mode of ecppc</h2>
+<p>The simplest solution is to use the binary mode of ecppc. This is enabled by passing -b to ecppc. The binary mode disables interpretation of ecpp tags, when the file is compiled. So if the content of the file happens to contain e.g. the character sequence “<$”, which normally introduces the start of a c++ expression, it is still sent as is.</p>
+<p>As with dynamic content, the mime type is looked up using the extension of the file. If ecppc happens to fail here and you know better, you may pass the correct mime type using the -m switch.</p>
+<p>The advantage here is, that you can handle static files just like dynamic ones. The static files are also compiled into the web application, so you do not have to bother, how tntnet finds the source files.</p>
+<p>There are 2 caveats though. If you frequently change the static files, you have to recompile your application. And the memory overhead may be quite significant. I've measured additional on one specific system 8k in binary size for each component. So if you have a quite small static file of e.g. 0.5k, you have additional 8.5k in your binary.</p>
+<h2>Sending static files using a special component</h2>
+<p>If you really want to read the data from a external source like the file system, you are always free to send the content from your own written component. You may pass a file name to the component using a query parameter or the path info, which can also be set in the url mapping. Let's create a simple solution:</p>
+
+<pre><tt><font color="#990000">&lt;%</font>pre<font color="#990000">&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;fstream&gt;</font>
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tnt/mimedb.h&gt;</font>
+<font color="#990000">&lt;/%</font>pre<font color="#990000">&gt;</font>
+<font color="#990000">&lt;%</font>cpp<font color="#990000">&gt;</font>
+std<font color="#990000">::</font>ifstream <b><font color="#000000">in</font></b><font color="#990000">((</font><font color="#FF0000">"./"</font> <font color="#990000">+</font> request<font color="#990000">.</font><b><font color="#000000">getPathInfo</font></b><font color="#990000">()).</font><b><font color="#000000">c_str</font></b><font color="#990000">());</font>
+<b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>in<font color="#990000">)</font>
+  <b><font color="#0000FF">return</font></b> DECLINED<font color="#990000">;</font>
+
+tnt<font color="#990000">::</font>MimeDb <b><font color="#000000">mimeDb</font></b><font color="#990000">(</font><font color="#FF0000">"/etc/mime.types"</font><font color="#990000">);</font>
+reply<font color="#990000">.</font><b><font color="#000000">setContentType</font></b><font color="#990000">(</font>mimeDb<font color="#990000">.</font><b><font color="#000000">getMimetype</font></b><font color="#990000">(</font>request<font color="#990000">.</font><b><font color="#000000">getPathInfo</font></b><font color="#990000">()));</font>
+
+reply<font color="#990000">.</font><b><font color="#000000">out</font></b><font color="#990000">()</font> <font color="#990000">&lt;&lt;</font> in<font color="#990000">.</font><b><font color="#000000">rdbuf</font></b><font color="#990000">();</font>  <i><font color="#9A1900">// send the content of the ifstream to the page</font></i>
+<font color="#990000">&lt;/%</font>cpp<font color="#990000">&gt;</font>
+</tt></pre>
+
+We add a mapping to the tntnet.conf:
+<pre>MapUrl   .   static@static</pre>
+
+
+<p>This works fine. Notice, that the component sends a DECLINED, if the file is not found. This tells Tntnet to look for the next url mapping. If tntnet do not find any mappings any more, it sends HTTP_NOT_FOUND to the browser. That's what we want to see, if there is no file found.</p>
+<p>Instead of getting the path from the path info variable, you may also read it from a query parameter. But you have to be really careful. The path name should not break out of the directory you have intended to read the data from. Think about a path name like “../../../etc/passwd”. You don't really want to publish that file to the web!</p>
+<p>Tntnet checks automatically the request path for these double dot attacks, so the solution above works fine. But it can't check it from query parameters. You have to do that on your own.</p>
+<p>Let's look at the advantages using this solution.</p>
+<p>It is totally under your control, what to send when. You are not limited to read data from a file but you can also read the data e.g. from a database.</p>
+<p>The disadvantage is, that it is quite difficult to do correctly.</p>
+<h2>Using static@tntnet</h2>
+<p>Since it is so common to send files from the file system, tntnet has a standard component for that. It is called static@tntnet. You just need to add a url mapping for that.</p>
+<p>The component does almost that, what the code from the previous example does. Additionally it sends modification dates and sends http code 304 (not modified) if it makes sense. This is needed to enable caching of files in the browser.</p>
+<p>Also it uses some optimizations like the sendfile system call if available and suitable.</p>
+<p>For completeness here is a url mapping for this component:</p>
+<pre>MapUrl ^/(.*) static@tntnet /var/www/htdocs/$1</pre>
+
+<p>This makes the content of the directory /var/www/htdocs available to the world. But keep in mind, that you can't list directory contents with this component. There is also no standard component for this.</p>
+<p>As a side effect, static@tntnet looks for files with a .gz extension. If the client accepts gzip compression and the corresponding file with a .gz extension is found, that one is sent.</p>
+<p>If the file is not found in the file system, static@tntnet sends a DECLINED just like in the custom component above, so it is also possible to chain multiple search paths for files.</p>
+<h2>Multibinary components</h2>
+<p>Let's return to the first solution. We mentioned the significant overhead for each component. If you have many small files, the overhead gets larger and larger. The solution is a multibinary component. This is a component, which has multiple static pages. We get only once the 8k overhead. As a side effect compile time is significantly reduced.</p>
+<p>To create multibinary components, we pass -bb to ecppc (or -b -b) and a list of file names, which to include into the component. Normally you want to pass a component name with -n to ecppc. By default ecppc uses the name “image”. Useful is also to disable stripping paths from the file names with -p. Normally ecppc takes only the base name of the files.</p>
+<p>What we need is a suitable mapping. We have to tell the new component, which file to send. This is done using the path info, which we can pass from the url mapping after the component name. Lets looks at an example.</p>
+<p>We have 2 files p/foo.html and p/bar.html and want to create a multibinary component named static. This is done using the command:</p>
+<pre>ecppc -bb -n static -p p/foo.html p/bar.html</pre>
+
+<p>Now we have a static.cpp in the current directory. Next we create the mapping. Our shared library is called myapp. We want to send the component foo.html using the path /myfiles/p/foo.html and bar.html using /myfiles/p/bar.html:</p>
+<pre>MapUrl ^/myfiles/(.*) static@myapp $1</pre>
+
+<p>And we are done.</p>
+<h2>Conclusion</h2>
+<p>You have to choose from the 4 presented solutions, which one fits best to your problem.</p>
+<p>Just compiling each file into a component is easy and done quickly.</p>
+<p>Most larger applications have a bunch of static files, which are best placed into a multibinary component.</p>
+<p>For less static data you may decide to put the files into the file system using static@tntnet or in the database using your own custom code.</p>
+<p>Chaining is a interesting technique. You may choose to put the static files on development time into the file system first, so you can quickly test them. If you are happy with the content, just compile the file into your application and remove the file from the file system.</p>
+
+</div>
+\endhtmlonly
+
+*/
