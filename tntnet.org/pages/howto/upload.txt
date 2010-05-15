@@ -40,25 +40,26 @@ You can ask for the mime-type with tnt::Part::getMimetype() and for the filename
 
 <pre class="sourcecode">
   &lt;%cpp&gt;
-  const tnt::Multipart&amp; mp = request.getMultipart();
-  tnt::Multipart::const_iterator it = mp.find("myfile");
-  if (it != mp.end())
-  {
-    // we found a uploaded file - write it to some upload-area
-    std::ofstream out("upload/" + it->getFilename());
+<pre><tt>  <b><font color="#0000FF">const</font></b> tnt<font color="#990000">::</font>Multipart<font color="#990000">&amp;</font> mp <font color="#990000">=</font> request<font color="#990000">.</font><b><font color="#000000">getMultipart</font></b><font color="#990000">();</font>
+  tnt<font color="#990000">::</font>Multipart<font color="#990000">::</font>const_iterator it <font color="#990000">=</font> mp<font color="#990000">.</font><b><font color="#000000">find</font></b><font color="#990000">(</font><font color="#FF0000">"myfile"</font><font color="#990000">);</font>
+  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>it <font color="#990000">!=</font> mp<font color="#990000">.</font><b><font color="#000000">end</font></b><font color="#990000">())</font>
+  <font color="#FF0000">{</font>
+    <i><font color="#9A1900">// we found a uploaded file - write it to some upload-area</font></i>
+    std<font color="#990000">::</font>ofstream <b><font color="#000000">out</font></b><font color="#990000">(</font><font color="#FF0000">"upload/"</font> <font color="#990000">+</font> it<font color="#990000">-&gt;</font><b><font color="#000000">getFilename</font></b><font color="#990000">());</font>
 
-    out &lt;&lt; it->getBody(); // this is less efficient, because a temporary std::string
-                                // is created and the data is copies into it
+    out <font color="#990000">&lt;&lt;</font> it<font color="#990000">-&gt;</font><b><font color="#000000">getBody</font></b><font color="#990000">();</font> <i><font color="#9A1900">// this is less efficient, because a temporary std::string</font></i>
+                                <i><font color="#9A1900">// is created and the data is copied into it</font></i>
 
-    // more efficient is the use of iterators:
-    for (tnt::Part::const_iterator pi = it->getBodyBegin(); pi != it->getBodyEnd(); ++pi)
-      out &lt;&lt; *pi;
+    <i><font color="#9A1900">// more efficient is the use of iterators:</font></i>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font>tnt<font color="#990000">::</font>Part<font color="#990000">::</font>const_iterator pi <font color="#990000">=</font> it<font color="#990000">-&gt;</font><b><font color="#000000">getBodyBegin</font></b><font color="#990000">();</font> pi <font color="#990000">!=</font> it<font color="#990000">-&gt;</font><b><font color="#000000">getBodyEnd</font></b><font color="#990000">();</font> <font color="#990000">++</font>pi<font color="#990000">)</font>
+      out <font color="#990000">&lt;&lt;</font> <font color="#990000">*</font>pi<font color="#990000">;</font>
 
-    // ... or using STL-algorithm and ostreambuf_iterator:
-    std::copy(it->getBodyBegin(),
-              it->getBodyEnd(),
-              std::ostreambuf_iterator<char>(out));
-  }
+    <i><font color="#9A1900">// ... or using STL-algorithm and ostreambuf_iterator:</font></i>
+    std<font color="#990000">::</font><b><font color="#000000">copy</font></b><font color="#990000">(</font>it<font color="#990000">-&gt;</font><b><font color="#000000">getBodyBegin</font></b><font color="#990000">(),</font>
+              it<font color="#990000">-&gt;</font><b><font color="#000000">getBodyEnd</font></b><font color="#990000">(),</font>
+              std<font color="#990000">::</font>ostreambuf_iterator<font color="#990000">&lt;</font><font color="#009900">char</font><font color="#990000">&gt;(</font>out<font color="#990000">));</font>
+  <font color="#FF0000">}</font>
+</tt></pre>
   &lt;/%cpp&gt;
 </pre>
 
