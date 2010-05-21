@@ -62,11 +62,12 @@ namespace tnt
       bool sendStatusLine;
       bool headRequest;
 
-      bool tryCompress(std::string& body);
-      void send(unsigned ret, const char* msg, bool ready);
+      void send(unsigned ret, const char* msg, bool ready) const;
 
     public:
       explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
+
+      static bool tryCompress(std::string& body);
 
       void setContentType(const char* t)            { setHeader(httpheader::contentType, t); }
       void setContentType(const std::string& t)     { setHeader(httpheader::contentType, t); }

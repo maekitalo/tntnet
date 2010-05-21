@@ -83,29 +83,24 @@ namespace tnt
 
   bool HttpReply::tryCompress(std::string& body)
   {
-    if (body.size() >= minCompressSize
-      && !hasHeader(httpheader::contentEncoding)
-      && acceptEncoding.accept("gzip"))
+    log_debug("gzip");
+
+    std::string cbody = doCompress(body);
+
+    std::string::size_type oldSize = body.size();
+    // only send compressed data, if the data is compressed more than 1/8th
+    if (oldSize - (oldSize >> 3) > cbody.size())
     {
-      log_debug("gzip");
+      body = cbody;
+      log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
 
-      std::string cbody = doCompress(body);
-
-      std::string::size_type oldSize = body.size();
-      // only send compressed data, if the data is compressed more than 1/8th
-      if (oldSize - (oldSize >> 3) > cbody.size())
-      {
-        body = cbody;
-        log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
-
-        return true;
-      }
+      return true;
     }
 
     return false;
   }
 
-  void HttpReply::send(unsigned ret, const char* msg, bool ready)
+  void HttpReply::send(unsigned ret, const char* msg, bool ready) const
   {
     std::string body = outstream.str();
 
@@ -137,7 +132,10 @@ namespace tnt
 
     if (ready)
     {
-      if (tryCompress(body))
+      if (body.size() >= minCompressSize
+        && !hasHeader(httpheader::contentEncoding)
+        && acceptEncoding.accept("gzip")
+        && tryCompress(body))
       {
         log_debug(httpheader::contentEncoding << " gzip");
         hsocket << httpheader::contentEncoding << " gzip\r\n";
