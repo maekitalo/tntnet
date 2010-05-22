@@ -26,6 +26,7 @@ libtntnet_la_SOURCES = \
 	job.cpp \
 	langlib.cpp \
 	listener.cpp \
+	mbcomponent.cpp \
 	messageattribute.cpp \
 	messageheader.cpp \
 	messageheaderparser.cpp \
@@ -78,6 +79,7 @@ nobase_include_HEADERS = \
 	tnt/job.h \
 	tnt/langlib.h \
 	tnt/maptarget.h \
+	tnt/mbcomponent.h \
 	tnt/messageattribute.h \
 	tnt/messageheader.h \
 	tnt/messageheaderparser.h \

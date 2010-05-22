@@ -314,8 +314,11 @@ namespace tnt
 
     void Generator::getHeaderIncludes(std::ostream& out) const
     {
-      out << "#include <tnt/ecpp.h>\n"
-             "#include <tnt/convert.h>\n";
+      if (multiImages.empty())
+        out << "#include <tnt/ecpp.h>\n"
+               "#include <tnt/convert.h>\n";
+      else
+        out << "#include <tnt/mbcomponent.h>\n";
     }
 
     void Generator::getPre(std::ostream& out) const
@@ -338,14 +341,18 @@ namespace tnt
 
     void Generator::getClassDeclaration(std::ostream& out) const
     {
-      out << "class _component_ : public tnt::EcppComponent\n"
-             "{\n"
+      if (multiImages.empty())
+        out << "class _component_ : public tnt::EcppComponent\n";
+      else
+        out << "class _component_ : public tnt::MbComponent\n";
+      out << "{\n"
              "    _component_& main()  { return *this; }\n\n" 
              "  protected:\n"
              "    ~_component_();\n\n"
              "  public:\n"
-             "    _component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
-             "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);\n";
+             "    _component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n";
+      if (multiImages.empty())
+        out << "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);\n";
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
                "                    tnt::QueryParams& qparam);\n";
@@ -488,151 +495,151 @@ namespace tnt
           code << "  \"" << it->mime << "\",\n";
 
         code << "};\n\n"
-                "const char* url_c_time[] = {\n";
+                "const char* ctimes[] = {\n";
 
         for (MultiImagesType::const_iterator it = multiImages.begin();
              it != multiImages.end(); ++it)
           code << "  \"" << tnt::HttpMessage::htdate(it->c_time) << "\",\n";
 
         code << "};\n\n"
-                "typedef const char** urls_iterator;\n"
-                "static urls_iterator urls_begin = urls;\n"
-                "static urls_iterator urls_end = urls_begin + " << multiImages.size() << ";\n\n"
-                "inline bool charpLess(const char* a, const char* b)\n"
-                "{\n"
-                "  return strcmp(a, b) < 0;\n"
-                "}\n\n";
-      }
-
-      // logger, %shared and constructor
-      //
-      code << "// <%shared>\n"
-           << shared
-           << "// </%shared>\n\n";
-      code << "// <%config>\n";
-      for (variable_declarations::const_iterator it = configs.begin();
-           it != configs.end(); ++it)
-        it->getConfigDecl(code);
-      code << "// </%config>\n\n"
-              "#define SET_LANG(lang) \\\n"
-              "     do \\\n"
-              "     { \\\n"
-              "       request.setLang(lang); \\\n"
-              "       reply.setLocale(request.getLocale()); \\\n";
-      if (externData)
-        code << "       data.setData(getData(request, rawData)); \\\n";
-      code << "     } while (false)\n\n"
-           << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
-              "  : EcppComponent(ci, um, cl)";
-
-      // initialize subcomponents
-      for (subcomps_type::const_iterator i = subcomps.begin(); i != subcomps.end(); ++i)
-        code << ",\n"
-                "    " << i->getName() << "(*this, \"" << i->getName() << "\")";
-
-      code << "\n{\n";
-
-      if (compress)
-        code << "  rawData.addRef();\n";
-
-      code << "  // <%init>\n"
-           << init
-           << "  // </%init>\n"
-              "}\n\n"
-              "_component_::~_component_()\n"
-              "{\n"
-              "  // <%cleanup>\n"
-           << cleanup
-           << "  // </%cleanup>\n";
-
-      if (compress)
-        code << "  rawData.release();\n";
-
-      code << "}\n\n"
-              "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
-           << "{\n"
-              "  log_trace(\"" << maincomp.getName() << " \" << qparam.getUrl());\n\n";
-
-      if (raw)
-        code << "  reply.setKeepAliveHeader();\n\n";
-      if (!mimetype.empty())
-        code << "  reply.setContentType(\"" << mimetype << "\");\n";
-
-      if (c_time)
-        code << "  {\n"
-                "    std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);\n"
-                "    if (s == \"" << tnt::HttpMessage::htdate(c_time) << "\")\n"
-                "      return HTTP_NOT_MODIFIED;\n"
-                "  }\n";
-
-      if (!data.empty())
-      {
-        if (externData)
-          code << "  tnt::DataChunks data(getData(request, rawData));\n";
-        else
-          code << "  tnt::DataChunks data(rawData);\n";
-      }
-
-      if (multiImages.empty())
-      {
-        if (c_time)
-          code << "  reply.setHeader(tnt::httpheader::lastModified, \""
-               << tnt::HttpMessage::htdate(c_time) << "\");\n";
-        if (raw)
-          code << "  reply.setContentLengthHeader(data.size(0));\n"
-                  "  reply.setDirectMode();\n";
-
-        code << '\n';
-        maincomp.getBody(code, linenumbersEnabled);
-        code << "}\n\n";
+             << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+                "  : MbComponent(ci, um, cl, ::rawData, ::urls, ::mimetypes, ::ctimes)\n"
+                "{ }\n"
+                "_component_::~_component_()\n"
+                "{ }\n";
       }
       else
       {
-        // multi-image-component
-        code << "  const char* url = request.getPathInfo().c_str();\n\n"
-                "  log_debug(\"search for \\\"\" << url << '\"');\n\n"
-                "  urls_iterator it = std::lower_bound(urls_begin, urls_end, url, charpLess);\n"
-                "  if (it == urls_end || strcmp(url, *it) != 0)\n"
-                "  {\n"
-                "    log_info(\"binary file \\\"\" << url << \"\\\" not found\");\n"
-                "    return DECLINED;\n"
-                "  }\n"
-                "  unsigned url_idx = it - urls_begin;\n\n"
+        // logger, %shared and constructor
+        //
+        code << "// <%shared>\n"
+             << shared
+             << "// </%shared>\n\n";
+        code << "// <%config>\n";
+        for (variable_declarations::const_iterator it = configs.begin();
+             it != configs.end(); ++it)
+          it->getConfigDecl(code);
+        code << "// </%config>\n\n"
+                "#define SET_LANG(lang) \\\n"
+                "     do \\\n"
+                "     { \\\n"
+                "       request.setLang(lang); \\\n"
+                "       reply.setLocale(request.getLocale()); \\\n";
+        if (externData)
+          code << "       data.setData(getData(request, rawData)); \\\n";
+        code << "     } while (false)\n\n"
+             << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+                "  : EcppComponent(ci, um, cl)";
 
-                "  reply.setKeepAliveHeader();\n"
-                "  reply.setContentType(mimetypes[url_idx]);\n\n"
+        // initialize subcomponents
+        for (subcomps_type::const_iterator i = subcomps.begin(); i != subcomps.end(); ++i)
+          code << ",\n"
+                  "    " << i->getName() << "(*this, \"" << i->getName() << "\")";
 
-                "  std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);\n"
-                "  if (s == url_c_time[url_idx])\n"
-                "    return HTTP_NOT_MODIFIED;\n\n"
+        code << "\n{\n";
 
-                "  reply.setHeader(tnt::httpheader::lastModified, url_c_time[url_idx]);\n"
-                "  reply.setContentLengthHeader(data.size(url_idx));\n"
-                "  reply.setDirectMode();\n"
-                "  reply.out() << data[url_idx];\n"
-                "  return HTTP_OK;\n"
-                "}\n\n";
+        if (compress)
+          code << "  rawData.addRef();\n";
+
+        code << "  // <%init>\n"
+             << init
+             << "  // </%init>\n"
+                "}\n\n"
+                "_component_::~_component_()\n"
+                "{\n"
+                "  // <%cleanup>\n"
+             << cleanup
+             << "  // </%cleanup>\n";
+
+        if (compress)
+          code << "  rawData.release();\n";
+
+        code << "}\n\n"
+                "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
+             << "{\n"
+                "  log_trace(\"" << maincomp.getName() << " \" << qparam.getUrl());\n\n";
+
+        if (raw)
+          code << "  reply.setKeepAliveHeader();\n\n";
+        if (!mimetype.empty())
+          code << "  reply.setContentType(\"" << mimetype << "\");\n";
+
+        if (c_time)
+          code << "  {\n"
+                  "    std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);\n"
+                  "    if (s == \"" << tnt::HttpMessage::htdate(c_time) << "\")\n"
+                  "      return HTTP_NOT_MODIFIED;\n"
+                  "  }\n";
+
+        if (!data.empty())
+        {
+          if (externData)
+            code << "  tnt::DataChunks data(getData(request, rawData));\n";
+          else
+            code << "  tnt::DataChunks data(rawData);\n";
+        }
+
+        if (multiImages.empty())
+        {
+          if (c_time)
+            code << "  reply.setHeader(tnt::httpheader::lastModified, \""
+                 << tnt::HttpMessage::htdate(c_time) << "\");\n";
+          if (raw)
+            code << "  reply.setContentLengthHeader(data.size(0));\n"
+                    "  reply.setDirectMode();\n";
+
+          code << '\n';
+          maincomp.getBody(code, linenumbersEnabled);
+          code << "}\n\n";
+        }
+        else
+        {
+          // multi-image-component
+          code << "  const char* url = request.getPathInfo().c_str();\n\n"
+                  "  log_debug(\"search for \\\"\" << url << '\"');\n\n"
+                  "  urls_iterator it = std::lower_bound(urls_begin, urls_end, url, charpLess);\n"
+                  "  if (it == urls_end || strcmp(url, *it) != 0)\n"
+                  "  {\n"
+                  "    log_info(\"binary file \\\"\" << url << \"\\\" not found\");\n"
+                  "    return DECLINED;\n"
+                  "  }\n"
+                  "  unsigned url_idx = it - urls_begin;\n\n"
+
+                  "  reply.setKeepAliveHeader();\n"
+                  "  reply.setContentType(mimetypes[url_idx]);\n\n"
+
+                  "  std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);\n"
+                  "  if (s == url_c_time[url_idx])\n"
+                  "    return HTTP_NOT_MODIFIED;\n\n"
+
+                  "  reply.setHeader(tnt::httpheader::lastModified, url_c_time[url_idx]);\n"
+                  "  reply.setContentLengthHeader(data.size(url_idx));\n"
+                  "  reply.setDirectMode();\n"
+                  "  reply.out() << data[url_idx];\n"
+                  "  return HTTP_OK;\n"
+                  "}\n\n";
+        }
+
+        if (haveCloseComp)
+          closeComp.getDefinition(code, externData, linenumbersEnabled);
+
+        if (!attr.empty())
+        {
+          code << "// <%attr>\n"
+                  "std::string _component_::getAttribute(const std::string& name, const std::string& def) const\n"
+                  "{\n";
+          for (attr_type::const_iterator it = attr.begin();
+               it != attr.end(); ++it)
+            code << "  if (name == \"" << it->first << "\")\n"
+                    "    return " << it->second << ";\n";
+          code << "  return def;\n"
+                  "} // </%attr>\n\n";
+        }
+
+        for (subcomps_type::const_iterator i = subcomps.begin();
+             i != subcomps.end(); ++i)
+          i->getDefinition(code, externData, linenumbersEnabled);
       }
-
-      if (haveCloseComp)
-        closeComp.getDefinition(code, externData, linenumbersEnabled);
-
-      if (!attr.empty())
-      {
-        code << "// <%attr>\n"
-                "std::string _component_::getAttribute(const std::string& name, const std::string& def) const\n"
-                "{\n";
-        for (attr_type::const_iterator it = attr.begin();
-             it != attr.end(); ++it)
-          code << "  if (name == \"" << it->first << "\")\n"
-                  "    return " << it->second << ";\n";
-        code << "  return def;\n"
-                "} // </%attr>\n\n";
-      }
-
-      for (subcomps_type::const_iterator i = subcomps.begin();
-           i != subcomps.end(); ++i)
-        i->getDefinition(code, externData, linenumbersEnabled);
     }
 
     void Generator::printLine(std::ostream& out) const

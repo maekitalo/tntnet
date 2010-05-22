@@ -1,0 +1,137 @@
+/*
+ * Copyright (C) 2010 Tommi Maekitalo
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * is provided AS IS, WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, and
+ * NON-INFRINGEMENT.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ */
+
+#include <tnt/mbcomponent.h>
+#include <tnt/data.h>
+#include <tnt/http.h>
+#include <tnt/httpreply.h>
+#include <cxxtools/log.h>
+
+log_define("tntnet.mbcomponent")
+
+namespace tnt
+{
+  namespace
+  {
+    inline bool charpLess(const char* a, const char* b)
+    {
+      return strcmp(a, b) < 0;
+    }
+  }
+
+  MbComponent::MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
+              const char* rawData_, const char** urls_,
+              const char** mimetypes_, const char** ctimes_)
+    : EcppComponent(ci, um, cl),
+      rawData(rawData_),
+      urls(urls_),
+      mimetypes(mimetypes_),
+      ctimes(ctimes_)
+  {
+    log_debug("create MbComponent");
+    tnt::DataChunks data(rawData);
+    compressedData.resize(data.size());
+    log_debug("create MbComponent ready");
+  }
+
+  unsigned MbComponent::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
+  {
+    return operator() (request, reply, qparam, false);
+  }
+
+  unsigned MbComponent::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top)
+  {
+    log_trace("MbComponent " << getCompident());
+
+    tnt::DataChunks data(rawData);
+    const char* url = request.getPathInfo().c_str();
+
+    log_debug("search for \"" << url << '"');
+
+    const char** urls_end = urls + data.size();
+    const char** it = std::lower_bound(urls, urls_end, url, charpLess);
+    if (it == urls_end || strcmp(url, *it) != 0)
+    {
+      log_debug("file \"" << url << "\" not found");
+      return DECLINED;
+    }
+
+    unsigned url_idx = it - urls;
+
+    log_debug("file \"" << url << "\" found; idx=" << url_idx);
+
+    if (top)
+    {
+      reply.setKeepAliveHeader();
+      reply.setContentType(mimetypes[url_idx]);
+
+      std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);
+      if (s == ctimes[url_idx])
+        return HTTP_NOT_MODIFIED;
+
+      reply.setHeader(tnt::httpheader::lastModified, ctimes[url_idx]);
+
+      if (request.getEncoding().accept("gzip"))
+      {
+        cxxtools::ReadLock lock(mutex);
+        if (compressedData[url_idx].empty())
+        {
+          lock.unlock();
+          cxxtools::WriteLock wlock(mutex);
+
+          if (compressedData[url_idx].empty())
+          {
+            // check for compression
+            std::string body(data[url_idx].getData(), data[url_idx].getLength());
+            log_info("try compress");
+            if (reply.tryCompress(body))
+            {
+              log_info("compressed successfully from " << data[url_idx].getLength() << " to " << body.size());
+              compressedData[url_idx] = body;
+            }
+            else
+            {
+              log_info("not compressed " << data[url_idx].getLength());
+              compressedData[url_idx] = "-";
+            }
+          }
+        }
+
+        if (compressedData[url_idx] != "-")
+        {
+          log_debug("compressed data found; content size " << data[url_idx].getLength() << " to " << compressedData[url_idx].size());
+          reply.setContentLengthHeader(compressedData[url_idx].size());
+          reply.setHeader(httpheader::contentEncoding, "gzip");
+          reply.setDirectMode();
+          reply.out() << compressedData[url_idx];
+          return HTTP_OK;
+        }
+      }
+
+      log_debug("send data");
+
+      reply.setContentLengthHeader(data.size(url_idx));
+      reply.setDirectMode();
+    }
+
+    reply.out() << data[url_idx];
+    return HTTP_OK;
+  }
+
+}
