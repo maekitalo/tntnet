@@ -190,7 +190,7 @@ Component& Comploader::fetchComp(const Compident& ci,
   {
     rlock.unlock();
     wlock.lock();
-    componentmap_type::iterator it = componentmap.find(ci);
+    it = componentmap.find(ci);
     if (it == componentmap.end())
     {
       ComponentLibrary& lib = fetchLib(ci.libname);
