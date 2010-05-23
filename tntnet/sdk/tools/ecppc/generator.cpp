@@ -342,17 +342,29 @@ namespace tnt
     void Generator::getClassDeclaration(std::ostream& out) const
     {
       if (multiImages.empty())
-        out << "class _component_ : public tnt::EcppComponent\n";
+      {
+        out << "class _component_ : public tnt::EcppComponent\n"
+               "{\n"
+               "    _component_& main()  { return *this; }\n\n" 
+               "  protected:\n"
+               "    ~_component_();\n\n"
+               "  public:\n"
+               "    _component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n"
+               "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);\n";
+      }
       else
-        out << "class _component_ : public tnt::MbComponent\n";
-      out << "{\n"
-             "    _component_& main()  { return *this; }\n\n" 
-             "  protected:\n"
-             "    ~_component_();\n\n"
-             "  public:\n"
-             "    _component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n";
-      if (multiImages.empty())
-        out << "    unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);\n";
+      {
+        out << "class _component_ : public tnt::MbComponent\n"
+               "{\n"
+               "    _component_& main()  { return *this; }\n\n" ;
+        if (compress)
+          out << "    tnt::DataChunks data;\n\n";
+        out << "  protected:\n"
+               "    ~_component_();\n\n"
+               "  public:\n"
+               "    _component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);\n\n";
+      }
+
       if (haveCloseComp)
         out << "    unsigned endTag(tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
                "                    tnt::QueryParams& qparam);\n";
@@ -501,12 +513,29 @@ namespace tnt
              it != multiImages.end(); ++it)
           code << "  \"" << tnt::HttpMessage::htdate(it->c_time) << "\",\n";
 
-        code << "};\n\n"
-             << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
-                "  : MbComponent(ci, um, cl, ::rawData, ::urls, ::mimetypes, ::ctimes)\n"
-                "{ }\n"
-                "_component_::~_component_()\n"
-                "{ }\n";
+        code << "};\n\n";
+        if (compress)
+        {
+          code << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+                  "  : MbComponent(ci, um, cl)\n"
+                  "{\n"
+                  "  ::rawData.addRef();\n"
+                  "  data.setData(::rawData);\n"
+                  "  init(::rawData, ::urls, ::mimetypes, ::ctimes);\n"
+                  "}\n\n"
+                  "_component_::~_component_()\n"
+                  "{\n"
+                  "  ::rawData.release();\n"
+                  "}\n";
+        }
+        else
+        {
+          code << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+                  "  : MbComponent(ci, um, cl, ::rawData, ::urls, ::mimetypes, ::ctimes)\n"
+                  "{ }\n\n"
+                  "_component_::~_component_()\n"
+                  "{ }\n";
+        }
       }
       else
       {

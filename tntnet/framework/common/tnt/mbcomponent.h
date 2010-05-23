@@ -36,10 +36,28 @@ namespace tnt
       std::vector<std::string> compressedData;
       cxxtools::ReadWriteMutex mutex;
 
+    protected:
+      void init(const char* rawData_, const char** urls_,
+                const char** mimetypes_, const char** ctimes_);
+
     public:
+      MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl)
+        : EcppComponent(ci, um, cl),
+          rawData(0),
+          urls(0),
+          mimetypes(0),
+          ctimes(0)
+      { }
+
       MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
-                  const char* rawData_, const char** urls_,
-                  const char** mimetypes_, const char** ctimes_);
+                  const char* rawData, const char** urls,
+                  const char** mimetypes, const char** ctimes)
+        : EcppComponent(ci, um, cl),
+          rawData(0),
+          urls(0),
+          mimetypes(0),
+          ctimes(0)
+      { init(rawData, urls, mimetypes, ctimes); }
 
       unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
       unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);

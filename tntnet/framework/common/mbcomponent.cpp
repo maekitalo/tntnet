@@ -35,19 +35,16 @@ namespace tnt
     }
   }
 
-  MbComponent::MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
-              const char* rawData_, const char** urls_,
-              const char** mimetypes_, const char** ctimes_)
-    : EcppComponent(ci, um, cl),
-      rawData(rawData_),
-      urls(urls_),
-      mimetypes(mimetypes_),
-      ctimes(ctimes_)
+  void MbComponent::init(const char* rawData_, const char** urls_,
+                         const char** mimetypes_, const char** ctimes_)
   {
-    log_debug("create MbComponent");
+    rawData   = rawData_;
+    urls      = urls_;
+    mimetypes = mimetypes_;
+    ctimes    = ctimes_;
+
     tnt::DataChunks data(rawData);
     compressedData.resize(data.size());
-    log_debug("create MbComponent ready");
   }
 
   unsigned MbComponent::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)

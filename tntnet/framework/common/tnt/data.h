@@ -70,7 +70,7 @@ namespace tnt
       }
 
     public:
-      DataChunks(const char* d)
+      DataChunks(const char* d = 0)
         : dataObject(d)
       { }
 
