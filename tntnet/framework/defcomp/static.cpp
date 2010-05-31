@@ -191,13 +191,13 @@ namespace tnt
     {
       if (stat(file.c_str(), &st) != 0)
       {
-        log_warn("error in stat for file \"" << file << "\"");
+        log_debug("can't stat file \"" << file << "\"");
         return DECLINED;
       }
 
       if (!S_ISREG(st.st_mode))
       {
-        log_warn("no regular file \"" << file << "\"");
+        log_debug("no regular file \"" << file << "\"");
         return DECLINED;
       }
     }
@@ -296,7 +296,7 @@ namespace tnt
     std::ifstream in(file.c_str());
     if (!in)
     {
-      log_warn("error opening file \"" << file << '"');
+      log_debug("can't open file \"" << file << '"');
       return DECLINED;
     }
 
