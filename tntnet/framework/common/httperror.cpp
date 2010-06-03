@@ -29,6 +29,8 @@
 
 #include <tnt/httperror.h>
 #include <tnt/http.h>
+#include <iostream>
+#include <algorithm>
 
 namespace tnt
 {
@@ -51,6 +53,81 @@ namespace tnt
       ret += msg;
       return ret;
     }
+
+    struct HttpMsg
+    {
+      unsigned statusCode;
+      const char* statusText;
+    };
+
+    const static HttpMsg httpMsgs[] = {
+        { 0, "UNKNOWN" },
+        { HTTP_CONTINUE, "Continue" },
+        { HTTP_SWITCHING_PROTOCOLS, "Switching Protocols" },
+        { HTTP_OK, "OK" },
+        { HTTP_PROCESSING, "Processing" },
+        { HTTP_CREATED, "Created" },
+        { HTTP_ACCEPTED, "Accepted" },
+        { HTTP_NON_AUTHORITATIVE, "Non-Authoritative Information" },
+        { HTTP_NO_CONTENT, "No Content" },
+        { HTTP_RESET_CONTENT, "Reset Content" },
+        { HTTP_PARTIAL_CONTENT, "Partial Content" },
+        { HTTP_MULTI_STATUS, "Multi Status" },
+        { HTTP_MULTIPLE_CHOICES, "Multiple Choices" },
+        { HTTP_MOVED_PERMANENTLY, "Moved Permanently" },
+        { HTTP_MOVED_TEMPORARILY, "Moved Temporarily" },
+        { HTTP_SEE_OTHER, "See Other" },
+        { HTTP_NOT_MODIFIED, "Not Modified" },
+        { HTTP_USE_PROXY, "Use Proxy" },
+        { HTTP_TEMPORARY_REDIRECT, "Temporary Redirect" },
+        { HTTP_BAD_REQUEST, "Bad Request" },
+        { HTTP_UNAUTHORIZED, "Unauthorized" },
+        { HTTP_PAYMENT_REQUIRED, "Payment Required" },
+        { HTTP_FORBIDDEN, "Forbidden" },
+        { HTTP_NOT_FOUND, "Not Found" },
+        { HTTP_METHOD_NOT_ALLOWED, "Method Not Allowed" },
+        { HTTP_NOT_ACCEPTABLE, "Not Acceptable" },
+        { HTTP_PROXY_AUTHENTICATION_REQUIRED, "Proxy Authentication Required" },
+        { HTTP_REQUEST_TIME_OUT, "Request Time-out" },
+        { HTTP_CONFLICT, "Conflict" },
+        { HTTP_GONE, "Gone" },
+        { HTTP_LENGTH_REQUIRED, "Length Required" },
+        { HTTP_PRECONDITION_FAILED, "Precondition Failed" },
+        { HTTP_REQUEST_ENTITY_TOO_LARGE, "Request Entity Too Large" },
+        { HTTP_REQUEST_URI_TOO_LARGE, "Request URI Too Large" },
+        { HTTP_UNSUPPORTED_MEDIA_TYPE, "Unsupported Media Type" },
+        { HTTP_RANGE_NOT_SATISFIABLE, "Range not satisfiable" },
+        { HTTP_EXPECTATION_FAILED, "Expectation Failed" },
+        { HTTP_UNPROCESSABLE_ENTITY, "Unprocessable Entity" },
+        { HTTP_LOCKED, "Locked" },
+        { HTTP_FAILED_DEPENDENCY, "Failed Dependency" },
+        { HTTP_UPGRADE_REQUIRED, "Upgrade Required" },
+        { HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error" },
+        { HTTP_NOT_IMPLEMENTED, "Not Implemented" },
+        { HTTP_BAD_GATEWAY, "Bad Gateway" },
+        { HTTP_SERVICE_UNAVAILABLE, "Service Unavailable" },
+        { HTTP_GATEWAY_TIME_OUT, "Gateway Time Out" },
+        { HTTP_VERSION_NOT_SUPPORTED, "Version Not Supported" },
+        { HTTP_VARIANT_ALSO_VARIES, "Variant Also Varies" },
+        { HTTP_INSUFFICIENT_STORAGE, "Insufficient Storage" },
+        { HTTP_NOT_EXTENDED, "Not Extended" }
+    };
+
+    const static HttpMsg* httpMsgsBegin = httpMsgs;
+    const static HttpMsg* httpMsgsEnd = httpMsgs + sizeof(httpMsgs)/sizeof(HttpMsg);;
+
+    inline bool operator< (const HttpMsg& m1, const HttpMsg& m2)
+    { return m1.statusCode < m2.statusCode; }
+
+    inline std::ostream& operator<< (std::ostream& out, const HttpMsg& msg)
+    { return out << msg.statusCode << ' ' << msg.statusText; }
+
+  }
+
+  HttpReturn::HttpReturn(unsigned returncode_)
+    : returncode(returncode_),
+      msg(httpMessage(returncode_))
+  {
   }
 
   HttpReturn::HttpReturn(unsigned returncode_, const char* msg_)
@@ -59,10 +136,32 @@ namespace tnt
   {
   }
 
-  HttpError::HttpError(unsigned errcode, const std::string& m)
-    : msg(httpErrorFormat(errcode, m)),
-      body("<html><body><h1>Error</h1><p>" + m + "</p></body></html>")
+  const char* HttpReturn::httpMessage(unsigned httpstatus)
   {
+    HttpMsg msg;
+    msg.statusCode = httpstatus;
+    const HttpMsg* m = std::lower_bound(httpMsgsBegin, httpMsgsEnd, msg);
+    return m == httpMsgsEnd || m->statusCode != httpstatus ? "-" : m->statusText;
+  }
+
+  HttpError::HttpError(unsigned errcode)
+    : msg(HttpReturn::httpMessage(errcode))
+  {
+    body.reserve(48 + msg.size());
+    body += "<html><body><h1>Error</h1><p>";
+    body += msg;
+    body += "</p></body></html>";
+
+    msg = httpErrorFormat(errcode, msg);
+  }
+
+  HttpError::HttpError(unsigned errcode, const std::string& m)
+    : msg(httpErrorFormat(errcode, m))
+  {
+    body.reserve(48 + msg.size());
+    body += "<html><body><h1>Error</h1><p>";
+    body += m;
+    body += "</p></body></html>";
   }
 
   HttpError::HttpError(unsigned errcode, const std::string& m, const std::string& b)
@@ -78,20 +177,20 @@ namespace tnt
   }
 
   NotFoundException::NotFoundException(const std::string& url_)
-    : HttpError(HTTP_NOT_FOUND, "not found (" + url_ + ')'),
+    : HttpError(HTTP_NOT_FOUND, "Not Found"),
       url(url_)
   {
   }
 
   NotAuthorized::NotAuthorized(const std::string& realm)
-    : HttpError(HTTP_UNAUTHORIZED, "not authorized", "<html><body><h1>not authorized</h1></body></html>")
+    : HttpError(HTTP_UNAUTHORIZED, "Unauthorized", "<html><body><h1>not authorized</h1></body></html>")
   {
     setHeader(httpheader::wwwAuthenticate, "Basic realm=\"" + realm + '"');
   }
 
   MovedTemporarily::MovedTemporarily(const std::string& url)
     : HttpError(HTTP_MOVED_TEMPORARILY,
-                "moved temporarily",
+                "Moved Temporarily",
                 "<html><body>moved to <a href=\"" + url + "\">" + url + "</a></body></html>")
   {
     setHeader(httpheader::location, url);

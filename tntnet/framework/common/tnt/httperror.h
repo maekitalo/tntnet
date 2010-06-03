@@ -42,6 +42,7 @@ namespace tnt
       const char* msg;
 
     public:
+      explicit HttpReturn(unsigned errcode);
       HttpReturn(unsigned errcode_, const char* msg_);
 
       unsigned getReturnCode() const
@@ -49,6 +50,8 @@ namespace tnt
 
       const char* getMessage() const
         { return msg; }
+
+      static const char* httpMessage(unsigned httpstatus);
   };
 
   /// HTTP-error-class
@@ -58,6 +61,7 @@ namespace tnt
       std::string body;
 
     public:
+      explicit HttpError(unsigned errcode);
       HttpError(unsigned errcode, const std::string& msg);
       HttpError(unsigned errcode, const std::string& msg, const std::string& b);
       ~HttpError() throw() { }

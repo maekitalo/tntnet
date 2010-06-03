@@ -120,7 +120,7 @@ namespace tnt
             {
               state = stateSendError;
               log_warn("bad request");
-              socket << "HTTP/1.0 500 bad request\r\n"
+              socket << "HTTP/1.0 400 Bad Request\r\n"
                         "Content-Type: text/html\r\n"
                         "\r\n"
                         "<html><body><h1>Error</h1><p>bad request</p></body></html>"
@@ -343,28 +343,31 @@ namespace tnt
 
         state = stateProcessingRequest;
         unsigned http_return;
-        const char* http_msg = "OK";
+        const char* http_msg;
+        std::string msg;
         try
         {
           http_return = (*comp)(request, reply, request.getQueryParams(), true);
+          http_msg = HttpReturn::httpMessage(http_return);
         }
         catch (const HttpReturn& e)
         {
           http_return = e.getReturnCode();
-          http_msg = e.getMessage();
+          msg = e.getMessage();
+          http_msg = msg.c_str();
         }
 
         if (http_return != DECLINED)
         {
           if (reply.isDirectMode())
           {
-            log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return);
+            log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg);
             state = stateFlush;
             reply.out().flush();
           }
           else
           {
-            log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << " - ContentSize: " << reply.getContentSize());
+            log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.getContentSize());
 
             application.getScopemanager().postCall(request, reply,
                 ci.libname.empty() ? application.getAppName() : ci.libname);
