@@ -1,0 +1,12 @@
+<%pre>
+
+#include <seweb/configuration.h>
+#include <cxxtools/xmlrpc/httpclient.h>
+
+</%pre>
+<%thread>
+
+seweb::Configuration config = seweb::Configuration::get();
+cxxtools::xmlrpc::HttpClient rpcclient(config.rpcip(), config.rpcport(), "/");
+
+</%thread>

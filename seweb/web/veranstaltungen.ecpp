@@ -1,0 +1,34 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <seweb/veranstaltung.h>
+#include <cxxtools/xmlrpc/remoteprocedure.h>
+
+</%pre>
+<%cpp>
+
+rpcclient.url("/veranstaltung");
+
+typedef std::vector<seweb::Veranstaltung> Veranstaltungen;
+
+cxxtools::xmlrpc::RemoteProcedure<Veranstaltungen>
+    getVeranstaltungen(rpcclient, "getVeranstaltungen");
+
+Veranstaltungen v = getVeranstaltungen();
+
+</%cpp>
+<html>
+<body>
+<table>
+% for (Veranstaltungen::const_iterator it = v.begin(); it != v.end(); ++it) {
+  <tr>
+    <td><$ it->id $></td>
+    <td><$ it->name $></td>
+    <td><$ it->datum.toIsoString() $></td>
+    <td><$ it->ort $></td>
+    <td><$ it->logo $></td>
+  </tr>
+% }
+</table>
+</body>
+</html>

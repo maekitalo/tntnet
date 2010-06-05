@@ -1,0 +1,44 @@
+<%args>
+unsigned id;
+</%args>
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <seweb/veranstaltung.h>
+#include <cxxtools/xmlrpc/remoteprocedure.h>
+
+</%pre>
+<%cpp>
+
+rpcclient.url("/veranstaltung");
+cxxtools::xmlrpc::RemoteProcedure<seweb::Veranstaltung, unsigned>
+    getVeranstaltung(rpcclient, "getVeranstaltung");
+
+seweb::Veranstaltung v = getVeranstaltung(id);
+
+</%cpp>
+<html>
+<body>
+<table>
+  <tr>
+    <td>Id</td>
+    <td><$ v.id $></td>
+  <tr>
+    <td>Name</td>
+    <td><$ v.name $></td>
+  </tr>
+  <tr>
+    <td>Datum</td>
+    <td><$ v.datum.toIsoString() $></td>
+  </tr>
+  <tr>
+    <td>Ort</td>
+    <td><$ v.ort $></td>
+  </tr>
+  <tr>
+    <td>Logo</td>
+    <td><$ v.logo $></td>
+  </tr>
+</table>
+</body>
+</html>

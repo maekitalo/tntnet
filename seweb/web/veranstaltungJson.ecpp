@@ -1,0 +1,26 @@
+<%args>
+unsigned id;
+</%args>
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <seweb/veranstaltung.h>
+#include <cxxtools/xmlrpc/remoteprocedure.h>
+#include <cxxtools/jsonserializer.h>
+
+</%pre>
+<%cpp>
+
+rpcclient.url("/veranstaltung");
+cxxtools::xmlrpc::RemoteProcedure<seweb::Veranstaltung, unsigned>
+    getVeranstaltung(rpcclient, "getVeranstaltung");
+
+seweb::Veranstaltung v = getVeranstaltung(id);
+
+cxxtools::JsonSerializer json;
+json.beautify(true);
+json.begin(reply.out());
+json.serialize(v, "veranstaltung");
+json.finish();
+
+</%cpp>
