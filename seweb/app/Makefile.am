@@ -2,10 +2,12 @@ bin_PROGRAMS = seweb-app
 
 seweb_app_SOURCES = \
 	main.cpp \
-	veranstaltung.cpp
+	veranstaltung.cpp \
+	veranstaltungimpl.cpp
 
 noinst_HEADERS = \
-    seweb/service/veranstaltung.h
+    seweb/service/veranstaltung.h \
+    seweb/impl/veranstaltung.h
 
 seweb_app_LDADD = $(top_builddir)/lib/libseweb.la
 seweb_app_LDFLAGS = -lcxxtools -lcxxtools-http -lcxxtools-xml -lcxxtools-xmlrpc -ltntdb
