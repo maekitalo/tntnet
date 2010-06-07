@@ -17,8 +17,6 @@ cxxtools::xmlrpc::RemoteProcedure<Veranstaltungen>
 Veranstaltungen v = getVeranstaltungen();
 
 </%cpp>
-<html>
-<body>
 <table>
 % for (Veranstaltungen::const_iterator it = v.begin(); it != v.end(); ++it) {
   <tr>
@@ -30,5 +28,3 @@ Veranstaltungen v = getVeranstaltungen();
   </tr>
 % }
 </table>
-</body>
-</html>

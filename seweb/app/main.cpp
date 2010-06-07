@@ -30,13 +30,15 @@ int main(int argc, char* argv[])
   {
     log_init();
 
-    seweb::Configuration conf = seweb::Configuration::get();
+    seweb::Configuration config = seweb::Configuration::get();
 
     cxxtools::EventLoop eventLoop;
-    cxxtools::http::Server server(eventLoop, conf.rpcip(), conf.rpcport());
+    cxxtools::http::Server server(eventLoop, config.rpcip(), config.rpcport());
 
     seweb::service::Veranstaltung veranstaltung;
     server.addService("/veranstaltung", veranstaltung);
+
+    std::cout << "xmlrpc service listening on " << config.rpcip() << ':' << config.rpcport() << std::endl;
 
     eventLoop.run();
   }

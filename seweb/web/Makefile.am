@@ -1,6 +1,9 @@
 bin_PROGRAMS = seweb-web
 
 ecppSources = \
+    index.ecpp \
+    htmlmain.ecpp \
+    menu.ecpp \
     veranstaltung.ecpp \
     veranstaltungJson.ecpp \
     veranstaltungXml.ecpp \

@@ -31,8 +31,14 @@ int main(int argc, char* argv[])
     seweb::Configuration config = seweb::Configuration::get();
 
     tnt::Tntnet app;
-    app.mapUrl("^/(.*)$", "$1");
+    app.mapUrl("^/$", "htmlmain").setPathInfo("index");
+    app.mapUrl("^/(.*)\\.html$", "htmlmain").setPathInfo("$1");
+    app.mapUrl("^/(.*).json$", "$1Json");
+    app.mapUrl("^/(.*).xml$", "$1Xml");
     app.listen(config.httpip(), config.httpport());
+
+    std::cout << "http service listening on " << config.httpip() << ':' << config.httpport() << std::endl;
+
     app.run();
   }
   catch (const std::exception& e)

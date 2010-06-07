@@ -17,8 +17,6 @@ cxxtools::xmlrpc::RemoteProcedure<seweb::Veranstaltung, unsigned>
 seweb::Veranstaltung v = getVeranstaltung(id);
 
 </%cpp>
-<html>
-<body>
 <table>
   <tr>
     <td>Id</td>
@@ -40,5 +38,3 @@ seweb::Veranstaltung v = getVeranstaltung(id);
     <td><$ v.logo $></td>
   </tr>
 </table>
-</body>
-</html>
