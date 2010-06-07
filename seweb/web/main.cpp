@@ -31,10 +31,26 @@ int main(int argc, char* argv[])
     seweb::Configuration config = seweb::Configuration::get();
 
     tnt::Tntnet app;
+
+    // map jquery/foo/bar/ to foo/bar/index.html in jquery lib
+    app.mapUrl("^/jquery/(.*)/$", "jquery").setPathInfo("$1/index.html");
+    app.mapUrl("^/jquery/$", "jquery").setPathInfo("index.html");
+
+    // map jquery/foo/bar to foo/bar in jquery lib
+    app.mapUrl("^/jquery/(.*)$", "jquery").setPathInfo("$1");
+
+    // map / to index file with layout
     app.mapUrl("^/$", "htmlmain").setPathInfo("index");
+
+    // add layout page htmlmain to all *.html files
     app.mapUrl("^/(.*)\\.html$", "htmlmain").setPathInfo("$1");
+
+    // map foo.json to fooJson
     app.mapUrl("^/(.*).json$", "$1Json");
+
+    // map foo.xml to fooXml
     app.mapUrl("^/(.*).xml$", "$1Xml");
+
     app.listen(config.httpip(), config.httpport());
 
     std::cout << "http service listening on " << config.httpip() << ':' << config.httpport() << std::endl;

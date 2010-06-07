@@ -16,7 +16,7 @@ seweb_web_SOURCES = \
 EXTRA_DIST = \
     global.ecpp
 
-seweb_web_LDADD = $(top_builddir)/lib/libseweb.la
+seweb_web_LDADD = $(top_builddir)/lib/libseweb.la $(top_builddir)/jquery/libtnt-jquery-ui-1.8.2.la
 seweb_web_LDFLAGS = -ltntnet -lcxxtools-xmlrpc
 AM_CPPFLAGS = -I$(top_srcdir)/lib
 
