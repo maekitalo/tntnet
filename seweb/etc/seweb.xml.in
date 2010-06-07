@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <seweb>
-  <dburl>postgresql:dbname=seweb</dburl>
+  <dburl>@DBURL@</dburl>
   <rpcip></rpcip>
   <rpcport>7007</rpcport>
   <httpip></httpip>
