@@ -1,0 +1,12 @@
+<html>
+<body>
+<a href="/">Hauptseite</a>
+<a href="/veranstaltungen.html">Veranstaltungen</a>
+<a href="/jquery/">JQuery</a>
+<a href="/jquery/development-bundle/demos/">JQuery-ui demos</a>
+<hr>
+<form>
+<& (request.getPathInfo()) >
+</form>
+</body>
+</html>
