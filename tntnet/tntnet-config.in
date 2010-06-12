@@ -167,12 +167,28 @@ project()
         template $P >$P/tntnet.conf
         properties $P >$P/tntnet.properties
         cat >$P/$P.ecpp <<EOF
+<%pre>
+// put your includes here
+// #include "foo.h"
+</%pre>
+<%args>
+// define the query parameters
+// bar;
+</%args>
+<%session>
+// define your session scope variables here
+// std::string mySessionState;
+</%session>
+<%cpp>
+// put your C++ code here
+</%cpp>
 <html>
  <head>
   <title>ecpp-application $P</title>
  </head>
  <body>
   <h1>$P</h1>
+  <\$ "Hello world!" \$>
  </body>
 </html>
 EOF
