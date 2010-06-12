@@ -16,9 +16,12 @@ tntdb::Statement stmt = conn.prepareCached(
 stmt.set("id", id);
 
 tntdb::Row row = stmt.selectRow();
-std::string title = row[0];
-std::string time = row[1];
-std::string longtext = row[2];
+std::string title;
+std::string time;
+std::string longtext;
+row[0].get(title);
+row[1].get(time);
+row[2].get(longtext);
 
 </%cpp>
 <html>

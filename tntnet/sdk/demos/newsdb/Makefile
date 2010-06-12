@@ -3,8 +3,8 @@ newsdb.so: index.o news.o newscss.o
 
 SUFFIXES=.ecpp .gif .jpg
 ECPPC=../../tools/ecppc/ecppc
-CXXFLAGS+=`tntnet-config --cxxflags` -fPIC -O2
-LDFLAGS+=-shared `tntnet-config --libs` -ltntdb
+CXXFLAGS+=-I../../framework/common -fPIC -O2
+LDFLAGS+=-shared -ltntnet -ltntdb
 
 %.cpp: %.ecpp
 	$(ECPPC) $(ECPPFLAGS) $(ECPPFLAGS_CPP) $<
