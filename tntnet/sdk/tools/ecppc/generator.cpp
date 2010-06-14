@@ -314,7 +314,7 @@ namespace tnt
 
     void Generator::getHeaderIncludes(std::ostream& out) const
     {
-      if (multiImages.empty())
+      if (multiImages.empty() && !isRawMode())
         out << "#include <tnt/ecpp.h>\n"
                "#include <tnt/convert.h>\n";
       else
@@ -336,12 +336,12 @@ namespace tnt
 
     void Generator::getNamespaceEnd(std::ostream& out) const
     {
-      out << "} // namespace\n\n";
+      out << "} // namespace\n";
     }
 
     void Generator::getClassDeclaration(std::ostream& out) const
     {
-      if (multiImages.empty())
+      if (multiImages.empty() && !isRawMode())
       {
         out << "class _component_ : public tnt::EcppComponent\n"
                "{\n"
@@ -410,9 +410,6 @@ namespace tnt
 
       out << "#include <cxxtools/log.h>\n"
              "#include <stdexcept>\n\n";
-
-      if (!multiImages.empty())
-        out << "#include <string.h>\n";
     }
 
     void Generator::getFactoryDeclaration(std::ostream& code) const
@@ -477,7 +474,7 @@ namespace tnt
           BStringPrinter bs(code, 2, 120, 30);
           bs.print(buffer, s);
 
-          code << "\",\n  " << s << ", " << data.size() << ");\n";
+          code << "\",\n  " << s << ", " << data.size() << ");\n\n";
         }
         else
         {
@@ -514,6 +511,7 @@ namespace tnt
           code << "  \"" << tnt::HttpMessage::htdate(it->c_time) << "\",\n";
 
         code << "};\n\n";
+
         if (compress)
         {
           code << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
@@ -526,7 +524,7 @@ namespace tnt
                   "_component_::~_component_()\n"
                   "{\n"
                   "  ::rawData.release();\n"
-                  "}\n";
+                  "}\n\n";
         }
         else
         {
@@ -534,7 +532,35 @@ namespace tnt
                   "  : MbComponent(ci, um, cl, ::rawData, ::urls, ::mimetypes, ::ctimes)\n"
                   "{ }\n\n"
                   "_component_::~_component_()\n"
-                  "{ }\n";
+                  "{ }\n\n";
+        }
+      }
+      else if (isRawMode())
+      {
+        code << "static const char* mimetype = \"" << mimetype << "\";\n"
+                "static const char* c_time = \"" << tnt::HttpMessage::htdate(c_time) << "\";\n\n";
+
+        if (compress)
+        {
+          code << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+                  "  : MbComponent(ci, um, cl)\n"
+                  "{\n"
+                  "  ::rawData.addRef();\n"
+                  "  data.setData(::rawData);\n"
+                  "  init(::rawData, ::mimetype, ::c_time);\n"
+                  "}\n\n"
+                  "_component_::~_component_()\n"
+                  "{\n"
+                  "  ::rawData.release();\n"
+                  "}\n\n";
+        }
+        else
+        {
+          code << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
+                  "  : MbComponent(ci, um, cl, ::rawData, ::mimetype, ::c_time)\n"
+                  "{ }\n\n"
+                  "_component_::~_component_()\n"
+                  "{ }\n\n";
         }
       }
       else
@@ -677,38 +703,7 @@ namespace tnt
         out << "#line " << (curline + 1) << " \"" << curfile << "\"\n";
     }
 
-    void Generator::getHeader(std::ostream& header, const std::string& filename) const
-    {
-      getIntro(header, filename);
-      header << "#ifndef ECPP_COMPONENT_" << maincomp.getName() << "_H\n"
-                "#define ECPP_COMPONENT_" << maincomp.getName() << "_H\n\n";
-
-      getHeaderIncludes(header);
-      header << '\n';
-      getPre(header);
-      header << '\n';
-      getNamespaceStart(header);
-      getClassDeclaration(header);
-      getNamespaceEnd(header);
-
-      header << "\n"
-                "#endif\n";
-    }
-
     void Generator::getCpp(std::ostream& code, const std::string& filename) const
-    {
-      getIntro(code, filename);
-      getCppIncludes(code);
-
-      code << "#include \"" << maincomp.getName() << ".h\"\n\n"
-              "log_define(\"component." << maincomp.getLogCategory() << "\")\n\n";
-
-      getNamespaceStart(code);
-      getCppBody(code);
-      getNamespaceEnd(code);
-    }
-
-    void Generator::getCppWoHeader(std::ostream& code, const std::string& filename) const
     {
       getIntro(code, filename);
 

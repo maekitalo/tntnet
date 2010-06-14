@@ -57,21 +57,26 @@ namespace tnt
     log_trace("MbComponent " << getCompident());
 
     tnt::DataChunks data(rawData);
-    const char* url = request.getPathInfo().c_str();
 
-    log_debug("search for \"" << url << '"');
-
-    const char** urls_end = urls + data.size();
-    const char** it = std::lower_bound(urls, urls_end, url, charpLess);
-    if (it == urls_end || strcmp(url, *it) != 0)
+    unsigned url_idx = 0;
+    if (urls)
     {
-      log_debug("file \"" << url << "\" not found");
-      return DECLINED;
+      const char* url = request.getPathInfo().c_str();
+
+      log_debug("search for \"" << url << '"');
+
+      const char** urls_end = urls + data.size();
+      const char** it = std::lower_bound(urls, urls_end, url, charpLess);
+      if (it == urls_end || strcmp(url, *it) != 0)
+      {
+        log_debug("file \"" << url << "\" not found");
+        return DECLINED;
+      }
+
+      unsigned url_idx = it - urls;
+
+      log_debug("file \"" << url << "\" found; idx=" << url_idx);
     }
-
-    unsigned url_idx = it - urls;
-
-    log_debug("file \"" << url << "\" found; idx=" << url_idx);
 
     if (top)
     {

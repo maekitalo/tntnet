@@ -264,7 +264,7 @@ namespace tnt
       if (verbose)
         std::cout << "generate " << obase << ".cpp" << std::endl;
       std::ofstream sout((obase + ".cpp").c_str());
-      generator.getCppWoHeader(sout, ofile + ".cpp");
+      generator.getCpp(sout, ofile + ".cpp");
       sout.close();
 
       if (!sout)

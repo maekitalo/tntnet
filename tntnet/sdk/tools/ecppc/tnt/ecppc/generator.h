@@ -166,9 +166,7 @@ namespace tnt
         virtual void startI18n();
         virtual void endI18n();
 
-        void getHeader(std::ostream& out, const std::string& filename) const;
         void getCpp(std::ostream& out, const std::string& filename) const;
-        void getCppWoHeader(std::ostream& out, const std::string& filename) const;
     };
 
   }

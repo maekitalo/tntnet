@@ -39,6 +39,8 @@ namespace tnt
     protected:
       void init(const char* rawData_, const char** urls_,
                 const char** mimetypes_, const char** ctimes_);
+      void init(const char* rawData_, const char* &mimetype_, const char* &ctime_)
+      { init(rawData_, 0, &mimetype_, &ctime_); }
 
     public:
       MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl)
@@ -58,6 +60,15 @@ namespace tnt
           mimetypes(0),
           ctimes(0)
       { init(rawData, urls, mimetypes, ctimes); }
+
+      MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
+                  const char* rawData, const char* &mimetype, const char* &ctime)
+        : EcppComponent(ci, um, cl),
+          rawData(0),
+          urls(0),
+          mimetypes(0),
+          ctimes(0)
+      { init(rawData, mimetype, ctime); }
 
       unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
       unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
