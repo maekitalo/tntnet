@@ -38,6 +38,7 @@
 #include <cxxtools/condition.h>
 #include <cxxtools/mutex.h>
 #include <set>
+#include <fstream>
 
 namespace tnt
 {
@@ -59,6 +60,8 @@ namespace tnt
    */
   class Tntnet
   {
+      friend class Worker;
+
       unsigned minthreads;
       unsigned maxthreads;
       unsigned long threadstartdelay;
@@ -77,6 +80,9 @@ namespace tnt
 
       ScopeManager scopemanager;
       std::string appname;
+
+      std::ofstream accessLog;
+      cxxtools::Mutex accessLogMutex;
 
       // noncopyable
       Tntnet(const Tntnet&);
@@ -180,6 +186,9 @@ namespace tnt
         { appname = appname_; }
       const std::string& getAppName() const
         { return appname; }
+
+      void setAccessLog(const std::string& accesslog)
+      { accessLog.open(accesslog.c_str(), std::ios::out | std::ios::app); }
   };
 
 }

@@ -57,6 +57,10 @@ namespace tnt
       const char* state;
       time_t lastWaitTime;
 
+      // cache for access log
+      time_t lastLogTime;
+      char timebuf[40];
+
       typedef std::set<Worker*> workers_type;
       static workers_type workers;
 
@@ -65,6 +69,7 @@ namespace tnt
 
       bool processRequest(HttpRequest& request, std::iostream& socket,
         unsigned keepAliveCount);
+      void logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn);
       void healthCheck(time_t currentTime);
 
       // thread context methods
@@ -72,7 +77,7 @@ namespace tnt
       Scope& getScope();
 
     public:
-      Worker(Tntnet& app);
+      explicit Worker(Tntnet& app);
 
       virtual void run();
 
@@ -89,6 +94,7 @@ namespace tnt
 
       static void setEnableCompression(bool sw = true)  { enableCompression = sw; }
       static unsigned getEnableCompression()            { return enableCompression; }
+
   };
 }
 

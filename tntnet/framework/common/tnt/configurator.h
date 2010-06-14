@@ -207,6 +207,9 @@ namespace tnt
       /// Adds a file path where components are searched.
       void addSearchPathEntry(const std::string& path)
         { Comploader::addSearchPathEntry(path); }
+
+      void setAccessLog(const std::string& accessLog)
+        { tntnet.setAccessLog(accessLog); }
   };
 
 }

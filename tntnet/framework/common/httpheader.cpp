@@ -61,5 +61,6 @@ namespace tnt
     const char* userAgent = "User-Agent:";
     const char* wwwAuthenticate = "WWW-Authenticate:";
     const char* authorization = "Authorization:";
+    const char* referer = "Referer:";
   }
 }

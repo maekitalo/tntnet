@@ -74,7 +74,8 @@ namespace tnt
     : application(app),
       threadId(0),
       state(stateStarting),
-      lastWaitTime(0)
+      lastWaitTime(0),
+      lastLogTime(0)
   {
     cxxtools::MutexLock lock(mutex);
     workers.insert(this);
@@ -120,11 +121,15 @@ namespace tnt
             {
               state = stateSendError;
               log_warn("bad request");
-              socket << "HTTP/1.0 400 Bad Request\r\n"
-                        "Content-Type: text/html\r\n"
-                        "\r\n"
-                        "<html><body><h1>Error</h1><p>bad request</p></body></html>"
-                     << std::endl;
+              tnt::HttpReply errorReply(socket);
+              errorReply.setVersion(1, 0);
+              errorReply.setContentType("text/html");
+              errorReply.setKeepAliveCounter(0);
+              errorReply.out() << "<html><body><h1>Error</h1><p>bad request</p></body></html>\n";
+              errorReply.sendReply(400, "Bad Request");
+              HttpRequest request(application);
+              request.setMethod("-");
+              logRequest(request, errorReply, 400);
             }
             else if (socket.fail())
               log_debug("socket failed");
@@ -173,15 +178,18 @@ namespace tnt
             keepAlive = false;
             state = stateSendError;
             log_warn("http-Error: " << e.what());
-            HttpReply reply(socket);
-            reply.setVersion(1, 0);
-            reply.setKeepAliveCounter(0);
+            HttpReply errorReply(socket);
+            errorReply.setVersion(1, 0);
+            errorReply.setKeepAliveCounter(0);
             for (HttpMessage::header_type::const_iterator it = e.header_begin();
                  it != e.header_end(); ++it)
-              reply.setHeader(it->first, it->second);
+              errorReply.setHeader(it->first, it->second);
 
-            reply.out() << e.getBody() << '\n';
-            reply.sendReply(e.getErrcode(), e.getErrmsg());
+            errorReply.out() << e.getBody() << '\n';
+            errorReply.sendReply(e.getErrcode(), e.getErrmsg());
+            HttpRequest request(application);
+            request.setMethod("-");
+            logRequest(request, errorReply, e.getErrcode());
           }
         } while (keepAlive);
       }
@@ -265,21 +273,75 @@ namespace tnt
     {
       state = stateSendError;
       log_warn("http-Error: " << e.what());
-      HttpReply reply(socket);
-      reply.setVersion(request.getMajorVersion(), request.getMinorVersion());
+      HttpReply errorReply(socket);
+      errorReply.setVersion(request.getMajorVersion(), request.getMinorVersion());
       if (request.keepAlive())
-        reply.setKeepAliveCounter(keepAliveCount);
+        errorReply.setKeepAliveCounter(keepAliveCount);
       else
         keepAliveCount = 0;
       for (HttpMessage::header_type::const_iterator it = e.header_begin();
            it != e.header_end(); ++it)
-        reply.setHeader(it->first, it->second);
+        errorReply.setHeader(it->first, it->second);
 
-      reply.out() << e.getBody() << '\n';
-      reply.sendReply(e.getErrcode(), e.getErrmsg());
+      errorReply.out() << e.getBody() << '\n';
+      errorReply.sendReply(e.getErrcode(), e.getErrmsg());
+      HttpRequest request(application);
+      request.setMethod("-");
+      logRequest(request, errorReply, e.getErrcode());
     }
 
     return keepAliveCount > 0;
+  }
+
+  void Worker::logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn)
+  {
+    std::ofstream& accessLog = application.accessLog;
+
+    if (!accessLog.is_open())
+      return;
+
+    log_debug("log requests with return code " << httpReturn);
+
+    time_t t;
+    ::time(&t);
+    if (t != lastLogTime)
+    {
+      struct tm tm;
+      ::localtime_r(&t, &tm);
+      strftime(timebuf, sizeof(timebuf), "%d/%b/%Y:%H:%M:%S %z", &tm);
+      lastLogTime = t;
+    }
+
+    cxxtools::MutexLock lock(application.accessLogMutex);
+
+    static const std::string unknown("-");
+
+    std::string user = request.getUsername();
+    if (user.empty())
+      user = unknown;
+
+    std::string peerIp = request.getPeerIp();
+    if (peerIp.empty())
+      peerIp = unknown;
+
+    std::string query = request.getQuery();
+    if (query.empty())
+      query = unknown;
+
+    accessLog << peerIp
+              << " - " << user << " [" << timebuf << "] \""
+              << request.getMethod_cstr() << ' '
+              << query << ' '
+              << "HTTP/" << request.getMajorVersion() << '.' << request.getMinorVersion() << "\" "
+              << httpReturn << ' ';
+    std::string::size_type contentSize = reply.getContentSize();
+    if (contentSize != 0)
+      accessLog << contentSize;
+    else
+      accessLog << '-';
+    accessLog << " \"" << request.getHeader(httpheader::referer, "-") << "\" \""
+              << request.getHeader(httpheader::userAgent, "-") << "\""
+              << std::endl;
   }
 
   void Worker::dispatch(HttpRequest& request, HttpReply& reply)
@@ -376,12 +438,14 @@ namespace tnt
             reply.sendReply(http_return, http_msg);
           }
 
+          logRequest(request, reply, http_return);
+
           if (reply.out())
             log_debug("reply sent");
           else
           {
             reply.setKeepAliveCounter(0);
-            log_warn("stream error");
+            log_warn("sending failed");
           }
 
           return;

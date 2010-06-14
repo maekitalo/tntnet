@@ -86,6 +86,7 @@ PropertyFile        tntnet.properties
 #MinCompressSize    1024  # in bytes
 #MaxUrlMapCache     8192
 #DefaultContentType "text/html; charset=UTF-8"
+#AccessLog          /var/log/tntnet/access.log
 EOF
 }
 

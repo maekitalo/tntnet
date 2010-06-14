@@ -63,6 +63,7 @@ namespace tnt
     extern const char* userAgent;
     extern const char* wwwAuthenticate;
     extern const char* authorization;
+    extern const char* referer;
   }
 }
 
