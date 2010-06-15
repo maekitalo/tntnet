@@ -73,7 +73,7 @@ namespace tnt
         return DECLINED;
       }
 
-      unsigned url_idx = it - urls;
+      url_idx = it - urls;
 
       log_debug("file \"" << url << "\" found; idx=" << url_idx);
     }
