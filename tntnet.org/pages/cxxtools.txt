@@ -23,7 +23,7 @@
         <li>parser for property files</li>
         <li>policy based smartpointer</li>
         <li>wrappers for dlopen(2) and dlsym(2)</li>
-        <li>std::istream based http client</li>
+        <li>fast http client</li>
         <li>uuencoder-std::ostream</li>
         <li>classes to create mime messages for sending mail with attachements or as html-formatted mail</li>
         <li>template based fast signal/slot-classes</li>
@@ -31,7 +31,6 @@
         <li>parser for http-query-parameters e.g. for cgi</li>
         <li>ostream-filter for counting bytes passed through it</li>
         <li>wrappers for atomic operations</li>
-        <li>std::ostream based wrapper around iconv(3)</li>
         <li>...</li>
     </ul>
 
@@ -39,7 +38,7 @@
 
     <table>
       <tr>
-        <td><a href="cxxtools_arg.html">arg.cpp</a></td>
+        <td><a href="cxxtools_arg.cpp.html">arg.cpp</a></td>
         <td>Argument-parser (argc, argv)</td>
       </tr>
       <tr>
