@@ -294,6 +294,11 @@ The main difference is, that a parameter variable has no scope, since
 the parameter is always local to the component.
 .
 \" ---------------------------------------------------------------------
+.SS <%out> \fIexpr\fP </%out>
+\" ---------------------------------------------------------------------
+Same as <$$ ... $>. Prints the contained C++ expression \fIexpr\fP.
+.
+\" ---------------------------------------------------------------------
 .SS <%pre>...</%pre>
 \" ---------------------------------------------------------------------
 Defines C++-code, which is placed outside the C++-class and outside the
@@ -315,6 +320,13 @@ Sessions are identified with cookies. If a <%session>-block is defined
 somewhere in a component, a session-cookie is sent to the client.
 .PP
 Sessions are automatically locked.
+.
+\" ---------------------------------------------------------------------
+.SS <%sout> \fIexpr\fP </%sout>
+\" ---------------------------------------------------------------------
+Same as <$ ... $>. Prints the contained C++ expression \fIexpr\fP.
+The characters <, >, &, " and ', which have special meanings in html, are
+translated to the corresponding html-entities.
 .
 \" ---------------------------------------------------------------------
 .SS <%thread [ scope="component|page|global"] >...</%thread>

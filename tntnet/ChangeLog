@@ -1,3 +1,53 @@
+2010-06-15 tommi@tntnet.org
+ - add support for access.log with common log format
+ - fix bug, where always the first file of multibinary components was sent
+
+2010-06-14 tommi@tntnet.org
+ - files compiled with ecppc -b compressed when requested
+
+2010-06-03 tommi@tntnet.org
+ - set proper text in http reply header instead of defaulting to OK
+
+2010-05-31 tommi@tntnet.org
+ - do not log_warn if static file is not found in static@tntnet
+
+2010-05-22 tommi@tntnet.org
+ - use compression in multibinary components and cache the compressed data
+ - fix for a very old bug, which may cause a crash when a component was called
+   in parallel the first time
+
+2010-04-06 tommi@tntnet.org
+ - ecppc -I do not need a space before the parameter any more
+
+2010-03-21 tommi@tntnet.org
+ - do not generate current time into generated source to help tools like ccache detecting identity
+
+2010-03-10 tommi@tntnet.org
+ - use application/x-data as mime type in multibinary components when
+   mimetype is otherwise unknown.
+ - sort file names correctly in multibinary components
+
+2010-02-26 tommi@tntnet.org
+ - send cookies also in redirect and not authorized replies
+
+2010-02-21 tommi@tntnet.org
+ - new feature: make components callable from the command line using "tntnet -C compid"
+
+2010-02-19 tommi@tntnet.org
+ - make application name in tntnet application class settable
+ - add a demo for using tntnet application class (calcapp)
+
+2010-02-03 tommi@tntnet.org
+ - (url-)decode cookie value as is should be
+
+2010-01-27 tommi@tntnet.org
+ - do not add a dot at the end of session cookie name if no library is set
+
+2010-01-27 tommi@tntnet.org
+
+2010-01-18 tommi@tntnet.org
+ - improve logging output
+
 2009-12-30 tommi@tntnet.org
  - make RTLD_LOCAL the default loading mechanism
 
@@ -6,6 +56,7 @@
  - remove unused class inflatestream
  - cxxtools::Pipe is moved to cxxtools::posix::Pipe
  - fix bug, where tntnet did not use keep alive when in HTTP 1.1 the connection header was ommitted
+
 2009-12-21 tommi@tntnet.org
  - make unit test optional
 

@@ -1,7 +1,7 @@
 pkglib_LTLIBRARIES = calc.la
 
 nodist_calc_la_SOURCES = \
-	calc.cpp
+	calc.cpp js.cpp
 
 EXTRA_DIST = \
 	calc.ecpp
@@ -22,3 +22,8 @@ tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties calc >$@
 tntnet.conf:
 	( $(SHELL) $(top_builddir)/tntnet-config --config=calc; echo CompPath .libs ) >$@
+
+
+JS=media/foo.js media/bar.js
+js.cpp: $(JS)
+	$(top_builddir)/sdk/tools/ecppc/ecppc -bb -n js $(JS)
