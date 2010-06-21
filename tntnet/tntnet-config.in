@@ -189,7 +189,7 @@ project()
  </head>
  <body>
   <h1>$P</h1>
-  <\$ "Hello world!" \$>
+  <p>Hello world!</p>
  </body>
 </html>
 EOF
