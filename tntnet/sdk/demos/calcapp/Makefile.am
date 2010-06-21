@@ -1,7 +1,9 @@
 noinst_PROGRAMS = calc
 
+calc_SOURCES = \
+	main.cpp
+
 nodist_calc_SOURCES = \
-	main.cpp \
 	calc.cpp
 
 EXTRA_DIST = \
