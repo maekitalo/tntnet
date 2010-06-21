@@ -31,7 +31,7 @@ You can ask for the mime-type with tnt::Part::getMimetype() and for the filename
 
 <pre class="sourcecode">
 &lt;form method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
- &lt;input type=&quot;file&quot; name=&quot;upload&quot;&gt;
+ &lt;input type=&quot;file&quot; name=&quot;myfile&quot;&gt;
  &lt;input type=&quot;submit&quot;&gt;
 &lt;/form&gt;
 </pre>

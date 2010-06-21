@@ -14,7 +14,7 @@
 <h2>Connecting</h2>
 <p>A connection is represented by the class tntdb::Connection. Tntdb offers a simple function, which connects to the database: tntdb::connect. This expects a parameter of type std::string, which is the database-url. The database-url consists of the driver name and a database dependent part divided by a colon.</p>
 <p>Example:</p>
-<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>connection<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connection.h&gt;</font>
 <b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connect.h&gt;</font>
 <font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">)</font>
 <font color="#FF0000">{</font>
@@ -24,7 +24,7 @@
 
 <p>The example above loads the sqlite-driver-library and opens a connection to the databasefile "mydb.db". At the end of the program the class tntdb::Connection goes out of scope, which closes the connection automatically.</p>
 <p>When the database could not be opened a exception is thrown. In the above example it is unhandled, which makes the program to abort. This is not so nice, so we add exceptionhandling in the second example:</p>
-<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>connection<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connection.h&gt;</font>
 <b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connect.h&gt;</font>
 <font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">)</font>
 <font color="#FF0000">{</font>
@@ -44,7 +44,7 @@
 <p>Let's look a little deeper into the driver dependent part.</p>
 <h3>The Postgresql driver</h3>
 <p>The part after the prefix "postgresql:" is passed directly to the C-API function PQconnectdb. You can look into the C-API documentation for details. Here is a simple example:</p>
-<pre><tt>tntdb<font color="#990000">::</font>Connection conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font><font color="#FF0000">"postgresql:dbname=DS2 user=web passwd=web"</font><font color="#990000">);</font>
+<pre><tt>tntdb<font color="#990000">::</font>Connection conn <font color="#990000">=</font> tntdb<font color="#990000">::</font><b><font color="#000000">connect</font></b><font color="#990000">(</font><font color="#FF0000">"postgresql:dbname=DS2 user=web password=web"</font><font color="#990000">);</font>
 </tt></pre>
 <h3>The Sqlite driver</h3>
 <p>The sqlite driver supports only sqlite3. No support for sqlite2 is available. The part after the prefix "sqlite:" is used as a file name for the database. No additional parameters are needed.</p>
@@ -65,7 +65,7 @@
 <h2>Execute query</h2>
 <p>To execute a query without selecting data tntdb::Connection has a method execute. It expects a std::string with a sql-statement, which does not return data. It returns the number of affected rows.</p>
 <p>Example:</p>
-<pre><tt>#include <font color="#990000">&lt;</font>tntdb<font color="#990000">/</font>connection<font color="#990000">.</font>h<font color="#990000">&gt;</font>
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connection.h&gt;</font>
 <b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;tntdb/connect.h&gt;</font>
 <font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font><font color="#990000">*</font> argv<font color="#990000">)</font>
 <font color="#FF0000">{</font>
