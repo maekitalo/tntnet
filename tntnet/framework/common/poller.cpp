@@ -284,7 +284,7 @@ namespace tnt
         append(*it);
         int msec = (*it)->msecToTimeout(currentTime);
         if (poll_timeout < 0 || msec < poll_timeout)
-          poll_timeout = msec
+          poll_timeout = msec;
       }
 
       new_jobs.clear();
