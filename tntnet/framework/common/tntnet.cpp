@@ -447,24 +447,15 @@ namespace tnt
       getScopemanager().checkSessionTimeout();
       Worker::timer();
     }
+
+    queue.noWaitThreads.signal();
+    minthreads = maxthreads = 0;
   }
 
   void Tntnet::shutdown()
   {
     stop = true;
-
-    {
-      cxxtools::MutexLock timeStopLock(timeStopMutex);
-      timerStopCondition.broadcast();
-    }
-
-    cxxtools::MutexLock lock(allTntnetInstancesMutex);
-    for (TntnetInstancesType::iterator it = allRunningTntnetInstances.begin();
-      it != allRunningTntnetInstances.end(); ++it)
-    {
-      (*it)->queue.noWaitThreads.signal();
-      (*it)->minthreads = (*it)->maxthreads = 0;
-    }
+    timerStopCondition.broadcast();
   }
 
 }

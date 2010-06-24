@@ -296,6 +296,7 @@ namespace tnt
     }
 
     signal(SIGTERM, sigEnd);
+    signal(SIGINT, sigEnd);
     signal(SIGHUP, sigReload);
   }
 
