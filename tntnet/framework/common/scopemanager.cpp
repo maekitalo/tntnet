@@ -136,8 +136,7 @@ namespace tnt
         log_debug("available session " << it->first << " value " << it->second);
         */
 
-      log_debug("session-cookie " << currentSessionCookieName << " not found");
-      request.setSessionScope(0);
+      log_debug("session-cookie " << currentSessionCookieName << " not found - keep session");
     }
     else
     {
