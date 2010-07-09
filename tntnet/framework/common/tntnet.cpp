@@ -384,20 +384,9 @@ namespace tnt
       allRunningTntnetInstances.erase(this);
     }
 
-    log_info("stop listeners");
-    while (!listeners.empty())
-    {
-      listeners_type::value_type s = *listeners.begin();
-      log_debug("remove listener from listener-list");
-      listeners.erase(s);
-
-      log_debug("request listener to stop");
-      s->doStop();
-
-      delete s;
-
-      log_debug("listener stopped");
-    }
+    log_info("wake listeners");
+    for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
+      (*it)->doStop();
 
     log_info("stop poller thread");
     poller.doStop();
@@ -415,6 +404,11 @@ namespace tnt
         usleep(100);
       }
     }
+
+    log_debug("destroy listeners");
+    for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
+      delete *it;
+    listeners.clear();
 
     log_info("all threads stopped");
   }

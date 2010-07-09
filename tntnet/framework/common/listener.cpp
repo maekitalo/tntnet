@@ -80,7 +80,9 @@ namespace tnt
     try
     {
       // connect once to wake up listener, so it will check stop-flag
-      cxxtools::net::TcpSocket(ipaddr, port);
+      cxxtools::net::TcpSocket s(ipaddr, port);
+      char ch = 'A';
+      s.write(&ch, 1);
     }
     catch (const std::exception& e)
     {
