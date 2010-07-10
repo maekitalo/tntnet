@@ -9,6 +9,7 @@ libtntnet_la_SOURCES = \
 	configurator.cpp \
 	contentdisposition.cpp \
 	contenttype.cpp \
+	convert.cpp \
 	cookie.cpp \
 	deflatestream.cpp \
 	dispatcher.cpp \

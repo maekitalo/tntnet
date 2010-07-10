@@ -92,10 +92,9 @@ namespace tnt
       {
         o << "typedef std::vector<" << type << "> " << name << "_type;\n"
           << name << "_type " << name << ";\n"
-          << "std::transform(qparam.begin(\"" << name
-          << "\"), qparam.end(), std::back_inserter(" << name
-          << "), tnt::stringToConverter<" << type
-          << ">(reply.out().getloc()));\n";
+          << "tnt::convertRange(\"" << name << "\", \"" << type
+          << "\", qparam.begin(\"" << name << "\"), qparam.end(), " << name
+          << ", reply.out().getloc());\n";
       }
     }
 
@@ -114,15 +113,15 @@ namespace tnt
         {
           // no default-value
 
-          o << "tnt::stringToConverter<" << type
-            << ">(reply.out().getloc())( qparam.param(\"" << name << "\") );\n";
+          o << "tnt::stringTo<" << type
+            << ">(\"" << name << "\", \"" << type << "\", qparam.param(\"" << name << "\"), reply.out().getloc());\n";
         }
         else
         {
           // with default-value
-          o << "qparam.has(\"" << name << "\") ? tnt::stringToWithDefaultConverter<"
-            << type << ">(" << value << ", reply.out().getloc())(qparam.param(\""
-            << name << "\")) : " << value << ";\n";
+          o << "qparam.has(\"" << name << "\") ? tnt::stringToWithDefault<" << type
+            << ">(qparam.param(\"" << name << "\"), (" << value << "), reply.out().getloc()) : ("
+            << value << ");\n";
         }
       }
       else
@@ -131,7 +130,7 @@ namespace tnt
         o << "std::string " << name 
           << " = qparam.param(\"" << name << '"';
         if (!value.empty())
-          o << ", " << value;
+          o << ", (" << value << ')';
 
         o << ");\n";
       }
@@ -145,7 +144,7 @@ namespace tnt
 
         o << "    if (config.hasValue(\"" << name << "\"))\n"
           << "      _component_::" << name << " = tnt::stringTo<" << type
-          << ">( config.getValue(\"" << name << "\") );\n";
+            << ">(\"" << name << "\", \"" << type << "\", config.getValue(\"" << name << "\"));\n";
       }
       else
       {

@@ -29,7 +29,6 @@
 #include <tnt/cgi.h>
 #include <tnt/urlmapper.h>
 #include <tnt/httpreply.h>
-#include <tnt/convert.h>
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
 #include <cxxtools/arg.h>
@@ -38,6 +37,7 @@
 #include <arpa/inet.h>
 #include <config.h>
 #include <stdlib.h>
+#include <sstream>
 
 // fastcgi is not yet implemented!!!
 #ifdef WITH_FASTCGI
@@ -109,7 +109,13 @@ namespace tnt
   void Cgi::readBody()
   {
     const char* contentLength = getenv("CONTENT_LENGTH");
-    unsigned length = contentLength ? stringTo<unsigned>(contentLength) : 0;
+    unsigned length = 0;
+    if (contentLength)
+    {
+      std::istringstream in(contentLength);
+      in >> length;
+    }
+
     if (length > 0)
     {
       std::vector<char> buffer(length);

@@ -36,19 +36,12 @@
 
 namespace tnt
 {
-  class convertError : public std::runtime_error
+  class ConversionError : public std::runtime_error
   {
-      std::string value;
+      explicit ConversionError(const std::string& msg);
 
     public:
-      explicit convertError(const std::string& value_)
-        : std::runtime_error("cannot cast \"" + value_ + '"'),
-          value(value_)
-        { }
-      ~convertError() throw ()
-        { }
-
-      const std::string& getValue() const   { return value; }
+      static void doThrow(const char* argname, const char* typeto, const std::string& value);
   };
 
   template <typename T>
@@ -82,26 +75,34 @@ namespace tnt
   inline std::string toString(const char* value, const std::locale&)
   { return std::string(value); }
 
+  inline std::string toString(char value)
+  { return std::string(1, value); }
+
+  inline std::string toString(char value, const std::locale&)
+  { return std::string(1, value); }
+
+  // convert std::string to some type
+
   template <typename T>
-  inline T stringTo(const std::string& value)
+  inline T stringTo(const char* argname, const char* typeto, const std::string& value)
   {
     T ret;
     std::istringstream s(value);
     s >> ret;
     if (!s)
-      throw convertError(value);
+      ConversionError::doThrow(argname, typeto, value);
     return ret;
   }
 
   template <typename T>
-  inline T stringTo(const std::string& value, const std::locale& loc)
+  inline T stringTo(const char* argname, const char* typeto, const std::string& value, const std::locale& loc)
   {
     T ret;
     std::istringstream s(value);
     s.imbue(loc);
     s >> ret;
     if (!s)
-      throw convertError(value);
+      ConversionError::doThrow(argname, typeto, value);
     return ret;
   }
 
@@ -128,13 +129,38 @@ namespace tnt
     return ret;
   }
 
+  // specializations
+
   template <>
-  inline std::string stringTo<std::string>(const std::string& value)
+  inline std::string stringTo<std::string>(const char* /*argname*/, const char* /*typeto*/, const std::string& value)
   { return value; }
 
   template <>
-  inline std::string stringTo<std::string>(const std::string& value, const std::locale&)
+  inline std::string stringTo<std::string>(const char* /*argname*/, const char* /*typeto*/, const std::string& value, const std::locale&)
   { return value; }
+
+  template <>
+  inline char stringTo<char>(const char* argname, const char* typeto, const std::string& value)
+  {
+    if (value.empty())
+      ConversionError::doThrow(argname, typeto, value);
+    return value[0];
+  }
+
+  template <>
+  inline char stringTo<char>(const char* argname, const char* typeto, const std::string& value, const std::locale&)
+  { return stringTo<char>(argname, typeto, value); }
+
+  template <>
+  inline bool stringTo<bool>(const char* /*argname*/, const char* /*typeto*/, const std::string& value)
+  {
+    // consider empty value as false
+    return !value.empty();
+  }
+
+  template <>
+  inline bool stringTo<bool>(const char* /*argname*/, const char* /*typeto*/, const std::string& value, const std::locale&)
+  { return stringTo<bool>(0, 0, value); }
 
   template <>
   inline std::string stringToWithDefault<std::string>(const std::string& value, const std::string&)
@@ -144,35 +170,32 @@ namespace tnt
   inline std::string stringToWithDefault<std::string>(const std::string& value, const std::string&, const std::locale&)
   { return value; }
 
-  template <typename T>
-  class stringToConverter : public std::unary_function<std::string, T>
+  template <>
+  inline char stringToWithDefault<char>(const std::string& value, const char& def)
+  { return value.empty() ? def : value[0]; }
+
+  template <>
+  inline char stringToWithDefault<char>(const std::string& value, const char& def, const std::locale&)
+  { return value.empty() ? def : value[0]; }
+
+  template <>
+  inline bool stringToWithDefault<bool>(const std::string& value, const bool& def)
   {
-      std::locale loc;
-    public:
-      stringToConverter() { }
-      explicit stringToConverter(const std::locale& loc_)
-        : loc(loc_)
-        { }
+    return value.empty() ? def
+                         : stringTo<bool>(0, 0, value);
+  }
 
-      T operator() (std::string s)
-      { return stringTo<T>(s, loc); }
-  };
+  template <>
+  inline bool stringToWithDefault<bool>(const std::string& value, const bool& def, const std::locale&)
+  { return stringToWithDefault<bool>(value, def); }
 
-  template <typename T>
-  class stringToWithDefaultConverter : public std::unary_function<std::string, T>
+  template <typename iteratorType, typename vectorType>
+  void convertRange(const char* argname, const char* typeto, iteratorType b, iteratorType e, vectorType& v, const std::locale& l)
   {
-      T def;
-      std::locale loc;
+    for (iteratorType it = b; it != e; ++it)
+      v.push_back(stringTo<typename vectorType::value_type>(argname, typeto, *it, l));
+  }
 
-    public:
-      explicit stringToWithDefaultConverter(const T& def_) : def(def_) { }
-      stringToWithDefaultConverter(const T& def_, const std::locale& loc_)
-        : def(def_), loc(loc_)
-        { }
-
-      T operator() (std::string s)
-      { return stringToWithDefault<T>(s, def, loc); }
-  };
 }
 
 #endif // TNT_CONVERT_H

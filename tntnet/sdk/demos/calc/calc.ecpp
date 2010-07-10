@@ -1,20 +1,35 @@
 <%args>
 double arg1 = 0;     // typed parameter with default value
 double arg2 = 0;     // typed parameter with default value
-char op = ' ';       // typed parameter with default value
+bool plus;           // bool arguments for buttons
+bool minus;
+bool mul;
+bool div;
 </%args>
 <%cpp>  // <= this starts a c++-processing-block
 
   double result = 0.0;
+  char op = '\0';
 
-  bool result_ok = true;
-  switch (op)
+  if (plus)
   {
-    case '+': result = arg1 + arg2; break;
-    case '-': result = arg1 - arg2; break;
-    case '*': result = arg1 * arg2; break;
-    case '/': result = arg1 / arg2; break;
-    default: result_ok = false;
+    result = arg1 + arg2;
+    op = '+';
+  }
+  else if (minus)
+  {
+    result = arg1 - arg2;
+    op = '-';
+  }
+  else if (mul)
+  {
+    result = arg1 * arg2;
+    op = '*';
+  }
+  else if (div)
+  {
+    result = arg1 / arg2;
+    op = '/';
   }
 
 </%cpp> <# <= this terminates a c++-processing-block (and this is a ecpp-comment) #>
@@ -31,13 +46,13 @@ char op = ' ';       // typed parameter with default value
       They just need a outputstream-operator #>
    <input type="text" name="arg1" value="<$arg1$>"> <br>
    <input type="text" name="arg2" value="<$arg2$>"> <br>
-   <input type="submit" name="op" value="+">
-   <input type="submit" name="op" value="-">
-   <input type="submit" name="op" value="*">
-   <input type="submit" name="op" value="/">
+   <input type="submit" name="plus" value="+">
+   <input type="submit" name="minus" value="-">
+   <input type="submit" name="mul" value="*">
+   <input type="submit" name="div" value="/">
   </form>
 
-% if (result_ok) {    // '%' in the first column makes a c++-one-liner
+% if (op) {    // '%' in the first column makes a c++-one-liner
 
   <hr>
   <$arg1$> <$op$> <$arg2$> = <$result$>

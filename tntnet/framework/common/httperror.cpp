@@ -29,7 +29,9 @@
 
 #include <tnt/httperror.h>
 #include <tnt/http.h>
+#include <tnt/htmlescostream.h>
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 
 namespace tnt
@@ -147,10 +149,13 @@ namespace tnt
   HttpError::HttpError(unsigned errcode)
     : msg(HttpReturn::httpMessage(errcode))
   {
-    body.reserve(48 + msg.size());
-    body += "<html><body><h1>Error</h1><p>";
-    body += msg;
-    body += "</p></body></html>";
+    std::ostringstream b;
+    HtmlEscOstream sb(b);
+
+    b << "<html><body><h1>Error</h1><p>";
+    sb << msg;
+    b << "</p></body></html>";
+    body = b.str();
 
     msg = httpErrorFormat(errcode, msg);
   }
@@ -158,10 +163,13 @@ namespace tnt
   HttpError::HttpError(unsigned errcode, const std::string& m)
     : msg(httpErrorFormat(errcode, m))
   {
-    body.reserve(48 + msg.size());
-    body += "<html><body><h1>Error</h1><p>";
-    body += m;
-    body += "</p></body></html>";
+    std::ostringstream b;
+    HtmlEscOstream sb(b);
+
+    b << "<html><body><h1>Error</h1><p>";
+    sb << m;
+    b << "</p></body></html>";
+    body = b.str();
   }
 
   HttpError::HttpError(unsigned errcode, const std::string& m, const std::string& b)
