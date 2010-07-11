@@ -32,17 +32,13 @@ namespace tnt
 {
   void ConversionError::doThrow(const char* argname, const char* typeto, const std::string& value)
   {
-    std::string msg = "expected <";
+    std::string msg = "Cannot interpret '";
+    msg += value;
+    msg += "' as <";
     msg += typeto;
-    msg += "> for argument \"";
+    msg += "> for argument '";
     msg += argname;
-    msg += "\"";
-    if (!value.empty())
-    {
-      msg += " - got \"";
-      msg += value;
-      msg += '"';
-    }
+    msg += '\'';
 
     throw ConversionError(msg);
   }
