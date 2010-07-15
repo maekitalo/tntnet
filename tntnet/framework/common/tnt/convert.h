@@ -81,6 +81,15 @@ namespace tnt
   inline std::string toString(char value, const std::locale&)
   { return std::string(1, value); }
 
+  inline std::string toString(bool value)
+  {
+    static const std::string trueValue = "1";
+    return value ? trueValue : std::string();
+  }
+
+  inline std::string toString(bool value, const std::locale&)
+  { return toString(value); }
+
   // convert std::string to some type
 
   template <typename T>
