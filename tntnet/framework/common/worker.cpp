@@ -401,7 +401,7 @@ namespace tnt
         request.setArgs(ci.getArgs());
 
         application.getScopemanager().preCall(request,
-            ci.libname.empty() ? application.getAppName() : ci.libname);
+            application.getAppName().empty() ? ci.libname : application.getAppName());
 
         state = stateProcessingRequest;
         unsigned http_return;
