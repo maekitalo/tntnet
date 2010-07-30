@@ -1,3 +1,6 @@
+2010-07-14 tommi@tntnet.org
+ - documentation updates
+
 2010-06-15 tommi@tntnet.org
  - add support for access.log with common log format
  - fix bug, where always the first file of multibinary components was sent
