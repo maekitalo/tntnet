@@ -1,11 +1,11 @@
 <%args>
-myaction;
+bool myaction;
 </%args>
 <%request scope="global">
 std::string message;
 </%request>
 <{
-  if (!myaction.empty())
+  if (myaction)
   {
     // put your action-processing here
     message = "action processed";
