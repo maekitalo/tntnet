@@ -1,5 +1,22 @@
-2010-07-14 tommi@tntnet.org
+2010-07-30 tommi@tntnet.org
  - documentation updates
+
+2010-07-18 tommi@tntnet.org
+ - prefer application name over library name for session cookie
+
+2010-07-10 tommi@tntnet.org
+ - better error message, when number cannot be converted in %args-section
+ - handle non empty strings as true in boolean arguments, so that submit buttons can be easily queried
+
+2010-07-09 tommi@tntnet.org
+ - fix race condition when stopping tntnet
+
+2010-07-05 tommi@tntnet.org
+ - keep session when component returns with DECLINED and no new session is
+   found
+
+2010-06-24 tommi@tntnet.org
+ - do graceful shutdown on SIGINT
 
 2010-06-15 tommi@tntnet.org
  - add support for access.log with common log format
