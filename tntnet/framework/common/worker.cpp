@@ -400,8 +400,9 @@ namespace tnt
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
-        application.getScopemanager().preCall(request,
-            application.getAppName().empty() ? ci.libname : application.getAppName());
+        std::string appname = application.getAppName().empty() ? ci.libname : application.getAppName();
+
+        application.getScopemanager().preCall(request, appname);
 
         state = stateProcessingRequest;
         unsigned http_return;
@@ -431,8 +432,7 @@ namespace tnt
           {
             log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.getContentSize());
 
-            application.getScopemanager().postCall(request, reply,
-                ci.libname.empty() ? application.getAppName() : ci.libname);
+            application.getScopemanager().postCall(request, reply, appname);
 
             state = stateSendReply;
             reply.sendReply(http_return, http_msg);
