@@ -35,7 +35,7 @@
 #include "tnt/gcryptinit.h"
 #include <sys/poll.h>
 #include <errno.h>
-#include <cxxtools/net/net.h>
+#include <cxxtools/ioerror.h>
 
 log_define("tntnet.ssl")
 
@@ -364,7 +364,7 @@ namespace tnt
           break;
 
         if (ret == GNUTLS_E_AGAIN)
-          throw cxxtools::net::Timeout();
+          throw cxxtools::IOTimeout();
 
         if (ret < 0 && ret != GNUTLS_E_INTERRUPTED)
           throw GnuTlsException("gnutls_record_recv", ret);
@@ -403,7 +403,7 @@ namespace tnt
           break;
 
         if (ret == GNUTLS_E_AGAIN)
-          throw cxxtools::net::Timeout();
+          throw cxxtools::IOTimeout();
 
         if (ret != GNUTLS_E_INTERRUPTED)
           throw GnuTlsException("gnutls_record_send", ret);
