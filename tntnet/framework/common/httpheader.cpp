@@ -47,6 +47,7 @@ namespace tnt
     const char* acceptLanguage = "Accept-Language:";
     const char* acceptEncoding = "Accept-Encoding:";
     const char* acceptCharset = "Accept-Charset:";
+    const char* acceptRanges = "Accept-Ranges:";
     const char* contentEncoding = "Content-Encoding:";
     const char* date = "Date:";
     const char* keepAlive = "Keep-Alive:";
@@ -62,5 +63,8 @@ namespace tnt
     const char* wwwAuthenticate = "WWW-Authenticate:";
     const char* authorization = "Authorization:";
     const char* referer = "Referer:";
+    const char* range = "Range:";
+    const char* contentRange = "Content-Range:";
+    const char* contentLocation = "Content-Location:";
   }
 }

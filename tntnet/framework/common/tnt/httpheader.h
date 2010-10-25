@@ -49,6 +49,7 @@ namespace tnt
     extern const char* acceptLanguage;
     extern const char* acceptEncoding;
     extern const char* acceptCharset;
+    extern const char* acceptRanges;
     extern const char* contentEncoding;
     extern const char* date;
     extern const char* keepAlive;
@@ -64,6 +65,9 @@ namespace tnt
     extern const char* wwwAuthenticate;
     extern const char* authorization;
     extern const char* referer;
+    extern const char* range;
+    extern const char* contentRange;
+    extern const char* contentLocation;
   }
 }
 

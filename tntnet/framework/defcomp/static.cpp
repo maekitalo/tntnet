@@ -33,7 +33,6 @@
 #include <tnt/httperror.h>
 #include <tnt/http.h>
 #include <tnt/httpheader.h>
-#include <tnt/httperror.h>
 #include <tnt/comploader.h>
 #include <fstream>
 #include <cxxtools/log.h>
@@ -42,6 +41,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <config.h>
+#include <limits>
 
 #if HAVE_SENDFILE
 #include <fcntl.h>
@@ -59,9 +59,126 @@ log_define("tntnet.static")
 
 namespace tnt
 {
-#if HAVE_SENDFILE
   namespace
   {
+    bool parseRange(const char* range, off_t& offset, off_t& count)
+    {
+      enum
+      {
+        state_0,
+        state_1,
+        state_from0,
+        state_from,
+        state_from_e,
+        state_to0,
+        state_to,
+        state_e
+      } state = state_0;
+
+      std::string token;
+
+      const char* prefix = "bytes=";
+      off_t firstPos = 0;
+      off_t lastPos = count;
+      for (const char* p = range; *p && state != state_e; ++p)
+      {
+        char ch = *p;
+        switch (state)
+        {
+          case state_0:
+          case state_1:
+            if (ch == *prefix)
+            {
+              ++prefix;
+              if (*prefix == '\0')
+              {
+                log_debug("prefix ends");
+                state = state_from0;
+              }
+              else
+                state = state_1;
+            }
+            else if (state == state_1 || ch != ' ')
+              return false;
+            break;
+
+          case state_from0:
+            if (std::isdigit(ch))
+            {
+              log_debug("from found");
+              firstPos = ch - '0';
+              state = state_from;
+            }
+            else if (ch == '-')
+              state = state_to0;
+            else if (ch != ' ')
+              return false;
+            break;
+
+          case state_from:
+            if (std::isdigit(ch))
+              firstPos = firstPos * 10 + ch - '0';
+            else if (ch == '-')
+              state = state_to0;
+            else if (ch == ' ')
+              state = state_from_e;
+            else
+              return false;
+            break;
+
+          case state_from_e:
+            if (ch == '-')
+              state = state_to0;
+            else if (ch != ' ')
+              return false;
+            break;
+
+          case state_to0:
+            if (std::isdigit(ch))
+            {
+              lastPos = ch - '0';
+              state = state_to;
+            }
+            else if (ch != ' ')
+              return false;
+            break;
+
+          case state_to:
+            if (std::isdigit(ch))
+              lastPos = lastPos * 10 + ch - '0';
+            else if (ch == ' ')
+              state = state_e;
+            else
+              return false;
+            break;
+
+          case state_e:
+            break;
+        }
+      }
+
+      switch (state)
+      {
+        case state_to0:
+        case state_to:
+        case state_e:
+          if (lastPos > firstPos)
+          {
+            offset = firstPos;
+            count = lastPos - firstPos;
+            log_debug("firstPos=" << firstPos << " lastPos=" << lastPos << " offset=" << offset << " count=" << count);
+            return true;
+          }
+          break;
+
+        default:
+          break;
+      }
+
+      return false;
+    }
+
+#if HAVE_SENDFILE
     class Fdfile
     {
         int fd;
@@ -106,8 +223,8 @@ namespace tnt
       }
     }
 
-  }
 #endif
+  }
 
   tnt::Component* StaticFactory::doCreate(const tnt::Compident&,
     const tnt::Urlmapper&, tnt::Comploader&)
@@ -225,11 +342,36 @@ namespace tnt
     // set Keep-Alive
     reply.setKeepAliveHeader();
 
+    reply.setHeader(tnt::httpheader::acceptRanges, "bytes");
+
+    // check for byte range (only "bytes=from-" or "bytes=from-to" are supported)
+    const char* range = request.getHeader(tnt::httpheader::range);
+    off_t offset = 0;
+    off_t count = st.st_size;
+    unsigned httpOkReturn = HTTP_OK;
+    if (range)
+    {
+      if (parseRange(range, offset, count))
+      {
+        if (offset > st.st_size)
+          return HTTP_RANGE_NOT_SATISFIABLE;
+
+        reply.setHeader(tnt::httpheader::contentLocation, request.getUrl());
+        std::ostringstream contentRange;
+        contentRange << offset << '-' << (offset+count)-1 << '/' << st.st_size;
+        reply.setHeader(tnt::httpheader::contentRange, contentRange.str());
+
+        httpOkReturn = HTTP_PARTIAL_CONTENT;
+      }
+      else
+        log_debug("ignore invalid byte range " << range);
+    }
+
     // set Content-Length
-    reply.setContentLengthHeader(st.st_size);
+    reply.setContentLengthHeader(count);
 
     // send data
-    log_info("send file \"" << file << "\" size " << st.st_size << " bytes");
+    log_info("send file \"" << file << "\" size " << st.st_size << " bytes; offset=" << offset << " count=" << count);
 
 #if HAVE_SENDFILE
     if (top)
@@ -248,25 +390,24 @@ namespace tnt
             &on, sizeof(on)) < 0)
           throw cxxtools::SystemError("setsockopt(TCP_CORK)");
 
-        reply.setDirectMode();
+        reply.setDirectMode(httpOkReturn, HttpReturn::httpMessage(httpOkReturn));
         tcpStream.flush();
 
-        off_t offset = 0;
         Fdfile in(file.c_str(), O_RDONLY);
         ssize_t s;
         while(tcpStream)
         {
           do
           {
-            log_debug("sendfile " << st.st_size << " bytes");
-            s = sendfile(tcpStream.getFd(), in.getFd(), &offset, st.st_size - offset);
+            log_debug("sendfile offset " << offset << " size " << count);
+            s = sendfile(tcpStream.getFd(), in.getFd(), &offset, count);
             log_debug("sendfile returns " << s);
           } while (s < 0 && errno == EINTR);
 
           if (s < 0 && errno != EAGAIN)
             throw cxxtools::SystemError("sendfile");
 
-          if (offset >= st.st_size)
+          if (offset >= count)
             break;
 
           log_debug("poll");
@@ -281,7 +422,7 @@ namespace tnt
             &on, sizeof(on)) < 0)
           throw cxxtools::SystemError("setsockopt(TCP_NODELAY)");
 
-        return HTTP_OK;
+        return httpOkReturn;
       }
       catch (const std::bad_cast& e)
       {
@@ -293,16 +434,28 @@ namespace tnt
     if (top)
       reply.setDirectMode();
 #endif
+
     std::ifstream in(file.c_str());
+    in.seekg(offset);
     if (!in)
     {
       log_debug("can't open file \"" << file << '"');
       return DECLINED;
     }
 
-    reply.out() << in.rdbuf() << std::flush;
+    if (offset == 0 && count == st.st_size)
+      reply.out() << in.rdbuf() << std::flush;
+    else
+    {
+      char ch;
+      for (off_t o = 0; in.get(ch) && o < count; ++o)
+        reply.out().put(ch);
+    }
 
-    return HTTP_OK;
+    if (in.fail())
+      throw std::runtime_error("failed to send file \"" + file + '"');
+
+    return httpOkReturn;
   }
 
 }
