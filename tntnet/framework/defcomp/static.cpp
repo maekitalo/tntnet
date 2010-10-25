@@ -444,16 +444,20 @@ namespace tnt
     }
 
     if (offset == 0 && count == st.st_size)
+    {
       reply.out() << in.rdbuf() << std::flush;
+      if (in.fail())
+        throw std::runtime_error("failed to send file \"" + file + '"');
+    }
     else
     {
       char ch;
-      for (off_t o = 0; in.get(ch) && o < count; ++o)
+      off_t o;
+      for (o = 0; in.get(ch) && o < count; ++o)
         reply.out().put(ch);
+      if (o < count)
+        throw std::runtime_error("failed to send file \"" + file + '"');
     }
-
-    if (in.fail())
-      throw std::runtime_error("failed to send file \"" + file + '"');
 
     return httpOkReturn;
   }
