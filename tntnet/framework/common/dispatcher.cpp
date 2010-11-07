@@ -108,7 +108,7 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
 
       if (maxUrlMapCache > 0)
       {
-        // clear cache after maxUrlMapCache distict requests
+        // clear cache after maxUrlMapCache distinct requests
         if (urlMapCache.size() >= maxUrlMapCache)
         {
           log_warn("clear url-map-cache");
