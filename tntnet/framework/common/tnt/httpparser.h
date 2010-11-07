@@ -68,6 +68,10 @@ namespace tnt
       bool state_cmd0(char ch);
       bool state_cmd(char ch);
       bool state_url0(char ch);
+      bool state_protocol(char ch);
+      bool state_protocol_slash1(char ch);
+      bool state_protocol_slash2(char ch);
+      bool state_protocol_host(char ch);
       bool state_url(char ch);
       bool state_urlesc(char ch);
       bool state_qparam(char ch);

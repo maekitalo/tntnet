@@ -145,14 +145,84 @@ namespace tnt
     if (ch == ' ' || ch == '\t')
     {
     }
-    else if (ch > ' ')
+    else if (ch == '/')
     {
       message.url.clear();
       message.url.reserve(32);
       message.url += ch;
       SET_STATE(state_url);
     }
+    else if (std::isalpha(ch))
+    {
+      SET_STATE(state_protocol);
+    }
     else
+    {
+      log_warn("invalid character " << chartoprint(ch) << " in url");
+      httpCode = HTTP_BAD_REQUEST;
+      failedFlag = true;
+    }
+
+    return failedFlag;
+  }
+
+  bool HttpRequest::Parser::state_protocol(char ch)
+  {
+    if (ch == ':')
+      SET_STATE(state_protocol_slash1);
+    else if (!std::isalpha(ch))
+    {
+      log_warn("invalid character " << chartoprint(ch) << " in url");
+      httpCode = HTTP_BAD_REQUEST;
+      failedFlag = true;
+    }
+
+    return failedFlag;
+  }
+
+  bool HttpRequest::Parser::state_protocol_slash1(char ch)
+  {
+    if (ch == '/')
+      SET_STATE(state_protocol_slash2);
+    else
+    {
+      log_warn("invalid character " << chartoprint(ch) << " in url");
+      httpCode = HTTP_BAD_REQUEST;
+      failedFlag = true;
+    }
+
+    return failedFlag;
+  }
+
+  bool HttpRequest::Parser::state_protocol_slash2(char ch)
+  {
+    if (ch == '/')
+      SET_STATE(state_protocol_host);
+    else
+    {
+      log_warn("invalid character " << chartoprint(ch) << " in url");
+      httpCode = HTTP_BAD_REQUEST;
+      failedFlag = true;
+    }
+
+    return failedFlag;
+  }
+
+  bool HttpRequest::Parser::state_protocol_host(char ch)
+  {
+    if (ch == '/')
+    {
+      message.url.clear();
+      message.url.reserve(32);
+      message.url += ch;
+      SET_STATE(state_url);
+    }
+    else if (!std::isalpha(ch)
+           && !std::isdigit(ch)
+           && ch != '['
+           && ch != ']'
+           && ch != '.'
+           && ch != ':')
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       httpCode = HTTP_BAD_REQUEST;
