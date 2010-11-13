@@ -105,8 +105,6 @@ namespace tnt
 
         void getHeaderIncludes(std::ostream& out) const;
         void getPre(std::ostream& out) const;
-        void getNamespaceStart(std::ostream& out) const;
-        void getNamespaceEnd(std::ostream& out) const;
         void getClassDeclaration(std::ostream& out) const;
 
         void getCppIncludes(std::ostream& out) const;
@@ -164,7 +162,6 @@ namespace tnt
         virtual void onInclude(const std::string& file);
         virtual void onIncludeEnd(const std::string& file);
         virtual void startI18n();
-        virtual void endI18n();
 
         void getCpp(std::ostream& out, const std::string& filename) const;
     };

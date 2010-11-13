@@ -260,10 +260,16 @@ namespace tnt
   unsigned Static::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {
-    return operator() (request, reply, qparams, false);
+    return doCall(request, reply, qparams, false);
   }
 
-  unsigned Static::operator() (tnt::HttpRequest& request,
+  unsigned Static::topCall(tnt::HttpRequest& request,
+    tnt::HttpReply& reply, tnt::QueryParams& qparams)
+  {
+    return doCall(request, reply, qparams, true);
+  }
+
+  unsigned Static::doCall(tnt::HttpRequest& request,
     tnt::HttpReply& reply, tnt::QueryParams& qparams, bool top)
   {
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))

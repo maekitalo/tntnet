@@ -410,7 +410,7 @@ namespace tnt
         std::string msg;
         try
         {
-          http_return = (*comp)(request, reply, request.getQueryParams(), true);
+          http_return = comp->topCall(request, reply, request.getQueryParams());
           http_msg = HttpReturn::httpMessage(http_return);
         }
         catch (const HttpReturn& e)

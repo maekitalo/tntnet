@@ -46,9 +46,9 @@ namespace tnt
   {
     bool ishexdigit(char ch)
     {
-      return ch >= '0' && ch <= '9'
-          || ch >= 'a' && ch <= 'f'
-          || ch >= 'A' && ch <= 'F';
+      return (ch >= '0' && ch <= '9')
+          || (ch >= 'a' && ch <= 'f')
+          || (ch >= 'A' && ch <= 'F');
     }
 
     char hexvalue(char ch)
@@ -224,7 +224,7 @@ namespace tnt
     };
 
     state_type state = state_0;
-    char h;
+    char h = '\0';
 
     for (std::string::const_iterator it = header.begin();
          it != header.end(); ++it)

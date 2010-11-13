@@ -201,8 +201,8 @@ namespace tnt
       paramargs_type paramargs;
       unsigned bracket_count = 0;
       std::string scopetype, scopevar, scopeinit;
-      scope_container_type scope_container;
-      scope_type scope;
+      scope_container_type scope_container = application_container;
+      scope_type scope = global_scope;
       bool inComp = false;
       bool inClose = false;
       bool htmlExpr = false;
@@ -1302,7 +1302,7 @@ namespace tnt
               state = state_callarge;
             else if (ch == '=')
               state = state_callval0;
-            else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
+            else if ((pass_cgi.empty() && ch == '&') || ch == '/' || ch == '>')
             {
               log_debug("onCall(\"" << comp << "comp_args (" << comp_args.size() << "), \"" << pass_cgi << "\", paramargs (" << paramargs.size() << "), defarg (" << defarg.size() << "))");
               handler.onCall(comp, comp_args, arg, paramargs, defarg);
@@ -1326,7 +1326,7 @@ namespace tnt
               arg = ch;
               state = state_callarg;
             }
-            else if (pass_cgi.empty() && ch == '&' || ch == '/' || ch == '>')
+            else if ((pass_cgi.empty() && ch == '&') || ch == '/' || ch == '>')
             {
               log_debug("onCall(\"" << comp << "comp_args (" << comp_args.size() << "), \"" << pass_cgi << "\", paramargs (" << paramargs.size() << "), defarg (" << defarg.size() << "))");
               handler.onCall(comp, comp_args, arg, paramargs, defarg);

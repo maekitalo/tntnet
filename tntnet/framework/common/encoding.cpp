@@ -60,7 +60,7 @@ namespace tnt
     } state = state_0;
 
     std::string encoding;
-    unsigned quality;
+    unsigned quality = 0;
     for (const char* p = header; *p; ++p)
     {
       char ch = *p;

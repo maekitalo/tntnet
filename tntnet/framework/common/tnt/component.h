@@ -46,8 +46,8 @@ class Component
   public:
     virtual ~Component() { }
 
-    virtual unsigned operator() (HttpRequest& request,
-      HttpReply& reply, tnt::QueryParams& qparam, bool top);
+    virtual unsigned topCall(HttpRequest& request,
+      HttpReply& reply, tnt::QueryParams& qparam);
     virtual unsigned operator() (HttpRequest& request,
       HttpReply& reply, tnt::QueryParams& qparam);
     virtual unsigned endTag (HttpRequest& request,

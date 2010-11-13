@@ -282,7 +282,7 @@ namespace tnt
       } while (n < 0
          && ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
           || err == SSL_ERROR_WANT_WRITE
-          || err == SSL_ERROR_SYSCALL && errno == EAGAIN));
+          || (err == SSL_ERROR_SYSCALL && errno == EAGAIN)));
     }
     return n;
   }
@@ -303,7 +303,7 @@ namespace tnt
       n = SSL_write(ssl, buffer, s);
       checkSslError();
 
-      int err;
+      int err = SSL_ERROR_WANT_WRITE;
       if (n > 0)
       {
         buffer += n;

@@ -73,8 +73,8 @@ void MimeDb::read(std::istream& in)
     switch (state)
     {
       case state_0:
-        if (ch >= 'a' && ch <= 'z'
-         || ch >= 'A' && ch <= 'Z')
+        if ((ch >= 'a' && ch <= 'z')
+         || (ch >= 'A' && ch <= 'Z'))
         {
           mime = ch;
           state = state_mime;

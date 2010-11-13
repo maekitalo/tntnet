@@ -48,12 +48,15 @@ namespace tnt
       static MimeHandler* handler;
       static bool enableGzip;
 
+      unsigned doCall(tnt::HttpRequest& request,
+        tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
+
     protected:
       void setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply);
 
     public:
-      virtual unsigned operator() (tnt::HttpRequest& request,
-        tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
+      virtual unsigned topCall(tnt::HttpRequest& request,
+        tnt::HttpReply& reply, tnt::QueryParams& qparam);
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };

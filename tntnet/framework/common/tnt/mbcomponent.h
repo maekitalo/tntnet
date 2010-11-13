@@ -71,8 +71,10 @@ namespace tnt
       { init(rawData, mimetype, ctime); }
 
       unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
-      unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
+      unsigned topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
 
+  private:
+      unsigned doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
   };
 }
 

@@ -82,7 +82,7 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
     urlMapCacheType::const_iterator um = urlMapCache.find(cacheKey);
     if (um != urlMapCache.end())
     {
-      log_debug("vhost <" << vhost << "> url <" << compUrl << "> match regex <" << pos->first.getRegex() << "> (cached) => " << um->second.ci);
+      log_debug("vhost <" << vhost << "> url <" << compUrl << "> match regex <" << um->second.pos->first.getRegex() << "> (cached) => " << um->second.ci);
       pos = um->second.pos;
       return um->second.ci;
     }

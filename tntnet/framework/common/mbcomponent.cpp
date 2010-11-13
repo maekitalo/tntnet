@@ -49,10 +49,15 @@ namespace tnt
 
   unsigned MbComponent::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
   {
-    return operator() (request, reply, qparam, false);
+    return doCall(request, reply, qparam, false);
   }
 
-  unsigned MbComponent::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top)
+  unsigned MbComponent::topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
+  {
+    return doCall(request, reply, qparam, true);
+  }
+
+  unsigned MbComponent::doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top)
   {
     log_trace("MbComponent " << getCompident());
 

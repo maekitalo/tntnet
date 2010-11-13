@@ -37,8 +37,8 @@
 
 void Ecpplang::onHtml(const std::string& html)
 {
-  if (inLang && lang
-    || !inLang && nolang)
+  if ((inLang && lang)
+    || (!inLang && nolang))
     data[count] = html;
   ++count;
 }

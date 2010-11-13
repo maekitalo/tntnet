@@ -116,7 +116,7 @@ namespace tnt
     };
 
     const static HttpMsg* httpMsgsBegin = httpMsgs;
-    const static HttpMsg* httpMsgsEnd = httpMsgs + sizeof(httpMsgs)/sizeof(HttpMsg);;
+    const static HttpMsg* httpMsgsEnd = httpMsgs + sizeof(httpMsgs)/sizeof(HttpMsg);
 
     inline bool operator< (const HttpMsg& m1, const HttpMsg& m2)
     { return m1.statusCode < m2.statusCode; }

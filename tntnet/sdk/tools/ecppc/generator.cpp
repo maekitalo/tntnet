@@ -300,10 +300,6 @@ namespace tnt
       externData = true;
     }
 
-    void Generator::endI18n()
-    {
-    }
-
     void Generator::getIntro(std::ostream& out, const std::string& filename) const
     {
       out << "////////////////////////////////////////////////////////////////////////\n"
@@ -326,17 +322,6 @@ namespace tnt
       out << "// <%pre>\n"
           << pre
           << "// </%pre>\n";
-    }
-
-    void Generator::getNamespaceStart(std::ostream& out) const
-    {
-      out << "namespace\n"
-             "{\n";
-    }
-
-    void Generator::getNamespaceEnd(std::ostream& out) const
-    {
-      out << "} // namespace\n";
     }
 
     void Generator::getClassDeclaration(std::ostream& out) const
@@ -710,18 +695,20 @@ namespace tnt
       getHeaderIncludes(code);
       getCppIncludes(code);
 
-      code << "log_define(\"component." << maincomp.getLogCategory() << "\")\n\n";
+      if (multiImages.empty() && !isRawMode())
+        code << "log_define(\"component." << maincomp.getLogCategory() << "\")\n\n";
 
       getPre(code);
-      code << '\n';
 
-      getNamespaceStart(code);
+      code << "\n" 
+              "namespace\n"
+              "{\n";
 
       getClassDeclaration(code);
 
       getCppBody(code);
 
-      getNamespaceEnd(code);
+      code << "} // namespace\n";
     }
   }
 }

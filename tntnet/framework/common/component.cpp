@@ -35,8 +35,8 @@
 
 namespace tnt
 {
-  unsigned Component::operator() (HttpRequest& request,
-    HttpReply& reply, tnt::QueryParams& qparam, bool top)
+  unsigned Component::topCall(HttpRequest& request,
+    HttpReply& reply, tnt::QueryParams& qparam)
   {
     return operator() (request, reply, qparam);
   }

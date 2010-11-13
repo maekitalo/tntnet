@@ -209,7 +209,7 @@ namespace tnt
             }
 
             char buffer[64];
-            ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
+            notify_pipe.read(buffer, sizeof(buffer));
           }
           else
           {
@@ -321,7 +321,7 @@ namespace tnt
           }
 
           char buffer[64];
-          ssize_t n = notify_pipe.read(buffer, sizeof(buffer));
+          notify_pipe.read(buffer, sizeof(buffer));
           pollfds[0].revents = 0;
         }
 

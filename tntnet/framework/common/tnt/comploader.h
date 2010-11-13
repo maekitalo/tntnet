@@ -125,14 +125,14 @@ namespace tnt
     public:
       Comploader();
 
-      virtual Component& fetchComp(const Compident& compident,
+      Component& fetchComp(const Compident& compident,
         const Urlmapper& rootmapper = Urlmapper());
-      virtual Component* createComp(const Compident& compident,
+      Component* createComp(const Compident& compident,
         const Urlmapper& rootmapper);
       const char* getLangData(const Compident& compident, const std::string& lang);
 
       // lookup library; load if needed
-      virtual ComponentLibrary& fetchLib(const std::string& libname);
+      ComponentLibrary& fetchLib(const std::string& libname);
 
       static const Tntconfig& getConfig()        { return *config; }
       static void configure(const Tntconfig& config);
