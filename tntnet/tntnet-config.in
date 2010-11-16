@@ -49,11 +49,11 @@ EOF
 
   cat <<EOF
 
-# listen to a port
-Listen              0.0.0.0 8000
+# listen to a port (empty string means any local interface)
+Listen              "" 8000
 
 # to enable ssl, we need a Certificate and another listen-command
-#SslListen          0.0.0.0 8443    tntnet.pem
+#SslListen          "" 8443    tntnet.pem
 
 # this propertyfile defines, what and where to log
 PropertyFile        tntnet.properties
