@@ -8,6 +8,41 @@
     <table cellspacing="0" class="news-article">
         <tr>
             <th class="news-article-header" >
+                <b>stable versions cxxtools 2.0, tntnet 2.0 and tntdb 1.1 released</b>
+                <br/>
+                <i>Posted on August 01, 2010</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>After more than 2 years new without stable releases it is time for updates.
+Cxxtools has hot huge improvements and feature enhancements like xmlrpc, a
+signal slot framework, anynchronous I/O and others.</p>
+
+<p>This implied some API changes. Still most of the existing code should run.
+Tntnet and tntdb needed some changes for this, so that the new tntnet and tntdb
+releases need cxxtools 2.0.
+</p>
+
+<p>Tntnet has got many small feature and performance enhancements. Luckily
+there was no much need for API changes. Almost applications should run out of
+the box by recompiling.</p>
+
+<p>Tntdb got some feature enhancements. Most important are maybe the support
+for auto incremented values using the method
+tntdb::Connection::lastInsertId(std::string) and support for user defined
+types by overloading 2 operators.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
                 <b>new article about using xmlrpc in cxxtools (> 1.99)</b>
                 <br/>
                 <i>Posted on May 12, 2010</i>
@@ -86,7 +121,7 @@ changes in cxxtools (which are quite small).
 <p>The regex-wrapper classes from tntnet are now copied to cxxtools and are
 fully functional now. Cxxtools also got a set of conversion functions as easy
 to use wrappers around std::stringstream. The so-number is increased to
-indicate binary incompatiblity to older versions (at least <= 1.4.6)</p>
+indicate binary incompatiblity to older versions (at least &lt;= 1.4.6)</p>
 
 <p>Clearing cookies was broken since about a year. This is fixed now. Quotes
 and double quotes in c++ comments in ecpp files was not handled correctly.
