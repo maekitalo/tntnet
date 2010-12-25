@@ -128,14 +128,3 @@
 \endhtmlonly
 
 */
-      <tr>
-        <td><a href="cxxtools_thread.cpp.html">thread.cpp</a></td>
-        <td>threading</td>
-      </tr>
-    </table>
-
-</div>
-
-\endhtmlonly
-
-*/
