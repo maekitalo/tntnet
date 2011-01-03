@@ -21,6 +21,7 @@ Known values for OPTION are:
   --makefile[=app]  print simple makefile for a ecpp-project
   --properties=app  print a properties file
   --project=app     create a simple ecpp-project-directory
+  -p=app            shortcut for --project=app
   --help            display this help and exit
   --version         output version information
 EOF
@@ -169,12 +170,12 @@ EOF
 
 project()
 {
-        P=$1
-        mkdir $P || exit 1
-        makefile $P >$P/Makefile
-        template $P >$P/tntnet.conf
-        properties $P >$P/tntnet.properties
-        cat >$P/$P.ecpp <<EOF
+  P=$1
+  mkdir $P || exit 1
+  makefile $P >$P/Makefile
+  template $P >$P/tntnet.conf
+  properties $P >$P/tntnet.properties
+  cat >$P/$P.ecpp <<EOF
 <%pre>
 // put your includes here
 // #include "foo.h"
@@ -208,6 +209,251 @@ To run the application execute "tntnet" there.
 To view the page navigate your browser to "http://localhost:8000/".
 
 EOF
+}
+
+autoproject()
+{
+  P=$1
+  mkdir $P $P/include $P/include/my $P/lib $P/webapp || exit 1
+  touch $P/NEWS $P/ChangeLog $P/AUTHORS $P/README
+
+  cat >$P/README <<EOF
+This is a sample tntnet project using autotools.
+
+The project is split into a library, which should contain the business logic
+and a webapplication, which represents the presentation layer.
+
+As an example a class "Foo" in the namespace "my" was generated and put into
+the session scope of a web form.
+
+To compile the application, run ./autogen.sh once, which generates a
+configure script. Running the configure script generates Makefiles.
+Running make, finally compiles the application.
+
+To run the application, change to the webapp directory and enter "tntnet".
+You find your webapplication on port 8000.
+
+You may want to add your e-mail adress to the AC_INIT macro in configure.in.
+EOF
+  cat >$P/configure.in <<EOF
+AC_INIT($P, 0.1, [])
+AM_INIT_AUTOMAKE
+
+abi_current=0
+abi_revision=0
+abi_age=0
+sonumber=\${abi_current}:\${abi_revision}:\${abi_age}
+AC_SUBST(sonumber)
+
+AC_CONFIG_HEADERS([lib/config.h])
+AC_CONFIG_SRCDIR([lib/foo.cpp])
+
+AC_PROG_CXX
+AC_PROG_LIBTOOL
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+AC_LANG(C++)
+AC_CHECK_HEADER([tnt/tntnet.h], , AC_MSG_ERROR([tntnet headers not found]))
+AC_CHECK_PROGS(ECPPC, [ecppc])
+AC_CHECK_PROGS(TNTNET_CONFIG, [tntnet-config])
+
+AC_CONFIG_FILES([Makefile
+                 include/Makefile
+                 lib/Makefile
+                 webapp/Makefile])
+AC_OUTPUT
+EOF
+
+  cat >$P/Makefile.am <<EOF
+SUBDIRS = \
+	include \
+	lib \
+	webapp
+EOF
+
+  cat >$P/include/Makefile.am <<EOF
+nobase_include_HEADERS = \
+	my/foo.h
+EOF
+
+  cat >$P/lib/Makefile.am <<EOF
+AM_CPPFLAGS = -I\$(top_srcdir)/src -I\$(top_srcdir)/include
+
+lib_LTLIBRARIES = lib$P.la
+
+lib${P}_la_SOURCES = \
+	foo.cpp
+EOF
+
+  cat >$P/webapp/Makefile.am <<EOF
+AM_CPPFLAGS = -I\$(top_srcdir)/include
+
+pkglib_LTLIBRARIES = $P.la
+
+ecppSources = \
+	$P.ecpp
+
+${P}_la_SOURCES = \
+	\$(ecppSources)
+
+${P}_la_LIBADD = \$(top_builddir)/lib/lib$P.la
+${P}_la_LDFLAGS = -module -ltntnet
+
+noinst_DATA = tntnet.conf tntnet.properties
+CLEANFILES = \$(ecppSources:.ecpp=.cpp) tntnet.conf tntnet.properties
+
+SUFFIXES=.ecpp .jpg .cpp
+
+.ecpp.cpp:
+	\$(ECPPC) -I \$(top_srcdir)/web -o \$@ \$<
+.jpg.cpp:
+	\$(ECPPC) -b -m image/jpeg -o \$@ \$<
+
+tntnet.properties:
+	\$(TNTNET_CONFIG) --properties $P >\$@
+tntnet.conf:
+	( \$(TNTNET_CONFIG) --config=$P; echo CompPath .libs ) >\$@
+EOF
+
+  cat >$P/autogen.sh <<EOF
+#! /bin/sh
+# Regenerate the files autoconf / automake
+
+libtoolize --force --automake
+
+rm -f config.cache config.log
+aclocal
+autoheader
+autoconf
+automake -a
+EOF
+
+  cat >$P/include/my/foo.h <<EOF
+/*
+ * This is a example class for a C++ web project
+ *
+ */
+
+#include <string>
+
+namespace my
+{
+  class Foo
+  {
+    public:
+      Foo()
+        : intValue(0)
+      { }
+
+      int getIntValue() const
+      { return intValue; }
+
+      const std::string& getStringValue() const
+      { return stringValue; }
+
+      void setIntValue(int v)
+      { intValue = v; }
+
+      void addIntValue(int v)
+      { intValue += v; }
+
+      void setStringValue(const std::string& s)
+      { stringValue = s; }
+
+      // declare more Foo methods here
+      // void f();
+
+    private:
+      int intValue;
+      std::string stringValue;
+
+  };
+
+}
+EOF
+
+  cat >$P/lib/foo.cpp <<EOF
+/*
+ * This is a example class for a C++ web project
+ *
+ */
+
+#include <my/foo.h>
+
+namespace my
+{
+  // define your Foo methods here
+
+/*
+void Foo::f()
+{
+}
+*/
+
+}
+EOF
+  cat >$P/webapp/$P.ecpp <<EOF
+<%pre>
+// put your includes here
+#include <my/foo.h>
+</%pre>
+<%args>
+
+  // define the query parameters
+  // bar;
+  int intValue = 0;
+  bool add;
+  bool reset;
+
+</%args>
+<%session>
+
+  // define your session scope variables here
+  my::Foo foo;
+
+</%session>
+<%cpp>
+
+  // put your C++ code here
+
+  if (add)
+  {
+    log_debug("add");
+    foo.addIntValue(intValue);
+  }
+
+  if (reset)
+  {
+    log_debug("reset");
+    foo.setIntValue(0);
+  }
+
+  foo.setStringValue("Hello world!");
+
+</%cpp>
+<html>
+ <head>
+  <title>ecpp-application $P</title>
+ </head>
+ <body>
+  <h1>$P</h1>
+  <p><\$ foo.getStringValue() \$></p>
+  <p>Value=<\$ foo.getIntValue() \$></p>
+
+  <form method="post">
+   <input type="text" name="intValue" value="<\$intValue\$>">
+   <input type="submit" name="add" value="add">
+   <input type="submit" name="reset" value="reset">
+  </form>
+
+ </body>
+</html>
+EOF
+
+  chmod +x $P/autogen.sh
 }
 
 if test $# -eq 0; then
@@ -264,12 +510,21 @@ while test $# -gt 0; do
         shift
         ;;
 
-    --project=*)
+    --project=*|-p=*)
         project $optarg
         ;;
 
-    --project)
+    --project|-p)
         project $2
+        shift
+        ;;
+
+    --autoproject=*|-A=*)
+        autoproject $optarg
+        ;;
+
+    --autoproject|-A)
+        autoproject $2
         shift
         ;;
 
