@@ -2,6 +2,8 @@ ACLOCAL_AMFLAGS = -I m4
 
 bin_SCRIPTS = tntnet-config
 
+tntnet-config: tntnet-config.in
+
 if MAKE_SERVER
 SERVERDIRS = \
     framework/runtime \
