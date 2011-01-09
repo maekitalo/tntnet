@@ -293,10 +293,10 @@ AM_CPPFLAGS = -I\$(top_srcdir)/include
 
 pkglib_LTLIBRARIES = $P.la
 
-ecppSources = \
+ecppSources = \\
 	$P.ecpp
 
-${P}_la_SOURCES = \
+${P}_la_SOURCES = \\
 	\$(ecppSources)
 
 ${P}_la_LIBADD = \$(top_builddir)/lib/lib$P.la
