@@ -1,3 +1,18 @@
+2010-11-13 tommi@tntnet.org
+ - cleanup code to reduce compiler warnings
+
+2010-11-07 tommi@tntnet.org
+ - accept full uri in http request line as rfc demands
+
+2010-10-25 tommi@tntnet.org
+ - implement support for ranges in static@tntnet (or more precise: one range)
+
+2010-09-04 tommi@tntnet.org
+ - fix compile bug in gnutls support
+
+2010-08-07 tommi@tntnet.org
+ - fix handling of application name in session cookies
+
 2010-08-01 tommi@tntnet.org
  - release 2.0
 
