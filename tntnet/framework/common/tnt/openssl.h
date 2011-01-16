@@ -72,7 +72,7 @@ namespace tnt
       void installCertificates(const char* certificateFile, const char* privateKeyFile);
 
     public:
-      OpensslServer(const char* certificateFile);
+      explicit OpensslServer(const char* certificateFile);
       OpensslServer(const char* certificateFile, const char* privateKeyFile);
 
       SslCtxPtr getSslContext() const        { return ctx; }
