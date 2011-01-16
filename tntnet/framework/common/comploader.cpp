@@ -148,23 +148,6 @@ LangLib::PtrType ComponentLibrary::getLangLib(const std::string& lang)
 ////////////////////////////////////////////////////////////////////////
 // Comploader
 //
-Comploader::Comploader()
-{
-  if (config)
-  {
-    Tntconfig::config_entries_type configLoad;
-    config->getConfigValues("Load", configLoad);
-
-    for (Tntconfig::config_entries_type::const_iterator it = configLoad.begin();
-         it != configLoad.end(); ++it)
-    {
-      if (it->params.empty())
-        throwRuntimeError("missing libraryname in Load-command");
-      fetchLib(it->params[0]);
-    }
-  }
-}
-
 Comploader::librarymap_type& Comploader::getLibrarymap()
 {
   static librarymap_type librarymap;

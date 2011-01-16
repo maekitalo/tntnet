@@ -1,3 +1,9 @@
+2011-01-09 tommi@tntnet.org
+ - remove "Load" setting (and feature) from tntnet.conf since it did not work and is useless
+
+2011-01-03 tommi@tntnet.org
+ - add a generator for a autotools project to tntnet-config script
+
 2010-11-13 tommi@tntnet.org
  - cleanup code to reduce compiler warnings
 

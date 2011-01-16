@@ -123,8 +123,6 @@ namespace tnt
       static ComponentLibrary::factoryMapType* currentFactoryMap;
 
     public:
-      Comploader();
-
       Component& fetchComp(const Compident& compident,
         const Urlmapper& rootmapper = Urlmapper());
       Component* createComp(const Compident& compident,

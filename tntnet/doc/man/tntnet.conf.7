@@ -184,17 +184,6 @@ The default value is 16
 .br
 ListenBacklog 64
 
-.SS Load \fIwebapplication\fP
-Load specifies, which webapplications are preloaded on startup.
-Normally webapplications are loaded as needed.
-The disadvantage is, that tntnet does not check on startup, if a application
-is loadable at all.
-With this directive startup fails, if the application is not loadable.
-.PP
-.B Example
-.br
-Load myapp
-
 .SS MapUrl \fIurl\fP \fIcomponent-identifier\fP [ \fIpath-info\fP { \fIadditional-arguments\fP } ]
 Tells tntnet, which component should be called, when it receives a http-request.
 \fIurl\fP is a regular expression, which is tried against the request-url.

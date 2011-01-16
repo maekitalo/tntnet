@@ -1,9 +1,9 @@
-AC_INIT(tntnet, 2.0, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 2.0.1, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
 
-abi_current=9
+abi_current=10
 abi_revision=0
 abi_age=0
 sonumber=${abi_current}:${abi_revision}:${abi_age}
