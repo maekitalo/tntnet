@@ -9,7 +9,6 @@ tntnet_SOURCES = \
 nobase_include_HEADERS = \
 	tnt/process.h
 
-tntnet_LDFLAGS = $(PTHREAD_LIBS)
-tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la
+tntnet_LDADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 tntnet_CXXFLAGS=-DTNTNET_CONF=\"@sysconfdir@/tntnet/tntnet.conf\" -DTNTNET_PID=\"@localstatedir@/tntnet.pid\" $(PTHREAD_CFLAGS)
 

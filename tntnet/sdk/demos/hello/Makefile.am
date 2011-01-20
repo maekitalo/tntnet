@@ -10,8 +10,8 @@ EXTRA_DIST = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-hello_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
-hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+hello_la_LDFLAGS = -module @SHARED_LIB_FLAG@
+hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = hello.cpp tntnet.cpp tntnet.conf tntnet.properties

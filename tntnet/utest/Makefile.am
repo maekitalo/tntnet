@@ -7,5 +7,4 @@ utest_SOURCES = \
     testmain.cpp \
     strutest.cpp
 
-utest_LDFLAGS = -lcxxtools-unit
-utest_LDADD = $(top_builddir)/framework/common/libtntnet.la
+utest_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools-unit

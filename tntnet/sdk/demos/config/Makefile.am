@@ -8,8 +8,8 @@ nodist_config_la_SOURCES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-config_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
-config_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+config_la_LDFLAGS = -module @SHARED_LIB_FLAG@
+config_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = config.cpp tntnet.conf tntnet.properties

@@ -10,8 +10,8 @@ EXTRA_DIST = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-session_la_LDFLAGS = -module $(PTHREAD_LIBS) @SHARED_LIB_FLAG@
-session_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+session_la_LDFLAGS = -module @SHARED_LIB_FLAG@
+session_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
 noinst_DATA = tntnet.conf tntnet.properties
 CLEANFILES = session.cpp appsession.cpp \
