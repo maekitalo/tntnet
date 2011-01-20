@@ -202,7 +202,7 @@ project()
 EOF
         cat <<EOF
 
-Sample ecpp-project "$P" created.
+Sample tntnet-project "$P" created.
 To build change to the directory "$P" and run make.
 To run the application execute "tntnet" there.
 To view the page navigate your browser to "http://localhost:8000/".
@@ -453,6 +453,16 @@ EOF
 EOF
 
   chmod +x $P/autogen.sh
+
+  cat <<EOF
+
+Sample tntnet-project "$P" created.
+Make sure, you have autoconf and automake installed.
+To build change to the directory "$P" and run ./autogen.sh && ./configure && make.
+To run the application execute "tntnet" in $P/webapp.
+To view the page navigate your browser to "http://localhost:8000/".
+
+EOF
 }
 
 if test $# -eq 0; then
