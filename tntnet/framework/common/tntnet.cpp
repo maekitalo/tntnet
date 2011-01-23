@@ -153,6 +153,7 @@ namespace tnt
     std::string accessLog = config.getValue("AccessLog");
     if (!accessLog.empty())
       c.setAccessLog(accessLog);
+    c.setMaxBackgroundTasks(config.getValue("MaxBackgroundTasks",    c.getMaxBackgroundTasks()));
 
     Tntconfig::config_entries_type configSetEnv;
     config.getConfigValues("SetEnv", configSetEnv);

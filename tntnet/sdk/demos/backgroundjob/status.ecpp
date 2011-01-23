@@ -1,0 +1,33 @@
+<%include>
+global.ecpp
+</%include>
+    <table border="1">
+    <colgroup>
+     <col width="50px">
+     <col width="80px">
+     <col width="800px">
+    </colgroup>
+    <tr>
+     <th style="width:50px">id</th>
+     <th colspan="2">progress</th>
+    </tr>
+% for (std::set<unsigned>::const_iterator it = activeJobs.begin(); it != activeJobs.end(); ++it) {
+    <tr>
+     <td><$*it$></td>
+%   tnt::BackgroundTask::Pointer ptr = tnt::BackgroundWorker::it().getTask(*it);
+%   if (ptr) {
+     <td>
+       <$ptr->progress()$>%
+     </td>
+     <td>
+       <$std::string(ptr->progress(), '*')$>
+     </td>
+%   } else {
+     <td colspan="2">
+       timed out
+     </td>
+%   }
+    </tr>
+% }
+  </table>
+

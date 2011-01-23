@@ -94,6 +94,7 @@ PropertyFile        tntnet.properties
 #MaxUrlMapCache     8192
 #DefaultContentType "text/html; charset=UTF-8"
 #AccessLog          /var/log/tntnet/access.log
+#MaxBackgroundTasks 5
 EOF
 }
 

@@ -33,6 +33,7 @@
 #include <tnt/worker.h>
 #include <tnt/sessionscope.h>
 #include <tnt/httpreply.h>
+#include <tnt/backgroundworker.h>
 
 namespace tnt
 {
@@ -89,33 +90,33 @@ namespace tnt
         { tntnet.setQueueSize(n); }
 
       /// Returns the maximum request time, after which tntnet is automatically restarted in daemon mode.
-      unsigned getMaxRequestTime()
+      unsigned getMaxRequestTime() const
         { return Worker::getMaxRequestTime(); }
       /// Sets the maximum request time, after which tntnet is automatically restarted in daemon mode.
       void setMaxRequestTime(unsigned sec)
         { Worker::setMaxRequestTime(sec); }
 
       /// Returns true, when http compression is used.
-      bool getEnableCompression()
+      bool getEnableCompression() const
         { return Worker::getEnableCompression(); }
       /// enables or disables http compression.
       void setEnableCompression(bool sw = true)
         { Worker::setEnableCompression(sw); }
 
       /// Returns the time of inactivity in seconds after which a session is destroyed
-      unsigned getSessionTimeout()
+      unsigned getSessionTimeout() const
         { return Sessionscope::getDefaultTimeout(); }
       /// Sets the time of inactivity in seconds after which a session is destroyed
       void setSessionTimeout(unsigned sec)
         { Sessionscope::setDefaultTimeout(sec); }
 
       /// Returns the listen backlog parameter (see also listen(2)).
-      int getListenBacklog();
+      int getListenBacklog() const;
       /// Sets the listen backlog parameter (see also listen(2)).
       void setListenBacklog(int n);
 
       /// Returns the number of retries, when a listen retried, when failing.
-      unsigned getListenRetry();
+      unsigned getListenRetry() const;
       /// Sets the number of retries, when a listen retried, when failing.
       void setListenRetry(int n);
 
@@ -124,7 +125,7 @@ namespace tnt
       /// mappings. Since the number of different urls used is normally quite
       /// limited, the cache reduces significantly the number of executed
       /// regular expressions.
-      unsigned getMaxUrlMapCache()
+      unsigned getMaxUrlMapCache() const
         { return Dispatcher::getMaxUrlMapCache(); }
       /// Sets the maximum number of cached urlmappings.
       void setMaxUrlMapCache(int n)
@@ -133,7 +134,7 @@ namespace tnt
       /// Returns the maximum size of a request.
       /// Requestdata are collected in memory and therefore requests, which
       /// exceed the size of available memory may lead to a denial of service.
-      size_t getMaxRequestSize()
+      size_t getMaxRequestSize() const
         { return HttpRequest::getMaxRequestSize(); }
       /// Sets the maximum size of a request.
       void setMaxRequestSize(size_t s)
@@ -145,7 +146,7 @@ namespace tnt
       /// arrives. After that period the request is passed to the poller,
       /// which waits for activity on the socket. The default value is
       /// 10 ms.
-      unsigned getSocketReadTimeout()
+      unsigned getSocketReadTimeout() const
         { return Job::getSocketReadTimeout(); }
       /// Sets the timeout in millisecods after which the request is passed to the poller.
       void setSocketReadTimeout(unsigned ms)
@@ -153,7 +154,7 @@ namespace tnt
 
       /// Returns the write timeout in millisecods after which the request is timed out.
       /// The default value is 10000 ms.
-      unsigned getSocketWriteTimeout()
+      unsigned getSocketWriteTimeout() const
         { return Job::getSocketWriteTimeout(); }
       /// Sets the write timeout in millisecods after which the request is timed out.
       void setSocketWriteTimeout(unsigned ms)
@@ -161,7 +162,7 @@ namespace tnt
 
       /// Returns the maximum number of requests handled over a single connection.
       /// The default value is 1000.
-      unsigned getKeepAliveMax()
+      unsigned getKeepAliveMax() const
         { return Job::getKeepAliveMax(); }
       /// Sets the maximum number of requests handled over a single connection.
       void setKeepAliveMax(unsigned ms)
@@ -171,7 +172,7 @@ namespace tnt
       /// This specifies the maximum number of bytes after which the data sent
       /// or received over a socket is passed to the operating system.
       /// The default value is 16384 bytes (16 kBytes).
-      unsigned getSocketBufferSize()
+      unsigned getSocketBufferSize() const
         { return Job::getSocketBufferSize(); }
       /// Sets the size of the socket buffer.
       void setSocketBufferSize(unsigned ms)
@@ -180,7 +181,7 @@ namespace tnt
       /// Returns the minimum size of a request body for compression.
       /// Small requests are not worth compressing, so tntnet has a limit,
       /// to save cpu. The default value is 1024 bytes.
-      unsigned getMinCompressSize()
+      unsigned getMinCompressSize() const
         { return HttpReply::getMinCompressSize(); }
       /// Sets the minimum size of a request body for compression.
       void setMinCompressSize(unsigned s)
@@ -190,7 +191,7 @@ namespace tnt
       /// This specifies, how long a connection is kept for keep alive. A keep
       /// alive request binds (little) resources, so it is good to free it
       /// after some time of inactivity. The default value if 15000 ms.
-      unsigned getKeepAliveTimeout()
+      unsigned getKeepAliveTimeout() const
         { return HttpReply::getKeepAliveTimeout(); }
       /// Sets the keep alive timeout in milliseconds.
       void setKeepAliveTimeout(unsigned s)
@@ -198,7 +199,7 @@ namespace tnt
 
       /// Returns the default content type.
       /// The default content type is "text/html; charset=iso-8859-1".
-      const std::string& getDefaultContentType()
+      const std::string& getDefaultContentType() const
         { return HttpReply::getDefaultContentType(); }
       /// Sets the default content type.
       void setDefaultContentType(const std::string& s)
@@ -210,6 +211,11 @@ namespace tnt
 
       void setAccessLog(const std::string& accessLog)
         { tntnet.setAccessLog(accessLog); }
+
+      void setMaxBackgroundTasks(unsigned n)
+        { BackgroundWorker::setMaxJobs(n); }
+      unsigned getMaxBackgroundTasks() const
+        { return BackgroundWorker::getMaxJobs(); }
   };
 
 }

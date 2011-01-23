@@ -27,6 +27,7 @@ endif
 if MAKE_DEMOS
 DEMOSDIRS = \
     sdk/demos \
+    sdk/demos/backgroundjob \
     sdk/demos/calc \
     sdk/demos/calcajax \
     sdk/demos/calcapp \

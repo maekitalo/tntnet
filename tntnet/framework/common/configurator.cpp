@@ -33,7 +33,7 @@
 
 namespace tnt
 {
-  int Configurator::getListenBacklog()
+  int Configurator::getListenBacklog() const
   {
     return Listener::getBacklog();
   }
@@ -43,7 +43,7 @@ namespace tnt
     Listener::setBacklog(n);
   }
 
-  unsigned Configurator::getListenRetry()
+  unsigned Configurator::getListenRetry() const
   {
     return Listener::getListenRetry();
   }
