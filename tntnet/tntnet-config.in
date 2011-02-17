@@ -159,6 +159,8 @@ LDFLAGS+=@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
 	\${ECPPC} \${ECPPFLAGS} -m image/jpg \${ECPPFLAGS_JPG} -b -o \$@ \$<
 .png.cpp:
 	\${ECPPC} \${ECPPFLAGS} -m image/png \${ECPPFLAGS_PNG} -b -o \$@ \$<
+.ico.cpp:
+	\${ECPPC} \${ECPPFLAGS} -m image/x-icon \${ECPPFLAGS_ICO} -b -o \$@ \$<
 .css.cpp:
 	\${ECPPC} \${ECPPFLAGS} -m text/css \${ECPPFLAGS_CSS} -b -o \$@ \$<
 .js.cpp:
