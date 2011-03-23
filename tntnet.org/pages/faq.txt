@@ -81,7 +81,7 @@
 
 <h3>C++ programs have often buffer overflows and memory leaks. How that fit into web development?</h3>
 
-<p>The programming language, which is sensitive to buffer overflows and memory leaks is called C. C++ is a different kind. If C++ is used correctly, you do not have to bother much about buffer buffer overflows and memory leaks.</p>
+<p>The programming language, which is sensitive to buffer overflows and memory leaks is called C. C++ is a different kind. If C++ is used correctly, you do not have to bother much about buffer overflows and memory leaks.</p>
 
 <p>To prevent buffer overflows, use e.g. std::string instead of a fixed size character array.</p>
 
