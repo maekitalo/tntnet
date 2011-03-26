@@ -262,12 +262,16 @@ namespace tnt
       currentComp = &maincomp;
     }
 
-    void Generator::onCondExpr(const std::string& cond, const std::string& expr)
+    void Generator::onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr)
     {
       std::ostringstream m;
       printLine(m);
-      m << "  if (" << cond << ")\n"
-           "    reply.sout() << " << expr << ";\n";
+      m << "  if (" << cond << ")\n";
+      if (htmlexpr)
+        m << "    reply.out() << ";
+      else
+        m << "    reply.sout() << ";
+      m << expr << ";\n";
       currentComp->addHtml(m.str());
     }
 

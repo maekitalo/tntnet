@@ -118,7 +118,7 @@ namespace tnt
     {
     }
 
-    void ParseHandler::onCondExpr(const std::string& cond, const std::string& expr)
+    void ParseHandler::onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr)
     {
     }
 

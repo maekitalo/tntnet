@@ -163,6 +163,7 @@ namespace tnt
         state_commente,
         state_compe0,
         state_compe,
+        state_cond0,
         state_cond,
         state_condexpr,
         state_condexpre,  // 70
@@ -319,7 +320,7 @@ namespace tnt
                 html.clear();
               }
               handler.onLine(curline, curfile); //#
-              state = state_cond;
+              state = state_cond0;
             }
             else if (ch == '/')
             {
@@ -1493,6 +1494,14 @@ namespace tnt
             }
             break;
 
+          case state_cond0:
+            if (ch == '?')
+              htmlExpr = true;
+            else
+              cond += ch;
+            state = state_cond;
+            break;
+
           case state_cond:
             if (ch == '?')
               state = state_condexpr;
@@ -1518,7 +1527,8 @@ namespace tnt
             if (ch == '>')
             {
               log_debug("onCondExpression(\"" << cond << ", " << code << "\")");
-              handler.onCondExpr(cond, expr);
+              handler.onCondExpr(cond, expr, htmlExpr);
+              htmlExpr = false;
               cond.clear();
               expr.clear();
               state = state_html;

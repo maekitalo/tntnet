@@ -47,7 +47,7 @@ syn match ecppCondExprDelim "?"
 " this is needed - it just works better
 syn region ecppLine matchgroup=Delimiter start="^%" end="{*\s*$" contains=@cppTop
 syn region ecppExpr matchgroup=Delimiter start="<\$" end="{*\s*\$>" contains=@cppTop
-syn region ecppCondExpr matchgroup=Delimiter start="<?" end="?>" contains=ecppCondExprDelim,@cppTop
+syn region ecppCondExpr matchgroup=Delimiter start="<??\?" end="?>" contains=ecppCondExprDelim,@cppTop
 syn region ecppCpp matchgroup=Delimiter start="<%cpp>" end="{*\s*</%cpp>" contains=@cppTop
 syn region ecppCpps matchgroup=Delimiter start="<{" end="}>" contains=@cppTop
 syn region ecppComp keepend matchgroup=Delimiter start="<&" end=">" contains=@cppTop

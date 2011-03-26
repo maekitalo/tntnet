@@ -73,7 +73,7 @@ namespace tnt
         virtual void startClose();
         virtual void endClose();
         virtual void onComp(const std::string& code);
-        virtual void onCondExpr(const std::string& cond, const std::string& expr);
+        virtual void onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr);
         virtual void onConfig(const std::string& code, const std::string& value);
         virtual void tokenSplit(bool start);
         virtual void onInclude(const std::string& file);

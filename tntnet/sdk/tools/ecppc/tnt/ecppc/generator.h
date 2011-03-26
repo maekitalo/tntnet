@@ -157,7 +157,7 @@ namespace tnt
         virtual void onComp(const std::string& code);
         virtual void startClose();
         virtual void endClose();
-        virtual void onCondExpr(const std::string& cond, const std::string& expr);
+        virtual void onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr);
         virtual void onConfig(const std::string& name, const std::string& value);
         virtual void onScope(scope_container_type container, scope_type scope,
           const std::string& type, const std::string& var, const std::string& init);

@@ -76,7 +76,7 @@ namespace tnt
 
         public:
           const_iterator()
-            : current_value(0, 0)
+            : current_value(static_cast<const char*>(0), static_cast<const char*>(0))
             { }
 
           explicit const_iterator(const char* p)
