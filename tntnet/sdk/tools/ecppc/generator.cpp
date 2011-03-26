@@ -696,7 +696,7 @@ namespace tnt
       getCppIncludes(code);
 
       if (multiImages.empty() && !isRawMode())
-        code << "log_define(\"component." << maincomp.getLogCategory() << "\")\n\n";
+        code << "log_define(\"" << maincomp.getLogCategory() << "\")\n\n";
 
       getPre(code);
 

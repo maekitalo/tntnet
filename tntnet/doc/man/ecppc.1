@@ -36,6 +36,8 @@ ecppc \- compiler for ecpp
 .IR filename ]
 .RB [ \-I
 .IR dir ]
+.RB [ \-l
+.IR log-category ]
 .RB filename
 .br
 .B ecppc
@@ -74,6 +76,8 @@ mime-database by file-extension of the source-file.
 Search include-files in directory.
 This option can be passed multiple times.
 All specified directories are searched in turn for include-files.
+.IP "\-l log-category"
+Set log category. Default is "\fIcomponent.componentname\fP".
 .IP "\-L"
 Disable generation of #line-directives
 .IP "\-m mimetype"

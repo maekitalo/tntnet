@@ -131,6 +131,8 @@ namespace tnt
         void enableLinenumbers(bool sw = true)       { linenumbersEnabled = sw; }
         bool isLinenumbersEnabled() const            { return linenumbersEnabled; }
 
+        void setLogCategory(const std::string& cat)  { maincomp.setLogCategory(cat); }
+
         void addImage(const std::string& name, const std::string& content,
             const std::string& mime, time_t c_time);
 

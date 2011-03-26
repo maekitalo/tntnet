@@ -54,6 +54,7 @@ namespace tnt
         std::string odir;
         std::string mimetype;
         std::string mimedb;
+        std::string logCategory;
         bool binary;
         bool multibinary;
         bool keepPath;

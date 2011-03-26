@@ -71,6 +71,7 @@ namespace tnt
       verbose = cxxtools::Arg<bool>(argc, argv, 'v');
       generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
       disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
+      logCategory = cxxtools::Arg<std::string>(argc, argv, 'l');
 
       if (argc < 2 || argv[1][0] == '-')
         throw Usage(argv[0]);
@@ -172,6 +173,7 @@ namespace tnt
       }
 
       generator.setCompress(compress);
+      generator.setLogCategory(logCategory);
 
       std::string obase = odir;
       if (!obase.empty())
@@ -328,6 +330,7 @@ namespace tnt
            "  -v               verbose\n"
            "  -M               generate dependency for Makefile\n"
            "  -p               keep path when generating component name from filename\n"
+           "  -l log-category  set log category (default: component.compname)\n";
            "  -L               disable generation of #line-directives\n";
       msg = o.str();
     }

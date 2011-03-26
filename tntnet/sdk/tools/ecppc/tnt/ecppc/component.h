@@ -41,6 +41,7 @@ namespace tnt
     class Component
     {
         std::string componentName;
+        std::string logCategory;
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::list<Variable> variables_type;
@@ -65,6 +66,8 @@ namespace tnt
 
         const std::string& getName() const  { return componentName; }
         std::string getLogCategory() const;
+        void setLogCategory(const std::string& logCategory_)
+          { logCategory = logCategory_; }
 
         void addHtml(const std::string& code)
           { compbody.addHtml(code); }

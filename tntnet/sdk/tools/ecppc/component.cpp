@@ -39,7 +39,10 @@ namespace tnt
 
     std::string Component::getLogCategory() const
     {
-      std::string logCategory = componentName;
+      if (!logCategory.empty())
+        return logCategory;
+
+      std::string logCategory = "component." + componentName;
       std::string::size_type pos;
       while ((pos = logCategory.find('/')) != std::string::npos)
         logCategory[pos] = '.';
