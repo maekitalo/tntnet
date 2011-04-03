@@ -224,10 +224,12 @@ namespace tnt
       listen(ip, port);
     }
 
-#ifdef USE_SSL
-    // initialize ssl-listener
     Tntconfig::config_entries_type configSslListen;
     config.getConfigValues("SslListen", configSslListen);
+
+#ifdef USE_SSL
+
+    // initialize ssl-listener
     std::string defaultCertificateFile = config.getValue("SslCertificate");
     std::string defaultCertificateKey = config.getValue("SslKey");
 
@@ -264,6 +266,12 @@ namespace tnt
 
       sslListen(certificateFile, keyFile, ip, port);
     }
+
+#else
+
+    if (!configSslListen.empty())
+      throwRuntimeError("SslListen is configured but SSL is not compiled into this tntnet");
+
 #endif // USE_SSL
 
 #ifdef WITH_STRESSJOB
