@@ -1,7 +1,34 @@
 XPTemplate priority=personal
 
+let s:f = g:XPTfuncs()
+
 XPTinclude
-    \ _common/common
+      \ _common/common
+
+let s:nIndent = 0
+fun! s:f.ecpp_cont_ontype()
+    let v = self.V()
+    if v =~ '\V\n'
+        let v = matchstr( v, '\V\.\*\ze\n' )
+        let s:nIndent = &indentexpr != ''
+              \ ? eval( substitute( &indentexpr, '\Vv:lnum', 'line(".")', '' ) ) - indent( line( "." ) - 1 )
+              \ : self.NIndent()
+
+        " If after <CR> you want the cursor to be indented in the repeat() make the string one space ' '
+        return self.Finish( v . "\n" . repeat( '', s:nIndent ) )
+    else
+        return v
+    endif
+endfunction
+
+fun! s:f.ecpp_cont_helper()
+    let v = self.V()
+    if v =~ '\V\n'
+        return self.ResetIndent( -s:nIndent, "\n" )
+    else
+        return ''
+    endif
+endfunction
 
 XPT $ " <$ expr $>
 <$ `expr^ $>
@@ -9,28 +36,30 @@ XPT $ " <$ expr $>
 XPT $$ " <$$ expr $>
 <$$ `expr^ $>
 
-XPT # " <#...#>
-<# `comment^ #>
-
 XPT ? " <? cond ? expr ?>
 <? `cond^ ? `expr^ ?>
 
 XPT ?? " <?? cond ? expr ?>
 <?? `cond^ ? `expr^ ?>
 
-XPT com " <& component [ arguments ] >
-<& `component^` `arguments^ >
+XPT & " <& component [ arguments ] >
+<& `component^` `arguments^ &>
 
 XPT <{ " <{...}>
 <{
 `cursor^
 }>
 
-XPT app
-<%application`scope^>
+XPT #
+XSET content|ontype=ecpp_cont_ontype()
+<#`content^^`content^ecpp_cont_helper()^#>
+
+XPT app " <%application>...</application>
+<%application` scope="`scope`"^>
 `cursor^
 </%application>
-XSET scope=ChooseStr(' scope="component"', ' scope="page"', ' scope="global"')
+XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
 XPT arg " <%args>...</%args>
 <%args>
@@ -67,31 +96,35 @@ XPT inc " <%include>...</%include>
 `cursor^
 </%include>
 
-XPT par
-<%param`scope^>
+XPT par " <%param>...</%param>
+<%param` scope="`scope`"^>
 `cursor^
 </%param>
-XSET scope=ChooseStr(' scope="component"', ' scope="page"', ' scope="global"')
+XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
 XPT pre " <%pre>...</%pre>
 <%pre>
 `cursor^
 </%pre>
 
-XPT req
-<%request`scope^>
+XPT req " <%request>...</%request>
+<%request` scope="`scope`"^>
 `cursor^
 </%request>
-XSET scope=ChooseStr(' scope="component"', ' scope="page"', ' scope="global"')
+XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
-XPT ses
-<%session`scope^>
+XPT ses " </session>...</%session>
+<%session` scope="`scope`"^>
 `cursor^
 </%session>
-XSET scope=ChooseStr(' scope="component"', ' scope="page"', ' scope="global"')
+XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
-XPT thr
-<%thread`scope^>
+XPT thr " </thread>...</%thread>
+<%thread` scope="`scope`"^>
 `cursor^
 </%thread>
-XSET scope=ChooseStr(' scope="component"', ' scope="page"', ' scope="global"')
+XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope|post=Echo( V() =~ '""' ? "" : V() )
