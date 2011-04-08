@@ -8,27 +8,35 @@ XPTinclude
 let s:nIndent = 0
 fun! s:f.ecpp_cont_ontype()
     let v = self.V()
+
     if v =~ '\V\n'
-        let v = matchstr( v, '\V\.\*\ze\n' )
+        let v = matchstr( v, '\V\.\*\S\ze\s\*\n' )
+
         let s:nIndent = &indentexpr != ''
-              \ ? eval( substitute( &indentexpr, '\Vv:lnum', 'line(".")', '' ) ) - indent( line( "." ) - 1 )
+              \ ? eval( substitute( &indentexpr, '\Vv:lnum', 'line(".")', '') ) - indent( line( "." ) - 1 )
               \ : self.NIndent()
 
-        " If after <CR> you want the cursor to be indented in the repeat() make the string one space ' '
-        return self.Finish( v . "\n" . repeat( '', s:nIndent ) )
+        return self.FinishOuter( v . "\n" . repeat( '', s:nIndent ) )
     else
         return v
     endif
+
 endfunction
 
 fun! s:f.ecpp_cont_helper()
     let v = self.V()
+
     if v =~ '\V\n'
         return self.ResetIndent( -s:nIndent, "\n" )
     else
-        return ''
+        return matchstr( v, '\V\^\s\*' )
     endif
+
 endfunction
+
+XPT #
+XSET content|ontype=ecpp_cont_ontype()
+<#` `content^^`content^ecpp_cont_helper()^#>
 
 XPT $ " <$ expr $>
 <$ `expr^ $>
@@ -49,10 +57,6 @@ XPT <{ " <{...}>
 <{
 `cursor^
 }>
-
-XPT #
-XSET content|ontype=ecpp_cont_ontype()
-<#`content^^`content^ecpp_cont_helper()^#>
 
 XPT app " <%application>...</application>
 <%application` scope="`scope`"^>
