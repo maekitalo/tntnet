@@ -165,8 +165,6 @@ LDFLAGS+=@SHARED_LIB_FLAG@ -L$libdir -ltntnet -lcxxtools
 	\${ECPPC} \${ECPPFLAGS} -m text/css \${ECPPFLAGS_CSS} -b -o \$@ \$<
 .js.cpp:
 	\${ECPPC} \${ECPPFLAGS} -m application/javascript \${ECPPFLAGS_JS} -b -o \$@ \$<
-.cpp.o:
-	\${CXX} \${CPPFLAGS} \${CXXFLAGS} -c \$<
 EOF
 }
 
