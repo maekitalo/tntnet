@@ -254,8 +254,6 @@ namespace tnt
       log_debug("url=" << message.url);
       SET_STATE(state_version);
     }
-    else if (ch == '+')
-      message.url += ' ';
     else if (ch == '%')
     {
       SET_STATE(state_urlesc);
