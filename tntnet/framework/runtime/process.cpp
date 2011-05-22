@@ -29,7 +29,7 @@
 
 #include "tnt/process.h"
 #include <cxxtools/syserror.h>
-#include <cxxtools/fork.h>
+#include <cxxtools/posix/fork.h>
 #include <pwd.h>
 #include <grp.h>
 #include <cxxtools/log.h>
@@ -188,7 +188,7 @@ namespace tnt
     {
       cxxtools::posix::Pipe monitorPipe;
 
-      cxxtools::Fork fork;
+      cxxtools::posix::Fork fork;
 
       if (fork.child())
       {
@@ -309,7 +309,7 @@ namespace tnt
       // We receive the writing-end of the notify pipe.
       // After successful initialization we need to write a byte to this fd.
       cxxtools::posix::Pipe mainPipe;
-      cxxtools::Fork fork;
+      cxxtools::posix::Fork fork;
       if (fork.parent())
       {
         log_debug("close write-fd of main-pipe");

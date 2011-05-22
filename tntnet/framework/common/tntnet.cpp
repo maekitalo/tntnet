@@ -41,7 +41,6 @@
 #endif
 
 #include <cxxtools/net/tcpstream.h>
-#include <cxxtools/fork.h>
 #include <cxxtools/log.h>
 
 #include <unistd.h>
