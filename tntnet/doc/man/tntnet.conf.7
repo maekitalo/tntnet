@@ -64,6 +64,18 @@ Defines a variable with 3 parameters.
 .SH CONFIGURATION VARIABLES
 \" =====================================================================
 This section describes the variables, used by Tntnet (8).
+
+.SS AccessLog \fIfilename\fP
+Writes a log entry for each request in a common format. This format is compatible
+with most log file analyze systems for http servers.
+.PP
+The log file has the fields:
+.br
+\fIpeer-ip\fP - \fIusername\fP [\fItime\fP] "\fIhttp-method\fP \fIquery-string\fP HTTP/\fImajor-version\fP.\fIminor-version\fP" \fIhttp-return-code\fP \fIcontent-size\fP "\fIreferer\fP" "\fIuser-agent\fP"
+
+The \fIusername\fP, \fIreferer\fP and \fIuser-agent\fP may be '-' when the value is not available.
+Also the \fIcontent-size\fP can be empty in rare cases.
+
 .SS BufferSize \fIbytes\fP
 Specifies the number of bytes sent in a single system-call.
 This does not limit anything in application-level.
