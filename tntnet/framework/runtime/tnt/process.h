@@ -43,6 +43,7 @@ namespace tnt
       std::string user;
       std::string group;
       std::string pidfile;
+      std::string errorLog;
 
       bool exitRestart;
 
@@ -57,6 +58,7 @@ namespace tnt
       void setUser(const std::string& v)    { user = v; }
       void setGroup(const std::string& v)   { group = v; }
       void setPidFile(const std::string& v) { pidfile = v; }
+      void setErrorLog(const std::string& v) { errorLog = v; }
 
     public:
       explicit Process(bool daemon_ = false);

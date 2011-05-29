@@ -111,6 +111,7 @@ namespace tnt
     setRootdir(config.getValue("Chroot"));
     setUser(config.getValue("User"));
     setGroup(config.getValue("Group"));
+    setErrorLog(config.getValue("ErrorLog"));
   }
 
   void TntnetProcess::initializeLogging()

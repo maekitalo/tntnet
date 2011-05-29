@@ -76,6 +76,11 @@ The log file has the fields:
 The \fIusername\fP, \fIreferer\fP and \fIuser-agent\fP may be '-' when the value is not available.
 Also the \fIcontent-size\fP can be empty in rare cases.
 
+.PP
+.B Example
+.br
+AccessLog /var/log/tntnet/access.log
+
 .SS BufferSize \fIbytes\fP
 Specifies the number of bytes sent in a single system-call.
 This does not limit anything in application-level.
@@ -125,6 +130,15 @@ Normally the size of html-pages can be compressed by about 70%, while Tntnet slo
 .B Example
 .br
 EnableCompression no
+
+.SS ErrorLog \fIfilename\fP
+Redirects stderr to the specified file when tntnet runs as a daemon. If ErrorLog is not set
+stderr is redirected to /dev/null.
+
+.PP
+.B Example
+.br
+ErrorLog /var/log/tntnet/error.log
 
 .SS Group \fIunix-group\fP
 Changes the group under which tntnet answers requests.

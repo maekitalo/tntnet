@@ -146,7 +146,7 @@ namespace
       ::unlink(pidFileName.c_str());
   }
 
-  void closeStdHandles()
+  void closeStdHandles(const std::string& errorLog)
   {
     if (::freopen("/dev/null", "r", stdin) == 0)
       throw cxxtools::SystemError("freopen(stdin)");
@@ -154,7 +154,7 @@ namespace
     if (::freopen("/dev/null", "w", stdout) == 0)
       throw cxxtools::SystemError("freopen(stdout)");
 
-    if (::freopen("/dev/null", "w", stderr) == 0)
+    if (::freopen(errorLog.empty() ? "/dev/null" : errorLog.c_str(), "w", stderr) == 0)
       throw cxxtools::SystemError("freopen(stderr)");
   }
 
@@ -207,7 +207,7 @@ namespace tnt
         }
 
         log_debug("close standard-handles");
-        closeStdHandles();
+        closeStdHandles(errorLog);
 
         exitRestart = false;
         log_debug("do work");
@@ -232,7 +232,7 @@ namespace tnt
       if (first)
       {
         log_debug("close standard-handles");
-        closeStdHandles();
+        closeStdHandles(errorLog);
         first = false;
       }
 
