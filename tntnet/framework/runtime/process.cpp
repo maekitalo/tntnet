@@ -28,7 +28,7 @@
 
 
 #include "tnt/process.h"
-#include <cxxtools/syserror.h>
+#include <cxxtools/systemerror.h>
 #include <cxxtools/posix/fork.h>
 #include <pwd.h>
 #include <grp.h>
@@ -68,7 +68,7 @@ namespace
 
     int ret = ::setgid(gr->gr_gid);
     if (ret != 0)
-      throw cxxtools::SysError("setgid");
+      throw cxxtools::SystemError("setgid");
   }
 
   void setUser(const std::string& user)
@@ -81,20 +81,20 @@ namespace
 
     int ret = ::setuid(pw->pw_uid);
     if (ret != 0)
-      throw cxxtools::SysError("getuid");
+      throw cxxtools::SystemError("getuid");
   }
 
   void setDir(const std::string& dir)
   {
     log_debug("chdir(" << dir << ')');
     if (::chdir(dir.c_str()) == -1)
-      throw cxxtools::SysError("chdir");
+      throw cxxtools::SystemError("chdir");
   }
 
   void setRootdir(const std::string& dir)
   {
     if (!::chroot(dir.c_str()) == -1)
-      throw cxxtools::SysError("chroot");
+      throw cxxtools::SystemError("chroot");
   }
 
   class PidFile
@@ -126,7 +126,7 @@ namespace
         else if (errno == ERANGE)
           buf.resize(buf.size() * 2);
         else
-          throw cxxtools::SysError("getcwd");
+          throw cxxtools::SystemError("getcwd");
       }
       pidFileName = std::string(cwd) + '/' + pidFileName;
       log_debug("pidfile=" << pidFileName);
@@ -149,13 +149,13 @@ namespace
   void closeStdHandles()
   {
     if (::freopen("/dev/null", "r", stdin) == 0)
-      throw cxxtools::SysError("freopen(stdin)");
+      throw cxxtools::SystemError("freopen(stdin)");
 
     if (::freopen("/dev/null", "w", stdout) == 0)
-      throw cxxtools::SysError("freopen(stdout)");
+      throw cxxtools::SystemError("freopen(stdout)");
 
     if (::freopen("/dev/null", "w", stderr) == 0)
-      throw cxxtools::SysError("freopen(stderr)");
+      throw cxxtools::SystemError("freopen(stderr)");
   }
 
 }
@@ -180,7 +180,7 @@ namespace tnt
 
     // setsid
     if (setsid() == -1)
-      throw cxxtools::SysError("setsid");
+      throw cxxtools::SystemError("setsid");
 
     bool first = true;
 
@@ -249,7 +249,7 @@ namespace tnt
         }
         log_debug("nothing read from monitor-pipe - restart child");
       }
-      catch (const cxxtools::SysError&)
+      catch (const cxxtools::SystemError&)
       {
         log_debug("child exited without notification");
       }

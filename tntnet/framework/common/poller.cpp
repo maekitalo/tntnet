@@ -30,7 +30,7 @@
 #include "tnt/poller.h"
 #include "tnt/pollerimpl.h"
 #include "tnt/tntnet.h"
-#include <cxxtools/syserror.h>
+#include <cxxtools/systemerror.h>
 #include <cxxtools/log.h>
 #include <ios>
 #include <unistd.h>
