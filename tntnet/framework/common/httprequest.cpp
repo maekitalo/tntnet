@@ -218,7 +218,11 @@ namespace tnt
 
   void HttpRequest::doPostParse()
   {
+    if (hasHeader("Expect:"))
+      throw HttpError(HTTP_EXPECTATION_FAILED, "expectation failed", "Expect not supported by this server");
+
     qparam.parse_url(getQueryString());
+
     if (isMethodPOST())
     {
       std::istringstream in(getHeader(httpheader::contentType));
