@@ -44,6 +44,7 @@
 #include <cxxtools/log.h>
 
 #include <unistd.h>
+#include <signal.h>
 
 #include <config.h>
 
@@ -337,6 +338,9 @@ namespace tnt
     // set FD_CLOEXEC
     for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
       (*it)->initialize();
+
+    // SIGPIPE must be ignored
+    ::signal(SIGPIPE, SIG_IGN);
 
     // create worker-threads
     log_info("create " << minthreads << " worker threads");
