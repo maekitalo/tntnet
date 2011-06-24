@@ -180,15 +180,22 @@ namespace tnt
     {
       // request has session-scope
       sessionId = request.getCookie(currentSessionCookieName);
-      if (sessionId.empty() || !hasSessionScope(sessionId))
+      if (sessionId.empty())
       {
-        // client has no or unknown sessionId
+        // client has no sessionId
 
         cxxtools::Md5stream c;
         c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
         sessionId = c.getHexDigest();
         log_info("create new session " << sessionId);
         reply.setCookie(currentSessionCookieName, sessionId);
+        putSessionScope(sessionId, &request.getSessionScope());
+      }
+      else if (!hasSessionScope(sessionId))
+      {
+        // client has a sessionId but no associated session
+        // this may happen, when tntnet is restarted while the browser has a session
+
         putSessionScope(sessionId, &request.getSessionScope());
       }
     }
