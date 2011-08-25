@@ -68,6 +68,7 @@ namespace tnt
     extern const char* range;
     extern const char* contentRange;
     extern const char* contentLocation;
+    extern const char* contentDisposition;
   }
 }
 

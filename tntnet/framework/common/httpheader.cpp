@@ -66,5 +66,6 @@ namespace tnt
     const char* range = "Range:";
     const char* contentRange = "Content-Range:";
     const char* contentLocation = "Content-Location:";
+    const char* contentDisposition = "Content-Disposition:";
   }
 }
