@@ -1,3 +1,75 @@
+2011-08-25 tommi@tntnet.org
+
+- define constant for content-disposition header
+
+2011-08-10 tommi@tntnet.org
+
+- fix license headers of files from minizip by updating them to the most recent version
+
+2011-06-24 tommi@tntnet.org
+
+- reuse session id if already set instead of replacing it
+
+2011-06-05 tommi@tntnet.org
+
+- ignore SIGPIPE always
+
+2011-05-30 tommi@tntnet.org
+
+- add setting ErrorLog for redirecting stderr to a file
+
+2011-05-29 tommi@tntnet.org
+
+- return error code if client tries to use http header Expect
+
+2011-05-29 tommi@tntnet.org
+
+- add documentation for AcessLog into man page tntnet.conf(7)
+
+2011-05-08 tommi@tntnet.org
+
+- do not translate '+' to space when parsing urls
+
+2011-04-03 tommi@tntnet.org
+
+- add xptemplates (vim template plugin)
+
+2011-04-03 tommi@tntnet.org
+
+- fail to start tntnet if ssl is configured but not compiled in
+
+2011-04-03 tommi@tntnet.org
+
+- remove ipv4 addresses from configuration files
+
+2011-03-26 tommi@tntnet.org
+
+- add "<?? cond ? expr ?>" to ecpp for printing conditionally something without escaping html similar to "<$$ ... $>"
+
+2011-03-26 tommi@tntnet.org
+
+- set log category of components settable in ecppc using flag -l
+
+2011-02-20 tommi@tntnet.org
+
+- fix a small documentation bug and update version number in quick start guide
+
+2011-02-17 tommi@tntnet.org
+
+- add makefile rule to compile a .ico file
+
+2011-01-23 tommi@tntnet.org
+
+- add background worker threads
+
+2011-01-20 tommi@tntnet.org
+
+- set lib deps using LIBADD instead of LDFLAGS (thanks idl0r)
+
+2011-01-16 tommi@tntnet.org
+
+- remove feature for preloading applications (it did not work anyway and it has limited use)
+
 2011-01-09 tommi@tntnet.org
  - remove "Load" setting (and feature) from tntnet.conf since it did not work and is useless
 
