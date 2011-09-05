@@ -97,13 +97,13 @@ namespace tnt
 
       template <typename T>
       void put(const std::string& key, T* o)
-      { put<T, cxxtools::DefaultDestroyPolicy>(key, o); }
+      { put<T, cxxtools::DeletePolicy>(key, o); }
 
       template <typename T>
       void put(const std::string& key, T* o, bool transferOwnership)
       {
         if (transferOwnership)
-          put<T, cxxtools::DefaultDestroyPolicy>(key, o);
+          put<T, cxxtools::DeletePolicy>(key, o);
         else
           put<T, NullDestroyPolicy>(key, o);
       }
