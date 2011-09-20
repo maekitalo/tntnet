@@ -41,7 +41,7 @@ if (start)
 
 if (cleanup)
 {
-    for (std::set<unsigned>::const_iterator it = activeJobs.begin(); it != activeJobs.end(); )
+    for (std::set<unsigned>::iterator it = activeJobs.begin(); it != activeJobs.end(); )
     {
         if (tnt::BackgroundWorker::it().getTask(*it))
             ++it;
