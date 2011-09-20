@@ -330,7 +330,7 @@ namespace tnt
            "  -v               verbose\n"
            "  -M               generate dependency for Makefile\n"
            "  -p               keep path when generating component name from filename\n"
-           "  -l log-category  set log category (default: component.compname)\n";
+           "  -l log-category  set log category (default: component.compname)\n"
            "  -L               disable generation of #line-directives\n";
       msg = o.str();
     }
