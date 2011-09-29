@@ -141,12 +141,27 @@ namespace tnt
     else
     {
       log_debug("session-cookie " << currentSessionCookieName << " found: " << c.getValue());
-      Sessionscope* sessionScope = getSessionScope(c.getValue());
-      if (sessionScope != 0)
+
+      cxxtools::MutexLock lock(sessionScopesMutex);
+
+      Sessionscope* sessionScope;
+
+      sessionscopes_type::iterator it = sessionScopes.find(c.getValue());
+      if (it == sessionScopes.end())
+      {
+        log_debug("session not found - create new");
+        sessionScope = new Sessionscope();
+        sessionScope->addRef();
+        sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
+      }
+      else
       {
         log_debug("session found");
-        request.setSessionScope(sessionScope);
+        sessionScope = it->second;
+        sessionScope->touch();
       }
+
+      request.setSessionScope(sessionScope);
     }
 
     // set application-scope
