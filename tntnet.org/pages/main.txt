@@ -38,6 +38,12 @@
                 <th>Date</th>
                 <th>Headline</th>
             </tr>
+
+            <tr>
+                <td valign="top" class="news-table-date"><b>03&nbsp;Oct&nbsp;2011</b></td>
+                <td><a href="news.html">Wiki available</a></td>
+            </tr>
+
             <tr>
                 <td valign="top" class="news-table-date"><b>01&nbsp;Aug&nbsp;2010</b></td>
                 <td><a href="news.html">stable versions cxxtools 2.0, tntnet 2.0 and tntdb 1.1 released</a></td>
@@ -51,11 +57,6 @@
             <tr>
                 <td valign="top" class="news-table-date"><b>21&nbsp;Dec&nbsp;2009</b></td>
                 <td><a href="news.html">development versions cxxtools 1.99.5 and tntnet 1.6.991</a></td>
-            </tr>
-
-            <tr>
-                <td valign="top" class="news-table-date"><b>13&nbsp;Jun&nbsp;2009</b></td>
-                <td><a href="news.html">development versions cxxtools 1.99.4, tntnet 1.6.99 and tntdb 1.0.99</a></td>
             </tr>
 
         </table>
