@@ -86,7 +86,7 @@ PropertyFile        tntnet.properties
 #KeepAliveTimeout   15000
 #KeepAliveMax       1000
 #SessionTimeout     300
-#ListenBacklog      16
+#ListenBacklog      64
 #ListenRetry        5
 #EnableCompression  no
 #MimeDb             /etc/mime.types

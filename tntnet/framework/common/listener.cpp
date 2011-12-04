@@ -95,7 +95,7 @@ namespace tnt
   {
   }
 
-  int Listener::backlog = 16;
+  int Listener::backlog = 64;
   unsigned Listener::listenRetry = 5;
 
   Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q)
