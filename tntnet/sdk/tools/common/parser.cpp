@@ -220,6 +220,12 @@ namespace tnt
         switch(state)
         {
           case state_html0:
+            if (ch == ' ' || ch == '\t')
+              std::cerr << curfile << ':' << curline + 1 << ": warning: trailing white space after closing tag" << std::endl;
+            else if (ch == '\r')
+              std::cerr << curfile << ':' << curline + 1 << ": warning: trailing cr after closing tag (dos format?)" << std::endl;
+            // no break - continue with state_html
+
           case state_html:
             if (ch == '<')
             {
@@ -907,7 +913,7 @@ namespace tnt
               arg.clear();
               state = state_args0;
               if (ch == '\n')
-                std::cerr << curfile << ':' << curline << ": warning: old syntax: ';' missing" << std::endl;
+                std::cerr << curfile << ':' << curline + 1 << ": warning: old syntax: ';' missing" << std::endl;
             }
             else if (!std::isspace(ch))
             {
