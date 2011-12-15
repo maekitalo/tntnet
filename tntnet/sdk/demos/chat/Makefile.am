@@ -21,7 +21,7 @@ EXTRA_DIST = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 AM_CXXFLAGS = $(PTHREAD_CFLAGS)
-chat_la_LDFLAGS = -module
+chat_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 chat_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
 noinst_DATA = tntnet.conf tntnet.properties
