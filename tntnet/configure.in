@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 2.0.1, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 2.0-r1310, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
@@ -176,19 +176,6 @@ AC_COMPILE_IFELSE(
    cxxtools::net::TcpServer s;
    int f = s.getFd();])],
   AC_DEFINE(HAVE_CXXTOOLS_TCPSERVER_GETFD, , [defined if cxxtools::TcpServer has getFd method]))
-
-case "${host_cpu}-${host_os}" in
-*-aix*)
-    SHARED_LIB_FLAG=-qmkshrobj
-    ;;
-*-darwin*)
-    SHARED_LIB_FLAG=-dynamiclib
-    ;;
-*)
-    SHARED_LIB_FLAG=-shared
-    ;;
-esac
-AC_SUBST(SHARED_LIB_FLAG)
 
 AC_ARG_ENABLE([unittest],
   AS_HELP_STRING([--disable-unittest], [disable unittest]),
