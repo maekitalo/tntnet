@@ -31,19 +31,15 @@
 #include <tnt/util.h>
 #include <zlib.h>
 #include <stdexcept>
-#include <cxxtools/mutex.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.data")
 
 namespace tnt
 {
-  static cxxtools::Mutex mutex;
-
   void Zdata::addRef()
   {
-    cxxtools::MutexLock lock(mutex);
-    if (refs++ == 0)
+    if (cxxtools::atomicIncrement(refs) == 1)
     {
       // allocate uncompressed data
       data = new char[data_len];
@@ -65,8 +61,7 @@ namespace tnt
 
   void Zdata::release()
   {
-    cxxtools::MutexLock lock(mutex);
-    if (--refs <= 0)
+    if (cxxtools::atomicDecrement(refs) == 0)
     {
       log_debug("release " << data_len << " uncompressed bytes");
       delete[] data;
