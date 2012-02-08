@@ -1,3 +1,36 @@
+2012-01-09 tommi@tntnet.org
+
+- Use atomic operations instead of mutex in zdata. This fixes occational crashes on shutdown on AIX.
+
+2011-12-07 tommi@tntnet.org
+
+- output warning, when there is white space other than line feed after closing %-Tag
+
+2011-12-04 tommi@tntnet.org
+
+- increase default listen backlog from 16 to 64
+
+2011-09-29 tommi@tntnet.org
+
+- fix reuse of session id (may leak on parallel requests)
+
+2011-09-25 tommi@tntnet.org
+
+- fix for autoconf 2.68
+
+2011-09-20 tommi@tntnet.org
+
+- fix help page in ecppc
+- fix type in demo (std::set::erase takes a non const iterator)
+
+2011-09-12 tommi@tntnet.org
+
+- the names of autotools projects created with tntnet-config may have special characters
+
+r1300 | maekitalo | 2011-09-05 12:48:32 +0200 (Mon, 05 Sep 2011) | 1 line
+
+DefaultDestroyPolicy was renamed to DeletePolicy in cxxtools
+
 2011-08-25 tommi@tntnet.org
 
 - define constant for content-disposition header
