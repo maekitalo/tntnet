@@ -57,7 +57,7 @@ namespace tnt
         : ptr(ptr_)
         { }
       ~PointerObject()
-        { destroy(ptr); }
+        { destroyPolicy<data_type>::destroy(ptr); }
       void set(data_type* ptr_)
         { destroy(ptr); ptr = ptr_; }
       data_type* get()  { return ptr; }
