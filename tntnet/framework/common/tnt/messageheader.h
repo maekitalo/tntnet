@@ -33,6 +33,7 @@
 #include <istream>
 #include <string>
 #include <cstring>
+#include <utility>
 
 namespace tnt
 {

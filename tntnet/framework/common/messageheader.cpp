@@ -32,6 +32,7 @@
 #include <cxxtools/log.h>
 #include <stdexcept>
 #include <tnt/stringlessignorecase.h>
+#include <cstring>
 
 namespace tnt
 {
@@ -107,9 +108,9 @@ namespace tnt
 
     char* p = getEnd();
 
-    size_t lk = strlen(key);     // length of key
+    size_t lk = std::strlen(key);     // length of key
     size_t lk2 = key[lk-1] == ':' ? lk + 1 : lk;  // length of key including trailing ':'
-    size_t lv = strlen(value);   // length of value
+    size_t lv = std::strlen(value);   // length of value
 
     if (p - rawdata + lk2 + lv + 3 > MAXHEADERSIZE)
       throw std::runtime_error("message header too big");

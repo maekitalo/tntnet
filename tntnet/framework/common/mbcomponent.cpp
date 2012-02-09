@@ -31,6 +31,7 @@
 #include <tnt/http.h>
 #include <tnt/httpreply.h>
 #include <cxxtools/log.h>
+#include <cstring>
 
 log_define("tntnet.mbcomponent")
 
@@ -40,7 +41,7 @@ namespace tnt
   {
     inline bool charpLess(const char* a, const char* b)
     {
-      return strcmp(a, b) < 0;
+      return std::strcmp(a, b) < 0;
     }
   }
 
@@ -81,7 +82,7 @@ namespace tnt
 
       const char** urls_end = urls + data.size();
       const char** it = std::lower_bound(urls, urls_end, url, charpLess);
-      if (it == urls_end || strcmp(url, *it) != 0)
+      if (it == urls_end || std::strcmp(url, *it) != 0)
       {
         log_debug("file \"" << url << "\" not found");
         return DECLINED;

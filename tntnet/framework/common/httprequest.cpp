@@ -42,6 +42,7 @@
 #include <pthread.h>
 #include "config.h"
 #include <tnt/stringlessignorecase.h>
+#include <cstring>
 
 namespace tnt
 {
@@ -195,7 +196,7 @@ namespace tnt
   {
     if (strlen(m) >= 7)
       throw HttpError(HTTP_BAD_REQUEST, "invalid method");
-    strcpy(method, m);
+    std::strcpy(method, m);
   }
 
   std::string HttpRequest::getArg(const std::string& name, const std::string& def) const
