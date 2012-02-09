@@ -299,28 +299,16 @@ namespace tnt
     log_debug("gnutls_transport_set_push_function()");
     gnutls_transport_set_push_function(session, push_func);
 
-    if (getTimeout() < 0)
-    {
-      // blocking
-      do
-      {
-        log_debug("gnutls_handshake");
-        ret = gnutls_handshake(session);
-      } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
-    }
-    else
-    {
-      // non-blocking/with timeout
+    // non-blocking/with timeout
 
-      fdInfo.timeout = 10000;
+    fdInfo.timeout = 10000;
 
-      log_debug("gnutls_handshake");
-      ret = gnutls_handshake(session);
-      log_debug("gnutls_handshake => " << ret);
+    log_debug("gnutls_handshake");
+    ret = gnutls_handshake(session);
+    log_debug("gnutls_handshake => " << ret);
 
-      if (ret != 0)
-        throw GnuTlsException("gnutls_handshake", ret);
-    }
+    if (ret != 0)
+      throw GnuTlsException("gnutls_handshake", ret);
 
     connected = true;
     fdInfo.timeout = getTimeout();
@@ -380,34 +368,22 @@ namespace tnt
 
     fdInfo.timeout = getTimeout();
 
-    if (getTimeout() < 0)
+    // non-blocking/with timeout
+
+    while (true)
     {
-      // blocking
-      do
-      {
-        log_debug("gnutls_record_send");
-        ret = gnutls_record_send(session, buffer, bufsize);
-      } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
-    }
-    else
-    {
-      // non-blocking/with timeout
+      log_debug("gnutls_record_send");
+      ret = gnutls_record_send(session, buffer, bufsize);
+      log_debug("gnutls_record_send => " << ret);
 
-      while (true)
-      {
-        log_debug("gnutls_record_send");
-        ret = gnutls_record_send(session, buffer, bufsize);
-        log_debug("gnutls_record_send => " << ret);
+      if (ret > 0)
+        break;
 
-        if (ret > 0)
-          break;
+      if (ret == GNUTLS_E_AGAIN)
+        throw cxxtools::IOTimeout();
 
-        if (ret == GNUTLS_E_AGAIN)
-          throw cxxtools::IOTimeout();
-
-        if (ret != GNUTLS_E_INTERRUPTED)
-          throw GnuTlsException("gnutls_record_send", ret);
-      }
+      if (ret != GNUTLS_E_INTERRUPTED)
+        throw GnuTlsException("gnutls_record_send", ret);
     }
 
     return ret;
@@ -419,40 +395,27 @@ namespace tnt
 
     fdInfo.timeout = 1000;
 
-    if (getTimeout() < 0)
+    // non-blocking/with timeout
+
+    while (true)
     {
-      // blocking
-      do
+      log_debug("gnutls_bye");
+      ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
+      log_debug("gnutls_bye => " << ret);
+
+      if (ret == 0)
       {
-        log_debug("gnutls_bye");
-        ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
-      } while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
-      connected = false;
-    }
-    else
-    {
-      // non-blocking/with timeout
-
-      while (true)
-      {
-        log_debug("gnutls_bye");
-        ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
-        log_debug("gnutls_bye => " << ret);
-
-        if (ret == 0)
-        {
-          connected = false;
-          break;
-        }
-
-        if (ret < 0
-          && ret != GNUTLS_E_INTERRUPTED
-          && ret != GNUTLS_E_AGAIN)
-            throw GnuTlsException("gnutls_bye", ret);
-
-        log_debug("poll");
-        poll(POLLIN);
+        connected = false;
+        break;
       }
+
+      if (ret < 0
+        && ret != GNUTLS_E_INTERRUPTED
+        && ret != GNUTLS_E_AGAIN)
+          throw GnuTlsException("gnutls_bye", ret);
+
+      log_debug("poll");
+      poll(POLLIN);
     }
   }
 
