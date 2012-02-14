@@ -29,6 +29,7 @@
 #include <cxxtools/mutex.h>
 #include <cxxtools/condition.h>
 #include <cxxtools/clock.h>
+#include <stdint.h>
 
 template <typename T>
 class ModificationTracker
@@ -69,7 +70,7 @@ class ModificationTracker
       clock.start();
       while (_serial <= serial)
       {
-        cxxtools::int64_t timeoutLeft = static_cast<cxxtools::int64_t>(timeoutMsec) - clock.stop().totalMSecs();
+        int64_t timeoutLeft = static_cast<int64_t>(timeoutMsec) - clock.stop().totalMSecs();
         if (timeoutLeft <= 0)
           break;
 
