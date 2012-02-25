@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 2.0, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 2.1rc2, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
@@ -22,8 +22,15 @@ AC_PROG_LIBTOOL
 AC_LANG(C++)
 ACX_PTHREAD
 
+AX_COMPILER_VENDOR
+AS_IF([test "$ax_cv_cxx_compiler_vendor" = "ibm"],
+      [CXXFLAGS="$CXXFLAGS -qrtti -qlanglvl=newexcp -D__NOLOCK_ON_INPUT -D__NOLOCK_ON_OUTPUT"])
+AX_CHECK_COMPILE_FLAG([-Wno-long-long], [CXXFLAGS="$CXXFLAGS -Wno-long-long"])
+
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADER([cxxtools/net/tcpsocket.h], , AC_MSG_ERROR([cxxtools headers not found]))
+AC_CHECK_FUNCS([fopen64], ,[AM_CFLAGS=-DUSE_FILE32API])
+AC_SUBST(AM_CFLAGS)
 
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
