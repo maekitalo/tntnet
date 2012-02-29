@@ -412,7 +412,7 @@ namespace tnt
       log_info("wait for " << Worker::getCountThreads() << " worker threads to stop");
       while (Worker::getCountThreads() > 0)
       {
-        log_debug("wait for worker threads to stop; " << getQueue().getWaitThreadCount() << " left");
+        log_debug("wait for worker threads to stop; " << Worker::getCountThreads() << " left");
         usleep(100);
       }
     }
