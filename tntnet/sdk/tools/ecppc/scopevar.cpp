@@ -71,7 +71,7 @@ namespace tnt
 
       out << "  typedef " << type << ' ' << var << "_type;\n"
              "  " << macro << '(' << var << "_type, " << var
-          << ", \"" << var << "\", (" << init << ")); " 
+          << ", \"" << type << ' ' << var << "\", (" << init << ")); " 
              "  // <%" << tag << "> " << type << ' ' << var;
 
       if (!init.empty())
