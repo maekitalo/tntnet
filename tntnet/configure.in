@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 2.1rc2, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 2.1rc3, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
@@ -188,8 +188,11 @@ case "${host_cpu}-${host_os}" in
 *-aix*)
     SHARED_LIB_FLAG=-qmkshrobj
     ;;
+*-darwin*)
+    SHARED_LIB_FLAG=-dynamiclib
+    ;;
 *)
-    SHARED_LIB_FLAG=
+    SHARED_LIB_FLAG=-shared
     ;;
 esac
 AC_SUBST(SHARED_LIB_FLAG)
