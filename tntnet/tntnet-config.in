@@ -22,6 +22,7 @@ Known values for OPTION are:
   --properties=app  print a properties file
   --project=app     create a simple ecpp-project-directory
   -p=app            shortcut for --project=app
+  --autoproject=app create a autotools based tntnet project
   --help            display this help and exit
   --version         output version information
 EOF
