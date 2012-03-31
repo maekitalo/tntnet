@@ -1,107 +1,149 @@
+2012-03-26 tommi@tntnet.org
+
+ - fix generation of tntnet-config (shared lib flag was missing)
+ - add documentation about --autoproject option of tntnet-config
+
+2012-02-29 tommi@tntnet.org
+
+ - fix debug output
+ - use name of type also as key into scope variables to prevent binding variables to instances of different type
+
+2012-02-25 tommi@tntnet.org
+
+ - set compile flags for ibm xlc
+
+2012-02-14 bendri
+
+ - replace cxxtools::int64_t with standard int64_t
+
+2012-02-09 tommi@tntnet.org
+
+ - remove code for blocking mode from openssl and gnutls since it is not used anyway and was not working for a long time
+
+2012-02-09 tommi@tntnet.org
+
+ - fix declaration template class (clang complained about it)
+
+2012-02-09 tommi@tntnet.org
+
+ - add missing headers (yofuh)
+
+2012-02-08 tommi@tntnet.org
+
+ - update ChangeLog
+
 2012-01-09 tommi@tntnet.org
 
-- Use atomic operations instead of mutex in zdata. This fixes occational crashes on shutdown on AIX.
+ - Use atomic operations instead of mutex in zdata. This fixes occational crashes on shutdown on AIX.
+
+2011-12-15 tommi@tntnet.org
+
+ - flag -qmkshrobj is still needed on AIX
+
+2012-01-09 tommi@tntnet.org
+
+ - Use atomic operations instead of mutex in zdata. This fixes occational crashes on shutdown on AIX.
 
 2011-12-07 tommi@tntnet.org
 
-- output warning, when there is white space other than line feed after closing %-Tag
+ - output warning, when there is white space other than line feed after closing %-Tag
 
 2011-12-04 tommi@tntnet.org
 
-- increase default listen backlog from 16 to 64
+ - increase default listen backlog from 16 to 64
 
 2011-09-29 tommi@tntnet.org
 
-- fix reuse of session id (may leak on parallel requests)
+ - fix reuse of session id (may leak on parallel requests)
 
 2011-09-25 tommi@tntnet.org
 
-- fix for autoconf 2.68
+ - fix for autoconf 2.68
 
 2011-09-20 tommi@tntnet.org
 
-- fix help page in ecppc
-- fix type in demo (std::set::erase takes a non const iterator)
+ - fix help page in ecppc
+ - fix type in demo (std::set::erase takes a non const iterator)
 
 2011-09-12 tommi@tntnet.org
 
-- the names of autotools projects created with tntnet-config may have special characters
+ - the names of autotools projects created with tntnet-config may have special characters
 
-r1300 | maekitalo | 2011-09-05 12:48:32 +0200 (Mon, 05 Sep 2011) | 1 line
+2011-09-05 tommi@tntnet.org
 
-DefaultDestroyPolicy was renamed to DeletePolicy in cxxtools
+ - DefaultDestroyPolicy was renamed to DeletePolicy in cxxtools
 
 2011-08-25 tommi@tntnet.org
 
-- define constant for content-disposition header
+ - define constant for content-disposition header
 
 2011-08-10 tommi@tntnet.org
 
-- fix license headers of files from minizip by updating them to the most recent version
+ - fix license headers of files from minizip by updating them to the most recent version
 
 2011-06-24 tommi@tntnet.org
 
-- reuse session id if already set instead of replacing it
+ - reuse session id if already set instead of replacing it
 
 2011-06-05 tommi@tntnet.org
 
-- ignore SIGPIPE always
+ - ignore SIGPIPE always
 
 2011-05-30 tommi@tntnet.org
 
-- add setting ErrorLog for redirecting stderr to a file
+ - add setting ErrorLog for redirecting stderr to a file
 
 2011-05-29 tommi@tntnet.org
 
-- return error code if client tries to use http header Expect
+ - return error code if client tries to use http header Expect
 
 2011-05-29 tommi@tntnet.org
 
-- add documentation for AcessLog into man page tntnet.conf(7)
+ - add documentation for AcessLog into man page tntnet.conf(7)
 
 2011-05-08 tommi@tntnet.org
 
-- do not translate '+' to space when parsing urls
+ - do not translate '+' to space when parsing urls
 
 2011-04-03 tommi@tntnet.org
 
-- add xptemplates (vim template plugin)
+ - add xptemplates (vim template plugin)
 
 2011-04-03 tommi@tntnet.org
 
-- fail to start tntnet if ssl is configured but not compiled in
+ - fail to start tntnet if ssl is configured but not compiled in
 
 2011-04-03 tommi@tntnet.org
 
-- remove ipv4 addresses from configuration files
+ - remove ipv4 addresses from configuration files
 
 2011-03-26 tommi@tntnet.org
 
-- add "<?? cond ? expr ?>" to ecpp for printing conditionally something without escaping html similar to "<$$ ... $>"
+ - add "<?? cond ? expr ?>" to ecpp for printing conditionally something without escaping html similar to "<$$ ... $>"
 
 2011-03-26 tommi@tntnet.org
 
-- set log category of components settable in ecppc using flag -l
+ - set log category of components settable in ecppc using flag -l
 
 2011-02-20 tommi@tntnet.org
 
-- fix a small documentation bug and update version number in quick start guide
+ - fix a small documentation bug and update version number in quick start guide
 
 2011-02-17 tommi@tntnet.org
 
-- add makefile rule to compile a .ico file
+ - add makefile rule to compile a .ico file
 
 2011-01-23 tommi@tntnet.org
 
-- add background worker threads
+ - add background worker threads
 
 2011-01-20 tommi@tntnet.org
 
-- set lib deps using LIBADD instead of LDFLAGS (thanks idl0r)
+ - set lib deps using LIBADD instead of LDFLAGS (thanks idl0r)
 
 2011-01-16 tommi@tntnet.org
 
-- remove feature for preloading applications (it did not work anyway and it has limited use)
+ - remove feature for preloading applications (it did not work anyway and it has limited use)
 
 2011-01-09 tommi@tntnet.org
  - remove "Load" setting (and feature) from tntnet.conf since it did not work and is useless
@@ -315,587 +357,587 @@ DefaultDestroyPolicy was renamed to DeletePolicy in cxxtools
  - use RTLD_LOCAL-flag when loading components to improve separation between applications
 
 2008-10-15 tommi@tntnet.org
-  - make shutdown of tntnet cleaner and faster by using conditions
+ - make shutdown of tntnet cleaner and faster by using conditions
 
 2008-07-04 tommi@tntnet.org
-  - move shortcut methods into a separate class tnt::Configurator. This also
+ - move shortcut methods into a separate class tnt::Configurator. This also
     ensures binary compatibility with previous releases
 
 2008-06-16 tommi@tntnet.org
-  - add shortcut methods for configuring tntnet to tnt::Tntnet-class to
+ - add shortcut methods for configuring tntnet to tnt::Tntnet-class to
     ease configuration when tntnet is used as a library
 
 2008-06-03 tommi@tntnet.org
-  - release version 1.6.3
+ - release version 1.6.3
 
 2008-05-31 tommi@tntnet.org
-  - allow multiline initialization in scope variables
-  - handle ' and " in c++-comments correctly in ecpp parser
+ - allow multiline initialization in scope variables
+ - handle ' and " in c++-comments correctly in ecpp parser
 
 2008-05-25 tommi@tntnet.org
-  - fix clearCookie (set cookie path as in setCookie; was broken since
+ - fix clearCookie (set cookie path as in setCookie; was broken since
     2007-06-17)
 
 2008-04-05 tommi@tntnet.org
-  - define %args-variables before scoped variables, so it is possible to use
+ - define %args-variables before scoped variables, so it is possible to use
     %args variables to initialize scoped variables.
-  - fix shutdown
+ - fix shutdown
 
 2008-04-04 tommi@tntnet.org
-  - default output for ecppc -M is stdout, not the basename of the source
-  - don't set content-type- and keep-alive-headers when switching to direct
+ - default output for ecppc -M is stdout, not the basename of the source
+ - don't set content-type- and keep-alive-headers when switching to direct
     mode
 
 2008-03-29 tommi@tntnet.org
-  - fix error and timeout handling in gnutls
-  - improve gnutls performance by letting handshake happen in parallel
+ - fix error and timeout handling in gnutls
+ - improve gnutls performance by letting handshake happen in parallel
     between sockets
 
 2008-03-23 tommi@tntnet.org
-  - fix error handling in accept; accept in gnutls may throw exceptions,
+ - fix error handling in accept; accept in gnutls may throw exceptions,
     which tntnet did not catch. This resulted in a break of the accept-
     loop.
 
 2008-03-19 tommi@tntnet.org
-  - support certificate chains in openssl
+ - support certificate chains in openssl
 
 2008-03-17 tommi@tntnet.org
-  - clear username and password between keep-alive requests
+ - clear username and password between keep-alive requests
 
 2008-02-07 tommi@tntnet.org
-  - simplify handling of scoped variables
+ - simplify handling of scoped variables
 
 2008-01-03 tommi@tntnet.org
-  - openssl fixes
-  - remove warnings when shutting down
-  - make timersleep configurable
+ - openssl fixes
+ - remove warnings when shutting down
+ - make timersleep configurable
 
 2007-12-28 tommi@tntnet.org
-  - set FD_CLOEXEC on listener socket and accepted connections
+ - set FD_CLOEXEC on listener socket and accepted connections
 
 2007-12-09 tommi@tntnet.org
-  - tnt::Tntnet::forkProcess and runProcess to start processes.
+ - tnt::Tntnet::forkProcess and runProcess to start processes.
     with a simple fork the child process inherits the listener ports
     and prevents restarting tntnet while the child process runs.
-  - pass application object to request
+ - pass application object to request
 
 2007-12-02 tommi@tntnet.org
-  - named arguments from urlmapping to components, e.g.
+ - named arguments from urlmapping to components, e.g.
     request.getArgs("DocumentRoot")
 
 2007-11-18 tommi@tntnet.org
-  - fixed cookie handling (did not work in some cases on IE)
-  - reply.uout() for printing url encoded data
+ - fixed cookie handling (did not work in some cases on IE)
+ - reply.uout() for printing url encoded data
 
 2007-11-04 tommi@tntnet.org
-  - allow initialization of scope variables in ecpp with "type = value;"
+ - allow initialization of scope variables in ecpp with "type = value;"
 
 2007-10-25 tommi@tntnet.org
-  - move class tnt::Dispatcher::CompidentType to tnt::MapTarget
-  - fix some warnings and errors produced by gcc when using -pedantic
+ - move class tnt::Dispatcher::CompidentType to tnt::MapTarget
+ - fix some warnings and errors produced by gcc when using -pedantic
 
 2007-10-21 tommi@tntnet.org
-  - search components in pkglibdir
+ - search components in pkglibdir
 
 2007-10-17 tommi@tntnet.org
-  - set content-type also in other than POST requests
+ - set content-type also in other than POST requests
 
 2007-10-15 tommi@tntnet.org
-  - move most of tntnet into libtntnet to ease embedding tntnet in
+ - move most of tntnet into libtntnet to ease embedding tntnet in
     applications
 
 2007-08-22 tommi@tntnet.org
-  - allow underscore in name of scoped variables
+ - allow underscore in name of scoped variables
 
 2007-08-19 tommi@tntnet.org
-  - rebuild epoll-fd after detecting inconsistency instead of failing
+ - rebuild epoll-fd after detecting inconsistency instead of failing
 
 2007-08-11 tommi@tntnet.org
-  - new feature: pass named parameters of any class to subcomponents
+ - new feature: pass named parameters of any class to subcomponents
 
 2007-07-14 tommi@tntnet.org
-  - prefix classname in generated components with "_component_" to reduce
+ - prefix classname in generated components with "_component_" to reduce
     possible naming-conflicts and allow components to have reserved c++-words
     as names (like "template")
 
 2007-07-10 tommi@tntnet.org
-  - generate macro SET_LANG to set language inside components
+ - generate macro SET_LANG to set language inside components
 
 2007-07-08 tommi@tntnet.org
-  - new methods request.setLocale(std::locale) and
+ - new methods request.setLocale(std::locale) and
     reply.setLocale(std::locale)
 
 2007-07-07 tommi@tntnet.org
-  - restructure HttpMessage/HttpRequest/HttpReply and pass additional
+ - restructure HttpMessage/HttpRequest/HttpReply and pass additional
     http-headers with HttpError-exceptions
-  - make HttpReply::notAuthorized and HttpReply::redirect throw an exception,
+ - make HttpReply::notAuthorized and HttpReply::redirect throw an exception,
     so that it can be called in subcomponents easily
 
 2007-07-03 tommi@tntnet.org
-  - allow "char *var;" in scoped-variables
-  - don't listen on 0.0.0.0:80 if only ssl-listeners are configured
+ - allow "char *var;" in scoped-variables
+ - don't listen on 0.0.0.0:80 if only ssl-listeners are configured
 
 2007-06-30 tommi@tntnet.org
-  - support for http-basic-authentification
-  - new tag <%doc>...</%doc> (long form of comment-tag)
+ - support for http-basic-authentification
+ - new tag <%doc>...</%doc> (long form of comment-tag)
 
 2007-06-20 tommi@tntnet.org
-  - use C-locale if standard-locale ($LANG) is unknown
+ - use C-locale if standard-locale ($LANG) is unknown
 
 2007-06-17 tommi@tntnet.org
-  - add debug-statements in dispatcher for easier debugging of
+ - add debug-statements in dispatcher for easier debugging of
     MapUrl-statements
-  - set cookie-path in session-scope to extend sessions to all pages
+ - set cookie-path in session-scope to extend sessions to all pages
 
 2007-05-29 tommi@tntnet.org
-  - fix typo in redirect-component (name is redirect, not redired)
+ - fix typo in redirect-component (name is redirect, not redired)
 
 2007-05-27 tommi@tntnet.org
-  - don't warn about unknown mime-type for ecpp-files
-  - fix internationalization in subcomponents
+ - don't warn about unknown mime-type for ecpp-files
+ - fix internationalization in subcomponents
 
 2007-05-23 tommi@tntnet.org
-  - use requestname as base filename in multibinary-generation by default
-  - document option --mimetypes in ecppc
+ - use requestname as base filename in multibinary-generation by default
+ - document option --mimetypes in ecppc
 
 2007-05-20 tommi@tntnet.org
-  - make content-type-detection in ecppc working again (broken since
+ - make content-type-detection in ecppc working again (broken since
     AddType-fix on 2007-05-16)
 
 2007-05-17 tommi@tntnet.org
-  - fix minor protocol-error when sendfile is used (connection was closed
+ - fix minor protocol-error when sendfile is used (connection was closed
     after request although the header specified to use keep-alive)
 
 2007-05-16 tommi@tntnet.org
-  - AddType-configuration-variable fixed
+ - AddType-configuration-variable fixed
 
 2007-05-13 tommi@tntnet.org
-  - removed method isTop() from components, since it is not reliable in all
+ - removed method isTop() from components, since it is not reliable in all
     circumstances. The feature is replaced with a additional virtual
     operator()-variant in tnt::Component.
 
 2007-05-11 tommi@tntnet.org
-  - change newsdb-demo to use built in connectionpool of tntdb
-  - build-improvements (port to solaris/SunStudio)
+ - change newsdb-demo to use built in connectionpool of tntdb
+ - build-improvements (port to solaris/SunStudio)
 
 2007-05-08 tommi@tntnet.org
-  - allow cookie-values to have commas
+ - allow cookie-values to have commas
 
 2007-05-07 tommi@tntnet.org
-  - fix gnutls
-  - fix componentloader (crashed sometimes under load)
+ - fix gnutls
+ - fix componentloader (crashed sometimes under load)
 
 2007-05-04 tommi@tntnet.org
-  - fix tntnet-config-script for Mac-OS-X
+ - fix tntnet-config-script for Mac-OS-X
 
 2007-05-03 tommi@tntnet.org
-  - make tnt::MimeDb non-case-sensitive
-  - building tntnet-server and cgi-lib is now optional and on by default
+ - make tnt::MimeDb non-case-sensitive
+ - building tntnet-server and cgi-lib is now optional and on by default
     for sdk-only-builds (useful for cross-builds)
-  - make setting user and group working again
+ - make setting user and group working again
 
 2007-04-29 tommi@tntnet.org
-  - send gz-file in static@tntnet when gzip-encoding is accepted and a gz-file
+ - send gz-file in static@tntnet when gzip-encoding is accepted and a gz-file
     is available
-  - use sendfile(2) in static@tntnet when possible
+ - use sendfile(2) in static@tntnet when possible
 
 2007-04-25 tommi@tntnet.org
-  - remove support for non-singleton components (it is useless now)
+ - remove support for non-singleton components (it is useless now)
 
 2007-04-16 tommi@tntnet.org
-  - 2 other serious bugs fixed: epoll was not always waked up on new jobs.
+ - 2 other serious bugs fixed: epoll was not always waked up on new jobs.
     After this, idle-jobs where queued until system-resources were
     exhausted. Another problem was a race-condition when the http-date-header
     was generated. After these fixes tntnet runs stable under high load.
 
 2007-04-15 tommi@tntnet.org
-  - fixed serious bug: don't delete thread-scope in request - worker-thread
+ - fixed serious bug: don't delete thread-scope in request - worker-thread
     does this
 
 2007-04-11 tommi@tntnet.org
-  - new option -L for ecppc to disable generation of #line-directives
-  - add missing includes and rename some variables to suppress warnings from
+ - new option -L for ecppc to disable generation of #line-directives
+ - add missing includes and rename some variables to suppress warnings from
     Sun Studo 11 (thank you Mark)
 
 2007-03-27 tommi@tntnet.org
-  - fix race-condition in scope-handling, which caused a crash on MP-boxes
+ - fix race-condition in scope-handling, which caused a crash on MP-boxes
     under high load
-  - check for enough worker-threads to handle all sockets (tntnet now needs at
+ - check for enough worker-threads to handle all sockets (tntnet now needs at
     least one per listen-socket after removing listener threads)
-  - make thread-sleep-time configurable (default: 10s)
+ - make thread-sleep-time configurable (default: 10s)
 
 2007-03-25 tommi@tntnet.org
-  - use TCP_DEFER_ACCEPT if available
-  - remove listener-threads - worker threads now accept connections,
+ - use TCP_DEFER_ACCEPT if available
+ - remove listener-threads - worker threads now accept connections,
     which removes on context-switch on each accepted connection
 
 2007-03-24 tommi@tntnet.org
-  - new demo calci18n
+ - new demo calci18n
 
 2007-03-21 tommi@tntnet.org
-  - change license from GPL to LGPL
-  - new configure-option --with-epoll=yes|no|probe
+ - change license from GPL to LGPL
+ - new configure-option --with-epoll=yes|no|probe
 
 2007-03-20 tommi@tntnet.org
-  - look for LANG-settings also in sub-query-parameters
+ - look for LANG-settings also in sub-query-parameters
 
 2007-03-18 tommi@tntnet.org
-  - be more tolerant about whitespace in http-header
+ - be more tolerant about whitespace in http-header
 
 2007-03-13 tommi@tntnet.org
-  - fix bug, which caused tntnet sometimes to fail loading components
-  - new feature: tnt::HttpReply::resetContent
+ - fix bug, which caused tntnet sometimes to fail loading components
+ - new feature: tnt::HttpReply::resetContent
 
 2007-03-11 tommi@tntnet.org
-  - url-decode non-ascii-characters in path-info
+ - url-decode non-ascii-characters in path-info
 
 2007-03-10 tommi@tntnet.org
 
-  - revert signalhandlers for SIGPIPE and SIGABRT, which were lost when
+ - revert signalhandlers for SIGPIPE and SIGABRT, which were lost when
     modularized
-  - standard-components static and unzip set mime-type now
+ - standard-components static and unzip set mime-type now
 
 2007-01-24 tommi@tntnet.org
 
-  - move process-handling from class Tntnet to a separate class Process
+ - move process-handling from class Tntnet to a separate class Process
 
 2006-12-03 tommi@tntnet.org
 
-  - print full path of dependencies in ecppc -M
-  - debug-log when fetching scoped variables
+ - print full path of dependencies in ecppc -M
+ - debug-log when fetching scoped variables
 
 2006-11-23 tommi@tntnet.org
 
-  - Option "-I dir" for ecppc, ecppl, ecppll
+ - Option "-I dir" for ecppc, ecppl, ecppll
 
 2006-11-20 tommi@tntnet.org
 
-  - use epoll-interface when available
+ - use epoll-interface when available
 
 2006-11-18 tommi@tntnet.org
 
-  - make sdk and demos optional in build-system
-  - fix bug, which made keep-alive-timeout unnecessary short
+ - make sdk and demos optional in build-system
+ - fix bug, which made keep-alive-timeout unnecessary short
 
 2006-11-17 tommi@tntnet.org
 
-  - Remove global factory-symbol from shared libraries. This makes it possible to
+ - Remove global factory-symbol from shared libraries. This makes it possible to
     have components with identical names in different libraries.
 
 2006-11-16 tommi@tntnet.org
 
-  - VMapUrl (virtual host specific mapping)
+ - VMapUrl (virtual host specific mapping)
 
 2006-11-05 tommi@tntnet.org
 
-  - changed some less informative log-entries from info to debug
-  - added logging of file-size in static pages
-  - reading tntnet.conf from current directory in non-root accounts
-  - using port 8000 as default-port in non-root accounts
+ - changed some less informative log-entries from info to debug
+ - added logging of file-size in static pages
+ - reading tntnet.conf from current directory in non-root accounts
+ - using port 8000 as default-port in non-root accounts
 
 2006-09-22 tommi@tntnet.org
 
-  - major bugfix: MaxRequestSize was not checked for 0 in POST-requests.
+ - major bugfix: MaxRequestSize was not checked for 0 in POST-requests.
     the result was, that POST-requests did not work in the default
     configuration at all.
-  - Version 1.5.3
+ - Version 1.5.3
 
 2006-09-09 tommi@tntnet.org
 
-  - fix crash in cgi-library when using thread-scope in cgi-programs
+ - fix crash in cgi-library when using thread-scope in cgi-programs
 
 2006-08-22 tommi@tntnet.org
 
-  - tntnet has now a complete set of man-pages
+ - tntnet has now a complete set of man-pages
 
 2006-08-19 tommi@tntnet.org
 
-  - increase maximum limits for better default scalability
+ - increase maximum limits for better default scalability
 
 2006-07-09 tommi@tntnet.org
 
-  - thread-scope variables
-  - new demo "alldemos", which links to all other demos
+ - thread-scope variables
+ - new demo "alldemos", which links to all other demos
 
 2006-07-03 tommi@tntnet.org
 
-  - cookies are case-insensitive (see rfc 2109)
+ - cookies are case-insensitive (see rfc 2109)
 
 2006-06-25 tommi@tntnet.org
 
-  - make http-headers case-insensitive as per spec
-  - don't delete components any more - they don't eat so much memory
+ - make http-headers case-insensitive as per spec
+ - don't delete components any more - they don't eat so much memory
     and it is impossible to know, when components aren't needed any more
 
 2006-06-20 tommi@tntnet.org
 
-  - graceful shutdown of ssl-connections (gnutls and openssl)
+ - graceful shutdown of ssl-connections (gnutls and openssl)
 
 2006-06-16 tommi@tntnet.org
 
-  - new demo-applications calcmvc, which shows a simple mvc-pattern, and
+ - new demo-applications calcmvc, which shows a simple mvc-pattern, and
     calcajax, which demonstrates, how to use ajax with tntnet
 
 2006-06-10 tommi@tntnet.org
 
-  - port to gnutls
+ - port to gnutls
 
 2006-06-08 tommi@tntnet.org
 
-  - take first commandline-argument as configurationfile
-  - remove unnecessery virtual destructors (although this triggers some
+ - take first commandline-argument as configurationfile
+ - remove unnecessery virtual destructors (although this triggers some
     compiler-warnings)
 
 2006-05-24 tommi@tntnet.org
 
-  - fix linking with openssl for Open-BSD (and possibly others)
-  - try harder to shut down listener
+ - fix linking with openssl for Open-BSD (and possibly others)
+ - try harder to shut down listener
 
 2006-05-08 tommi@tntnet.org
 
-  - send charset in content-type-header with HTTP/1.1
+ - send charset in content-type-header with HTTP/1.1
 
 2006-04-29 tommi@tntnet.org
 
-  - improved namespace-support for components
+ - improved namespace-support for components
 
 2006-04-26 tommi@tntnet.org
-  - support for IPv6
+ - support for IPv6
 
 2006-04-12 tommi@tntnet.org
 
-  - new demo newsdb, which reads news from a database using tntdb
-  - add openssl-license and allow tntnet to be linked with openssl
-  - fix names of standard-components (components in tntnet.so)
+ - new demo newsdb, which reads news from a database using tntdb
+ - add openssl-license and allow tntnet to be linked with openssl
+ - fix names of standard-components (components in tntnet.so)
 
 2006-04-04 tommi@tntnet.org
 
-  - ANSI-C++-fixes
-  - make SIGTERM a graceful shutdown
+ - ANSI-C++-fixes
+ - make SIGTERM a graceful shutdown
 
 2006-03-24 tommi@tntnet.org
 
-  - include #line-directives into generated code to help finding
+ - include #line-directives into generated code to help finding
     syntax errors in components
 
 2006-03-23 tommi@tntnet.org
 
-  - fix ssl
-  - delay closing standard-handles for better error-reporting at startup
-  - fix internationalization
+ - fix ssl
+ - delay closing standard-handles for better error-reporting at startup
+ - fix internationalization
 
 2006-03-02 tommi@tntnet.org
 
-  - locale-cache
-  - poll before read, which reduces system calls even more
+ - locale-cache
+ - poll before read, which reduces system calls even more
 
 2006-02-16 tommi@tntnet.org
 
-  - dramatic performance-improvement by optimization of locale-handling
+ - dramatic performance-improvement by optimization of locale-handling
 
 2006-01-25 tommi@tntnet.org
 
-  - add support for locales
+ - add support for locales
 
 2006-01-15 tommi@tntnet.org
-  - Simplified constant data-handling for i18n
-  - i18n is now controled with <%i18n>-tags
+ - Simplified constant data-handling for i18n
+ - i18n is now controled with <%i18n>-tags
 
 2005-12-31 tommi@tntnet.org
 
-  - components can be compiled into cgi-programs
+ - components can be compiled into cgi-programs
 
 2005-12-09 tommi@tntnet.org
 
-  - new demo "controls" to demonstrate usage of end-tags
-  - new configuration-variables ListenBacklog, ListenRetry, EnableCompression
+ - new demo "controls" to demonstrate usage of end-tags
+ - new configuration-variables ListenBacklog, ListenRetry, EnableCompression
 
 2005-12-08 tommi@tntnet.org
 
-  - tntnet now supports gzip-encoding
+ - tntnet now supports gzip-encoding
 
 2005-12-02 tommi@tntnet.org
 
-  - end-tags for component-calls
-  - documentation-updates and converted to open-document-format
+ - end-tags for component-calls
+ - documentation-updates and converted to open-document-format
 
 2005-12-01 tommi@tntnet.org
 
-  - fixed SSL-problems - need to mutex-lock SSL-read and -write-calls
+ - fixed SSL-problems - need to mutex-lock SSL-read and -write-calls
 
 2005-11-08 tommi@tntnet.org
 
-  - store comploader in objectpool for later reuse.
-  - derive workerthread from DetachedThread and delete itself on exit
+ - store comploader in objectpool for later reuse.
+ - derive workerthread from DetachedThread and delete itself on exit
 
 2005-11-04 tommi@tntnet.org
 
-  - new health-check - if a thread takes too long for processing (default: 10
+ - new health-check - if a thread takes too long for processing (default: 10
     minutes), the thread is considered hanging and tntnet is restarted
     automatically.
 
 2005-10-22 tommi@tntnet.org
 
-  - delay initialization of logging after changing user and group. This ensures
+ - delay initialization of logging after changing user and group. This ensures
     that logfiles are created with the right permissions.
-  - increase defaults for MinThreads from 5 to 10 and MaxThreads from 10 to 100.
+ - increase defaults for MinThreads from 5 to 10 and MaxThreads from 10 to 100.
     Threads are not that expensive and it should not hurt to create much more.
 
 2005-10-18 tommi@tntnet.org
 
-  - components with compressed data did not work any more - fixed
+ - components with compressed data did not work any more - fixed
 
 2005-09-26 tommi@tntnet.org
 
-  - one level of indirection of factory-pointer removed.
-  - detection of cxxtools- and zlib-headers fixed. Missing headers trigger a
+ - one level of indirection of factory-pointer removed.
+ - detection of cxxtools- and zlib-headers fixed. Missing headers trigger a
     error at configure-time.
 
 2005-09-15 tommi@tntnet.org
 
-  - components are created with a factory instead of a create-method.
+ - components are created with a factory instead of a create-method.
     This way there is no need to convert a void* to a function-pointer, what
     is not defined in c++.
 
 2005-08-23 tommi@tntnet.org
 
-  - documentation update (see doc/tntnet.sxw)
-  - initscript update - tntnet reload
+ - documentation update (see doc/tntnet.sxw)
+ - initscript update - tntnet reload
 
 2005-08-22 tommi@tntnet.org
 
-  - new namingconventions: classfiles start with uppercase, methods with lowercase
-  - use cxxtools-1.4.0
+ - new namingconventions: classfiles start with uppercase, methods with lowercase
+ - use cxxtools-1.4.0
 
 2005-06-27 tommi@tntnet.org
 
-  - fixed ssl-threading problem
+ - fixed ssl-threading problem
 
 2005-06-22 tommi@tntnet.org
 
-  - dependencygeneration fixed (no *.h-dependency any more unless requested)
-  - no escape of '&' in sout()
-  - fixed upload.ecpp-demo
-  - fixed ecppl/ecppll
+ - dependencygeneration fixed (no *.h-dependency any more unless requested)
+ - no escape of '&' in sout()
+ - fixed upload.ecpp-demo
+ - fixed ecppl/ecppll
 
 2005-06-13 tommi@tntnet.org
 
-  - components are generated in .cpp-files only by default (no .h-files)
-  - bugfix: component-type was not filled
-  - unsave html-character-output in <$...$> and <?...?...?> is escaped
+ - components are generated in .cpp-files only by default (no .h-files)
+ - bugfix: component-type was not filled
+ - unsave html-character-output in <$...$> and <?...?...?> is escaped
 
 2005-06-02 tommi@tntnet.org
 
-  - scope-variables
-  - automatic session-handling
-  - removed boost dependency
+ - scope-variables
+ - automatic session-handling
+ - removed boost dependency
 
 2005-05-17 tommi@tntnet.org
 
-  - version 1.3.1 released
+ - version 1.3.1 released
 
 2005-05-17 tommi@tntnet.org
 
-  - monitor-process calls listen before fork of worker instead of worker.
+ - monitor-process calls listen before fork of worker instead of worker.
 
 2005-05-03 tommi@tntnet.org
 
-  - better startup-handling: parent-process wait for child to start
+ - better startup-handling: parent-process wait for child to start
     successfully and listen to ports
 
 2005-05-09 tommi@tntnet.org
 
-  - Bug: peeraddress was cleared at keep-alive
-  - init-scripts starts tntnet on restart even when not running
+ - Bug: peeraddress was cleared at keep-alive
+ - init-scripts starts tntnet on restart even when not running
 
 2005-03-03 tommi@tntnet.org
 
-  - logs remote ip-address in category debug
+ - logs remote ip-address in category debug
 
 2005-02-10 tommi@tntnet.org
 
-  - new syntax for calling subcomponents
+ - new syntax for calling subcomponents
 
 2005-01-23 tommi@tntnet.org
 
-  - better scalability by creating a poller-thread, which monitors
+ - better scalability by creating a poller-thread, which monitors
     multiple idle connections instead of having a worker-thread
     for each connection.
-  - worker-threads are dynamically stopped and started
-  - Version 1.3.0 released
+ - worker-threads are dynamically stopped and started
+ - Version 1.3.0 released
 
 2005-01-12 tommi@tntnet.org
 
-  - version 1.2.3 released
-  - some protection against DoS-attacks (MaxRequestSize, MaxBodySize,
+ - version 1.2.3 released
+ - some protection against DoS-attacks (MaxRequestSize, MaxBodySize,
     MaxHeaderSize)
-  - support for Cookies
-  - tnt::savepoint
+ - support for Cookies
+ - tnt::savepoint
 
 2004-12-14 tommi@tntnet.org
 
-  - version 1.2.2 released
-  - Bug in Keep-Alive fixed
+ - version 1.2.2 released
+ - Bug in Keep-Alive fixed
 
 2004-12-05 tommi@tntnet.org
 
-  - version 1.2.1 released
-  - Content-MD5-header
-  - moved logging-wrapper to cxxtools (1.2.1)
-  - typed arguments
+ - version 1.2.1 released
+ - Content-MD5-header
+ - moved logging-wrapper to cxxtools (1.2.1)
+ - typed arguments
 
 2004-11-25 tommi@tntnet.org
 
-  - version 1.2.0 released
-  - use cxxtools-1.2.0
+ - version 1.2.0 released
+ - use cxxtools-1.2.0
 
 2004-11-24 tommi@tntnet.org
 
-  - add missing CR in HTTP-Header
+ - add missing CR in HTTP-Header
 
 2004-11-22 tommi@tntnet.org
 
-  - init-script checks, if tntnet is really running when pid-file is found
+ - init-script checks, if tntnet is really running when pid-file is found
 
 2004-11-12 tommi@tntnet.org
 
-  - version 1.1.3 released
-  - generate tntnet.conf with autoconf to get autoconf-parameters in
+ - version 1.1.3 released
+ - generate tntnet.conf with autoconf to get autoconf-parameters in
 
 2004-11-11 tommi@tntnet.org
 
-  - added missing tntnet.so.*
+ - added missing tntnet.so.*
 
 2004-11-03 tommi@tntnet.org
 
-  - version 1.1.2 released
-  - improved autoconf/automake-buildsystem
-  - minor feature-improvements and bugfixes
+ - version 1.1.2 released
+ - improved autoconf/automake-buildsystem
+ - minor feature-improvements and bugfixes
 
 2004-10-25 tommi@tntnet.org
 
-  - version 1.1.1 released
-  - buldsystem changed to autoconf/automake
+ - version 1.1.1 released
+ - buldsystem changed to autoconf/automake
 
 2004-09-20 tommi@tntnet.org
 
-  - resolved: server might crash under high load, because I linked it
+ - resolved: server might crash under high load, because I linked it
     with the non-multithreaded regex-library
 
 2004-09-16 tommi@tntnet.org
 
-  - new build for compatibility with cxxtools 1.1
+ - new build for compatibility with cxxtools 1.1
 
 2004-09-07 tommi@tntnet.org
 
-  - fixed HTTP-header
+ - fixed HTTP-header
 
 2004-08-31 tommi@tntnet.org
 
-  - version 1.1 released
-  - ecpp-components read LANG from request first.
+ - version 1.1 released
+ - ecpp-components read LANG from request first.
 
 2004-03-25 tommi@tntnet.org
 
-  - initial release 1.0
+ - initial release 1.0
 
