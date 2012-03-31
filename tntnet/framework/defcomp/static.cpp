@@ -43,7 +43,7 @@
 #include <config.h>
 #include <limits>
 
-#if HAVE_SENDFILE
+#if defined(HAVE_SENDFILE) && defined(HAVE_SYS_SENDFILE_H)
 #include <fcntl.h>
 #include <sys/sendfile.h>
 #include <cxxtools/net/tcpstream.h>
@@ -178,7 +178,7 @@ namespace tnt
       return false;
     }
 
-#if HAVE_SENDFILE
+#if defined(HAVE_SENDFILE) && defined(HAVE_SYS_SENDFILE_H)
     class Fdfile
     {
         int fd;
@@ -379,7 +379,7 @@ namespace tnt
     // send data
     log_info("send file \"" << file << "\" size " << st.st_size << " bytes; offset=" << offset << " count=" << count);
 
-#if HAVE_SENDFILE
+#if defined(HAVE_SENDFILE) && defined(HAVE_SYS_SENDFILE_H)
     if (top)
     {
       int on = 1;
