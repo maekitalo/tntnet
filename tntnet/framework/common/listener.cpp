@@ -98,11 +98,11 @@ namespace tnt
   int Listener::backlog = 64;
   unsigned Listener::listenRetry = 5;
 
-  Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q)
-    : ListenerBase(ipaddr, port),
+  Listener::Listener(Tntnet& application, const std::string& ipaddr_, unsigned short int port_, Jobqueue& q)
+    : ListenerBase(ipaddr_, port_),
       queue(q)
   {
-    doListenRetry(server, ipaddr.c_str(), port);
+    doListenRetry(server, ipaddr_.c_str(), port_);
     queue.put(new Tcpjob(application, server, queue));
   }
 
@@ -127,13 +127,13 @@ namespace tnt
 #ifdef USE_SSL
   Ssllistener::Ssllistener(Tntnet& application, const char* certificateFile,
       const char* keyFile,
-      const std::string& ipaddr, unsigned short int port,
+      const std::string& ipaddr_, unsigned short int port_,
       Jobqueue& q)
-    : ListenerBase(ipaddr, port),
+    : ListenerBase(ipaddr_, port_),
       server(certificateFile, keyFile),
       queue(q)
   {
-    doListenRetry(server, ipaddr.c_str(), port);
+    doListenRetry(server, ipaddr_.c_str(), port_);
     queue.put(new SslTcpjob(application, server, queue));
   }
 

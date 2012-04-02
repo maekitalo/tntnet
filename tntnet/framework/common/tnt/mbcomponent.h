@@ -61,23 +61,23 @@ namespace tnt
       { }
 
       MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
-                  const char* rawData, const char** urls,
-                  const char** mimetypes, const char** ctimes)
+                  const char* rawData_, const char** urls_,
+                  const char** mimetypes_, const char** ctimes_)
         : EcppComponent(ci, um, cl),
           rawData(0),
           urls(0),
           mimetypes(0),
           ctimes(0)
-      { init(rawData, urls, mimetypes, ctimes); }
+      { init(rawData_, urls_, mimetypes_, ctimes_); }
 
       MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
-                  const char* rawData, const char* &mimetype, const char* &ctime)
+                  const char* rawData_, const char* &mimetype_, const char* &ctime_)
         : EcppComponent(ci, um, cl),
           rawData(0),
           urls(0),
           mimetypes(0),
           ctimes(0)
-      { init(rawData, mimetype, ctime); }
+      { init(rawData_, mimetype_, ctime_); }
 
       unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
       unsigned topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);

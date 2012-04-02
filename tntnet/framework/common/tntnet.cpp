@@ -150,9 +150,9 @@ namespace tnt
     c.setListenBacklog(     config.getValue("ListenBacklog",         c.getListenBacklog()));
     c.setListenRetry(       config.getValue("ListenRetry",           c.getListenRetry()));
     c.setMaxUrlMapCache(    config.getValue("MaxUrlMapCache",        c.getMaxUrlMapCache()));
-    std::string accessLog = config.getValue("AccessLog");
-    if (!accessLog.empty())
-      c.setAccessLog(accessLog);
+    std::string accessLog_ = config.getValue("AccessLog");
+    if (!accessLog_.empty())
+      c.setAccessLog(accessLog_);
     c.setMaxBackgroundTasks(config.getValue("MaxBackgroundTasks",    c.getMaxBackgroundTasks()));
 
     Tntconfig::config_entries_type configSetEnv;

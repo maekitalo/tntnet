@@ -117,12 +117,12 @@ namespace tnt
     }
 
     void Generator::addImage(const std::string& name, const std::string& content,
-        const std::string& mime, time_t c_time)
+        const std::string& mime, time_t c_time_)
     {
       MultiImageType mi;
       mi.name = name;
       mi.mime = mime;
-      mi.c_time = c_time;
+      mi.c_time = c_time_;
       multiImages.push_back(mi);
 
       data.push_back(content);
@@ -281,12 +281,12 @@ namespace tnt
     }
 
     void Generator::onScope(scope_container_type container, scope_type scope,
-      const std::string& type, const std::string& var, const std::string& init)
+      const std::string& type, const std::string& var, const std::string& init_)
     {
-      log_debug("onScope type=\"" << type << "\" var=\"" << var << "\" init=\"" << init << '"');
+      log_debug("onScope type=\"" << type << "\" var=\"" << var << "\" init=\"" << init_ << '"');
       tnt::ecppc::Component* comp = (scope == ecpp::page_scope ? &maincomp : currentComp);
 
-      comp->addScopevar(Scopevar(container, scope, type, var, init, curline, curfile));
+      comp->addScopevar(Scopevar(container, scope, type, var, init_, curline, curfile));
     }
 
     void Generator::onInclude(const std::string& file)

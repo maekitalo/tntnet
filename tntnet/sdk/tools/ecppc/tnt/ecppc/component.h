@@ -74,11 +74,11 @@ namespace tnt
 
         void addCall(unsigned line, const std::string& file,
                      const std::string& comp,
-                     const comp_args_type& args,
+                     const comp_args_type& args_,
                      const std::string& pass_cgi,
                      const paramargs_type& paramargs,
                      const std::string& cppargs)
-          { compbody.addCall(line, file, comp, args, pass_cgi, paramargs, cppargs); }
+          { compbody.addCall(line, file, comp, args_, pass_cgi, paramargs, cppargs); }
         void addArg(const std::string& name, const std::string& value)
         {
           args.push_back(Variable(name, value));

@@ -42,11 +42,11 @@ namespace tnt
       if (!logCategory.empty())
         return logCategory;
 
-      std::string logCategory = "component." + componentName;
+      std::string ret = "component." + componentName;
       std::string::size_type pos;
-      while ((pos = logCategory.find('/')) != std::string::npos)
-        logCategory[pos] = '.';
-      return logCategory;
+      while ((pos = ret.find('/')) != std::string::npos)
+        ret[pos] = '.';
+      return ret;
     }
 
     void Component::getBody(std::ostream& body, bool linenumbersEnabled) const

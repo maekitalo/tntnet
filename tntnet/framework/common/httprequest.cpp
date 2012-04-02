@@ -68,7 +68,7 @@ namespace tnt
   {
   }
 
-  HttpRequest::HttpRequest(Tntnet& application_, const std::string& url, const SocketIf* socketIf_)
+  HttpRequest::HttpRequest(Tntnet& application_, const std::string& url_, const SocketIf* socketIf_)
     : socketIf(socketIf_),
       locale_init(false),
       requestScope(0),
@@ -79,7 +79,7 @@ namespace tnt
       sessionScopeLocked(false),
       application(application_)
   {
-    std::istringstream s("GET " + url + " HTTP/1.1\r\n\r\n");
+    std::istringstream s("GET " + url_ + " HTTP/1.1\r\n\r\n");
     parse(s);
   }
 

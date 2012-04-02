@@ -80,8 +80,8 @@ namespace tnt
       {
         for (int a = 1; a < argc; ++a)
         {
-          std::string inputfile = argv[a];
-          std::string key = inputfile;
+          std::string ifile = argv[a];
+          std::string key = ifile;
           if (!keepPath)
           {
             // strip path
@@ -90,7 +90,7 @@ namespace tnt
               key.erase(0, p + 1);
           }
 
-          inputfiles.insert(inputfiles_type::value_type(key, inputfile));
+          inputfiles.insert(inputfiles_type::value_type(key, ifile));
         }
       }
     }
@@ -194,11 +194,11 @@ namespace tnt
              it != inputfiles.end(); ++it)
         {
           std::string key = it->first;
-          std::string inputfile = it->second;
+          std::string ifile = it->second;
 
           struct stat st;
-          log_debug("check for input file " << inputfile);
-          if (stat(inputfile.c_str(), &st) != 0)
+          log_debug("check for input file " << ifile);
+          if (stat(ifile.c_str(), &st) != 0)
           {
             // search for input file in includes list
             int ret;
@@ -209,16 +209,16 @@ namespace tnt
               log_debug("check for input file " << inputfile_);
               if ((ret = stat(inputfile_.c_str(), &st)) == 0)
               {
-                inputfile = inputfile_;
+                ifile = inputfile_;
                 break;
               }
             }
           }
 
-          log_debug("read input file " << inputfile);
-          std::ifstream in(inputfile.c_str());
+          log_debug("read input file " << ifile);
+          std::ifstream in(ifile.c_str());
           if (!in)
-            throw std::runtime_error("can't read " + inputfile);
+            throw std::runtime_error("can't read " + ifile);
 
           std::ostringstream content;
           content << in.rdbuf();
@@ -228,11 +228,11 @@ namespace tnt
             mime = mimetype;
           else
           {
-            mime = mimeDb.getMimetype(inputfile);
+            mime = mimeDb.getMimetype(ifile);
             if (mime.empty())
             {
               mime = "application/x-data";
-              std::cerr << "warning: no mimetype found for \"" << inputfile << "\" using " << mime << std::endl;
+              std::cerr << "warning: no mimetype found for \"" << ifile << "\" using " << mime << std::endl;
             }
           }
 
