@@ -22,8 +22,8 @@
               <li><a href="exampleHello.html">Example "Hello"</a></li>
               <li><a href="exampleCalc.html">Example "Calc"</a></li>
               <li><a href="download/quick-start-guide.pdf">Tntnet quick start guide (pdf)</a></li>
-              <li><a href="download/tntnet-2.0/doc/tntnet.pdf">Tntnet users guide (pdf)</a></li>
-              <li><a href="download/tntnet-2.0/doc/tntnet-configuration.pdf">Tntnet configuration guide (pdf)</a></li>
+              <li><a href="download/tntnet-2.1/doc/tntnet.pdf">Tntnet users guide (pdf)</a></li>
+              <li><a href="download/tntnet-2.1/doc/tntnet-configuration.pdf">Tntnet configuration guide (pdf)</a></li>
           </ul>
       </div>
     </td>
