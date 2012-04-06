@@ -6,6 +6,7 @@ tntnet_la_SOURCES = \
 	error.cpp \
 	mime.cpp \
 	mimehandler.cpp \
+	proxy.cpp \
 	redirect.cpp \
 	static.cpp \
 	unzipcomp.cpp \
@@ -14,5 +15,5 @@ tntnet_la_SOURCES = \
 	static.h
 
 tntnet_la_CXXFLAGS = $(PTHREAD_CFLAGS)
-tntnet_la_LDFLAGS = -module -version-info @sonumber@ @SHARED_LIB_FLAG@
+tntnet_la_LDFLAGS = -module -version-info @sonumber@ @SHARED_LIB_FLAG@ -lcxxtools-http
 tntnet_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
