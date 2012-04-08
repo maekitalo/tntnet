@@ -61,9 +61,11 @@ namespace tnt
       requestScope(0),
       applicationScope(0),
       sessionScope(0),
+      secureSessionScope(0),
       threadContext(0),
       applicationScopeLocked(false),
       sessionScopeLocked(false),
+      secureSessionScopeLocked(false),
       application(application_)
   {
   }
@@ -74,9 +76,11 @@ namespace tnt
       requestScope(0),
       applicationScope(0),
       sessionScope(0),
+      secureSessionScope(0),
       threadContext(0),
       applicationScopeLocked(false),
       sessionScopeLocked(false),
+      secureSessionScopeLocked(false),
       application(application_)
   {
     std::istringstream s("GET " + url_ + " HTTP/1.1\r\n\r\n");
@@ -97,9 +101,11 @@ namespace tnt
       requestScope(r.requestScope),
       applicationScope(r.applicationScope),
       sessionScope(r.sessionScope),
+      secureSessionScope(r.secureSessionScope),
       threadContext(r.threadContext),
       applicationScopeLocked(false),
       sessionScopeLocked(false),
+      secureSessionScopeLocked(false),
       application(r.application)
   {
     if (requestScope)
@@ -108,6 +114,8 @@ namespace tnt
       applicationScope->addRef();
     if (sessionScope)
       sessionScope->addRef();
+    if (secureSessionScope)
+      secureSessionScope->addRef();
   }
 
   HttpRequest::~HttpRequest()
@@ -120,6 +128,8 @@ namespace tnt
       applicationScope->release();
     if (sessionScope)
       sessionScope->release();
+    if (secureSessionScope)
+      secureSessionScope->release();
   }
 
   HttpRequest& HttpRequest::operator= (const HttpRequest& r)
@@ -136,9 +146,11 @@ namespace tnt
     requestScope = r.requestScope;
     applicationScope = r.applicationScope;
     sessionScope = r.sessionScope;
+    secureSessionScope = r.secureSessionScope;
     threadContext = r.threadContext;
     applicationScopeLocked = false;
     sessionScopeLocked = false;
+    secureSessionScopeLocked = false;
 
     if (requestScope)
       requestScope->addRef();
@@ -146,6 +158,8 @@ namespace tnt
       applicationScope->addRef();
     if (sessionScope)
       sessionScope->addRef();
+    if (secureSessionScope)
+      secureSessionScope->addRef();
 
     return *this;
   }
@@ -187,6 +201,12 @@ namespace tnt
     {
       sessionScope->release();
       sessionScope = 0;
+    }
+
+    if (secureSessionScope)
+    {
+      secureSessionScope->release();
+      secureSessionScope = 0;
     }
 
     threadContext = 0;
@@ -429,24 +449,69 @@ namespace tnt
 
     if (sessionScope)
     {
-      releaseSessionScopeLock();
+      if (sessionScopeLocked)
+      {
+        sessionScope->unlock();
+        sessionScopeLocked = false;
+      }
       sessionScope->release();
     }
 
     if (s)
       s->addRef();
+
     sessionScope = s;
+  }
+
+  void HttpRequest::setSecureSessionScope(Sessionscope* s)
+  {
+    if (secureSessionScope == s)
+      return;
+
+    if (secureSessionScope)
+    {
+      if (secureSessionScopeLocked)
+      {
+        secureSessionScope->unlock();
+        secureSessionScopeLocked = false;
+      }
+      secureSessionScope->release();
+    }
+
+    if (s)
+      s->addRef();
+
+    secureSessionScope = s;
   }
 
   void HttpRequest::clearSession()
   {
+    log_info("end session");
+
     if (sessionScope)
     {
-      log_info("end session");
-      releaseSessionScopeLock();
+      if (sessionScopeLocked)
+      {
+        sessionScope->unlock();
+        sessionScopeLocked = false;
+      }
+
       sessionScope->release();
       sessionScope = 0;
     }
+
+    if (secureSessionScope)
+    {
+      if (secureSessionScopeLocked)
+      {
+        secureSessionScope->unlock();
+        secureSessionScopeLocked = false;
+      }
+
+      secureSessionScope->release();
+      secureSessionScope = 0;
+    }
+
   }
 
   void HttpRequest::ensureApplicationScopeLock()
@@ -466,6 +531,13 @@ namespace tnt
       sessionScope->lock();
       sessionScopeLocked = true;
     }
+
+    if (secureSessionScope && !secureSessionScopeLocked)
+    {
+      secureSessionScope->lock();
+      secureSessionScopeLocked = true;
+    }
+
   }
 
   void HttpRequest::releaseApplicationScopeLock()
@@ -481,6 +553,12 @@ namespace tnt
 
   void HttpRequest::releaseSessionScopeLock()
   {
+    if (secureSessionScope && secureSessionScopeLocked)
+    {
+      secureSessionScopeLocked = false;
+      secureSessionScope->unlock();
+    }
+
     if (sessionScope && sessionScopeLocked)
     {
       sessionScopeLocked = false;
@@ -516,9 +594,23 @@ namespace tnt
     return *sessionScope;
   }
 
+  Sessionscope& HttpRequest::getSecureSessionScope()
+  {
+    if (!secureSessionScope)
+      secureSessionScope = new Sessionscope();
+    ensureSessionScopeLock();
+    return *secureSessionScope;
+  }
+
   bool HttpRequest::hasSessionScope() const
   {
-    return sessionScope != 0 && !sessionScope->empty();
+    return secureSessionScope != 0 && !secureSessionScope->empty();
   }
+
+  bool HttpRequest::hasSecureSessionScope() const
+  {
+    return secureSessionScope != 0 && !secureSessionScope->empty();
+  }
+
 }
 

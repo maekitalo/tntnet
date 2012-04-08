@@ -40,10 +40,11 @@ namespace tnt
     void Scopevar::get(std::ostream& out, bool linenumbersEnabled) const
     {
       std::string tag =
-          scope_container == ecpp::application_container ? "application"
-        : scope_container == ecpp::thread_container      ? "thread"
-        : scope_container == ecpp::session_container     ? "session"
-        : scope_container == ecpp::request_container     ? "request"
+          scope_container == ecpp::application_container    ? "application"
+        : scope_container == ecpp::thread_container         ? "thread"
+        : scope_container == ecpp::session_container        ? "session"
+        : scope_container == ecpp::secure_session_container ? "securesession"
+        : scope_container == ecpp::request_container        ? "request"
         :                                                  "param";
 
       std::string macro;
@@ -54,11 +55,12 @@ namespace tnt
       else
       {
         std::string container =
-            scope_container == ecpp::application_container ? "APPLICATION_"
-          : scope_container == ecpp::thread_container      ? "THREAD_"
-          : scope_container == ecpp::session_container     ? "SESSION_"
-          : scope_container == ecpp::request_container     ? "REQUEST_"
-          :                                                  "PARAM_";
+            scope_container == ecpp::application_container    ? "APPLICATION_"
+          : scope_container == ecpp::thread_container         ? "THREAD_"
+          : scope_container == ecpp::session_container        ? "SESSION_"
+          : scope_container == ecpp::secure_session_container ? "SECURE_SESSION_"
+          : scope_container == ecpp::request_container        ? "REQUEST_"
+          :                                                     "PARAM_";
         std::string key = scope == ecpp::global_scope ? "GLOBAL_"
                         : scope == ecpp::page_scope   ? "PAGE_"
                         : scope_container != ecpp::param_container ? "COMPONENT_"

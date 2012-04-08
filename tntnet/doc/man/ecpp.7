@@ -330,6 +330,16 @@ somewhere in a component, a session-cookie is sent to the client.
 Sessions are automatically locked.
 .
 \" ---------------------------------------------------------------------
+.SS <%securesession [ scope="component|page|global"] >...</%securesession>
+\" ---------------------------------------------------------------------
+Secure session is just like session but a secure cookie is used to identify
+the session. Secure cookies are transfered only over a ssl connection from
+the browser and hence the variables are only kept in a ssl secured application.
+.PP
+If a variable defined here is used in a non ssl page, the variable values are
+lost after the current request.
+.
+\" ---------------------------------------------------------------------
 .SS <%sout> \fIexpr\fP </%sout>
 \" ---------------------------------------------------------------------
 Same as <$ ... $>. Prints the contained C++ expression \fIexpr\fP.

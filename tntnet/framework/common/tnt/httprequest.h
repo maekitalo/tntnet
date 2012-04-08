@@ -95,10 +95,12 @@ namespace tnt
       Scope* requestScope;
       Scope* applicationScope;
       Sessionscope* sessionScope;
+      Sessionscope* secureSessionScope;
       ThreadContext* threadContext;
 
       bool applicationScopeLocked;
       bool sessionScopeLocked;
+      bool secureSessionScopeLocked;
 
       void ensureApplicationScopeLock();
       void ensureSessionScopeLock();
@@ -218,6 +220,8 @@ namespace tnt
 
       void setSessionScope(Sessionscope* s);
       void setSessionScope(Sessionscope& s)      { setSessionScope(&s); }
+      void setSecureSessionScope(Sessionscope* s);
+      void setSecureSessionScope(Sessionscope& s)      { setSecureSessionScope(&s); }
       void clearSession();
 
       void setThreadContext(ThreadContext* ctx)    { threadContext = ctx; }
@@ -226,7 +230,9 @@ namespace tnt
       Scope& getApplicationScope();
       Scope& getThreadScope();
       Sessionscope& getSessionScope();
+      Sessionscope& getSecureSessionScope();
       bool   hasSessionScope() const;
+      bool   hasSecureSessionScope() const;
 
       /// returns the value of the content-size-header as read from the client.
       size_t getContentSize() const

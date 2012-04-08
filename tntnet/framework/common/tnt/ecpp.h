@@ -251,6 +251,15 @@ namespace tnt
 #define TNT_SESSION_GLOBAL_VAR(type, varname, key, construct) \
   TNT_VAR(request.getSessionScope(), type, varname, key, construct)
 
+#define TNT_SECURE_SESSION_COMPONENT_VAR(type, varname, key, construct) \
+  TNT_VAR(request.getSecureSessionScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_SECURE_SESSION_PAGE_VAR(type, varname, key, construct) \
+  TNT_VAR(request.getSecureSessionScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
+
+#define TNT_SECURE_SESSION_GLOBAL_VAR(type, varname, key, construct) \
+  TNT_VAR(request.getSecureSessionScope(), type, varname, key, construct)
+
 #define TNT_APPLICATION_COMPONENT_VAR(type, varname, key, construct) \
   TNT_VAR(request.getApplicationScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
 

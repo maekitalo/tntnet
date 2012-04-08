@@ -45,6 +45,7 @@ namespace tnt
       application_container,
       thread_container,
       session_container,
+      secure_session_container,
       request_container,
       param_container
     };

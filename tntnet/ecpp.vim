@@ -59,6 +59,7 @@ syn region ecppAttr matchgroup=Delimiter start="<%attr>" end="</%attr>" contains
 syn region ecppVar matchgroup=Delimiter start="<%application\s*\(scope\s*=\s*\"\(global\|page\|component\)\"\)\?\s*>" end="</%application>" contains=@cppTop
 syn region ecppVar matchgroup=Delimiter start="<%thread\s*\(scope\s*=\s*\"\(global\|page\|component\)\"\)\?\s*>" end="</%thread>" contains=@cppTop
 syn region ecppVar matchgroup=Delimiter start="<%session\s*\(scope\s*=\s*\"\(global\|page\|component\)\"\)\?\s*>" end="</%session>" contains=@cppTop
+syn region ecppVar matchgroup=Delimiter start="<%securesession\s*\(scope\s*=\s*\"\(global\|page\|component\)\"\)\?\s*>" end="</%securesession>" contains=@cppTop
 syn region ecppVar matchgroup=Delimiter start="<%request\s*\(scope\s*=\s*\"\(global\|page\|component\)\"\)\?\s*>" end="</%request>" contains=@cppTop
 syn region ecppVar matchgroup=Delimiter start="<%param>" end="</%param>" contains=@cppTop
 

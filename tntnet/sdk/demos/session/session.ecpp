@@ -30,6 +30,21 @@ class MyClass
   MyClass myObject;
 
 </%session>
+<%securesession>
+
+  unsigned ss(0);
+
+</%securesession>
+<%securesession scope="global">
+
+  unsigned ssa(0);
+
+</%securesession>
+<%securesession scope="page">
+
+  unsigned ssp(0);
+
+</%securesession>
 <%application>
 
   unsigned a(0);
@@ -81,6 +96,9 @@ else
 Sessioncounter (component): <$ ++s $><br>
 Sessioncounter (application): <$ ++sa $><br>
 Sessioncounter (page): <$ ++sp $><br>
+Secure sessioncounter (component): <$ ++ss $><br>
+Secure sessioncounter (application): <$ ++ssa $><br>
+Secure sessioncounter (page): <$ ++ssp $><br>
 Applicationcounter (component): <$ ++a $><br>
 Applicationcounter (page): <$ ++ap $><br>
 Requestcounter (component): <$ ++r $><br>

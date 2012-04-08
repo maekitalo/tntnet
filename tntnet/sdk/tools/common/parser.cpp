@@ -414,6 +414,12 @@ namespace tnt
                 scope = component_scope;
                 state = state_scope0;
               }
+              else if (tag == "securesession")
+              {
+                scope_container = secure_session_container;
+                scope = component_scope;
+                state = state_scope0;
+              }
               else if (tag == "request")
               {
                 scope_container = request_container;
@@ -458,6 +464,11 @@ namespace tnt
             else if (std::isspace(ch) && tag == "session")
             {
               scope_container = session_container;
+              state = state_scopearg0;
+            }
+            else if (std::isspace(ch) && tag == "securesession")
+            {
+              scope_container = secure_session_container;
               state = state_scopearg0;
             }
             else if (std::isspace(ch) && tag == "request")
@@ -790,6 +801,7 @@ namespace tnt
               else if (tag == "args" || tag == "attr" || tag == "config"
                 || tag == "include"
                 || tag == "session"
+                || tag == "securesession"
                 || tag == "application"
                 || tag == "thread"
                 || tag == "request"
