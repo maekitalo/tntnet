@@ -166,35 +166,45 @@ namespace tnt
       request.setSessionScope(sessionScope);
     }
 
-    c = request.getCookie(currentSecureSessionCookieName);
-    if (c.getValue().empty())
+    if (request.isSsl())
     {
-      log_debug("secure session cookie " << currentSessionCookieName << " not found - keep session");
+      c = request.getCookie(currentSecureSessionCookieName);
+      if (c.getValue().empty())
+      {
+        log_debug("secure session cookie " << currentSessionCookieName
+            << " not found - keep session");
+      }
+      else if (request.isSsl())
+      {
+        log_debug("secure session cookie " << currentSessionCookieName
+            << " found: " << c.getValue());
+
+        cxxtools::MutexLock lock(sessionScopesMutex);
+
+        Sessionscope* sessionScope;
+
+        sessionscopes_type::iterator it = sessionScopes.find(c.getValue());
+        if (it == sessionScopes.end())
+        {
+          log_debug("session not found - create new");
+          sessionScope = new Sessionscope();
+          sessionScope->addRef();
+          sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
+        }
+        else
+        {
+          log_debug("session found");
+          sessionScope = it->second;
+          sessionScope->touch();
+        }
+
+        request.setSecureSessionScope(sessionScope);
+      }
     }
     else
     {
-      log_debug("secure session cookie " << currentSessionCookieName << " found: " << c.getValue());
-
-      cxxtools::MutexLock lock(sessionScopesMutex);
-
-      Sessionscope* sessionScope;
-
-      sessionscopes_type::iterator it = sessionScopes.find(c.getValue());
-      if (it == sessionScopes.end())
-      {
-        log_debug("session not found - create new");
-        sessionScope = new Sessionscope();
-        sessionScope->addRef();
-        sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
-      }
-      else
-      {
-        log_debug("session found");
-        sessionScope = it->second;
-        sessionScope->touch();
-      }
-
-      request.setSecureSessionScope(sessionScope);
+      log_debug("secure session cookie " << currentSessionCookieName
+          << " not checked in non ssl request");
     }
 
     // set application-scope
@@ -249,7 +259,7 @@ namespace tnt
       }
     }
 
-    if (request.hasSessionScope())
+    if (request.isSsl() && request.hasSecureSessionScope())
     {
       // request has secure session scope
       std::string sessionId = request.getCookie(currentSecureSessionCookieName);
