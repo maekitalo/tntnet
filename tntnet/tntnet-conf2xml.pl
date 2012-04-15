@@ -110,7 +110,7 @@ EOF
   {
     my ($ip, $port, $certificate, $key) = @params;
     $ip =~ s/"//g;
-    $listeners .= <<EOF;
+    $ssllisteners .= <<EOF;
     <sslistener>
       <ip>$ip</ip>
       <port>$port</port>
