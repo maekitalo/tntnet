@@ -7,7 +7,6 @@ libtntnet_la_SOURCES = \
 	comploader.cpp \
 	component.cpp \
 	componentfactory.cpp \
-	configurator.cpp \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	convert.cpp \
@@ -38,7 +37,6 @@ libtntnet_la_SOURCES = \
 	savepoint.cpp \
 	scope.cpp \
 	scopemanager.cpp \
-	sessionscope.cpp \
 	stringlessignorecase.cpp \
 	tntconfig.cpp \
 	tntnet.cpp \
@@ -117,7 +115,7 @@ noinst_HEADERS = \
 
 libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\" $(PTHREAD_CFLAGS)
 libtntnet_la_LDFLAGS = -version-info @sonumber@ @SHARED_LIB_FLAG@
-libtntnet_la_LIBADD = -lz -lcxxtools $(PTHREAD_LIBS)
+libtntnet_la_LIBADD = -lz -lcxxtools -lcxxtools-xml $(PTHREAD_LIBS)
 
 if MAKE_GNUTLS
 libtntnet_la_SOURCES += \

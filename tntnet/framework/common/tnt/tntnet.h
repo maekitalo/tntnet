@@ -43,7 +43,7 @@
 namespace tnt
 {
   class ListenerBase;
-  class Tntconfig;
+  class TntConfig;
 
   /**
    @brief Main application class for stand alone webapplication.
@@ -64,8 +64,6 @@ namespace tnt
 
       unsigned minthreads;
       unsigned maxthreads;
-      unsigned long threadstartdelay;
-      unsigned timersleep;
 
       Jobqueue queue;
 
@@ -97,8 +95,8 @@ namespace tnt
       /// Initialize a default Tntnet-application without mappings.
       Tntnet();
 
-      /// Read settings from a Tntconfig object.
-      void init(const Tntconfig& config);
+      /// Initialize from global configuration
+      void init(const TntConfig& config);
       /// Set up a listener on the specified ip address and port.
       /// Listening on the port does not actually happen here but when the
       /// application is started using the run-method.
@@ -137,21 +135,6 @@ namespace tnt
       unsigned getMaxThreads() const          { return maxthreads; }
       /// Sets the maximum number of worker threads.
       void setMaxThreads(unsigned n)          { maxthreads = n; }
-
-      /// Returns the time in seconds after which cleanup like checking sessiontimeout is done.
-      unsigned getTimersleep() const          { return timersleep; }
-      /// Sets the time in seconds after which cleanup like checking sessiontimeout is done.
-      void setTimersleep(unsigned sec)        { timersleep = sec; }
-
-      /// Returns the time in seconds between thread starts.
-      unsigned getThreadStartDelay() const    { return threadstartdelay; }
-      /// Sets the time in seconds between thread starts.
-      void setThreadStartDelay(unsigned sec)  { threadstartdelay = sec; }
-
-      /// Returns the maximum number of jobs waiting for processing.
-      unsigned getQueueSize() const           { return queue.getCapacity(); }
-      /// Sets the maximum number of jobs waiting for processing.
-      void setQueueSize(unsigned n)           { queue.setCapacity(n); }
 
       /// Adds a mapping from a url to a component.
       /// The url is specified using a regular expression and the mapped target

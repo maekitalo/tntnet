@@ -39,17 +39,11 @@ namespace tnt
   //
   class MimeHandler
   {
-    public:
-      static const std::string configMimeDb;
-      static const std::string configDefaultContentType;
-      static const std::string configAddType;
-
     private:
       tnt::MimeDb mimeDb;
-      std::string defaultType;
 
     public:
-      MimeHandler(const tnt::Tntconfig& config);
+      MimeHandler();
 
       std::string getMimeType(const std::string& path) const;
   };

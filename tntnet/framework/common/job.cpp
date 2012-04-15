@@ -43,10 +43,12 @@ log_define("tntnet.job")
 
 namespace tnt
 {
-  unsigned Job::socket_read_timeout = 10;
-  unsigned Job::socket_write_timeout = 10000;
-  unsigned Job::keepalive_max = 1000;
-  unsigned Job::socket_buffer_size = 16384;
+  Job::Job(Tntnet& app_, const SocketIf* socketIf_)
+    : keepAliveCounter(TntConfig::it().keepAliveMax),
+      request(app_, socketIf_),
+      parser(request),
+      lastAccessTime(0)
+    { }
 
   Job::~Job()
   { }
@@ -60,13 +62,8 @@ namespace tnt
   int Job::msecToTimeout(time_t currentTime) const
   {
     return (lastAccessTime - currentTime + 1) * 1000
-         + getKeepAliveTimeout()
-         - getSocketReadTimeout();
-  }
-
-  unsigned Job::getKeepAliveTimeout()
-  {
-    return HttpReply::getKeepAliveTimeout();
+         + TntConfig::it().keepAliveTimeout
+         - TntConfig::it().socketReadTimeout;
   }
 
   ////////////////////////////////////////////////////////////////////////
@@ -131,12 +128,12 @@ namespace tnt
 
   void Tcpjob::setRead()
   {
-    socket.setTimeout(getSocketReadTimeout());
+    socket.setTimeout(TntConfig::it().socketReadTimeout);
   }
 
   void Tcpjob::setWrite()
   {
-    socket.setTimeout(getSocketWriteTimeout());
+    socket.setTimeout(TntConfig::it().socketWriteTimeout);
   }
 
 #ifdef USE_SSL
@@ -213,12 +210,12 @@ namespace tnt
 
   void SslTcpjob::setRead()
   {
-    socket.setTimeout(getSocketReadTimeout());
+    socket.setTimeout(TntConfig::it().socketReadTimeout);
   }
 
   void SslTcpjob::setWrite()
   {
-    socket.setTimeout(getSocketWriteTimeout());
+    socket.setTimeout(TntConfig::it().socketWriteTimeout);
   }
 
 #endif // USE_SSL

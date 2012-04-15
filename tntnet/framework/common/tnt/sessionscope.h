@@ -31,6 +31,7 @@
 #define TNT_SESSIONSCOPE_H
 
 #include <tnt/scope.h>
+#include <tnt/tntconfig.h>
 #include <time.h>
 
 namespace tnt
@@ -39,20 +40,16 @@ namespace tnt
   {
       time_t atime;
       unsigned timeout;
-      static unsigned defaultTimeout;
 
     public:
       Sessionscope()
-        : timeout(defaultTimeout)
+        : timeout(TntConfig::it().sessionTimeout)
         { touch(); }
 
       void touch()                               { time(&atime); }
       time_t getAtime() const                    { return atime; }
       unsigned getTimeout() const                { return timeout; }
       void setTimeout(unsigned t)                { timeout = t; }
-
-      static void setDefaultTimeout(unsigned t)  { defaultTimeout = t; }
-      static unsigned getDefaultTimeout()        { return defaultTimeout; }
   };
 }
 

@@ -51,7 +51,6 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpRequest
   //
-  size_t HttpRequest::maxRequestSize = 0;
   cxxtools::atomic_t HttpRequest::serial_ = 0;
 
   HttpRequest::HttpRequest(Tntnet& application_, const SocketIf* socketIf_)

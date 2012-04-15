@@ -40,7 +40,7 @@ namespace tnt
   class Compident;
   class Comploader;
   class Urlmapper;
-  class Tntconfig;
+  class TntConfig;
 
   class ComponentFactory
   {
@@ -53,7 +53,7 @@ namespace tnt
     protected:
       virtual Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl) = 0;
-      virtual void doConfigure(const tnt::Tntconfig& config);
+      virtual void doConfigure(const tnt::TntConfig& config);
 
     public:
       ComponentFactory(const std::string& componentName_);

@@ -115,11 +115,9 @@ namespace tnt
       typedef std::map<UrlMapCacheKey, UrlMapCacheValue> urlMapCacheType;
       mutable cxxtools::ReadWriteMutex urlMapCacheMutex;
       mutable urlMapCacheType urlMapCache;
-      static urlMapCacheType::size_type maxUrlMapCache;
 
       // don't make this public - it's not threadsafe:
-      CompidentType mapCompNext(const std::string& vhost,
-        const std::string& compUrl, urlmap_type::const_iterator& pos) const;
+      CompidentType mapCompNext(const HttpRequest& request, urlmap_type::const_iterator& pos) const;
 
     public:
       virtual ~Dispatcher()  { }
@@ -127,12 +125,7 @@ namespace tnt
       CompidentType& addUrlMapEntry(const std::string& vhost, const std::string& url,
         const CompidentType& ci);
 
-      Compident mapComp(const std::string& vhost, const std::string& compUrl) const;
-
-      static urlMapCacheType::size_type getMaxUrlMapCache()
-        { return maxUrlMapCache; }
-      static void setMaxUrlMapCache(urlMapCacheType::size_type s)
-        { maxUrlMapCache = s; }
+      Compident mapComp(const HttpRequest& request) const;
 
       friend class PosType;
 
@@ -141,18 +134,15 @@ namespace tnt
           const Dispatcher& dis;
           cxxtools::ReadLock lock;
           urlmap_type::const_iterator pos;
-          std::string vhost;
-          std::string url;
+          const HttpRequest& request;
           bool first;
 
         public:
-          PosType(const Dispatcher& d, const std::string& v,
-            const std::string& u)
+          PosType(const Dispatcher& d, const HttpRequest& r)
             : dis(d),
               lock(dis.mutex),
               pos(dis.urlmap.begin()),
-              vhost(v),
-              url(u),
+              request(r),
               first(true)
           { }
 

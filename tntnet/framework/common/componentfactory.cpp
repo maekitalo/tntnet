@@ -29,6 +29,7 @@
 
 #include "tnt/componentfactory.h"
 #include "tnt/comploader.h"
+#include "tnt/tntconfig.h"
 #include <cxxtools/log.h>
 
 log_define("tntnet.componentfactory")
@@ -49,7 +50,7 @@ namespace tnt
     delete theComponent;
   }
 
-  void ComponentFactory::doConfigure(const tnt::Tntconfig& config)
+  void ComponentFactory::doConfigure(const tnt::TntConfig& config)
   {
   }
 
@@ -58,7 +59,7 @@ namespace tnt
   {
     if (theComponent == 0)
     {
-      doConfigure(cl.getConfig());
+      doConfigure(TntConfig::it());
       theComponent = doCreate(ci, um, cl);
     }
 

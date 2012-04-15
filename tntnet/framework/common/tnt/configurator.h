@@ -34,6 +34,7 @@
 #include <tnt/sessionscope.h>
 #include <tnt/httpreply.h>
 #include <tnt/backgroundworker.h>
+#include <tnt/tntconfig.h>
 
 namespace tnt
 {
@@ -44,6 +45,8 @@ namespace tnt
    *  Class helps here and offers methods for all settings in one place. The
    *  methods dispatch the setting to the right place, so the user needs to
    *  know only this class, when he wants to set some settings.
+   *
+   *  This is yet deprecated since all configuration is done in tnt::TntConfig.
    */
   class Configurator
   {
@@ -56,69 +59,73 @@ namespace tnt
 
       /// Returns the minimum number of worker threads.
       unsigned getMinThreads() const
-        { return tntnet.getMinThreads(); }
+        { return TntConfig::it().minThreads; }
       /// Sets the minimum number of worker threads.
       void setMinThreads(unsigned n)
-        { tntnet.setMinThreads(n); }
+        { TntConfig::it().minThreads = n; }
 
       /// Returns the maximum number of worker threads.
       unsigned getMaxThreads() const
-        { return tntnet.getMaxThreads(); }
+        { return TntConfig::it().maxThreads; }
       /// Sets the maximum number of worker threads.
       void setMaxThreads(unsigned n)
-        { tntnet.setMaxThreads(n); }
+        { TntConfig::it().maxThreads = n; }
 
       /// Returns the time in seconds after which cleanup like checking sessiontimeout is done.
       unsigned getTimerSleep() const
-        { return tntnet.getTimersleep(); }
+        { return TntConfig::it().timerSleep; }
       /// Sets the time in seconds after which cleanup like checking sessiontimeout is done.
       void setTimerSleep(unsigned sec)
-        { tntnet.setTimersleep(sec); }
+        { TntConfig::it().timerSleep = sec; }
 
       /// Returns the time in seconds between thread starts.
       unsigned getThreadStartDelay() const
-        { return tntnet.getThreadStartDelay(); }
+        { return TntConfig::it().threadStartDelay; }
       /// Sets the time in seconds between thread starts.
       void setThreadStartDelay(unsigned sec)
-        { tntnet.setThreadStartDelay(sec); }
+        { TntConfig::it().threadStartDelay = sec; }
 
       /// Returns the maximum number of jobs waiting for processing.
       unsigned getQueueSize() const
-        { return tntnet.getQueueSize(); }
+        { return TntConfig::it().queueSize; }
       /// Sets the maximum number of jobs waiting for processing.
       void setQueueSize(unsigned n)
-        { tntnet.setQueueSize(n); }
+        { TntConfig::it().queueSize = n; }
 
       /// Returns the maximum request time, after which tntnet is automatically restarted in daemon mode.
       unsigned getMaxRequestTime() const
-        { return Worker::getMaxRequestTime(); }
+        { return TntConfig::it().maxRequestTime; }
       /// Sets the maximum request time, after which tntnet is automatically restarted in daemon mode.
       void setMaxRequestTime(unsigned sec)
-        { Worker::setMaxRequestTime(sec); }
+        { TntConfig::it().maxRequestTime = sec; }
 
       /// Returns true, when http compression is used.
       bool getEnableCompression() const
-        { return Worker::getEnableCompression(); }
+        { return TntConfig::it().enableCompression; }
       /// enables or disables http compression.
       void setEnableCompression(bool sw = true)
-        { Worker::setEnableCompression(sw); }
+        { TntConfig::it().enableCompression = sw; }
 
       /// Returns the time of inactivity in seconds after which a session is destroyed
       unsigned getSessionTimeout() const
-        { return Sessionscope::getDefaultTimeout(); }
+        { return TntConfig::it().sessionTimeout; }
       /// Sets the time of inactivity in seconds after which a session is destroyed
       void setSessionTimeout(unsigned sec)
-        { Sessionscope::setDefaultTimeout(sec); }
+        { TntConfig::it().sessionTimeout = sec; }
 
       /// Returns the listen backlog parameter (see also listen(2)).
-      int getListenBacklog() const;
+      int getListenBacklog() const
+        { return TntConfig::it().listenBacklog; }
       /// Sets the listen backlog parameter (see also listen(2)).
-      void setListenBacklog(int n);
+      void setListenBacklog(int n)
+        { TntConfig::it().listenBacklog = n; }
 
       /// Returns the number of retries, when a listen retried, when failing.
-      unsigned getListenRetry() const;
+      unsigned getListenRetry() const
+        { return TntConfig::it().listenRetry; }
       /// Sets the number of retries, when a listen retried, when failing.
-      void setListenRetry(int n);
+      void setListenRetry(int n)
+        { TntConfig::it().listenRetry = n; }
 
       /// Returns the maximum number of cached urlmappings.
       /// The cache stores results of the regular expressions used for defining
@@ -126,19 +133,19 @@ namespace tnt
       /// limited, the cache reduces significantly the number of executed
       /// regular expressions.
       unsigned getMaxUrlMapCache() const
-        { return Dispatcher::getMaxUrlMapCache(); }
+        { return TntConfig::it().maxUrlMapCache; }
       /// Sets the maximum number of cached urlmappings.
       void setMaxUrlMapCache(int n)
-        { Dispatcher::setMaxUrlMapCache(n); }
+        { TntConfig::it().maxUrlMapCache = n; }
 
       /// Returns the maximum size of a request.
       /// Requestdata are collected in memory and therefore requests, which
       /// exceed the size of available memory may lead to a denial of service.
       size_t getMaxRequestSize() const
-        { return HttpRequest::getMaxRequestSize(); }
+        { return TntConfig::it().maxRequestSize; }
       /// Sets the maximum size of a request.
       void setMaxRequestSize(size_t s)
-        { HttpRequest::setMaxRequestSize(s); }
+        { TntConfig::it().maxRequestSize = s; }
 
       /// Returns the read timeout in millisecods after which the request is passed to the poller.
       /// Tntnet tries to keep a connection on the same thread to reduce
@@ -147,75 +154,71 @@ namespace tnt
       /// which waits for activity on the socket. The default value is
       /// 10 ms.
       unsigned getSocketReadTimeout() const
-        { return Job::getSocketReadTimeout(); }
+        { return TntConfig::it().socketReadTimeout; }
       /// Sets the timeout in millisecods after which the request is passed to the poller.
       void setSocketReadTimeout(unsigned ms)
-        { Job::setSocketReadTimeout(ms); }
+        { TntConfig::it().socketReadTimeout = ms; }
 
       /// Returns the write timeout in millisecods after which the request is timed out.
       /// The default value is 10000 ms.
       unsigned getSocketWriteTimeout() const
-        { return Job::getSocketWriteTimeout(); }
+        { return TntConfig::it().socketWriteTimeout; }
       /// Sets the write timeout in millisecods after which the request is timed out.
       void setSocketWriteTimeout(unsigned ms)
-        { Job::setSocketWriteTimeout(ms); }
+        { TntConfig::it().socketWriteTimeout = ms; }
 
       /// Returns the maximum number of requests handled over a single connection.
       /// The default value is 1000.
       unsigned getKeepAliveMax() const
-        { return Job::getKeepAliveMax(); }
+        { return TntConfig::it().keepAliveMax; }
       /// Sets the maximum number of requests handled over a single connection.
       void setKeepAliveMax(unsigned ms)
-        { Job::setKeepAliveMax(ms); }
+        { TntConfig::it().keepAliveMax = ms; }
 
       /// Returns the size of the socket buffer.
       /// This specifies the maximum number of bytes after which the data sent
       /// or received over a socket is passed to the operating system.
       /// The default value is 16384 bytes (16 kBytes).
       unsigned getSocketBufferSize() const
-        { return Job::getSocketBufferSize(); }
+        { return TntConfig::it().socketBufferSize; }
       /// Sets the size of the socket buffer.
       void setSocketBufferSize(unsigned ms)
-        { Job::setSocketBufferSize(ms); }
+        { TntConfig::it().socketBufferSize = ms; }
 
       /// Returns the minimum size of a request body for compression.
       /// Small requests are not worth compressing, so tntnet has a limit,
       /// to save cpu. The default value is 1024 bytes.
       unsigned getMinCompressSize() const
-        { return HttpReply::getMinCompressSize(); }
+        { return TntConfig::it().minCompressSize; }
       /// Sets the minimum size of a request body for compression.
       void setMinCompressSize(unsigned s)
-        { HttpReply::setMinCompressSize(s); }
+        { TntConfig::it().minCompressSize = s; }
 
       /// Returns the keep alive timeout in milliseconds.
       /// This specifies, how long a connection is kept for keep alive. A keep
       /// alive request binds (little) resources, so it is good to free it
       /// after some time of inactivity. The default value if 15000 ms.
       unsigned getKeepAliveTimeout() const
-        { return HttpReply::getKeepAliveTimeout(); }
+        { return TntConfig::it().keepAliveTimeout; }
       /// Sets the keep alive timeout in milliseconds.
       void setKeepAliveTimeout(unsigned s)
-        { HttpReply::setKeepAliveTimeout(s); }
+        { TntConfig::it().keepAliveTimeout = s; }
 
       /// Returns the default content type.
       /// The default content type is "text/html; charset=iso-8859-1".
       const std::string& getDefaultContentType() const
-        { return HttpReply::getDefaultContentType(); }
+        { return TntConfig::it().defaultContentType; }
       /// Sets the default content type.
       void setDefaultContentType(const std::string& s)
-        { HttpReply::setDefaultContentType(s); }
-
-      /// Adds a file path where components are searched.
-      void addSearchPathEntry(const std::string& path)
-        { Comploader::addSearchPathEntry(path); }
+        { TntConfig::it().defaultContentType = s; }
 
       void setAccessLog(const std::string& accessLog)
-        { tntnet.setAccessLog(accessLog); }
+        { TntConfig::it().accessLog = accessLog; }
 
       void setMaxBackgroundTasks(unsigned n)
-        { BackgroundWorker::setMaxJobs(n); }
+        { TntConfig::it().backgroundTasks = n; }
       unsigned getMaxBackgroundTasks() const
-        { return BackgroundWorker::getMaxJobs(); }
+        { return TntConfig::it().backgroundTasks; }
   };
 
 }

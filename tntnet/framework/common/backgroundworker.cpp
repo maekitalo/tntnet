@@ -27,6 +27,7 @@
  */
 
 #include <tnt/backgroundworker.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.backgroundworker")
@@ -35,7 +36,6 @@ namespace tnt
 {
 
 unsigned BackgroundTask::_nextId = 1;
-unsigned BackgroundWorker::_maxJobs = 5;
 
 BackgroundWorker& BackgroundWorker::it()
 {
@@ -57,7 +57,7 @@ BackgroundWorker& BackgroundWorker::it()
 }
 
 BackgroundWorker::BackgroundWorker()
-    : _threadPool(_maxJobs + 1),
+    : _threadPool(TntConfig::it().backgroundTasks + 1),
       _running(true)
 {
     _threadPool.schedule(cxxtools::callable(*this, &BackgroundWorker::timeoutCheckerFunc));

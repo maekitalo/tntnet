@@ -76,18 +76,8 @@ namespace tnt
       HttpRequest::Parser parser;
       time_t lastAccessTime;
 
-      static unsigned socket_read_timeout;
-      static unsigned socket_write_timeout;
-      static unsigned keepalive_max;
-      static unsigned socket_buffer_size;
-
     public:
-      explicit Job(Tntnet& app_, const SocketIf* socketIf_ = 0)
-        : keepAliveCounter(keepalive_max),
-          request(app_, socketIf_),
-          parser(request),
-          lastAccessTime(0)
-        { }
+      explicit Job(Tntnet& app_, const SocketIf* socketIf_ = 0);
       virtual ~Job();
 
       virtual std::iostream& getStream() = 0;
@@ -103,17 +93,6 @@ namespace tnt
       void clear();
       void touch()     { time(&lastAccessTime); }
       int msecToTimeout(time_t currentTime) const;
-
-      static void setSocketReadTimeout(unsigned ms)     { socket_read_timeout = ms; }
-      static void setSocketWriteTimeout(unsigned ms)    { socket_write_timeout = ms; }
-      static void setKeepAliveMax(unsigned n)       { keepalive_max = n; }
-      static void setSocketBufferSize(unsigned b)   { socket_buffer_size = b; }
-
-      static unsigned getSocketReadTimeout()        { return socket_read_timeout; }
-      static unsigned getSocketWriteTimeout()       { return socket_write_timeout; }
-      static unsigned getKeepAliveTimeout();
-      static unsigned getKeepAliveMax()       { return keepalive_max; }
-      static unsigned getSocketBufferSize()   { return socket_buffer_size; }
   };
 
   /** Jobqueue - one per process */

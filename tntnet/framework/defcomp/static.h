@@ -39,40 +39,38 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // componentdeclaration
   //
-  class Static : public tnt::Component
+  class Static : public Component
   {
       friend class StaticFactory;
 
       static std::string configDocumentRoot;
-      static std::string documentRoot;
       static MimeHandler* handler;
-      static bool enableGzip;
 
-      unsigned doCall(tnt::HttpRequest& request,
-        tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
+      unsigned doCall(HttpRequest& request,
+        HttpReply& reply, QueryParams& qparam, bool top);
 
     protected:
-      void setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply);
+      void setContentType(HttpRequest& request, HttpReply& reply);
 
     public:
-      virtual unsigned topCall(tnt::HttpRequest& request,
-        tnt::HttpReply& reply, tnt::QueryParams& qparam);
-      virtual unsigned operator() (tnt::HttpRequest& request,
-        tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned topCall(HttpRequest& request,
+        HttpReply& reply, QueryParams& qparam);
+      virtual unsigned operator() (HttpRequest& request,
+        HttpReply& reply, QueryParams& qparam);
   };
 
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class StaticFactory : public tnt::ComponentFactory
+  class StaticFactory : public ComponentFactory
   {
     public:
       StaticFactory(const std::string& componentName)
-        : tnt::ComponentFactory(componentName)
+        : ComponentFactory(componentName)
         { }
-      virtual tnt::Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl);
-      virtual void doConfigure(const tnt::Tntconfig& config);
+      virtual Component* doCreate(const Compident& ci,
+        const Urlmapper& um, Comploader& cl);
+      virtual void doConfigure(const TntConfig& config);
   };
 
 }

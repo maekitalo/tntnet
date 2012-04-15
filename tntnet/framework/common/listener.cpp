@@ -47,33 +47,36 @@
 
 log_define("tntnet.listener")
 
-static void doListenRetry(cxxtools::net::TcpServer& server,
-  const char* ipaddr, unsigned short int port)
-{
-  for (unsigned n = 1; true; ++n)
-  {
-    try
-    {
-      log_debug("listen " << ipaddr << ':' << port);
-      server.listen(ipaddr, port, tnt::Listener::getBacklog(), cxxtools::net::TcpServer::DEFER_ACCEPT);
-      return;
-    }
-    catch (const cxxtools::net::AddressInUse& e)
-    {
-      log_debug("cxxtools::net::AddressInUse");
-      if (n > tnt::Listener::getListenRetry())
-      {
-        log_debug("rethrow exception");
-        throw;
-      }
-      log_warn("address " << ipaddr << ':' << port << " in use - retry; n = " << n);
-      ::sleep(1);
-    }
-  }
-}
-
 namespace tnt
 {
+  namespace
+  {
+    void doListenRetry(cxxtools::net::TcpServer& server,
+      const char* ipaddr, unsigned short int port)
+    {
+      for (unsigned n = 1; true; ++n)
+      {
+        try
+        {
+          log_debug("listen " << ipaddr << ':' << port);
+          server.listen(ipaddr, port, TntConfig::it().listenBacklog, cxxtools::net::TcpServer::DEFER_ACCEPT);
+          return;
+        }
+        catch (const cxxtools::net::AddressInUse& e)
+        {
+          log_debug("cxxtools::net::AddressInUse");
+          if (n > TntConfig::it().listenRetry)
+          {
+            log_debug("rethrow exception");
+            throw;
+          }
+          log_warn("address " << ipaddr << ':' << port << " in use - retry; n = " << n);
+          ::sleep(1);
+        }
+      }
+    }
+  }
+
   void ListenerBase::doStop()
   {
     log_info("stop listener " << ipaddr << ':' << port);
@@ -86,17 +89,14 @@ namespace tnt
     }
     catch (const std::exception& e)
     {
-      log_warn("error waking up listener: " << e.what() << " try 127.0.0.1");
-      cxxtools::net::TcpSocket("127.0.0.1", port);
+      log_warn("error waking up listener: " << e.what() << " try local interface");
+      cxxtools::net::TcpSocket("", port);
     }
   }
 
   void ListenerBase::initialize()
   {
   }
-
-  int Listener::backlog = 64;
-  unsigned Listener::listenRetry = 5;
 
   Listener::Listener(Tntnet& application, const std::string& ipaddr_, unsigned short int port_, Jobqueue& q)
     : ListenerBase(ipaddr_, port_),

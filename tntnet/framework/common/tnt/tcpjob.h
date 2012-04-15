@@ -34,6 +34,7 @@
 #include <cxxtools/net/tcpstream.h>
 #include <tnt/ssl.h>
 #include <tnt/socketif.h>
+#include <tnt/tntconfig.h>
 
 namespace tnt
 {
@@ -54,7 +55,7 @@ namespace tnt
     public:
       Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener_, Jobqueue& queue_)
         : Job(app, this),
-          socket(getSocketBufferSize(), getSocketReadTimeout()),
+          socket(TntConfig::it().socketBufferSize, TntConfig::it().socketReadTimeout),
           listener(listener_),
           queue(queue_)
         { }
@@ -83,7 +84,7 @@ namespace tnt
     public:
       SslTcpjob(Tntnet& app, const SslServer& listener_, Jobqueue& queue_)
         : Job(app, this),
-          socket(getSocketBufferSize(), getSocketReadTimeout()),
+          socket(TntConfig::it().socketBufferSize, TntConfig::it().socketReadTimeout),
           listener(listener_),
           queue(queue_)
         { }

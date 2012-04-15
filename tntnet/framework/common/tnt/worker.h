@@ -64,9 +64,6 @@ namespace tnt
       typedef std::set<Worker*> workers_type;
       static workers_type workers;
 
-      static unsigned maxRequestTime;
-      static bool enableCompression;
-
       bool processRequest(HttpRequest& request, std::iostream& socket,
         unsigned keepAliveCount);
       void logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn);
@@ -85,15 +82,7 @@ namespace tnt
 
       static void timer();
 
-      /// Sets a hard limit for request-time.
-      /// When the time is exceeded, this process exits.
-      static void setMaxRequestTime(unsigned sec)  { maxRequestTime = sec; }
-      static unsigned getMaxRequestTime()          { return maxRequestTime; }
-
       static workers_type::size_type getCountThreads();
-
-      static void setEnableCompression(bool sw = true)  { enableCompression = sw; }
-      static unsigned getEnableCompression()            { return enableCompression; }
 
   };
 }

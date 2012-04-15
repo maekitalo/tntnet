@@ -32,6 +32,7 @@
 #include <tnt/httpheader.h>
 #include <tnt/deflatestream.h>
 #include <tnt/httperror.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 #include <zlib.h>
@@ -44,10 +45,6 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpReply
   //
-  unsigned HttpReply::keepAliveTimeout = 15000;
-  unsigned HttpReply::minCompressSize = 1024;
-  std::string HttpReply::defaultContentType = "text/html; charset=UTF-8";
-
   namespace
   {
     std::string doCompress(const std::string& body)
@@ -132,7 +129,7 @@ namespace tnt
 
     if (ready)
     {
-      if (body.size() >= minCompressSize
+      if (body.size() >= TntConfig::it().minCompressSize
         && !hasHeader(httpheader::contentEncoding)
         && acceptEncoding.accept("gzip")
         && tryCompress(body))
@@ -149,17 +146,17 @@ namespace tnt
 
       if (!hasHeader(httpheader::contentType))
       {
-        log_debug(httpheader::contentType << ' ' << defaultContentType);
-        hsocket << httpheader::contentType << ' ' << defaultContentType << "\r\n";
+        log_debug(httpheader::contentType << ' ' << TntConfig::it().defaultContentType);
+        hsocket << httpheader::contentType << ' ' << TntConfig::it().defaultContentType << "\r\n";
       }
 
       if (!hasHeader(httpheader::connection))
       {
-        if (keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
+        if (TntConfig::it().keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
         {
-          log_debug(httpheader::keepAlive << " timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter());
+          log_debug(httpheader::keepAlive << " timeout=" << TntConfig::it().keepAliveTimeout << ", max=" << getKeepAliveCounter());
           log_debug(httpheader::connection << ' ' << httpheader::connectionKeepAlive);
-          hsocket << httpheader::keepAlive << " timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter() << "\r\n"
+          hsocket << httpheader::keepAlive << " timeout=" << TntConfig::it().keepAliveTimeout << ", max=" << getKeepAliveCounter() << "\r\n"
                   << httpheader::connection << ' ' << httpheader::connectionKeepAlive << "\r\n";
         }
         else
@@ -272,11 +269,11 @@ namespace tnt
     log_debug("setKeepAliveHeader()");
     removeHeader(httpheader::connection);
     removeHeader(httpheader::keepAlive);
-    if (keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
+    if (TntConfig::it().keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
     {
       std::ostringstream s;
       s.imbue(std::locale::classic());
-      s << "timeout=" << keepAliveTimeout << ", max=" << getKeepAliveCounter();
+      s << "timeout=" << TntConfig::it().keepAliveTimeout << ", max=" << getKeepAliveCounter();
       setHeader(httpheader::keepAlive, s.str());
 
       setHeader(httpheader::connection, httpheader::connectionKeepAlive);
@@ -330,7 +327,7 @@ namespace tnt
     }
     else
     {
-      return keepAliveTimeout > 0 && getKeepAliveCounter() > 0;
+      return TntConfig::it().keepAliveTimeout > 0 && getKeepAliveCounter() > 0;
     }
   }
 }

@@ -27,39 +27,16 @@
  */
 
 #include <mimehandler.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.mime.handler")
 
 namespace tnt
 {
-  const std::string MimeHandler::configMimeDb = "MimeDb";
-  const std::string MimeHandler::configDefaultContentType = "DefaultContentType";
-  const std::string MimeHandler::configAddType = "AddType";
-
-  MimeHandler::MimeHandler(const tnt::Tntconfig& config)
-    : defaultType(config.getValue(configDefaultContentType, "text/html"))
+  MimeHandler::MimeHandler()
   {
-    mimeDb.read(config.getValue(configMimeDb, "/etc/mime.types"));
-
-    for (tnt::Tntconfig::config_entries_type::const_iterator it = config.getConfigValues().begin();
-         it != config.getConfigValues().end(); ++it)
-    {
-      if (it->key == configAddType)
-      {
-        std::string type = it->params[0];
-        for (tnt::Tntconfig::params_type::size_type i = 1;
-             i < it->params.size(); ++i)
-        {
-          std::string ext = it->params[i];
-          if (ext.size() > 0)
-          {
-            log_debug("AddType \"" << type << "\" \"" << ext << '"');
-            mimeDb.addType(ext, type);
-          }
-        }
-      }
-    }
+    mimeDb.read(TntConfig::it().mimeDb);
   }
 
   std::string MimeHandler::getMimeType(const std::string& path) const
@@ -67,8 +44,8 @@ namespace tnt
     std::string mimeType = mimeDb.getMimetype(path);
     if (mimeType.empty())
     {
-      log_debug("unknown type in url-path \"" << path << "\" set DefaultContentType " << defaultType);
-      return defaultType;
+      log_debug("unknown type in url-path \"" << path << "\" set DefaultContentType " << TntConfig::it().defaultContentType);
+      return TntConfig::it().defaultContentType;
     }
     else
     {

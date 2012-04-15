@@ -37,31 +37,14 @@ namespace tnt
 {
   class Process
   {
-      bool daemon;
-      std::string dir;
-      std::string rootdir;
-      std::string user;
-      std::string group;
-      std::string pidfile;
-      std::string errorLog;
-
       bool exitRestart;
 
       int mkDaemon(cxxtools::posix::Pipe& pipe);
       void runMonitor(cxxtools::posix::Pipe& mainPipe);
       void initWorker();
 
-    protected:
-      void setDaemon(bool sw = true)        { daemon = sw; }
-      void setDir(const std::string& v)     { dir = v; }
-      void setRootdir(const std::string& v) { rootdir = v; }
-      void setUser(const std::string& v)    { user = v; }
-      void setGroup(const std::string& v)   { group = v; }
-      void setPidFile(const std::string& v) { pidfile = v; }
-      void setErrorLog(const std::string& v) { errorLog = v; }
-
     public:
-      explicit Process(bool daemon_ = false);
+      Process();
       ~Process();
 
       void run();

@@ -35,6 +35,7 @@
 #include <tnt/httperror.h>
 #include <tnt/http.h>
 #include <tnt/poller.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -66,8 +67,6 @@ namespace tnt
 {
   cxxtools::Mutex Worker::mutex;
   Worker::workers_type Worker::workers;
-  unsigned Worker::maxRequestTime = 600;
-  bool Worker::enableCompression = true;
   Comploader Worker::comploader;
 
   Worker::Worker(Tntnet& app)
@@ -162,7 +161,7 @@ namespace tnt
                     struct pollfd fd;
                     fd.fd = j->getFd();
                     fd.events = POLLIN;
-                    if (::poll(&fd, 1, Job::getSocketReadTimeout()) == 0)
+                    if (::poll(&fd, 1, TntConfig::it().socketReadTimeout) == 0)
                     {
                       log_debug("pass job to poll-thread");
                       application.getPoller().addIdleJob(j);
@@ -234,7 +233,7 @@ namespace tnt
     if (request.keepAlive())
       reply.setKeepAliveCounter(keepAliveCount);
 
-    if (enableCompression)
+    if (TntConfig::it().enableCompression)
       reply.setAcceptEncoding(request.getEncoding());
 
     // process request
@@ -357,8 +356,7 @@ namespace tnt
 
     request.setThreadContext(this);
 
-    Dispatcher::PosType pos(application.getDispatcher(), request.getHost(),
-      request.getUrl());
+    Dispatcher::PosType pos(application.getDispatcher(), request);
     while (true)
     {
       state = stateDispatch;
@@ -479,11 +477,11 @@ namespace tnt
   {
     if (state == stateProcessingRequest
         && lastWaitTime != 0
-        && maxRequestTime > 0)
+        && TntConfig::it().maxRequestTime > 0)
     {
-      if (static_cast<unsigned>(currentTime - lastWaitTime) > maxRequestTime)
+      if (static_cast<unsigned>(currentTime - lastWaitTime) > TntConfig::it().maxRequestTime)
       {
-        log_fatal("requesttime " << maxRequestTime << " seconds in thread "
+        log_fatal("requesttime " << TntConfig::it().maxRequestTime << " seconds in thread "
           << threadId << " exceeded - exit process");
         log_info("current state: " << state);
         ::exit(111);

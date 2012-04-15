@@ -226,19 +226,16 @@ namespace tnt
 #endif
   }
 
-  tnt::Component* StaticFactory::doCreate(const tnt::Compident&,
-    const tnt::Urlmapper&, tnt::Comploader&)
+  Component* StaticFactory::doCreate(const Compident&,
+    const Urlmapper&, Comploader&)
   {
     return new Static();
   }
 
-  void StaticFactory::doConfigure(const tnt::Tntconfig& config)
+  void StaticFactory::doConfigure(const TntConfig& config)
   {
     if (Static::handler == 0)
-      Static::handler = new MimeHandler(config);
-
-    Static::documentRoot = config.getValue(Static::configDocumentRoot);
-    Static::enableGzip = config.getBoolValue("StaticEnableGzip", Static::enableGzip);
+      Static::handler = new MimeHandler();
   }
 
   static StaticFactory staticFactory("static");
@@ -247,39 +244,37 @@ namespace tnt
   // componentdefinition
   //
   std::string Static::configDocumentRoot = "DocumentRoot";
-  std::string Static::documentRoot;
   MimeHandler* Static::handler;
-  bool Static::enableGzip = true;
 
-  void Static::setContentType(tnt::HttpRequest& request, tnt::HttpReply& reply)
+  void Static::setContentType(HttpRequest& request, HttpReply& reply)
   {
     if (handler)
       reply.setContentType(handler->getMimeType(request.getPathInfo()).c_str());
   }
 
-  unsigned Static::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, tnt::QueryParams& qparams)
+  unsigned Static::operator() (HttpRequest& request,
+    HttpReply& reply, QueryParams& qparams)
   {
     return doCall(request, reply, qparams, false);
   }
 
-  unsigned Static::topCall(tnt::HttpRequest& request,
-    tnt::HttpReply& reply, tnt::QueryParams& qparams)
+  unsigned Static::topCall(HttpRequest& request,
+    HttpReply& reply, QueryParams& qparams)
   {
     return doCall(request, reply, qparams, true);
   }
 
-  unsigned Static::doCall(tnt::HttpRequest& request,
-    tnt::HttpReply& reply, tnt::QueryParams& qparams, bool top)
+  unsigned Static::doCall(HttpRequest& request,
+    HttpReply& reply, QueryParams& qparams, bool top)
   {
-    if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
-      throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
+    if (!HttpRequest::checkUrl(request.getPathInfo()))
+      throw HttpError(HTTP_BAD_REQUEST, "illegal url");
 
     std::string file = request.getArg(configDocumentRoot); // fetch document root from arguments first
     if (file.empty())
     {
-      if (!documentRoot.empty())
-        file = documentRoot;
+      if (!TntConfig::it().documentRoot.empty())
+        file = TntConfig::it().documentRoot;
     }
     else
       log_debug("document root \"" << file << "\" got as argument");
@@ -294,7 +289,7 @@ namespace tnt
     struct stat st;
 
     bool localEnableGzip = false;
-    if (request.getEncoding().accept("gzip") && enableGzip)
+    if (request.getEncoding().accept("gzip") && TntConfig::it().enableCompression)
     {
       std::string gzfile = file + ".gz";
       if (stat(gzfile.c_str(), &st) == 0 && S_ISREG(st.st_mode))
@@ -325,10 +320,10 @@ namespace tnt
       }
     }
 
-    std::string lastModified = tnt::HttpMessage::htdate(st.st_ctime);
+    std::string lastModified = HttpMessage::htdate(st.st_ctime);
 
     {
-      std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);
+      std::string s = request.getHeader(httpheader::ifModifiedSince);
       if (s == lastModified)
         return HTTP_NOT_MODIFIED;
     }
@@ -343,15 +338,15 @@ namespace tnt
     else
       setContentType(request, reply);
 
-    reply.setHeader(tnt::httpheader::lastModified, lastModified);
+    reply.setHeader(httpheader::lastModified, lastModified);
 
     // set Keep-Alive
     reply.setKeepAliveHeader();
 
-    reply.setHeader(tnt::httpheader::acceptRanges, "bytes");
+    reply.setHeader(httpheader::acceptRanges, "bytes");
 
     // check for byte range (only "bytes=from-" or "bytes=from-to" are supported)
-    const char* range = request.getHeader(tnt::httpheader::range);
+    const char* range = request.getHeader(httpheader::range);
     off_t offset = 0;
     off_t count = st.st_size;
     unsigned httpOkReturn = HTTP_OK;
@@ -362,10 +357,10 @@ namespace tnt
         if (offset > st.st_size)
           return HTTP_RANGE_NOT_SATISFIABLE;
 
-        reply.setHeader(tnt::httpheader::contentLocation, request.getUrl());
+        reply.setHeader(httpheader::contentLocation, request.getUrl());
         std::ostringstream contentRange;
         contentRange << offset << '-' << (offset+count)-1 << '/' << st.st_size;
-        reply.setHeader(tnt::httpheader::contentRange, contentRange.str());
+        reply.setHeader(httpheader::contentRange, contentRange.str());
 
         httpOkReturn = HTTP_PARTIAL_CONTENT;
       }

@@ -95,13 +95,7 @@ namespace tnt
           BackgroundTask::Pointer getTask(unsigned id) const;
           void removeTask(unsigned id);
 
-          static void setMaxJobs(unsigned n)
-          { _maxJobs = n; }
-          static unsigned getMaxJobs()
-          { return _maxJobs; }
-
       private:
-          static unsigned _maxJobs;
           mutable cxxtools::Mutex _mutex;
           cxxtools::Condition _jobReady;
           cxxtools::ThreadPool _threadPool;

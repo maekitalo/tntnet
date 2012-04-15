@@ -33,77 +33,109 @@ EOF
 template()
 {
     cat <<EOF
-# This is the main configuration file for tntnet.
-#
-# You can find documentation about the parameters in the man page tntnet.conf(7)
-#
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is the main configuration file for tntnet.
 
+  You can find documentation about the parameters in the man page tntnet.xml(7)
+  -->
+<tntnet>
 EOF
   if test -z "$1"
   then
     cat <<EOF
-# map /webapp/comp.* or /webapp/comp to comp@webapp
-MapUrl      ^/(.+)/([^.]+)(\..+)?  \$2@\$1
-# map /comp.* or /comp to comp@comp
-MapUrl      ^/([^.]+)(\..+)?       \$1@\$1
+  <mappings>
+    <!-- map /webapp/comp.* or /webapp/comp to comp@webapp -->
+    <mapping>
+      <target>\$2@\$1</target>
+      <url>^/(.+)/([^.]+)(\..+)?</url>
+    </mapping>
+    <!-- map /comp.* or /comp to comp@comp -->
+    <mapping>
+      <target>\$1@\$1</target>
+      <url>^/([^.]+)(\..+)?</url>
+    </mapping>
+  </mappings>
 EOF
   else
     cat <<EOF
-# map / to $1@$1
-MapUrl      ^/$   $1@$1
-# map /comp.* or /comp to comp@$1
-MapUrl      ^/([^.]+)(\..+)?   \$1@$1
+  <mappings>
+    <!-- map / to $1@$1 -->
+    <mapping>
+      <target>$1@$1</target>
+      <url>^/$</url>
+    </mapping>
+    <!-- map /comp.* or /comp to comp@$1 -->
+    <mapping>
+      <target>\$1@$1</target>
+      <url>^/([^.]+)(\..+)?</url>
+    </mapping>
+  </mappings>
 EOF
   fi
 
   cat <<EOF
 
-# listen to a port (empty string means any local interface)
-Listen              "" 8000
+  <!-- listen to a port (empty string means any local interface) -->
+  <listeners>
+    <listener>
+      <ip></ip>
+      <port>8000</port>
+    </listener>
+  </listeners>
 
-# to enable ssl, we need a Certificate and another listen-command
-#SslListen          "" 8443    tntnet.pem
+  <!-- to enable ssl, we need a Certificate and a ssllistener-section -->
+  <!--
+  <ssllistener>
+    <ssllistener>
+      <ip></ip>
+      <port>8443</port>
+      <certificate>tntnet.pem</certificate>
+    </ssllistener>
+  </ssllistener>
+    -->
 
-# this propertyfile defines, what and where to log
-PropertyFile        tntnet.properties
+  <!-- this propertyfile defines, what and where to log -->
+  <logproperties>tntnet.properties</logproperties>
 
-# set limit to prevent DoS-attacks (default 0=no limit)
-#MaxRequestSize     65536
-#MaxRequestTime     600  # request timeout for the watchdog, when tntnet runs as a daemon
-#User               tntnet
-#Group              tntnet
-#Dir                /
-#Chroot             /var/safedir
-#PidFile            /var/run/tntnet.pid
-#Daemon             0
-#MinThreads         5
-#MaxThreads         100
-#ThreadStartDelay   10  # in ms
-#QueueSize          1000
-#CompPath           path
-#BufferSize         16384
-#SocketReadTimeout  10
-#SocketWriteTimeout 10000
-#KeepAliveTimeout   15000
-#KeepAliveMax       1000
-#SessionTimeout     300
-#ListenBacklog      64
-#ListenRetry        5
-#EnableCompression  no
-#MimeDb             /etc/mime.types
-#MinCompressSize    1024  # in bytes
-#MaxUrlMapCache     8192
-#DefaultContentType "text/html; charset=UTF-8"
-#AccessLog          /var/log/tntnet/access.log
-#ErrorLog          /var/log/tntnet/error.log
-#MaxBackgroundTasks 5
+  <!-- <maxRequestSize>65536</maxRequestSize> -->
+  <!-- <maxRequestTime>600</maxRequestTime> -->
+  <!-- <user>tntnet</user> -->
+  <!-- <group>tntnet</group> -->
+  <!-- <dir>/</dir> -->
+  <!-- <chrootdir>/var/safedir</chrootdir> -->
+  <!-- <pidfile>/var/run/tntnet.pid</pidfile> -->
+  <!-- <daemon>0</daemon> -->
+  <!-- <minThreads>5</minThreads> -->
+  <!-- <maxThreads>100</maxThreads> -->
+  <!-- <threadStartDelay>10</threadStartDelay> -->
+  <!-- <queueSize>1000</queueSize> -->
+  <!-- <compPath>path</compPath> -->
+  <!-- <bufferSize>16384</bufferSize> -->
+  <!-- <socketReadTimeout>10</socketReadTimeout> -->
+  <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
+  <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->
+  <!-- <keepAliveMax>1000</keepAliveMax> -->
+  <!-- <sessionTimeout>300</sessionTimeout> -->
+  <!-- <listenBacklog>64</listenBacklog> -->
+  <!-- <listenRetry>5</listenRetry> -->
+  <!-- <enableCompression>no</enableCompression> -->
+  <!-- <mimeDb>/etc/mime.types</mimeDb> -->
+  <!-- <minCompressSize>1024</minCompressSize> -->
+  <!-- <maxUrlMapCache>8192</maxUrlMapCache> -->
+  <!-- <defaultContentType>text/html; charset=UTF-8</defaultContentType> -->
+  <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
+  <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
+  <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
+
+</tntnet>
 EOF
 }
 
 properties()
 {
   cat <<EOF
-# sample logging-properties for tntnet application $1
+# logging-properties for tntnet application $1
 #
 # print logging-messages with:
 #   log_fatal("some fatal message");
@@ -138,7 +170,7 @@ makefile()
 all: $1.so
 
 test: all
-	\${TNTNET} tntnet.conf
+	\${TNTNET} tntnet.xml
 
 $1.so: $1.o
 	\${CXX} -o \$@ \${LDFLAGS} \$^
@@ -175,7 +207,7 @@ project()
   P=$1
   mkdir $P || exit 1
   makefile $P >$P/Makefile
-  template $P >$P/tntnet.conf
+  template $P >$P/tntnet.xml
   properties $P >$P/tntnet.properties
   cat >$P/$P.ecpp <<EOF
 <%pre>
@@ -306,8 +338,8 @@ ${C}_la_SOURCES = \\
 ${C}_la_LIBADD = \$(top_builddir)/lib/lib$P.la
 ${C}_la_LDFLAGS = -module -ltntnet
 
-noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = \$(ecppSources:.ecpp=.cpp) tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
+CLEANFILES = \$(ecppSources:.ecpp=.cpp) tntnet.xml tntnet.properties
 
 SUFFIXES=.ecpp .jpg .cpp
 
@@ -318,7 +350,7 @@ SUFFIXES=.ecpp .jpg .cpp
 
 tntnet.properties:
 	\$(TNTNET_CONFIG) --properties $P >\$@
-tntnet.conf:
+tntnet.xml:
 	( \$(TNTNET_CONFIG) --config=$P; echo CompPath .libs ) >\$@
 EOF
 
@@ -512,7 +544,8 @@ while test $# -gt 0; do
         ;;
 
     --config)
-        template
+        template $2
+        shift
         ;;
 
     --properties=*)

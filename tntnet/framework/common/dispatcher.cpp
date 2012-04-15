@@ -29,6 +29,8 @@
 
 #include "tnt/dispatcher.h"
 #include <tnt/httperror.h>
+#include <tnt/httprequest.h>
+#include <tnt/tntconfig.h>
 #include <functional>
 #include <iterator>
 #include <algorithm>
@@ -49,11 +51,10 @@ Dispatcher::CompidentType& Dispatcher::addUrlMapEntry(const std::string& vhost,
   return urlmap.back().second;
 }
 
-Compident Dispatcher::mapComp(const std::string& vhost,
-  const std::string& compUrl) const
+Compident Dispatcher::mapComp(const HttpRequest& request) const
 {
   urlmap_type::const_iterator pos = urlmap.begin();
-  return mapCompNext(vhost, compUrl, pos);
+  return mapCompNext(request, pos);
 }
 
 namespace {
@@ -66,16 +67,16 @@ namespace {
   };
 }
 
-Dispatcher::urlMapCacheType::size_type Dispatcher::maxUrlMapCache = 8192;
-
-Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
-  const std::string& compUrl, Dispatcher::urlmap_type::const_iterator& pos) const
+Dispatcher::CompidentType Dispatcher::mapCompNext(const HttpRequest& request,
+  Dispatcher::urlmap_type::const_iterator& pos) const
 {
+  std::string vhost = request.getHost();
+  std::string compUrl = request.getUrl();
   // check cache
   cxxtools::ReadLock lock(urlMapCacheMutex, false);
   urlMapCacheType::key_type cacheKey;
 
-  if (maxUrlMapCache > 0)
+  if (TntConfig::it().maxUrlMapCache > 0)
   {
     lock.lock();
     cacheKey = urlMapCacheType::key_type(vhost, compUrl, pos);
@@ -106,10 +107,10 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const std::string& vhost,
       std::transform(src.getArgs().begin(), src.getArgs().end(),
         std::back_inserter(ci.getArgsRef()), formatter);
 
-      if (maxUrlMapCache > 0)
+      if (TntConfig::it().maxUrlMapCache > 0)
       {
         // clear cache after maxUrlMapCache distinct requests
-        if (urlMapCache.size() >= maxUrlMapCache)
+        if (urlMapCache.size() >= TntConfig::it().maxUrlMapCache)
         {
           log_warn("clear url-map-cache");
           urlMapCache.clear();
@@ -139,7 +140,7 @@ Dispatcher::CompidentType Dispatcher::PosType::getNext()
   else
     ++pos;
 
-  return dis.mapCompNext(vhost, url, pos);
+  return dis.mapCompNext(request, pos);
 }
 
 }

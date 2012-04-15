@@ -70,7 +70,6 @@ namespace tnt
       std::string queryString;
 
       size_t contentSize;
-      static size_t maxRequestSize;
 
       std::string pathinfo;
       args_type args;
@@ -247,10 +246,6 @@ namespace tnt
 
       /// rewind watchdog timer.
       void touch()                               { threadContext->touch(); }
-
-      /// Sets a limit for a maximum request size.
-      static void setMaxRequestSize(size_t s)    { maxRequestSize = s; }
-      static size_t getMaxRequestSize()          { return maxRequestSize; }
   };
 
   inline std::istream& operator>> (std::istream& in, HttpRequest& msg)

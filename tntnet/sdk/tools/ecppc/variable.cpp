@@ -144,18 +144,19 @@ namespace tnt
 
         o << "    if (config.hasValue(\"" << name << "\"))\n"
           << "      _component_::" << name << " = tnt::stringTo<" << type
-            << ">(\"" << name << "\", \"" << type << "\", config.getValue(\"" << name << "\"));\n";
+            << ">(\"" << name << "\", \"" << type << "\", config.getConfigValue(\"" << name << "\"));\n";
       }
       else
       {
         // type defaults to std::string
         if (value.empty())
           o << "    _component_::" << name 
-            << " = config.getValue(\"" << name << "\");\n";
+            << " = config.getConfigValue(\"" << name << "\");\n";
         else
           o << "    if (config.hasValue(\"" << name << "\"))\n"
-            << "      _component_::" << name << " = config.getValue(\""
-            << name << "\");\n";
+               "      _component_::" << name << " = config.getConfigValue(\"" << name << "\");\n"
+               "    else\n"
+               "      _component_::" << name << " = " << value << '\n';
       }
     }
 

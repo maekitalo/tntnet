@@ -29,8 +29,8 @@
 
 #include "tnt/process.h"
 #include "tnt/tntnet.h"
-#include "tnt/tntconfig.h"
 #include "tnt/cmd.h"
+#include "tnt/tntconfig.h"
 
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
@@ -44,7 +44,7 @@
 #include "config.h"
 
 #ifndef TNTNET_CONF
-# define TNTNET_CONF "/etc/tntnet.conf"
+# define TNTNET_CONF "/etc/tntnet.xml"
 #endif
 
 #ifndef TNTNET_PID
@@ -58,7 +58,6 @@ namespace tnt
 {
   class TntnetProcess : public Process
   {
-      tnt::Tntconfig config;
       tnt::Tntnet tntnet;
       bool logall;
 
@@ -95,28 +94,21 @@ namespace tnt
         if (tntnetConf)
           configFile = tntnetConf;
         else if (getuid() != 0)
-          configFile = "tntnet.conf";
+          configFile = "tntnet.xml";
         else
           configFile = TNTNET_CONF;  // take default
       }
     }
 
-    config.load(configFile.c_str());
+    TntConfig::it().load(configFile.c_str());
 
     if (logall)
       initializeLogging();
-
-    setDaemon(config.getBoolValue("Daemon", false));
-    setPidFile(config.getValue("PidFile", TNTNET_PID));
-    setRootdir(config.getValue("Chroot"));
-    setUser(config.getValue("User"));
-    setGroup(config.getValue("Group"));
-    setErrorLog(config.getValue("ErrorLog"));
   }
 
   void TntnetProcess::initializeLogging()
   {
-    std::string pf = config.getValue("PropertyFile");
+    std::string pf = TntConfig::it().logproperties;
 
     if (pf.empty())
       log_init();
@@ -126,13 +118,13 @@ namespace tnt
       if (stat(pf.c_str(), &properties_stat) != 0)
         throw std::runtime_error("propertyfile " + pf + " not found");
 
-      log_init(pf.c_str());
+      log_init(pf);
     }
   }
 
   void TntnetProcess::onInit()
   {
-    tntnet.init(config);
+    tntnet.init(TntConfig::it());
   }
 
   void TntnetProcess::doWork()

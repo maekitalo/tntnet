@@ -30,6 +30,7 @@
 #include <tnt/httpparser.h>
 #include <tnt/httperror.h>
 #include <tnt/httpheader.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 #include <sstream>
 #include <algorithm>
@@ -75,8 +76,8 @@ namespace tnt
 
   bool RequestSizeMonitor::post(bool ret)
   {
-    if (++requestSize > HttpRequest::getMaxRequestSize()
-      && HttpRequest::getMaxRequestSize() > 0)
+    if (++requestSize > TntConfig::it().maxRequestSize
+      && TntConfig::it().maxRequestSize > 0)
     {
       requestSizeExceeded();
       return true;
@@ -410,8 +411,8 @@ namespace tnt
           bodySize = bodySize * 10 + *c - '0';
         }
 
-        if (getMaxRequestSize() > 0
-          && getCurrentRequestSize() + bodySize > getMaxRequestSize())
+        if (TntConfig::it().maxRequestSize > 0
+          && getCurrentRequestSize() + bodySize > TntConfig::it().maxRequestSize)
         {
           requestSizeExceeded();
           return true;
@@ -442,7 +443,7 @@ namespace tnt
 
   void HttpRequest::Parser::requestSizeExceeded()
   {
-    log_warn("max request size " << getMaxRequestSize() << " exceeded");
+    log_warn("max request size " << TntConfig::it().maxRequestSize << " exceeded");
     httpCode = HTTP_REQUEST_ENTITY_TOO_LARGE;
     failedFlag = true;
   }

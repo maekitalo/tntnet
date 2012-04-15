@@ -29,9 +29,9 @@
 
 #include <tnt/comploader.h>
 #include <tnt/componentfactory.h>
-#include <tnt/tntconfig.h>
 #include <tnt/httperror.h>
 #include <tnt/util.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 #include <cxxtools/dlloader.h>
 #include <stdlib.h>
@@ -154,9 +154,6 @@ Comploader::librarymap_type& Comploader::getLibrarymap()
   return librarymap;
 }
 
-static const Tntconfig emptyconfig;
-const Tntconfig* Comploader::config = &emptyconfig;
-Comploader::search_path_type Comploader::search_path;
 ComponentLibrary::factoryMapType* Comploader::currentFactoryMap = 0;
 
 Component& Comploader::fetchComp(const Compident& ci,
@@ -251,8 +248,8 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
     log_info("load library \"" << n << '"');
     ComponentLibrary lib;
 
-    for (search_path_type::const_iterator p = search_path.begin();
-         !lib && p != search_path.end(); ++p)
+    for (TntConfig::CompPathType::const_iterator p = TntConfig::it().compPath.begin();
+         !lib && p != TntConfig::it().compPath.end(); ++p)
     {
       log_debug("load library \"" << n << "\" from " << *p << " dir");
       lib = ComponentLibrary(*p, n, local);
@@ -289,20 +286,6 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
     log_debug("library " << n << " found");
 
   return it->second;
-}
-
-void Comploader::configure(const Tntconfig& config_)
-{
-  config = &config_;
-
-  Tntconfig::config_entries_type compPath;
-  config_.getConfigValues("CompPath", compPath);
-  for (Tntconfig::config_entries_type::const_iterator it = compPath.begin();
-       it != compPath.end(); ++it)
-  {
-    if (it->params.size() > 0)
-      search_path.push_back(it->params[0]);
-  }
 }
 
 void Comploader::registerFactory(const std::string& component_name,

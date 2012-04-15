@@ -39,27 +39,27 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class MimeFactory : public tnt::ComponentFactory
+  class MimeFactory : public ComponentFactory
   {
     public:
       MimeFactory(const std::string& componentName)
-        : tnt::ComponentFactory(componentName)
+        : ComponentFactory(componentName)
         { }
-      virtual tnt::Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl);
-      virtual void doConfigure(const tnt::Tntconfig& config);
+      virtual Component* doCreate(const Compident& ci,
+        const Urlmapper& um, Comploader& cl);
+      virtual void doConfigure(const TntConfig& config);
   };
 
-  tnt::Component* MimeFactory::doCreate(const tnt::Compident&,
-    const tnt::Urlmapper&, tnt::Comploader&)
+  Component* MimeFactory::doCreate(const Compident&,
+    const Urlmapper&, Comploader&)
   {
     return new Mime();
   }
 
-  void MimeFactory::doConfigure(const tnt::Tntconfig& config)
+  void MimeFactory::doConfigure(const TntConfig& config)
   {
     if (Mime::handler == 0)
-      Mime::handler = new MimeHandler(config);
+      Mime::handler = new MimeHandler();
   }
 
   static MimeFactory mimeFactory("mime");
@@ -70,8 +70,8 @@ namespace tnt
 
   MimeHandler* Mime::handler = 0;
 
-  unsigned Mime::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, tnt::QueryParams& qparams)
+  unsigned Mime::operator() (HttpRequest& request,
+    HttpReply& reply, QueryParams& qparams)
   {
     if (request.getArgs().size() > 0)
       reply.setContentType(request.getArg(0).c_str());

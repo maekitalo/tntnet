@@ -55,9 +55,6 @@ namespace tnt
       Encoding acceptEncoding;
 
       unsigned keepAliveCounter;
-      static unsigned keepAliveTimeout;
-      static unsigned minCompressSize;
-      static std::string defaultContentType;
 
       bool sendStatusLine;
       bool headRequest;
@@ -122,15 +119,6 @@ namespace tnt
 
       void setKeepAliveCounter(unsigned c)          { keepAliveCounter = c; }
       unsigned getKeepAliveCounter() const          { return keepAliveCounter; }
-
-      static void setKeepAliveTimeout(unsigned ms)  { keepAliveTimeout = ms; }
-      static unsigned getKeepAliveTimeout()         { return keepAliveTimeout; }
-
-      static void setMinCompressSize(unsigned s)    { minCompressSize = s; }
-      static unsigned getMinCompressSize()          { return minCompressSize; }
-
-      static void setDefaultContentType(const std::string& ct) { defaultContentType = ct; }
-      static const std::string& getDefaultContentType()        { return defaultContentType; }
 
       void setAcceptEncoding(const Encoding& enc)    { acceptEncoding = enc; }
 
