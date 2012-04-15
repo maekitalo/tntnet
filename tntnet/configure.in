@@ -122,13 +122,6 @@ AC_ARG_WITH([server],
 
 AM_CONDITIONAL(MAKE_SERVER, test x$with_server = xyes)
 
-AC_ARG_WITH([cgi],
-  AS_HELP_STRING([--with-cgi=yes|no], [build cgi-library (default: yes)]),
-  [with_cgi=$withval],
-  [with_cgi=yes])
-
-AM_CONDITIONAL(MAKE_CGI, test x$with_cgi = xyes)
-
 AC_ARG_WITH([sdk],
   AS_HELP_STRING([--with-sdk=yes|no], [build sdk (default: yes)]),
   [with_sdk=$withval],
@@ -213,7 +206,6 @@ AC_CONFIG_FILES([
     framework/common/Makefile
     framework/runtime/Makefile
     framework/defcomp/Makefile
-    framework/cgi/Makefile
     sdk/tools/common/Makefile
     sdk/tools/ecppc/Makefile
     sdk/tools/ecppl/Makefile

@@ -11,11 +11,6 @@ SERVERDIRS = \
     etc
 endif
 
-if MAKE_CGI
-CGIDIRS = \
-    framework/cgi
-endif
-
 if MAKE_SDK
 SDKDIRS = \
     sdk/tools/common \
