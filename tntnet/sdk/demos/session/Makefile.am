@@ -13,9 +13,9 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 session_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 session_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
 CLEANFILES = session.cpp appsession.cpp \
-	tntnet.conf tntnet.properties
+	tntnet.xml tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
@@ -23,5 +23,5 @@ SUFFIXES=.ecpp .cpp
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties session >$@
-tntnet.conf:
-	( $(SHELL) $(top_builddir)/tntnet-config --config=session; echo CompPath .libs ) >$@
+tntnet.xml:
+	$(SHELL) $(top_builddir)/tntnet-config --config=session|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

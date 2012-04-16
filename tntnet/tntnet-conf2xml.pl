@@ -15,7 +15,7 @@ Tommi ME<auml>kitalo, Tntnet.org
 =cut
 
 use strict;
-my ($mappings, $listeners, $ssllisteners, $settings, $appconfigs) = ("", "", "", "");
+my ($mappings, $listeners, $ssllisteners, $settings, $appconfigs, $comppath) = ("", "", "", "", "");
 
 my %keywords = (
     PropertyFile => 'logproperties',
@@ -123,6 +123,12 @@ EOF
     </sslistener>
 EOF
   }
+  elsif ($keyword eq "CompPath")
+  {
+    $comppath .= <<EOF;
+    <entry>$params[0]</entry>
+EOF
+  }
   elsif ($keywords{$keyword})
   {
     $settings .= <<EOF;
@@ -152,6 +158,10 @@ print <<EOF if $ssllisteners;
 $ssllisteners  </ssllisteners>
 EOF
 print $settings;
+print <<EOF if $comppath;
+  <compPath>
+$comppath  </compPath>
+EOF
 print <<EOF if $appconfigs;
   <appconfig>
 $appconfigs  </appconfig>

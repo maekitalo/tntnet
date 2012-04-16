@@ -19,9 +19,9 @@ comp_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 extlib_la_LDFLAGS = -module
 extlib_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
 CLEANFILES = comp.cpp subcomp.cpp extcomp.cpp \
-    tntnet.conf tntnet.properties
+    tntnet.xml tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
@@ -29,5 +29,5 @@ SUFFIXES=.ecpp .cpp
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties comp >$@
-tntnet.conf:
-	( $(SHELL) $(top_builddir)/tntnet-config --config=comp; echo CompPath .libs ) >$@
+tntnet.xml:
+	$(SHELL) $(top_builddir)/tntnet-config --config=comp|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

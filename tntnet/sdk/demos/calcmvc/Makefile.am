@@ -21,9 +21,9 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calcmvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 calcmvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
 CLEANFILES = calcController.cpp calcModel.cpp calcView.cpp calcmvc.cpp \
-	tntnet.conf tntnet.properties
+	tntnet.xml tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
@@ -31,5 +31,5 @@ SUFFIXES=.ecpp .cpp
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties calcmvc >$@
-tntnet.conf:
-	( $(SHELL) $(top_builddir)/tntnet-config --config=calcmvc; echo CompPath .libs ) >$@
+tntnet.xml:
+	$(SHELL) $(top_builddir)/tntnet-config --config=calcmvc|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

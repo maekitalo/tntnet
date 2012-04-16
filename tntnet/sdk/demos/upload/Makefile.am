@@ -11,8 +11,8 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 upload_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 upload_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = upload.cpp tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
+CLEANFILES = upload.cpp tntnet.xml tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
@@ -20,5 +20,5 @@ SUFFIXES=.ecpp .cpp
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties upload >$@
-tntnet.conf:
-	( $(SHELL) $(top_builddir)/tntnet-config --config=upload; echo CompPath .libs ) >$@
+tntnet.xml:
+	$(SHELL) $(top_builddir)/tntnet-config --config=upload|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

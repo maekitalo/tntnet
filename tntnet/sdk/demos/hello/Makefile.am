@@ -13,8 +13,8 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 hello_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 hello_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = hello.cpp tntnet.cpp tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
+CLEANFILES = hello.cpp tntnet.cpp tntnet.xml tntnet.properties
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
@@ -26,5 +26,5 @@ SUFFIXES=.ecpp .jpg .cpp
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties hello >$@
-tntnet.conf:
-	( $(SHELL) $(top_builddir)/tntnet-config --config=hello; echo CompPath .libs ) >$@
+tntnet.xml:
+	$(SHELL) $(top_builddir)/tntnet-config --config=hello|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

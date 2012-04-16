@@ -13,8 +13,8 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 backgroundjob_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 backgroundjob_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = ajax.cpp backgroundjob.cpp status.cpp tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
+CLEANFILES = ajax.cpp backgroundjob.cpp status.cpp tntnet.xml tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
@@ -24,5 +24,5 @@ SUFFIXES=.ecpp .cpp
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties backgroundjob >$@
-tntnet.conf:
-	( $(SHELL) $(top_builddir)/tntnet-config --config=backgroundjob; echo CompPath .libs ) >$@
+tntnet.xml:
+	$(SHELL) $(top_builddir)/tntnet-config --config=backgroundjob|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

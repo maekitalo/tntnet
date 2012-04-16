@@ -21,8 +21,8 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 message_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 message_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.conf tntnet.properties
-CLEANFILES = get.cpp jquery.cpp message.cpp put.cpp tntnet.conf tntnet.properties
+noinst_DATA = tntnet.xml tntnet.properties
+CLEANFILES = get.cpp jquery.cpp message.cpp put.cpp tntnet.xml tntnet.properties
 
 SUFFIXES=.ecpp .js .cpp
 
@@ -33,5 +33,5 @@ SUFFIXES=.ecpp .js .cpp
 
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties message >$@
-tntnet.conf:
-	( $(SHELL) $(top_builddir)/tntnet-config --config=message; echo CompPath .libs ) >$@
+tntnet.xml:
+	$(SHELL) $(top_builddir)/tntnet-config --config=message|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
