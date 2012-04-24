@@ -61,7 +61,7 @@ namespace tnt
         Dispatcher::CompidentType ci = Dispatcher::CompidentType(it->target);
         ci.setPathInfo(it->pathinfo);
         ci.setArgs(it->args);
-        dis.addUrlMapEntry(it->vhost, it->url, ci);
+        dis.addUrlMapEntry(it->vhost, it->url, it->method, it->ssl, ci);
       }
     }
 

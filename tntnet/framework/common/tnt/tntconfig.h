@@ -37,6 +37,10 @@ namespace tnt
 {
   struct TntConfig
   {
+    static const int SSL_ALL = 0;
+    static const int SSL_NO  = 1;
+    static const int SSL_YES = 2;
+
     struct Mapping
     {
       std::string target;
@@ -44,7 +48,7 @@ namespace tnt
       std::string vhost;
       std::string method;
       std::string pathinfo;
-      enum { SSL_ALL, SSL_NO, SSL_YES } ssl;
+      int ssl;
 
       typedef std::vector<std::string> ArgsType;
 

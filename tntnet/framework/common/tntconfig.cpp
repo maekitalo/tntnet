@@ -33,6 +33,10 @@
 
 namespace tnt
 {
+  const int TntConfig::SSL_ALL;
+  const int TntConfig::SSL_NO;
+  const int TntConfig::SSL_YES;
+
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping)
   {
     si.getMember("target", mapping.target);
@@ -40,6 +44,12 @@ namespace tnt
     si.getMember("vhost", mapping.vhost);
     si.getMember("method", mapping.method);
     si.getMember("pathinfo", mapping.pathinfo);
+    bool ssl;
+    if (si.getMember("ssl", ssl))
+      mapping.ssl = ssl ? TntConfig::SSL_YES : TntConfig::SSL_NO;
+    else
+      mapping.ssl = TntConfig::SSL_ALL;
+
     si.getMember("args", mapping.args);
   }
 
