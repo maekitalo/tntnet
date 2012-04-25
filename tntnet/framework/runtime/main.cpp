@@ -35,6 +35,8 @@
 #include <cxxtools/log.h>
 #include <cxxtools/loginit.h>
 #include <cxxtools/arg.h>
+#include <cxxtools/xml/xmldeserializer.h>
+#include <cxxtools/jsondeserializer.h>
 
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -77,6 +79,8 @@ namespace tnt
   {
     std::string configFile;
 
+    cxxtools::Arg<bool> jsonConfig(argc, argv, 'j');
+
     // check for argument -c
     cxxtools::Arg<const char*> conf(argc, argv, 'c');
     if (conf.isSet())
@@ -100,7 +104,20 @@ namespace tnt
       }
     }
 
-    TntConfig::it().load(configFile.c_str());
+    std::ifstream in(configFile.c_str());
+    if (!in)
+      throw std::runtime_error("error opening " + configFile);
+
+    if (jsonConfig)
+    {
+      cxxtools::JsonDeserializer deserializer(in);
+      deserializer.deserialize(TntConfig::it());
+    }
+    else
+    {
+      cxxtools::xml::XmlDeserializer deserializer(in);
+      deserializer.deserialize(TntConfig::it());
+    }
 
     if (logall)
       initializeLogging();

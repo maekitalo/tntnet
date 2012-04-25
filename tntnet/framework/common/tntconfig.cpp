@@ -28,8 +28,6 @@
 
 #include <tnt/tntconfig.h>
 #include <cxxtools/serializationinfo.h>
-#include <cxxtools/xml/xmldeserializer.h>
-#include <fstream>
 
 namespace tnt
 {
@@ -163,21 +161,6 @@ namespace tnt
       backgroundTasks(5),
       timerSleep(10)
   { }
-
-  void TntConfig::load(const char* fname)
-  {
-    std::ifstream in(fname);
-    if (!in)
-    {
-      std::string msg;
-      msg = "error opening ";
-      msg += fname;
-      throw std::runtime_error(msg);
-    }
-
-    cxxtools::xml::XmlDeserializer deserializer(in);
-    deserializer.deserialize(*this);
-  }
 
   std::string TntConfig::getConfigValue(const std::string& key, const std::string& def) const
   {

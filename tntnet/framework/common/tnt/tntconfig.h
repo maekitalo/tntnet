@@ -33,6 +33,11 @@
 #include <vector>
 #include <map>
 
+namespace cxxtools
+{
+  class SerializationInfo;
+}
+
 namespace tnt
 {
   static const int SSL_ALL = 0;
@@ -115,8 +120,6 @@ namespace tnt
 
     TntConfig();
 
-    void load(const char* fname);
-
     std::string getConfigValue(const std::string& key, const std::string& def = std::string()) const;
     bool hasValue(const std::string& key) const
     { return config.find(key) != config.end(); }
@@ -124,6 +127,10 @@ namespace tnt
     static TntConfig& it();
   };
 
+  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping);
+  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener);
+  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::SslListener& ssllistener);
+  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config);
 }
 
 #endif // TNT_TNTCONFIG_H
