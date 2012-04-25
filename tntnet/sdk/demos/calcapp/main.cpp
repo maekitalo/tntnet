@@ -44,7 +44,7 @@
  */
 #include <iostream>
 #include <tnt/tntnet.h>
-#include <tnt/configurator.h>
+#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 
 int main(int argc, char* argv[])
@@ -60,17 +60,23 @@ int main(int argc, char* argv[])
 
     app.setAppName("calc");
 
-    // set your settings
+    // set up your mappings
+
     app.mapUrl("^/$", "calc");
+
+    // the next mapping is only valid, when the method is "GET" (or more precisely
+    // matches the regular expression "GET" - it may be GETTY or something)
+    app.mapUrl("^/foo$", "calc")
+       .setMethod("GET");
+
     app.mapUrl("^/([^.]+)(..+)?", "$1");
 
-    // set more settings; the settings from tntnet.conf are spread throughout
-    // different classes. It is quite difficult to know, where to find the right
-    // place, where to set the settings. The helper class tnt::Configurator
-    // makes it easy though.
-    tnt::Configurator configurator(app);
-    configurator.setMinThreads(3);        // MinThreads in tntnet.conf
-    configurator.setSessionTimeout(600);  // SessionTimeout in tntnet.conf
+    // set more settings
+    tnt::TntConfig::it().minThreads = 3;
+    tnt::TntConfig::it().sessionTimeout = 600;
+
+    // configure listener
+    app.listen("", 8000);
 
     // run the application
     app.run();

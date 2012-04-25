@@ -41,38 +41,38 @@ log_define("tntnet.dispatcher")
 namespace tnt
 {
 
-
 namespace
 {
-  std::ostream& operator<< (std::ostream& out, const Dispatcher::VHostRegex& r)
+  std::ostream& operator<< (std::ostream& out, const Mapping& r)
   {
     out << r.getVHost() << ':'
         << r.getUrl();
 
-    if (r.getSsl() != Dispatcher::SSL_ALL || !r.getMethod().empty())
+    if (r.getSsl() != SSL_ALL || !r.getMethod().empty())
       out << ':' << r.getMethod();
 
-    if (r.getSsl() == Dispatcher::SSL_NO)
+    if (r.getSsl() == SSL_NO)
       out << ":NOSSL";
-    else if (r.getSsl() == Dispatcher::SSL_YES)
+    else if (r.getSsl() == SSL_YES)
       out << ":SSL";
 
     return out;
   }
 }
 
-Dispatcher::VHostRegex::VHostRegex(const std::string& vhost_, const std::string& url_,
-    const std::string& method_, int ssl_)
+Mapping::Mapping(const std::string& vhost_, const std::string& url_,
+    const std::string& method_, int ssl_, const Maptarget& target_)
   : vhost(vhost_),
     url(url_),
     method(method_),
     ssl(ssl_),
     r_vhost(vhost_),
     r_url(url_),
-    r_method(method_)
+    r_method(method_),
+    target(target_)
 { }
 
-bool Dispatcher::VHostRegex::match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const
+bool Mapping::match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const
 {
   return (vhost.empty() || r_vhost.match(request.getHost()))
       && (url.empty() || r_url.match(request.getUrl(), smatch))
@@ -113,14 +113,14 @@ bool Dispatcher::UrlMapCacheKey::operator< (const UrlMapCacheKey& other) const
   return pos < other.pos;
 }
 
-Dispatcher::CompidentType& Dispatcher::addUrlMapEntry(const std::string& vhost,
-  const std::string& url, const std::string& method, int ssl, const CompidentType& ci)
+Mapping& Dispatcher::addUrlMapEntry(const std::string& vhost,
+  const std::string& url, const std::string& method, int ssl, const Maptarget& ci)
 {
   cxxtools::WriteLock lock(mutex);
 
   log_debug("map vhost <" << vhost << "> url <" << url << "> method <" << method << "> ssl <" << ssl << "> to <" << ci << '>');
-  urlmap.push_back(urlmap_type::value_type(VHostRegex(vhost, url, method, ssl), ci));
-  return urlmap.back().second;
+  urlmap.push_back(Mapping(vhost, url, method, ssl, ci));
+  return urlmap.back();
 }
 
 namespace {
@@ -133,7 +133,7 @@ namespace {
   };
 }
 
-Dispatcher::CompidentType Dispatcher::mapCompNext(const HttpRequest& request,
+Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
   Dispatcher::urlmap_type::size_type& pos) const
 {
   std::string vhost = request.getHost();
@@ -154,7 +154,7 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const HttpRequest& request,
       if (um != urlMapCache.end())
       {
         pos = um->second.pos;
-        log_debug("match <" << urlmap[pos].first << "> => " << um->second.ci << " (cached)");
+        log_debug("match <" << urlmap[pos] << "> => " << um->second.ci << " (cached)");
         return um->second.ci;
       }
 
@@ -168,11 +168,11 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const HttpRequest& request,
 
     for (; pos < urlmap.size(); ++pos)
     {
-      if (urlmap[pos].first.match(request, formatter.what))
+      if (urlmap[pos].match(request, formatter.what))
       {
-        const CompidentType& src = urlmap[pos].second;
+        const Maptarget& src = urlmap[pos].getTarget();
 
-        CompidentType ci;
+        Maptarget ci;
         ci.libname = formatter(src.libname);
         ci.compname = formatter(src.compname);
 
@@ -195,12 +195,12 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const HttpRequest& request,
           urlMapCache.insert(urlMapCacheType::value_type(cacheKey, UrlMapCacheValue(ci, pos)));
         }
 
-        log_debug("match <" << urlmap[pos].first << "> => " << ci);
+        log_debug("match <" << urlmap[pos] << "> => " << ci);
         return ci;
       }
       else
       {
-        log_debug("no match <" << urlmap[pos].first << '>');
+        log_debug("no match <" << urlmap[pos] << '>');
       }
     }
   }
@@ -208,7 +208,7 @@ Dispatcher::CompidentType Dispatcher::mapCompNext(const HttpRequest& request,
   throw NotFoundException(compUrl);
 }
 
-Dispatcher::CompidentType Dispatcher::PosType::getNext()
+Maptarget Dispatcher::PosType::getNext()
 {
   if (first)
     first = false;

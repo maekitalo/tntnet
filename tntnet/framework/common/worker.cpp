@@ -362,7 +362,7 @@ namespace tnt
       state = stateDispatch;
 
       // pos.getNext() throws NotFoundException at end
-      Dispatcher::CompidentType ci = pos.getNext();
+      Maptarget ci = pos.getNext();
       try
       {
         Component* comp = 0;
@@ -374,7 +374,7 @@ namespace tnt
             // linked directly
             try
             {
-              Dispatcher::CompidentType cii = ci;
+              Compident cii = ci;
               cii.libname = std::string();
               comp = &comploader.fetchComp(cii, application.getDispatcher());
             }

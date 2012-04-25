@@ -139,7 +139,7 @@ namespace tnt
       /// Adds a mapping from a url to a component.
       /// The url is specified using a regular expression and the mapped target
       /// may contain back references to the expression using $1, $2, ... .
-      Maptarget& mapUrl(const std::string& url, const std::string& ci)
+      Mapping& mapUrl(const std::string& url, const std::string& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
       void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)
       {
@@ -147,9 +147,9 @@ namespace tnt
         ci.setPathInfo(pathinfo);
         dispatcher.addUrlMapEntry(std::string(), url, ci);
       }
-      Maptarget& mapUrl(const std::string& url, const Maptarget& ci)
+      Mapping& mapUrl(const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, ci); }
-      Maptarget& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
+      Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
 
       /** Set the app name.

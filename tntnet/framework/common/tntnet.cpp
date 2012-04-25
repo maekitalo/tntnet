@@ -58,7 +58,7 @@ namespace tnt
       const TntConfig::MappingsType& mappings = TntConfig::it().mappings;
       for (TntConfig::MappingsType::const_iterator it = mappings.begin(); it != mappings.end(); ++it)
       {
-        Dispatcher::CompidentType ci = Dispatcher::CompidentType(it->target);
+        Maptarget ci(it->target);
         ci.setPathInfo(it->pathinfo);
         ci.setArgs(it->args);
         dis.addUrlMapEntry(it->vhost, it->url, it->method, it->ssl, ci);

@@ -35,11 +35,12 @@
 
 namespace tnt
 {
+  static const int SSL_ALL = 0;
+  static const int SSL_NO  = 1;
+  static const int SSL_YES = 2;
+
   struct TntConfig
   {
-    static const int SSL_ALL = 0;
-    static const int SSL_NO  = 1;
-    static const int SSL_YES = 2;
 
     struct Mapping
     {
