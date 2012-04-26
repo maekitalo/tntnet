@@ -58,6 +58,7 @@ while (<>)
   s/ *#.*//g;
   my ($keyword, @params) = split(/\s+/);
   next unless $keyword;
+  @params = map { s/^(["'])(.*)(\1)/$2/; $_; } @params;
 
   if ($keyword =~ /^(V?)MapUrl$/)
   {
@@ -162,10 +163,7 @@ print <<EOF if $comppath;
   <compPath>
 $comppath  </compPath>
 EOF
-print <<EOF if $appconfigs;
-  <appconfig>
-$appconfigs  </appconfig>
-EOF
+
 print <<EOF;
-</tntnet>
+$appconfigs</tntnet>
 EOF

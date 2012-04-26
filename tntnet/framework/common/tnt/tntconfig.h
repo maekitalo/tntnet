@@ -32,11 +32,7 @@
 #include <string>
 #include <vector>
 #include <map>
-
-namespace cxxtools
-{
-  class SerializationInfo;
-}
+#include <cxxtools/serializationinfo.h>
 
 namespace tnt
 {
@@ -77,7 +73,6 @@ namespace tnt
     typedef std::vector<Listener> ListenersType;
     typedef std::vector<SslListener> SslListenersType;
     typedef std::vector<std::string> CompPathType;
-    typedef std::map<std::string, std::string> ConfigType;
     typedef std::map<std::string, std::string> EnvironmentType;
 
     MappingsType mappings;
@@ -114,15 +109,14 @@ namespace tnt
     std::string errorLog;
     unsigned backgroundTasks;
     unsigned timerSleep;
-    ConfigType config;
+    cxxtools::SerializationInfo config;
     EnvironmentType environment;
     std::string documentRoot;
 
     TntConfig();
 
-    std::string getConfigValue(const std::string& key, const std::string& def = std::string()) const;
     bool hasValue(const std::string& key) const
-    { return config.find(key) != config.end(); }
+    { return config.findMember(key) != 0; }
 
     static TntConfig& it();
   };

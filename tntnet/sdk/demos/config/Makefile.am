@@ -21,4 +21,4 @@ SUFFIXES=.ecpp .cpp
 tntnet.properties:
 	$(SHELL) $(top_builddir)/tntnet-config --properties config >$@
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=config|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>\n\n  <appconfig>\n    <dburl>some_config_value</dburl>\n  </appconfig>"} {print}' >$@
+	$(SHELL) $(top_builddir)/tntnet-config --config=config|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>\n\n  <dburl>some_config_value</dburl>\n  <values>\n    <value>5</value>\n    <value>9</value>\n  </values>"} {print}' >$@

@@ -138,26 +138,7 @@ namespace tnt
 
     void Variable::getConfigInit(std::ostream& o) const
     {
-      if (!type.empty())
-      {
-        // we have a type
-
-        o << "    if (config.hasValue(\"" << name << "\"))\n"
-          << "      _component_::" << name << " = tnt::stringTo<" << type
-            << ">(\"" << name << "\", \"" << type << "\", config.getConfigValue(\"" << name << "\"));\n";
-      }
-      else
-      {
-        // type defaults to std::string
-        if (value.empty())
-          o << "    _component_::" << name 
-            << " = config.getConfigValue(\"" << name << "\");\n";
-        else
-          o << "    if (config.hasValue(\"" << name << "\"))\n"
-               "      _component_::" << name << " = config.getConfigValue(\"" << name << "\");\n"
-               "    else\n"
-               "      _component_::" << name << " = " << value << '\n';
-      }
+      o << "  config.config.getMember(\"" << name << "\", _component::" << name << ");\n";
     }
 
     void Variable::getConfigDecl(std::ostream& o) const

@@ -27,7 +27,6 @@
  */
 
 #include <tnt/tntconfig.h>
-#include <cxxtools/serializationinfo.h>
 
 namespace tnt
 {
@@ -113,18 +112,9 @@ namespace tnt
     si.getMember("mimeDb", config.mimeDb);
     si.getMember("documentRoot", config.documentRoot);
 
-    const cxxtools::SerializationInfo* p = si.findMember("appconfig");
-    if (p)
-    {
-      for (cxxtools::SerializationInfo::ConstIterator it = p->begin(); it != p->end(); ++it)
-      {
-        std::string value;
-        it->getValue(value);
-        config.config[it->name()] = value;
-      }
-    }
+    config.config = si;
 
-    p = si.findMember("environment");
+    const cxxtools::SerializationInfo* p = si.findMember("environment");
     if (p)
     {
       for (cxxtools::SerializationInfo::ConstIterator it = p->begin(); it != p->end(); ++it)
@@ -161,12 +151,6 @@ namespace tnt
       backgroundTasks(5),
       timerSleep(10)
   { }
-
-  std::string TntConfig::getConfigValue(const std::string& key, const std::string& def) const
-  {
-    ConfigType::const_iterator it = config.find(key);
-    return it == config.end() ? def : it->second;
-  }
 
   TntConfig& TntConfig::it()
   {
