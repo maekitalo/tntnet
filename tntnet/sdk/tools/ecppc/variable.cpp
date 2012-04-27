@@ -138,7 +138,7 @@ namespace tnt
 
     void Variable::getConfigInit(std::ostream& o) const
     {
-      o << "  config.config.getMember(\"" << name << "\", _component::" << name << ");\n";
+      o << "  config.config.getMember(\"" << name << "\", _component_::" << name << ");\n";
     }
 
     void Variable::getConfigDecl(std::ostream& o) const
