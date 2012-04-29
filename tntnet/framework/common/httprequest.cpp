@@ -603,7 +603,7 @@ namespace tnt
 
   bool HttpRequest::hasSessionScope() const
   {
-    return secureSessionScope != 0 && !secureSessionScope->empty();
+    return sessionScope != 0 && !sessionScope->empty();
   }
 
   bool HttpRequest::hasSecureSessionScope() const
