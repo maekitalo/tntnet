@@ -173,7 +173,7 @@ test: all
 	\${TNTNET} tntnet.xml
 
 $1.so: $1.o
-	\${CXX} -o \$@ \${LDFLAGS} \$^
+	\${CXX} -o \$@ \$^ \${LDFLAGS}
 
 EOF
   fi
