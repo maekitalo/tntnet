@@ -56,7 +56,7 @@ while (<>)
 {
   chomp;
   s/ *#.*//g;
-  my ($keyword, @params) = split(/\s+/);
+  my ($keyword, @params) = grep { defined($_) } /"([^"]*)"|([^"\s]+)/g;
   next unless $keyword;
   @params = map { s/^(["'])(.*)(\1)/$2/; $_; } @params;
 
