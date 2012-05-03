@@ -59,7 +59,8 @@ namespace tnt
       for (TntConfig::MappingsType::const_iterator it = mappings.begin(); it != mappings.end(); ++it)
       {
         Maptarget ci(it->target);
-        ci.setPathInfo(it->pathinfo);
+        if (!it->pathinfo.empty())
+          ci.setPathInfo(it->pathinfo);
         ci.setArgs(it->args);
         dis.addUrlMapEntry(it->vhost, it->url, it->method, it->ssl, ci);
       }
