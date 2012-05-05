@@ -69,9 +69,18 @@ namespace tnt
 
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config)
   {
-    si.getMember("mappings") >>= config.mappings;
-    si.getMember("listeners", config.listeners);
-    si.getMember("ssllisteners", config.ssllisteners);
+    TntConfig::MappingsType mappings;
+    if (si.getMember("mappings", mappings))
+      config.mappings.insert(config.mappings.end(), mappings.begin(), mappings.end());
+
+    TntConfig::ListenersType listeners;
+    if (si.getMember("listeners", listeners))
+      config.listeners.insert(config.listeners.end(), listeners.begin(), listeners.end());
+
+    TntConfig::SslListenersType ssllisteners;
+    if (si.getMember("ssllisteners", ssllisteners))
+      config.ssllisteners.insert(config.ssllisteners.end(), ssllisteners.begin(), ssllisteners.end());
+
     if (config.listeners.empty() && config.ssllisteners.empty())
     {
       config.listeners.resize(1);
@@ -111,6 +120,7 @@ namespace tnt
     si.getMember("timerSleep", config.timerSleep);
     si.getMember("mimeDb", config.mimeDb);
     si.getMember("documentRoot", config.documentRoot);
+    si.getMember("includes", config.includes);
 
     config.config = si;
 

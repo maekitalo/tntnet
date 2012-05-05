@@ -42,6 +42,10 @@
 #include <sys/stat.h>
 #include <iostream>
 #include <stdexcept>
+#include <set>
+
+#include <glob.h>
+#include <sstream>
 
 #include "config.h"
 
@@ -58,6 +62,80 @@ log_define("tntnet.main")
 
 namespace tnt
 {
+  namespace
+  {
+    class Glob
+    {
+        glob_t gl;
+        unsigned n;
+
+      public:
+        explicit Glob(const std::string& pattern, int flags = 0);
+        ~Glob();
+
+        const char* current() const
+        {
+          return gl.gl_pathv ? gl.gl_pathv[n] : 0;
+        }
+
+        const char* next()
+        {
+          if (gl.gl_pathv && gl.gl_pathv[n])
+            ++n;
+          return current();
+        }
+    };
+
+    Glob::Glob(const std::string& pattern, int flags)
+      : n(0)
+    {
+      int ret = ::glob(pattern.c_str(), flags, 0, &gl);
+      if (ret == GLOB_NOMATCH)
+      {
+        gl.gl_pathv = 0;
+      }
+      else if (ret != 0)
+      {
+        std::ostringstream msg;
+        msg << "failed to process glob pattern <" << pattern << "> errorcode " << ret;
+        throw std::runtime_error(msg.str());
+      }
+    }
+
+    Glob::~Glob()
+    {
+      if (gl.gl_pathv)
+        globfree(&gl);
+    }
+
+    template <typename Deserializer>
+    void processConfigFile(const std::string& configFile, std::set<std::string>& filesProcessed)
+    {
+      TntConfig& config = TntConfig::it();
+
+      std::ifstream in(configFile.c_str());
+      if (!in)
+        throw std::runtime_error("failed to open configuration file \"" + configFile + '"');
+
+      Deserializer deserializer(in);
+      deserializer.deserialize(config);
+
+      in.close();
+
+      filesProcessed.insert(configFile);
+
+      for (std::vector<std::string>::size_type n = 0; n < config.includes.size(); ++n)
+      {
+        for (Glob glob(config.includes[n]); glob.current(); glob.next())
+        {
+          std::string configFile = glob.current();
+          if (filesProcessed.find(configFile) == filesProcessed.end())
+            processConfigFile<Deserializer>(glob.current(), filesProcessed);
+        }
+      }
+    }
+  }
+
   class TntnetProcess : public Process
   {
       tnt::Tntnet tntnet;
@@ -104,20 +182,11 @@ namespace tnt
       }
     }
 
-    std::ifstream in(configFile.c_str());
-    if (!in)
-      throw std::runtime_error("error opening " + configFile);
-
+    std::set<std::string> filesProcessed;
     if (jsonConfig)
-    {
-      cxxtools::JsonDeserializer deserializer(in);
-      deserializer.deserialize(TntConfig::it());
-    }
+      processConfigFile<cxxtools::JsonDeserializer>(configFile, filesProcessed);
     else
-    {
-      cxxtools::xml::XmlDeserializer deserializer(in);
-      deserializer.deserialize(TntConfig::it());
-    }
+      processConfigFile<cxxtools::xml::XmlDeserializer>(configFile, filesProcessed);
 
     if (logall)
       initializeLogging();
