@@ -36,7 +36,7 @@ namespace tnt
 
   void Savepoint::save()
   {
-    pos = reply.outstream.str().size();
+    pos = reply.getContentSize();
     active = true;
 
     log_debug("set Savepoint " << pos);
@@ -53,9 +53,7 @@ namespace tnt
     if (active)
     {
       log_info("rollback to Savepoint " << pos);
-
-      reply.outstream.str( reply.outstream.str().substr(0, pos) );
-      reply.outstream.seekp(pos);
+      reply.rollbackContent(pos);
       active = false;
     }
     else

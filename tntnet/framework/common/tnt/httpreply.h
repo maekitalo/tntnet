@@ -31,11 +31,9 @@
 #define TNT_HTTPREPLY_H
 
 #include <tnt/httpmessage.h>
-#include <tnt/htmlescostream.h>
-#include <tnt/urlescostream.h>
 #include <tnt/encoding.h>
 #include <tnt/http.h>
-#include <sstream>
+#include <iosfwd>
 
 namespace tnt
 {
@@ -44,25 +42,17 @@ namespace tnt
   /// HTTP-Reply-message
   class HttpReply : public HttpMessage
   {
-      friend class Savepoint;
-
-      std::ostream& socket;
-      std::ostringstream outstream;
+      struct Impl;
+      Impl* impl;
       std::ostream* current_outstream;
-      HtmlEscOstream safe_outstream;
-      UrlEscOstream url_outstream;
-
-      Encoding acceptEncoding;
-
-      unsigned keepAliveCounter;
-
-      bool sendStatusLine;
-      bool headRequest;
+      std::ostream* safe_outstream;
+      std::ostream* url_outstream;
 
       void send(unsigned ret, const char* msg, bool ready) const;
 
     public:
       explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
+      ~HttpReply();
 
       static bool tryCompress(std::string& body);
 
@@ -70,7 +60,7 @@ namespace tnt
       void setContentType(const std::string& t)     { setHeader(httpheader::contentType, t); }
       const char* getContentType() const            { return getHeader(httpheader::contentType); }
 
-      void setHeadRequest(bool sw = true)           { headRequest = sw; }
+      void setHeadRequest(bool sw = true);
 
       /// Throws an exception, which results in a redirect.
       unsigned redirect(const std::string& newLocation);
@@ -84,23 +74,22 @@ namespace tnt
         { sendReply(ret, msg.c_str()); }
 
       /// returns outputstream
-      std::ostream& out()   { return *current_outstream; }
+      std::ostream& out()    { return *current_outstream; }
       /// returns safe outputstream (unsafe html-chars are escaped)
-      std::ostream& sout()  { return safe_outstream; }
+      std::ostream& sout()   { return *safe_outstream; }
       /// returns outputstream, which url encodes output
-      std::ostream& uout()  { return url_outstream; }
-      void resetContent()   { outstream.str(std::string()); }
+      std::ostream& uout()   { return *url_outstream; }
+      void resetContent();
+      void rollbackContent(unsigned size);
 
       void setContentLengthHeader(size_t size);
       void setKeepAliveHeader();
 
       virtual void setDirectMode(unsigned ret = HTTP_OK, const char* msg = "OK");
       virtual void setDirectModeNoFlush();
-      virtual bool isDirectMode() const
-        { return current_outstream == &socket; }
-      std::string::size_type getContentSize() const
-        { return outstream.str().size(); }
-      std::ostream& getDirectStream()   { return socket; }
+      virtual bool isDirectMode() const;
+      std::string::size_type getContentSize() const;
+      std::ostream& getDirectStream();
 
       void setMd5Sum();
 
@@ -117,10 +106,10 @@ namespace tnt
       const Cookies& getCookies() const
         { return httpcookies; }
 
-      void setKeepAliveCounter(unsigned c)          { keepAliveCounter = c; }
-      unsigned getKeepAliveCounter() const          { return keepAliveCounter; }
+      void setKeepAliveCounter(unsigned c);
+      unsigned getKeepAliveCounter() const;
 
-      void setAcceptEncoding(const Encoding& enc)    { acceptEncoding = enc; }
+      void setAcceptEncoding(const Encoding& enc);
 
       bool keepAlive() const;
 

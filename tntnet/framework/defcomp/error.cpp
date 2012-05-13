@@ -32,6 +32,7 @@
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
 #include <tnt/httperror.h>
+#include <sstream>
 
 namespace tnt
 {

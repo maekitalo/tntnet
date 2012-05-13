@@ -46,6 +46,9 @@ namespace tnt
       { parse(header); }
 
       void parse(const char* header);
+      void clear()
+      { encodingMap.clear(); }
+
       /**
        * returns the quality-value in the range 0..10
        */
