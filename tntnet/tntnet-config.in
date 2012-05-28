@@ -85,13 +85,13 @@ EOF
 
   <!-- to enable ssl, we need a Certificate and a ssllistener-section -->
   <!--
-  <ssllistener>
+  <ssllisteners>
     <ssllistener>
       <ip></ip>
       <port>8443</port>
       <certificate>tntnet.pem</certificate>
     </ssllistener>
-  </ssllistener>
+  </ssllisteners>
     -->
   <logging>
     <rootlogger>INFO</rootlogger>
