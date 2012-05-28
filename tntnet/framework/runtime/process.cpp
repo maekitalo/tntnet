@@ -155,7 +155,7 @@ namespace
     if (::freopen("/dev/null", "w", stdout) == 0)
       throw cxxtools::SystemError("freopen(stdout)");
 
-    if (::freopen(errorLog.empty() ? "/dev/null" : errorLog.c_str(), "w", stderr) == 0)
+    if (::freopen(errorLog.empty() ? "/dev/null" : errorLog.c_str(), "a+", stderr) == 0)
       throw cxxtools::SystemError("freopen(stderr)");
   }
 
