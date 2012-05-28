@@ -19,7 +19,6 @@ Known values for OPTION are:
   --cxxflags        print pre-processor and compiler flags
   --config[=app]    print default configuration-file
   --makefile[=app]  print simple makefile for a ecpp-project
-  --properties=app  print a properties file
   --project=app     create a simple ecpp-project-directory
   -p=app            shortcut for --project=app
   --autoproject=app create a autotools based tntnet project
@@ -94,9 +93,28 @@ EOF
     </ssllistener>
   </ssllistener>
     -->
+  <logging>
+    <rootlogger>INFO</rootlogger>
 
-  <!-- this propertyfile defines, what and where to log -->
-  <logproperties>tntnet.properties</logproperties>
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+      <logger>
+        <category>component.$1</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+
+    <!--
+    <file>tntnet.log</file>
+    <maxfilesize>10M</maxfilesize>
+    <maxbackupindex>2</maxbackupindex>
+    -->
+
+  </logging>
+
 
   <!-- <maxRequestSize>65536</maxRequestSize> -->
   <!-- <maxRequestTime>600</maxRequestTime> -->
@@ -129,36 +147,6 @@ EOF
   <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
 
 </tntnet>
-EOF
-}
-
-properties()
-{
-  cat <<EOF
-# logging-properties for tntnet application $1
-#
-# print logging-messages with:
-#   log_fatal("some fatal message");
-#   log_error("some error message");
-#   log_warn("some warn message");
-#   log_info("some info message");
-#   log_debug("some debug message");
-#
-rootLogger=INFO
-
-# define logger-categories
-logger.tntnet=INFO
-logger.component.$1=INFO
-
-# uncomment if you want to log to a file
-#file=tntnet.log
-#maxfilesize=1MB
-#maxbackupindex=2
-#host=localhost:1234  # send log-messages with udp
-#disabled=1  # disable logging
-#logprocess=1  # log through separate process
-#logprocesuser=someuser  # change to user in log process
-#logprocesgroup=somegroup  # change to group in log process
 EOF
 }
 
@@ -208,7 +196,6 @@ project()
   mkdir $P || exit 1
   makefile $P >$P/Makefile
   template $P >$P/tntnet.xml
-  properties $P >$P/tntnet.properties
   cat >$P/$P.ecpp <<EOF
 <%pre>
 // put your includes here
@@ -338,8 +325,8 @@ ${C}_la_SOURCES = \\
 ${C}_la_LIBADD = \$(top_builddir)/lib/lib$P.la
 ${C}_la_LDFLAGS = -module -ltntnet
 
-noinst_DATA = tntnet.xml tntnet.properties
-CLEANFILES = \$(ecppSources:.ecpp=.cpp) tntnet.xml tntnet.properties
+noinst_DATA = tntnet.xml
+CLEANFILES = \$(ecppSources:.ecpp=.cpp) tntnet.xml
 
 SUFFIXES=.ecpp .jpg .cpp
 
@@ -348,10 +335,8 @@ SUFFIXES=.ecpp .jpg .cpp
 .jpg.cpp:
 	\$(ECPPC) -b -m image/jpeg -o \$@ \$<
 
-tntnet.properties:
-	\$(TNTNET_CONFIG) --properties $P >\$@
 tntnet.xml:
-	( \$(TNTNET_CONFIG) --config=$P; echo CompPath .libs ) >\$@
+	( \$(SHELL) \$(TNTNET_CONFIG) --config=calc|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' ) >\$@
 EOF
 
   cat >$P/autogen.sh <<EOF
@@ -545,15 +530,6 @@ while test $# -gt 0; do
 
     --config)
         template $2
-        shift
-        ;;
-
-    --properties=*)
-        properties $optarg
-        ;;
-
-    --properties)
-        properties $2
         shift
         ;;
 

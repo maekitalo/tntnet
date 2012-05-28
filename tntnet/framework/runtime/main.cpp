@@ -33,7 +33,6 @@
 #include "tnt/tntconfig.h"
 
 #include <cxxtools/log.h>
-#include <cxxtools/loginit.h>
 #include <cxxtools/arg.h>
 #include <cxxtools/xml/xmldeserializer.h>
 #include <cxxtools/jsondeserializer.h>
@@ -194,18 +193,9 @@ namespace tnt
 
   void TntnetProcess::initializeLogging()
   {
-    std::string pf = TntConfig::it().logproperties;
-
-    if (pf.empty())
-      log_init();
-    else
-    {
-      struct stat properties_stat;
-      if (stat(pf.c_str(), &properties_stat) != 0)
-        throw std::runtime_error("propertyfile " + pf + " not found");
-
-      log_init(pf);
-    }
+    const cxxtools::SerializationInfo* psi = TntConfig::it().config.findMember("logging");
+    if (psi)
+      log_init(*psi);
   }
 
   void TntnetProcess::onInit()
@@ -248,7 +238,7 @@ int main(int argc, char* argv[])
     cxxtools::Arg<bool> cmd(argc, argv, 'C');
     if (cmd)
     {
-      log_init("tntnet.properties");
+      log_init("tntnet.xml");
 
       tnt::Cmd cmdapp(std::cout);
 

@@ -87,7 +87,6 @@ namespace tnt
       config.listeners.back().port = 80;
     }
 
-    si.getMember("logproperties", config.logproperties);
     si.getMember("maxRequestSize", config.maxRequestSize);
     si.getMember("maxRequestTime", config.maxRequestTime);
     si.getMember("user", config.user);

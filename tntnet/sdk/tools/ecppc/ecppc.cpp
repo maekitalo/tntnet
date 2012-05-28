@@ -38,7 +38,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "config.h"
-#include <cxxtools/loginit.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.ecppc")

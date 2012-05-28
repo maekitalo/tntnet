@@ -78,7 +78,6 @@ namespace tnt
     MappingsType mappings;
     ListenersType listeners;
     SslListenersType ssllisteners;
-    std::string logproperties;
     unsigned maxRequestSize;
     unsigned maxRequestTime;
     std::string user;
