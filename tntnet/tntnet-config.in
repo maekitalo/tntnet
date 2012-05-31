@@ -115,7 +115,6 @@ EOF
 
   </logging>
 
-
   <!-- <maxRequestSize>65536</maxRequestSize> -->
   <!-- <maxRequestTime>600</maxRequestTime> -->
   <!-- <user>tntnet</user> -->
@@ -128,7 +127,12 @@ EOF
   <!-- <maxThreads>100</maxThreads> -->
   <!-- <threadStartDelay>10</threadStartDelay> -->
   <!-- <queueSize>1000</queueSize> -->
-  <!-- <compPath>path</compPath> -->
+  <!--
+  <compPath>
+    <entry>path1</entry>
+    <entry>path2</entry>
+  </compPath>
+   -->
   <!-- <bufferSize>16384</bufferSize> -->
   <!-- <socketReadTimeout>10</socketReadTimeout> -->
   <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
