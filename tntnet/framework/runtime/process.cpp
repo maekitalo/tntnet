@@ -134,10 +134,12 @@ namespace
     }
 
     std::ofstream pidfile(pidFileName.c_str());
-    if (!pidfile)
+    if (pidfile.fail())
       throw std::runtime_error("unable to open pid-file " + pidFileName);
+
     pidfile << pid;
-    if (!pidfile)
+
+    if (pidfile.fail())
       throw std::runtime_error("error writing to pid-file " + pidFileName);
   }
 
@@ -147,7 +149,7 @@ namespace
       ::unlink(pidFileName.c_str());
   }
 
-  void closeStdHandles(const std::string& errorLog)
+  void closeStdHandles(const std::string& errorLog = std::string())
   {
     if (::freopen("/dev/null", "r", stdin) == 0)
       throw cxxtools::SystemError("freopen(stdin)");
@@ -155,8 +157,11 @@ namespace
     if (::freopen("/dev/null", "w", stdout) == 0)
       throw cxxtools::SystemError("freopen(stdout)");
 
-    if (::freopen(errorLog.empty() ? "/dev/null" : errorLog.c_str(), "a+", stderr) == 0)
-      throw cxxtools::SystemError("freopen(stderr)");
+    if (!errorLog.empty())
+    {
+      if (::freopen(errorLog.c_str(), "a+", stderr) == 0)
+        throw cxxtools::SystemError("freopen(stderr)");
+    }
   }
 
 }
@@ -232,7 +237,7 @@ namespace tnt
       if (first)
       {
         log_debug("close standard-handles");
-        closeStdHandles(tnt::TntConfig::it().errorLog);
+        closeStdHandles();
         first = false;
       }
 

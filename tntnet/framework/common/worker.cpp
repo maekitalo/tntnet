@@ -126,9 +126,7 @@ namespace tnt
               errorReply.setKeepAliveCounter(0);
               errorReply.out() << "<html><body><h1>Error</h1><p>bad request</p></body></html>\n";
               errorReply.sendReply(400, "Bad Request");
-              HttpRequest request(application);
-              request.setMethod("-");
-              logRequest(request, errorReply, 400);
+              logRequest(j->getRequest(), errorReply, 400);
             }
             else if (socket.fail())
               log_debug("socket failed");
@@ -186,9 +184,7 @@ namespace tnt
 
             errorReply.out() << e.getBody() << '\n';
             errorReply.sendReply(e.getErrcode(), e.getErrmsg());
-            HttpRequest request(application);
-            request.setMethod("-");
-            logRequest(request, errorReply, e.getErrcode());
+            logRequest(j->getRequest(), errorReply, e.getErrcode());
           }
         } while (keepAlive);
       }
@@ -284,8 +280,6 @@ namespace tnt
 
       errorReply.out() << e.getBody() << '\n';
       errorReply.sendReply(e.getErrcode(), e.getErrmsg());
-      HttpRequest request(application);
-      request.setMethod("-");
       logRequest(request, errorReply, e.getErrcode());
     }
 
@@ -297,9 +291,26 @@ namespace tnt
     std::ofstream& accessLog = application.accessLog;
 
     if (!accessLog.is_open())
-      return;
+    {
+      std::string fname = TntConfig::it().accessLog;
+      if (!fname.empty())
+      {
+        cxxtools::MutexLock lock(application.accessLogMutex);
 
-    log_debug("log requests with return code " << httpReturn);
+        if (!accessLog.is_open())
+        {
+          log_debug("access log is not open - open now");
+          accessLog.open(fname.c_str(), std::ios::out | std::ios::app);
+          if (accessLog.fail())
+          {
+            std::cerr << "failed to open access log \"" << fname << '"' << std::endl;
+            TntConfig::it().accessLog.clear();
+          }
+        }
+      }
+    }
+
+    log_debug("log request to access log with return code " << httpReturn);
 
     time_t t;
     ::time(&t);

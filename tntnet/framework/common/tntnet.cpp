@@ -96,9 +96,6 @@ namespace tnt
 
     queue.setCapacity(config.queueSize);
 
-    if (!config.accessLog.empty())
-      accessLog.open(config.accessLog.c_str(), std::ios::out | std::ios::app);
-
     for (TntConfig::EnvironmentType::const_iterator it = config.environment.begin(); it != config.environment.end(); ++it)
     {
       std::string name = it->first;
