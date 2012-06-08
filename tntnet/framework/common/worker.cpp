@@ -73,8 +73,7 @@ namespace tnt
     : application(app),
       threadId(0),
       state(stateStarting),
-      lastWaitTime(0),
-      lastLogTime(0)
+      lastWaitTime(0)
   {
     cxxtools::MutexLock lock(mutex);
     workers.insert(this);
@@ -312,18 +311,6 @@ namespace tnt
 
     log_debug("log request to access log with return code " << httpReturn);
 
-    time_t t;
-    ::time(&t);
-    if (t != lastLogTime)
-    {
-      struct tm tm;
-      ::localtime_r(&t, &tm);
-      strftime(timebuf, sizeof(timebuf), "%d/%b/%Y:%H:%M:%S %z", &tm);
-      lastLogTime = t;
-    }
-
-    cxxtools::MutexLock lock(application.accessLogMutex);
-
     static const std::string unknown("-");
 
     std::string user = request.getUsername();
@@ -337,6 +324,23 @@ namespace tnt
     std::string query = request.getQuery();
     if (query.empty())
       query = unknown;
+
+    time_t t;
+    ::time(&t);
+
+    cxxtools::MutexLock lock(application.accessLogMutex);
+
+    // cache for timestamp of access log
+    static time_t lastLogTime = 0;
+    static char timebuf[40];
+
+    if (t != lastLogTime)
+    {
+      struct tm tm;
+      ::localtime_r(&t, &tm);
+      strftime(timebuf, sizeof(timebuf), "%d/%b/%Y:%H:%M:%S %z", &tm);
+      lastLogTime = t;
+    }
 
     accessLog << peerIp
               << " - " << user << " [" << timebuf << "] \""

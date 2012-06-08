@@ -57,10 +57,6 @@ namespace tnt
       const char* state;
       time_t lastWaitTime;
 
-      // cache for access log
-      time_t lastLogTime;
-      char timebuf[40];
-
       typedef std::set<Worker*> workers_type;
       static workers_type workers;
 
