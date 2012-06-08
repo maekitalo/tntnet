@@ -13,14 +13,12 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 sprintf_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 sprintf_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.xml tntnet.properties
-CLEANFILES = sprintf.cpp subcomp.cpp tntnet.xml tntnet.properties
+noinst_DATA = tntnet.xml
+CLEANFILES = sprintf.cpp subcomp.cpp tntnet.xml
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
-tntnet.properties:
-	$(SHELL) $(top_builddir)/tntnet-config --properties sprintf >$@
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=sprintf|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

@@ -38,8 +38,8 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 controls_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 controls_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.xml tntnet.properties
-CLEANFILES = tntnet.properties \
+noinst_DATA = tntnet.xml
+CLEANFILES = \
 	controls.cpp \
 	index.cpp \
 	treemenu.cpp \
@@ -65,7 +65,5 @@ SUFFIXES=.ecpp .png .css .cpp
 .css.cpp:
 	$(ECPPC) -b -m text/css -o $@ $<
 
-tntnet.properties:
-	$(SHELL) $(top_builddir)/tntnet-config --properties controls >$@
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=controls|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

@@ -11,14 +11,12 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 cookie_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 cookie_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.xml tntnet.properties
-CLEANFILES = cookie.cpp tntnet.xml tntnet.properties
+noinst_DATA = tntnet.xml
+CLEANFILES = cookie.cpp tntnet.xml
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
-tntnet.properties:
-	$(SHELL) $(top_builddir)/tntnet-config --properties cookie >$@
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=cookie|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

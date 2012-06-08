@@ -19,8 +19,8 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calci18n_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 calci18n_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.xml tntnet.properties calci18n.txt calci18n.fi calci18n.de
-CLEANFILES = calci18n.cpp tntnet.xml tntnet.properties \
+noinst_DATA = tntnet.xml calci18n.txt calci18n.fi calci18n.de
+CLEANFILES = calci18n.cpp tntnet.xml \
 	en.cpp calci18n.txt \
 	fi.cpp calci18n.fi fi/calci18n.tntdata \
 	de.cpp calci18n.de de/calci18n.tntdata
@@ -35,8 +35,6 @@ SUFFIXES=.ecpp .cpp .png
 .png.cpp:
 	$(ECPPC) -b -o $@ $<
 
-tntnet.properties:
-	$(SHELL) $(top_builddir)/tntnet-config  --properties calci18n >$@
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=calci18n|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
 

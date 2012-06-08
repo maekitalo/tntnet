@@ -24,10 +24,10 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 chat_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 chat_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.xml tntnet.properties
+noinst_DATA = tntnet.xml
 CLEANFILES = chat.cpp ajax.cpp getchat.cpp putchat.cpp \
     sad.cpp smile.cpp wink.cpp \
-    tntnet.xml tntnet.properties
+    tntnet.xml
 
 SUFFIXES=.ecpp .js .png .cpp
 .ecpp.cpp:
@@ -37,7 +37,5 @@ SUFFIXES=.ecpp .js .png .cpp
 .png.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png -o $@ $<
 
-tntnet.properties:
-	$(SHELL) $(top_builddir)/tntnet-config --properties chat >$@
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=chat|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

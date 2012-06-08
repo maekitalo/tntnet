@@ -11,14 +11,12 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 calc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.xml tntnet.properties
-CLEANFILES = calc.cpp tntnet.xml tntnet.properties
+noinst_DATA = tntnet.xml
+CLEANFILES = calc.cpp tntnet.xml
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
-tntnet.properties:
-	$(SHELL) $(top_builddir)/tntnet-config --properties calc >$@
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=calc|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

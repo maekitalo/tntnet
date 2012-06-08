@@ -15,8 +15,8 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calcajax_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 calcajax_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
 
-noinst_DATA = tntnet.xml tntnet.properties
-CLEANFILES = calcajax.cpp calcajax_js.cpp docalc.cpp tntnet.xml tntnet.properties
+noinst_DATA = tntnet.xml
+CLEANFILES = calcajax.cpp calcajax_js.cpp docalc.cpp tntnet.xml
 
 SUFFIXES=.ecpp .js .cpp
 
@@ -25,7 +25,5 @@ SUFFIXES=.ecpp .js .cpp
 .js.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript -o $@ $<
 
-tntnet.properties:
-	$(SHELL) $(top_builddir)/tntnet-config --properties calcajax >$@
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=calcajax|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
