@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tntnet>
+  <mappings>
+    <mapurl>
+      <target>index@newsdb</target>
+      <url>/$</url>
+    </mapurl>
+    <mapurl>
+      <target>$1@newsdb</target>
+      <url>/([^.]+)(\..+)?</url>
+    </mapurl>
+  </mappings>
+
+  <listeners>
+    <listener>
+      <ip></ip>
+      <port>8000</port>
+    </listener>
+  </listeners>
+
+  <logging>
+    <rootlogger>INFO</rootlogger>
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+    <!-- <file>tntnet.log</file> -->      <!--uncomment if you want to log to a file -->
+    <!-- <maxfilesize>1MB</maxfilesize> -->
+    <!-- <maxbackupindex>2</maxbackupindex> -->
+    <!-- <host>localhost:1234</host> --> <!--  # send log-messages with udp -->
+  </logging>
+
+  <dburl>sqlite:newsdb.db</dburl>
+</tntnet>

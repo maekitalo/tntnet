@@ -18,7 +18,6 @@ use strict;
 my ($mappings, $listeners, $ssllisteners, $settings, $appconfigs, $comppath) = ("", "", "", "", "");
 
 my %keywords = (
-    PropertyFile => 'logproperties',
     MaxRequestSize => 'maxRequestSize',
     MaxRequestTime => 'maxRequestTime',
     User => 'user',
@@ -50,6 +49,10 @@ my %keywords = (
     MaxBackgroundTasks => 'maxBackgroundTasks',
     MimeDb => 'mimeDb',
     DocumentRoot => 'documentRoot',
+);
+
+my %obsolete = (
+    PropertyFile => 'logproperties',
 );
 
 while (<>)
@@ -136,7 +139,7 @@ EOF
   <$keywords{$keyword}>$params[0]</$keywords{$keyword}>
 EOF
   }
-  else
+  elsif (!$obsolete{$keyword})
   {
     $appconfigs .= <<EOF;
   <$keyword>$params[0]</$keyword>
@@ -149,14 +152,17 @@ print <<EOF;
 <tntnet>
   <mappings>
 $mappings  </mappings>
+
 EOF
 print <<EOF if $listeners;
   <listeners>
 $listeners  </listeners>
+
 EOF
 print <<EOF if $ssllisteners;
   <ssllisteners>
 $ssllisteners  </ssllisteners>
+
 EOF
 print $settings;
 print <<EOF if $comppath;
@@ -165,5 +171,19 @@ $comppath  </compPath>
 EOF
 
 print <<EOF;
+  <logging>
+    <rootlogger>INFO</rootlogger>
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+    <!-- <file>tntnet.log</file> -->      <!--uncomment if you want to log to a file -->
+    <!-- <maxfilesize>1MB</maxfilesize> -->
+    <!-- <maxbackupindex>2</maxbackupindex> -->
+    <!-- <host>localhost:1234</host> --> <!--  # send log-messages with udp -->
+  </logging>
+
 $appconfigs</tntnet>
 EOF
