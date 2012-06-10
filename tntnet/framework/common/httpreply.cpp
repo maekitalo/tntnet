@@ -111,7 +111,6 @@ namespace tnt
       {
         for (unsigned n = 0; n < pool.size(); ++n)
           delete pool[n];
-        pool.clear();
       }
 
       Impl* getInstance(std::ostream& s, bool sendStatusLine);

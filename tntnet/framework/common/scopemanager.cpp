@@ -40,6 +40,18 @@ log_define("tntnet.scopemanager")
 
 namespace tnt
 {
+  ScopeManager::ScopeManager()
+  {
+  }
+
+  ScopeManager::~ScopeManager()
+  {
+    for (sessionscopes_type::iterator it = sessionScopes.begin(); it != sessionScopes.end(); ++it)
+      delete it->second;
+    for (scopes_type::iterator it = applicationScopes.begin(); it != applicationScopes.end(); ++it)
+      delete it->second;
+  }
+
   Scope* ScopeManager::getApplicationScope(const std::string& appname)
   {
     cxxtools::MutexLock lock(applicationScopesMutex);

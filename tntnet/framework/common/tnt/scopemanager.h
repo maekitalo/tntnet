@@ -62,6 +62,9 @@ namespace tnt
       void removeSessionScope(const std::string& sessioncookie);
 
     public:
+      ScopeManager();
+      ~ScopeManager();
+
       void preCall(HttpRequest& request, const std::string& app);
       void setSessionId(HttpRequest& request, const std::string& sessionId);
       std::string postCall(HttpRequest& request, HttpReply& reply, const std::string& app);

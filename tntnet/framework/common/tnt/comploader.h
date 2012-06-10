@@ -60,7 +60,10 @@ namespace tnt
   {
     protected:
       void destroy(objectType* ptr)
-      { ::dlclose(*ptr); }
+      {
+        ::dlclose(*ptr);
+        delete ptr;
+      }
   };
 
   class ComponentLibrary
