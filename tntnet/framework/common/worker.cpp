@@ -44,6 +44,7 @@
 #include <sys/poll.h>
 #include <cxxtools/dlloader.h>
 #include <cxxtools/ioerror.h>
+#include <cxxtools/atomicity.h>
 #include <pthread.h>
 #include <string.h>
 
@@ -287,6 +288,9 @@ namespace tnt
 
   void Worker::logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn)
   {
+    static cxxtools::atomic_t waitCount = 0;
+    cxxtools::atomicIncrement(waitCount);
+
     std::ofstream& accessLog = application.accessLog;
 
     if (!accessLog.is_open())
@@ -354,8 +358,9 @@ namespace tnt
     else
       accessLog << '-';
     accessLog << " \"" << request.getHeader(httpheader::referer, "-") << "\" \""
-              << request.getHeader(httpheader::userAgent, "-") << "\""
-              << std::endl;
+              << request.getHeader(httpheader::userAgent, "-") << "\"\n";
+    if (cxxtools::atomicDecrement(waitCount) == 0)
+      accessLog.flush();
   }
 
   void Worker::dispatch(HttpRequest& request, HttpReply& reply)
