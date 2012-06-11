@@ -55,6 +55,7 @@ namespace tnt
       ~HttpReply();
 
       static bool tryCompress(std::string& body);
+      static void postRunCleanup();
 
       void setContentType(const char* t)            { setHeader(httpheader::contentType, t); }
       void setContentType(const std::string& t)     { setHeader(httpheader::contentType, t); }

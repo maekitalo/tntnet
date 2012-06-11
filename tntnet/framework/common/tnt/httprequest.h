@@ -246,6 +246,8 @@ namespace tnt
 
       /// rewind watchdog timer.
       void touch()                               { threadContext->touch(); }
+
+      static void postRunCleanup();
   };
 
   inline std::istream& operator>> (std::istream& in, HttpRequest& msg)

@@ -115,6 +115,7 @@ namespace tnt
 
       Impl* getInstance(std::ostream& s, bool sendStatusLine);
       void releaseInstance(Impl* inst);
+      void clear();
     };
 
     static Pool pool;
@@ -167,6 +168,14 @@ namespace tnt
     {
       delete inst;
     }
+  }
+
+  void HttpReply::Impl::Pool::clear()
+  {
+    cxxtools::MutexLock lock(poolMutex);
+    for (unsigned n = 0; n < pool.size(); ++n)
+      delete pool[n];
+    pool.clear();
   }
 
   HttpReply::Impl::Impl(std::ostream& s, bool sendStatusLine_)
@@ -258,6 +267,11 @@ namespace tnt
     }
 
     return false;
+  }
+
+  void HttpReply::postRunCleanup()
+  {
+    Impl::pool.clear();
   }
 
   void HttpReply::send(unsigned ret, const char* msg, bool ready) const

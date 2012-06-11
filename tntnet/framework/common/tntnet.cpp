@@ -281,6 +281,9 @@ namespace tnt
       delete *it;
     listeners.clear();
 
+    HttpReply::postRunCleanup();
+    HttpRequest::postRunCleanup();
+
     log_info("all threads stopped");
   }
 

@@ -278,24 +278,22 @@ namespace tnt
 
   namespace
   {
+    typedef std::map<std::string, std::locale> locale_map_type;
+    static std::locale* stdlocale = 0;
+    static locale_map_type locale_map;
+    static cxxtools::Mutex locale_monitor;
+
     const std::locale& getCacheLocale(const std::string& lang)
     {
-      static std::locale stdlocale;
-      static bool stdlocale_init = false;
 
-      typedef std::map<std::string, std::locale> locale_map_type;
-      static locale_map_type locale_map;
-      static cxxtools::Mutex locale_monitor;
-
-      if (!stdlocale_init)
+      if (stdlocale == 0)
       {
         cxxtools::MutexLock lock(locale_monitor);
-        if (!stdlocale_init)
+        if (stdlocale == 0)
         {
-          stdlocale_init = true;
           try
           {
-            stdlocale = std::locale("");
+            stdlocale = new std::locale("");
           }
           catch (const std::exception& e)
           {
@@ -304,8 +302,8 @@ namespace tnt
         }
       }
 
-      if (lang.empty() || lang == stdlocale.name())
-        return stdlocale;
+      if (lang.empty() || lang == stdlocale->name())
+        return *stdlocale;
 
       try
       {
@@ -322,9 +320,17 @@ namespace tnt
       catch (const std::exception& e)
       {
         log_warn("unknown locale " << lang << ": " << e.what());
-        locale_map.insert(locale_map_type::value_type(lang, stdlocale));
-        return stdlocale;
+        locale_map.insert(locale_map_type::value_type(lang, *stdlocale));
+        return *stdlocale;
       }
+    }
+
+    void clearLocaleCache()
+    {
+      cxxtools::MutexLock lock(locale_monitor);
+      locale_map.clear();
+      delete stdlocale;
+      stdlocale = 0;
     }
   }
 
@@ -611,5 +617,9 @@ namespace tnt
     return secureSessionScope != 0 && !secureSessionScope->empty();
   }
 
+  void HttpRequest::postRunCleanup()
+  {
+    tnt::clearLocaleCache();
+  }
 }
 
