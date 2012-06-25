@@ -129,20 +129,13 @@ namespace tnt
 
   HttpReply::Impl* HttpReply::Impl::Pool::getInstance(std::ostream& s, bool sendStatusLine)
   {
+    cxxtools::MutexLock lock(poolMutex);
+
     if (pool.empty())
       return new Impl(s, sendStatusLine);
 
-    Impl* impl;
-
-    {
-      cxxtools::MutexLock lock(poolMutex);
-
-      if (pool.empty())
-        return new Impl(s, sendStatusLine);
-
-      impl = pool.back();
-      pool.pop_back();
-    }
+    Impl* impl = pool.back();
+    pool.pop_back();
 
     impl->socket = &s;
     impl->keepAliveCounter = 0;
