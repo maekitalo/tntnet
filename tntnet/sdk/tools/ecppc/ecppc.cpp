@@ -256,7 +256,11 @@ namespace tnt
             generator.setLastModifiedTime(st.st_ctime);
         }
         else
-          runParser(in, generator);
+        {
+          bool success = runParser(in, generator, true);
+          if (!success)
+            return 1;
+        }
       }
 
       //
@@ -285,7 +289,7 @@ namespace tnt
         throw std::runtime_error(std::string("can't read ") + inputfile);
 
       if (!binary)
-        runParser(in, generator);
+        runParser(in, generator, false);
 
       if (ofile.empty())
         generator.getDependencies(std::cout);
@@ -298,7 +302,7 @@ namespace tnt
       return 0;
     }
 
-    void Ecppc::runParser(std::istream& in, tnt::ecpp::ParseHandler& handler)
+    bool Ecppc::runParser(std::istream& in, tnt::ecpp::ParseHandler& handler, bool continueOnError)
     {
       // create parser
       tnt::ecpp::Parser parser(handler, inputfile);
@@ -309,7 +313,24 @@ namespace tnt
         parser.addInclude(*it);
 
       // call parser
-      parser.parse(in);
+      bool success = true;
+      while (in)
+      {
+        try
+        {
+          parser.parse(in);
+        }
+        catch (const std::exception& e)
+        {
+          if (!continueOnError)
+            throw;
+
+          success = false;
+          std::cerr << e.what() << std::endl;
+        }
+      }
+
+      return success;
     }
 
     Usage::Usage(const char* progname)

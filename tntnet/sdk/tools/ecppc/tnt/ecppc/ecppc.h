@@ -68,7 +68,7 @@ namespace tnt
 
         int runDependencies();
         int runGenerator();
-        void runParser(std::istream& in, tnt::ecpp::ParseHandler& handler);
+        bool runParser(std::istream& in, tnt::ecpp::ParseHandler& handler, bool continueOnError);
 
       public:
         Ecppc(int& argc, char* argv[]);
