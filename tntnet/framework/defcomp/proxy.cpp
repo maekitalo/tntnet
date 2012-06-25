@@ -103,6 +103,21 @@ namespace tnt
     cxxtools::net::Uri uri(request.getArg(0));
 
     std::string url = uri.path();
+    bool urlEndsWithSlash = !url.empty() && url[url.size()-1] == '/';
+    bool pathInfoStartsWithSlash = !request.getPathInfo().empty() && request.getPathInfo()[0] == '/';
+
+    if (urlEndsWithSlash
+      && pathInfoStartsWithSlash)
+    {
+      // Avoid double slash, if getPathInfo starts with '/' (which is normally the case).
+      url.erase (url.size()-1, 1);
+    }
+    else if (!urlEndsWithSlash
+      && !pathInfoStartsWithSlash)
+    {
+      url += '/';
+    }
+
     url += request.getPathInfo();
     if (!qparam.empty())
     {
@@ -130,6 +145,12 @@ namespace tnt
     clientRequest.body() << request.getBody();
 
     const char* value;
+
+    clientRequest.setHeader ("Host", uri.host().c_str());
+
+    std::string peerIp = request.getPeerIp();
+    clientRequest.setHeader ("X-Real-IP", peerIp.c_str());
+    clientRequest.addHeader ("X-Forwarded-For", peerIp.c_str());
 
     value = request.getHeader(tnt::httpheader::contentType, 0);
     if (value)
@@ -159,12 +180,28 @@ namespace tnt
     for (cxxtools::http::MessageHeader::const_iterator it = client.header().begin();
         it != client.header().end(); ++it)
     {
-        if (strcasecmp(it->first, "Set-Cookie") == 0)
-        {
-            log_info("cookie: " << it->first << " value: " << it->second);
-            reply.setHeader(tnt::httpheader::setCookie, it->second, false);
-        }
+      if (strcasecmp(it->first, "Set-Cookie") == 0)
+      {
+        log_info("cookie: " << it->first << " value: " << it->second);
+        reply.setHeader(tnt::httpheader::setCookie, it->second, false);
+      }
     }
+
+    value = client.header().getHeader ("p3p");
+    if (value)
+      reply.setHeader("p3p:", value);
+
+    value = client.header().getHeader("Cache-Control");
+    if (value)
+      reply.setHeader(tnt::httpheader::cacheControl, value);
+
+    value = client.header().getHeader("Expires");
+    if (value)
+      reply.setHeader(tnt::httpheader::expires, value);
+
+    value = client.header().getHeader("Last-Modified");
+    if (value)
+      reply.setHeader(tnt::httpheader::lastModified, value);
 
     value = client.header().getHeader("Location");
     if (value)
