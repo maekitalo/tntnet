@@ -89,12 +89,14 @@ namespace tnt
   class NotFoundException : public HttpError
   {
       std::string url;
+      std::string vhost;
 
     public:
-      explicit NotFoundException(const std::string& url_);
+      explicit NotFoundException(const std::string& url_, const std::string& vhost = std::string());
       ~NotFoundException() throw() { }
 
       const std::string& getUrl() const  { return url; }
+      const std::string& getVHost() const  { return vhost; }
   };
 
   class NotAuthorized : public HttpError

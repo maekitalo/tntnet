@@ -184,9 +184,27 @@ namespace tnt
     return p == std::string::npos ? msg.substr(4) : msg.substr(4, p - 4);
   }
 
-  NotFoundException::NotFoundException(const std::string& url_)
-    : HttpError(HTTP_NOT_FOUND, "Not Found"),
-      url(url_)
+  namespace
+  {
+    std::string notFoundMsg(const std::string& url, const std::string& vhost)
+    {
+      std::string msg = "Not Found: ";
+      if (!vhost.empty())
+      {
+        msg += "vhost: ";
+        msg += vhost;
+        msg += ' ';
+      }
+
+      msg += url;
+      return msg;
+    }
+  }
+
+  NotFoundException::NotFoundException(const std::string& url_, const std::string& vhost_)
+    : HttpError(HTTP_NOT_FOUND, notFoundMsg(url_, vhost_)),
+      url(url_),
+      vhost(vhost_)
   {
   }
 

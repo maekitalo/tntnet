@@ -35,6 +35,6 @@ namespace tnt
   Compident Urlmapper::mapComp(const std::string& vhost,
     const std::string& compUrl) const
   {
-    throw NotFoundException(compUrl);
+    throw NotFoundException(compUrl, vhost);
   }
 }

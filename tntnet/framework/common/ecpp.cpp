@@ -119,7 +119,7 @@ namespace tnt
       }
       catch (const std::exception&)
       {
-        throw NotFoundException(ci.toString());
+        throw NotFoundException(url);
       }
     }
 

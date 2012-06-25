@@ -205,7 +205,7 @@ Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
     }
   }
 
-  throw NotFoundException(compUrl);
+  throw NotFoundException(compUrl, vhost);
 }
 
 Maptarget Dispatcher::PosType::getNext()
