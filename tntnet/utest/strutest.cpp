@@ -34,7 +34,7 @@ class StrTest : public cxxtools::unit::TestSuite
 {
     public:
         StrTest()
-        : cxxtools::unit::TestSuite("cxxtools-str-Test")
+        : cxxtools::unit::TestSuite("str-Test")
         {
             registerMethod("testCompare_std_string", *this, &StrTest::testCompare_std_string);
             registerMethod("testCompare_charp", *this, &StrTest::testCompare_charp);

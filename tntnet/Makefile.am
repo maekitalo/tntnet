@@ -49,11 +49,11 @@ endif
 SUBDIRS = \
     framework/common \
     doc/man \
-    $(UNITTESTDIR) \
     $(SERVERDIRS) \
     $(CGIDIRS) \
     $(SDKDIRS) \
-    $(DEMOSDIRS)
+    $(DEMOSDIRS) \
+    $(UNITTESTDIR)
 
 EXTRA_DIST = ecpp.vim \
     doc/tntnet.pdf \
