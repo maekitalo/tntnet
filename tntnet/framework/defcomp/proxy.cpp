@@ -119,10 +119,10 @@ namespace tnt
     }
 
     url += request.getPathInfo();
-    if (!qparam.empty())
+    if (!request.getQueryString().empty())
     {
       url += '?';
-      url += qparam.getUrl();
+      url += request.getQueryString();
     }
 
     if (currentProxyHost != uri.host() || currentProxyPort != uri.port())
