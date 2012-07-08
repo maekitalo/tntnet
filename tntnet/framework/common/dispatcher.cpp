@@ -183,6 +183,9 @@ Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
 
         if (TntConfig::it().maxUrlMapCache > 0)
         {
+          lock.unlock();
+          cxxtools::WriteLock wlock(urlMapCacheMutex);
+
           // clear cache after maxUrlMapCache distinct requests
           if (urlMapCache.size() > TntConfig::it().maxUrlMapCache)
           {
@@ -190,8 +193,6 @@ Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
             urlMapCache.clear();
           }
 
-          lock.unlock();
-          cxxtools::WriteLock wlock(urlMapCacheMutex);
           urlMapCache.insert(urlMapCacheType::value_type(cacheKey, UrlMapCacheValue(ci, pos)));
         }
 
