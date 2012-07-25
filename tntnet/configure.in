@@ -86,12 +86,12 @@ AC_ARG_WITH([ssl],
 
 case "$ssl_option" in
     gnutls)
-        AC_CHECK_HEADER([gnutls/gnutls.h], [
+        PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11], [
             AC_MSG_RESULT([building with GnuTLS support])
             AC_DEFINE(WITH_GNUTLS, [], [Define to build with gnutls])
             with_gnutls=1
           ],
-          [AC_MSG_ERROR(gnutls-headers not not found)])
+          [AC_MSG_ERROR(gnutls >= 2.11 not not found)])
         ;;
     openssl|yes)
         AC_CHECK_HEADER([openssl/ssl.h], [

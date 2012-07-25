@@ -32,7 +32,6 @@
 #include <cxxtools/mutex.h>
 #include <cxxtools/log.h>
 #include <sstream>
-#include "tnt/gcryptinit.h"
 #include <sys/poll.h>
 #include <errno.h>
 #include <cxxtools/ioerror.h>
@@ -150,11 +149,6 @@ namespace tnt
     cxxtools::MutexLock lock(mutex);
     if (initCount++ == 0)
     {
-      log_debug("gcry_control");
-      ret = gcrypt_init();
-      if (ret != 0)
-        throw GnuTlsException("gcry_control", ret);
-
       log_debug("gnutls_global_init()");
       ret = gnutls_global_init();
       if (ret != 0)

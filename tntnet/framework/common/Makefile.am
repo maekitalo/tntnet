@@ -119,14 +119,12 @@ libtntnet_la_LIBADD = -lz -lcxxtools $(PTHREAD_LIBS)
 
 if MAKE_GNUTLS
 libtntnet_la_SOURCES += \
-	gcryptinit.c \
 	gnutls.cpp
 
 noinst_HEADERS += \
-	tnt/gcryptinit.h \
 	tnt/gnutls.h
 
-libtntnet_la_LIBADD += -lgnutls -lgcrypt
+libtntnet_la_LIBADD += $(GNUTLS_LIBS)
 endif
 
 if MAKE_OPENSSL
