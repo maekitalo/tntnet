@@ -37,7 +37,7 @@ namespace tnt
   extern const std::string factorySuffix;
 
   class Component;
-  class Compident;
+  struct Compident;
   class Comploader;
   class Urlmapper;
   class TntConfig;
