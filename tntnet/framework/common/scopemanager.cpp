@@ -247,53 +247,66 @@ namespace tnt
 
     std::string sessionId;
 
-    if (request.hasSessionScope())
+    if (reply.isClearSession())
     {
-      // request has session scope
       sessionId = request.getCookie(currentSessionCookieName);
-      if (sessionId.empty())
-      {
-        // client has no sessionId
+      if (!sessionId.empty())
+        removeSessionScope(sessionId);
 
-        cxxtools::Md5stream c;
-        c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
-        sessionId = c.getHexDigest();
-        log_info("create new session " << sessionId);
-        reply.setCookie(currentSessionCookieName, sessionId);
-        putSessionScope(sessionId, &request.getSessionScope());
-      }
-      else if (!hasSessionScope(sessionId))
-      {
-        // client has a sessionId but no associated session
-        // this may happen, when tntnet is restarted while the browser has a session
-
-        putSessionScope(sessionId, &request.getSessionScope());
-      }
+      std::string secureSessionId = request.getCookie(currentSecureSessionCookieName);
+      if (!secureSessionId.empty())
+        removeSessionScope(secureSessionId);
     }
-
-    if (request.isSsl() && request.hasSecureSessionScope())
+    else
     {
-      // request has secure session scope
-      std::string sessionId = request.getCookie(currentSecureSessionCookieName);
-      if (sessionId.empty())
+      if (request.hasSessionScope())
       {
-        // client has no sessionId
+        // request has session scope
+        sessionId = request.getCookie(currentSessionCookieName);
+        if (sessionId.empty())
+        {
+          // client has no sessionId
 
-        cxxtools::Md5stream c;
-        c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
-        sessionId = c.getHexDigest();
-        log_info("create new secure session " << sessionId);
-        tnt::Cookie cookie(sessionId);
-        cookie.setSecure();
-        reply.setCookie(currentSecureSessionCookieName, cookie);
-        putSessionScope(sessionId, &request.getSecureSessionScope());
+          cxxtools::Md5stream c;
+          c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
+          sessionId = c.getHexDigest();
+          log_info("create new session " << sessionId);
+          reply.setCookie(currentSessionCookieName, sessionId);
+          putSessionScope(sessionId, &request.getSessionScope());
+        }
+        else if (!hasSessionScope(sessionId))
+        {
+          // client has a sessionId but no associated session
+          // this may happen, when tntnet is restarted while the browser has a session
+
+          putSessionScope(sessionId, &request.getSessionScope());
+        }
       }
-      else if (!hasSessionScope(sessionId))
-      {
-        // client has a sessionId but no associated session
-        // this may happen, when tntnet is restarted while the browser has a session
 
-        putSessionScope(sessionId, &request.getSecureSessionScope());
+      if (request.isSsl() && request.hasSecureSessionScope())
+      {
+        // request has secure session scope
+        std::string sessionId = request.getCookie(currentSecureSessionCookieName);
+        if (sessionId.empty())
+        {
+          // client has no sessionId
+
+          cxxtools::Md5stream c;
+          c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
+          sessionId = c.getHexDigest();
+          log_info("create new secure session " << sessionId);
+          tnt::Cookie cookie(sessionId);
+          cookie.setSecure();
+          reply.setCookie(currentSecureSessionCookieName, cookie);
+          putSessionScope(sessionId, &request.getSecureSessionScope());
+        }
+        else if (!hasSessionScope(sessionId))
+        {
+          // client has a sessionId but no associated session
+          // this may happen, when tntnet is restarted while the browser has a session
+
+          putSessionScope(sessionId, &request.getSecureSessionScope());
+        }
       }
     }
 

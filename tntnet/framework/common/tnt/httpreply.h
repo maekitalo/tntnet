@@ -63,6 +63,11 @@ namespace tnt
 
       void setHeadRequest(bool sw = true);
 
+      /// Session is cleared after the current request.
+      void clearSession();
+      /// Returns true, if the session is cleared after the current request.
+      bool isClearSession() const;
+
       /// Throws an exception, which results in a redirect.
       unsigned redirect(const std::string& newLocation);
       /// Throws an exception, which results in a login dialog in the browser.
