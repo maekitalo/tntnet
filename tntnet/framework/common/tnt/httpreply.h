@@ -31,13 +31,13 @@
 #define TNT_HTTPREPLY_H
 
 #include <tnt/httpmessage.h>
-#include <tnt/encoding.h>
 #include <tnt/http.h>
 #include <iosfwd>
 
 namespace tnt
 {
   class Savepoint;
+  class Encoding;
 
   /// HTTP-Reply-message
   class HttpReply : public HttpMessage

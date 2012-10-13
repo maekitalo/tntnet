@@ -35,6 +35,7 @@
 #include <tnt/tntconfig.h>
 #include <tnt/htmlescostream.h>
 #include <tnt/urlescostream.h>
+#include <tnt/encoding.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 #include <cxxtools/mutex.h>
