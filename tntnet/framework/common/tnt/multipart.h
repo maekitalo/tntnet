@@ -71,13 +71,7 @@ namespace tnt
 
     public:
       Part()
-#if defined(_RWSTDDEBUG) && !defined(_RWSTD_NO_DEBUG_ITER)
-        : bodyBegin(), bodyEnd()
-        { bodyBegin._C_iter = bodyEnd._C_iter = 0;}
-#else
-        : bodyBegin(0), bodyEnd(0)
         { }
-#endif
 
       Part(const_iterator b, const_iterator e);
 
