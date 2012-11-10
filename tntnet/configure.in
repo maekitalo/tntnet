@@ -26,6 +26,8 @@ AX_COMPILER_VENDOR
 AS_IF([test "$ax_cv_cxx_compiler_vendor" = "ibm"],
       [CXXFLAGS="$CXXFLAGS -qrtti -qlanglvl=newexcp -D__NOLOCK_ON_INPUT -D__NOLOCK_ON_OUTPUT"])
 AX_CHECK_COMPILE_FLAG([-Wno-long-long], [CXXFLAGS="$CXXFLAGS -Wno-long-long"])
+AX_CHECK_COMPILE_FLAG([-Wall], [CXXFLAGS="$CXXFLAGS -Wall"])
+AX_CHECK_COMPILE_FLAG([-pedantic], [CXXFLAGS="$CXXFLAGS -pedantic"])
 
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADER([cxxtools/net/tcpsocket.h], , AC_MSG_ERROR([cxxtools headers not found]))
