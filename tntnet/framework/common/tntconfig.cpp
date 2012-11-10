@@ -74,12 +74,25 @@ namespace tnt
       config.mappings.insert(config.mappings.end(), mappings.begin(), mappings.end());
 
     TntConfig::ListenersType listeners;
-    if (si.getMember("listeners", listeners))
-      config.listeners.insert(config.listeners.end(), listeners.begin(), listeners.end());
-
     TntConfig::SslListenersType ssllisteners;
-    if (si.getMember("ssllisteners", ssllisteners))
-      config.ssllisteners.insert(config.ssllisteners.end(), ssllisteners.begin(), ssllisteners.end());
+
+    const cxxtools::SerializationInfo& lit = si.getMember("listeners");
+    for (cxxtools::SerializationInfo::ConstIterator it = lit.begin(); it != lit.end(); ++it)
+    {
+      if (it->findMember("certificate") != 0)
+      {
+        ssllisteners.resize(ssllisteners.size() + 1);
+        *it >>= ssllisteners.back();
+      }
+      else
+      {
+        listeners.resize(listeners.size() + 1);
+        *it >>= listeners.back();
+      }
+    }
+
+    config.listeners.insert(config.listeners.end(), listeners.begin(), listeners.end());
+    config.ssllisteners.insert(config.ssllisteners.end(), ssllisteners.begin(), ssllisteners.end());
 
     if (config.listeners.empty() && config.ssllisteners.empty())
     {

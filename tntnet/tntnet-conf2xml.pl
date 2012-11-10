@@ -15,7 +15,7 @@ Tommi ME<auml>kitalo, Tntnet.org
 =cut
 
 use strict;
-my ($mappings, $listeners, $ssllisteners, $settings, $appconfigs, $comppath) = ("", "", "", "", "");
+my ($mappings, $listeners, $settings, $appconfigs, $comppath) = ("", "", "", "", "");
 
 my %keywords = (
     MaxRequestSize => 'maxRequestSize',
@@ -114,17 +114,17 @@ EOF
   {
     my ($ip, $port, $certificate, $key) = @params;
     $ip =~ s/"//g;
-    $ssllisteners .= <<EOF;
-    <sslistener>
+    $listeners .= <<EOF;
+    <listener>
       <ip>$ip</ip>
       <port>$port</port>
       <certificate>$certificate</certificate>
 EOF
-    $ssllisteners .= <<EOF if $key;
+    $listeners .= <<EOF if $key;
       <key>$key</key>
 EOF
-    $ssllisteners .= <<EOF;
-    </sslistener>
+    $listeners .= <<EOF;
+    </listener>
 EOF
   }
   elsif ($keyword eq "CompPath")
@@ -154,16 +154,14 @@ print <<EOF;
 $mappings  </mappings>
 
 EOF
+print <<EOF;
+EOF
 print <<EOF if $listeners;
   <listeners>
 $listeners  </listeners>
 
 EOF
-print <<EOF if $ssllisteners;
-  <ssllisteners>
-$ssllisteners  </ssllisteners>
 
-EOF
 print $settings;
 print <<EOF if $comppath;
   <compPath>

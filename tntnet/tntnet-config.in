@@ -81,18 +81,16 @@ EOF
       <ip></ip>
       <port>8000</port>
     </listener>
-  </listeners>
-
-  <!-- to enable ssl, we need a Certificate and a ssllistener-section -->
+  <!-- a certificate enables ssl -->
   <!--
-  <ssllisteners>
-    <ssllistener>
+    <listener>
       <ip></ip>
       <port>8443</port>
       <certificate>tntnet.pem</certificate>
-    </ssllistener>
-  </ssllisteners>
+    </listener>
     -->
+  </listeners>
+
   <logging>
     <rootlogger>INFO</rootlogger>
 
