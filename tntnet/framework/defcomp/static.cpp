@@ -372,6 +372,16 @@ namespace tnt
     // set Content-Length
     reply.setContentLengthHeader(count);
 
+    if (request.isMethodHEAD())
+    {
+      log_debug("head request");
+      return httpOkReturn;
+    }
+    else
+    {
+      log_debug("no head request");
+    }
+
     // send data
     log_info("send file \"" << file << "\" size " << st.st_size << " bytes; offset=" << offset << " count=" << count);
 

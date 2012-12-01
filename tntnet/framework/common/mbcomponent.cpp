@@ -135,19 +135,27 @@ namespace tnt
           log_debug("compressed data found; content size " << data[url_idx].getLength() << " to " << compressedData[url_idx].size());
           reply.setContentLengthHeader(compressedData[url_idx].size());
           reply.setHeader(httpheader::contentEncoding, "gzip");
-          reply.setDirectMode();
-          reply.out() << compressedData[url_idx];
+          if (!request.isMethodHEAD())
+          {
+            reply.setDirectMode();
+            reply.out() << compressedData[url_idx];
+          }
           return HTTP_OK;
         }
       }
 
-      log_debug("send data");
-
       reply.setContentLengthHeader(data.size(url_idx));
-      reply.setDirectMode();
+
+      if (!request.isMethodHEAD())
+      {
+        log_debug("send data");
+        reply.setDirectMode();
+      }
     }
 
-    reply.out() << data[url_idx];
+    if (!request.isMethodHEAD())
+      reply.out() << data[url_idx];
+
     return HTTP_OK;
   }
 
