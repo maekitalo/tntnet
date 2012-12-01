@@ -38,6 +38,7 @@
 #include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
