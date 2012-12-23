@@ -5,7 +5,7 @@ nodist_alldemos_la_SOURCES = \
 
 EXTRA_DIST = \
 	alldemos.ecpp \
-	tntnet.conf \
+	tntnet.xml \
 	demos.txt
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
