@@ -90,16 +90,6 @@ The value specified here can be postfixed with 'k' or 'M' to specify
 kBytes or MBytes.
 The maximum fileindex backed up is set with \fImaxbackupindex\fP.
 .PP
-Since writing the file can take some time, output can be buffered and
-written physically in regular intervals.
-The interval is specified in milliseconds with the variable \fIflushdelay\fP.
-The logging-library starts a background-thread, which flushes the buffer
-regulary.
-This improves logging-speed significantly.
-The problem is, that a background-thread is used, which consumes
-resources and if the program crashes, the most recent log-messages might
-not be in the file.
-.PP
 Log-messages can be sent to another host in the network with udp.
 This is done by specifying a hostname and a port with the variable
 \fIhost\fP.
@@ -129,8 +119,6 @@ file=tntnet.log
 maxfilesize=1MB
 .br
 maxbackupindex=10
-.br
-flulshdelay=100
 .br
 .RE
 .
