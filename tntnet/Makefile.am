@@ -75,4 +75,5 @@ EXTRA_DIST = ecpp.vim \
     sdk/demos/newsdb/newsdata.sh \
     sdk/demos/newsdb/newsdb.sql \
     sdk/demos/newsdb/tntnet.xml \
-    m4/acx_pthread.m4
+    m4/acx_pthread.m4 \
+    m4/pkg.m4
