@@ -39,6 +39,16 @@
                 <th>Headline</th>
             </tr>
             <tr>
+                <td valign="top" class="news-table-date"><b>28&nbsp;Dec&nbsp;2012</b></td>
+                <td><a href="news.html">Tntnet homepage runs now tntnet</a></td>
+            </tr>
+
+            <tr>
+                <td valign="top" class="news-table-date"><b>19&nbsp;May&nbsp;2012</b></td>
+                <td><a href="news.html">bugfix release 2.1.1 of cxxtools released</a></td>
+            </tr>
+
+            <tr>
                 <td valign="top" class="news-table-date"><b>02&nbsp;Apr&nbsp;2012</b></td>
                 <td><a href="news.html">stable versions cxxtools 2.1, tntnet 2.1 and tntdb 1.2 released</a></td>
             </tr>
@@ -46,16 +56,6 @@
             <tr>
                 <td valign="top" class="news-table-date"><b>03&nbsp;Oct&nbsp;2011</b></td>
                 <td><a href="news.html">Wiki available</a></td>
-            </tr>
-
-            <tr>
-                <td valign="top" class="news-table-date"><b>01&nbsp;Aug&nbsp;2010</b></td>
-                <td><a href="news.html">stable versions cxxtools 2.0, tntnet 2.0 and tntdb 1.1 released</a></td>
-            </tr>
-
-            <tr>
-                <td valign="top" class="news-table-date"><b>12&nbsp;May&nbsp;2010</b></td>
-                <td><a href="news.html">new article about using xmlrpc in cxxtools (> 1.99)</a></td>
             </tr>
 
         </table>

@@ -9,7 +9,7 @@
         <h3>stable versions</h3>
         <ul>
             <li><a href="download/tntnet-2.1.tar.gz">the source of tntnet 2.1</a></li>
-            <li><a href="download/cxxtools-2.1.tar.gz">the source of cxxtools 2.1</a></li>
+            <li><a href="download/cxxtools-2.1.1.tar.gz">the source of cxxtools 2.1.1</a></li>
             <li><a href="download/tntdb-1.2.tar.gz">the source of tntdb 1.2</a></li>
         </ul>
 

@@ -97,7 +97,7 @@
 
 <h3>How many developers tntnet has?</h3>
 
-<p>Almost all of tntnet was developed by a single person – Tommi Mäkitalo.</p>
+<p>Almost all of tntnet was developed by a single person - Tommi M&auml;kitalo.</p>
 
 <p>Normally you should really think if you really want to trust a application written and maintained by a single person.</p>
 
@@ -109,7 +109,7 @@
 
 <p>Also on the server, where the page is hosted, there are other web sites, which need technologies not offered by tntnet, so to run the site with tntnet we need at least a unique IP address, which we currently do not have.</p>
 
-<p>But you are really right – tntnet should anyhow run with tntnet. I hope, that I can switch some day.</p>
+<p>But you are really right - tntnet should anyhow run with tntnet. I hope, that I can switch some day.</p>
 
 <h3>Can I use tntnet in commercial applications?</h3>
 
@@ -118,6 +118,14 @@
 <h3>Do I need to publish my source code, when I use tntnet in my application?</h3>
 
 <p>Most web applications are written in interpreted languages like PHP, Ruby, Python or Perl, where the source is the application itself. So it is technologically necessary to deliver the source for your uses. That is not the case with tntnet. Tntnet applications are compiled into binary code and the source is not needed at run time. This makes it possible to deliver your application binary only. And the LGPL allows you to do that also.</p>
+
+<h2>Development</h2>
+
+<h3>After adding tntdb (or something else) to my tntnet application, the page is not loaded any more. What can I do?</h3>
+
+<p>Most probably there are unresolved external symbols. Maybe you forgot to link the applicatioin against tntdb. Not that you can link a shared library without error messages although there are unresolved symbols.</p>
+
+<p>Try "ldd -r myapplication.so". This checks for unresolved symbols. If you get an error message, you also get a hint, what may be missing</p>
 
 </div>
 

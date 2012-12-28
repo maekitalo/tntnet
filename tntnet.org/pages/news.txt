@@ -8,6 +8,25 @@
     <table cellspacing="0" class="news-article">
         <tr>
             <th class="news-article-header" >
+                <b>bugfix release 2.1.1 of cxxtools released</b>
+                <br/>
+                <i>Posted on May 19, 2012</i>
+            </th>
+        </tr>
+        <tr>
+            <td class="news-article-body">
+<p>This release fixes some bugs occured after the last 2.1 release. No features are added here and it is binary compatible to version 2.1.</p>
+
+
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <table cellspacing="0" class="news-article">
+        <tr>
+            <th class="news-article-header" >
                 <b>stable versions cxxtools 2.1, tntnet 2.1 and tntdb 1.2 released</b>
                 <br/>
                 <i>Posted on April 02, 2012</i>
@@ -18,14 +37,13 @@
 <p>Its update time. These releases are the result of 2 years of development whith
 many improvements.</p>
 
-<p>Major features in cxxtools are a implementation for json and proprietary
-fast binary rpc server and client based on the serialization framework,
-serialization of both formats as well as csv.  The serialization framework got
-a big refactoration, which comes along with a better type system. The unicode
-string class got a rewrite.</p>
+<p>This release adds json and jsonrpc to cxxtools as well as a fast binary rpc server and client. Both are based on the improved serialization framework of cxxtools.</p>
 
-<p>Tntnet has mainly many small improvements, better standard compliance and a slightly higher
-performance.</p>
+<p>The json and binary format can be used as a storage format. Also serialization and deserialization of csv is possible.</p>
+
+<p>The unicode string as a specialization of std::basic_string got a major rewrite with short string optimization.</p>
+
+<p>Tntnet has mainly many small improvements, better standard compliance and a slightly higher performance.</p>
 
 <p>Tntdb got a replication driver, which is able to replicate the data between
 databases without database support. The decimal class was rewritten and got
