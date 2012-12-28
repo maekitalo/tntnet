@@ -130,7 +130,6 @@ namespace tnt
     si.getMember("errorLog", config.errorLog);
     si.getMember("backgroundTasks", config.backgroundTasks);
     si.getMember("timerSleep", config.timerSleep);
-    si.getMember("mimeDb", config.mimeDb);
     si.getMember("documentRoot", config.documentRoot);
     si.getMember("includes", config.includes);
 
