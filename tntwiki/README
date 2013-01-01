@@ -1,0 +1,3 @@
+Tntwiki is a wiki based on tntnet.
+
+It currently uses postgresql. It needs acess to a postgresql database with the name "tntwiki".

@@ -1,0 +1,63 @@
+<%pre>
+#include <tntwiki/PageManager.h>
+#include <tntwiki/Renderer.h>
+#include <tntdb/connect.h>
+</%pre>
+<%args>
+std::string pagedata;
+bool edit;
+bool preview;
+bool save;
+</%args>
+<form method='post'>
+<%cpp>
+
+static const std::string dburl = "postgresql:dbname=tntwiki";
+tntdb::Connection conn = tntdb::connectCached(dburl);
+tntwiki::PageManager pageManager(conn);
+tntwiki::Renderer renderer(conn);
+
+std::string path = request.getPathInfo();
+
+if (save)
+{
+  pageManager.update(1, path, pagedata);
+}
+else if (!preview)
+{
+  try
+  {
+    pagedata = pageManager.getData(path);
+  }
+  catch (const std::exception&)
+  {
+  }
+}
+
+if (pagedata.empty() || edit || preview)
+{
+  if (preview)
+  {
+    reply.out() << "<div class='preview'>";
+    renderer.putHtml(reply.out(), pagedata);
+    reply.out() << "</div>";
+  }
+
+</%cpp>
+<textarea rows=10 cols=80 name="pagedata"><$pagedata$></textarea><br>
+<input type="submit" name="preview" value="preview">
+<input type="submit" name="save" value="save">
+<input type="submit" name="cancel" value="cancel">
+<%cpp>
+}
+else
+{
+  reply.out() << "<div class='pagedata'>";
+  renderer.putHtml(reply.out(), pagedata);
+  reply.out() << "</div>";
+</%cpp>
+<input type="submit" name="edit" value="edit">
+<%cpp>
+}
+</%cpp>
+</form>
