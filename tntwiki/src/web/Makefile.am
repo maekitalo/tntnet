@@ -40,7 +40,7 @@ tntwiki_la_LIBADD = \
 
 $(top_builddir)/CIXWeb: $(thtmlSources:.thtml=.deps)
 
-CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) static.cpp tntnet.xml
+CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) static.cpp
 EXTRA_DIST = $(ecppIncludes)
 
 #
@@ -56,9 +56,6 @@ SUFFIXES=.ecpp .cpp
 
 -include $(thtmlSources:.thtml=.deps)
 -include $(ecppSources:.ecpp=.deps)
-
-tntnet.xml:
-	$(SHELL) tntnet-config --config=tntwiki|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
 
 noinst_DATA = tntnet.xml
 
