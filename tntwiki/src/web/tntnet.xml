@@ -15,6 +15,7 @@
     <mapping>
       <target>wiki@tntwiki</target>
       <url>^/(.*)</url>
+      <pathinfo>$1</pathinfo>
     </mapping>
   </mappings>
 
@@ -43,7 +44,7 @@
         <level>INFO</level>
       </logger>
       <logger>
-        <category>component.tntwiki</category>
+        <category>component.wiki</category>
         <level>INFO</level>
       </logger>
     </loggers>

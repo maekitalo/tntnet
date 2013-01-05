@@ -27,10 +27,12 @@ else if (!preview)
 {
   try
   {
+    log_debug("read page \"" << path << '"');
     pagedata = pageManager.getData(path);
   }
   catch (const std::exception&)
   {
+    log_debug("page \"" << path << "\" does not exist");
   }
 }
 
