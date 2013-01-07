@@ -1,77 +1,58 @@
-.\"                                      Hey, EMACS: -*- nroff -*-
-.\" First parameter, NAME, should be all caps
-.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
-.\" other parameters are allowed: see man(7), man(1)
-.TH TNTNET-CONFIG 1 "July  3, 2006"
-.\" Please adjust this date whenever revising the manpage.
-.\"
-.\" Some roff macros, for reference:
-.\" .nh        disable hyphenation
-.\" .hy        enable hyphenation
-.\" .ad l      left justify
-.\" .ad b      justify to both left and right margins
-.\" .nf        disable filling
-.\" .fi        enable filling
-.\" .br        insert line break
-.\" .sp <n>    insert n+1 empty lines
-.\" for manpage-specific macros, see man(7)
+.TH tntnet\-config 1 "2006\-07\-23" Tntnet "Tntnet users guide"
 .SH NAME
-tntnet-config \- output compiler flags for tntnet usage
+.PP
+tntnet\-config \- output compiler flags for 
+.BR tntnet (8) 
+usage
 .SH SYNOPSIS
-.B tntnet-config
-.RB [ --libs ]
-.RB [ --cxxflags ]
-.RB [ --config [ =app ]]
-.RB [ --makefile [ =app ]]
-.RB [ --project=app ]
-.RB [ --autoproject=app ]
-.RB [ --help ]
-.RB [ --version ]
+.PP
+\fB\fCtntnet-config\fR [\fB\fC--libs\fR] [\fB\fC--cxxflags\fR] [\fB\fC--config\fR[=\fIapp\fP]] [\fB\fC--makefile\fR[=\fIapp\fP]] [\fB\fC--project\fR=\fIapp\fP] [\fB\fC--auto‐project\fR=\fIapp\fP] [\fB\fC--help\fR] [\fB\fC--version\fR]
 .SH DESCRIPTION
-This manual page documents briefly the
-.B tntnet-config
-command.
+.PP
+This manual page documents briefly the tntnet\-config command.
 .SH OPTIONS
-This program's options start with two dashes (`-').
-A summary of options is included below.
+.PP
+This program's options start with two dashes ('\-'). A summary of options is
+included below.
 .TP
-.B --libs
+\fB\fC--libs\fR
 Output linker flags.
 .TP
-.B --cxxflags
+\fB\fC--cxxflags\fR
 Output C++ preprocessor and compiler flags.
 .TP
-.BR --config [ =app ]
+\fB\fC--config\fR[=\fB\fCapp\fR]
 Print default configuration file.
 .TP
-.BR --makefile [ =app ]
+\fB\fC--makefile\fR[=\fIapp\fP]
 Print a simple makefile for an ecpp project.
 .TP
-.BI --project= app
-Create a simple
-.B ecpp
-project directory.
+\fB\fC--project\fR=\fIapp\fP
+Create a simple ecpp project directory.
 .TP
-.BI --autoproject= app
-Create a autotools based
-.B ecpp
-project.
+\fB\fC--autoproject\fR=\fIapp\fP
+Create a autotools based ecpp project.
 .TP
-.B --help
+\fB\fC--help\fR
 Show summary of options.
 .TP
-.B \-\-version
+\fB\fC--version\fR
 Show version of program.
 .SH AUTHOR
-tntnet was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
 .PP
-This manual page was written by Kari Pahula <kaol@debian.org>,
-for the Debian project (but may be used by others).
+tntnet was written by Tommi Mäkitalo 
+.MT tommi@tntnet.org
+.ME .
+.PP
+This manual page was written by Kari Pahula 
+.MT kaol@debian.org
+.ME , for the Debian
+project (but may be used by others).
 .SH SEE ALSO
-.BR tntnet (8),
-.BR ecppc (1),
-.BR ecppl (1),
+.PP
+.BR tntnet (8), 
+.BR ecppc (1), 
+.BR ecppl (1), 
 .BR ecppll (1).
-.br
-More documentation can be found in
-.BR /usr/share/doc/tntnet-doc/ .
+.PP
+More documentation can be found in /usr/share/doc/tntnet\-doc/.

@@ -1,125 +1,99 @@
-.\" Copyright (C) 2006 Tommi Maekitalo
-.\"
-.\" This is free documentation; you can redistribute it and/or
-.\" modify it under the terms of the GNU General Public License as
-.\" published by the Free Software Foundation; either version 2 of
-.\" the License, or (at your option) any later version.
-.\"
-.\" The GNU General Public License's references to "object code"
-.\" and "executables" are to be interpreted as the output of any
-.\" document formatting or typesetting system, including
-.\" intermediate and printed output.
-.\"
-.\" This manual is distributed in the hope that it will be useful,
-.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\" GNU General Public License for more details.
-.\"
-.\" You should have received a copy of the GNU General Public
-.\" License along with this manual; if not, write to the Free
-.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
-.\" USA.
-.TH ecppc 1 2006-07-23 "Tntnet" "Tntnet users guide"
+.TH ecppc 1 "2006\-07\-23" Tntnet "Tntnet users guide"
 .SH NAME
-ecppc \- compiler for ecpp
+.PP
+ecppc \- compiler for 
+.BR ecpp (7)
 .SH SYNOPSIS
-.B ecppc
-.RB [ \-bhszvtM ]
-.RB [ \-s- ]
-.RB [ \-o
-.IR filename ]
-.RB [ \-n
-.IR name ]
-.RB [ \-m
-.IR mimetype ]
-.RB [ \--mimetypes
-.IR filename ]
-.RB [ \-I
-.IR dir ]
-.RB [ \-l
-.IR log-category ]
-.RB filename
-.br
-.B ecppc
-.RB \-bb
-.RB filename...
+.PP
+\fB\fCecppc\fR [\fB\fC-bhszvtM\fR] [\fB\fC-s-\fR] [\fB\fC-o\fR \fIfilename\fP]  [\fB\fC-n\fR \fIname\fP] [\fB\fC-m\fR \fImimetype\fP] [\fB\fC--mimetypes\fR \fIfilename\fP] [\fB\fC-I\fR \fIdir\fP] [\fB\fC-l\fR \fIlog\-category\fP] \fIfilename\fP
+.PP
+\fB\fCecppc\fR \fB\fC-bb\fR \fIfilename\fP ...
 .SH DESCRIPTION
-.I Ecppc
-is the compiler for the ecpp-language.
-.I Ecpp
-is a template-language, which lets the user embed C++-code into HTML for use in
-.I tntnet
-(8).
-.I Ecppc
-generates a C++-class from a ecpp-template.
-It can also compile binary data into a C++-class, which makes it possible to integrate
-them in a tntnet-application.
+.PP
+\fB\fCecppc\fR is the compiler for the ecpp\-language. \fB\fCecpp\fR is a template language,
+which lets the user embed C++\-code  into HTML  for  use  in  
+.BR tntnet (8).
+\fB\fCecppc\fR generates a C++\-class from a ecpp template. It can also compile binary
+data into a C++\-class, which makes it possible to integrate them in a tntnet
+application.
 .SH OPTIONS
-.IP "\-b"
-This enables binary-mode.
-.I Ecppc
-does not look for ecpp-tags, but creates a class, which just copies the data
-.IP "\-bb"
-This enables multi-binary-mode.
-Every binary-file has some overhead, when packed into a tntnet-application.
-This overhead can be quite significant, when binary-files are small, like small icons in a
-web application.
-To reduce this overhead, multiple binaries can be packed into a single class, which removes
-the per-binary overhead completely.
-.br
-When the component is called, it uses the path-info-parameter (\fIrequest.getPathInfo()\fP)
-from the request, to decide, which binary to send.
-If no filename matches the path-info, processing is declined.
-The binaries need not be of same mime-type, since the mime-type is looked automatically from the
-mime-database by file-extension of the source-file.
-.IP "\-I dir"
-Search include-files in directory.
-This option can be passed multiple times.
-All specified directories are searched in turn for include-files.
-.IP "\-l log-category"
-Set log category. Default is "\fIcomponent.componentname\fP".
-.IP "\-L"
-Disable generation of #line-directives
-.IP "\-m mimetype"
-Set mimetype of output.
-This is the mimetype, sent by the component to the browser in the Content-Type-header.
-Without this parameter the mimetype is looked up from the mime-database of your system using
-the file-extension of the source-file.
-.IP "\--mimetypes file"
+.TP
+\fB\fC-b\fR
+This enables binary\-mode. Ecppc does not look for ecpp\-tags, but creates a
+class, which just copies the data
+.TP
+\fB\fC-bb\fR
+This enables multi\-binary\-mode. Every binary\-file has some overhead, when
+packed into a tntnet\-application. This overhead can be quite significant, when
+binary\-files are small, like small icons in a web application. To reduce this
+overhead, multiple binaries can be packed into a single class, which removes
+the per\-binary overhead completely.
+.IP
+When the component is called, it uses the path\-info\-parameter
+(request.getPathInfo()) from the request, to decide, which binary to send. If
+no filename matches the path\-info, processing is declined. The binaries need
+not be of same mime\-type, since the mime\-type is looked automatically from the
+mime\-database by file\- extension of the source\-file.
+.TP
+\fB\fC-I\fR \fIdir\fP
+Search include\-files in directory. This option can be passed multiple times.
+All specified directories are searched in turn for include\-files.
+.TP
+\fB\fC-l\fR \fIlog\-category\fP
+Set log category. Default is \fIcomponent.componentname\fP.
+.TP
+\fB\fC-L\fR
+Disable generation of #line\-directives
+.TP
+\fB\fC-m\fR \fImimetype\fP
+Set mimetype of output. This is the mimetype, sent by the component to the
+browser in the Content\-Type\- header. Without this parameter the mimetype is
+looked up from the mime\-database of your system using the file\-extension of
+the source\-file.
+.TP
+\fB\fC--mimetypes\fR \fIfile\fP
 Read mimetypes from file (default: /etc/mime.types).
-.IP "\-M"
-This disables normal processing and prints just the ecpp-dependencies from this component.
-The output can be included into a Makefile.
-Ecpp-dependencies are introduces by the \fi<%include>\fP-tag.
-.IP "\-n name"
-Set the name of the component.
-Normally this is derived from the source-file-name by removing the path and .ecpp-extension.
-.IP "\-o filename"
-Write the generated file to the specified file instead of deriving the filename from the source-file-name.
-The outputfilename is normally the source-file where the extension is replaced by \fI.cpp\fP.
-.IP "\-p"
+.TP
+\fB\fC-M\fR
+This disables normal processing and prints just the ecpp\-dependencies from
+this component. The output can be included into a Makefile. Ecpp\-dependencies
+are introduces by the <%include>\-tag.
+.TP
+\fB\fC-n\fR \fIname\fP
+Set the name of the component. Normally this is derived from the
+source\-file\-name by removing the path and .ecpp\-extension.
+.TP
+\fB\fC-o\fR \fIfilename\fP
+Write the generated file to the specified file instead of deriving the
+filename from the source\-file\-name.  The outputfilename is normally the
+source\-file where the extension is replaced by .cpp.
+.TP
+\fB\fC-p\fR
 Keep path name when deriving name of component from input file name.
-.IP "\-s"
-Generate singleton.
-Normally
-.I ecppc
-decides automatically, if the template is suitable for a singleton.
-This option force
-.I ecppc
-to generate a singleton.
-.IP "\-s-"
+.TP
+\fB\fC-s\fR
+Generate singleton. Normally ecppc decides automatically, if the template is
+suitable for a singleton.  This option force ecppc to generate a singleton.
+.TP
+\fB\fC-s-\fR
 Do not generate a singleton.
-.IP "\-v"
-Enable verbose mode.
-This prints additional information about the processing on the standard-output.
-.IP "\-z"
-Compress the data in the component.
-Compressed data is automatically decopressed on first use.
-This reduces the code-size, but slightly slows down the first call of the component.
+.TP
+\fB\fC-v\fR
+Enable verbose mode. This prints additional information about the processing
+on the standard\-output.
+.TP
+\fB\fC-z\fR
+Compress the data in the component. Compressed data is automatically
+decopressed on first use. This reduces the code\-size, but slightly slows down
+the first call of the component.
 .SH AUTHOR
-This manual page was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
+.PP
+This manual page was written by Tommi Mäkitalo 
+.MT tommi@tntnet.org
+.ME .
 .SH SEE ALSO
-.BR tntnet (1),
-.BR ecpp (7),
-.BR ecppl (1),
-.BR ecppll (1).
+.PP
+.BR tntnet (1), 
+.BR ecpp (7), 
+.BR ecppl (1), 
+.BR ecppll (1)

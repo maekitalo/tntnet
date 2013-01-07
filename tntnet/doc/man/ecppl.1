@@ -1,65 +1,43 @@
-.\" Copyright (C) 2006 Tommi Maekitalo
-.\"
-.\" This is free documentation; you can redistribute it and/or
-.\" modify it under the terms of the GNU General Public License as
-.\" published by the Free Software Foundation; either version 2 of
-.\" the License, or (at your option) any later version.
-.\"
-.\" The GNU General Public License's references to "object code"
-.\" and "executables" are to be interpreted as the output of any
-.\" document formatting or typesetting system, including
-.\" intermediate and printed output.
-.\"
-.\" This manual is distributed in the hope that it will be useful,
-.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\" GNU General Public License for more details.
-.\"
-.\" You should have received a copy of the GNU General Public
-.\" License along with this manual; if not, write to the Free
-.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
-.\" USA.
-.TH ecppl 1 2006-08-26 "Tntnet" "Tntnet users guide"
+.TH ecppl 1 "2006\-07\-23" Tntnet "Tntnet users guide"
 .SH NAME
-ecppl \- language-extractor for ecpp
-.SH SYNOPSIS
-.B ecppl
-.RB [ \-I
-.IR dir ]
-.RB [ \-ln ]
-.RB [ \-o
-.IR output-filename ]
-.RB ecpp-filename
-
-.SH DESCRIPTION
-.I Ecppl
-is the language-extractor for ecpp.
-Ecpp - the template-language used with tntnet - supports internationalized
-applications.
-In ecpp-templates a tag \fI<i18n>\fP changes the meaning of curly braces.
-A phrase, which is enclosed in curly braces, can be translated.
-At runtime the phrase is looked up in a language-library.
-This mode can be quit with the tag \fI</i18n>\fP.
-Phrases must not have newlines or tabs.
 .PP
-Every phrase, which is marked as translatable, is extracted with ecppl
-and written to standard output or to a specified output-filename line by line.
-
+ecppl \- language\-extractor for 
+.BR ecpp (7)
+.SH SYNOPSIS
+.PP
+\fB\fCecppl\fR [\fB\fC-I\fR \fIdir\fP] [\fB\fC-ln\fR] [\fB\fC-o\fR \fIoutput\-filename\fP] \fIecpp\-filename\fP ...
+.SH DESCRIPTION
+.PP
+\fB\fCecppl\fR is the language extractor for ecpp. Ecpp \- the template language used
+with tntnet \- supports internationalized applications. In ecpp templates a tag
+<i18n> changes the meaning of curly braces. A phrase, which is enclosed in curly
+braces, can be translated. At runtime the phrase is looked up in a
+language\-library. This mode can be quit with the tag </i18n>. Phrases must not
+have newlines or tabs.
+.PP
+Every phrase, which is marked as translatable, is extracted with ecppl and
+written to standard output or to a specified output\-filename line by line.
 .SH OPTIONS
-.IP "\-I dir"
-Search include-files in directory.
-This option can be passed multiple times.
-All specified directories are searched in turn for include-files.
-.IP "\-l"
-Extract language-phrases (the default)
-.IP "\-n"
-Extract non-language-phrases
-.IP "\-o filename"
+.TP
+\fB\fC-I\fR \fIdir\fP
+Search include\-files in directory. This option can be passed multiple times.
+All specified directories are searched in turn for include\-files.
+.TP
+\fB\fC-l\fR
+Extract language\-phrases (the default)
+.TP
+\fB\fC-n\fR
+Extract non\-language\-phrases
+.TP
+\fB\fC-o\fR \fIfilename\fP
 Specify output filename
-
 .SH AUTHOR
-This manual page was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
+.PP
+This manual page was written by Tommi Mäkitalo 
+.MT tommi@tntnet.org
+.ME .
 .SH SEE ALSO
-.BR tntnet (1),
-.BR ecpp (7),
+.PP
+.BR tntnet (1), 
+.BR ecpp (7), 
 .BR ecppll (1).

@@ -1,70 +1,44 @@
-.\" Copyright (C) 2006 Tommi Maekitalo
-.\"
-.\" This is free documentation; you can redistribute it and/or
-.\" modify it under the terms of the GNU General Public License as
-.\" published by the Free Software Foundation; either version 2 of
-.\" the License, or (at your option) any later version.
-.\"
-.\" The GNU General Public License's references to "object code"
-.\" and "executables" are to be interpreted as the output of any
-.\" document formatting or typesetting system, including
-.\" intermediate and printed output.
-.\"
-.\" This manual is distributed in the hope that it will be useful,
-.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\" GNU General Public License for more details.
-.\"
-.\" You should have received a copy of the GNU General Public
-.\" License along with this manual; if not, write to the Free
-.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
-.\" USA.
-.TH ecppll 1 2006-08-26 "Tntnet" "Tntnet users guide"
+.TH ecppll 1 "2006\-07\-23" Tntnet "Tntnet users guide"
 .SH NAME
-ecppll \- language-linker for ecpp
+.PP
+ecppll \- language\-linker for ecpp
 .SH SYNOPSIS
-.B ecppll
-.RB [ \-I
-.IR dir ]
-.RB [ \-F ]
-.RB [ \-o
-.IR output-filename ]
-.RB ecpp-filename
-.RB [ translated-data ]
-
+.PP
+\fB\fCecppll\fR [\fB\fC-I\fR \fIdir\fP] [\fB\fC-F\fR] [\fB\fC-o\fR \fIoutput\-filename\fP] \fIecpp\-filename\fP [\fB\fCtranslated-data\fR]
 .SH DESCRIPTION
-.I Ecppll
-is the language-linker for ecpp.
-This program combines the data of a ecpp-file with translated phrases from a
-source-file and generates a data-file used by tntnet to look up translated
-data.
-The translated data file must contain the original phrase and the translated
-version separated by tab line by line.
+.PP
+Ecppll is the language\-linker for ecpp. This program combines the data of a
+ecpp\-file with translated phrases from a source\-file and generates a data\-file
+used by tntnet to look up translated data. The translated data file must contain
+the original phrase and the translated version separated by tab line by line.
 .PP
 To generate a language file the generated files of all components of a
-component-library must be zipped. The resulting zip-file must have the same
-basename as the component-library and the language-code as the extension.
-Tntnet tries to find the langage library by first appending the value of
-the query parameter LANG to the name of the componentlibrary. If the file
-is not found, the environment-variable LANG is used. If that is neither found,
-the default data from the original component is used.
-
+component\-library must be zipped. The resulting zip\-file must have the same
+basename as the component\-library and the language\-code as the extension. Tntnet
+tries to find the langage library by first appending the value of the query
+parameter LANG to the name of the componentlibrary. If the file is not found,
+the environment\-variable LANG is used. If that is neither found, the default
+data from the original component is used.
 .SH OPTIONS
-.IP "\-F"
-Fail on warning.
-If a phrase is not found in the language-data or in language-data is a phrase
-not used it the ecpp-file, ecppll warns about it to standard output.
-If this flag is set, ecppll returns a non-zero return-code.
-.IP "\-I dir"
-Search include-files in directory.
-This option can be passed multiple times.
-All specified directories are searched in turn for include-files.
-.IP "\-o filename"
+.TP
+\fB\fC-F\fR
+Fail on warning. If a phrase is not found in the language\-data or in
+language\-data is a phrase not used it the ecpp\-file, ecppll warns about it to
+standard output. If this flag is set, ecppll returns a non\-zero return\-code.
+.TP
+\fB\fC-I\fR \fIdir\fP
+Search include\-files in directory. This option can be passed multiple times.
+All specified directories are searched in turn for include\-files.
+.TP
+\fB\fC-o\fR \fIfilename\fP
 Specify output filename
-
 .SH AUTHOR
-This manual page was written by Tommi M\[:a]kitalo <tommi@tntnet.org>.
+.PP
+This manual page was written by Tommi Mäkitalo 
+.MT tommi@tntnet.org
+.ME .
 .SH SEE ALSO
-.BR tntnet (1),
-.BR ecpp (7),
+.PP
+.BR tntnet (1), 
+.BR ecpp (7), 
 .BR ecppl (1)
