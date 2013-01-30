@@ -213,7 +213,11 @@ unsigned PageManager::update(unsigned userId, const std::string& title, const st
       " values (:id, :title, 'now', :data, :userid)");
 
   tntdb::Transaction trans(_conn);
+#ifdef HAVLE_TNTDB_TABLELOCKER
+  tntdb::TableLocker tableLocker(_conn, "pages", true);
+#else
   _conn.execute("lock table pages in exclusive mode");
+#endif
 
   tntdb::Value id_ = _selId.selectValue();
   unsigned id = 1;
