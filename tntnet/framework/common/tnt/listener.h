@@ -48,7 +48,8 @@ namespace tnt
           { }
       virtual ~ListenerBase() { }
 
-      void doStop();
+      void terminate();
+      virtual void doTerminate() = 0;
       virtual void initialize();
 
       const std::string& getIpaddr() const
@@ -65,6 +66,7 @@ namespace tnt
     public:
       Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q);
 
+      virtual void doTerminate();
       virtual void initialize();
   };
 
@@ -78,6 +80,7 @@ namespace tnt
       Ssllistener(Tntnet& application, const char* certificateFile, const char* keyFile,
           const std::string& ipaddr, unsigned short int port, Jobqueue& q);
 
+      virtual void doTerminate();
       virtual void initialize();
   };
 #endif // USE_SSL

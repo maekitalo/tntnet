@@ -46,6 +46,7 @@
 #include <cxxtools/dlloader.h>
 #include <cxxtools/ioerror.h>
 #include <cxxtools/atomicity.h>
+#include <cxxtools/net/tcpserver.h>
 #include <pthread.h>
 #include <string.h>
 
@@ -192,6 +193,11 @@ namespace tnt
       catch (const cxxtools::IOTimeout& e)
       {
         application.getPoller().addIdleJob(j);
+      }
+      catch (const cxxtools::net::AcceptTerminated&)
+      {
+        log_debug("listener terminated");
+        break;
       }
       catch (const std::exception& e)
       {

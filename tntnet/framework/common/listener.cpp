@@ -77,21 +77,10 @@ namespace tnt
     }
   }
 
-  void ListenerBase::doStop()
+  void ListenerBase::terminate()
   {
     log_info("stop listener " << ipaddr << ':' << port);
-    try
-    {
-      // connect once to wake up listener, so it will check stop-flag
-      cxxtools::net::TcpSocket s(ipaddr, port);
-      char ch = 'A';
-      s.write(&ch, 1);
-    }
-    catch (const std::exception& e)
-    {
-      log_warn("error waking up listener: " << e.what() << " try local interface");
-      cxxtools::net::TcpSocket("", port);
-    }
+    doTerminate();
   }
 
   void ListenerBase::initialize()
@@ -104,6 +93,11 @@ namespace tnt
   {
     doListenRetry(server, ipaddr_.c_str(), port_);
     queue.put(new Tcpjob(application, server, queue));
+  }
+
+  void Listener::doTerminate()
+  {
+    server.terminateAccept();
   }
 
   void Listener::initialize()
@@ -135,6 +129,11 @@ namespace tnt
   {
     doListenRetry(server, ipaddr_.c_str(), port_);
     queue.put(new SslTcpjob(application, server, queue));
+  }
+
+  void Ssllistener::doTerminate()
+  {
+    server.terminateAccept();
   }
 
   void Ssllistener::initialize()

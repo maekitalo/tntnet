@@ -255,9 +255,9 @@ namespace tnt
       allRunningTntnetInstances.erase(this);
     }
 
-    log_info("wake listeners");
+    log_info("stop listener");
     for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
-      (*it)->doStop();
+      (*it)->doTerminate();
 
     log_info("stop poller thread");
     poller.doStop();
@@ -276,7 +276,7 @@ namespace tnt
       }
     }
 
-    log_debug("destroy listeners");
+    log_debug("destroy listener");
     for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
       delete *it;
     listeners.clear();
