@@ -121,14 +121,14 @@ namespace tnt
   {
     releaseLocks();
 
-    if (requestScope)
-      requestScope->release();
-    if (applicationScope)
-      applicationScope->release();
-    if (sessionScope)
-      sessionScope->release();
-    if (secureSessionScope)
-      secureSessionScope->release();
+    if (requestScope && requestScope->release() == 0)
+      delete requestScope;
+    if (applicationScope && applicationScope->release() == 0)
+      delete applicationScope;
+    if (sessionScope && sessionScope->release() == 0)
+      delete sessionScope;
+    if (secureSessionScope && secureSessionScope->release() == 0)
+      delete secureSessionScope;
   }
 
   HttpRequest& HttpRequest::operator= (const HttpRequest& r)
@@ -180,7 +180,8 @@ namespace tnt
     locale_init = false;
     if (requestScope)
     {
-      requestScope->release();
+      if (requestScope->release() == 0)
+        delete requestScope;
       requestScope = 0;
     }
     httpcookies.clear();
@@ -192,19 +193,22 @@ namespace tnt
 
     if (applicationScope)
     {
-      applicationScope->release();
+      if (applicationScope->release() == 0)
+        delete applicationScope;
       applicationScope = 0;
     }
 
     if (sessionScope)
     {
-      sessionScope->release();
+      if (sessionScope->release() == 0)
+        delete sessionScope;
       sessionScope = 0;
     }
 
     if (secureSessionScope)
     {
-      secureSessionScope->release();
+      if (secureSessionScope->release() == 0)
+        delete secureSessionScope;
       secureSessionScope = 0;
     }
 
@@ -439,7 +443,8 @@ namespace tnt
     if (applicationScope)
     {
       releaseApplicationScopeLock();
-      applicationScope->release();
+      if (applicationScope->release() == 0)
+        delete applicationScope;
     }
 
     if (s)
@@ -459,7 +464,8 @@ namespace tnt
         sessionScope->unlock();
         sessionScopeLocked = false;
       }
-      sessionScope->release();
+      if (sessionScope->release() == 0)
+        delete sessionScope;
     }
 
     if (s)
@@ -480,7 +486,8 @@ namespace tnt
         secureSessionScope->unlock();
         secureSessionScopeLocked = false;
       }
-      secureSessionScope->release();
+      if (secureSessionScope->release() == 0)
+        delete secureSessionScope;
     }
 
     if (s)
@@ -501,7 +508,8 @@ namespace tnt
         sessionScopeLocked = false;
       }
 
-      sessionScope->release();
+      if (sessionScope->release() == 0)
+        delete sessionScope;
       sessionScope = 0;
     }
 
@@ -513,7 +521,8 @@ namespace tnt
         secureSessionScopeLocked = false;
       }
 
-      secureSessionScope->release();
+      if (secureSessionScope->release() == 0)
+        delete secureSessionScope;
       secureSessionScope = 0;
     }
 
