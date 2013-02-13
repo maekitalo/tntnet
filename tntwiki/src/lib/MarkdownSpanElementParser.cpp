@@ -44,11 +44,17 @@ void SpanElementParser::parse(char ch)
       }
       else if (ch == '\\')
         _state = state_esc;
+      else if (ch == '[')
+      {
+        _linktext.clear();
+        _linktarget.clear();
+        _linktitle.clear();
+        _save = ch;
+        _state = state_linktext;
+      }
       else
         _data += ch;
       break;
-
-    // emphasis
 
     case state_esc:
       _data += ch;
@@ -222,6 +228,7 @@ void SpanElementParser::parse(char ch)
       if (ch == '`')
       {
         _event.onData(_data);
+        _data.clear();
         _event.onCodeEnd();
         _state = state_0;
       }
@@ -266,6 +273,7 @@ void SpanElementParser::parse(char ch)
       if (ch == '`')
       {
         _event.onData(_data);
+        _data.clear();
         _event.onCodeEnd();
         _state = state_0;
       }
@@ -293,13 +301,167 @@ void SpanElementParser::parse(char ch)
       }
       break;
 
+    case state_linktext:
+      _save += ch;
+      if (ch == ']')
+        _state = state_linktextend;
+      else
+        _linktext += ch;
+      break;
+
+    case state_linktextend:
+      _save += ch;
+      if (ch == '(')
+      {
+        _linktarget.clear();
+        _state = state_link;
+      }
+      else if (ch == ' ' || ch == '\t')
+        ;
+      else
+      {
+        // no link
+        _state = state_esc;
+        std::string save = _save;
+        _save.clear();
+        parse(save, false);
+      }
+      break;
+
+    case state_link:
+      _save += ch;
+      if (ch == ')')
+      {
+        _event.onLink(_linktext, _linktarget, _linktitle);
+        _linktext.clear();
+        _linktarget.clear();
+        _linktitle.clear();
+        _save.clear();
+        _state = state_0;
+      }
+      else if (ch == ' ' || ch == '\t')
+        _state = state_linktitle0;
+      else
+        _linktarget += ch;
+      break;
+
+    case state_linktitle0:
+      _save += ch;
+      if (ch == '\'' || ch == '"')
+      {
+        _delimiter = ch;
+        _state = state_linktitle;
+      }
+      else if (ch == ' ' || ch == '\t')
+        ;
+      else
+      {
+        // no link
+        _state = state_esc;
+        std::string save = _save;
+        _save.clear();
+        parse(save, false);
+      }
+      break;
+
+    case state_linktitle:
+      _save += ch;
+      if (ch == _delimiter)
+        _state = state_linktitleend;
+      else
+        _linktitle += ch;
+      break;
+
+    case state_linktitleend:
+      _save += ch;
+      if (ch == ' ' || ch == '\t')
+        ;
+      else if (ch == ')')
+      {
+        _event.onLink(_linktext, _linktarget, _linktitle);
+        _linktext.clear();
+        _linktarget.clear();
+        _linktitle.clear();
+        _save.clear();
+        _state = state_0;
+      }
+      else
+      {
+        // no link
+        _state = state_esc;
+        std::string save = _save;
+        _save.clear();
+        parse(save, false);
+      }
+      break;
   }
 }
 
 void SpanElementParser::finalize()
 {
-  if (_state != state_0)
-    throw std::runtime_error("missing closing markup");
+  switch (_state)
+  {
+    case state_0:
+    case state_esc:
+      break;
+    case state_em0:
+    case state_em:
+    case state_emesc:
+      _event.onData(_data);
+      _data.clear();
+      _event.onEmphasisEnd();
+      break;
+
+    case state_em2:
+    case state_em2esc:
+    case state_em2e:
+      _event.onData(_data);
+      _data.clear();
+      _event.onStrongEmphasisEnd();
+      break;
+
+    case state_underscore0:
+    case state_underscore:
+    case state_underscoreesc:
+      _event.onData(_data);
+      _data.clear();
+      _event.onUnderscoreEnd();
+      break;
+
+    case state_underscore2:
+    case state_underscore2esc:
+    case state_underscore2e:
+      _event.onData(_data);
+      _data.clear();
+      _event.onDoubleUnderscoreEnd();
+      break;
+
+    case state_code0:
+    case state_code:
+    case state_codeesc:
+      _event.onData(_data);
+      _data.clear();
+      _event.onCodeEnd();
+      break;
+
+    case state_code2:
+    case state_code2esc:
+    case state_code2e:
+      _event.onData(_data);
+      _data.clear();
+      _event.onCodeEnd();
+      break;
+
+    case state_linktext:
+    case state_linktextend:
+    case state_link:
+    case state_linktitle0:
+    case state_linktitle:
+    case state_linktitleend:
+      _state = state_esc;
+      parse(_save, true);
+      return;
+  }
 
   if (!_data.empty())
     _event.onData(_data);

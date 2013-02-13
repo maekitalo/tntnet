@@ -424,14 +424,24 @@ void Html::onDoubleUnderscoreEnd()
   }
 }
 
-void Html::onLink(const std::string& target)
+void Html::onLink(const std::string& text, const std::string& target, const std::string& title)
 {
   if (_sub)
-    _sub->onLink(target);
+    _sub->onLink(text, target, title);
   else
   {
-    log_debug("onLink(\"" << target << "\")");
-    _html << "<a>\n";
+    log_debug("onLink(\"" << text << "\", \"" << target << "\", \"" << title << "\")");
+    _html << "<a href=\"" << target << '"';
+
+    if (!title.empty())
+    {
+      if (title.find('"') == std::string::npos)
+        _html << " title=\"" << title << '"';
+      else
+        _html << " title='" << title << '\'';
+    }
+
+    _html << '>' << text << "</a>";
   }
 }
 

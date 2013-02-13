@@ -18,7 +18,12 @@ pkglib_LTLIBRARIES = tntwiki.la
 cppSources =
 
 ecppSources = \
-	wiki.ecpp
+	edit.ecpp \
+	login.ecpp \
+	preview.ecpp \
+	show.ecpp \
+	wiki.ecpp \
+	wikimain.ecpp
 
 staticSources =
 
@@ -38,8 +43,6 @@ tntwiki_la_LDFLAGS = -module
 tntwiki_la_LIBADD = \
 	$(top_builddir)/src/lib/libtntwiki.la
 
-$(top_builddir)/CIXWeb: $(thtmlSources:.thtml=.deps)
-
 CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) static.cpp
 EXTRA_DIST = $(ecppIncludes)
 
@@ -54,7 +57,6 @@ SUFFIXES=.ecpp .cpp
 .ecpp.deps:
 	$(ECPPC) -M -n $* -I $(srcdir) -I $(srcdir)/include $< | $(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > $@
 
--include $(thtmlSources:.thtml=.deps)
 -include $(ecppSources:.ecpp=.deps)
 
 noinst_DATA = tntnet.xml

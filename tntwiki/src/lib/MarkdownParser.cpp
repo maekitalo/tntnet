@@ -15,6 +15,9 @@ namespace markdown
 {
 void Parser::parse(char ch)
 {
+  if (ch == '\r')
+    return;
+
   if (ch == '\n')
     ++_lineNo;
 

@@ -49,11 +49,9 @@
       </logger>
     </loggers>
 
-    <!--
     <file>tntnet.log</file>
     <maxfilesize>10M</maxfilesize>
     <maxbackupindex>2</maxbackupindex>
-    -->
 
   </logging>
 

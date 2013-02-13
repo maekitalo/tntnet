@@ -1,0 +1,23 @@
+<%pre>
+#include <tntwiki/MarkdownHtml.h>
+#include <tntwiki/MarkdownParser.h>
+</%pre>
+<%args>
+std::string pagedata;
+</%args>
+<h1>this is a preview</h1>
+<div class='page preview'>
+<%cpp>
+
+  tntwiki::markdown::Html html(reply.out());
+  tntwiki::markdown::Parser parser(html);
+  parser.parse(pagedata);
+
+</%cpp>
+</div>
+<form method='post'>
+<input type="hidden" name="pagedata" value="<$ pagedata $>">
+<input type="submit" name="edit" value="edit">
+<input type="submit" name="save" value="save">
+<input type="submit" name="cancel" value="cancel">
+</form>

@@ -16,6 +16,8 @@ namespace tntwiki
   {
     struct ParserEvent
     {
+      virtual ~ParserEvent() { }
+
       // data
       virtual void onData(const std::string& data) { }
 
@@ -32,7 +34,7 @@ namespace tntwiki
       virtual void onDoubleUnderscoreBegin() { }
       virtual void onDoubleUnderscoreEnd() { }
 
-      virtual void onLink(const std::string& target) { }
+      virtual void onLink(const std::string& text, const std::string& target, const std::string& title) { }
 
       // block elements
       virtual void onLineBreak() { }
@@ -89,9 +91,20 @@ namespace tntwiki
           state_code2,
           state_code2esc,
           state_code2e,
+          state_linktext,
+          state_linktextend,
+          state_link,
+          state_linktitle0,
+          state_linktitle,
+          state_linktitleend
         } _state;
 
         std::string _data;
+        std::string _save;
+        std::string _linktext;
+        std::string _linktarget;
+        std::string _linktitle;
+        char _delimiter;
 
       public:
         explicit SpanElementParser(ParserEvent& event)

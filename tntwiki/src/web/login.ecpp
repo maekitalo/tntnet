@@ -1,0 +1,22 @@
+<%pre>
+#include <tntwiki/UserManager.h>
+</%pre>
+<%args>
+username;
+password;
+</%args>
+<%include>global.ecpp</%include>
+<%cpp>
+if (!username.empty())
+{
+  tntwiki::UserManager userManager(conn);
+  currentUser = userManager.getUser(username, password);
+  if (currentUser.loggedIn())
+    return DECLINED;
+}
+</%cpp>
+<form method='post'>
+  Username: <input type='text' name='username'><br>
+  Password: <input type='text' name='password'>
+  <input type="submit" name="login" value="login">
+</form>

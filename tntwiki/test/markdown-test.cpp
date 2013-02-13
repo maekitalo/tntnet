@@ -5,8 +5,8 @@
 
 #include <tntwiki/MarkdownParser.h>
 #include <tntwiki/MarkdownHtml.h>
-#include "cxxtools/unit/testsuite.h"
-#include "cxxtools/unit/registertest.h"
+#include <cxxtools/unit/testsuite.h>
+#include <cxxtools/unit/registertest.h>
 #include <sstream>
 
 class MarkdownTest : public cxxtools::unit::TestSuite
@@ -27,6 +27,9 @@ class MarkdownTest : public cxxtools::unit::TestSuite
       registerMethod("nested-list", *this, &MarkdownTest::testNestedList);
       registerMethod("orderedlist", *this, &MarkdownTest::testOrderedList);
       registerMethod("orderedlist-at-end", *this, &MarkdownTest::testOrderedListAtEnd);
+      registerMethod("link", *this, &MarkdownTest::testLink);
+      registerMethod("linkWithData", *this, &MarkdownTest::testLinkWithData);
+      registerMethod("linkTitle", *this, &MarkdownTest::testLinkTitle);
     }
 
     void testPlain()
@@ -235,6 +238,42 @@ class MarkdownTest : public cxxtools::unit::TestSuite
         "<li>three\n"
         "blub</li>\n"
         "</ol>\n");
+    }
+
+    void testLink()
+    {
+      std::ostringstream out;
+      tntwiki::markdown::Html html(out);
+      tntwiki::markdown::Parser parser(html);
+      parser.parse(
+          "[tntnet] (http://www.tntnet.org/)");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(
+          out.str(),
+          "<p><a href=\"http://www.tntnet.org/\">tntnet</a></p>\n");
+    }
+
+    void testLinkWithData()
+    {
+      std::ostringstream out;
+      tntwiki::markdown::Html html(out);
+      tntwiki::markdown::Parser parser(html);
+      parser.parse(
+          "Hi [tntnet] (http://www.tntnet.org/) there");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(
+          out.str(),
+          "<p>Hi <a href=\"http://www.tntnet.org/\">tntnet</a> there</p>\n");
+    }
+
+    void testLinkTitle()
+    {
+      std::ostringstream out;
+      tntwiki::markdown::Html html(out);
+      tntwiki::markdown::Parser parser(html);
+      parser.parse(
+          "[tntnet] (http://www.tntnet.org/ 'Tntnet homepage')");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(
+          out.str(),
+          "<p><a href=\"http://www.tntnet.org/\" title=\"Tntnet homepage\">tntnet</a></p>\n");
     }
 
 };

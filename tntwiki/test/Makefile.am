@@ -7,6 +7,7 @@ tntwiki_test_SOURCES = \
 	testmain.cpp \
     page-test.cpp \
     markdown-test.cpp \
-    renderer-test.cpp
+    renderer-test.cpp \
+    user-test.cpp
 
 tntwiki_test_LDADD = $(top_builddir)/src/lib/libtntwiki.la -ltntdb -lcxxtools-unit

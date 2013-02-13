@@ -69,7 +69,7 @@ namespace tntwiki
         virtual void onDoubleUnderscoreBegin();
         virtual void onDoubleUnderscoreEnd();
 
-        virtual void onLink(const std::string& target);
+        virtual void onLink(const std::string& text, const std::string& target, const std::string& title);
 
         virtual void finalize();
     };

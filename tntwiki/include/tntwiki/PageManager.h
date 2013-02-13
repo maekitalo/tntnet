@@ -10,6 +10,7 @@
 #include <tntdb/connection.h>
 #include <tntdb/statement.h>
 #include <cxxtools/datetime.h>
+#include <tntwiki/User.h>
 
 namespace tntwiki
 {
@@ -34,7 +35,12 @@ namespace tntwiki
 
       // stores new page; returns new version number
       unsigned update(unsigned userId, const std::string& title, const std::string& data);
+      unsigned update(const User& user, const std::string& title, const std::string& data)
+        { return update(user.id(), title, data); }
+
       unsigned del(unsigned userId, const std::string& title);
+      unsigned del(const User& user, const std::string& title)
+        { return del(user.id(), title); }
 
     private:
       tntdb::Connection _conn;
