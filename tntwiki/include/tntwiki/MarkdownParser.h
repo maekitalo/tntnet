@@ -156,6 +156,7 @@ namespace tntwiki
         } _state;
 
         unsigned _lineNo;
+        bool _para;
         cxxtools::SmartPtr<Parser> _sub;
         std::string _token;
         SpanElementParser _data;
@@ -166,10 +167,11 @@ namespace tntwiki
         Parser& operator=(Parser&);
 
       public:
-        explicit Parser(ParserEvent& event)
+        explicit Parser(ParserEvent& event, bool para = true)
           : _event(event),
             _state(state_0),
             _lineNo(1),
+            _para(para),
             _sub(0),
             _data(event)
         { }

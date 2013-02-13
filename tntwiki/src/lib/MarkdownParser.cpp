@@ -31,6 +31,7 @@ void Parser::parse(char ch)
       {
         _listChar = ch;
         _event.onListBegin(_listChar);
+        _sub = new Parser(_event, false);
         _state = state_list1;
       }
       else if (ch >= '0' && ch <= '9')
@@ -57,9 +58,12 @@ void Parser::parse(char ch)
       }
       else
       {
-        _event.onParaBegin();
         _data.parse(ch);
-        _state = state_para;
+        if (_para)
+        {
+          _event.onParaBegin();
+          _state = state_para;
+        }
       }
       break;
 
@@ -74,6 +78,7 @@ void Parser::parse(char ch)
       else
       {
         _event.onListBegin(_listChar);
+        _sub = new Parser(_event, false);
         _state = state_list1;
       }
       break;
@@ -107,7 +112,7 @@ void Parser::parse(char ch)
       else
       {
         _event.onListEntryBegin();
-        _data.parse(ch);
+        _sub->parse(ch);
         _state = state_list;
       }
       break;
@@ -119,33 +124,32 @@ void Parser::parse(char ch)
         _state = state_listend;
       }
       else
-        _data.parse(ch);
+        _sub->parse(ch);
       break;
 
     case state_listend:
       if (ch == _listChar)
       {
-        _event.onData(_data.str());
+        _sub->finalize();
         _event.onListEntryEnd();
-        _data.reset();
         _state = state_list1;
       }
       else if (ch == ' ')
         ;
       else if (ch == '\n')
       {
-        _event.onData(_data.str());
+        _sub->finalize();
+        _sub = 0;
         _event.onListEntryEnd();
-        _data.reset();
         _event.onListEnd();
         _state = state_0;
       }
       else
       {
-        _data.parse('\n');
-        _data.parse(_token, false);
+        _sub->parse('\n');
+        _sub->parse(_token, false);
         _token.clear();
-        _data.parse(ch);
+        _sub->parse(ch);
         _state = state_list;
       }
       break;
@@ -454,6 +458,8 @@ void Parser::finalize()
 
     case state_list:
     case state_listend:
+      _sub->finalize();
+      _sub = 0;
       _event.onListEntryEnd();
       _event.onListEnd();
       break;
@@ -514,6 +520,10 @@ void Parser::finalize()
   }
 
   _event.finalize();
+  _state = state_0;
+  _token.clear();
+  _data.reset();
+  _sub = 0;
 }
 
 }
