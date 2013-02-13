@@ -145,6 +145,7 @@ namespace tnt
     impl->headRequest = false;
     impl->clearSession = false;
     impl->acceptEncoding.clear();
+    impl->safe_outstream.setSink(impl->outstream.rdbuf());
 
     return impl;
   }
