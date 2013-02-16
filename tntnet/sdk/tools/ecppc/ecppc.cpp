@@ -72,11 +72,28 @@ namespace tnt
       disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
       logCategory = cxxtools::Arg<std::string>(argc, argv, 'l');
 
-      if (argc < 2 || argv[1][0] == '-')
-        throw Usage(argv[0]);
-      inputfile = argv[1];
       if (multibinary)
       {
+        cxxtools::Arg<const char*> ifiles(argc, argv, 'i');
+        if (ifiles.isSet())
+        {
+          std::ifstream in(ifiles.getValue());
+          std::string ifile;
+          while (std::getline(in, ifile))
+          {
+            std::string key = ifile;
+            if (!keepPath)
+            {
+              // strip path
+              std::string::size_type p;
+              if ((p = key.find_last_of('/')) != std::string::npos)
+                key.erase(0, p + 1);
+            }
+
+            inputfiles.insert(inputfiles_type::value_type(key, ifile));
+          }
+        }
+
         for (int a = 1; a < argc; ++a)
         {
           std::string ifile = argv[a];
@@ -91,6 +108,12 @@ namespace tnt
 
           inputfiles.insert(inputfiles_type::value_type(key, ifile));
         }
+      }
+      else
+      {
+        if (argc < 2 || argv[1][0] == '-')
+          throw Usage(argv[0]);
+        inputfile = argv[1];
       }
     }
 
@@ -346,6 +369,7 @@ namespace tnt
            "  --mimetypes file read mimetypes from file (default /etc/mime.types)\n"
            "  -b               binary\n"
            "  -bb              generate multibinary component\n"
+           "  -i filename      read filenames for multibinary component from specified file\n"
            "  -z               compress constant data\n"
            "  -v               verbose\n"
            "  -M               generate dependency for Makefile\n"
