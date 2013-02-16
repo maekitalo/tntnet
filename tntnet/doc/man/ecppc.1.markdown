@@ -42,6 +42,11 @@ OPTIONS
   not be of same mime-type, since the mime-type is looked automatically from the
   mime-database by file- extension of the source-file.
 
+`-i` *filename*
+  In multi binary mode (option `-bb`) filenames can be read from the file
+  specified with this option. This can be useful when the command line gets too
+  long or just for convenience.
+
 `-I` *dir*
   Search include-files in directory. This option can be passed multiple times.
   All specified directories are searched in turn for include-files.
