@@ -16,36 +16,37 @@ SETTINGS
 --------
 This section describes the variables, used by Tntnet (8).
 
-`<AccessLog>*filename*</AccessLog>`
+`<accessLog>`*filename*`</accessLog>`
   Writes a log entry for each request in a common format. This format is
   compatible with most log file analyze systems for http servers.
 
-  The log file has the fields:
-    `peer-ip` - `username` [`time`] "`http-method` `query-string` HTTP/`major-version`.`minor-version`" `http-return-code` `content-size` "`referer`" "`user-agent`"
+  The log file has the fields: `peer-ip` - `username` [`time`] "`http-method`
+  `query-string` HTTP/`major-version`.`minor-version`" `http-return-code`
+  `content-size` "`referer`" "`user-agent`"
 
   The `username`, `referer` and `user-agent` may be '-' when the value is not
   available. Also the `content-size` can be empty in some cases.
 
   *Example*
 
-    <AccessLog>/var/log/tntnet/access.log</AccessLog
+    <accessLog>/var/log/tntnet/access.log</accessLog
 
-`<BufferSize>*bytes*</BufferSize>`
+`<bufferSize>`*bytes*`</bufferSize>`
 
   Specifies the number of bytes sent in a single system-call. This does not
   limit anything in application-level. It does not affect e.g. savepoints or
   exception-handling. Component-output is collected completely and then passed
-  in chunks of BufferSize bytes to the operating system.
+  in chunks of `bufferSize` bytes to the operating system.
 
   The default value is 16384.
 
-`<comppath><entry>*path1*</entry></comppath>`
+`<comppath>` [ `<entry>`*path1*`</entry>` ] `</comppath>`
 
   `comppath` specifies, where tntnet should search for webapplications. Tntnet
   searches first in the current directory and then in each directory, you
   specify here, until a library is found. You can repeat the directive as many
   times as desired to add more entries. If it is not found, the next
-  MapUrl-entry is tried.
+  `mappings` entry is tried.
 
   *Example*
 
@@ -54,7 +55,7 @@ This section describes the variables, used by Tntnet (8).
       <entry>/usr/local/share/tntnet</entry>
     </comppath>
 
-`<chroot>*directory*</chroot>`
+`<chroot>`*directory*`</chroot>`
 
   Does a chroot(2)-system call on startup, which locks the process into the directory at system-level.
 
@@ -62,12 +63,12 @@ This section describes the variables, used by Tntnet (8).
 
     <chroot>/var/tntnet</chroot>
 
-`<daemon>*0|1*</daemon>`
+`<daemon>`*0|1*`</daemon>`
 
   If this flag is set to 1, Tntnet forks at startup and terminates the
   parent-process on successful initialization.
 
-`<dir>*directory*</dir>`
+`<dir>`*directory*`</dir>`
 
   Changes the current working directory of the process on startup.
 
@@ -75,7 +76,7 @@ This section describes the variables, used by Tntnet (8).
 
     <dir>/var/tntnet</dir>
 
-`<enableCompression>*yes|no*</enableCompression>`
+`<enableCompression>`*yes|no*`</enableCompression>`
 
   Specifies, if Tntnet should use gzip-compression at http-level. By default
   Tntnet use compression. A http-client like a web browser can send a header
@@ -93,7 +94,7 @@ This section describes the variables, used by Tntnet (8).
 
     <enableCompression>no</enableCompression>
 
-`<errorLog>*filename*</errorLog>`
+`<errorLog>`*filename*`</errorLog>`
 
   Redirects stderr to the specified file when tntnet runs as a daemon. If
   ErrorLog is not set stderr is redirected to /dev/null.
@@ -102,7 +103,7 @@ This section describes the variables, used by Tntnet (8).
 
     <errorLog>/var/log/tntnet/error.log</errorLog>
 
-`<group>*unix-group-id*</group>`
+`<group>`*unix-group-id*`</group>`
 
   Changes the group under which tntnet runs.
 
@@ -113,7 +114,7 @@ This section describes the variables, used by Tntnet (8).
 
     <group>tntnet-group</group>
 
-`<keepAliveTimeout>*milliseconds*</keepAliveTimeout>`
+`<keepAliveTimeout>`*milliseconds*`</keepAliveTimeout>`
 
   Sets the timeout for keep-alive requests.
 
@@ -126,7 +127,7 @@ This section describes the variables, used by Tntnet (8).
 
     <keepAliveTimeout>300000</keepAliveTimeout>
 
-`<keepAliveMax>*number*</keepAliveMax>`
+`<keepAliveMax>`*number*`</keepAliveMax>`
 
   Sets the maximum number of request per tcp-connection. This defaults to 100.
 
@@ -134,7 +135,7 @@ This section describes the variables, used by Tntnet (8).
 
     <keepAliveTimeout>10</keepAliveTimeout>
 
-`<listeners>*listener definition*</listeners>`
+`<listeners>`*listener definition*`</listeners>`
 
   Specifies, on which local interfaces tntnet waits for connections. There can
   be more than one Listen-directives, in which case tntnet waits on every
@@ -142,11 +143,11 @@ This section describes the variables, used by Tntnet (8).
 
   See separate section *Listeners*
 
-`<logging>*listener definition*</logging>`
+`<logging>`*listener definition*`</logging>`
 
   Configures logging. See separate section *logging*
 
-`<listenRetry>*number*</listenRetry>`
+`<listenRetry>`*number*`</listenRetry>`
 
   On startup Tntnet calls listen on the specified port. When the systemcall
   returns with an error, Tntnet tries again and fails after the specified number
@@ -158,7 +159,7 @@ This section describes the variables, used by Tntnet (8).
 
     <listenRetry>10</listenRetry>
 
-`<listenBacklog>*number*</listenBacklog>`
+`<listenBacklog>`*number*`</listenBacklog>`
 
   The system-call listen(3p) needs a parameter backlog, which specifies, how
   many pending connections the operating-system should queue before it starts to
@@ -170,14 +171,14 @@ This section describes the variables, used by Tntnet (8).
 
     <ListenBacklog>64</ListenBacklog>
 
-`<mapUrl>*urlmappings*</mapUrl>`
+`<mappings>`*urlmappings*`</mappings>`
 
   This is the most important setting for tntnet. It specifies, which components
   schould be called on which urls.
 
-  For details see the section *Urlmapping*.
+  For details see the section *Url mapping*.
 
-`<maxUrlMapCache>*number*</maxUrlMapCache>`
+`<maxUrlMapCache>`*number*`</maxUrlMapCache>`
 
   Mapping urls to components is done using regular expressions. Executing these
   expressions is quite expensive while the number of different urls is quite
@@ -198,7 +199,7 @@ This section describes the variables, used by Tntnet (8).
 
     <maxUrlMapCache>32768</maxUrlMapCache>
 
-`<maxRequestSize>*number*</maxRequestSize>`
+`<maxRequestSize>`*number*`</maxRequestSize>`
 
   This directive limits the size of the request. After *number* Bytes the
   connection is just closed. This prevents denial-of-service-attacks through
@@ -212,7 +213,7 @@ This section describes the variables, used by Tntnet (8).
 
     <maxRequestSize>65536</maxRequestSize>
 
-`<maxRequestTime>*seconds*</maxRequestTime>`
+`<maxRequestTime>`*seconds*`</maxRequestTime>`
 
   In daemon mode tntnet has a watchdog, which restarts tntnet when the maximum
   request time is exceeded. This happens, when a request is in a endless loop or
@@ -227,7 +228,7 @@ This section describes the variables, used by Tntnet (8).
 
     <maxRequestTime>1200</maxRequestTime>
 
-`<minThreads>*number*</minThreads>`
+`<minThreads>`*number*`</minThreads>`
 
   Tntnet uses a dynamic pool of worker-threads, which wait for incoming
   requests. MinThreads specifies, how many worker threads there have to be. This
@@ -237,7 +238,7 @@ This section describes the variables, used by Tntnet (8).
 
     <minThreads>10</minThreads>
 
-`<minCompressSize>*number*</minCompressSize>`
+`<minCompressSize>`*number*`</minCompressSize>`
 
   Http-compression for replies smaller than this are not compressed at all.
 
@@ -247,7 +248,7 @@ This section describes the variables, used by Tntnet (8).
 
     <minCompressSize>256</minCompressSize>
 
-`<maxThreads>*number*</maxThreads>`
+`<maxThreads>`*number*`</maxThreads>`
 
   Tntnet uses a dynamic pool of worker-threads, which wait for incoming
   requests. `maxThreads` limits the number of threads.
@@ -259,7 +260,7 @@ This section describes the variables, used by Tntnet (8).
 
     <maxThreads>200</maxThreads>
 
-`<pidFile>*filename*</pidFile>`
+`<pidFile>`*filename*`</pidFile>`
 
   When run in daemon-mode, tntnet writes the process-id of the monitor-process
   to filename. When the monitor-process is deactivated, the pid of the
@@ -270,7 +271,7 @@ This section describes the variables, used by Tntnet (8).
 
     <pidFile>/var/run/tntnet.pid</pidFile>
 
-`<queueSize>*number*</queueSize>`
+`<queueSize>`*number*`</queueSize>`
 
   Tntnet has a request-queue, where new requests wait for service. This sets a
   maximum size of this queue, after wich new requests are not accepted.
@@ -281,7 +282,7 @@ This section describes the variables, used by Tntnet (8).
 
     <queueSize>50</queueSize>
 
-`<sessionTimeout>*seconds*</sessionTimeout>`
+`<sessionTimeout>`*seconds*`</sessionTimeout>`
 
   This sets the number of seconds without requests after which a sesssion is
   timed out.
@@ -292,7 +293,7 @@ This section describes the variables, used by Tntnet (8).
 
     <sessionTimeout>600</sessionTimeout>
 
-`<socketReadTimeout>*milliseconds*</socketReadTimeout>`
+`<socketReadTimeout>`*milliseconds*`</socketReadTimeout>`
 
   A worker-thread waits for some milliseconds on incoming data. If there is no
   data, the job is put into a queue and another thread waits with poll(2) on
@@ -306,7 +307,7 @@ This section describes the variables, used by Tntnet (8).
 
     <socketReadTimeout>0</socketReadTimeout>
 
-`<socketWriteTimeout>*milliseconds*</socketWriteTimeout>`
+`<socketWriteTimeout>`*milliseconds*`</socketWriteTimeout>`
 
   This defines the time, how long the workerthreads wait on write.  If the
   timeout is exceeded, the socket is closed and the browser might not get all
@@ -316,7 +317,7 @@ This section describes the variables, used by Tntnet (8).
 
     <socketWriteTimeout>20000</socketWriteTimeout>
 
-`<threadStartDelay>*ms*</threadStartDelay>`
+`<threadStartDelay>`*ms*`</threadStartDelay>`
 
   When additional worker threads are needed tntnet waits the number of
   milliseconds before it starts additional threads to prevent high load when
@@ -328,7 +329,7 @@ This section describes the variables, used by Tntnet (8).
 
     <threadStartDelay>1000</threadStartDelay>
 
-`<user>*username*</user>`
+`<user>`*username*`</user>`
 
   Changes the user under which tntnet answers requests.
 
@@ -340,10 +341,94 @@ This section describes the variables, used by Tntnet (8).
 
     <user>www-data</user>
 
-Urlmapping
-----------
+Url mapping
+-----------
+Tntnet is a web server, which receives http requests from a http client and
+answers them. A http request has a url and other attributes, which are used to
+decide, how the answer should look like. This is done my mapping urls to components.
 
-TODO
+A component is something, which generates a http reply. They are normally
+generated with the ecpp compiler ecppc(1). The ecppc compiler generated C++
+classes with component names. The classes are compiled and linked into a shared
+library. Both the component name and the shared library name is needed to
+identify a component.
+
+The component identifier is a string built from the component name, the @
+character and the shared library name. A example is `myclass@myapplication`.
+This tells tntnet: load shared library `myapplication` and call the component
+with the name `myclass` in that library, which creates the reply to the request.
+
+To tell tntnet, which component to call, url mappings must be configured.
+
+Configuration is done in the xml section `<mappings>`. Multiple mappings can be
+configured there. A mapping has a condition and a target. Tntnet looks in the
+list of mappings for the first mapping, where the condition is met and uses that
+to call the component. The component may return either a reply - then the
+request is done or a special value `DECLINED`, which tells tntnet to continue in
+the list and look for the next mapping, where the condition is met.
+
+The component, which returns `DECLINED` may already have generated part of the
+request. This is preserved for the next mapping. A common use case is to write a
+special component, which just checks the user name and password. If the user
+name and password is valid, `DECLINED` is returned and tntnet calls the next
+mapping where the condition is met.
+
+When the end of the list is reached and no mapping returned a http reply code,
+tntnet replies with http not found (404) error.
+
+So how these mapping are specified then?
+
+The mapping contains 3 kind of nodes:
+
+`conditions`
+  Multiple conditions can be specified. All conditions must be met when the
+  mapping is to be used.
+
+  The most important and only mandatory condition is `<url>`, which contains a
+  extended regular expression (see regex(7) for details). This expression is
+  checked against the url of the request.
+
+  The condition `<vhost>` specifies the virtual host, for which this mapping is
+  valid. When this is specified, the mapping is only valid for requests, where
+  the virtual host matches the setting. The value is also a extended regular
+  expression. Note, that a dot matches any character in regular expressions,
+  which may be irritating here. If you want to specify a mapping for the all
+  hosts of the domain `tntnet.org`, you have to set
+  `<vhost>tntnet\.org$</vhost>`. Also the dollar sign at the end is important,
+  since it matches the end of the string. Otherwise the mapping would be also
+  valid for a virtual host like `tntnet.org.foo.com`, which may not be what you
+  meant.
+
+  The condition `method` specifies the http method for which the mapping should
+  be considered. Again a extended regular expression is used.
+
+  The condition `ssl` is a boolean value. The value should be 0 or 1. The
+  setting checks, whether this mapping should be used depending on ssl.  If the
+  value is 1, the condition is met, when the request is sent via ssl. If the
+  value is 0, the condition is met, when the request is sent without ssl.
+
+`target`
+  The mapping node contains a node `<target>`, which contains the component name,
+  which is to be called when the conditions are met.
+  
+  The target may contain back references to the regular expression in the
+  `<url>` condition. Parts of the regular expression may be in brackets. In the
+  target $1 is replaced with the first bracketed expression, $2 with the second
+  and so on.
+  
+  This node is mandatory.
+
+`parameters`
+  When the condition is met, additional parameters may be passed to the called
+  component. There are 2 nodes for this.
+
+  The node `<pathinfo>` can be requested in the component using
+  `request.getPathInfo()`. If the node is not set, the url is set as path info.
+
+  The node `<args>` contain a list of strings, which can be requested using e.g.
+  `request.getArg(`*number*`)` or other methods. The strings must be in tags
+  also but the actual tag name is not used. Normally we use the tag `<arg>`
+  here.
 
 Listeners
 ---------

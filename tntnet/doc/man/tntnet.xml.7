@@ -13,12 +13,13 @@ order.
 .PP
 This section describes the variables, used by Tntnet (8).
 .TP
-\fB\fC<AccessLog>*filename*</AccessLog>\fR
+\fB\fC<accessLog>\fR\fIfilename\fP\fB\fC</accessLog>\fR
 Writes a log entry for each request in a common format. This format is
 compatible with most log file analyze systems for http servers.
-.TP
-The log file has the fields:
-    \fB\fCpeer-ip\fR \- \fB\fCusername\fR [\fB\fCtime\fR] "\fB\fChttp-method\fR \fB\fCquery-string\fR HTTP/\fB\fCmajor-version\fR.\fB\fCminor-version\fR" \fB\fChttp-return-code\fR \fB\fCcontent-size\fR "\fB\fCreferer\fR" "\fB\fCuser-agent\fR"
+.IP
+The log file has the fields: \fB\fCpeer-ip\fR \- \fB\fCusername\fR [\fB\fCtime\fR] "\fB\fChttp-method\fR
+\fB\fCquery-string\fR HTTP/\fB\fCmajor-version\fR.\fB\fCminor-version\fR" \fB\fChttp-return-code\fR
+\fB\fCcontent-size\fR "\fB\fCreferer\fR" "\fB\fCuser-agent\fR"
 .IP
 The \fB\fCusername\fR, \fB\fCreferer\fR and \fB\fCuser-agent\fR may be '\-' when the value is not
 available. Also the \fB\fCcontent-size\fR can be empty in some cases.
@@ -27,26 +28,26 @@ available. Also the \fB\fCcontent-size\fR can be empty in some cases.
 .PP
 .RS
 .nf
-<AccessLog>/var/log/tntnet/access.log</AccessLog
+<accessLog>/var/log/tntnet/access.log</accessLog
 .fi
 .RE
 .PP
-\fB\fC<BufferSize>*bytes*</BufferSize>\fR
+\fB\fC<bufferSize>\fR\fIbytes\fP\fB\fC</bufferSize>\fR
 .IP
 Specifies the number of bytes sent in a single system\-call. This does not
 limit anything in application\-level. It does not affect e.g. savepoints or
 exception\-handling. Component\-output is collected completely and then passed
-in chunks of BufferSize bytes to the operating system.
+in chunks of \fB\fCbufferSize\fR bytes to the operating system.
 .IP
 The default value is 16384.
 .PP
-\fB\fC<comppath><entry>*path1*</entry></comppath>\fR
+\fB\fC<comppath>\fR [ \fB\fC<entry>\fR\fIpath1\fP\fB\fC</entry>\fR ] \fB\fC</comppath>\fR
 .IP
 \fB\fCcomppath\fR specifies, where tntnet should search for webapplications. Tntnet
 searches first in the current directory and then in each directory, you
 specify here, until a library is found. You can repeat the directive as many
 times as desired to add more entries. If it is not found, the next
-MapUrl\-entry is tried.
+\fB\fCmappings\fR entry is tried.
 .IP
 \fIExample\fP
 .PP
@@ -59,7 +60,7 @@ MapUrl\-entry is tried.
 .fi
 .RE
 .PP
-\fB\fC<chroot>*directory*</chroot>\fR
+\fB\fC<chroot>\fR\fIdirectory\fP\fB\fC</chroot>\fR
 .IP
 Does a 
 .BR chroot (2)-system 
@@ -73,12 +74,12 @@ call on startup, which locks the process into the directory at system\-level.
 .fi
 .RE
 .PP
-\fB\fC<daemon>*0|1*</daemon>\fR
+\fB\fC<daemon>\fR\fI0|1\fP\fB\fC</daemon>\fR
 .IP
 If this flag is set to 1, Tntnet forks at startup and terminates the
 parent\-process on successful initialization.
 .PP
-\fB\fC<dir>*directory*</dir>\fR
+\fB\fC<dir>\fR\fIdirectory\fP\fB\fC</dir>\fR
 .IP
 Changes the current working directory of the process on startup.
 .IP
@@ -90,7 +91,7 @@ Changes the current working directory of the process on startup.
 .fi
 .RE
 .PP
-\fB\fC<enableCompression>*yes|no*</enableCompression>\fR
+\fB\fC<enableCompression>\fR\fIyes|no\fP\fB\fC</enableCompression>\fR
 .IP
 Specifies, if Tntnet should use gzip\-compression at http\-level. By default
 Tntnet use compression. A http\-client like a web browser can send a header
@@ -112,7 +113,7 @@ up to 30%.
 .fi
 .RE
 .PP
-\fB\fC<errorLog>*filename*</errorLog>\fR
+\fB\fC<errorLog>\fR\fIfilename\fP\fB\fC</errorLog>\fR
 .IP
 Redirects stderr to the specified file when tntnet runs as a daemon. If
 ErrorLog is not set stderr is redirected to /dev/null.
@@ -125,7 +126,7 @@ ErrorLog is not set stderr is redirected to /dev/null.
 .fi
 .RE
 .PP
-\fB\fC<group>*unix-group-id*</group>\fR
+\fB\fC<group>\fR\fIunix\-group\-id\fP\fB\fC</group>\fR
 .IP
 Changes the group under which tntnet runs.
 .IP
@@ -142,7 +143,7 @@ when tntnet starts as root user.
 .fi
 .RE
 .PP
-\fB\fC<keepAliveTimeout>*milliseconds*</keepAliveTimeout>\fR
+\fB\fC<keepAliveTimeout>\fR\fImilliseconds\fP\fB\fC</keepAliveTimeout>\fR
 .IP
 Sets the timeout for keep\-alive requests.
 .IP
@@ -159,7 +160,7 @@ to 15000ms.
 .fi
 .RE
 .PP
-\fB\fC<keepAliveMax>*number*</keepAliveMax>\fR
+\fB\fC<keepAliveMax>\fR\fInumber\fP\fB\fC</keepAliveMax>\fR
 .IP
 Sets the maximum number of request per tcp\-connection. This defaults to 100.
 .IP
@@ -171,7 +172,7 @@ Sets the maximum number of request per tcp\-connection. This defaults to 100.
 .fi
 .RE
 .PP
-\fB\fC<listeners>*listener definition*</listeners>\fR
+\fB\fC<listeners>\fR\fIlistener definition\fP\fB\fC</listeners>\fR
 .IP
 Specifies, on which local interfaces tntnet waits for connections. There can
 be more than one Listen\-directives, in which case tntnet waits on every
@@ -179,11 +180,11 @@ address.
 .IP
 See separate section \fIListeners\fP
 .PP
-\fB\fC<logging>*listener definition*</logging>\fR
+\fB\fC<logging>\fR\fIlistener definition\fP\fB\fC</logging>\fR
 .IP
 Configures logging. See separate section \fIlogging\fP
 .PP
-\fB\fC<listenRetry>*number*</listenRetry>\fR
+\fB\fC<listenRetry>\fR\fInumber\fP\fB\fC</listenRetry>\fR
 .IP
 On startup Tntnet calls listen on the specified port. When the systemcall
 returns with an error, Tntnet tries again and fails after the specified number
@@ -199,7 +200,7 @@ The default number is 5.
 .fi
 .RE
 .PP
-\fB\fC<listenBacklog>*number*</listenBacklog>\fR
+\fB\fC<listenBacklog>\fR\fInumber\fP\fB\fC</listenBacklog>\fR
 .IP
 The system\-call 
 .BR listen (3p) 
@@ -217,14 +218,14 @@ The default value is 16.
 .fi
 .RE
 .PP
-\fB\fC<mapUrl>*urlmappings*</mapUrl>\fR
+\fB\fC<mappings>\fR\fIurlmappings\fP\fB\fC</mappings>\fR
 .IP
 This is the most important setting for tntnet. It specifies, which components
 schould be called on which urls.
 .IP
-For details see the section \fIUrlmapping\fP.
+For details see the section \fIUrl mapping\fP.
 .PP
-\fB\fC<maxUrlMapCache>*number*</maxUrlMapCache>\fR
+\fB\fC<maxUrlMapCache>\fR\fInumber\fP\fB\fC</maxUrlMapCache>\fR
 .IP
 Mapping urls to components is done using regular expressions. Executing these
 expressions is quite expensive while the number of different urls is quite
@@ -249,7 +250,7 @@ The default value is 8192.
 .fi
 .RE
 .PP
-\fB\fC<maxRequestSize>*number*</maxRequestSize>\fR
+\fB\fC<maxRequestSize>\fR\fInumber\fP\fB\fC</maxRequestSize>\fR
 .IP
 This directive limits the size of the request. After \fInumber\fP Bytes the
 connection is just closed. This prevents denial\-of\-service\-attacks through
@@ -267,7 +268,7 @@ The value defaults to 0, which means, that there is no limit at all.
 .fi
 .RE
 .PP
-\fB\fC<maxRequestTime>*seconds*</maxRequestTime>\fR
+\fB\fC<maxRequestTime>\fR\fIseconds\fP\fB\fC</maxRequestTime>\fR
 .IP
 In daemon mode tntnet has a watchdog, which restarts tntnet when the maximum
 request time is exceeded. This happens, when a request is in a endless loop or
@@ -286,7 +287,7 @@ request should run. If the Timeout is set to 0, the watchdog is deactivated.
 .fi
 .RE
 .PP
-\fB\fC<minThreads>*number*</minThreads>\fR
+\fB\fC<minThreads>\fR\fInumber\fP\fB\fC</minThreads>\fR
 .IP
 Tntnet uses a dynamic pool of worker\-threads, which wait for incoming
 requests. MinThreads specifies, how many worker threads there have to be. This
@@ -300,7 +301,7 @@ defaults to 5.
 .fi
 .RE
 .PP
-\fB\fC<minCompressSize>*number*</minCompressSize>\fR
+\fB\fC<minCompressSize>\fR\fInumber\fP\fB\fC</minCompressSize>\fR
 .IP
 Http\-compression for replies smaller than this are not compressed at all.
 .IP
@@ -314,7 +315,7 @@ The default value for this is 1024.
 .fi
 .RE
 .PP
-\fB\fC<maxThreads>*number*</maxThreads>\fR
+\fB\fC<maxThreads>\fR\fInumber\fP\fB\fC</maxThreads>\fR
 .IP
 Tntnet uses a dynamic pool of worker\-threads, which wait for incoming
 requests. \fB\fCmaxThreads\fR limits the number of threads.
@@ -329,7 +330,7 @@ The default is 100.
 .fi
 .RE
 .PP
-\fB\fC<pidFile>*filename*</pidFile>\fR
+\fB\fC<pidFile>\fR\fIfilename\fP\fB\fC</pidFile>\fR
 .IP
 When run in daemon\-mode, tntnet writes the process\-id of the monitor\-process
 to filename. When the monitor\-process is deactivated, the pid of the
@@ -344,7 +345,7 @@ stored process\-id stops tntnet.
 .fi
 .RE
 .PP
-\fB\fC<queueSize>*number*</queueSize>\fR
+\fB\fC<queueSize>\fR\fInumber\fP\fB\fC</queueSize>\fR
 .IP
 Tntnet has a request\-queue, where new requests wait for service. This sets a
 maximum size of this queue, after wich new requests are not accepted.
@@ -359,7 +360,7 @@ The default value is 1000.
 .fi
 .RE
 .PP
-\fB\fC<sessionTimeout>*seconds*</sessionTimeout>\fR
+\fB\fC<sessionTimeout>\fR\fIseconds\fP\fB\fC</sessionTimeout>\fR
 .IP
 This sets the number of seconds without requests after which a sesssion is
 timed out.
@@ -374,7 +375,7 @@ The default value is 300 seconds.
 .fi
 .RE
 .PP
-\fB\fC<socketReadTimeout>*milliseconds*</socketReadTimeout>\fR
+\fB\fC<socketReadTimeout>\fR\fImilliseconds\fP\fB\fC</socketReadTimeout>\fR
 .IP
 A worker\-thread waits for some milliseconds on incoming data. If there is no
 data, the job is put into a queue and another thread waits with 
@@ -394,7 +395,7 @@ timeout reduces contextswitches on slow connections.
 .fi
 .RE
 .PP
-\fB\fC<socketWriteTimeout>*milliseconds*</socketWriteTimeout>\fR
+\fB\fC<socketWriteTimeout>\fR\fImilliseconds\fP\fB\fC</socketWriteTimeout>\fR
 .IP
 This defines the time, how long the workerthreads wait on write.  If the
 timeout is exceeded, the socket is closed and the browser might not get all
@@ -408,7 +409,7 @@ data.  The default value is 10000 milliseconds.
 .fi
 .RE
 .PP
-\fB\fC<threadStartDelay>*ms*</threadStartDelay>\fR
+\fB\fC<threadStartDelay>\fR\fIms\fP\fB\fC</threadStartDelay>\fR
 .IP
 When additional worker threads are needed tntnet waits the number of
 milliseconds before it starts additional threads to prevent high load when
@@ -424,7 +425,7 @@ The default value is 10ms.
 .fi
 .RE
 .PP
-\fB\fC<user>*username*</user>\fR
+\fB\fC<user>\fR\fIusername\fP\fB\fC</user>\fR
 .IP
 Changes the user under which tntnet answers requests.
 .IP
@@ -440,9 +441,98 @@ when tntnet starts as root user.
 <user>www-data</user>
 .fi
 .RE
-.SH Urlmapping
+.SH Url mapping
 .PP
-TODO
+Tntnet is a web server, which receives http requests from a http client and
+answers them. A http request has a url and other attributes, which are used to
+decide, how the answer should look like. This is done my mapping urls to components.
+.PP
+A component is something, which generates a http reply. They are normally
+generated with the ecpp compiler 
+.BR ecppc (1). 
+The ecppc compiler generated C++
+classes with component names. The classes are compiled and linked into a shared
+library. Both the component name and the shared library name is needed to
+identify a component.
+.PP
+The component identifier is a string built from the component name, the @
+character and the shared library name. A example is \fB\fCmyclass@myapplication\fR.
+This tells tntnet: load shared library \fB\fCmyapplication\fR and call the component
+with the name \fB\fCmyclass\fR in that library, which creates the reply to the request.
+.PP
+To tell tntnet, which component to call, url mappings must be configured.
+.PP
+Configuration is done in the xml section \fB\fC<mappings>\fR. Multiple mappings can be
+configured there. A mapping has a condition and a target. Tntnet looks in the
+list of mappings for the first mapping, where the condition is met and uses that
+to call the component. The component may return either a reply \- then the
+request is done or a special value \fB\fCDECLINED\fR, which tells tntnet to continue in
+the list and look for the next mapping, where the condition is met.
+.PP
+The component, which returns \fB\fCDECLINED\fR may already have generated part of the
+request. This is preserved for the next mapping. A common use case is to write a
+special component, which just checks the user name and password. If the user
+name and password is valid, \fB\fCDECLINED\fR is returned and tntnet calls the next
+mapping where the condition is met.
+.PP
+When the end of the list is reached and no mapping returned a http reply code,
+tntnet replies with http not found (404) error.
+.PP
+So how these mapping are specified then?
+.PP
+The mapping contains 3 kind of nodes:
+.TP
+\fB\fCconditions\fR
+Multiple conditions can be specified. All conditions must be met when the
+mapping is to be used.
+.IP
+The most important and only mandatory condition is \fB\fC<url>\fR, which contains a
+extended regular expression (see 
+.BR regex (7) 
+for details). This expression is
+checked against the url of the request.
+.IP
+The condition \fB\fC<vhost>\fR specifies the virtual host, for which this mapping is
+valid. When this is specified, the mapping is only valid for requests, where
+the virtual host matches the setting. The value is also a extended regular
+expression. Note, that a dot matches any character in regular expressions,
+which may be irritating here. If you want to specify a mapping for the all
+hosts of the domain \fB\fCtntnet.org\fR, you have to set
+\fB\fC<vhost>tntnet\\.org$</vhost>\fR. Also the dollar sign at the end is important,
+since it matches the end of the string. Otherwise the mapping would be also
+valid for a virtual host like \fB\fCtntnet.org.foo.com\fR, which may not be what you
+meant.
+.IP
+The condition \fB\fCmethod\fR specifies the http method for which the mapping should
+be considered. Again a extended regular expression is used.
+.IP
+The condition \fB\fCssl\fR is a boolean value. The value should be 0 or 1. The
+setting checks, whether this mapping should be used depending on ssl.  If the
+value is 1, the condition is met, when the request is sent via ssl. If the
+value is 0, the condition is met, when the request is sent without ssl.
+.TP
+\fB\fCtarget\fR
+The mapping node contains a node \fB\fC<target>\fR, which contains the component name,
+which is to be called when the conditions are met.
+.IP
+The target may contain back references to the regular expression in the
+\fB\fC<url>\fR condition. Parts of the regular expression may be in brackets. In the
+target $1 is replaced with the first bracketed expression, $2 with the second
+and so on.
+.IP
+This node is mandatory.
+.TP
+\fB\fCparameters\fR
+When the condition is met, additional parameters may be passed to the called
+component. There are 2 nodes for this.
+.IP
+The node \fB\fC<pathinfo>\fR can be requested in the component using
+\fB\fCrequest.getPathInfo()\fR. If the node is not set, the url is set as path info.
+.IP
+The node \fB\fC<args>\fR contain a list of strings, which can be requested using e.g.
+\fB\fCrequest.getArg(\fR\fInumber\fP\fB\fC)\fR or other methods. The strings must be in tags
+also but the actual tag name is not used. Normally we use the tag \fB\fC<arg>\fR
+here.
 .SH Listeners
 .PP
 TODO
