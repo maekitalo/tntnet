@@ -332,6 +332,11 @@ void SpanElementParser::parse(char ch)
       _save += ch;
       if (ch == ')')
       {
+        if (!_data.empty())
+        {
+          _event.onData(_data);
+          _data.clear();
+        }
         _event.onLink(_linktext, _linktarget, _linktitle);
         _linktext.clear();
         _linktarget.clear();
@@ -378,6 +383,11 @@ void SpanElementParser::parse(char ch)
         ;
       else if (ch == ')')
       {
+        if (!_data.empty())
+        {
+          _event.onData(_data);
+          _data.clear();
+        }
         _event.onLink(_linktext, _linktarget, _linktitle);
         _linktext.clear();
         _linktarget.clear();
