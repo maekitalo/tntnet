@@ -352,4 +352,4 @@ This manual page was written by Tommi Mäkitalo <tommi@tntnet.org>.
 SEE ALSO
 --------
 
-tntnet(1), ecppc(1),
+tntnet(1), ecppc(1)
