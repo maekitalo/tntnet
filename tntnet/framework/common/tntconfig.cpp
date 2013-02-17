@@ -32,7 +32,7 @@ namespace tnt
 {
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping)
   {
-    si.getMember("target", mapping.target);
+    si.getMember("target") >>= mapping.target;
     si.getMember("url") >>= mapping.url;
     si.getMember("vhost", mapping.vhost);
     si.getMember("method", mapping.method);
