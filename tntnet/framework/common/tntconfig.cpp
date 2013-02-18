@@ -43,7 +43,16 @@ namespace tnt
     else
       mapping.ssl = SSL_ALL;
 
-    si.getMember("args", mapping.args);
+    const cxxtools::SerializationInfo* args = si.findMember("args");
+    if (args)
+    {
+      for (cxxtools::SerializationInfo::ConstIterator it = args->begin(); it != args->end(); ++it)
+      {
+        std::string value;
+        it->getValue(value);
+        mapping.args[it->name()] = value;
+      }
+    }
   }
 
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener)

@@ -41,7 +41,7 @@
 #include <tnt/scope.h>
 #include <tnt/threadcontext.h>
 #include <locale>
-#include <vector>
+#include <map>
 #include <cxxtools/atomicity.h>
 #include <string>
 #include <cstring>
@@ -60,7 +60,7 @@ namespace tnt
       friend class SessionUnlocker;
       friend class ApplicationUnlocker;
 
-      typedef std::vector<std::string> args_type;
+      typedef std::map<std::string, std::string> args_type;
 
     private:
       std::string body;
@@ -156,13 +156,14 @@ namespace tnt
       const args_type& getArgs() const             { return args; }
       args_type& getArgs()                         { return args; }
 
-      std::string getArgDef(args_type::size_type n,
-        const std::string& def = std::string()) const
-        { return args.size() > n ? args[n] : def; }
-      const std::string& getArg(args_type::size_type n) const
-        { return args[n]; }
-      std::string getArg(const std::string& name, const std::string& def = std::string()) const;
+      /// @deprecated
+      std::string getArgDef(args_type::size_type n, const std::string& def = std::string()) const;
+      /// @deprecated
+      std::string getArg(args_type::size_type n) const { return getArgDef(n); }
+      /// @deprecated
       args_type::size_type getArgsCount() const    { return args.size(); }
+
+      std::string getArg(const std::string& name, const std::string& def = std::string()) const;
 
       void parse(std::istream& in);
       void doPostParse();

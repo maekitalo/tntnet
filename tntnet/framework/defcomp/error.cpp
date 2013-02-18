@@ -81,25 +81,13 @@ namespace tnt
   unsigned Error::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, tnt::QueryParams&)
   {
-    std::string msg;
-
-    const tnt::HttpRequest::args_type& args = request.getArgs();
-
-    tnt::HttpRequest::args_type::const_iterator i = args.begin();
-    if (i == args.end())
-      throw tnt::HttpError(HTTP_BAD_REQUEST, "internal error");
-
-    std::istringstream s(*i++);
+    std::istringstream s(request.getArg("code"));
     unsigned errorcode;
     s >> errorcode;
     if (!s || errorcode < 300 || errorcode >= 1000)
       throw tnt::HttpError(HTTP_INTERNAL_SERVER_ERROR, "configuration error");
 
-    for ( ; i != args.end(); ++i)
-    {
-      msg += ' ';
-      msg += *i;
-    }
+    std::string msg = request.getArg("message");
 
     throw tnt::HttpError(errorcode, msg);
 

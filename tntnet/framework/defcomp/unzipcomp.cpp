@@ -86,21 +86,19 @@ namespace tnt
   {
     std::string pi = request.getPathInfo();
 
-    if (request.getArgsCount() < 1)
-      throw tnt::HttpError(HTTP_INTERNAL_SERVER_ERROR, "missing archive name");
-
-    log_debug("unzip archive \"" << request.getArg(0) << "\" file \"" << pi << '"');
+    log_debug("unzip archive \"" << request.getArg("file") << "\" file \"" << pi << '"');
 
     try
     {
-      unzipFile f(request.getArg(0));
+      unzipFile f(request.getArg("file"));
       unzipFileStream in(f, pi, false);
 
       // set Content-Type
-      if (request.getArgs().size() > 1 && request.getArg(1).size() > 0)
-        reply.setContentType(request.getArg(1).c_str());
-      else
+      std::string contentType = request.getArg("contenttype");
+      if (contentType.empty())
         setContentType(request, reply);
+      else
+        reply.setContentType(contentType);
 
       reply.out() << in.rdbuf();
     }

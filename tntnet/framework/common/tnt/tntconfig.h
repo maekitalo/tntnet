@@ -52,7 +52,7 @@ namespace tnt
       std::string pathinfo;
       int ssl;
 
-      typedef std::vector<std::string> ArgsType;
+      typedef std::map<std::string, std::string> ArgsType;
 
       ArgsType args;
     };

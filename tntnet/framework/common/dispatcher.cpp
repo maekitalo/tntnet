@@ -178,8 +178,9 @@ Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
 
         if (src.hasPathInfo())
           ci.setPathInfo(formatter(src.getPathInfo()));
-        std::transform(src.getArgs().begin(), src.getArgs().end(),
-          std::back_inserter(ci.getArgsRef()), formatter);
+
+        for (Maptarget::args_type::const_iterator it = src.getArgs().begin(); it != src.getArgs().end(); ++it)
+          ci.args[it->first] = formatter(it->second);
 
         if (TntConfig::it().maxUrlMapCache > 0)
         {

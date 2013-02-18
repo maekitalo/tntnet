@@ -222,14 +222,17 @@ namespace tnt
     std::strcpy(method, m);
   }
 
+  std::string HttpRequest::getArgDef(args_type::size_type n, const std::string& def) const
+  {
+    std::ostringstream k;
+    k << "arg" << n;
+    return getArg(k.str());
+  }
+
   std::string HttpRequest::getArg(const std::string& name, const std::string& def) const
   {
-    for (args_type::const_iterator it = args.begin(); it != args.end(); ++it)
-      if (it->size() > name.size()
-        && it->compare(0, name.size(), name) == 0
-        && it->at(name.size()) == '=')
-        return it->substr(name.size() + 1);
-    return def;
+    args_type::const_iterator it = args.find(name);
+    return it == args.end() ? def : it->second;
   }
 
   void HttpRequest::parse(std::istream& in)

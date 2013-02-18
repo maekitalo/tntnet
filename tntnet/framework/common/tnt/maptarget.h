@@ -31,15 +31,17 @@
 #define TNT_MAPTARGET_H
 
 #include <tnt/compident.h>
-#include <vector>
+#include <map>
 #include <string>
 
 namespace tnt
 {
   class Maptarget : public Compident
   {
+      friend class Dispatcher;
+
     public:
-      typedef std::vector<std::string> args_type;
+      typedef std::map<std::string, std::string> args_type;
 
     private:
       std::string pathinfo;
@@ -71,10 +73,6 @@ namespace tnt
         { return pathinfo; }
       const args_type& getArgs() const
         { return args; }
-      args_type& getArgsRef()
-        { return args; }
-      Maptarget& pushArg(const std::string& arg)
-        { args.push_back(arg); return *this; }
   };
 
 }
