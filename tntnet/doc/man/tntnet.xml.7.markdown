@@ -341,7 +341,7 @@ This section describes the variables, used by Tntnet (8).
 
     <user>www-data</user>
 
-Url mapping
+URL MAPPING
 -----------
 Tntnet is a web server, which receives http requests from a http client and
 answers them. A http request has a url and other attributes, which are used to
@@ -425,22 +425,34 @@ The mapping contains 3 kind of nodes:
   The node `<pathinfo>` can be requested in the component using
   `request.getPathInfo()`. If the node is not set, the url is set as path info.
 
-  The node `<args>` contain a list of strings, which can be requested using e.g.
-  `request.getArg(`*number*`)` or other methods. The strings must be in tags
-  also but the actual tag name is not used. Normally we use the tag `<arg>`
-  here.
+  The node `<args>` contains additional parameters, which can be passed to the
+  component. The node can have any number of nodes with values. The tags are
+  used as a parameter name and the content as the value. The method
+  `request.getArg(`*name*`)` returns the value of the specified *name*. When the
+  node is not set, the method returns a empty string. Optionally a diffrent
+  default value can be passed to the method as an additional parameter like
+  `request.getArg(`*name*`, `*defaultValue*`)`.
 
-Listeners
+LISTENERS
 ---------
+The section `<listeners>` specifies the ip addresses and ports, where tntnet
+waits for incoming requests. Multiple listeners may be defined, when tntnet
+should listen on multiple ip addresses or ports.
 
-TODO
+Each listener is defined in a node `<listener>`. A listener must have a subnode
+`<ip>` and `<port>`. The node `<ip>` may contain a ip address or hostname or may
+be left empty. If the node is empty, any interface is used. The `<port>` must
+contain the numeric port number.
+
+Optionally a tag `<certificate>` may be added. This enables ssl on the interface
+and specifies the ssl host certificate for the interface. Note that tntnet can
+be built without ssl support. In that case the certificate is just ignored and
+unencrypted http is used here.
 
 AUTHOR
 ------
-
 This manual page was written by Tommi Mäkitalo <tommi@tntnet.org>.
 
 SEE ALSO
 --------
-
 tntnet (1)

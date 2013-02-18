@@ -441,7 +441,7 @@ when tntnet starts as root user.
 <user>www-data</user>
 .fi
 .RE
-.SH Url mapping
+.SH URL MAPPING
 .PP
 Tntnet is a web server, which receives http requests from a http client and
 answers them. A http request has a url and other attributes, which are used to
@@ -529,13 +529,28 @@ component. There are 2 nodes for this.
 The node \fB\fC<pathinfo>\fR can be requested in the component using
 \fB\fCrequest.getPathInfo()\fR. If the node is not set, the url is set as path info.
 .IP
-The node \fB\fC<args>\fR contain a list of strings, which can be requested using e.g.
-\fB\fCrequest.getArg(\fR\fInumber\fP\fB\fC)\fR or other methods. The strings must be in tags
-also but the actual tag name is not used. Normally we use the tag \fB\fC<arg>\fR
-here.
-.SH Listeners
+The node \fB\fC<args>\fR contains additional parameters, which can be passed to the
+component. The node can have any number of nodes with values. The tags are
+used as a parameter name and the content as the value. The method
+\fB\fCrequest.getArg(\fR\fIname\fP\fB\fC)\fR returns the value of the specified \fIname\fP. When the
+node is not set, the method returns a empty string. Optionally a diffrent
+default value can be passed to the method as an additional parameter like
+\fB\fCrequest.getArg(\fR\fIname\fP\fB\fC,\fR\fIdefaultValue\fP\fB\fC)\fR.
+.SH LISTENERS
 .PP
-TODO
+The section \fB\fC<listeners>\fR specifies the ip addresses and ports, where tntnet
+waits for incoming requests. Multiple listeners may be defined, when tntnet
+should listen on multiple ip addresses or ports.
+.PP
+Each listener is defined in a node \fB\fC<listener>\fR. A listener must have a subnode
+\fB\fC<ip>\fR and \fB\fC<port>\fR. The node \fB\fC<ip>\fR may contain a ip address or hostname or may
+be left empty. If the node is empty, any interface is used. The \fB\fC<port>\fR must
+contain the numeric port number.
+.PP
+Optionally a tag \fB\fC<certificate>\fR may be added. This enables ssl on the interface
+and specifies the ssl host certificate for the interface. Note that tntnet can
+be built without ssl support. In that case the certificate is just ignored and
+unencrypted http is used here.
 .SH AUTHOR
 .PP
 This manual page was written by Tommi Mäkitalo 
