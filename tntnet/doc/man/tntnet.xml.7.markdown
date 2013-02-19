@@ -373,6 +373,9 @@ special component, which just checks the user name and password. If the user
 name and password is valid, `DECLINED` is returned and tntnet calls the next
 mapping where the condition is met.
 
+Also when the condition is met, but the component could not be loaded, tntnet
+continues with the next mapping.
+
 When the end of the list is reached and no mapping returned a http reply code,
 tntnet replies with http not found (404) error.
 
@@ -433,6 +436,32 @@ The mapping contains 3 kind of nodes:
   default value can be passed to the method as an additional parameter like
   `request.getArg(`*name*`, `*defaultValue*`)`.
 
+*Example*
+
+    <mappings>
+      <!-- map / to index@myapp -->
+      <mapping>
+        <target>index@myapp</target>
+        <url>^/$</url>
+        <pathinfo>index.html</pathinfo>
+      </mapping>
+      <!-- map /comp.* or /comp to comp@myapp -->
+      <mapping>
+        <target>action@myapp</target>
+        <url></url>               <!-- any url -->
+        <method>POST</method>     <!-- but only on method POST -->
+        <vhost>localhost</vhost>  <!-- and host header must be localhost -->
+        <ssl>1</ssl>              <!-- and ssl is enabled -->
+      </mapping>
+      <mapping>
+        <target>$1@myapp</target>
+        <url>^/([^.]+)(\.(.+))?</url>
+        <args>
+          <extension>$2</extension>
+        </args>
+      </mapping>
+    </mappings>
+
 LISTENERS
 ---------
 The section `<listeners>` specifies the ip addresses and ports, where tntnet
@@ -444,10 +473,27 @@ Each listener is defined in a node `<listener>`. A listener must have a subnode
 be left empty. If the node is empty, any interface is used. The `<port>` must
 contain the numeric port number.
 
+The ip address may be a IPv4 or IPv6 address.
+
 Optionally a tag `<certificate>` may be added. This enables ssl on the interface
 and specifies the ssl host certificate for the interface. Note that tntnet can
 be built without ssl support. In that case the certificate is just ignored and
 unencrypted http is used here.
+
+*Example*
+
+    <listeners>
+      <listener>
+        <ip></ip>
+        <port>80</port>
+      </listener>
+      <listener>
+        <ip></ip>
+        <port>443</port>
+        <!-- a certificate enables ssl -->
+        <certificate>tntnet.pem</certificate>
+      </listener>
+    </listeners>
 
 AUTHOR
 ------
