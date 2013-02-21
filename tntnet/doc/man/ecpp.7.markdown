@@ -26,13 +26,13 @@ The name of the class is the basename of the file.
 
 Each component has 3 parameters: `request`, `reply` and `qparam`.  `request`
 holds information about the client-request like http headers and the url, but
-also additional parameters specified in the config-file tntnet.conf(7). The
-type of request is tnt::HttpRequest.
+also additional parameters specified in the config-file tntnet.xml(7). The
+type of request is `tnt::HttpRequest`.
 
-reply receives the answer from the component. The component can set additional
+`reply` receives the answer from the component. The component can set additional
 http-headers here, set cookies and - most important - generate output. The most
-important methods here are reply.out() and reply.sout(). Both return a
-std::ostream, which receives the output of the component. reply.sout() has a
+important methods here are `reply.out()` and `reply.sout()`. Both return a
+`std::ostream`, which receives the output of the component. `reply.sout()` has a
 filter installed, which translates some characters, whith special meanings in
 html to the corresponding html-entities. The characters are `<`, `>`, `&`, `"`
 and `'`. This is useful for printing values from variables to the html-code.
@@ -99,7 +99,7 @@ TAGS
   The arguments-part specify the parameters, the component will receive.
   Arguments are names- value-pairs separated by '='. They are put in the
   qparam-parameter of the component and are normally declared in the
-  <%args>-block. Values can be specified in 3 forms:
+  `<%args>`-block. Values can be specified in 3 forms:
 
   As a plain word without spaces
 
@@ -120,7 +120,8 @@ TAGS
 
 
 `<{...}>`
-  C++-inline-processing-block. The code in this block is copied into the C++-class unchanged.
+  C++-inline-processing-block. The code in this block is copied into the
+  C++-class unchanged.
 
   A linefeed after the closing tag is not ignored.
 
@@ -129,7 +130,7 @@ TAGS
   Comment-block. Everything in this block is ignored.
 
 
-`<%application [ scope="component|page|global"] >...</%application>`
+`<%application [ scope="component|page|global" ] >...</%application>`
   Variables defined here, have the lifetime of the application.
 
   Application-scope is automatically locked.
@@ -159,18 +160,20 @@ TAGS
   Code in these tags is placed into the calling component, when a closing tag
   </&component> is found.
 
-  The <%close> receives the same parameters like the corresponding normal component call.
+  The <%close> receives the same parameters like the corresponding normal
+  component call.
 
 
 `<%config>...</%config>`
   Often webapplications need some configuration like database-names or
   login-information to the database. These configuratioin-variables can be read
-  from the tntnet.conf. Variablenames ended with a semicolon are defined as
-  static std::string-variables and filled from tntnet.conf. A variable can be
-  prepended by a type. The value from tntnet.conf is then converted with a
+  from the tntnet.xml. Variablenames ended with a semicolon are defined as
+  static std::string-variables and filled from tntnet.xml. A variable can be
+  prepended by a type. The value from tntnet.xml is then converted with a
   std::istream.
 
-  You can also specify a default value by appending a '=' and the value to the variable.
+  You can also specify a default value by appending a '=' and the value to the
+  variable.
 
 `Example:`
 
@@ -179,8 +182,8 @@ TAGS
       int maxvalue = 10;
     </%config>
 
-  tntnet.conf:
-    dburl = "postgresql:dbname=mydb";
+  tntnet.xml:
+    `<dburl>postgresql:dbname=mydb</dburl>`
 
 `<%cpp>...</%cpp>`
   C++-processing-block. The code between these tags are copied into the
@@ -201,8 +204,8 @@ TAGS
 
 
 `<%i18n>...</%i18n>`
-  Encloses a block of text-data, which is to be translated. See ecppl(1) and ecppll(1) for
-  details.
+  Encloses a block of text-data, which is to be translated. See ecppl(1) and
+  ecppll(1) for details.
 
 
 `<%include>filename</%include>`
@@ -227,12 +230,12 @@ TAGS
   namespace-definition.  This is a good place to define #include-directives.
 
 
-`<%request [ scope="component|page|global"] >...</%request>`
+`<%request [ scope="component|page|global" ] >...</%request>`
   Define request-scope variables. Variables defined here, has the lifetime of
   the request.
 
 
-`<%session [ scope="component|page|global"] >...</%session>`
+`<%session [ scope="component|page|global" ] >...</%session>`
   Variables defined here, has the lifetime of the session.
 
   Sessions are identified with cookies. If a <%session>-block is defined
@@ -241,7 +244,7 @@ TAGS
   Sessions are automatically locked.
 
 
-`<%securesession [ scope="component|page|global"] >...</%securesession>`
+`<%securesession [ scope="component|page|global" ] >...</%securesession>`
   Secure session is just like session but a secure cookie is used to identify
   the session. Secure cookies are transfered only over a ssl connection from
   the browser and hence the variables are only kept in a ssl secured
@@ -257,7 +260,7 @@ TAGS
   corresponding html-entities.
 
 
-`<%thread [ scope="component|page|global"] >...</%thread>`
+`<%thread [ scope="component|page|global" ] >...</%thread>`
   Variables defined here, has the lifetime of the thread. Each thread has his
   own instance of these variables.
 
@@ -277,13 +280,13 @@ There are 5 different lifetimes for scoped variables:
   The variable is valid in the current request. The tag is <%request>.
 
 `application`
-  The variable is valid in the application. The tag is <%application>. The applica‐
-  tion is specified by the shared-library of the top-level component.
+  The variable is valid in the application. The tag is <%application>. The
+  application is specified by the shared-library of the top-level component.
 
 `session`
-  The variable is valid for the current session. The tag is <%session>. If at least
-  session-variable is declared in the current request, a session-cookie is sent to
-  the client.
+  The variable is valid for the current session. The tag is <%session>. If at
+  least session-variable is declared in the current request, a session-cookie is
+  sent to the client.
 
 `thread`
   The variable is valid in the current thread. The tag is <%thread>.
@@ -331,14 +334,16 @@ Specify a application-specific global variable, which is initialized with 0:
     unsigned count = 0;
     </%application>
 
-Specify a variable with a user-defined type, which holds the state of the session:
+Specify a variable with a user-defined type, which holds the state of the
+session:
 
     <%session>
     MyClass sessionState;
     </%session>
 
-Specify a persistent databaseconnection, which is initialized, when first needed and hold for
-the lifetime of the current thread. This variable may be used in other components:
+Specify a persistent databaseconnection, which is initialized, when first needed
+and hold for the lifetime of the current thread. This variable may be used in
+other components:
 
     <%thread scope="global">
     tntdb::Connection conn(dburl);
