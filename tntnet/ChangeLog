@@ -1,3 +1,223 @@
+2013-02-24 tommi@tntnet.org
+
+ - revert invalid change: make %config variables optional again
+ - make ip address in listener section of tntnet.xml optional
+ - remove ip address from generated tntnet.xml since it is normally not needed and now optional
+ - add a convenience method tnt::Tntnet::listen with just a port number to listen on all local interfaces; previously a empty string must be specified, which remains possible of course
+
+2013-02-21 tommi@tntnet.org
+
+ - replace references to tntnet.conf with tntnet.xml in man pages
+
+2013-02-19 tommi@tntnet.org
+
+ - add example to url mapping and listeners section in man page tntnet.xml(7)
+
+2013-02-18 tommi@tntnet.org
+
+ - update documentation (man page for tntnet.xml is finished)
+ - implement named args in tntnet.xml
+ - continue man page for tntnet.xml (not finished yet)
+
+2013-02-17 tommi@tntnet.org
+
+ - make node <target> mandatory in tntnet.xml as it should be
+ - add man page for tntnet.xml and remove obsolete man page for tntnet.conf
+
+2013-02-16 tommi@tntnet.org
+
+ - document option -i in the man page of ecppc
+ - read filenames for multibinary component optionally from file using option -i in ecppc
+
+2013-02-13 tommi@tntnet.org
+
+ - fix crash in direct mode (which is used when static files are sent)
+
+2013-02-12 tommi@tntnet.org
+
+ - fix memory leak: scopes were never deleted since a change in cxxtools some times ago
+
+2013-02-06 tommi@tntnet.org
+
+ - cleaner termination of tntnet using method cxxtools::net::TcpServer::terminateAccept()
+
+2013-01-18 tommi@tntnet.org
+
+ - do not set -pedantic on xlC compiler
+
+2013-01-08 tommi@tntnet.org
+
+ - port man pages to markdown and use md2man to generate man pages (markdown is so much easier to write)
+
+2012-12-28 tommi@tntnet.org
+
+ - change global tntnet.conf to tntnet.xml
+ - remove duplicate entry from tntconfig
+
+2012-12-24 tommi@tntnet.org
+
+ - add pkg.m4 to dist package also
+ - remove the unused flushdelay from man page tntnet.properties (although tntnet.properties is obsolet nowadays)
+ - fix builing dist package
+
+2012-12-01 tommi@tntnet.org
+
+ - process HEAD requests for static files
+
+2012-11-10 tommi@tntnet.org
+
+ - replace ssllisteners section from tntnet.xml with a listener entry with certificate tag
+ - compile with -pedantic and -Wall by default when compiler supports it
+
+2012-10-13 tommi@tntnet.org
+
+ - do not initialize string iterator with 0 - it is not standard conformant
+ - replace include of tnt/encoding.h with forward declaration in tnt/httpreply.h
+
+2012-10-02 tommi@tntnet.org
+
+ - implement method tnt::HttpReply::clearSession to clear the current session after the current request
+
+2012-10-01 tommi@tntnet.org
+
+ - call _exit instead of exit when tntnet tries to restart itself to make restarting more robust
+
+2012-08-04 tommi@tntnet.org
+
+ - fix forward declaration for tnt::Compident struct
+
+2012-07-25 tommi@tntnet.org
+
+ - update gnutls support and other patches from debian package
+
+2012-07-08 tommi@tntnet.org
+
+ - fix locking when url map cache is cleared
+
+2012-06-30 tommi@tntnet.org
+
+ - use original query string from request instead of qparam, which is a combination of GET and POST parameters in proxy component (Artem)
+
+2012-06-25 tommi@tntnet.org
+
+ - add some unittests for ecpp parser
+ - fix proxy (pass additional headers, handle '/' correctly)
+ - add vhost and url to not found exception
+ - simplify management of pooled http reply impl objects
+ - improvements in ecpp compiler:
+    - report right line number (numbering started from 0, but it should start with 1)
+    - don't stop on first error but try to recover
+    - allow '/' in component names when calling without quotes (<& foo/bar >)
+
+2012-06-17 tommi@tntnet.org
+
+ - fix http status code ordering
+     invalid ordering results in invalid binary search. The bug here had no
+     effect until now just with good luck.
+
+2012-06-11 tommi@tntnet.org
+
+ - make stopping tntnet more robust (I don't exactly know, if this fixes possible crashes, but looks better now)
+
+2012-06-10 tommi@tntnet.org
+
+ - improve converter script from tntnet.conf to tntnet.xml (initialize logging using xml)
+ - replace tntnet.conf and tntnet.properties with new tntnet.xml in newsdb demo
+ - fix 2 memory leaks (static structures, which were not cleaned up correctly when tntnet stops)
+ - optimize writing accesslog by buffering actual writes when there are multiple requests running in parallel
+
+2012-06-08 tommi@tntnet.org
+
+ - tntnet.properties is obsolete - do not try to generate it any more
+ - optimize writing access log slightly
+
+2012-05-31 tommi@tntnet.org
+
+ - fix writing access log and pid file
+ - default configuration file when started as root is also xml
+ - fix specifiaction of compPath in generated example tntnet.xml
+
+2012-05-28 tommi@tntnet.org
+
+ - fix typo in generated sample tntnet xml configuration
+ - do not truncate error log on start
+ - move logging configuration into tntnet.xml; cxxtools got support for configuration of logging using the serialization framework
+
+2012-05-13 tommi@tntnet.org
+
+ - performance improvement: impl http reply class and create a pool, so that the reply do not need to be reconstructed for each request
+
+2012-05-07 tommi@tntnet.org
+
+ - fix potential template problem in call to destroy in tnt::PointerObject
+
+2012-05-05 tommi@tntnet.org
+
+ - implement "include" in configuration file, which was lost after converting to xml and json
+
+2012-05-03 tommi@tntnet.org
+
+ - fix setting path info
+
+2012-04-30 tommi@tntnet.org
+
+ - fix tntnet-conf2xml.pl to parse quoted strings correctly
+ - fix order of link parameters in link command
+
+2012-04-29 tommi@tntnet.org
+
+ - session handling was broken after implementation of secure session scope
+
+2012-04-27 tommi@tntnet.org
+
+ - fix typo in ecpp compiler occured in last checkin
+
+2012-04-26 tommi@tntnet.org
+
+ - use serialization framework to read %config variables from tntnet configuration
+
+2012-04-25 tommi@tntnet.org
+
+ - move reading configuration from libtntnet to process and add support for json configuration files (as an experiment for now)
+ - implement API for new mapping features
+
+2012-04-24 tommi@tntnet.org
+
+ - add mapping by method or ssl status
+ - update copyright header
+
+2012-04-16 tommi@tntnet.org
+
+ - update demos to use new xml configuration
+ - fix converting ssl listeners from tntnet.conf to tntnet.xml
+ - converter script from tntnet.conf to tntnet.xml
+
+2012-04-15 tommi@tntnet.org
+
+ - configure tntnet using xml
+ - remove cgi lib
+
+2012-04-10 tommi@tntnet.org
+
+ - send secure session cookie only when ssl is enabled
+
+2012-04-08 tommi@tntnet.org
+
+ - implement secure session scope for variables only kept in ssl sessions (tag <%securesession>)
+
+2012-04-06 tommi@tntnet.org
+
+ - add proxy module to tntnet standard components
+
+2012-04-02 tommi@tntnet.org
+
+ - update version number to 2.1
+ - fix another set of possible conflicts, sun studio compiler complains about
+
+2012-03-31 tommi@tntnet.org
+
+ - add configure check for header sys/sendfile.h
+
 2012-03-26 tommi@tntnet.org
 
  - fix generation of tntnet-config (shared lib flag was missing)

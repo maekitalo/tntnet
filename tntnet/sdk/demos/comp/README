@@ -4,10 +4,10 @@ Demo-application "subcomp"
 This application shows various ways to embed subcomponents into a page and how
 to pass parameters to them.
 
-To run the application enter "tntnet tntnet.conf" in this directory. If you 
+To run the application enter "tntnet" in this directory. If you 
 have not yet installed but only built tntnet, you need to enter the path to 
 the generated tntnet-program: 
-  "../../../framework/runtime/tntnet tntnet.conf"
+  "../../../framework/runtime/tntnet"
 
 You can see the result (various examples, how to ebed components including
 an explanation) in your browser at http://localhost:8000/comp

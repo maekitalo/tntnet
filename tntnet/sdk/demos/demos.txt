@@ -10,7 +10,7 @@ controls/|Controls|creating widget-controls like tree-view and how to use sessio
 session/|Session|how to use session-, request- and applicationscope
 strings/|Strings|sample application, which uses sessionscope to collect input from the client
 sprintf/|Sprintf|generate the content of subcomponents into a string instead of sending to the browser
-config/|Config|how to access variables in tntnet.conf
+config/|Config|how to access variables in tntnet.xml
 savepoint/|Savepoint|how to recover from exceptions inside your template
 upload/|Upload|how to upload files
 newsdb/|Newsdb|how to access a database with tntdb in tntnet (to be build seperately)

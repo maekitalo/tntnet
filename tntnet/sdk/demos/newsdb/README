@@ -7,11 +7,11 @@ not check for Tntdb, which is needed here. A simple Makefile is provided,
 which builts the demo by entering just 'make' in a shell.
 
 It works with sqlite3, postgresql and mysql. The database is choosen in
-tntnet.conf (this also demonstrates, how to access tntnet.conf in your
+tntnet.xml (this also demonstrates, how to access tntnet.xml in your
 applications). The application uses a variable dburl, which specifies the
 connectionstring. It defaults to "sqlite:newsdb.db". You can guess, what it
 menans: use sqlite3 with the file newsdb.db. The connectionstrings for
-postgresql and mysql are commented out in the example tntnet.conf.
+postgresql and mysql are commented out in the example tntnet.xml.
 
 For setting up the database there is one sql-script newsdb.sql to create
 the table and a shell-script newsdata.sh to generate test data.
@@ -47,7 +47,7 @@ To create the database enter these commands:
 Running tntnet
 --------------
 To run tntnet enter
-  tntnet tntnet.conf
+  tntnet
 
 Tntnet runs on the shell and prints its log to the terminal. Tntnet listens
 on port 8000 by default.

@@ -32,10 +32,10 @@
 
  Normally applications are compiled into shared libraries and loaded at
  runtime. Configuration, especially the mapping from url to component, is done
- with tntnet.conf.
+ with tntnet.xml.
 
  As an alternative you may write your own small main function and compile the
- components into a program. There is no configuration file tntnet.conf read any
+ components into a program. There is no configuration file tntnet.xml read any
  more but you have to code your mappings into the program. The advantage is,
  that there is no configuration file needed. Since the mappings are often a
  fundamental part of your application, it is better to hard code it into the
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     tnt::TntConfig::it().sessionTimeout = 600;
 
     // configure listener
-    app.listen("", 8000);
+    app.listen("", 8000);  // note that a empty ip address tells tntnet to listen on all local interfaces
 
     // run the application
     app.run();

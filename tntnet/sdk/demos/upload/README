@@ -3,9 +3,9 @@ Demo-application "upload"
 
 This application demostrates how to handle an upload-button
 
-To run the application enter "tntnet tntnet.conf" in this directory. If you 
+To run the application enter "tntnet" in this directory. If you 
 have not yet installed but only built tntnet, you need to enter the path to 
 the generated tntnet-program: 
-  "../../../framework/runtime/tntnet tntnet.conf"
+  "../../../framework/runtime/tntnet"
 
 You can see the result in your browser at http://localhost:8000/upload

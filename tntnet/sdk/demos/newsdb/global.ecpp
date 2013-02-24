@@ -6,7 +6,7 @@
 </%pre>
 <%config>
 
-// read variable from tntnet.conf with default value
+// read variable from tntnet.xml with default value
 dburl = "sqlite:newsdb.db";
 
 </%config>

@@ -58,13 +58,10 @@ SUBDIRS = \
 EXTRA_DIST = ecpp.vim \
     doc/tntnet.pdf \
     doc/tntnet.odt \
-    doc/tntnet-configuration.pdf \
-    doc/tntnet-configuration.odt \
     doc/logo-tntnet.cdr \
     doc/tntnet.svg \
     doc/tntnet-dynamite.svg \
-    doc/quick-start-guide.odt \
-    doc/quick-start-guide.pdf \
+    doc/quick-start-guide.markdown \
     COPYING \
     sdk/demos/newsdb/Makefile \
     sdk/demos/newsdb/README \
@@ -76,4 +73,6 @@ EXTRA_DIST = ecpp.vim \
     sdk/demos/newsdb/newsdb.sql \
     sdk/demos/newsdb/tntnet.xml \
     m4/acx_pthread.m4 \
+    m4/ax_check_compile_flag.m4 \
+    m4/ax_compiler_vendor.m4 \
     m4/pkg.m4
