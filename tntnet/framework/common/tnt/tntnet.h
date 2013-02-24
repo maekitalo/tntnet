@@ -101,10 +101,18 @@ namespace tnt
       /// Listening on the port does not actually happen here but when the
       /// application is started using the run-method.
       void listen(const std::string& ipaddr, unsigned short int port);
+      /// Listen on all local interfaces on the specified port.
+      void listen(unsigned short int port)
+      { listen(std::string(), port); }
+
       /// Set up a ssl listener on the specified ip address and port.
       /// Listening on the port does not actually happen here but when the
       /// application is started using the run-method.
       void sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ipaddr, unsigned short int port);
+      /// Listen on all local interfaces on the specified port for ssl requests.
+      void sslListen(const std::string& certificateFile, const std::string& keyFile, unsigned short int port)
+      { sslListen(certificateFile, keyFile, std::string(), port); }
+
       /// Starts all needed threads and the application loop.
       /// If no listeners are set up using listen or sslListen, a default
       /// listener is instantiated. By default it listens on the ip address
