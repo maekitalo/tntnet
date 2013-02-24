@@ -224,7 +224,14 @@ namespace tnt
         else
         {
           log_debug("signal shutdown");
-          monitorPipe.write('s');
+          try
+          {
+            monitorPipe.write('s');
+          }
+          catch (const std::exception& e)
+          {
+            log_debug("ingore exception from monitor pipe: " << e.what());
+          }
         }
         return;
       }
