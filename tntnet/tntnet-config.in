@@ -78,13 +78,11 @@ EOF
   <!-- listen to a port (empty string means any local interface) -->
   <listeners>
     <listener>
-      <ip></ip>
       <port>8000</port>
     </listener>
   <!-- a certificate enables ssl -->
   <!--
     <listener>
-      <ip></ip>
       <port>8443</port>
       <certificate>tntnet.pem</certificate>
     </listener>
