@@ -57,7 +57,7 @@ namespace tnt
 
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener)
   {
-    si.getMember("ip") >>= listener.ip;
+    si.getMember("ip", listener.ip);
 
     if (!si.getMember("port", listener.port))
       listener.port = 80;
@@ -65,7 +65,7 @@ namespace tnt
 
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::SslListener& ssllistener)
   {
-    si.getMember("ip") >>= ssllistener.ip;
+    si.getMember("ip", ssllistener.ip);
 
     if (!si.getMember("port", ssllistener.port))
       ssllistener.port = 443;
