@@ -183,9 +183,9 @@ namespace tnt
 
       printLine(out);
       if (pass_cgi.empty())
-        out << "    tnt::QueryParams " << queryParamName << "(qparam, false);\n";
+        out << "    tnt::QueryParams " << queryParamName << ";\n";
       else
-        out << "    tnt::QueryParams " << queryParamName << "(" << pass_cgi << ", true);\n";
+        out << "    tnt::QueryParams " << queryParamName << "(" << pass_cgi << ");\n";
 
       for (comp_args_type::const_iterator i = args.begin();
            i != args.end(); ++i)

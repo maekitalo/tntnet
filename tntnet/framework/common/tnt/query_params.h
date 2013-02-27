@@ -43,10 +43,6 @@ namespace tnt
       QueryParams()
         : paramScope(0)
         { }
-      QueryParams(QueryParams& parent, bool use_parent_values)
-        : cxxtools::QueryParams(parent, use_parent_values),
-          paramScope(0)
-        { }
       QueryParams(const QueryParams& src)
         : cxxtools::QueryParams(src),
           paramScope(src.paramScope)
