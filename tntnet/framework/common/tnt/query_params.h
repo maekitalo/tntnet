@@ -56,7 +56,8 @@ namespace tnt
         cxxtools::QueryParams::operator=(src);
         if (paramScope && paramScope != src.paramScope)
         {
-          paramScope->release();
+          if (paramScope->release() == 0)
+            delete paramScope;
           paramScope = src.paramScope;
           paramScope->addRef();
         }
@@ -64,8 +65,8 @@ namespace tnt
       }
       ~QueryParams()
       {
-        if (paramScope)
-          paramScope->release();
+        if (paramScope && paramScope->release() == 0)
+          delete paramScope;
       }
 
       Scope& getScope()
