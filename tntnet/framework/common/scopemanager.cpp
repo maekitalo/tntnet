@@ -104,7 +104,8 @@ namespace tnt
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
     if (it != sessionScopes.end())
     {
-      it->second->release();
+      if (it->second->release() == 0)
+        delete it->second;
       it->second = s;
     }
     else
@@ -118,7 +119,8 @@ namespace tnt
     scopes_type::iterator it = applicationScopes.find(appname);
     if (it != applicationScopes.end())
     {
-      it->second->release();
+      if (it->second->release() == 0)
+        delete it->second;
       applicationScopes.erase(it);
     }
   }
@@ -129,7 +131,8 @@ namespace tnt
     sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
     if (it != sessionScopes.end())
     {
-      it->second->release();
+      if (it->second->release() == 0)
+        delete it->second;
       sessionScopes.erase(it);
     }
   }
@@ -328,7 +331,8 @@ namespace tnt
         log_info("sessiontimeout for session " << it->first << " reached");
         sessionscopes_type::iterator it2 = it;
         ++it;
-        s->release();
+        if (s->release() == 0)
+          delete s;
         sessionScopes.erase(it2);
         ++count;
       }
