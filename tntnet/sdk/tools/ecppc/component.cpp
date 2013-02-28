@@ -51,11 +51,26 @@ namespace tnt
 
     void Component::getBody(std::ostream& body, bool linenumbersEnabled) const
     {
-      body << "  // <%args>\n";
+      if (!args.empty())
+      {
+        body << "  // <%args>\n";
+        getArgs(body);
+        body << "  // </%args>\n\n";
+      }
 
-      getArgs(body);
+      if (!get.empty())
+      {
+        body << "  // <%get>\n";
+        getGet(body);
+        body << "  // </%get>\n\n";
+      }
 
-      body << "  // </%args>\n\n";
+      if (!post.empty())
+      {
+        body << "  // <%post>\n";
+        getPost(body);
+        body << "  // </%post>\n\n";
+      }
 
       getScopevars(body, linenumbersEnabled);
 
@@ -71,7 +86,21 @@ namespace tnt
     {
       for (variables_type::const_iterator it = args.begin();
            it != args.end(); ++it)
-        it->getParamCode(body);
+        it->getParamCode(body, "qparam");
+    }
+
+    void Component::getGet(std::ostream& body) const
+    {
+      for (variables_type::const_iterator it = get.begin();
+           it != get.end(); ++it)
+        it->getParamCode(body, "request.getGetParams()");
+    }
+
+    void Component::getPost(std::ostream& body) const
+    {
+      for (variables_type::const_iterator it = post.begin();
+           it != post.end(); ++it)
+        it->getParamCode(body, "request.getPostParams()");
     }
 
     void Component::getScopevars(std::ostream& body, bool linenumbersEnabled) const

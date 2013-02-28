@@ -32,7 +32,7 @@ html to the corresponding html\-entities. The characters are \fB\fC<\fR, \fB\fC>
 and \fB\fC'\fR. This is useful for printing values from variables to the html\-code.
 .PP
 \fB\fCqparam\fR holds the query\-parameters parsed from GET\- or POST\-parameters or
-received from other components. The type of qparam is \fB\fCcxxtools::query_params\fR.
+received from other components. The type of qparam is \fB\fCtnt::query_params\fR.
 Normally you use a \fB\fC<%args>\fR\-block to specify the parameters, but there are
 special cases, where it is useful to access these directly.
 .SS component adressing
@@ -183,6 +183,9 @@ Comment\-block. Everything in this block is ignored.
 .IP
 A linefeed after the closing tag is ignored.
 .TP
+\fB\fC<%get>...</%get>\fR
+Works like a <%args> block but receives only GET parameters.
+.TP
 \fB\fC<%i18n>...</%i18n>\fR
 Encloses a block of text\-data, which is to be translated. See 
 .BR ecppl (1) 
@@ -203,6 +206,9 @@ always local to the component.
 .TP
 \fB\fC<%out> expr </%out>\fR
 Same as <$$ ... $>. Prints the contained C++ expression expr.
+.TP
+\fB\fC<%post>...</%post>\fR
+Works like a <%args> block but receives only POST parameters.
 .TP
 \fB\fC<%pre>...</%pre>\fR
 Defines C++\-code, which is placed outside the C++\-class and outside the

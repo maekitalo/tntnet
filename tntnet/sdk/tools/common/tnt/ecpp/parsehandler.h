@@ -58,8 +58,9 @@ namespace tnt
         virtual void onPre(const std::string& code);
         virtual void onInit(const std::string& code);
         virtual void onCleanup(const std::string& code);
-        virtual void onArg(const std::string& name,
-          const std::string& value);
+        virtual void onArg(const std::string& name, const std::string& value);
+        virtual void onGet(const std::string& name, const std::string& value);
+        virtual void onPost(const std::string& name, const std::string& value);
         virtual void onAttr(const std::string& name,
           const std::string& value);
         virtual void onCall(const std::string& comp,

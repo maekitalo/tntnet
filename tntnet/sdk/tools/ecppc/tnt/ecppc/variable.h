@@ -44,13 +44,13 @@ namespace tnt
         std::string value;
         bool isvector;
 
-        void getParamCodeVector(std::ostream& o) const;
+        void getParamCodeVector(std::ostream& o, const std::string& qparam) const;
 
       public:
         Variable()  { }
         Variable(const std::string& arg, const std::string& value_);
 
-        void getParamCode(std::ostream& o) const;
+        void getParamCode(std::ostream& o, const std::string& qparam) const;
         void getConfigInit(std::ostream& o) const;
         void getConfigDecl(std::ostream& o) const;
         void getConfigHDecl(std::ostream& o) const;

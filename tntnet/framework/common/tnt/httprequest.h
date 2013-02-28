@@ -73,6 +73,8 @@ namespace tnt
 
       std::string pathinfo;
       args_type args;
+      tnt::QueryParams getparam;
+      tnt::QueryParams postparam;
       tnt::QueryParams qparam;
 
       const SocketIf* socketIf;
@@ -170,6 +172,8 @@ namespace tnt
 
       tnt::QueryParams& getQueryParams()               { return qparam; }
       const tnt::QueryParams& getQueryParams() const   { return qparam; }
+      const tnt::QueryParams& getGetParams() const     { return getparam; }
+      const tnt::QueryParams& getPostParams() const    { return postparam; }
       void setQueryParams(const tnt::QueryParams& q)   { qparam = q; }
 
       std::string getPeerIp() const    { return socketIf ? socketIf->getPeerIp()   : std::string(); }

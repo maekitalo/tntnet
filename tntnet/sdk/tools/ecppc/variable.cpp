@@ -78,14 +78,14 @@ namespace tnt
 
     }
 
-    void Variable::getParamCodeVector(std::ostream& o) const
+    void Variable::getParamCodeVector(std::ostream& o, const std::string& qparam) const
     {
       if (type.empty())
       {
         o << "typedef std::vector<std::string> " << name << "_type;\n"
           << name << "_type " << name << ";\n"
-          << "std::copy(qparam.begin(\"" << name
-          << "\"), qparam.end(), std::back_inserter(" << name
+          << "std::copy(" << qparam << ".begin(\"" << name
+          << "\"), " << qparam << ".end(), std::back_inserter(" << name
           << "));\n";
       }
       else
@@ -93,15 +93,15 @@ namespace tnt
         o << "typedef std::vector<" << type << "> " << name << "_type;\n"
           << name << "_type " << name << ";\n"
           << "tnt::convertRange(\"" << name << "\", \"" << type
-          << "\", qparam.begin(\"" << name << "\"), qparam.end(), " << name
+          << "\", " << qparam << ".begin(\"" << name << "\"), " << qparam << ".end(), " << name
           << ", reply.out().getloc());\n";
       }
     }
 
-    void Variable::getParamCode(std::ostream& o) const
+    void Variable::getParamCode(std::ostream& o, const std::string& qparam) const
     {
       if (isvector)
-        getParamCodeVector(o);
+        getParamCodeVector(o, qparam);
       else if (!type.empty())
       {
         // we have a type
@@ -114,13 +114,13 @@ namespace tnt
           // no default-value
 
           o << "tnt::stringTo<" << type
-            << ">(\"" << name << "\", \"" << type << "\", qparam.param(\"" << name << "\"), reply.out().getloc());\n";
+            << ">(\"" << name << "\", \"" << type << "\", " << qparam << ".param(\"" << name << "\"), reply.out().getloc());\n";
         }
         else
         {
           // with default-value
-          o << "qparam.has(\"" << name << "\") ? tnt::stringToWithDefault<" << type
-            << ">(qparam.param(\"" << name << "\"), (" << value << "), reply.out().getloc()) : ("
+          o << qparam << ".has(\"" << name << "\") ? tnt::stringToWithDefault<" << type
+            << ">(" << qparam << ".param(\"" << name << "\"), (" << value << "), reply.out().getloc()) : ("
             << value << ");\n";
         }
       }
@@ -128,7 +128,7 @@ namespace tnt
       {
         // type defaults to std::string
         o << "std::string " << name 
-          << " = qparam.param(\"" << name << '"';
+          << " = " << qparam << ".param(\"" << name << '"';
         if (!value.empty())
           o << ", (" << value << ')';
 

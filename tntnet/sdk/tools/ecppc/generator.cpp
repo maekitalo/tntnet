@@ -210,6 +210,18 @@ namespace tnt
       currentComp->addArg(name, value);
     }
 
+    void Generator::onGet(const std::string& name,
+      const std::string& value)
+    {
+      currentComp->addGet(name, value);
+    }
+
+    void Generator::onPost(const std::string& name,
+      const std::string& value)
+    {
+      currentComp->addPost(name, value);
+    }
+
     void Generator::onAttr(const std::string& name,
       const std::string& value)
     {

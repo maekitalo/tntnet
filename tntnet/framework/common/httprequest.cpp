@@ -90,6 +90,8 @@ namespace tnt
     : methodLen(0),
       pathinfo(r.pathinfo),
       args(r.args),
+      getparam(r.getparam),
+      postparam(r.postparam),
       qparam(r.qparam),
       socketIf(r.socketIf),
       ct(r.ct),
@@ -135,6 +137,8 @@ namespace tnt
   {
     pathinfo = r.pathinfo;
     args = r.args;
+    getparam = r.getparam;
+    postparam = r.postparam;
     qparam = r.qparam;
     ct = r.ct;
     mp = r.mp;
@@ -174,6 +178,8 @@ namespace tnt
     contentSize = 0;
     pathinfo.clear();
     args.clear();
+    getparam.clear();
+    postparam.clear();
     qparam.clear();
     ct = Contenttype();
     mp = Multipart();
@@ -248,7 +254,7 @@ namespace tnt
     if (hasHeader("Expect:"))
       throw HttpError(HTTP_EXPECTATION_FAILED, "expectation failed", "Expect not supported by this server");
 
-    qparam.parse_url(getQueryString());
+    getparam.parse_url(getQueryString());
 
     if (isMethodPOST())
     {
@@ -268,17 +274,20 @@ namespace tnt
             if (it->getFilename().empty())
             {
               std::string multipartBody(it->getBodyBegin(), it->getBodyEnd());
-              qparam.add(it->getName(), multipartBody);
+              postparam.add(it->getName(), multipartBody);
             }
           }
         }
         else if (ct.getType() == "application"
               && ct.getSubtype() == "x-www-form-urlencoded")
         {
-          qparam.parse_url(getBody());
+          postparam.parse_url(getBody());
         }
       }
     }
+
+    qparam.add(getparam);
+    qparam.add(postparam);
 
     serial = cxxtools::atomicIncrement(serial_);
   }

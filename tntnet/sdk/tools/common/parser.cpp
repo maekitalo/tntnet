@@ -390,7 +390,7 @@ namespace tnt
           case state_tag:
             if (ch == '>')
             {
-              if (tag == "args" || tag == "config")
+              if (tag == "args" || tag == "get" || tag == "post" || tag == "config")
                 state = state_args0;
               else if (tag == "attr")
                 state = state_attr0;
@@ -511,7 +511,7 @@ namespace tnt
               state = state_defarg0;
             else if (ch == '>')
             {
-              if (tag == "args")
+              if (tag == "args" || tag == "get" || tag == "post")
                 state = state_args0;
               else if (tag == "attr")
                 state = state_attr0;
@@ -543,7 +543,7 @@ namespace tnt
           case state_tagarge:
             if (ch == '>')
             {
-              if (tag == "args")
+              if (tag == "args" || tag == "get" || tag == "post")
                 state = state_args0;
               else if (tag == "attr")
                 state = state_attr0;
@@ -815,7 +815,11 @@ namespace tnt
               {
                 handler.onExpression(code);
               }
-              else if (tag == "args" || tag == "attr" || tag == "config"
+              else if (tag == "args"
+                || tag == "get"
+                || tag == "post"
+                || tag == "attr"
+                || tag == "config"
                 || tag == "include"
                 || tag == "session"
                 || tag == "securesession"
@@ -1939,6 +1943,10 @@ namespace tnt
     {
       if (tag == "args")
         handler.onArg(name, value);
+      if (tag == "get")
+        handler.onGet(name, value);
+      if (tag == "post")
+        handler.onPost(name, value);
       else if (tag == "config")
         handler.onConfig(name, value);
     }

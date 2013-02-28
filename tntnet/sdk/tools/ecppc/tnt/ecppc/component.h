@@ -48,6 +48,8 @@ namespace tnt
         typedef std::list<Scopevar> scopevars_type;
 
         variables_type args;
+        variables_type get;
+        variables_type post;
         scopevars_type scopevars;
         Body compbody;
 
@@ -83,6 +85,14 @@ namespace tnt
         {
           args.push_back(Variable(name, value));
         }
+        void addGet(const std::string& name, const std::string& value)
+        {
+          get.push_back(Variable(name, value));
+        }
+        void addPost(const std::string& name, const std::string& value)
+        {
+          post.push_back(Variable(name, value));
+        }
         void addEndCall(unsigned line, const std::string& file,
                         const std::string& comp)
           { compbody.addEndCall(line, file, comp); }
@@ -97,6 +107,8 @@ namespace tnt
 
         void getBody(std::ostream& o, bool linenumbersEnabled) const;
         void getArgs(std::ostream& o) const;
+        void getGet(std::ostream& o) const;
+        void getPost(std::ostream& o) const;
         virtual void getScopevars(std::ostream& o, bool linenumbersEnabled) const;
         void getScopevars(std::ostream& o, ecpp::scope_type scope, bool linenumbersEnabled) const;
         bool hasScopevars() const  { return !scopevars.empty(); }

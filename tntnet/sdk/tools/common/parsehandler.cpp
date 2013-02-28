@@ -73,9 +73,18 @@ namespace tnt
     {
     }
 
-    void ParseHandler::onArg(const std::string& name,
-      const std::string& value)
+    void ParseHandler::onArg(const std::string& name, const std::string& value)
     {
+    }
+
+    void ParseHandler::onGet(const std::string& name, const std::string& value)
+    {
+      onArg(name, value);
+    }
+
+    void ParseHandler::onPost(const std::string& name, const std::string& value)
+    {
+      onArg(name, value);
     }
 
     void ParseHandler::onAttr(const std::string& name,

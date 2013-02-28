@@ -38,7 +38,7 @@ html to the corresponding html-entities. The characters are `<`, `>`, `&`, `"`
 and `'`. This is useful for printing values from variables to the html-code.
 
 `qparam` holds the query-parameters parsed from GET- or POST-parameters or
-received from other components. The type of qparam is `cxxtools::query_params`.
+received from other components. The type of qparam is `tnt::query_params`.
 Normally you use a `<%args>`-block to specify the parameters, but there are
 special cases, where it is useful to access these directly.
 
@@ -108,7 +108,7 @@ TAGS
   As a expression enclosed in brackets
 
   A single plain word in the argumentlist is treated as a variable of type
-  cxxtools::query_params and a copy is passed to the component. Other
+  cxxtools::query\_params and a copy is passed to the component. Other
   parameters are added to this copy. If you want to pass all parameters of the
   current component put the variable qparam as a plain word in the argument
   list.
@@ -203,6 +203,10 @@ TAGS
   A linefeed after the closing tag is ignored.
 
 
+`<%get>...</%get>`
+  Works like a <%args> block but receives only GET parameters.
+
+
 `<%i18n>...</%i18n>`
   Encloses a block of text-data, which is to be translated. See ecppl(1) and
   ecppll(1) for details.
@@ -223,6 +227,10 @@ TAGS
 
 `<%out> expr </%out>`
   Same as <$$ ... $>. Prints the contained C++ expression expr.
+
+
+`<%post>...</%post>`
+  Works like a <%args> block but receives only POST parameters.
 
 
 `<%pre>...</%pre>`
