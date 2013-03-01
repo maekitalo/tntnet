@@ -29,7 +29,7 @@ A summary of options is included below.
 `--logall`
   Initialize logging earlier. Normally logging is initialized after starting the
   listeners and changing user so that logfiles are created with the right owner.
-  For debugging rea‐ sons this option forces to do that earlier.
+  For debugging reasons this option forces to do that earlier.
 
 `-C`
   Call components and print the result to stdout instead of starting tntnet as a webserver

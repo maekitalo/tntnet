@@ -9,7 +9,7 @@ tntnet-config - output compiler flags for tntnet(8) usage
 
 SYNOPSIS
 --------
-`tntnet-config` [`--libs`] [`--cxxflags`] [`--config`[=*app*]] [`--makefile`[=*app*]] [`--project`=*app*] [`--auto‐project`=*app*] [`--help`] [`--version`]
+`tntnet-config` [`--libs`] [`--cxxflags`] [`--config`[=*app*]] [`--makefile`[=*app*]] [`--project`=*app*] [`--auto-project`=*app*] [`--help`] [`--version`]
 
 DESCRIPTION
 -----------
