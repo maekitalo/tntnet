@@ -83,7 +83,7 @@ component. You must surround the expression in brackets, if it contains
 spaces.
 .IP
 The arguments\-part specify the parameters, the component will receive.
-Arguments are names\- value\-pairs separated by '='. They are put in the
+Arguments are name\-value\-pairs separated by '='. They are put in the
 qparam\-parameter of the component and are normally declared in the
 \fB\fC<%args>\fR\-block. Values can be specified in 3 forms:
 .IP
@@ -198,7 +198,7 @@ The specified file is read and compiled.
 .TP
 \fB\fC<%param>...</%param>\fR
 Defines parameter received from calling components. In contrast to
-query\-parameters these vari‐ ables can be of any type. The syntax (and the
+query\-parameters these variables can be of any type. The syntax (and the
 underlying technology) is the same like in scoped variables. See the
 description about scoped variables to see how to define parameters. The main
 difference is, that a parameter variable has no scope, since the parameter is
@@ -245,7 +245,7 @@ Variables defined here, has the lifetime of the thread. Each thread has his
 own instance of these variables.
 .IP
 Thread\-scope\-variables do not need to be locked at all, because they are only
-valid in the cur‐ rent thread.
+valid in the current thread.
 .SH SCOPED VARIABLES
 .PP
 Scoped variables are c++\-variables, whose lifetime is handled by tntnet. These
@@ -297,7 +297,7 @@ locked at all, because they are not shared between threads.
 .PP
 Scoped variables are declared with exactly the same syntax as normal variables
 in c++\-code. They can be of any type and are instantiated, when needed.
-Objects, which do not have default con‐ structors, need to be specified with
+Objects, which do not have default constructors, need to be specified with
 proper constructor\-parameters in brackets or separated by '='. The parameters
 are only used, if the variable need to be instantiated. This means, that
 parameters to e.g. application\-scope variables are only used once. When the
