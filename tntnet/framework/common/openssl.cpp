@@ -124,15 +124,15 @@ namespace tnt
   void OpensslServer::installCertificates(const char* certificateFile, const char* privateKeyFile)
   {
     log_debug("use certificate file " << certificateFile);
-    if (SSL_CTX_use_certificate_chain_file(ctx, certificateFile) <= 0)
+    if (SSL_CTX_use_certificate_chain_file(ctx.getPointer(), certificateFile) <= 0)
       checkSslError();
 
     log_debug("use private key file " << privateKeyFile);
-    if (SSL_CTX_use_PrivateKey_file(ctx, privateKeyFile, SSL_FILETYPE_PEM) <= 0)
+    if (SSL_CTX_use_PrivateKey_file(ctx.getPointer(), privateKeyFile, SSL_FILETYPE_PEM) <= 0)
       checkSslError();
 
     log_debug("check private key");
-    if (!SSL_CTX_check_private_key(ctx))
+    if (!SSL_CTX_check_private_key(ctx.getPointer()))
       throwOpensslException("private key does not match the certificate public key", 0);
 
     log_debug("private key ok");
@@ -211,7 +211,7 @@ namespace tnt
     log_debug("tcp-connection established - build ssltunnel");
 
     log_debug("SSL_new(" << server.getSslContext().getPointer() << ')');
-    ssl = SSL_new( server.getSslContext() );
+    ssl = SSL_new( server.getSslContext().getPointer() );
     checkSslError();
 
     log_debug("SSL_set_fd(" << ssl << ", " << getFd() << ')');
