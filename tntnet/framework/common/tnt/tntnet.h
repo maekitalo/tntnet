@@ -43,7 +43,7 @@
 namespace tnt
 {
   class ListenerBase;
-  class TntConfig;
+  struct TntConfig;
 
   /**
    @brief Main application class for stand alone webapplication.

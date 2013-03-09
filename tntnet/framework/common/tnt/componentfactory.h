@@ -40,7 +40,7 @@ namespace tnt
   struct Compident;
   class Comploader;
   class Urlmapper;
-  class TntConfig;
+  struct TntConfig;
 
   class ComponentFactory
   {

@@ -121,9 +121,6 @@ namespace tnt
     inline bool operator< (const HttpMsg& m1, const HttpMsg& m2)
     { return m1.statusCode < m2.statusCode; }
 
-    inline std::ostream& operator<< (std::ostream& out, const HttpMsg& msg)
-    { return out << msg.statusCode << ' ' << msg.statusText; }
-
   }
 
   HttpReturn::HttpReturn(unsigned returncode_)
