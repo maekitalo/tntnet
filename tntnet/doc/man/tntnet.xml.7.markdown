@@ -248,6 +248,14 @@ This section describes the variables, used by Tntnet (8).
 
     <minCompressSize>256</minCompressSize>
 
+`<mimeDb>`*filename*`</mimeDb>`
+
+  Specify filename for mime db. The default is /etc/mime.types.
+
+  The format of the file is just like this /etc/mime.types. A mime type is
+  followed after white space by a list of file extensions delimited by white
+  space.
+
 `<maxThreads>`*number*`</maxThreads>`
 
   Tntnet uses a dynamic pool of worker-threads, which wait for incoming

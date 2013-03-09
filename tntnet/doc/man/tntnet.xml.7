@@ -315,6 +315,14 @@ The default value for this is 1024.
 .fi
 .RE
 .PP
+\fB\fC<mimeDb>\fR\fIfilename\fP\fB\fC</mimeDb>\fR
+.IP
+Specify filename for mime db. The default is /etc/mime.types.
+.IP
+The format of the file is just like this /etc/mime.types. A mime type is
+followed after white space by a list of file extensions delimited by white
+space.
+.PP
 \fB\fC<maxThreads>\fR\fInumber\fP\fB\fC</maxThreads>\fR
 .IP
 Tntnet uses a dynamic pool of worker\-threads, which wait for incoming
