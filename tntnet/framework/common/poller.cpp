@@ -109,7 +109,7 @@ namespace tnt
   void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
   {
     cxxtools::MutexLock lock(mutex);
-    new_jobs.insert(job);
+    new_jobs.push_back(job);
     notify_pipe.write('A');
   }
 

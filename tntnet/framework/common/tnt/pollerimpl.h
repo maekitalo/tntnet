@@ -37,7 +37,6 @@
 
 #ifdef WITH_EPOLL
 #  include <map>
-#  include <set>
 #else
 #  include <deque>
 #  include <vector>
@@ -57,7 +56,7 @@ namespace tnt
       int pollFd;
 
       typedef std::map<int, Jobqueue::JobPtr> jobs_type;
-      typedef std::set<Jobqueue::JobPtr> new_jobs_type;
+      typedef std::vector<Jobqueue::JobPtr> new_jobs_type;
       jobs_type jobs;
       new_jobs_type new_jobs;
       int poll_timeout;
