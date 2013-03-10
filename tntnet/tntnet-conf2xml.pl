@@ -68,7 +68,7 @@ while (<>)
     my $vhost = shift @params if ($1);
     my ($url, $target, $pathinfo, @args) = @params;
     $mappings .= <<EOF;
-    <mapurl>
+    <mapping>
       <target>$target</target>
       <url>$url</url>
 EOF
@@ -96,7 +96,7 @@ EOF
 
     }
     $mappings .= <<EOF;
-    </mapurl>
+    </mapping>
 EOF
   }
   elsif ($keyword eq "Listen")
