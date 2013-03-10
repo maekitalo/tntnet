@@ -80,6 +80,8 @@ namespace tnt
 
       static workers_type::size_type getCountThreads();
 
+      static Comploader& getComponentLoader()
+      { return comploader; }
   };
 }
 
