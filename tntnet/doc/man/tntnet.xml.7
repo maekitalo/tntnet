@@ -497,11 +497,11 @@ The mapping contains 3 kind of nodes:
 Multiple conditions can be specified. All conditions must be met when the
 mapping is to be used.
 .IP
-The most important and only mandatory condition is \fB\fC<url>\fR, which contains a
-extended regular expression (see 
+The most important is \fB\fC<url>\fR, which contains a extended regular expression
+(see 
 .BR regex (7) 
-for details). This expression is
-checked against the url of the request.
+for details). This expression is checked against the url of the
+request. If the url tag is omitted, the mapping is used for every url.
 .IP
 The condition \fB\fC<vhost>\fR specifies the virtual host, for which this mapping is
 valid. When this is specified, the mapping is only valid for requests, where
@@ -547,6 +547,15 @@ used as a parameter name and the content as the value. The method
 node is not set, the method returns a empty string. Optionally a diffrent
 default value can be passed to the method as an additional parameter like
 \fB\fCrequest.getArg(\fR\fIname\fP\fB\fC,\fR\fIdefaultValue\fP\fB\fC)\fR.
+.IP
+For compatibility reasons with older tntnet \fB\fCrequest.getArg\fR accepts a numeric
+argument. Previously the arguments did not have names but were accessed by
+index. To emulate this, \fB\fCrequest.getArg\fR with a numeric argument translates
+the number into the name "\fB\fCarg\fR\fInumber\fP". So accessing
+\fB\fCrequest.getArg(\fR\fI2\fP\fB\fC)\fR returns the value of the argument with the name
+\fB\fCarg2\fR. Accessing a numeric argument equal or greater than the number of
+arguments (the first is number 0) used to be not allowed. Now a empty string
+is returned.
 .PP
 \fIExample\fP
 .PP

@@ -395,9 +395,9 @@ The mapping contains 3 kind of nodes:
   Multiple conditions can be specified. All conditions must be met when the
   mapping is to be used.
 
-  The most important and only mandatory condition is `<url>`, which contains a
-  extended regular expression (see regex(7) for details). This expression is
-  checked against the url of the request.
+  The most important is `<url>`, which contains a extended regular expression
+  (see regex(7) for details). This expression is checked against the url of the
+  request. If the url tag is omitted, the mapping is used for every url.
 
   The condition `<vhost>` specifies the virtual host, for which this mapping is
   valid. When this is specified, the mapping is only valid for requests, where
@@ -443,6 +443,15 @@ The mapping contains 3 kind of nodes:
   node is not set, the method returns a empty string. Optionally a diffrent
   default value can be passed to the method as an additional parameter like
   `request.getArg(`*name*`, `*defaultValue*`)`.
+
+  For compatibility reasons with older tntnet `request.getArg` accepts a numeric
+  argument. Previously the arguments did not have names but were accessed by
+  index. To emulate this, `request.getArg` with a numeric argument translates
+  the number into the name "`arg`*number*". So accessing
+  `request.getArg(`*2*`)` returns the value of the argument with the name
+  `arg2`. Accessing a numeric argument equal or greater than the number of
+  arguments (the first is number 0) used to be not allowed. Now a empty string
+  is returned.
 
 *Example*
 
