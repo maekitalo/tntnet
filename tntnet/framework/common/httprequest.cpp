@@ -232,7 +232,7 @@ namespace tnt
   {
     std::ostringstream k;
     k << "arg" << n;
-    return getArg(k.str());
+    return getArg(k.str(), def);
   }
 
   std::string HttpRequest::getArg(const std::string& name, const std::string& def) const
