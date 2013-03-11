@@ -295,13 +295,13 @@ namespace tnt
   namespace
   {
     typedef std::map<std::string, std::locale> locale_map_type;
-    static std::locale* stdlocale = 0;
+    static const std::locale* stdlocalePtr = 0;
+    static const std::locale* stdlocale = 0;
     static locale_map_type locale_map;
     static cxxtools::Mutex locale_monitor;
 
     const std::locale& getCacheLocale(const std::string& lang)
     {
-
       if (stdlocale == 0)
       {
         cxxtools::MutexLock lock(locale_monitor);
@@ -309,11 +309,13 @@ namespace tnt
         {
           try
           {
-            stdlocale = new std::locale("");
+            stdlocalePtr = new std::locale("");
+            stdlocale = stdlocalePtr;
           }
           catch (const std::exception& e)
           {
             log_warn("error initializing standard-locale - using locale \"C\"");
+            stdlocale = &std::locale::classic();
           }
         }
       }
@@ -345,7 +347,8 @@ namespace tnt
     {
       cxxtools::MutexLock lock(locale_monitor);
       locale_map.clear();
-      delete stdlocale;
+      delete stdlocalePtr;
+      stdlocalePtr = 0;
       stdlocale = 0;
     }
   }
