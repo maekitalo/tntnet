@@ -294,6 +294,7 @@ namespace tnt
 
   namespace
   {
+#ifdef ENABLE_LOCALE
     typedef std::map<std::string, std::locale> locale_map_type;
     static const std::locale* stdlocalePtr = 0;
     static const std::locale* stdlocale = 0;
@@ -351,10 +352,12 @@ namespace tnt
       stdlocalePtr = 0;
       stdlocale = 0;
     }
+#endif
   }
 
   const std::locale& HttpRequest::getLocale() const
   {
+#ifdef ENABLE_LOCALE
     if (!locale_init)
     {
       static const std::string LANG = "LANG";
@@ -366,20 +369,27 @@ namespace tnt
     }
 
     return locale;
+#else
+    return std::locale::classic();
+#endif
   }
 
   void HttpRequest::setLocale(const std::locale& loc)
   {
+#ifdef ENABLE_LOCALE
     locale_init = true;
     locale = loc;
     lang = loc.name();
+#endif
   }
 
   void HttpRequest::setLang(const std::string& lang_)
   {
+#ifdef ENABLE_LOCALE
     lang = lang_;
     locale = getCacheLocale(lang_);
     locale_init = true;
+#endif
   }
 
   const Cookies& HttpRequest::getCookies() const
@@ -643,7 +653,9 @@ namespace tnt
 
   void HttpRequest::postRunCleanup()
   {
+#ifdef ENABLE_LOCALE
     tnt::clearLocaleCache();
+#endif
   }
 }
 

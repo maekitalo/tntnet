@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 2.2, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 2.2rc1, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
@@ -194,6 +194,16 @@ AC_ARG_ENABLE([unittest],
   [enable_unittest=enable_unittest])
 
 AM_CONDITIONAL(MAKE_UNITTEST, test "$enable_unittest" = "enable_unittest")
+
+AC_ARG_ENABLE([locale],
+  AS_HELP_STRING([--disable-locale], [disable support for locales]),
+  [enable_locale=$enableval],
+  [enable_locale=enable_locale])
+
+if test "$enable_locale" != "no"
+then
+  AC_DEFINE(ENABLE_LOCALE, [], [Defined if locale is used])
+fi
 
 AC_CONFIG_FILES([tntnet-config], [chmod +x tntnet-config])
 

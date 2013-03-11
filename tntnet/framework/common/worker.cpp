@@ -49,6 +49,7 @@
 #include <cxxtools/net/tcpserver.h>
 #include <pthread.h>
 #include <string.h>
+#include "config.h"
 
 log_define("tntnet.worker")
 
@@ -231,7 +232,9 @@ namespace tnt
     if (request.isMethodHEAD())
       reply.setHeadRequest();
 
+#ifdef ENABLE_LOCALE
     reply.setLocale(request.getLocale());
+#endif
 
     if (request.keepAlive())
       reply.setKeepAliveCounter(keepAliveCount);
