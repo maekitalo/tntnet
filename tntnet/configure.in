@@ -175,12 +175,6 @@ AM_CONDITIONAL(MAKE_STRESSJOB, test "$stressjob_option" = "yes")
 #
 AC_CHECK_FUNCS([setenv])
 
-AC_COMPILE_IFELSE(
-  [AC_LANG_SOURCE([#include <cxxtools/net/tcpserver.h>
-   cxxtools::net::TcpServer s;
-   int f = s.getFd();])],
-  AC_DEFINE(HAVE_CXXTOOLS_TCPSERVER_GETFD, , [defined if cxxtools::TcpServer has getFd method]))
-
 case "${host_cpu}-${host_os}" in
 *-aix*)
     SHARED_LIB_FLAG=-qmkshrobj

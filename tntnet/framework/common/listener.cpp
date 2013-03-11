@@ -33,9 +33,6 @@
 #include <cxxtools/log.h>
 #include <cxxtools/net/net.h>
 #include <unistd.h>
-#ifdef HAVE_CXXTOOLS_TCPSERVER_GETFD
-#include <fcntl.h>
-#endif
 
 #ifdef WITH_GNUTLS
 #  include "tnt/gnutls.h"
@@ -103,9 +100,6 @@ namespace tnt
   void Listener::initialize()
   {
     log_info("listen ip=" << getIpaddr() << " port=" << getPort());
-#ifdef HAVE_CXXTOOLS_TCPSERVER_GETFD
-    fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
-#endif
   }
 
 #ifdef WITH_GNUTLS
@@ -139,9 +133,6 @@ namespace tnt
   void Ssllistener::initialize()
   {
     log_info("listen ip=" << getIpaddr() << " port=" << getPort() << " (ssl)");
-#ifdef HAVE_CXXTOOLS_TCPSERVER_GETFD
-    fcntl(server.getFd(), F_SETFD, FD_CLOEXEC);
-#endif
   }
 
 #endif // USE_SSL
