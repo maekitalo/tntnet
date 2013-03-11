@@ -76,4 +76,5 @@ EXTRA_DIST = ecpp.vim \
     m4/acx_pthread.m4 \
     m4/ax_check_compile_flag.m4 \
     m4/ax_compiler_vendor.m4 \
-    m4/pkg.m4
+    m4/pkg.m4 \
+    $(pkgdata_SCRIPTS)
