@@ -392,8 +392,251 @@ A block `<& ... &>` contains a subcomponent-call. In our simple case we have a
 normal C++-string-constant here. It can be also a variable or a functioncall,
 which returns a std::string.
 
-Further Readings
-----------------
- * The man pages
- * tntnet users guide (tntnet.pdf)
- * The demo programs in directory "sdk/demos"
+Moving business logic from web pages to C++ and using a session
+---------------------------------------------------------------
+
+What we have seen so far is, how to embed C++ code fragments into web pages. But
+we do not use C++ just because it has such a nice syntax. We want to use more of
+C++. We want to organize our business logic in C++ classes instead of mixing it
+with our web application. Moving the business logic into C++ classes helps
+testing the business logic or using this logic in other applications.
+
+So what we need? Classic C++ code normally uses headers with declarations and
+C++ files with the actual implementation. To use the implementation, we need to
+include the header to make the interface usable.
+
+In ecpp we use the tag `<%pre>`. Code inside this tag is placed outside our
+component class by the ecpp compiler. Normally we put it at the top. This is
+exactly the place, where one would add `#include`-statements. So let's look at a
+example.
+
+Lets come back to our calculator. To make it a little more sophisticated, we
+decide to add some state to our application. We want to accumulate new values on
+each request to a existing value. This accumulation is our business logic, which
+is held in a C++ class. Another new concept, what we need here is some sort of
+persistance between requests. We actually need a session.
+
+We create a project `accumulate` usint `tntnet-config --project=accumulate`.
+
+We create a C++ class `Accumulator` next, which implements the actual
+calculation. So our header `accumulator.h` might look like that:
+
+    #ifndef ACCUMULATOR_H
+    #define ACCUMULATOR_H
+    class Accumulator
+    {
+        double _sum;
+
+      public:
+        Accumulator()
+          : _sum(0)
+        { }
+
+        void add(double value);
+        double sum() const;
+        void reset();
+    };
+    #endif
+
+And our `accumulator.cpp` is here:
+
+    #include "accumulator.h"
+    #include <sstream>
+
+    void Accumulator::add(double value)
+    {
+      _sum += value;
+    }
+
+    double Accumulator::sum() const
+    {
+      return _sum;
+    }
+
+    void Accumulator::reset()
+    {
+      _sum = 0;
+    }
+
+We defined a class, which stores adds a new value to the result. Nothing special
+is here. In real world applications this business logic is far more complex but
+this is good enough to see, how to handle it.
+
+To make the state persistant, we add a session to our application. This is done
+using the tag `<%session>`. We can define variables there and they keep their
+value between requests. Tntnet automatically sends a session cookie to the
+browser, when it sees that tag.
+
+So here is our accumulate.ecpp:
+
+    <%pre>
+    #include "accumulator.h"
+    </%pre>
+    <%args>
+    double value = 0.0;
+    bool add;
+    bool reset;
+    </%args>
+    <%session>
+    Accumulator accumulator;
+    </%session>
+    <%cpp>
+    if (add)
+      accumulator.add(value);
+    if (reset)
+      accumulator.reset();
+    </%cpp>
+    <html>
+     <head>
+      <title>ecpp-application accumulate</title>
+     </head>
+     <body>
+      <h1>accumulate</h1>
+      <form>
+       <input type="text" name="value" value="<$ value $>">
+       <input type="submit" name="add" value="add the value">
+       <input type="submit" name="reset" value="reset the value">
+      </form>
+      The sum so far is <$ accumulator.sum() $>
+     </body>
+    </html>
+
+This is quite straight forward. Remember to add the accumulator.o to the list of
+object files in the Makefile. After building the applications and running
+`tntnet`, you can try the new application.
+
+Creating a standalone web application
+-------------------------------------
+
+We have seen now, how to create a web application with tntnet. We created a
+shared library, which is loaded into the web server tntnet. A configuration file
+tntnet.xml is needed to tell tntnet, what to do.
+
+But there is a alternative approach to run tntnet web applications. You can
+create a standalone application. Your application integrates the web server. You
+don't need to run tntnet any more but run your application.
+
+What we need is to write a little main function, which instantiates a object of
+type `tnt::Tntnet`, configures and runs it. And this is very easy.
+
+We convert now our accumulator application into a standalone application. Here
+is our `main.cpp`:
+
+    #include <tnt/tntnet.h>
+
+    int main(int argc, char* argv[])
+    {
+      try
+      {
+        tnt::Tntnet app;
+        app.listen(8000);
+        app.mapUrl("^/$", "accumulate");
+        app.mapUrl("^/([^.]+)(\\..+)?", "$1");
+        app.run();
+      }
+      catch (const std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+      }
+    }
+
+The Makefile needs some changes, since we do not want to build a shared library
+any more but create a real C++ application. Here is our Makefile (I removed
+everything, we do not need here):
+
+    all: accumulate
+
+    accumulate: accumulate.o accumulator.o main.o
+        ${CXX} -o $@ $^ ${LDFLAGS}
+
+    .SUFFIXES: .ecpp
+    ECPPC=/usr/local/bin/ecppc
+    CXXFLAGS+=-I/usr/local/include -O2
+    LDFLAGS+=-L/usr/local/lib -ltntnet -lcxxtools
+
+    .ecpp.cpp:
+        ${ECPPC} ${ECPPFLAGS} ${ECPPFLAGS_CPP} -o $@ $<
+
+If you run `make`, you get a executable `accumulate`. Now you run `./accumulate`
+and you can access the web application as before. To stop it, just press ctrl-C.
+
+Adding logging
+--------------
+
+You may miss the logging output. The logger is not configured. Lets add that to
+make the application complete. Logging is initialized using a macro
+`log_init()`. Optionally you can pass a file name of a xml configuration file as
+a parameter. By default this looks for a file named `log.xml`, which describes,
+what to log. We will do that.
+
+But first we add the initialization macro to our application. The macro is
+defined in the header `cxxtools/log.h`. So here is our new `main.cpp` with these
+2 lines added:
+
+    #include <tnt/tntnet.h>
+    #include <cxxtools/log.h>
+
+    int main(int argc, char* argv[])
+    {
+      try
+      {
+        log_init();
+        tnt::Tntnet app;
+        app.listen(8000);
+        app.mapUrl("^/$", "accumulate");
+        app.mapUrl("^/([^.]+)(\\..+)?", "$1");
+        app.run();
+      }
+      catch (const std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+      }
+    }
+
+That shouldn't be too hard. We need a configuration file `log.xml`. An easy way
+to create it is to use the command `cxxtools-config --logxml accumulator
+>log.xml`. You can look at the file to get an idea, what can be configured.
+
+Hey, we are done already. Compile the application using `make` and run it using
+`./accumulator`.
+
+One further step is to add some logging to our application. If you look at
+log.xml, you already have an idea, how to do that. Lets follow the instructions.
+We add a call to `log_define` to define a logging category and then we can log
+using the log macros e.g. `log_info`. Here is our new `main.cpp`:
+
+    #include <tnt/tntnet.h>
+    #include <cxxtools/log.h>
+
+    log_define("accumulator")
+
+    int main(int argc, char* argv[])
+    {
+      try
+      {
+        log_init();
+
+        unsigned short port = 8000;
+        log_info("run accumulator on port " << port);
+
+        tnt::Tntnet app;
+        app.listen(port);
+        app.mapUrl("^/$", "accumulate");
+        app.mapUrl("^/([^.]+)(\\..+)?", "$1");
+        app.run();
+      }
+      catch (const std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+      }
+    }
+
+When you compile and run the application, you get the new log statement to the
+screen.
+
+Next steps
+----------
+
+ * read the man pages starting at tntnet(8)
+ * look at the demo programs in directory "sdk/demos"
+ * choose a better build system (I suggest autoconf/automake)
