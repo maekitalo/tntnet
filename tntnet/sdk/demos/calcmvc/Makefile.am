@@ -30,4 +30,4 @@ SUFFIXES=.ecpp .cpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
 
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=calcmvc|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(SHELL) $(top_builddir)/tntnet-config --config=calcmvc|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

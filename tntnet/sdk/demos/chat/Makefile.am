@@ -38,4 +38,4 @@ SUFFIXES=.ecpp .js .png .cpp
 	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png -o $@ $<
 
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=chat|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(SHELL) $(top_builddir)/tntnet-config --config=chat|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

@@ -36,7 +36,7 @@ SUFFIXES=.ecpp .cpp .png
 	$(ECPPC) -b -o $@ $<
 
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=calci18n|awk '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(SHELL) $(top_builddir)/tntnet-config --config=calci18n|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
 
 calci18n.txt: $(srcdir)/calci18n.ecpp
 	$(ECPPL) -o calci18n.txt calci18n.ecpp
