@@ -42,6 +42,9 @@ namespace tnt
       size_t requestSize;
 
     protected:
+      virtual ~RequestSizeMonitor()
+      { }
+
       void pre(char ch)    { }
       bool post(bool ret);
 

@@ -36,6 +36,10 @@ namespace tnt
 {
   class SocketIf
   {
+    protected:
+      virtual ~SocketIf()
+      { }
+
     public:
       virtual std::string getPeerIp() const = 0;
       virtual std::string getServerIp() const = 0;

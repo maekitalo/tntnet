@@ -35,6 +35,10 @@ namespace tnt
 
   class ThreadContext
   {
+    protected:
+      virtual ~ThreadContext()
+      { }
+
     public:
       virtual void touch() = 0;       // wake watchdog timer
       virtual Scope& getScope() = 0;
