@@ -1,3 +1,55 @@
+2013-03-16 tommi@tntnet.org
+
+ - release candidate 2.2rc2
+
+2013-03-11 tommi@tntnet.org
+
+ - add configure switch --disable-locale
+ - remove obsolete configure check for cxxtools::net::TcpServer::getFd
+ - don't crash if standard locale could not be created
+
+2013-03-10 tommi@tntnet.org
+
+ - add converter script from tntnet.conf to tntnet.xml to dist package and install it
+ - bugfix: request.getArgDef(number, default) did not use the default value
+ - update man page for tntnet.xml (tag <url> is optional, request.getArgs with number)
+ - make url in mapping optional
+ - fix converting mapping from tntnet.conf to xml: tag in <mappings> should be <mapping>
+ - make static component loader publicly available
+
+2013-03-09 tommi@tntnet.org
+
+ - reduce warnings with clang compiler
+ - do not use implicit conversion of cxxtools::SmartPtr to raw pointer
+ - using std::set in poller is somewhat stupid - std::vector is simpler here
+ - add documentation about mimeDb to tntnet.xml man page
+
+2013-03-03 tommi@tntnet.org
+
+ - release candidate 2.2rc1
+
+2013-03-01 tommi@tntnet.org
+
+ - regenerate man pages
+ - remove special characters from markdown man pages
+ - add new <%get> and <%post> tags to vim syntax highlighting
+
+2013-02-28 tommi@tntnet.org
+
+ - convert static-howto document to markdown and update the content
+ - add <%get> and <%post> sections to receive GET or POST parameters
+
+2013-02-27 tommi@tntnet.org
+
+ - do not use parent values feature of cxxtools::QueryParams since it was never really used and will be removed in cxxtools
+ - fix leak of scopes
+
+2013-02-24 tommi@tntnet.org
+
+ - ignore exception message "lost connection to peer" when killing the monitor process before the worker process in daemon mode
+ - remove all references to tntnet.conf
+ - update documentation
+
 2013-02-24 tommi@tntnet.org
 
  - revert invalid change: make %config variables optional again
