@@ -18,7 +18,7 @@ CLEANFILES = ajax.cpp backgroundjob.cpp status.cpp tntnet.xml
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I$(srcdir) $<
 .js.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m application/x-javascript -o $@ $<
 
