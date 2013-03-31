@@ -17,9 +17,8 @@ EXTRA_DIST = \
 	put.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 message_la_LDFLAGS = -module @SHARED_LIB_FLAG@
-message_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
+message_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
 CLEANFILES = get.cpp jquery.cpp message.cpp put.cpp tntnet.xml

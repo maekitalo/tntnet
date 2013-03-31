@@ -7,9 +7,8 @@ EXTRA_DIST = \
 	calc.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 calc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
-calc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la $(PTHREAD_LIBS)
+calc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
 CLEANFILES = calc.cpp tntnet.xml

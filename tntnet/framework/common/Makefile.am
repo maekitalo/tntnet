@@ -113,9 +113,9 @@ noinst_HEADERS = \
 	tnt/tcpjob.h \
 	tnt/util.h
 
-libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\" $(PTHREAD_CFLAGS)
+libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\"
 libtntnet_la_LDFLAGS = -version-info @sonumber@ @SHARED_LIB_FLAG@
-libtntnet_la_LIBADD = -lz -lcxxtools $(PTHREAD_LIBS)
+libtntnet_la_LIBADD = -lz -lcxxtools
 
 if MAKE_GNUTLS
 libtntnet_la_SOURCES += \
