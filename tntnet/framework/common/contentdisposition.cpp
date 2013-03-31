@@ -29,7 +29,6 @@
 
 #include <tnt/contentdisposition.h>
 #include <ctype.h>
-#include <functional>
 #include <algorithm>
 
 namespace tnt
@@ -43,7 +42,7 @@ namespace tnt
 
     type = t;
     std::transform(type.begin(), type.end(), type.begin(),
-      std::ptr_fun(tolower));
+      ::tolower);
 
     return OK;
   }
@@ -55,8 +54,6 @@ namespace tnt
     if (attribute == "name")
     {
       name = value;
-      //std::transform(name.begin(), name.end(), name.begin(),
-        //std::ptr_fun(tolower));
     }
     else if (attribute == "filename")
       filename = value;

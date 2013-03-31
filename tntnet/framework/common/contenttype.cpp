@@ -33,7 +33,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <ctype.h>
-#include <functional>
 #include <algorithm>
 #include <cxxtools/log.h>
 
@@ -80,9 +79,9 @@ namespace tnt
     subtype = s;
 
     std::transform(type.begin(), type.end(), type.begin(),
-      std::ptr_fun(tolower));
+      ::tolower);
     std::transform(subtype.begin(), subtype.end(), subtype.begin(),
-      std::ptr_fun(tolower));
+      ::tolower);
 
     return OK;
   }
@@ -93,7 +92,7 @@ namespace tnt
     log_debug("Contenttype::onParameter " << attribute << ", " << value);
     std::string att = attribute;
     std::transform(att.begin(), att.end(), att.begin(),
-      std::ptr_fun(tolower));
+      ::tolower);
 
     parameter.insert(parameter_type::value_type(att, value));
     if (attribute == "boundary")

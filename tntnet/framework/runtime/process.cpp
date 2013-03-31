@@ -45,14 +45,14 @@ namespace
 {
   tnt::Process* theProcess = 0;
 
-  void sigEnd(int)
+  extern "C" void sigEnd(int)
   {
     signal(SIGTERM, sigEnd);
     if (theProcess)
       theProcess->shutdown();
   }
 
-  void sigReload(int)
+  extern "C" void sigReload(int)
   {
     signal(SIGHUP, sigReload);
     if (theProcess)
