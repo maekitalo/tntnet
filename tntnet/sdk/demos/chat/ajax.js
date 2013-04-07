@@ -6,10 +6,11 @@ function getRequest()
   return null;
 }
 
-function ajaxGet(url, fn, failFn)
+function ajaxGet(url, parameter, fn, failFn)
 {
   request = getRequest();
-  request.open("GET", url);
+  request.open("POST", url, true);
+  request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   request.onreadystatechange = function () {
       if (request.readyState == 4)
       {
@@ -22,5 +23,5 @@ function ajaxGet(url, fn, failFn)
           failFn(request);
       }
     }
-  request.send(null);
+  request.send(parameter);
 }

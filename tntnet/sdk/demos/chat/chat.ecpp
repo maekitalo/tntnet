@@ -4,31 +4,49 @@
   <script src="ajax" type="text/javascript"></script>
   <script type="text/javascript">
 
-   window.setInterval("updateChat()", 1000);
+   window.setInterval("updateChat()", 500);
 
-   var oldContent;
-
-   function onReceive(request)
+   function jsonRequest(request)
    {
-     var c = document.getElementById("chat");
-     if (request.responseText != oldContent)
+     if (request.responseText != this.oldContent)
      {
-       c.innerHTML = request.responseText;
-       oldContent = request.responseText;
+       this.oldContent = request.responseText;
+
+       var content = JSON.parse(request.responseText);
+       var c = document.getElementById("chat");
+       var newContent = "<table>";
+
+       for(var i = 0; i < content.length; ++i)
+       {
+         obj = content[i];
+         newContent += "<tr>"
+                     + "<td class='person'>"
+                     + obj.person
+                     + "</td>"
+                     + "<td class='message'>"
+                     + obj.message
+                     + "</td>"
+                     + "</tr>";
+       }
+
+       newContent += "</table>";
+       c.innerHTML = newContent;
      }
    }
 
-   function updateChat(ms)
+   function updateChat()
    {
-     ajaxGet("getchat", onReceive);
+     <# jsonRequest gets a JSON answer from server and gives it to jsonRequest #>
+     ajaxGet("getchat", null, jsonRequest);
    }
 
    function sendMessage()
    {
      var p = document.getElementById("person");
      var m = document.getElementById("message");
-     ajaxGet("putchat?person=" + escape(p.value) + "&message=" + escape(m.value),
-       onReceive);
+     ajaxGet("putchat",
+       "person=" + escape(p.value) + "&message=" + escape(m.value),
+       jsonRequest);
      m.value = "";
      m.focus();
    }
@@ -50,7 +68,7 @@
   </style>
  </head>
  <body>
-  <h1><$ request.getArgs().size() > 0 ? request.getArgs()[0] : "Ajaxchat" $></h1>
+  <h1>Ajaxchat</h1>
 
   <form>
    <table>
@@ -81,7 +99,7 @@
   </script>
 
   <hr>
-  <div id="chat"><& getchat ></div>
+  <div id="chat"><table></table></div>
 
  </body>
 </html>

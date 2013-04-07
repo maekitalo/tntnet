@@ -2,20 +2,30 @@
 
 #include <list>
 #include <string>
+#include <cxxtools/serializationinfo.h>
 
 struct chatMessage
 {
   chatMessage() { }
-  chatMessage(const std::string& person_, const std::string& message_)
+  chatMessage(const std::string& person_, const std::string& message_, const int id_)
     : person(person_),
-      message(message_)
+      message(message_),
+      id(id_)
       { }
 
   std::string person;
   std::string message;
+  int id;
 };
 
 typedef std::list<chatMessage> chat_type;
+
+inline void operator<<= (cxxtools::SerializationInfo& si, const chatMessage& msg)
+{
+  si.addMember("id") <<= msg.id;
+  si.addMember("person") <<= msg.person;
+  si.addMember("message") <<= msg.message;
+}
 
 </%pre>
 <%config>
@@ -26,5 +36,6 @@ unsigned maxComments = 10;
 <%application scope="global">
 
 chat_type chat;
+int maxID=0;
 
 </%application>

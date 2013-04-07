@@ -29,7 +29,7 @@ std::string replaceImg(std::string message, const std::string& txt,
     message = replaceImg(message, ":(", "<img src=\"sad\">");
     message = replaceImg(message, ";)", "<img src=\"wink\">");
 
-    chat.push_back(chatMessage(person, message));
+    chat.push_back(chatMessage(person, message, ++maxID));
     if (chat.size() > maxComments)
       chat.erase(chat.begin());
   }

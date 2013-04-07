@@ -28,6 +28,12 @@ CLEANFILES = chat.cpp ajax.cpp getchat.cpp putchat.cpp \
     sad.cpp smile.cpp wink.cpp \
     tntnet.xml
 
+getchat.cpp: getchat.ecpp \
+  global.ecpp
+
+putchat.cpp: putchat.ecpp \
+  global.ecpp
+
 SUFFIXES=.ecpp .js .png .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
