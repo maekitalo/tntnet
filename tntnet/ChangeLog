@@ -1,6 +1,31 @@
+2013-04-08 tommi@tntnet.org
+
+ - release candidate 2.2rc3
+
+2013-04-07 tommi@tntnet.org
+
+ - use json in chat demo
+
+2013-03-31 tommi@tntnet.org
+
+ - fix compiler warnings
+ - set pthread flags and select threaded compiler globally in configure script
+ - remove some obsolete documentation files (converted to markdown now)
+
+2013-03-20 tommi@tntnet.org
+
+ - fix for out of tree build
+
+2013-03-17 tommi@tntnet.org
+
+ - replace call to awk with $(AWK), which is set by configure to a suitable awk implementation
+ - set preprocesor flags in CPPFLAGS instead of CXXFLAGS
+ - fix some compiler warnings
+
 2013-03-16 tommi@tntnet.org
 
  - release candidate 2.2rc2
+ - add chapters about business logic, application class and logging to quick start guide
 
 2013-03-11 tommi@tntnet.org
 
