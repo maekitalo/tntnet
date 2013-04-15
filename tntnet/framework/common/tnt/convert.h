@@ -33,6 +33,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <locale>
+#include <cxxtools/convert.h>
 
 namespace tnt
 {
@@ -118,12 +119,14 @@ namespace tnt
   template <typename T>
   inline T stringToWithDefault(const std::string& value, const T& def)
   {
-    T ret;
-    std::istringstream s(value);
-    s >> ret;
-    if (!s)
+    try
+    {
+      return cxxtools::convert<T>(value);
+    }
+    catch (const cxxtools::ConversionError&)
+    {
       return def;
-    return ret;
+    }
   }
 
   template <typename T>

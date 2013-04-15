@@ -34,6 +34,7 @@
 #include <tnt/scope.h>
 #include <tnt/sessionscope.h>
 #include <tnt/httprequest.h>
+#include <tnt/http.h>
 #include <map>
 #include <set>
 
@@ -227,6 +228,17 @@ namespace tnt
   {
     return id.toString();
   }
+
+  inline unsigned controllerCaller(void*, tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&)
+  {
+    return DECLINED;
+  }
+
+  inline unsigned controllerCaller(tnt::Component* component, tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparams)
+  {
+    return (*component)(request, reply, qparams);
+  }
+
 }
 
 #define TNT_VAR(scope, type, varname, key, construct)                          \
@@ -239,7 +251,12 @@ namespace tnt
       _scope.put< type >(varname##_scopekey,                                   \
           varname##_pointer = new type construct);                             \
   }                                                                            \
-  type& varname = *varname##_pointer;
+  type& varname = *varname##_pointer;                                          \
+  {                                                                            \
+    unsigned r = tnt::controllerCaller(varname##_pointer, request, reply, qparam); \
+    if (r != DECLINED && r != HTTP_OK)                                         \
+      return r;                                                                \
+  }
 
 
 #define TNT_SESSION_COMPONENT_VAR(type, varname, key, construct) \

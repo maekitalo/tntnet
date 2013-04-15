@@ -32,9 +32,22 @@
 
 #include <cxxtools/query_params.h>
 #include <tnt/scope.h>
+#include <tnt/convert.h>
 
 namespace tnt
 {
+  class QueryParams;
+
+  namespace qhelper
+  {
+    template <typename Type>
+    Type arg(const QueryParams& q, const std::string& name, const Type& def);
+
+    template <>
+    inline bool arg<bool>(const QueryParams& q, const std::string& name, const bool&);
+
+  }
+
   class QueryParams : public cxxtools::QueryParams
   {
       Scope* paramScope;
@@ -50,12 +63,13 @@ namespace tnt
       QueryParams& operator= (const QueryParams& src)
       {
         cxxtools::QueryParams::operator=(src);
-        if (paramScope && paramScope != src.paramScope)
+        if (paramScope != src.paramScope)
         {
           if (paramScope->release() == 0)
             delete paramScope;
           paramScope = src.paramScope;
-          paramScope->addRef();
+          if (paramScope)
+            paramScope->addRef();
         }
         return *this;
       }
@@ -71,7 +85,37 @@ namespace tnt
           paramScope = new Scope();
         return *paramScope;
       }
+
+      template <typename Type>
+      Type arg(size_type n) const
+      { return cxxtools::convert<Type>(param(n)); }
+
+      template <typename Type>
+      Type arg(const std::string& name, const Type& def = Type()) const
+      { return qhelper::arg<Type>(*this, name, def); }
+
+      template <typename Type>
+      Type arg(const std::string& name, const std::locale& loc, const Type& def = Type()) const
+      { return has(name) ? tnt::stringToWithDefault<Type>(param(name), loc) : def; }
+
   };
+
+  namespace qhelper
+  {
+    template <typename Type>
+    Type arg(const QueryParams& q, const std::string& name, const Type& def)
+    {
+      return q.has(name) ? cxxtools::convert<Type>(q.param(name)) : def;
+    }
+
+    template <>
+    inline bool arg<bool>(const QueryParams& q, const std::string& name, const bool&)
+    {
+      return q.has(name);
+    }
+
+  }
+
 }
 
 #endif // TNT_QUERY_PARAMS_H
