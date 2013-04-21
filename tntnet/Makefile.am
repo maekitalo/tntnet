@@ -77,4 +77,5 @@ EXTRA_DIST = ecpp.vim \
     m4/ax_check_compile_flag.m4 \
     m4/ax_compiler_vendor.m4 \
     m4/pkg.m4 \
+    Releasenotes-2.2.markdown  \
     $(pkgdata_SCRIPTS)
