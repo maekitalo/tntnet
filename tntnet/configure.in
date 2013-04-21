@@ -37,6 +37,12 @@ AS_IF([test "$ax_cv_cxx_compiler_vendor" = "ibm"],
 
 AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADER([cxxtools/net/tcpsocket.h], , AC_MSG_ERROR([cxxtools headers not found]))
+AC_MSG_CHECKING([cxxtools version])
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([#include <cxxtools/refcounted.h>
+      void t() { cxxtools::RefCounted* r; unsigned n = r->release(); }])],
+    [AC_MSG_RESULT([cxxtools is usable])],
+    [AC_MSG_ERROR([cxxtools is outdated - please upgrade to at least version 2.2])])
 AC_CHECK_FUNCS([fopen64], ,[AM_CFLAGS=-DUSE_FILE32API])
 AC_SUBST(AM_CFLAGS)
 
