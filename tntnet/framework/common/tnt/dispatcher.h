@@ -77,6 +77,9 @@ namespace tnt
       Mapping& setArgs(const args_type& a)
         { target.setArgs(a); return *this; }
 
+      Mapping& setArg(const std::string& name, const std::string& value)
+        { target.setArg(name, value); return *this; }
+
       Mapping& setVHost(const std::string& vhost_)
         { vhost = vhost_; r_vhost = cxxtools::Regex(vhost_); return *this; }
 

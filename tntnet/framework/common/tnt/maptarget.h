@@ -73,6 +73,8 @@ namespace tnt
         { return pathinfo; }
       const args_type& getArgs() const
         { return args; }
+      Maptarget& setArg(const std::string& name, const std::string& value)
+        { args[name] = value; return *this; }
   };
 
 }
