@@ -1,9 +1,0 @@
-<html>
-  <head>
-    <title>Tntnet wiki</title>
-  </head>
-  <body>
-    <h1>Tntnet homepage</h2>
-    <& wiki qparam >
-  </body>
-</html>
