@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<seweb>
-  <dburl>@DBURL@</dburl>
-  <rpcip></rpcip>
-  <rpcport>7007</rpcport>
-  <httpip></httpip>
-  <httpport>8000</httpport>
-</seweb>
