@@ -50,4 +50,4 @@ This manual page was written by Tommi Mäkitalo <tommi@tntnet.org>.
 SEE ALSO
 --------
 
-tntnet(1), ecpp(7), ecppl(1)
+tntnet(8), ecpp(7), ecppl(1)
