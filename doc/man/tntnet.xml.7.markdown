@@ -176,7 +176,7 @@ This section describes the variables, used by Tntnet (8).
   This is the most important setting for tntnet. It specifies, which components
   schould be called on which urls.
 
-  For details see the section *Url mapping*.
+  For details see the section *URL MAPPING*.
 
 `<maxUrlMapCache>`*number*`</maxUrlMapCache>`
 
@@ -348,6 +348,38 @@ This section describes the variables, used by Tntnet (8).
   *Example*
 
     <user>www-data</user>
+
+`<virtualhosts> { <virtualhost> <hostname>`*hostname-regex*`</hostname>`*mappings*` </virtualhost> }</virtualhosts>`
+
+  Defines mappings for virtual hosts. These mappings are valid only when the
+  host header matches the *hostname-regex*. See section *URL MAPPING* for
+  details about how to define actual mappings
+
+  A *vhost* entry in the mappings should be empty since it is already specified
+  for the whole group.
+
+  The mappings defined here are always matched before the mappings on the top
+  level of the configuration.
+
+  *Example*
+
+    <virtualhosts>
+      <virtualhost>
+        <hostname>www\.tntnet\.org</hostname>
+        <mappings>
+          <mapping>
+            <url>^/$</url>
+            <target>static@tntent</target>
+            <pathinfo>htdocs/index.html</pathinfo>
+          </mapping>
+          <mapping>
+            <url>^/(.*)$</url>
+            <target>static@tntent</target>
+            <pathinfo>htdocs/$1</pathinfo>
+          </mapping>
+        </mappings>
+      </virtualhost>
+    </virtualhosts>
 
 URL MAPPING
 -----------

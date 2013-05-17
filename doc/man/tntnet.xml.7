@@ -223,7 +223,7 @@ The default value is 16.
 This is the most important setting for tntnet. It specifies, which components
 schould be called on which urls.
 .IP
-For details see the section \fIUrl mapping\fP.
+For details see the section \fIURL MAPPING\fP.
 .PP
 \fB\fC<maxUrlMapCache>\fR\fInumber\fP\fB\fC</maxUrlMapCache>\fR
 .IP
@@ -447,6 +447,42 @@ when tntnet starts as root user.
 .RS
 .nf
 <user>www-data</user>
+.fi
+.RE
+.PP
+\fB\fC<virtualhosts> { <virtualhost> <hostname>\fR\fIhostname\-regex\fP\fB\fC</hostname>\fR\fImappings\fP\fB\fC</virtualhost> }</virtualhosts>\fR
+.IP
+Defines mappings for virtual hosts. These mappings are valid only when the
+host header matches the \fIhostname\-regex\fP. See section \fIURL MAPPING\fP for
+details about how to define actual mappings
+.IP
+A \fIvhost\fP entry in the mappings should be empty since it is already specified
+for the whole group.
+.IP
+The mappings defined here are always matched before the mappings on the top
+level of the configuration.
+.IP
+\fIExample\fP
+.PP
+.RS
+.nf
+<virtualhosts>
+  <virtualhost>
+    <hostname>www\\.tntnet\\.org</hostname>
+    <mappings>
+      <mapping>
+        <url>^/$</url>
+        <target>static@tntent</target>
+        <pathinfo>htdocs/index.html</pathinfo>
+      </mapping>
+      <mapping>
+        <url>^/(.*)$</url>
+        <target>static@tntent</target>
+        <pathinfo>htdocs/$1</pathinfo>
+      </mapping>
+    </mappings>
+  </virtualhost>
+</virtualhosts>
 .fi
 .RE
 .SH URL MAPPING
