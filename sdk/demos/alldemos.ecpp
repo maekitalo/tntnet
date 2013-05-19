@@ -2,7 +2,7 @@
 #include <fstream>
 </%pre>
 <%config>
-std::string filename = "demos.txt";
+std::string filename = "/usr/share/tntnet/demos.txt";
 </%config>
 <%cpp>
 
