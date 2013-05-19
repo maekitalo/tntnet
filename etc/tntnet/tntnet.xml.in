@@ -55,7 +55,7 @@
   <daemon>1</daemon>
   <user>www-data</user>
   <group>www-data</group>
-  <pidFile>@localstatedir@/run/tntnet.pid</pidFile>
+  <pidfile>@localstatedir@/run/tntnet.pid</pidfile>
   <documentRoot>/var/www</documentRoot>
   <compPath>
     <entry>@libdir@/tntnet</entry>
