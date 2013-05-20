@@ -327,8 +327,7 @@ namespace tnt
     void Generator::getHeaderIncludes(std::ostream& out) const
     {
       if (multiImages.empty() && !isRawMode())
-        out << "#include <tnt/ecpp.h>\n"
-               "#include <tnt/convert.h>\n";
+        out << "#include <tnt/ecpp.h>\n";
       else
         out << "#include <tnt/mbcomponent.h>\n";
     }

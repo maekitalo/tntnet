@@ -98,7 +98,6 @@ namespace tnt
       mp(r.mp),
       serial(r.serial),
       locale_init(r.locale_init),
-      locale(r.locale),
       requestScope(r.requestScope),
       applicationScope(r.applicationScope),
       sessionScope(r.sessionScope),
@@ -145,7 +144,6 @@ namespace tnt
     socketIf = r.socketIf;
     serial = r.serial;
     locale_init = r.locale_init;
-    locale = r.locale;
     requestScope = r.requestScope;
     applicationScope = r.applicationScope;
     sessionScope = r.sessionScope;
@@ -362,13 +360,13 @@ namespace tnt
     {
       static const std::string LANG = "LANG";
       lang = qparam[LANG];
-      locale = getCacheLocale(qparam[LANG]);
+      const_cast<QueryParams&>(qparam).locale(getCacheLocale(qparam[LANG]));
       if (lang.empty())
-        lang = locale.name();
+        lang = qparam.locale().name();
       locale_init = true;
     }
 
-    return locale;
+    return qparam.locale();
 #else
     return std::locale::classic();
 #endif
@@ -378,7 +376,7 @@ namespace tnt
   {
 #ifdef ENABLE_LOCALE
     locale_init = true;
-    locale = loc;
+    qparam.locale(loc);
     lang = loc.name();
 #endif
   }
@@ -387,7 +385,7 @@ namespace tnt
   {
 #ifdef ENABLE_LOCALE
     lang = lang_;
-    locale = getCacheLocale(lang_);
+    qparam.locale(getCacheLocale(lang_));
     locale_init = true;
 #endif
   }
