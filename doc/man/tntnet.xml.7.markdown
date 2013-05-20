@@ -40,7 +40,7 @@ This section describes the variables, used by Tntnet (8).
 
   The default value is 16384.
 
-`<comppath>` [ `<entry>`*path1*`</entry>` ] `</comppath>`
+`<compPath>` [ `<entry>`*path1*`</entry>` ] `</compPath>`
 
   `comppath` specifies, where tntnet should search for webapplications. Tntnet
   searches first in the current directory and then in each directory, you
@@ -268,7 +268,7 @@ This section describes the variables, used by Tntnet (8).
 
     <maxThreads>200</maxThreads>
 
-`<pidFile>`*filename*`</pidFile>`
+`<pidfile>`*filename*`</pidfile>`
 
   When run in daemon-mode, tntnet writes the process-id of the monitor-process
   to filename. When the monitor-process is deactivated, the pid of the
@@ -277,7 +277,7 @@ This section describes the variables, used by Tntnet (8).
 
   *Example*
 
-    <pidFile>/var/run/tntnet.pid</pidFile>
+    <pidfile>/var/run/tntnet.pid</pidfile>
 
 `<queueSize>`*number*`</queueSize>`
 
