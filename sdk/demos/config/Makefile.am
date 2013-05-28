@@ -1,10 +1,7 @@
 pkglib_LTLIBRARIES = config.la
 
-EXTRA_DIST = \
-	config.ecpp
-
 nodist_config_la_SOURCES = \
-	config.cpp
+	config.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 config_la_LDFLAGS = -module @SHARED_LIB_FLAG@

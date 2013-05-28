@@ -50,17 +50,13 @@ namespace tnt
     delete theComponent;
   }
 
-  void ComponentFactory::doConfigure(const tnt::TntConfig& config)
-  {
-  }
-
   Component* ComponentFactory::create(const tnt::Compident& ci,
     const tnt::Urlmapper& um, tnt::Comploader& cl)
   {
     if (theComponent == 0)
     {
-      doConfigure(TntConfig::it());
       theComponent = doCreate(ci, um, cl);
+      theComponent->configure(TntConfig::it());
     }
 
     return theComponent;

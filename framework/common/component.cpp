@@ -35,6 +35,10 @@
 
 namespace tnt
 {
+  void Component::configure(const tnt::TntConfig& config)
+  {
+  }
+
   unsigned Component::topCall(HttpRequest& request,
     HttpReply& reply, tnt::QueryParams& qparam)
   {

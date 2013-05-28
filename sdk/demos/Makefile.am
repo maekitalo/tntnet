@@ -1,3 +1,24 @@
+SUBDIRS = \
+    backgroundjob \
+    calc \
+    calcajax \
+    calcapp \
+    calcmvc \
+    calci18n \
+    chat \
+    comp \
+    config \
+    controls \
+    cookie \
+    hello \
+    mvc \
+    savepoint \
+    session \
+    sprintf \
+    strings \
+    rajax-jquery \
+    upload
+
 pkglib_LTLIBRARIES = alldemos.la
 
 nodist_alldemos_la_SOURCES = \

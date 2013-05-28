@@ -56,26 +56,7 @@ namespace tnt
         tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };
 
-  ////////////////////////////////////////////////////////////////////////
-  // factory
-  //
-  class UnzipFactory : public StaticFactory
-  {
-    public:
-      UnzipFactory(const std::string& componentName)
-        : StaticFactory(componentName)
-        { }
-      virtual tnt::Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl);
-  };
-
-  tnt::Component* UnzipFactory::doCreate(const tnt::Compident&,
-    const tnt::Urlmapper&, tnt::Comploader&)
-  {
-    return new Unzip();
-  }
-
-  static UnzipFactory unzipFactory("unzip");
+  static ComponentFactoryImpl<Unzip> factory("unzip");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

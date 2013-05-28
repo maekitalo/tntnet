@@ -293,12 +293,18 @@ namespace tnt
     }
 
     void Generator::onScope(scope_container_type container, scope_type scope,
-      const std::string& type, const std::string& var, const std::string& init_)
+      const std::string& type, const std::string& var, const std::string& init_,
+      const std::vector<std::string>& includes)
     {
       log_debug("onScope type=\"" << type << "\" var=\"" << var << "\" init=\"" << init_ << '"');
       tnt::ecppc::Component* comp = (scope == ecpp::page_scope ? &maincomp : currentComp);
 
       comp->addScopevar(Scopevar(container, scope, type, var, init_, curline, curfile));
+
+      std::ostringstream m;
+      for (unsigned n = 0; n != includes.size(); ++n)
+        m << "#include <" << includes[n] << ">\n";
+      pre += m.str();
     }
 
     void Generator::onInclude(const std::string& file)
@@ -416,15 +422,15 @@ namespace tnt
     {
       if (configs.empty())
       {
-        code << "static tnt::ComponentFactoryImpl<_component_> Factory(\"" << maincomp.getName() << "\");\n\n";
+        code << "static tnt::EcppComponentFactoryImpl<_component_> Factory(\"" << maincomp.getName() << "\");\n\n";
       }
       else
       {
-        code << "class _component_Factory : public tnt::ComponentFactoryImpl<_component_>\n"
+        code << "class _component_Factory : public tnt::EcppComponentFactoryImpl<_component_>\n"
                 "{\n"
                 "  public:\n"
                 "    _component_Factory()\n"
-                "      : tnt::ComponentFactoryImpl<_component_>(\"" << maincomp.getName() << "\")\n"
+                "      : tnt::EcppComponentFactoryImpl<_component_>(\"" << maincomp.getName() << "\")\n"
                 "      { }\n"
                 "    tnt::Component* doCreate(const tnt::Compident& ci,\n"
                 "      const tnt::Urlmapper& um, tnt::Comploader& cl);\n"

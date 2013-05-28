@@ -31,6 +31,7 @@
 #define TNT_ECPP_PARSERHANDLER_H
 
 #include <tnt/ecpp/parser.h>
+#include <vector>
 
 namespace tnt
 {
@@ -69,7 +70,8 @@ namespace tnt
         virtual void onEndCall(const std::string& comp);
         virtual void onShared(const std::string& code);
         virtual void onScope(scope_container_type container, scope_type scope,
-          const std::string& type, const std::string& var, const std::string& init);
+          const std::string& type, const std::string& var, const std::string& init,
+          const std::vector<std::string>& includes);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
         virtual void startClose();
         virtual void endClose();

@@ -49,26 +49,7 @@ namespace tnt
         tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };
 
-  ////////////////////////////////////////////////////////////////////////
-  // factory
-  //
-  class RedirectFactory : public tnt::ComponentFactory
-  {
-    public:
-      RedirectFactory(const std::string& componentName)
-        : tnt::ComponentFactory(componentName)
-        { }
-      virtual tnt::Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl);
-  };
-
-  tnt::Component* RedirectFactory::doCreate(const tnt::Compident&,
-    const tnt::Urlmapper&, tnt::Comploader&)
-  {
-    return new Redirect();
-  }
-
-  static RedirectFactory redirectFactory("redirect");
+  static ComponentFactoryImpl<Redirect> redirectFactory("redirect");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

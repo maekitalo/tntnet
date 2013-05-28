@@ -174,7 +174,10 @@ namespace tnt
         state_scopeargeq,
         state_scopeargval0,
         state_scopeargval,
-        state_scopevale,
+        state_scopeargincleq,
+        state_scopearginclval0,
+        state_scopearginclval1,
+        state_scopearginclval,
         state_scope0,
         state_scope,  // 80
         state_scopeinit,
@@ -203,11 +206,12 @@ namespace tnt
       unsigned bracket_count = 0;
       std::string scopetype, scopevar, scopeinit;
       scope_container_type scope_container = application_container;
-      scope_type scope = global_scope;
+      scope_type scope = default_scope;
       bool inComp = false;
       bool inClose = false;
       bool htmlExpr = false;
       bool splitBar = false;
+      std::vector<std::string> scopeincludes;
 
       handler.start();
 
@@ -399,37 +403,43 @@ namespace tnt
               else if (tag == "application")
               {
                 scope_container = application_container;
-                scope = component_scope;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scope0;
               }
               else if (tag == "thread")
               {
                 scope_container = thread_container;
-                scope = component_scope;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scope0;
               }
               else if (tag == "session")
               {
                 scope_container = session_container;
-                scope = component_scope;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scope0;
               }
               else if (tag == "securesession")
               {
                 scope_container = secure_session_container;
-                scope = component_scope;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scope0;
               }
               else if (tag == "request")
               {
                 scope_container = request_container;
-                scope = component_scope;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scope0;
               }
               else if (tag == "param")
               {
                 scope_container = param_container;
-                scope = component_scope;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scope0;
               }
               else if (!inClose && tag == "close")
@@ -1609,7 +1619,6 @@ namespace tnt
             if (ch == '>')
             {
               state = state_scope0;
-              scope = component_scope;
             }
             else if (!std::isspace(ch))
             {
@@ -1619,18 +1628,21 @@ namespace tnt
             break;
 
           case state_scopearg:
-            if (ch == '=')
+            if (ch == '=' || std::isspace(ch))
             {
-              state = state_scopeargval0;
-              if (tagarg != "scope")
-                throw parse_error("argument \"scope\" expected", state, curfile, curline);
-              tagarg.clear();
-            }
-            else if (std::isspace(ch))
-            {
-              state = state_scopeargeq;
-              if (tagarg != "scope")
-                throw parse_error("argument \"scope\" expected", state, curfile, curline);
+              if (tagarg != "scope" && tagarg != "include")
+                throw parse_error("\"scope\" or \"include\" expected; \"" + tagarg + "\" found", state, curfile, curline);
+
+              if (tagarg == "scope")
+              {
+                if (scope != default_scope)
+                  throw parse_error("scope already set", state, curfile, curline);
+                state = (ch == '=' ? state_scopeargval0 : state_scopeargeq);
+              }
+              else
+              {
+                state = (ch == '=' ? state_scopearginclval0 : state_scopeargincleq);
+              }
               tagarg.clear();
             }
             else
@@ -1640,6 +1652,13 @@ namespace tnt
           case state_scopeargeq:
             if (ch == '=')
               state = state_scopeargval0;
+            else if (!std::isspace(ch))
+              throw parse_error("\"=\" expected", state, curfile, curline);
+            break;
+
+          case state_scopeargincleq:
+            if (ch == '=')
+              state = state_scopearginclval0;
             else if (!std::isspace(ch))
               throw parse_error("\"=\" expected", state, curfile, curline);
             break;
@@ -1661,10 +1680,10 @@ namespace tnt
               else if (value == "component")
                 scope = component_scope;
               else
-                throw parse_error("global|page|component expected", state, curfile, curline);
+                throw parse_error("scope global, page or component expected", state, curfile, curline);
 
               value.clear();
-              state = state_scopevale;
+              state = state_scopearg0;
             }
             else if (ch == '\n')
               throw parse_error("'\"' expected", state, curfile, curline);
@@ -1672,11 +1691,28 @@ namespace tnt
               value += ch;
             break;
 
-          case state_scopevale:
-            if (ch == '>')
-              state = state_scope0;
+          case state_scopearginclval0:
+            if (ch == '"')
+              state = state_scopearginclval1;
             else if (!std::isspace(ch))
-              throw parse_error("'>' expected", state, curfile, curline);
+              throw parse_error("'\"' expected", state, curfile, curline);
+            break;
+
+          case state_scopearginclval1:
+            if (!std::isspace(ch))
+            {
+              scopeincludes.push_back(std::string(1, ch));
+              state = state_scopearginclval;
+            }
+            break;
+
+          case state_scopearginclval:
+            if (ch == '"')
+              state = state_scopearg0;
+            else if (std::isspace(ch))
+              state = state_scopearginclval1;
+            else
+              scopeincludes.back() += ch;
             break;
 
           case state_scope0:
@@ -1703,10 +1739,14 @@ namespace tnt
                   scopetype.erase(scopetype.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
-              handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
+              handler.onScope(scope_container,
+                  scope == default_scope ? component_scope : scope,
+                  scopetype, scopevar, scopeinit, scopeincludes);
 
               scopetype.clear();
               scopevar.clear();
+              scopeinit.clear();
+              scope = default_scope;
               state = state_scope0;
             }
             else if (ch == '(')
@@ -1757,11 +1797,14 @@ namespace tnt
                   scopevar.erase(scopevar.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
-              handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
+              handler.onScope(scope_container, 
+                  scope == default_scope ? component_scope : scope,
+                  scopetype, scopevar, scopeinit, scopeincludes);
 
               scopetype.clear();
               scopevar.clear();
               scopeinit.clear();
+              scope = default_scope;
               state = state_scopee0;
             }
             else
@@ -1791,11 +1834,14 @@ namespace tnt
                   scopevar.erase(scopevar.size() - 1);
               log_debug("onScope(" << scope_container << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
-              handler.onScope(scope_container, scope, scopetype, scopevar, scopeinit);
+              handler.onScope(scope_container, 
+                  scope == default_scope ? component_scope : scope,
+                  scopetype, scopevar, scopeinit, scopeincludes);
 
               scopetype.clear();
               scopevar.clear();
               scopeinit.clear();
+              scope = default_scope;
               state = state_scope0;
             }
             else

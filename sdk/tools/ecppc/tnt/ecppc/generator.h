@@ -161,7 +161,8 @@ namespace tnt
         virtual void onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr);
         virtual void onConfig(const std::string& name, const std::string& value);
         virtual void onScope(scope_container_type container, scope_type scope,
-          const std::string& type, const std::string& var, const std::string& init);
+          const std::string& type, const std::string& var, const std::string& init,
+          const std::vector<std::string>& includes);
         virtual void onInclude(const std::string& file);
         virtual void onIncludeEnd(const std::string& file);
         virtual void startI18n();

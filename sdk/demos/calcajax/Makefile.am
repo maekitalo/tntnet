@@ -1,11 +1,6 @@
 pkglib_LTLIBRARIES = calcajax.la
 
 nodist_calcajax_la_SOURCES = \
-	calcajax.cpp \
-	calcajax_js.cpp \
-	docalc.cpp
-
-EXTRA_DIST = \
 	calcajax.ecpp \
 	calcajax_js.js \
 	docalc.ecpp

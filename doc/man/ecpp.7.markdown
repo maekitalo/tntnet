@@ -6,7 +6,7 @@ ecpp 7 "2006-07-23" Tntnet "Tntnet users guide"
 NAME
 ----
 
-ecpp - template-language for tntnet(8)
+ecpp - template language for tntnet(8)
 
 
 DESCRIPTION

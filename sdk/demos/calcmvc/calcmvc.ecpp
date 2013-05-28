@@ -1,11 +1,16 @@
+<!DOCTYPE html>
 <html>
  <head>
   <title>Calculator</title>
  </head>
- <body bgcolor=#ffffcc>
+ <body>
 
-<& calcController qparam >
-<& calcView qparam >
+ <div id="menu">
+   <a href="calc">calculator</a>
+   <a href="accumulator">accumulator</a>
+ </div>
+
+<& (request.getPathInfo()) qparam >
 
  </body>
 </html>

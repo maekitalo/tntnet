@@ -5,12 +5,6 @@ noinst_HEADERS = \
     modificationtracker.h
 
 nodist_message_la_SOURCES = \
-	get.cpp \
-	jquery.cpp \
-	message.cpp \
-	put.cpp
-
-EXTRA_DIST = \
 	get.ecpp \
 	jquery.js \
 	message.ecpp \

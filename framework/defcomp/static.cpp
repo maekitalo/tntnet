@@ -34,6 +34,7 @@
 #include <tnt/http.h>
 #include <tnt/httpheader.h>
 #include <tnt/comploader.h>
+#include <tnt/tntconfig.h>
 #include <fstream>
 #include <cxxtools/log.h>
 #include <cxxtools/systemerror.h>
@@ -227,25 +228,23 @@ namespace tnt
 #endif
   }
 
-  Component* StaticFactory::doCreate(const Compident&,
-    const Urlmapper&, Comploader&)
+  Static::~Static()
   {
-    return new Static();
+    delete handler;
   }
 
-  void StaticFactory::doConfigure(const TntConfig& config)
+  void Static::configure(const TntConfig& config)
   {
-    if (Static::handler == 0)
-      Static::handler = new MimeHandler();
+    if (handler == 0)
+      handler = new MimeHandler();
   }
 
-  static StaticFactory staticFactory("static");
+  static ComponentFactoryImpl<Static> staticFactory("static");
 
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
-  std::string Static::configDocumentRoot = "DocumentRoot";
-  MimeHandler* Static::handler;
+  static const std::string configDocumentRoot = "DocumentRoot";
 
   void Static::setContentType(HttpRequest& request, HttpReply& reply)
   {
