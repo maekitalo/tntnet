@@ -1,10 +1,6 @@
 pkglib_LTLIBRARIES = session.la
 
 nodist_session_la_SOURCES = \
-	session.cpp \
-	appsession.cpp
-
-EXTRA_DIST = \
 	session.ecpp \
 	appsession.ecpp
 

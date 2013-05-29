@@ -107,7 +107,8 @@ namespace tnt
     }
 
     void ParseHandler::onScope(scope_container_type container, scope_type scope,
-      const std::string& type, const std::string& var, const std::string& init)
+      const std::string& type, const std::string& var, const std::string& init,
+      const std::vector<std::string>& includes)
     {
     }
 

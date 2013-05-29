@@ -1,22 +1,6 @@
 pkglib_LTLIBRARIES = controls.la
 
 nodist_controls_la_SOURCES = \
-	controls.cpp \
-	index.cpp \
-	treemenu.cpp \
-	page1.cpp \
-	page2.cpp \
-	page3.cpp \
-	page4.cpp \
-	styles.cpp \
-	submitlink.cpp \
-	tooltip.cpp \
-	tooltipArea.cpp \
-	treeview.cpp \
-	minus.cpp \
-	plus.cpp
-
-EXTRA_DIST = \
 	controls.ecpp \
 	index.ecpp \
 	treemenu.ecpp \

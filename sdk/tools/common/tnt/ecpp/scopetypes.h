@@ -52,6 +52,7 @@ namespace tnt
 
     enum scope_type
     {
+      default_scope,
       global_scope,
       page_scope,
       component_scope

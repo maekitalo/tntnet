@@ -1,9 +1,6 @@
 pkglib_LTLIBRARIES = cookie.la
 
 nodist_cookie_la_SOURCES = \
-	cookie.cpp
-
-EXTRA_DIST = \
 	cookie.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common

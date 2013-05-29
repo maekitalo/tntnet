@@ -27,9 +27,34 @@
  */
 
 #include <tnt/tntconfig.h>
+#include <cxxtools/log.h>
+
+log_define("tntnet.tntconfig")
 
 namespace tnt
 {
+  namespace
+  {
+    struct VirtualHost
+    {
+      std::string hostname;
+      TntConfig::MappingsType mappings;
+    };
+
+    void operator>>= (const cxxtools::SerializationInfo& si, VirtualHost& virtualHost)
+    {
+      si.getMember("hostname") >>= virtualHost.hostname;
+      si.getMember("mappings") >>= virtualHost.mappings;
+      for (TntConfig::MappingsType::iterator it = virtualHost.mappings.begin(); it != virtualHost.mappings.end(); ++it)
+      {
+        if (!it->vhost.empty())
+          log_warn("vhost entry not empty in mapping \"" << it->url << "\" in virtual host \"" << virtualHost.hostname);
+        it->vhost = virtualHost.hostname;
+      }
+    }
+
+  }
+
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping)
   {
     si.getMember("target") >>= mapping.target;
@@ -78,6 +103,13 @@ namespace tnt
 
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config)
   {
+    std::vector<VirtualHost> virtualHosts;
+    if (si.getMember("virtualhosts", virtualHosts))
+    {
+      for (std::vector<VirtualHost>::const_iterator it = virtualHosts.begin(); it != virtualHosts.end(); ++it)
+        config.mappings.insert(config.mappings.end(), it->mappings.begin(), it->mappings.end());
+    }
+
     TntConfig::MappingsType mappings;
     if (si.getMember("mappings", mappings))
       config.mappings.insert(config.mappings.end(), mappings.begin(), mappings.end());

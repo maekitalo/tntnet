@@ -85,7 +85,6 @@ namespace tnt
       static cxxtools::atomic_t serial_;
       mutable bool locale_init;
       mutable std::string lang;
-      mutable std::locale locale;
 
       mutable Encoding encoding;
       mutable bool encodingRead;

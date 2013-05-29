@@ -39,44 +39,31 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class MimeFactory : public ComponentFactory
-  {
-    public:
-      MimeFactory(const std::string& componentName)
-        : ComponentFactory(componentName)
-        { }
-      virtual Component* doCreate(const Compident& ci,
-        const Urlmapper& um, Comploader& cl);
-      virtual void doConfigure(const TntConfig& config);
-  };
-
-  Component* MimeFactory::doCreate(const Compident&,
-    const Urlmapper&, Comploader&)
-  {
-    return new Mime();
-  }
-
-  void MimeFactory::doConfigure(const TntConfig& config)
-  {
-    if (Mime::handler == 0)
-      Mime::handler = new MimeHandler();
-  }
-
-  static MimeFactory mimeFactory("mime");
+  static ComponentFactoryImpl<Mime> mimeFactory("mime");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
 
-  MimeHandler* Mime::handler = 0;
+  Mime::~Mime()
+  {
+    delete handler;
+  }
+
+  void Mime::configure(tnt::TntConfig& config)
+  {
+    if (handler == 0)
+      handler = new MimeHandler();
+  }
 
   unsigned Mime::operator() (HttpRequest& request,
     HttpReply& reply, QueryParams& qparams)
   {
-    if (request.getArgs().size() > 0)
-      reply.setContentType(request.getArg(0).c_str());
-    else if (handler)
+    std::string mimeType = request.getArg("contenttype");
+    if (mimeType.empty())
       reply.setContentType(handler->getMimeType(request.getPathInfo()).c_str());
+    else
+      reply.setContentType(mimeType);
 
     // we do not produce any content, so we pass the request
     // to the next handler:

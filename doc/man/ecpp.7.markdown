@@ -6,7 +6,7 @@ ecpp 7 "2006-07-23" Tntnet "Tntnet users guide"
 NAME
 ----
 
-ecpp - template-language for tntnet(8)
+ecpp - template language for tntnet(8)
 
 
 DESCRIPTION
@@ -365,4 +365,4 @@ This manual page was written by Tommi Mäkitalo <tommi@tntnet.org>.
 SEE ALSO
 --------
 
-tntnet(1), ecppc(1)
+tntnet(8), ecppc(1)

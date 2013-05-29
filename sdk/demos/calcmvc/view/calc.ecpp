@@ -1,21 +1,23 @@
-<%include>calcModel.ecpp</%include>
+<%request scope="global" include="model/calc.h">
+model::Calc calc;
+</%request>
   <h1>Tommi's Tnt-Calculator</h1>
 
-  <form>
+  <form method='post'>
 
    <# you can output other types as well - arg1 and arg2 are of type double.
       They just need a outputstream-operator #>
-   <input type="text" name="arg1" value="<$calc.getArg1()$>"> <br>
-   <input type="text" name="arg2" value="<$calc.getArg2()$>"> <br>
+   <input type="text" name="arg1" value="<$ calc.arg1() $>"> <br>
+   <input type="text" name="arg2" value="<$ calc.arg2() $>"> <br>
    <input type="submit" name="op" value="+">
    <input type="submit" name="op" value="-">
    <input type="submit" name="op" value="*">
    <input type="submit" name="op" value="/">
   </form>
 
-% if (calc.isResultOk()) {
+% if (calc.resultOk()) {
 
   <hr>
-  <$calc.getArg1()$> <$calc.getOp()$> <$calc.getArg2()$> = <$calc.getResult()$>
+  <$ calc.arg1() $> <$ calc.op() $> <$ calc.arg2() $> = <$ calc.result() $>
 
 % }

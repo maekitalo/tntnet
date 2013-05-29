@@ -9,7 +9,6 @@ libtntnet_la_SOURCES = \
 	componentfactory.cpp \
 	contentdisposition.cpp \
 	contenttype.cpp \
-	convert.cpp \
 	cookie.cpp \
 	deflatestream.cpp \
 	dispatcher.cpp \
@@ -34,6 +33,7 @@ libtntnet_la_SOURCES = \
 	mimedb.cpp \
 	multipart.cpp \
 	poller.cpp \
+	query_params.cpp \
 	savepoint.cpp \
 	scope.cpp \
 	scopemanager.cpp \
@@ -62,7 +62,6 @@ nobase_include_HEADERS = \
 	tnt/configurator.h \
 	tnt/contentdisposition.h \
 	tnt/contenttype.h \
-	tnt/convert.h \
 	tnt/cookie.h \
 	tnt/data.h \
 	tnt/deflatestream.h \

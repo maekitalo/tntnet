@@ -45,28 +45,33 @@ namespace tnt
   class SessionUnlocker
   {
       HttpRequest& request;
+      bool locked;
 
     public:
       explicit SessionUnlocker(HttpRequest& request_, bool release = true)
         : request(request_)
+          locked(request_.sessionScopeLocked)
       {
-        if (release)
+        if (locked && release)
           request.releaseSessionScopeLock();
       }
 
       ~SessionUnlocker()
       {
-        request.ensureSessionScopeLock();
+        if (locked)
+          request.ensureSessionScopeLock();
       }
 
       void unlock()
       {
         request.releaseSessionScopeLock();
+        locked = false;
       }
 
       void lock()
       {
         request.ensureSessionScopeLock();
+        locked = true;
       }
 
   };

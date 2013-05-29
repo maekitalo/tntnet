@@ -57,23 +57,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // factory
   //
-  class ErrorFactory : public tnt::ComponentFactory
-  {
-    public:
-      ErrorFactory(const std::string& componentName)
-        : tnt::ComponentFactory(componentName)
-        { }
-      virtual tnt::Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl);
-  };
-
-  tnt::Component* ErrorFactory::doCreate(const tnt::Compident&,
-    const tnt::Urlmapper&, tnt::Comploader&)
-  {
-    return new Error();
-  }
-
-  static ErrorFactory errorFactory("error");
+  static ComponentFactoryImpl<Error> errorFactory("error");
 
   ////////////////////////////////////////////////////////////////////////
   // componentdefinition

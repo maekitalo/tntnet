@@ -1,32 +1,20 @@
 pkglib_LTLIBRARIES = calcmvc.la
-
-nodist_calcmvc_la_SOURCES = \
-	calcController.cpp \
-	calcModel.cpp \
-	calcView.cpp \
-	calcmvc.cpp
+AUTOMAKE_OPTIONS = subdir-objects
 
 calcmvc_la_SOURCES = \
-	calcBean.h \
-	calcBean.cpp
+	calcmvc.ecpp \
+	view/accumulator.ecpp \
+	view/calc.ecpp \
+	controller/accumulator.cpp \
+	controller/calc.cpp
 
-EXTRA_DIST = \
-	calcController.ecpp \
-	calcModel.ecpp \
-	calcView.ecpp \
-	calcmvc.ecpp
-
-AM_CPPFLAGS = -I$(top_srcdir)/framework/common
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I.
 calcmvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 calcmvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
-CLEANFILES = calcController.cpp calcModel.cpp calcView.cpp calcmvc.cpp \
-	tntnet.xml
+CLEANFILES = calcmvc.cpp view/calc.cpp controller/calc.cpp
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
-
-tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=calcmvc|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -p -I $(srcdir) $<
