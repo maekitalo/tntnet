@@ -235,6 +235,7 @@ AC_CONFIG_FILES([
     sdk/demos/controls/Makefile
     sdk/demos/cookie/Makefile
     sdk/demos/hello/Makefile
+    sdk/demos/mvc/Makefile
     sdk/demos/savepoint/Makefile
     sdk/demos/session/Makefile
     sdk/demos/sprintf/Makefile

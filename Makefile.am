@@ -22,25 +22,7 @@ endif
 
 if MAKE_DEMOS
 DEMOSDIRS = \
-    sdk/demos \
-    sdk/demos/backgroundjob \
-    sdk/demos/calc \
-    sdk/demos/calcajax \
-    sdk/demos/calcapp \
-    sdk/demos/calcmvc \
-    sdk/demos/calci18n \
-    sdk/demos/chat \
-    sdk/demos/comp \
-    sdk/demos/config \
-    sdk/demos/controls \
-    sdk/demos/cookie \
-    sdk/demos/hello \
-    sdk/demos/savepoint \
-    sdk/demos/session \
-    sdk/demos/sprintf \
-    sdk/demos/strings \
-    sdk/demos/rajax-jquery \
-    sdk/demos/upload
+    sdk/demos
 endif
 
 if MAKE_UNITTEST

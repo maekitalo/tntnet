@@ -1,13 +1,12 @@
 pkglib_LTLIBRARIES = calci18n.la
 
 nodist_calci18n_la_SOURCES = \
-	calci18n.cpp \
+	calci18n.ecpp \
 	en.cpp \
 	fi.cpp \
 	de.cpp
 
 EXTRA_DIST = \
-	calci18n.ecpp \
 	calci18n.txt.fi \
 	calci18n.txt.de \
 	en.png \

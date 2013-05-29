@@ -43,8 +43,8 @@ namespace tnt
   {
       friend class StaticFactory;
 
-      static std::string configDocumentRoot;
-      static MimeHandler* handler;
+      std::string configDocumentRoot;
+      MimeHandler* handler;
 
       unsigned doCall(HttpRequest& request,
         HttpReply& reply, QueryParams& qparam, bool top);
@@ -53,24 +53,16 @@ namespace tnt
       void setContentType(HttpRequest& request, HttpReply& reply);
 
     public:
+      Static()
+        : handler(0)
+      { }
+      ~Static();
+
+      virtual void configure(const TntConfig& config);
       virtual unsigned topCall(HttpRequest& request,
         HttpReply& reply, QueryParams& qparam);
       virtual unsigned operator() (HttpRequest& request,
         HttpReply& reply, QueryParams& qparam);
-  };
-
-  ////////////////////////////////////////////////////////////////////////
-  // factory
-  //
-  class StaticFactory : public ComponentFactory
-  {
-    public:
-      StaticFactory(const std::string& componentName)
-        : ComponentFactory(componentName)
-        { }
-      virtual Component* doCreate(const Compident& ci,
-        const Urlmapper& um, Comploader& cl);
-      virtual void doConfigure(const TntConfig& config);
   };
 
 }

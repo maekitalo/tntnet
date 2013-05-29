@@ -80,22 +80,12 @@ namespace tnt
 
     void Variable::getParamCodeVector(std::ostream& o, const std::string& qparam) const
     {
-      if (type.empty())
-      {
-        o << "typedef std::vector<std::string> " << name << "_type;\n"
-          << name << "_type " << name << ";\n"
-          << "std::copy(" << qparam << ".begin(\"" << name
-          << "\"), " << qparam << ".end(), std::back_inserter(" << name
-          << "));\n";
-      }
-      else
-      {
-        o << "typedef std::vector<" << type << "> " << name << "_type;\n"
-          << name << "_type " << name << ";\n"
-          << "tnt::convertRange(\"" << name << "\", \"" << type
-          << "\", " << qparam << ".begin(\"" << name << "\"), " << qparam << ".end(), " << name
-          << ", reply.out().getloc());\n";
-      }
+      std::string ltype = type;
+      if (ltype.empty())
+        ltype = "std::string";
+
+      o << "typedef std::vector<" << ltype << "> " << name << "_type;\n"
+        << name << "_type " << name << " = qparam.argst<" << ltype << ">(\"" << name << "\", \"" << ltype << "\");\n";
     }
 
     void Variable::getParamCode(std::ostream& o, const std::string& qparam) const
@@ -112,16 +102,12 @@ namespace tnt
         if (value.empty())
         {
           // no default-value
-
-          o << "tnt::stringTo<" << type
-            << ">(\"" << name << "\", \"" << type << "\", " << qparam << ".param(\"" << name << "\"), reply.out().getloc());\n";
+          o << qparam << ".argt<" << type << ">(\"" << name << "\", \"" << type << "\");\n";
         }
         else
         {
           // with default-value
-          o << qparam << ".has(\"" << name << "\") ? tnt::stringToWithDefault<" << type
-            << ">(" << qparam << ".param(\"" << name << "\"), (" << value << "), reply.out().getloc()) : ("
-            << value << ");\n";
+          o << qparam << ".arg<" << type << ">(\"" << name << "\", (" << value << "));\n";
         }
       }
       else

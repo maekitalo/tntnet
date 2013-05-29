@@ -34,6 +34,7 @@
 #include <tnt/http.h>
 #include <tnt/httpheader.h>
 #include <tnt/comploader.h>
+#include <tnt/tntconfig.h>
 #include <fstream>
 #include <cxxtools/log.h>
 #include <cxxtools/systemerror.h>
@@ -227,25 +228,23 @@ namespace tnt
 #endif
   }
 
-  Component* StaticFactory::doCreate(const Compident&,
-    const Urlmapper&, Comploader&)
+  Static::~Static()
   {
-    return new Static();
+    delete handler;
   }
 
-  void StaticFactory::doConfigure(const TntConfig& config)
+  void Static::configure(const TntConfig& config)
   {
-    if (Static::handler == 0)
-      Static::handler = new MimeHandler();
+    if (handler == 0)
+      handler = new MimeHandler();
   }
 
-  static StaticFactory staticFactory("static");
+  static ComponentFactoryImpl<Static> staticFactory("static");
 
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
-  std::string Static::configDocumentRoot = "DocumentRoot";
-  MimeHandler* Static::handler;
+  static const std::string configDocumentRoot = "DocumentRoot";
 
   void Static::setContentType(HttpRequest& request, HttpReply& reply)
   {
@@ -321,73 +320,71 @@ namespace tnt
       }
     }
 
-    std::string lastModified = HttpMessage::htdate(st.st_ctime);
-
-    {
-      std::string s = request.getHeader(httpheader::ifModifiedSince);
-      if (s == lastModified)
-        return HTTP_NOT_MODIFIED;
-    }
-
-    // set Content-Type
-    std::string contentType = request.getArg("ContentType");
-    if (!contentType.empty())
-    {
-      log_debug("content type is \"" << contentType << '"');
-      reply.setContentType(contentType.c_str());
-    }
-    else
-      setContentType(request, reply);
-
-    reply.setHeader(httpheader::lastModified, lastModified);
-
-    // set Keep-Alive
-    reply.setKeepAliveHeader();
-
-    reply.setHeader(httpheader::acceptRanges, "bytes");
-
-    // check for byte range (only "bytes=from-" or "bytes=from-to" are supported)
-    const char* range = request.getHeader(httpheader::range);
     off_t offset = 0;
     off_t count = st.st_size;
     unsigned httpOkReturn = HTTP_OK;
-    if (range)
-    {
-      if (parseRange(range, offset, count))
-      {
-        if (offset > st.st_size)
-          return HTTP_RANGE_NOT_SATISFIABLE;
 
-        reply.setHeader(httpheader::contentLocation, request.getUrl());
-        std::ostringstream contentRange;
-        contentRange << offset << '-' << (offset+count)-1 << '/' << st.st_size;
-        reply.setHeader(httpheader::contentRange, contentRange.str());
-
-        httpOkReturn = HTTP_PARTIAL_CONTENT;
-      }
-      else
-        log_debug("ignore invalid byte range " << range);
-    }
-
-    // set Content-Length
-    reply.setContentLengthHeader(count);
-
-    if (request.isMethodHEAD())
-    {
-      log_debug("head request");
-      return httpOkReturn;
-    }
-    else
-    {
-      log_debug("no head request");
-    }
-
-    // send data
-    log_info("send file \"" << file << "\" size " << st.st_size << " bytes; offset=" << offset << " count=" << count);
-
-#if defined(HAVE_SENDFILE) && defined(HAVE_SYS_SENDFILE_H)
     if (top)
     {
+      // set Content-Type
+      std::string contentType = request.getArg("ContentType");
+      if (!contentType.empty())
+      {
+        log_debug("content type is \"" << contentType << '"');
+        reply.setContentType(contentType.c_str());
+      }
+      else
+        setContentType(request, reply);
+
+      std::string lastModified = HttpMessage::htdate(st.st_ctime);
+
+      {
+        std::string s = request.getHeader(httpheader::ifModifiedSince);
+        if (s == lastModified)
+          return HTTP_NOT_MODIFIED;
+      }
+
+      reply.setHeader(httpheader::lastModified, lastModified);
+      reply.setKeepAliveHeader();
+      reply.setHeader(httpheader::acceptRanges, "bytes");
+
+      // check for byte range (only "bytes=from-" or "bytes=from-to" are supported)
+      const char* range = request.getHeader(httpheader::range);
+      if (range)
+      {
+        if (parseRange(range, offset, count))
+        {
+          if (offset > st.st_size)
+            return HTTP_RANGE_NOT_SATISFIABLE;
+
+          reply.setHeader(httpheader::contentLocation, request.getUrl());
+          std::ostringstream contentRange;
+          contentRange << offset << '-' << (offset+count)-1 << '/' << st.st_size;
+          reply.setHeader(httpheader::contentRange, contentRange.str());
+
+          httpOkReturn = HTTP_PARTIAL_CONTENT;
+        }
+        else
+          log_debug("ignore invalid byte range " << range);
+      }
+
+      // set Content-Length
+      reply.setContentLengthHeader(count);
+
+      if (request.isMethodHEAD())
+      {
+        log_debug("head request");
+        return httpOkReturn;
+      }
+      else
+      {
+        log_debug("no head request");
+      }
+
+      // send data
+      log_info("send file \"" << file << "\" size " << st.st_size << " bytes; offset=" << offset << " count=" << count);
+
+#if defined(HAVE_SENDFILE) && defined(HAVE_SYS_SENDFILE_H)
       int on = 1;
       int off = 0;
       try
@@ -441,11 +438,10 @@ namespace tnt
         log_debug("stream is no tcpstream - don't use sendfile");
         reply.setDirectMode();
       }
-    }
 #else
-    if (top)
       reply.setDirectMode();
 #endif
+    }
 
     std::ifstream in(file.c_str());
     in.seekg(offset);

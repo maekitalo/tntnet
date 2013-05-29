@@ -96,9 +96,9 @@ namespace tnt
       throw std::runtime_error("proxy uri missing in configuration");
     }
 
-    TNT_THREAD_COMPONENT_VAR(std::string, currentProxyHost, "std::string currentProxyHost", ());
-    TNT_THREAD_COMPONENT_VAR(unsigned short, currentProxyPort, "unsigned short currentProxyPort", ());
-    TNT_THREAD_COMPONENT_VAR(cxxtools::http::Client, client, "cxxtools::http::Client client", ());
+    TNT_THREAD_COMPONENT_VAR(std::string, currentProxyHost, ());
+    TNT_THREAD_COMPONENT_VAR(unsigned short, currentProxyPort, ());
+    TNT_THREAD_COMPONENT_VAR(cxxtools::http::Client, client, ());
 
     cxxtools::net::Uri uri(request.getArg(0));
 

@@ -5,6 +5,7 @@ noinst_PROGRAMS = utest
 utest_SOURCES = \
     ecpptest.cpp \
     messageheadertest.cpp \
+    qparamtest.cpp \
     strutest.cpp \
     testmain.cpp
 

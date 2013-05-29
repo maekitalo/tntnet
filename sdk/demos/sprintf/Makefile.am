@@ -1,10 +1,6 @@
 pkglib_LTLIBRARIES = sprintf.la
 
 nodist_sprintf_la_SOURCES = \
-	sprintf.cpp \
-	subcomp.cpp
-
-EXTRA_DIST = \
 	sprintf.ecpp \
 	subcomp.ecpp
 

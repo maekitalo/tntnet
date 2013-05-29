@@ -1,6 +1,0 @@
-<%pre>
-#include "calcBean.h"
-</%pre>
-<%request scope="global">
-calcBean calc;
-</%request>

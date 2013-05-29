@@ -1,0 +1,11 @@
+<%session scope="global" include="model/accumulator.h">
+  model::Accumulator accumulator;
+</%session>
+
+<h1>Accumulator</h1>
+value=<$ accumulator.value() $>
+
+<form method='post'>
+  <input type='submit' name='increment' value='increment'>
+  <input type='submit' name='decrement' value='decrement'>
+</form>

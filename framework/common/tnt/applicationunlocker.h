@@ -36,34 +36,39 @@ namespace tnt
   /** Unlocks the application (and session) as long as the object is in scope.
 
       Normally the application is locked as soon as a request uses somewhere
-      a application variable. Sometimes it is desirable to explicitely release
+      a application variable. Sometimes it is desirable to explicitly release
       that lock, e.g. when a request has some longer task to do.
    */
   class ApplicationUnlocker
   {
       HttpRequest& request;
+      bool locked;
 
     public:
       explicit ApplicationUnlocker(HttpRequest& request_, bool release = true)
-        : request(request_)
+        : request(request_),
+          locked(request_.applicationScopeLocked)
       {
-        if (release)
+        if (locked && release)
           request.releaseApplicationScopeLock();
       }
 
       ~ApplicationUnlocker()
       {
-        request.ensureApplicationScopeLock();
+        if (locked)
+          request.ensureApplicationScopeLock();
       }
 
       void unlock()
       {
         request.releaseApplicationScopeLock();
+        locked = false;
       }
 
       void lock()
       {
         request.ensureApplicationScopeLock();
+        locked = true;
       }
 
   };

@@ -1,15 +1,6 @@
 pkglib_LTLIBRARIES = chat.la
 
 nodist_chat_la_SOURCES = \
-	chat.cpp \
-	ajax.cpp \
-	getchat.cpp \
-	putchat.cpp \
-	sad.cpp \
-	smile.cpp \
-	wink.cpp
-
-EXTRA_DIST = \
 	chat.ecpp \
 	ajax.js \
 	getchat.ecpp \

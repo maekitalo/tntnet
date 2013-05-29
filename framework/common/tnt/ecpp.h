@@ -31,6 +31,7 @@
 #define TNT_ECPP_H
 
 #include <tnt/component.h>
+#include <tnt/componentfactory.h>
 #include <tnt/scope.h>
 #include <tnt/sessionscope.h>
 #include <tnt/httprequest.h>
@@ -81,7 +82,6 @@ namespace tnt
       virtual subcomps_type& getSubcomps()               { return subcomps; }
       virtual const subcomps_type& getSubcomps() const   { return subcomps; }
 
-      typedef std::set<std::string> libnotfound_type;
       typedef std::set<Compident> compnotfound_type;
 
     protected:
@@ -215,97 +215,22 @@ namespace tnt
         parameter1_type& p1) const
     { return fetchSubComp(sub).scall(request, p1); }
 
-  //////////////////////////////////////////////////////////////////////
-  // scope-helper
-  //
-  inline std::string getPageScopePrefix(const Compident& id)
+  template <typename ComponentType>
+  class EcppComponentFactoryImpl : public ComponentFactory
   {
-    return id.toString();
-  }
+    public:
+      explicit EcppComponentFactoryImpl(const std::string& componentName)
+        : ComponentFactory(componentName)
+        { }
 
-  template <typename compident_type>
-  std::string getComponentScopePrefix(const compident_type& id)
-  {
-    return id.toString();
-  }
-
-  inline unsigned controllerCaller(void*, tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&)
-  {
-    return DECLINED;
-  }
-
-  inline unsigned controllerCaller(tnt::Component* component, tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparams)
-  {
-    return (*component)(request, reply, qparams);
-  }
+      virtual Component* doCreate(const tnt::Compident& ci,
+        const tnt::Urlmapper& um, tnt::Comploader& cl)
+      {
+        return new ComponentType(ci, um, cl);
+      }
+  };
 
 }
-
-#define TNT_VAR(scope, type, varname, key, construct)                          \
-  type* varname##_pointer;                                                     \
-  {                                                                            \
-    const std::string varname##_scopekey = key;                                \
-    tnt::Scope& _scope = scope;                                                \
-    varname##_pointer = _scope.get< type >(varname##_scopekey);                \
-    if ( ! varname##_pointer )                                                 \
-      _scope.put< type >(varname##_scopekey,                                   \
-          varname##_pointer = new type construct);                             \
-  }                                                                            \
-  type& varname = *varname##_pointer;                                          \
-  {                                                                            \
-    unsigned r = tnt::controllerCaller(varname##_pointer, request, reply, qparam); \
-    if (r != DECLINED && r != HTTP_OK)                                         \
-      return r;                                                                \
-  }
-
-
-#define TNT_SESSION_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getSessionScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_SESSION_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getSessionScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_SESSION_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getSessionScope(), type, varname, key, construct)
-
-#define TNT_SECURE_SESSION_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getSecureSessionScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_SECURE_SESSION_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getSecureSessionScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_SECURE_SESSION_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getSecureSessionScope(), type, varname, key, construct)
-
-#define TNT_APPLICATION_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getApplicationScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_APPLICATION_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getApplicationScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_APPLICATION_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getApplicationScope(), type, varname, key, construct)
-
-#define TNT_THREAD_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getThreadScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_THREAD_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getThreadScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_THREAD_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getThreadScope(), type, varname, key, construct)
-
-#define TNT_REQUEST_COMPONENT_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getRequestScope(), type, varname, getComponentScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_REQUEST_PAGE_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getRequestScope(), type, varname, getPageScopePrefix(getCompident()) + ":" key, construct)
-
-#define TNT_REQUEST_GLOBAL_VAR(type, varname, key, construct) \
-  TNT_VAR(request.getRequestScope(), type, varname, key, construct)
-
-#define TNT_PARAM(type, varname, key, construct) \
-  TNT_VAR(qparam.getScope(), type, varname, key, construct)
 
 #endif // TNT_ECPP_H
 

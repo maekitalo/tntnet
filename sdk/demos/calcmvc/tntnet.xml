@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tntnet>
+  <mappings>
+    <mapping>
+      <target>redirect@tntnet</target>
+      <url>^/$</url>
+      <pathinfo>/calc</pathinfo>
+    </mapping>
+
+    <mapping>
+      <target>controller/$1@calcmvc</target>
+      <url>^/(.+)$</url>
+      <method>^POST$</method>
+    </mapping>
+    <mapping>
+      <target>calcmvc@calcmvc</target>
+      <url>^/(.+)$</url>
+      <pathinfo>view/$1</pathinfo>
+    </mapping>
+
+  </mappings>
+
+  <listeners>
+    <listener>
+      <port>8000</port>
+    </listener>
+  </listeners>
+
+  <logging>
+    <rootlogger>INFO</rootlogger>
+
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+      <logger>
+        <category>component.calcmvc</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+
+    <!--
+    <file>tntnet.log</file>
+    <maxfilesize>10M</maxfilesize>
+    <maxbackupindex>2</maxbackupindex>
+    -->
+
+  </logging>
+
+  <compPath>
+    <entry>.libs</entry>
+  </compPath>
+</tntnet>

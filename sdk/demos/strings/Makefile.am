@@ -1,9 +1,6 @@
 pkglib_LTLIBRARIES = strings.la
 
 nodist_strings_la_SOURCES = \
-	strings.cpp
-
-EXTRA_DIST = \
 	strings.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common

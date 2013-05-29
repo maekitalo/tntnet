@@ -41,9 +41,16 @@ namespace tnt
   class Mime : public tnt::Component
   {
       friend class MimeFactory;
-      static MimeHandler* handler;
+      MimeHandler* handler;
 
     public:
+      Mime()
+        : handler(0)
+      { }
+
+      ~Mime();
+
+      virtual void configure(tnt::TntConfig& config);
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };

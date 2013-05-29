@@ -53,7 +53,6 @@ namespace tnt
     protected:
       virtual Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl) = 0;
-      virtual void doConfigure(const tnt::TntConfig& config);
 
     public:
       ComponentFactory(const std::string& componentName_);
@@ -67,14 +66,14 @@ namespace tnt
   class ComponentFactoryImpl : public ComponentFactory
   {
     public:
-      ComponentFactoryImpl(const std::string& componentName)
+      explicit ComponentFactoryImpl(const std::string& componentName)
         : ComponentFactory(componentName)
         { }
 
       virtual Component* doCreate(const tnt::Compident& ci,
         const tnt::Urlmapper& um, tnt::Comploader& cl)
       {
-        return new ComponentType(ci, um, cl);
+        return new ComponentType();
       }
   };
 

@@ -64,8 +64,8 @@ project (but may be used by others).
 
 SEE ALSO
 --------
-tntnet-config(1), ecpp(7), ecppc(1), ecppl(1), ecppll(1), tntnet.xml(7),
-tntnet.properties(7), [Tntnet homepage] (http://www.tntnet.org). More
+tntnet-config(1), ecpp(7), ecppc(1), ecppl(1), ecppll(1), tntnet.xml(7), tntnet-defcomp(1)
+[Tntnet homepage] (http://www.tntnet.org). More
 documentation can be found in /usr/share/doc/tntnet-doc/.
 
 

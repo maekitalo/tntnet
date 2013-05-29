@@ -192,9 +192,7 @@ namespace tnt
       {
         printLine(out);
         out << "    " << queryParamName << ".add( \"" << i->first
-            << "\", tnt::toString("
-            << i->second
-            << ", reply.out().getloc() ) );\n";
+            << "\", " << i->second << ");\n";
       }
 
       call(out, queryParamName);
