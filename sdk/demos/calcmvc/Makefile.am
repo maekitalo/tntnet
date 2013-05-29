@@ -13,7 +13,7 @@ calcmvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 calcmvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
-CLEANFILES = calcmvc.cpp view/calc.cpp controller/calc.cpp
+CLEANFILES = calcmvc.cpp view/accumulator.cpp view/calc.cpp
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
