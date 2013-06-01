@@ -7,7 +7,7 @@ std::string message;
 <%cpp>
   if (logout)
   {
-    request.clearSession();
+    reply.clearSession();
     message = "user logged out";
   }
 </%cpp>
