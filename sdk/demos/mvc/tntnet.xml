@@ -11,12 +11,18 @@
       <target>redirect@tntnet</target>
       <url>^/$</url>
       <pathinfo>/counter</pathinfo>
+      <args>
+        <type>permanently</type>
+      </args>
     </mapping>
-    <!-- map /comp comp@mvc -->
+
+    <!-- map /comp controller/comp@mvc -->
     <mapping>
       <target>controller/$1@mvc</target>
       <url>^/(.*)$</url>
     </mapping>
+
+    <!-- map /comp view/comp@mvc -->
     <mapping>
       <target>view/$1@mvc</target>
       <url>^/(.*)$</url>
