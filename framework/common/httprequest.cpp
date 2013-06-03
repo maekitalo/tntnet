@@ -519,38 +519,6 @@ namespace tnt
     secureSessionScope = s;
   }
 
-  void HttpRequest::clearSession()
-  {
-    log_info("end session");
-
-    if (sessionScope)
-    {
-      if (sessionScopeLocked)
-      {
-        sessionScope->unlock();
-        sessionScopeLocked = false;
-      }
-
-      if (sessionScope->release() == 0)
-        delete sessionScope;
-      sessionScope = 0;
-    }
-
-    if (secureSessionScope)
-    {
-      if (secureSessionScopeLocked)
-      {
-        secureSessionScope->unlock();
-        secureSessionScopeLocked = false;
-      }
-
-      if (secureSessionScope->release() == 0)
-        delete secureSessionScope;
-      secureSessionScope = 0;
-    }
-
-  }
-
   void HttpRequest::ensureApplicationScopeLock()
   {
     ensureSessionScopeLock();

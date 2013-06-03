@@ -6,26 +6,19 @@
   -->
 <tntnet>
   <mappings>
-    <!-- map / to mvc@mvc -->
     <mapping>
-      <target>redirect@tntnet</target>
+      <target>index@controls</target>
       <url>^/$</url>
-      <pathinfo>/counter</pathinfo>
-      <args>
-        <type>permanently</type>
-      </args>
+      <pathinfo>controls</pathinfo>
     </mapping>
-
-    <!-- map /comp controller/comp@mvc -->
     <mapping>
-      <target>controller/$1@mvc</target>
-      <url>^/(.*)$</url>
+      <target>index@controls</target>
+      <url>^/([^.]+)$</url>
+      <pathinfo>$1</pathinfo>
     </mapping>
-
-    <!-- map /comp view/comp@mvc -->
     <mapping>
-      <target>view/$1@mvc</target>
-      <url>^/(.*)$</url>
+      <target>$1@controls</target>
+      <url>^/([^.]+)\..+</url>
     </mapping>
   </mappings>
 
@@ -52,20 +45,8 @@
         <level>INFO</level>
       </logger>
       <logger>
-        <category>tntnet.dispatcher</category>
-        <level>DEBUG</level>
-      </logger>
-      <logger>
-        <category>component.mvc</category>
+        <category>component.controls</category>
         <level>INFO</level>
-      </logger>
-      <logger>
-        <category>component.view.counter</category>
-        <level>DEBUG</level>
-      </logger>
-      <logger>
-        <category>controller.counter</category>
-        <level>DEBUG</level>
       </logger>
     </loggers>
 

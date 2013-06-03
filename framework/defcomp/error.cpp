@@ -72,6 +72,8 @@ namespace tnt
       throw tnt::HttpError(HTTP_INTERNAL_SERVER_ERROR, "configuration error");
 
     std::string msg = request.getArg("message");
+    if (msg.empty())
+      msg = HttpReturn::httpMessage(errorcode);
 
     throw tnt::HttpError(errorcode, msg);
 
