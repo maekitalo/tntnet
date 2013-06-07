@@ -1,3 +1,29 @@
+<%pre>
+#include <cxxtools/jsonserializer.h>
+
+namespace
+{
+  struct Result
+  {
+    double arg1;
+    double arg2;
+    char op;
+    double result;
+    bool resultOk;
+  };
+
+  // serialization operator needed in JsonSerializer
+  void operator<<= (cxxtools::SerializationInfo& si, const Result& result)
+  {
+    si.addMember("arg1") <<= result.arg1;
+    si.addMember("arg2") <<= result.arg2;
+    si.addMember("op") <<= result.op;
+    si.addMember("result") <<= result.result;
+    si.addMember("resultOk") <<= result.resultOk;
+  }
+}
+
+</%pre>
 <%args>
 double arg1;
 double arg2;
@@ -5,22 +31,29 @@ char op;
 </%args>
 <%cpp>
 
-  double result = 0.0;
+  Result result;
 
-  bool result_ok = true;
-  if (op == 'p')
-    op = '+';
-  switch (op)
+  result.arg1 = arg1;
+  result.arg2 = arg2;
+  result.result = 0.0;
+  result.resultOk = true;
+  result.op = op;
+
+  switch (result.op)
   {
-    case '+': result = arg1 + arg2; break;
-    case '-': result = arg1 - arg2; break;
-    case '*': result = arg1 * arg2; break;
-    case '/': result = arg1 / arg2; break;
-    default: result_ok = false;
+    case '+': result.result = arg1 + arg2; break;
+    case '-': result.result = arg1 - arg2; break;
+    case '*': result.result = arg1 * arg2; break;
+    case '/':
+        if (arg2 == 0)
+          result.resultOk = false;
+        else
+          result.result = arg1 / arg2; break;
+    default: result.resultOk = false;
   }
 
+  cxxtools::JsonSerializer serializer(reply.out());
+  serializer.serialize(result)
+            .finish();
+
 </%cpp>
-% if (result_ok) {
-<hr>
-<$arg1$> <$op$> <$arg2$> = <$result$>
-% }

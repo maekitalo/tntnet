@@ -69,7 +69,12 @@ namespace tnt
       bool isClearSession() const;
 
       /// Throws an exception, which results in a redirect.
-      unsigned redirect(const std::string& newLocation);
+      enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_MOVED_TEMPORARILY };
+      unsigned redirect(const std::string& newLocation, Redirect type = temporarily);
+      unsigned redirectTemporary(const std::string& newLocation)
+      { return redirect(newLocation, temporarily); }
+      unsigned redirectPermantently(const std::string& newLocation)
+      { return redirect(newLocation, permanently); }
       /// Throws an exception, which results in a login dialog in the browser.
       unsigned notAuthorized(const std::string& realm);
       /// alias for notAuthorized

@@ -5,6 +5,9 @@
       <target>redirect@tntnet</target>
       <url>^/$</url>
       <pathinfo>/calc</pathinfo>
+      <args>
+        <type>permanently</type>
+      </args>
     </mapping>
 
     <mapping>

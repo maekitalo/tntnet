@@ -22,7 +22,7 @@
 
 namespace tnt
 {
-  inline void ConversionError::doThrow(const std::string& argname, unsigned argnum, const char* typeto, const std::string& value)
+  void ConversionError::doThrow(const std::string& argname, unsigned argnum, const char* typeto, const std::string& value)
   {
     std::ostringstream msg;
 

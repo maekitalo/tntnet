@@ -31,6 +31,7 @@
 #include <tnt/httprequest.h>
 #include <tnt/httpreply.h>
 #include <tnt/http.h>
+#include <cxxtools/convert.h>
 
 namespace tnt
 {
@@ -57,7 +58,18 @@ namespace tnt
   unsigned Redirect::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, tnt::QueryParams&)
   {
-    return reply.redirect(request.getPathInfo());
+    std::string type = request.getArg("type");
+
+    HttpReply::Redirect httpCode = HttpReply::temporarily;
+
+    if (type == "permanently")
+      httpCode = HttpReply::permanently;
+    else if (type == "temporarily")
+      httpCode = HttpReply::temporarily;
+    else if (!type.empty())
+      httpCode = static_cast<HttpReply::Redirect>(cxxtools::convert<unsigned>(type));
+
+    return reply.redirect(request.getPathInfo(), httpCode);
   }
 
 }
