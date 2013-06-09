@@ -83,12 +83,30 @@ class Component
   }                                                                            \
   type& varname = *varname##_pointer;
 
+/**
+ * This corresponding in ecpp-code:
+ * @code
+ <%session>
+ * @endcode
+ */  
 #define TNT_SESSION_COMPONENT_VAR(type, varname, construct) \
   TNT_VAR(request.getSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
 
+/**
+ * This corresponding in ecpp-code:
+ * @code
+ <%session scope="page">
+ * @endcode
+ */  
 #define TNT_SESSION_PAGE_VAR(type, varname, construct) \
   TNT_VAR(request.getSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
 
+/**
+ * This corresponding in ecpp-code:
+ * @code
+ <%session scope="global">
+ * @endcode
+ */  
 #define TNT_SESSION_GLOBAL_VAR(type, varname, construct) \
   TNT_VAR(request.getSessionScope(), type, varname, #type #varname, construct)
 
