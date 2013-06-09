@@ -152,18 +152,41 @@ namespace tnt
 
       void setPathInfo(const std::string& p)       { pathinfo = p; }
       const std::string& getPathInfo() const       { return pathinfo; }
-
+      
+      /**
+       * With this function, you can manipulating the url-path. 
+       * @todo compliment the doxygen comment with a example
+       * @arg a The argument is a std::map with name/value pair strings.
+       * @code{.cpp}
+         // please fill me!
+       * @endcode
+       */
       void setArgs(const args_type& a)             { args = a; }
+      
+      
       const args_type& getArgs() const             { return args; }
       args_type& getArgs()                         { return args; }
 
-      /// @deprecated
+      /**
+       * @deprecated
+       */
       std::string getArgDef(args_type::size_type n, const std::string& def = std::string()) const;
-      /// @deprecated
+      
+      /**
+       * @deprecated
+       */      
       std::string getArg(args_type::size_type n) const { return getArgDef(n); }
-      /// @deprecated
+      
+      /**
+       * @deprecated
+       */
       args_type::size_type getArgsCount() const    { return args.size(); }
 
+      /**
+       * return a argument for a http request. 
+       * @arg name the name of a argument.
+       * @return the value of a argument.
+       */
       std::string getArg(const std::string& name, const std::string& def = std::string()) const;
 
       void parse(std::istream& in);
