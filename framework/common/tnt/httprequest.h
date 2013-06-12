@@ -225,7 +225,6 @@ namespace tnt
       void setSessionScope(Sessionscope& s)      { setSessionScope(&s); }
       void setSecureSessionScope(Sessionscope* s);
       void setSecureSessionScope(Sessionscope& s)      { setSecureSessionScope(&s); }
-      void clearSession();
 
       void setThreadContext(ThreadContext* ctx)    { threadContext = ctx; }
 

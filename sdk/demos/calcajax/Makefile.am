@@ -3,7 +3,8 @@ pkglib_LTLIBRARIES = calcajax.la
 nodist_calcajax_la_SOURCES = \
 	calcajax.ecpp \
 	calcajax_js.js \
-	docalc.ecpp
+	docalc.ecpp \
+	jquery.js
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 calcajax_la_LDFLAGS = -module @SHARED_LIB_FLAG@
@@ -17,7 +18,7 @@ SUFFIXES=.ecpp .js .cpp
 .ecpp.cpp:
 	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 .js.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript -o $@ $<
+	$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript -b -o $@ $<
 
 tntnet.xml:
 	$(SHELL) $(top_builddir)/tntnet-config --config=calcajax|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

@@ -18,10 +18,9 @@
 /calci18n/fi.cpp
 /calci18n/fi/
 /calci18n/tntnet.xml
-/calcmvc/calcController.cpp
-/calcmvc/calcModel.cpp
-/calcmvc/calcView.cpp
 /calcmvc/calcmvc.cpp
+/calcmvc/view/accumulator.cpp
+/calcmvc/view/calc.cpp
 /calcmvc/tntnet.xml
 /chat/ajax.cpp
 /chat/chat.cpp
@@ -77,3 +76,4 @@
 /backgroundjob/ajax.cpp
 /backgroundjob/backgroundjob.cpp
 /backgroundjob/status.cpp
+

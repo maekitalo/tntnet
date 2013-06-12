@@ -406,16 +406,17 @@ namespace tnt
     setHeader(httpheader::contentMD5, md5.getHexDigest());
   }
 
-  unsigned HttpReply::redirect(const std::string& newLocation)
+  unsigned HttpReply::redirect(const std::string& newLocation, Redirect type)
   {
     setHeader(httpheader::location, newLocation);
 
     impl->outstream.str(std::string());
     impl->outstream << "<html><body>moved to <a href=\"" << newLocation << "\">" << newLocation << "</a></body></html>";
 
-    throw HttpReturn(HTTP_MOVED_TEMPORARILY, "moved temporarily");
+    unsigned httpCode = static_cast<unsigned>(type);
+    throw HttpReturn(httpCode, HttpReturn::httpMessage(httpCode));
 
-    return HTTP_MOVED_TEMPORARILY;
+    return httpCode;
   }
 
   unsigned HttpReply::notAuthorized(const std::string& realm)

@@ -1,4 +1,4 @@
-tntnet.xml 8 "2006-07-23" Tntnet "Tntnet users guide"
+tntnet.xml 7 "2006-07-23" Tntnet "Tntnet users guide"
 =====================================================
 
 NAME

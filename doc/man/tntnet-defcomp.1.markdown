@@ -75,12 +75,30 @@ client.
 The component `redirect@tntnet` just returns with a redirect to another page.
 The location for the redirect is specified in the `<pathinfo>` setting.
 
+By default a temporary redirect code (301) is sent, but can be configured by
+adding a configuration argument "type". The value of the type can be
+"temporarily", "permanently" or a number, which is used.
+
 *Example*
 
     <mapping>
       <target>redirect@tntnet</target>
       <url>^/$</url>
+      <redirect>/login.html</redirect>
+    </mapping>
+
+This setting redirects the client to the index.html file when the root directory
+is requested.
+
+*Example for a permanent redirect*
+
+    <mapping>
+      <target>redirect@tntnet</target>
+      <url>^/$</url>
       <redirect>/index.html</redirect>
+      <args>
+        <type>permanently</type>
+      </args>
     </mapping>
 
 This setting redirects the client to the index.html file when the root directory
@@ -90,7 +108,8 @@ is requested.
 
 The error component returns a specific error code to the client when called. The
 code is specified using the argument `<code>` and the message using the argument
-`<message>`.
+`<message>`. The message may be omitted in which case a default error code
+specific text is used.
 
 *Example*
 
@@ -99,7 +118,6 @@ code is specified using the argument `<code>` and the message using the argument
       <method>^POST$</method>
       <args>
         <code>405</code>
-        <message>method not allowed</message>
       </args>
     </mapping>
 
