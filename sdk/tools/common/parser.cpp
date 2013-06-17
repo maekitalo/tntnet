@@ -1746,7 +1746,6 @@ namespace tnt
               scopetype.clear();
               scopevar.clear();
               scopeinit.clear();
-              scope = default_scope;
               state = state_scope0;
             }
             else if (ch == '(')
