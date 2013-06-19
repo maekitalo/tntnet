@@ -39,6 +39,7 @@
 #include <cxxtools/log.h>
 #include <cxxtools/systemerror.h>
 #include <cxxtools/ioerror.h>
+#include <cxxtools/convert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <config.h>
@@ -347,6 +348,10 @@ namespace tnt
       reply.setHeader(httpheader::lastModified, lastModified);
       reply.setKeepAliveHeader();
       reply.setHeader(httpheader::acceptRanges, "bytes");
+
+      std::string maxAgeStr = request.getArg("MaxAge");
+      unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
+      reply.setMaxAgeHeader(maxAge);
 
       // check for byte range (only "bytes=from-" or "bytes=from-to" are supported)
       const char* range = request.getHeader(httpheader::range);
