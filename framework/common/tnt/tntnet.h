@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2007 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -144,19 +144,51 @@ namespace tnt
       /// Sets the maximum number of worker threads.
       void setMaxThreads(unsigned n)          { maxthreads = n; }
 
-      /// Adds a mapping from a url to a component.
-      /// The url is specified using a regular expression and the mapped target
-      /// may contain back references to the expression using $1, $2, ... .
+      /**
+       * Adds a mapping from a url to a component.
+       * The url is specified using a regular expression and the mapped target
+       * may contain back references to the expression using $1, $2, ... .
+       * @arg url A url
+       * @arg ci component name
+       */
       Mapping& mapUrl(const std::string& url, const std::string& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
+
+       /**
+       * Adds a mapping from a url to a component.
+       * The url is specified using a regular expression and the mapped target
+       * may contain back references to the expression using $1, $2, ... .
+       * @arg url A url
+       * @arg pathinfo
+       * @arg ci component name
+       */
       void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)
       {
         Maptarget ci(ci_);
         ci.setPathInfo(pathinfo);
         dispatcher.addUrlMapEntry(std::string(), url, ci);
       }
+
+
+      /**
+       * Adds a mapping from a url to a component.
+       * The url is specified using a regular expression and the mapped target
+       * may contain back references to the expression using $1, $2, ... .
+       * @arg url A url
+       * @arg ci component name
+       */
       Mapping& mapUrl(const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, ci); }
+
+
+      /**
+       * Adds a mapping from a url to a component.
+       * The url is specified using a regular expression and the mapped target
+       * may contain back references to the expression using $1, $2, ... .
+       * @arg vhost A virtual host name
+       * @arg url A url
+       * @arg ci component name
+       */
       Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
 
@@ -172,12 +204,21 @@ namespace tnt
           Setting the application explicitely reduces potential conflicts if
           multiple tntnet application servers are run on the same host on
           different ports.
+          @arg appname_ Application name
        */
       void setAppName(const std::string& appname_)
         { appname = appname_; }
+
+      /**
+       * @return Get the application name.
+       */
       const std::string& getAppName() const
         { return appname; }
 
+      /**
+       * Set a access log
+       * @arg accesslog Pass to log file.
+       */
       void setAccessLog(const std::string& accesslog)
       { accessLog.open(accesslog.c_str(), std::ios::out | std::ios::app); }
   };
