@@ -18,7 +18,9 @@ namespace model
 
     public:
       Calc()
-        : _resultOk(false)
+        : _arg1(0),
+          _arg2(0),
+          _resultOk(false)
         { }
 
       void arg1(double v)      { _arg1 = v; }

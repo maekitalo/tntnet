@@ -52,7 +52,7 @@ namespace tnt
   {
     if (active)
     {
-      log_info("rollback to Savepoint " << pos);
+      log_debug("rollback to Savepoint " << pos);
       reply.rollbackContent(pos);
       active = false;
     }

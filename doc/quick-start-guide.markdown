@@ -195,7 +195,7 @@ modify `tntnet.xml` like so:
 
 Every request will be checked by tntnet for matching the first of all regular
 expressions which are defined. Every request with the suffix ".html" or ".jpg"
-tells tntnet to look for a component with the basename of the request. Ok 
+tells tntnet to look for a component with the basename of the request. Ok -
 there is one funny thing in our configuration: we get our picture with
 http://localhost:8000/picture.html. But tntnet does not care and nor does the
 browser. 
