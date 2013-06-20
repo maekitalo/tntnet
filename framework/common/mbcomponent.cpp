@@ -31,6 +31,7 @@
 #include <tnt/http.h>
 #include <tnt/httpreply.h>
 #include <cxxtools/log.h>
+#include <cxxtools/convert.h>
 #include <cstring>
 
 log_define("tntnet.mbcomponent")
@@ -97,6 +98,10 @@ namespace tnt
     {
       reply.setKeepAliveHeader();
       reply.setContentType(mimetypes[url_idx]);
+
+      std::string maxAgeStr = request.getArg("maxAge");
+      unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
+      reply.setMaxAgeHeader(maxAge);
 
       std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);
       if (s == ctimes[url_idx])
