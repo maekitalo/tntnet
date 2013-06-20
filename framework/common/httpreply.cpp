@@ -465,7 +465,7 @@ namespace tnt
     {
       char buffer[64];
       snprintf(buffer, sizeof(buffer), "max-age=%u", seconds);
-      header.setHeader(httpheader::contentLength, buffer, true);
+      header.setHeader(httpheader::cacheControl, buffer, true);
       header.setHeader(httpheader::age, "0", true);
       header.setHeader(httpheader::cacheControl, buffer, true);
     }
