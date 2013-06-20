@@ -461,11 +461,20 @@ namespace tnt
 
   void HttpReply::setMaxAgeHeader(unsigned seconds)
   {
-    char buffer[64];
-    snprintf(buffer, sizeof(buffer), "max-age=%u", seconds);
-    header.setHeader(httpheader::contentLength, buffer, true);
-    header.setHeader(httpheader::age, "0", true);
-    header.setHeader(httpheader::cacheControl, buffer, true);
+    if (seconds > 0)
+    {
+      char buffer[64];
+      snprintf(buffer, sizeof(buffer), "max-age=%u", seconds);
+      header.setHeader(httpheader::contentLength, buffer, true);
+      header.setHeader(httpheader::age, "0", true);
+      header.setHeader(httpheader::cacheControl, buffer, true);
+    }
+    else
+    {
+      header.setHeader(httpheader::cacheControl, "no-cache", true);
+      header.setHeader(httpheader::pragma, "no-cache", true);
+      header.setHeader(httpheader::expires, "-1", true);
+    }
   }
 
   void HttpReply::setDirectMode(unsigned ret, const char* msg)
