@@ -245,8 +245,6 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // componentdefinition
   //
-  static const std::string configDocumentRoot = "DocumentRoot";
-
   void Static::setContentType(HttpRequest& request, HttpReply& reply)
   {
     if (handler)
@@ -271,14 +269,10 @@ namespace tnt
     if (!HttpRequest::checkUrl(request.getPathInfo()))
       throw HttpError(HTTP_BAD_REQUEST, "illegal url");
 
-    std::string file = request.getArg(configDocumentRoot); // fetch document root from arguments first
-    if (file.empty())
-    {
-      if (!TntConfig::it().documentRoot.empty())
-        file = TntConfig::it().documentRoot;
-    }
-    else
-      log_debug("document root \"" << file << "\" got as argument");
+    // fetch document root from arguments or take global setting as default
+
+    std::string file = request.getArg("documentRoot", TntConfig::it().documentRoot);
+    log_debug("document root =\"" << file << '"');
 
     if (!file.empty() && *file.rbegin() != '/')
       file += '/';
@@ -328,7 +322,7 @@ namespace tnt
     if (top)
     {
       // set Content-Type
-      std::string contentType = request.getArg("ContentType");
+      std::string contentType = request.getArg("contentType");
       if (!contentType.empty())
       {
         log_debug("content type is \"" << contentType << '"');
@@ -349,12 +343,12 @@ namespace tnt
       reply.setKeepAliveHeader();
       reply.setHeader(httpheader::acceptRanges, "bytes");
 
-      std::string maxAgeStr = request.getArg("MaxAge");
+      std::string maxAgeStr = request.getArg("maxAge");
       unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
       reply.setMaxAgeHeader(maxAge);
 
       // check for byte range (only "bytes=from-" or "bytes=from-to" are supported)
-      const char* range = request.getHeader(httpheader::range);
+      const char* range = request.getHeader(httpheader::range, 0);
       if (range)
       {
         if (parseRange(range, offset, count))
