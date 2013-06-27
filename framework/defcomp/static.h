@@ -43,7 +43,6 @@ namespace tnt
   {
       friend class StaticFactory;
 
-      std::string configDocumentRoot;
       MimeHandler* handler;
 
       unsigned doCall(HttpRequest& request,
