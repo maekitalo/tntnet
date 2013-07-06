@@ -32,6 +32,7 @@
 
 #include <cxxtools/atomicity.h>
 
+/// @cond internal
 namespace tnt
 {
   class Zdata
@@ -58,6 +59,7 @@ namespace tnt
       operator const char* () const      { return data; }
   };
 }
+/// @endcond internal
 
 #endif // TNT_ZDATA_H
 
