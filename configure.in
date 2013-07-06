@@ -158,24 +158,6 @@ then
   fi
 fi
 
-AC_ARG_WITH([stressjob],
-  AS_HELP_STRING([--with-stressjob=yes|no], [support for stressjob for testing]),
-  [stressjob_option=$withval],
-  [stressjob_option=no])
-
-case "$stressjob_option" in
-    yes)
-        AC_DEFINE(WITH_STRESSJOB, [], [Define if stressjob option is set])
-        ;;
-    no)
-        ;;
-    *)
-        AC_MSG_ERROR([unknown stressjob-value $stressjob_option])
-        ;;
-esac
-
-AM_CONDITIONAL(MAKE_STRESSJOB, test "$stressjob_option" = "yes")
-
 #
 # others
 #
