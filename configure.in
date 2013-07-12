@@ -15,6 +15,7 @@ AC_CONFIG_SRCDIR([framework/common/tntnet.cpp])
 
 AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(dlopen, dl, , AC_MSG_ERROR([dlopen not found]))
+AC_SEARCH_LIBS(compress, z)
 
 AC_PROG_CXX
 AC_PROG_LIBTOOL
