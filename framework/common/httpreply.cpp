@@ -40,6 +40,7 @@
 #include <cxxtools/md5stream.h>
 #include <cxxtools/mutex.h>
 #include <sstream>
+#include <stdio.h>
 #include <zlib.h>
 #include <netinet/in.h>
 
@@ -433,10 +434,9 @@ namespace tnt
 
   void HttpReply::setContentLengthHeader(size_t size)
   {
-    std::ostringstream s;
-    s.imbue(std::locale::classic());
-    s << size;
-    setHeader(httpheader::contentLength, s.str());
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "%lu", static_cast<unsigned long>(size));
+    header.setHeader(httpheader::contentLength, buffer, true);
   }
 
   void HttpReply::setKeepAliveHeader()
@@ -446,15 +446,35 @@ namespace tnt
     removeHeader(httpheader::keepAlive);
     if (TntConfig::it().keepAliveTimeout > 0 && getKeepAliveCounter() > 0)
     {
-      std::ostringstream s;
-      s.imbue(std::locale::classic());
-      s << "timeout=" << TntConfig::it().keepAliveTimeout << ", max=" << getKeepAliveCounter();
-      setHeader(httpheader::keepAlive, s.str());
+      char buffer[64];
+      snprintf(buffer, sizeof(buffer),
+        "timeout=%lu, max=%u",
+        static_cast<unsigned long>(TntConfig::it().keepAliveTimeout),
+        static_cast<unsigned>(getKeepAliveCounter()));
+      header.setHeader(httpheader::keepAlive, buffer, true);
 
-      setHeader(httpheader::connection, httpheader::connectionKeepAlive);
+      header.setHeader(httpheader::connection, httpheader::connectionKeepAlive, true);
     }
     else
-      setHeader(httpheader::connection, httpheader::connectionClose);
+      header.setHeader(httpheader::connection, httpheader::connectionClose, true);
+  }
+
+  void HttpReply::setMaxAgeHeader(unsigned seconds)
+  {
+    if (seconds > 0)
+    {
+      char buffer[64];
+      snprintf(buffer, sizeof(buffer), "max-age=%u", seconds);
+      header.setHeader(httpheader::cacheControl, buffer, true);
+      header.setHeader(httpheader::age, "0", true);
+      header.setHeader(httpheader::cacheControl, buffer, true);
+    }
+    else
+    {
+      header.setHeader(httpheader::cacheControl, "no-cache", true);
+      header.setHeader(httpheader::pragma, "no-cache", true);
+      header.setHeader(httpheader::expires, "-1", true);
+    }
   }
 
   void HttpReply::setDirectMode(unsigned ret, const char* msg)

@@ -167,7 +167,13 @@ namespace tnt
 
       const std::locale& locale() const     { return _locale; }
       void locale(const std::locale& loc)   { _locale = loc; }
-
+      
+      /**
+       * Get back a single value of a argument.
+       * @arg name the keyword of a argument.
+       * @tparam Type set the return type.
+       * @return get back a single values. 
+       */      
       template <typename Type>
       Type arg(const std::string& name, const Type& def = Type()) const
       { return qhelper::QArg<Type>::arg(*this, name, 0, def); }
@@ -196,6 +202,12 @@ namespace tnt
       Type argt(size_type n, const char* typeName = 0) const
       { return qhelper::QArg<Type>::argt(*this, std::string(), n, typeName); }
 
+      /**
+       * Get back a list value of a argument.
+       * @arg name the keyword of a argument.
+       * @tparam Type set the return type.
+       * @return get back a vactor of values. 
+       */      
       template <typename Type>
       typename std::vector<Type> args(const std::string& name, const Type& def = Type()) const
       {
@@ -205,6 +217,12 @@ namespace tnt
         return ret;
       }
 
+      /**
+       * Get back a list value of a argument.
+       * @arg name the keyword of a argument.
+       * @tparam Type set the return type.
+       * @return get back a vactor of values. 
+       */
       template <typename Type>
       typename std::vector<Type> argst(const std::string& name, const char* typeName) const
       {

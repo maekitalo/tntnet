@@ -95,6 +95,7 @@ namespace tnt
 
       void setContentLengthHeader(size_t size);
       void setKeepAliveHeader();
+      void setMaxAgeHeader(unsigned seconds);
 
       virtual void setDirectMode(unsigned ret = HTTP_OK, const char* msg = "OK");
       virtual void setDirectModeNoFlush();
