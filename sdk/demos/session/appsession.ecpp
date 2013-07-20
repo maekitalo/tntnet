@@ -3,7 +3,7 @@
   unsigned s(0);
 
 </%session>
-<%session scope="global">
+<%session scope="shared">
 
   unsigned sa(0);
 

@@ -62,7 +62,7 @@ XPT app " <%application>...</application>
 <%application` scope="`scope`"^>
 `cursor^
 </%application>
-XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope=ChooseStr('component', 'page', 'shared')
 XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
 XPT arg " <%args>...</%args>
@@ -104,7 +104,7 @@ XPT par " <%param>...</%param>
 <%param` scope="`scope`"^>
 `cursor^
 </%param>
-XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope=ChooseStr('component', 'page', 'shared')
 XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
 XPT pre " <%pre>...</%pre>
@@ -116,19 +116,19 @@ XPT req " <%request>...</%request>
 <%request` scope="`scope`"^>
 `cursor^
 </%request>
-XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope=ChooseStr('component', 'page', 'shared')
 XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
 XPT ses " </session>...</%session>
 <%session` scope="`scope`"^>
 `cursor^
 </%session>
-XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope=ChooseStr('component', 'page', 'shared')
 XSET scope|post=Echo( V() =~ '""' ? "" : V() )
 
 XPT thr " </thread>...</%thread>
 <%thread` scope="`scope`"^>
 `cursor^
 </%thread>
-XSET scope=ChooseStr('component', 'page', 'global')
+XSET scope=ChooseStr('component', 'page', 'shared')
 XSET scope|post=Echo( V() =~ '""' ? "" : V() )

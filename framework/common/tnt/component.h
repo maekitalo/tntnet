@@ -89,6 +89,9 @@ class Component
 #define TNT_SESSION_PAGE_VAR(type, varname, construct) \
   TNT_VAR(request.getSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
 
+#define TNT_SESSION_SHARED_VAR(type, varname, construct) \
+  TNT_VAR(request.getSessionScope(), type, varname, #type #varname, construct)
+
 #define TNT_SESSION_GLOBAL_VAR(type, varname, construct) \
   TNT_VAR(request.getSessionScope(), type, varname, #type #varname, construct)
 
@@ -97,6 +100,9 @@ class Component
 
 #define TNT_SECURE_SESSION_PAGE_VAR(type, varname, construct) \
   TNT_VAR(request.getSecureSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+
+#define TNT_SECURE_SESSION_SHARED_VAR(type, varname, construct) \
+  TNT_VAR(request.getSecureSessionScope(), type, varname, #type #varname, construct)
 
 #define TNT_SECURE_SESSION_GLOBAL_VAR(type, varname, construct) \
   TNT_VAR(request.getSecureSessionScope(), type, varname, #type #varname, construct)
@@ -107,6 +113,9 @@ class Component
 #define TNT_APPLICATION_PAGE_VAR(type, varname, construct) \
   TNT_VAR(request.getApplicationScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
 
+#define TNT_APPLICATION_SHARED_VAR(type, varname, construct) \
+  TNT_VAR(request.getApplicationScope(), type, varname, #type #varname, construct)
+
 #define TNT_APPLICATION_GLOBAL_VAR(type, varname, construct) \
   TNT_VAR(request.getApplicationScope(), type, varname, #type #varname, construct)
 
@@ -116,6 +125,9 @@ class Component
 #define TNT_THREAD_PAGE_VAR(type, varname, construct) \
   TNT_VAR(request.getThreadScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
 
+#define TNT_THREAD_SHARED_VAR(type, varname, construct) \
+  TNT_VAR(request.getThreadScope(), type, varname, #type #varname, construct)
+
 #define TNT_THREAD_GLOBAL_VAR(type, varname, construct) \
   TNT_VAR(request.getThreadScope(), type, varname, #type #varname, construct)
 
@@ -124,6 +136,9 @@ class Component
 
 #define TNT_REQUEST_PAGE_VAR(type, varname, construct) \
   TNT_VAR(request.getRequestScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+
+#define TNT_REQUEST_SHARED_VAR(type, varname, construct) \
+  TNT_VAR(request.getRequestScope(), type, varname, #type #varname, construct)
 
 #define TNT_REQUEST_GLOBAL_VAR(type, varname, construct) \
   TNT_VAR(request.getRequestScope(), type, varname, #type #varname, construct)

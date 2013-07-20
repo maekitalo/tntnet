@@ -1,4 +1,4 @@
-<%session scope="global" include="model/accumulator.h">
+<%session scope="shared" include="model/accumulator.h">
   model::Accumulator accumulator;
 </%session>
 

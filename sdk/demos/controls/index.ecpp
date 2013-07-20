@@ -1,4 +1,4 @@
-<%request scope="global">
+<%request scope="shared">
 std::string message;
 </%request>
 <html>

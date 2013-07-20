@@ -83,7 +83,7 @@ namespace tnt
     {
       Component::getScopevars(o, linenumbersEnabled);
       outerclass->getScopevars(o, ecpp::page_scope, linenumbersEnabled);
-      outerclass->getScopevars(o, ecpp::global_scope, linenumbersEnabled);
+      outerclass->getScopevars(o, ecpp::shared_scope, linenumbersEnabled);
     }
   }
 }

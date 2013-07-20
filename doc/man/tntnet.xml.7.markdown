@@ -20,11 +20,11 @@ This section describes the variables, used by Tntnet (8).
   Writes a log entry for each request in a common format. This format is
   compatible with most log file analyze systems for http servers.
 
-  The log file has the fields: `peer-ip` - `username` [`time`] "`http-method`
-  `query-string` HTTP/`major-version`.`minor-version`" `http-return-code`
-  `content-size` "`referer`" "`user-agent`"
+  The log file has the fields: `peer ip` - `username` [`time`] "`http method`
+  `query string` HTTP/`major version`.`minor version`" `http return code`
+  `content size` "`referer`" "`user agent`"
 
-  The `username`, `referer` and `user-agent` may be '-' when the value is not
+  The `username`, `referer` and `user agent` may be '-' when the value is not
   available. Also the `content-size` can be empty in some cases.
 
   *Example*
@@ -33,9 +33,9 @@ This section describes the variables, used by Tntnet (8).
 
 `<bufferSize>`*bytes*`</bufferSize>`
 
-  Specifies the number of bytes sent in a single system-call. This does not
-  limit anything in application-level. It does not affect e.g. savepoints or
-  exception-handling. Component-output is collected completely and then passed
+  Specifies the number of bytes sent in a single system call. This does not
+  limit anything in application level. It does not affect e.g. savepoints or
+  exception handling. Component output is collected completely and then passed
   in chunks of `bufferSize` bytes to the operating system.
 
   The default value is 16384.
@@ -57,7 +57,8 @@ This section describes the variables, used by Tntnet (8).
 
 `<chroot>`*directory*`</chroot>`
 
-  Does a chroot(2)-system call on startup, which locks the process into the directory at system-level.
+  Does a chroot(2) system call on startup, which locks the process into the
+  directory at system level.
 
   *Example*
 
@@ -66,7 +67,7 @@ This section describes the variables, used by Tntnet (8).
 `<daemon>`*0|1*`</daemon>`
 
   If this flag is set to 1, Tntnet forks at startup and terminates the
-  parent-process on successful initialization.
+  parent process on successful initialization.
 
 `<dir>`*directory*`</dir>`
 
@@ -78,16 +79,16 @@ This section describes the variables, used by Tntnet (8).
 
 `<enableCompression>`*yes|no*`</enableCompression>`
 
-  Specifies, if Tntnet should use gzip-compression at http-level. By default
-  Tntnet use compression. A http-client like a web browser can send a header
+  Specifies, if Tntnet should use gzip compression at http level. By default
+  Tntnet use compression. A http client like a web browser can send a header
   "Accept-Encoding", to tell Tntnet, that it would accept compressed data.
   Tntnet then can decide, if it use compression. When the body is complete,
   Tntnet tries to compress the body. If the data can be compressed by more than
   10%, Tntnet sends this compressed data. With this flag, this feature can be
   turned off.
 
-  Compression slows down processing but reduces the network-load. Normally the
-  size of html-pages can be compressed by about 70%, while Tntnet slows down by
+  Compression slows down processing but reduces the network load. Normally the
+  size of html pages can be compressed by about 70%, while Tntnet slows down by
   up to 30%.
 
   *Example*
@@ -119,7 +120,7 @@ This section describes the variables, used by Tntnet (8).
   Sets the timeout for keep-alive requests.
 
   Tntnet tries to do keep-alive-requests wherever possible. This has the effect,
-  that tntnet can receive multiple requests within a single tcp-connection. The
+  that tntnet can receive multiple requests within a single tcp connection. The
   connection times out after KeepAliveTimeout milliseconds. The timeout defaults
   to 15000ms.
 
@@ -129,7 +130,7 @@ This section describes the variables, used by Tntnet (8).
 
 `<keepAliveMax>`*number*`</keepAliveMax>`
 
-  Sets the maximum number of request per tcp-connection. This defaults to 100.
+  Sets the maximum number of request per tcp connection. This defaults to 100.
 
   *Example*
 
@@ -138,7 +139,7 @@ This section describes the variables, used by Tntnet (8).
 `<listeners>`*listener definition*`</listeners>`
 
   Specifies, on which local interfaces tntnet waits for connections. There can
-  be more than one Listen-directives, in which case tntnet waits on every
+  be more than one Listen directives, in which case tntnet waits on every
   address.
 
   See separate section *Listeners*
@@ -161,8 +162,8 @@ This section describes the variables, used by Tntnet (8).
 
 `<listenBacklog>`*number*`</listenBacklog>`
 
-  The system-call listen(3p) needs a parameter backlog, which specifies, how
-  many pending connections the operating-system should queue before it starts to
+  The system call listen(3p) needs a parameter backlog, which specifies, how
+  many pending connections the operating system should queue before it starts to
   ignore new request. The value is configurable here.
 
   The default value is 16.
@@ -202,9 +203,9 @@ This section describes the variables, used by Tntnet (8).
 `<maxRequestSize>`*number*`</maxRequestSize>`
 
   This directive limits the size of the request. After *number* Bytes the
-  connection is just closed. This prevents denial-of-service-attacks through
+  connection is just closed. This prevents denial of service attacks through
   long requests. Every request is read into memory, so it must fit into it.
-  Bear in mind, that if you use file-upload-fields a request might be larger
+  Bear in mind, that if you use file upload fields a request might be larger
   than just a few bytes.
 
   The value defaults to 0, which means, that there is no limit at all.
@@ -230,7 +231,7 @@ This section describes the variables, used by Tntnet (8).
 
 `<minThreads>`*number*`</minThreads>`
 
-  Tntnet uses a dynamic pool of worker-threads, which wait for incoming
+  Tntnet uses a dynamic pool of worker threads, which wait for incoming
   requests. MinThreads specifies, how many worker threads there have to be. This
   defaults to 5.
 
@@ -240,7 +241,7 @@ This section describes the variables, used by Tntnet (8).
 
 `<minCompressSize>`*number*`</minCompressSize>`
 
-  Http-compression for replies smaller than this are not compressed at all.
+  Http compression for replies smaller than this are not compressed at all.
 
   The default value for this is 1024.
 
@@ -258,7 +259,7 @@ This section describes the variables, used by Tntnet (8).
 
 `<maxThreads>`*number*`</maxThreads>`
 
-  Tntnet uses a dynamic pool of worker-threads, which wait for incoming
+  Tntnet uses a dynamic pool of worker threads, which wait for incoming
   requests. `maxThreads` limits the number of threads.
 
 
@@ -270,10 +271,10 @@ This section describes the variables, used by Tntnet (8).
 
 `<pidfile>`*filename*`</pidfile>`
 
-  When run in daemon-mode, tntnet writes the process-id of the monitor-process
-  to filename. When the monitor-process is deactivated, the pid of the
-  worker-process is written. This ensures, that sending a sigkill to the the
-  stored process-id stops tntnet.
+  When run in daemon mode, tntnet writes the process id of the monitor process
+  to filename. When the monitor process is deactivated, the pid of the
+  worker process is written. This ensures, that sending a sigkill to the the
+  stored process id stops tntnet.
 
   *Example*
 
@@ -281,7 +282,7 @@ This section describes the variables, used by Tntnet (8).
 
 `<queueSize>`*number*`</queueSize>`
 
-  Tntnet has a request-queue, where new requests wait for service. This sets a
+  Tntnet has a request queue, where new requests wait for service. This sets a
   maximum size of this queue, after wich new requests are not accepted.
 
   The default value is 1000.
@@ -303,11 +304,11 @@ This section describes the variables, used by Tntnet (8).
 
 `<socketReadTimeout>`*milliseconds*`</socketReadTimeout>`
 
-  A worker-thread waits for some milliseconds on incoming data. If there is no
+  A worker thread waits for some milliseconds on incoming data. If there is no
   data, the job is put into a queue and another thread waits with poll(2) on
   incoming data on multiple sockets. The workerthreads are freed and they can
   respond to other requests quickly. The default value is 10 milliseconds, which
-  is good for normal operation. A value of 0 results in non-blocking read. If
+  is good for normal operation. A value of 0 results in non blocking read. If
   timeout is reached, this does not mean, that the socket is closed. A small
   timeout reduces contextswitches on slow connections.
 

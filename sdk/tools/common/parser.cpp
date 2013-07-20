@@ -1673,14 +1673,19 @@ namespace tnt
           case state_scopeargval:
             if (ch == '"')
             {
-              if (value == "global")
-                scope = global_scope;
+              if (value == "shared")
+                scope = shared_scope;
               else if (value == "page")
                 scope = page_scope;
               else if (value == "component")
                 scope = component_scope;
+              else if (value == "global")
+              {
+                std::cerr << curfile << ':' << curline << ": warning: scope=\"global\" is deprecated; use scope=\"shared\" instead" << std::endl;
+                scope = shared_scope;
+              }
               else
-                throw parse_error("scope global, page or component expected", state, curfile, curline);
+                throw parse_error("scope shared, page or component expected", state, curfile, curline);
 
               value.clear();
               state = state_scopearg0;

@@ -17,11 +17,11 @@ This section describes the variables, used by Tntnet (8).
 Writes a log entry for each request in a common format. This format is
 compatible with most log file analyze systems for http servers.
 .IP
-The log file has the fields: \fB\fCpeer-ip\fR \- \fB\fCusername\fR [\fB\fCtime\fR] "\fB\fChttp-method\fR
-\fB\fCquery-string\fR HTTP/\fB\fCmajor-version\fR.\fB\fCminor-version\fR" \fB\fChttp-return-code\fR
-\fB\fCcontent-size\fR "\fB\fCreferer\fR" "\fB\fCuser-agent\fR"
+The log file has the fields: \fB\fCpeer ip\fR \- \fB\fCusername\fR [\fB\fCtime\fR] "\fB\fChttp method\fR
+\fB\fCquery string\fR HTTP/\fB\fCmajor version\fR.\fB\fCminor version\fR" \fB\fChttp return code\fR
+\fB\fCcontent size\fR "\fB\fCreferer\fR" "\fB\fCuser agent\fR"
 .IP
-The \fB\fCusername\fR, \fB\fCreferer\fR and \fB\fCuser-agent\fR may be '\-' when the value is not
+The \fB\fCusername\fR, \fB\fCreferer\fR and \fB\fCuser agent\fR may be '\-' when the value is not
 available. Also the \fB\fCcontent-size\fR can be empty in some cases.
 .IP
 \fIExample\fP
@@ -34,9 +34,9 @@ available. Also the \fB\fCcontent-size\fR can be empty in some cases.
 .PP
 \fB\fC<bufferSize>\fR\fIbytes\fP\fB\fC</bufferSize>\fR
 .IP
-Specifies the number of bytes sent in a single system\-call. This does not
-limit anything in application\-level. It does not affect e.g. savepoints or
-exception\-handling. Component\-output is collected completely and then passed
+Specifies the number of bytes sent in a single system call. This does not
+limit anything in application level. It does not affect e.g. savepoints or
+exception handling. Component output is collected completely and then passed
 in chunks of \fB\fCbufferSize\fR bytes to the operating system.
 .IP
 The default value is 16384.
@@ -63,8 +63,9 @@ times as desired to add more entries. If it is not found, the next
 \fB\fC<chroot>\fR\fIdirectory\fP\fB\fC</chroot>\fR
 .IP
 Does a 
-.BR chroot (2)-system 
-call on startup, which locks the process into the directory at system\-level.
+.BR chroot (2) 
+system call on startup, which locks the process into the
+directory at system level.
 .IP
 \fIExample\fP
 .PP
@@ -77,7 +78,7 @@ call on startup, which locks the process into the directory at system\-level.
 \fB\fC<daemon>\fR\fI0|1\fP\fB\fC</daemon>\fR
 .IP
 If this flag is set to 1, Tntnet forks at startup and terminates the
-parent\-process on successful initialization.
+parent process on successful initialization.
 .PP
 \fB\fC<dir>\fR\fIdirectory\fP\fB\fC</dir>\fR
 .IP
@@ -93,16 +94,16 @@ Changes the current working directory of the process on startup.
 .PP
 \fB\fC<enableCompression>\fR\fIyes|no\fP\fB\fC</enableCompression>\fR
 .IP
-Specifies, if Tntnet should use gzip\-compression at http\-level. By default
-Tntnet use compression. A http\-client like a web browser can send a header
+Specifies, if Tntnet should use gzip compression at http level. By default
+Tntnet use compression. A http client like a web browser can send a header
 "Accept\-Encoding", to tell Tntnet, that it would accept compressed data.
 Tntnet then can decide, if it use compression. When the body is complete,
 Tntnet tries to compress the body. If the data can be compressed by more than
 10%, Tntnet sends this compressed data. With this flag, this feature can be
 turned off.
 .IP
-Compression slows down processing but reduces the network\-load. Normally the
-size of html\-pages can be compressed by about 70%, while Tntnet slows down by
+Compression slows down processing but reduces the network load. Normally the
+size of html pages can be compressed by about 70%, while Tntnet slows down by
 up to 30%.
 .IP
 \fIExample\fP
@@ -148,7 +149,7 @@ when tntnet starts as root user.
 Sets the timeout for keep\-alive requests.
 .IP
 Tntnet tries to do keep\-alive\-requests wherever possible. This has the effect,
-that tntnet can receive multiple requests within a single tcp\-connection. The
+that tntnet can receive multiple requests within a single tcp connection. The
 connection times out after KeepAliveTimeout milliseconds. The timeout defaults
 to 15000ms.
 .IP
@@ -162,7 +163,7 @@ to 15000ms.
 .PP
 \fB\fC<keepAliveMax>\fR\fInumber\fP\fB\fC</keepAliveMax>\fR
 .IP
-Sets the maximum number of request per tcp\-connection. This defaults to 100.
+Sets the maximum number of request per tcp connection. This defaults to 100.
 .IP
 \fIExample\fP
 .PP
@@ -175,7 +176,7 @@ Sets the maximum number of request per tcp\-connection. This defaults to 100.
 \fB\fC<listeners>\fR\fIlistener definition\fP\fB\fC</listeners>\fR
 .IP
 Specifies, on which local interfaces tntnet waits for connections. There can
-be more than one Listen\-directives, in which case tntnet waits on every
+be more than one Listen directives, in which case tntnet waits on every
 address.
 .IP
 See separate section \fIListeners\fP
@@ -202,10 +203,10 @@ The default number is 5.
 .PP
 \fB\fC<listenBacklog>\fR\fInumber\fP\fB\fC</listenBacklog>\fR
 .IP
-The system\-call 
+The system call 
 .BR listen (3p) 
 needs a parameter backlog, which specifies, how
-many pending connections the operating\-system should queue before it starts to
+many pending connections the operating system should queue before it starts to
 ignore new request. The value is configurable here.
 .IP
 The default value is 16.
@@ -253,9 +254,9 @@ The default value is 8192.
 \fB\fC<maxRequestSize>\fR\fInumber\fP\fB\fC</maxRequestSize>\fR
 .IP
 This directive limits the size of the request. After \fInumber\fP Bytes the
-connection is just closed. This prevents denial\-of\-service\-attacks through
+connection is just closed. This prevents denial of service attacks through
 long requests. Every request is read into memory, so it must fit into it.
-Bear in mind, that if you use file\-upload\-fields a request might be larger
+Bear in mind, that if you use file upload fields a request might be larger
 than just a few bytes.
 .IP
 The value defaults to 0, which means, that there is no limit at all.
@@ -289,7 +290,7 @@ request should run. If the Timeout is set to 0, the watchdog is deactivated.
 .PP
 \fB\fC<minThreads>\fR\fInumber\fP\fB\fC</minThreads>\fR
 .IP
-Tntnet uses a dynamic pool of worker\-threads, which wait for incoming
+Tntnet uses a dynamic pool of worker threads, which wait for incoming
 requests. MinThreads specifies, how many worker threads there have to be. This
 defaults to 5.
 .IP
@@ -303,7 +304,7 @@ defaults to 5.
 .PP
 \fB\fC<minCompressSize>\fR\fInumber\fP\fB\fC</minCompressSize>\fR
 .IP
-Http\-compression for replies smaller than this are not compressed at all.
+Http compression for replies smaller than this are not compressed at all.
 .IP
 The default value for this is 1024.
 .IP
@@ -325,7 +326,7 @@ space.
 .PP
 \fB\fC<maxThreads>\fR\fInumber\fP\fB\fC</maxThreads>\fR
 .IP
-Tntnet uses a dynamic pool of worker\-threads, which wait for incoming
+Tntnet uses a dynamic pool of worker threads, which wait for incoming
 requests. \fB\fCmaxThreads\fR limits the number of threads.
 .IP
 The default is 100.
@@ -340,10 +341,10 @@ The default is 100.
 .PP
 \fB\fC<pidfile>\fR\fIfilename\fP\fB\fC</pidfile>\fR
 .IP
-When run in daemon\-mode, tntnet writes the process\-id of the monitor\-process
-to filename. When the monitor\-process is deactivated, the pid of the
-worker\-process is written. This ensures, that sending a sigkill to the the
-stored process\-id stops tntnet.
+When run in daemon mode, tntnet writes the process id of the monitor process
+to filename. When the monitor process is deactivated, the pid of the
+worker process is written. This ensures, that sending a sigkill to the the
+stored process id stops tntnet.
 .IP
 \fIExample\fP
 .PP
@@ -355,7 +356,7 @@ stored process\-id stops tntnet.
 .PP
 \fB\fC<queueSize>\fR\fInumber\fP\fB\fC</queueSize>\fR
 .IP
-Tntnet has a request\-queue, where new requests wait for service. This sets a
+Tntnet has a request queue, where new requests wait for service. This sets a
 maximum size of this queue, after wich new requests are not accepted.
 .IP
 The default value is 1000.
@@ -385,13 +386,13 @@ The default value is 300 seconds.
 .PP
 \fB\fC<socketReadTimeout>\fR\fImilliseconds\fP\fB\fC</socketReadTimeout>\fR
 .IP
-A worker\-thread waits for some milliseconds on incoming data. If there is no
+A worker thread waits for some milliseconds on incoming data. If there is no
 data, the job is put into a queue and another thread waits with 
 .BR poll (2) 
 on
 incoming data on multiple sockets. The workerthreads are freed and they can
 respond to other requests quickly. The default value is 10 milliseconds, which
-is good for normal operation. A value of 0 results in non\-blocking read. If
+is good for normal operation. A value of 0 results in non blocking read. If
 timeout is reached, this does not mean, that the socket is closed. A small
 timeout reduces contextswitches on slow connections.
 .IP
