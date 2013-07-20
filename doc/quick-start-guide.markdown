@@ -21,8 +21,8 @@ Installation
 
 To install Tntnet you will first need to install cxxtools.
 
-You can find cxxtools on the tntnet homepage http://www.tntnet.org/download.hms and
-install it with:
+You can find cxxtools on the tntnet homepage
+http://www.tntnet.org/download.html and install it with:
 
     tar xzf cxxtools-2.x.tar.gz
     cd cxxtools-2.x
