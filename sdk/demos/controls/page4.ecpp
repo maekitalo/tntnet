@@ -1,7 +1,7 @@
 <%args>
 bool logout;
 </%args>
-<%request scope="global">
+<%request scope="shared">
 std::string message;
 </%request>
 <%cpp>

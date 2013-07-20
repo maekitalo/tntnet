@@ -74,7 +74,7 @@ unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& rep
   tnt::DataChunks data(rawData);
 
 #line 2 "view/counter.ecpp"
-  TNT_SESSION_GLOBAL_VAR(Counter, counter, ());   // <%session> Counter counter
+  TNT_SESSION_SHARED_VAR(Counter, counter, ());   // <%session> Counter counter
   // <%cpp>
   reply.out() << data[0]; // <!DOCTYPE html>\n<html>\n  <head>\n  </head>\n  <body>\n    <h1>Counter</h1>\n    value=
 #line 10 "view/counter.ecpp"

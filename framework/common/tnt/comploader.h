@@ -44,7 +44,7 @@ namespace tnt
   class Comploader;
   class ComponentFactory;
 
-  /// @internal
+  /// @cond internal
   class LibraryNotFound
   {
       std::string libname;
@@ -65,6 +65,7 @@ namespace tnt
         delete ptr;
       }
   };
+  /// @endcond internal
 
   class ComponentLibrary
   {

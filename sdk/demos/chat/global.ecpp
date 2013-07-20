@@ -33,7 +33,7 @@ inline void operator<<= (cxxtools::SerializationInfo& si, const chatMessage& msg
 unsigned maxComments = 10;
 
 </%config>
-<%application scope="global">
+<%application scope="shared">
 
 chat_type chat;
 int maxID=0;

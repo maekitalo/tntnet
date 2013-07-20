@@ -38,8 +38,10 @@
 #include <cxxtools/refcounted.h>
 #include <cxxtools/smartptr.h>
 
-/**
+/*
 // in tntnet (mainthread):
+
+\code
 Jobqueue queue;
 void mainloop()
 {
@@ -61,6 +63,7 @@ void Server::run()
     processRequest(socket);
   }
 }
+\endcode
 */
 
 namespace tnt

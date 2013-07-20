@@ -32,6 +32,7 @@
 
 #include <iostream>
 
+/// @cond internal
 namespace tnt
 {
   class DataChunk
@@ -110,6 +111,7 @@ namespace tnt
   }
 
 }
+/// @endcond internal
 
 #endif // TNT_DATA_H
 

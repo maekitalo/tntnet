@@ -214,7 +214,7 @@ project()
 </%cpp>
 <html>
  <head>
-  <title>ecpp-application $P</title>
+  <title>ecpp application $P</title>
  </head>
  <body>
   <h1>$P</h1>
@@ -457,7 +457,7 @@ EOF
 </%cpp>
 <html>
  <head>
-  <title>ecpp-application $P</title>
+  <title>ecpp application $P</title>
  </head>
  <body>
   <h1>$P</h1>

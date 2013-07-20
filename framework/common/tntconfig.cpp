@@ -114,8 +114,8 @@ namespace tnt
     if (si.getMember("mappings", mappings))
       config.mappings.insert(config.mappings.end(), mappings.begin(), mappings.end());
 
-    TntConfig::ListenersType listeners;
-    TntConfig::SslListenersType ssllisteners;
+    TntConfig::ListenersType& listeners = config.listeners;
+    TntConfig::SslListenersType& ssllisteners = config.ssllisteners;
 
     const cxxtools::SerializationInfo& lit = si.getMember("listeners");
     for (cxxtools::SerializationInfo::ConstIterator it = lit.begin(); it != lit.end(); ++it)
@@ -131,9 +131,6 @@ namespace tnt
         *it >>= listeners.back();
       }
     }
-
-    config.listeners.insert(config.listeners.end(), listeners.begin(), listeners.end());
-    config.ssllisteners.insert(config.ssllisteners.end(), ssllisteners.begin(), ssllisteners.end());
 
     if (config.listeners.empty() && config.ssllisteners.empty())
     {

@@ -33,6 +33,7 @@
 #include <cxxtools/net/tcpstream.h>
 #include <gnutls/gnutls.h>
 
+/// @cond internal
 namespace tnt
 {
   class GnuTlsException : public std::runtime_error
@@ -165,6 +166,7 @@ namespace tnt
       int getTimeout() const        { return m_buffer.getTimeout(); }
   };
 }
+/// @endcond internal
 
 #endif // TNT_GNUTLS_H
 

@@ -34,6 +34,7 @@
 #include <cxxtools/smartptr.h>
 #include <openssl/ssl.h>
 
+/// @cond internal
 namespace tnt
 {
   class OpensslException : public std::runtime_error
@@ -139,6 +140,7 @@ namespace tnt
       int getTimeout() const        { return m_buffer.getTimeout(); }
   };
 }
+/// @endcond internal
 
 #endif // TNT_OPENSSL_H
 

@@ -1,5 +1,6 @@
 AC_INIT(tntnet, 2.2rc2, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
+LT_INIT([disable-static])
 
 AM_INIT_AUTOMAKE
 
@@ -45,42 +46,28 @@ AC_ARG_WITH([epoll],
   [epoll_option=$withval],
   [epoll_option=probe])
 
-case "$epoll_option" in
-  yes)
-      AC_DEFINE(WITH_EPOLL, [], [Define if epoll is supported])
-      ;;
-  no)
-      ;;
-  probe)
-      AC_TRY_RUN([
-        #include <sys/epoll.h>
-        int main() { return epoll_create(10) <= 0; }
-        ],
-        [AC_DEFINE(WITH_EPOLL, [], [Define if epoll is supported])])
-        ;;
-    *)
-      AC_MSG_ERROR([unknown epoll-value $epoll_option])
-      ;;
-esac
+AS_CASE([$epoll_option],
+  [yes],   AC_DEFINE(WITH_EPOLL, [], [Define if epoll is supported]),
+  [no],    [],
+  [probe], AC_TRY_RUN([
+            #include <sys/epoll.h>
+            int main() { return epoll_create(10) <= 0; }
+            ],
+            [AC_DEFINE(WITH_EPOLL, [], [Define if epoll is supported])]),
+  AC_MSG_ERROR([unknown epoll-value $epoll_option])
+)
 
 AC_ARG_WITH([sendfile],
   AS_HELP_STRING([--with-sendfile=yes|no|probe], [use sendfile]),
   [sendfile_option=$withval],
   [sendfile_option=probe])
 
-case "$sendfile_option" in
-  yes)
-      AC_DEFINE(WITH_SENDFILE, [], [Define if sendfile is supported])
-      ;;
-  no)
-      ;;
-  probe)
-      AC_CHECK_FUNCS([sendfile])
-      ;;
-    *)
-      AC_MSG_ERROR([unknown sendfile-value $sendfile_option])
-      ;;
-esac
+AS_CASE([$sendfile_option],
+  [yes],    AC_DEFINE(WITH_SENDFILE, [], [Define if sendfile is supported]),
+  [no],     [],
+  [probe],  AC_CHECK_FUNCS([sendfile]),
+  AC_MSG_ERROR([unknown sendfile-value $sendfile_option])
+)
 
 AC_CHECK_HEADERS([sys/sendfile.h])
 
@@ -92,30 +79,31 @@ AC_ARG_WITH([ssl],
   [ssl_option=$withval],
   [ssl_option=openssl])
 
-case "$ssl_option" in
-    gnutls)
-        PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11], [
+AS_CASE([$ssl_option],
+    [gnutls],
+        [PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11], [
             AC_MSG_RESULT([building with GnuTLS support])
             AC_DEFINE(WITH_GNUTLS, [], [Define to build with gnutls])
             with_gnutls=1
           ],
           [AC_MSG_ERROR(gnutls >= 2.11 not not found)])
-        ;;
-    openssl|yes)
-        AC_CHECK_HEADER([openssl/ssl.h], [
+        ],
+
+    [openssl|yes],
+        [AC_CHECK_HEADER([openssl/ssl.h], [
             AC_MSG_RESULT([building with OpenSSL support])
             AC_DEFINE(WITH_OPENSSL, [], [Define to build with openssl])
             with_openssl=1
           ],
           [AC_MSG_ERROR(openssl-headers not not found)])
-        ;;
-    no)
-        AC_MSG_RESULT([building without ssl support])
-        ;;
-    *)
-        AC_MSG_ERROR([unknown ssl-value $ssl_option])
-        ;;
-esac
+        ],
+
+    [no],
+        [AC_MSG_RESULT([building without ssl support])
+        ],
+
+    [AC_MSG_ERROR([unknown ssl-value $ssl_option])]
+)
 
 AM_CONDITIONAL(MAKE_GNUTLS, test x$with_gnutls = x1)
 AM_CONDITIONAL(MAKE_OPENSSL, test x$with_openssl = x1)
@@ -145,36 +133,16 @@ AC_ARG_WITH([demos],
 AM_CONDITIONAL(MAKE_DEMOS, test "$with_demos" = "yes" -o "$with_demos" = "install")
 AM_CONDITIONAL(INSTALL_DEMOS, test "$with_demos" = "install")
 
-if test "$with_demos" = "yes"
-then
-  if test "$with_sdk" != "yes"
-  then
-    AC_MSG_ERROR([demos can't be built without building sdk])
-  fi
+AS_IF([test "$with_demos" = "yes"],
+  [
+    AS_IF([test "$with_sdk" != "yes"],
+        [AC_MSG_ERROR([demos cannott be built without building sdk])])
 
   AC_CHECK_PROG(ZIP, zip, 1)
-  if ! test "$ZIP"; then
-    AC_MSG_ERROR([zip program not found (needed for calci18n demo)])
-  fi
-fi
-
-AC_ARG_WITH([stressjob],
-  AS_HELP_STRING([--with-stressjob=yes|no], [support for stressjob for testing]),
-  [stressjob_option=$withval],
-  [stressjob_option=no])
-
-case "$stressjob_option" in
-    yes)
-        AC_DEFINE(WITH_STRESSJOB, [], [Define if stressjob option is set])
-        ;;
-    no)
-        ;;
-    *)
-        AC_MSG_ERROR([unknown stressjob-value $stressjob_option])
-        ;;
-esac
-
-AM_CONDITIONAL(MAKE_STRESSJOB, test "$stressjob_option" = "yes")
+  AS_IF([! test "$ZIP"],
+    AC_MSG_ERROR([zip program not found (needed for calci18n demo)]))
+  ]
+)
 
 #
 # others

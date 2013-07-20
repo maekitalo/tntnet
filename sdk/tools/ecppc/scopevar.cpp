@@ -61,7 +61,7 @@ namespace tnt
           : scope_container == ecpp::secure_session_container ? "SECURE_SESSION_"
           : scope_container == ecpp::request_container        ? "REQUEST_"
           :                                                     "PARAM_";
-        std::string key = scope == ecpp::global_scope ? "GLOBAL_"
+        std::string key = scope == ecpp::shared_scope ? "SHARED_"
                         : scope == ecpp::page_scope   ? "PAGE_"
                         : scope_container != ecpp::param_container ? "COMPONENT_"
                         : std::string();

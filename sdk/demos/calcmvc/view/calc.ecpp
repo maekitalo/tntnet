@@ -1,4 +1,4 @@
-<%request scope="global" include="model/calc.h">
+<%request scope="shared" include="model/calc.h">
 model::Calc calc;
 </%request>
   <h1>Tommi's Tnt-Calculator</h1>

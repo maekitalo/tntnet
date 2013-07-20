@@ -1,4 +1,4 @@
-<%session scope="global" include="counter.h">
+<%session scope="shared" include="counter.h">
   Counter counter;
 </%session>
 <!DOCTYPE html>

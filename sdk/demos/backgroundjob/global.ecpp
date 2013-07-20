@@ -2,6 +2,6 @@
 #include <set>
 #include <tnt/backgroundworker.h>
 </%pre>
-<%session scope="global">
+<%session scope="shared">
 std::set<unsigned> activeJobs;
 </%session>

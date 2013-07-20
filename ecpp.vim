@@ -58,7 +58,7 @@ syn region ecppGet matchgroup=Delimiter start="<%get>" end="</%get>" contains=@c
 syn region ecppPost matchgroup=Delimiter start="<%post>" end="</%post>" contains=@cppTop
 syn region ecppConfig matchgroup=Delimiter start="<%config>" end="</%config>" contains=@cppTop
 syn region ecppAttr matchgroup=Delimiter start="<%attr>" end="</%attr>" contains=@cppTop
-syn region ecppVar matchgroup=Delimiter start="<%\z(application\|session\|securesession\|request\|thread\)\s*\(scope\s*=\s*\"\(global\|page\|component\)\"\)\?\s*\(include\s*=\s*\".*\"\)\?\s*>" end="</%\z1>" contains=@cppTop
+syn region ecppVar matchgroup=Delimiter start='<%\z(application\|session\|securesession\|request\|thread\)\s*\n*\s*\(scope\s*=\s*"\(shared\|global\|page\|component\)"\)\?\s*\n*\s*\(include\s*=\s*".*"\s*\n*\s*\)*\s*>' end='</%\z1>' contains=@cppTop
 syn region ecppVar matchgroup=Delimiter start="<%param>" end="</%param>" contains=@cppTop
 
 syn region ecppInit matchgroup=Delimiter start="<%init>" end="</%init>" contains=@cppTop
