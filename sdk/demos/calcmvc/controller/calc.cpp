@@ -21,7 +21,7 @@ namespace controller
 
   unsigned Calc::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
   {
-    TNT_REQUEST_GLOBAL_VAR(model::Calc, calc, ());
+    TNT_REQUEST_SHARED_VAR(model::Calc, calc, ());
 
     calc.arg1(qparam.arg<double>("arg1"));
     calc.arg2(qparam.arg<double>("arg2"));
