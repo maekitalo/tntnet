@@ -1,10 +1,7 @@
-﻿
-
-Tntnet quick start guide
+﻿Tntnet quick start guide
 ========================
 
 Authors: Tommi Mäkitalo, Andreas Welchlin
-
 
 
 This quick start guide includes:
