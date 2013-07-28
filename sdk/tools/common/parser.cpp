@@ -1618,11 +1618,15 @@ namespace tnt
           case state_scopearg0:
             if (ch == '>')
             {
+              scope = default_scope;
+              scopeincludes.clear();
               state = state_scope0;
             }
             else if (!std::isspace(ch))
             {
               tagarg = ch;
+              scope = default_scope;
+              scopeincludes.clear();
               state = state_scopearg;
             }
             break;
