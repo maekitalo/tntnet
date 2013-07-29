@@ -1,0 +1,431 @@
+#!/bin/sh
+
+EMAIL=your-email@somewhere
+HOMEPAGE=http://somewhere/
+
+usage()
+{
+    cat <<EOF
+Usage: $0 [OPTION]
+
+  --project=app     create a mvc project directory
+  --page=app        add a page to the existing project
+EOF
+
+    exit $1
+}
+
+project()
+{
+    pname=$1
+
+    mkdir $pname $pname/manager $pname/model $pname/view $pname/controller $pname/resources
+    echo create $pname/configure.ac
+    cat >$pname/configure.ac <<EOF
+AC_INIT([${pname}], [0.1], [$EMAIL], [$HOMEPAGE])
+AM_INIT_AUTOMAKE([foreign])
+
+AC_PROG_CXX
+AC_LANG(C++)
+
+AC_CONFIG_HEADERS([config.h])
+AC_CHECK_HEADER([cxxtools/mutex.h], , AC_MSG_ERROR([cxxtools headers not found]))
+AC_CHECK_HEADER([tnt/tntnet.h], , AC_MSG_ERROR([tntnet headers not found]))
+AC_CHECK_HEADER([tntdb/connection.h], , AC_MSG_ERROR([tntdb headers not found]))
+AC_CHECK_PROGS(ECPPC, [ecppc])
+AC_PROG_SED
+
+AC_OUTPUT([
+    Makefile
+])
+EOF
+
+    echo create $pname/Makefile.am
+    cat >$pname/Makefile.am <<EOF
+AUTOMAKE_OPTIONS = subdir-objects
+
+bin_PROGRAMS = ${pname}
+
+ecppSources = \\
+	index.ecpp \\
+	webmain.ecpp
+
+staticSources = \\
+	resources/${pname}.css
+
+${pname}_SOURCES = \\
+	main.cpp \\
+	configuration.cpp \\
+	\$(ecppSources)
+
+nodist_${pname}_SOURCES = \\
+	resources.cpp
+
+AM_INCLUDES = -I\$(top_srcdir)/src
+
+${pname}_LDFLAGS = -lcxxtools -ltntnet -ltntdb
+
+CLEANFILES = \$(ecppSources:.ecpp=.cpp) \$(ecppSources:.ecpp=.deps) resources.cpp
+
+#
+# Rules for tntnet applications
+#
+
+# resources
+resources.cpp: \$(staticSources) Makefile.am
+	\$(ECPPC) -bb -z -n resources -p -o resources.cpp -I\$(srcdir) \$(staticSources)
+
+SUFFIXES=.ecpp .ico .cpp
+
+.ecpp.cpp:
+	\$(ECPPC) -I \$(top_srcdir)/src -n \$(basename \$<) -o \$@ \$<
+.ecpp.deps:
+	\$(ECPPC) -M -n \$* -I \$(srcdir) -I \$(srcdir)/include \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
+.ico.cpp:
+	\$(ECPPC) -b -m image/x-icon -o \$@ \$<
+
+-include \$(ecppSources:.ecpp=.deps)
+EOF
+
+    echo create $pname/main.cpp
+    cat >$pname/main.cpp <<EOF
+#include <iostream>
+#include <configuration.h>
+#include <tnt/tntnet.h>
+#include <tnt/configurator.h>
+#include <cxxtools/log.h>
+
+log_define("${pname}")
+
+int main(int argc, char* argv[])
+{
+  try
+  {
+    Configuration& configuration = Configuration::it();
+
+    if (argc > 1)
+      configuration.readConfiguration(argv[1]);
+    else
+      configuration.readConfiguration("${pname}.conf");
+
+    log_init(configuration.loggingConfiguration());
+
+    tnt::Tntnet app;
+    app.listen(configuration.listenIp(), configuration.listenPort());
+
+    tnt::Configurator configurator(app);
+    if (configuration.sessionTimeout())
+      configurator.setSessionTimeout(configuration.sessionTimeout());
+
+    // configure static stuff - lookup files in static resources first
+    app.mapUrl("^/(.*)", "resources")
+       .setPathInfo("resources/\$1");
+
+    // index page
+    app.mapUrl("^/$", "webmain")
+       .setArg("next", "index");
+
+    // controller
+    app.mapUrl("^/(.*)$", "controller/\$1");
+
+    // view
+    app.mapUrl("^/(.*)$", "webmain")
+       .setArg("next", "view/\$1");
+
+    app.run();
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
+}
+
+EOF
+
+    echo create $pname/webmain.ecpp
+    cat >$pname/webmain.ecpp <<EOF
+<%session scope="shared">
+</%session>
+<%request scope="shared">
+</%request>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="${pname} application">
+    <link rel="stylesheet" href="/${pname}.css" type="text/css">
+  </head>
+  <body>
+    <div id="header">
+      <span id="title">${pname} application</span>
+    </div>
+
+    <div id="menu">
+      <ul class="nav">
+        <li class="navitem"><a href="/">Home</a></li>
+      </ul>
+    </div>
+
+    <div id="content">
+       <& (request.getArg("next")) qparam >
+    </div>
+  </body>
+</html>
+EOF
+
+    echo create $pname/${pname}.conf
+    cat >$pname/${pname}.conf <<EOF
+listen.port 8000
+sessiontimeout 3600
+
+dburl       postgresql:dbname=${pname}
+
+rootlogger    INFO
+logger.${pname}  INFO
+EOF
+
+    echo create $pname/index.ecpp
+    cat >$pname/index.ecpp <<EOF
+<h1>${pname}</h1>
+
+Welcome to the ${pname} application.
+EOF
+
+    echo create $pname/configuration.cpp
+    cat >$pname/configuration.cpp <<EOF
+/*
+ * Copyright (C) 2013 Tommi Maekitalo
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * is provided AS IS, WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, and
+ * NON-INFRINGEMENT.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ */
+
+#include <configuration.h>
+#include <cxxtools/properties.h>
+#include <fstream>
+
+void operator>>= (const cxxtools::SerializationInfo& si, Configuration& config)
+{
+  si.getMember("listen.ip", config._listenIp);  // listen.ip is optional - default is to listen on all local interfaces
+  si.getMember("listen.port") >>= config._listenPort;
+  si.getMember("sessiontimeout", config._sessionTimeout);  // sessiontimeout is optional
+  si.getMember("dburl") >>= config._dburl;
+  config._loggingConfiguration = si;
+}
+
+Configuration::Configuration()
+    : _listenPort(0),
+      _sessionTimeout(0)
+{ }
+
+void Configuration::readConfiguration(const std::string& file)
+{
+  std::ifstream in(file.c_str());
+  in >> cxxtools::Properties(Configuration::it());
+}
+
+Configuration& Configuration::it()
+{
+  static Configuration theConfiguration;
+  return theConfiguration;
+}
+EOF
+
+    echo create $pname/configuration.h
+    cat >$pname/configuration.h <<EOF
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
+
+#include <string>
+#include <cxxtools/serializationinfo.h>
+
+class Configuration
+{
+    friend void operator>>= (const cxxtools::SerializationInfo& si, Configuration& config);
+
+  public:
+    static Configuration& it();
+
+    void readConfiguration(const std::string& file);
+
+    const std::string& listenIp() const
+    { return _listenIp; }
+
+    unsigned short listenPort() const
+    { return _listenPort; }
+
+    unsigned sessionTimeout() const
+    { return _sessionTimeout; }
+
+    const std::string& dburl() const
+    { return _dburl; }
+
+    const cxxtools::SerializationInfo& loggingConfiguration() const
+    { return _loggingConfiguration; }
+
+  private:
+    Configuration();
+    Configuration(const Configuration&);  // no implementation
+    const Configuration& operator=(const Configuration&);  // no implementation
+
+    std::string    _listenIp;
+    unsigned short _listenPort;
+    unsigned       _sessionTimeout;
+    std::string    _dburl;
+    cxxtools::SerializationInfo _loggingConfiguration;
+};
+
+#endif // CONFIGURATION_H
+EOF
+
+    echo create $pname/$pname.css
+    cat >$pname/resources/$pname.css <<EOF
+/* add your css here */
+EOF
+
+    echo project $pname created
+}
+
+pages()
+{
+    cp webmain.ecpp webmain.ecpp.new
+    cp Makefile.am Makefile.am.new
+
+    while [ "$1" ]
+    do
+        page=$1
+        shift
+
+        echo create view/$page.ecpp
+        cat >view/$page.ecpp <<EOF
+<h1>$page</h1>
+EOF
+
+        echo create controller/$page.cpp
+        cat >controller/$page.cpp <<EOF
+#include <tnt/component.h>
+#include <tnt/componentfactory.h>
+#include <tnt/httprequest.h>
+#include <tnt/httpreply.h>
+#include <cxxtools/log.h>
+
+log_define("controller.page1")
+
+namespace
+{
+  class ${page}Controller : public tnt::Component
+  {
+    public:
+      unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+  };
+
+  static tnt::ComponentFactoryImpl<${page}Controller> factory("controller/${page}");
+
+  unsigned ${page}Controller::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
+  {
+    // TODO add code for processing user input
+    return DECLINED;
+  }
+
+}
+EOF
+
+        echo add view/$page.ecpp and controller/$page.cpp to Makefile.am
+        awk '
+    /ecppSources/{E=1}
+    E && /index\.ecpp/ { print "\tview/'$page'.ecpp \\"; E=0 }
+    /_SOURCES =/{S=1}
+    S && /main.cpp/ { print "\tcontroller/'$page'.cpp \\"; E=0 }
+    { print }' <Makefile.am.new >Makefile.am.tmp
+        mv Makefile.am.tmp Makefile.am.new
+
+        echo add menu item $page
+        awk '
+    /navitem/{M=1}
+    M && /<\/ul>/ { print "        <li class=\"navitem\"><a href=\"/'$page'\">'$page'</a></li>"; M=0 }
+    { print }' <webmain.ecpp.new >webmain.ecpp.tmp
+        mv webmain.ecpp.tmp webmain.ecpp.new
+
+    done
+
+    mv webmain.ecpp webmain.ecpp.old
+    mv webmain.ecpp.new webmain.ecpp
+    mv Makefile.am Makefile.am.old
+    mv Makefile.am.new Makefile.am
+}
+
+while test $# -gt 0
+do
+    case "$1" in
+    -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) optarg= ;;
+    esac
+
+    case "$1" in
+        --project=*|-p=*)
+            project=$optarg
+            ;;
+
+        --project|-p)
+            project=$2
+            shift
+            ;;
+
+        --page=*)
+            page="$page $optarg"
+            ;;
+
+        --page)
+            page="$page $2"
+            shift
+            ;;
+
+    *)
+        usage
+        exit 1
+        ;;
+    esac
+
+    shift
+done
+
+echo project=$project pages="$page"
+if [ "$project" ]
+then
+    project $project
+
+    cd $project
+
+    if [ "$page" ]
+    then
+        pages $page
+    fi
+
+    echo run autoreconf -i
+    autoreconf -i
+
+    echo run configure
+    ./configure
+
+    echo project $project created
+    echo change to directory $project and run make to build the application
+    echo execute ./$project there to run the application
+
+else
+    if [ "$page" ]
+    then
+        pages $page
+    fi
+fi
