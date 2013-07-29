@@ -466,31 +466,43 @@ namespace tnt
               if (tag == "application")
               {
                 scope_container = application_container;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scopearg0;
               }
               else if (tag == "thread")
               {
                 scope_container = thread_container;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scopearg0;
               }
               else if (tag == "session")
               {
                 scope_container = session_container;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scopearg0;
               }
               else if (tag == "securesession")
               {
                 scope_container = secure_session_container;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scopearg0;
               }
               else if (tag == "request")
               {
                 scope_container = request_container;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scopearg0;
               }
               else if (tag == "param")
               {
                 scope_container = param_container;
+                scope = default_scope;
+                scopeincludes.clear();
                 state = state_scopearg0;
               }
               else
@@ -1618,15 +1630,11 @@ namespace tnt
           case state_scopearg0:
             if (ch == '>')
             {
-              scope = default_scope;
-              scopeincludes.clear();
               state = state_scope0;
             }
             else if (!std::isspace(ch))
             {
               tagarg = ch;
-              scope = default_scope;
-              scopeincludes.clear();
               state = state_scopearg;
             }
             break;
