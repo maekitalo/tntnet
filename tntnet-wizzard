@@ -1,7 +1,6 @@
 #!/bin/sh
 
 EMAIL=your-email@somewhere
-HOMEPAGE=http://somewhere/
 
 usage()
 {
@@ -22,7 +21,7 @@ project()
     mkdir $pname $pname/manager $pname/model $pname/view $pname/controller $pname/resources
     echo create $pname/configure.ac
     cat >$pname/configure.ac <<EOF
-AC_INIT([${pname}], [0.1], [$EMAIL], [$HOMEPAGE])
+AC_INIT([${pname}], [0.1], [$EMAIL])
 AM_INIT_AUTOMAKE([foreign])
 
 AC_PROG_CXX
@@ -46,6 +45,9 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = ${pname}
 
+noinst_HEADERS = \\
+	configuration.h
+
 ecppSources = \\
 	index.ecpp \\
 	webmain.ecpp
@@ -66,6 +68,8 @@ AM_INCLUDES = -I\$(top_srcdir)/src
 ${pname}_LDFLAGS = -lcxxtools -ltntnet -ltntdb
 
 CLEANFILES = \$(ecppSources:.ecpp=.cpp) \$(ecppSources:.ecpp=.deps) resources.cpp
+
+EXTRA_DIST = \$(staticSources)
 
 #
 # Rules for tntnet applications

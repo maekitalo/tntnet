@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-bin_SCRIPTS = tntnet-config
+bin_SCRIPTS = tntnet-config tntnet-wizzard
 pkgdata_SCRIPTS = tntnet-conf2xml.pl
 
 tntnet-config: tntnet-config.in
