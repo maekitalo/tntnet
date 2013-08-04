@@ -14,6 +14,22 @@ EOF
     exit $1
 }
 
+checkProc()
+{
+  echo checking for $1
+  if ! which $1 >/dev/null 2>&1
+  then
+      echo ERROR: $1 not installed
+      exit 1
+  fi
+}
+
+checkSystem()
+{
+  checkProc autoreconf
+  checkProc automake
+}
+
 project()
 {
     pname=$1
@@ -304,6 +320,18 @@ EOF
 
 pages()
 {
+    if ! -d view
+    then
+        echo ERROR: view directory not found
+        exit 1
+    fi
+
+    if ! -d controller
+    then
+        echo ERROR: controller directory not found
+        exit 1
+    fi
+
     cp webmain.ecpp webmain.ecpp.new
     cp Makefile.am Makefile.am.new
 
@@ -388,11 +416,11 @@ do
             ;;
 
         --page=*)
-            page="$page $optarg"
+            pages="$pages $optarg"
             ;;
 
         --page)
-            page="$page $2"
+            pages="$pages $2"
             shift
             ;;
 
@@ -405,16 +433,24 @@ do
     shift
 done
 
-echo project=$project pages="$page"
+if [ ! "$project" -a ! "$page" ]
+then
+    usage
+    exit 1
+fi
+
+echo project=$project pages="$pages"
 if [ "$project" ]
 then
+    checkSystem
+
     project $project
 
     cd $project
 
-    if [ "$page" ]
+    if [ "$pages" ]
     then
-        pages $page
+        pages $pages
     fi
 
     echo run autoreconf -i
@@ -423,9 +459,11 @@ then
     echo run configure
     ./configure
 
-    echo project $project created
-    echo change to directory $project and run make to build the application
-    echo execute ./$project there to run the application
+    echo "============================================================"
+    echo "= project <$project> created"
+    echo "= change to directory <$project> and run <make> to build the application"
+    echo "= execute <./$project> there to run the application"
+    echo "============================================================"
 
 else
     if [ "$page" ]
