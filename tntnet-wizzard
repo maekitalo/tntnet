@@ -63,7 +63,7 @@ ${pname}_SOURCES = \\
 nodist_${pname}_SOURCES = \\
 	resources.cpp
 
-AM_INCLUDES = -I\$(top_srcdir)/src
+AM_CPPFLAGS = -I\$(top_srcdir)/src
 
 ${pname}_LDFLAGS = -lcxxtools -ltntnet -ltntdb
 
