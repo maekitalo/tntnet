@@ -21,7 +21,7 @@ namespace controller
 
   unsigned Accumulator::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
   {
-    TNT_SESSION_GLOBAL_VAR(model::Accumulator, accumulator, ());
+    TNT_SESSION_SHARED_VAR(model::Accumulator, accumulator, ());
 
     if (qparam.arg<bool>("increment"))
       accumulator.increment();
