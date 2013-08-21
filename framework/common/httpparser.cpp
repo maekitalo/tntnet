@@ -278,6 +278,8 @@ namespace tnt
       if (message.url.size() >= 2 && message.url[message.url.size() - 2] == '%')
       {
         unsigned v = (valueOfHexDigit(message.url[message.url.size() - 1]) << 4) | valueOfHexDigit(ch);
+        if (v == 0)
+          throw HttpError(HTTP_BAD_REQUEST, "invalid value in url");
         message.url[message.url.size() - 2] = static_cast<char>(v);
         message.url.resize(message.url.size() - 1);
         SET_STATE(state_url);
