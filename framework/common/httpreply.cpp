@@ -309,8 +309,8 @@ namespace tnt
 
     if (!hasHeader(httpheader::server))
     {
-      log_debug(httpheader::server << ' ' << httpheader::serverName);
-      hsocket << httpheader::server << ' ' << httpheader::serverName << "\r\n";
+      log_debug(httpheader::server << ' ' << TntConfig::it().server);
+      hsocket << httpheader::server << ' ' << TntConfig::it().server << "\r\n";
     }
 
     if (ready)
