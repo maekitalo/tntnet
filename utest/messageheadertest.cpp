@@ -40,6 +40,7 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
         : cxxtools::unit::TestSuite("messageheader-Test")
         {
             registerMethod("testMessageheader", *this, &MessageheaderTest::testMessageheader);
+            registerMethod("testMessageheaderColon", *this, &MessageheaderTest::testMessageheaderColon);
             registerMethod("testMessageheaderRemove", *this, &MessageheaderTest::testMessageheaderRemove);
             registerMethod("testMessageheaderParser", *this, &MessageheaderTest::testMessageheaderParser);
             registerMethod("testMessageheaderParserSize", *this, &MessageheaderTest::testMessageheaderParserSize);
@@ -57,6 +58,14 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
             CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
             CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
             CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
+        }
+
+        void testMessageheaderColon()
+        {
+            tnt::Messageheader mh;
+            mh.setHeader("blah", "tntnet", false);
+            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
         }
 
         void testMessageheaderRemove()
