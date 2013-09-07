@@ -327,15 +327,24 @@ namespace tnt
     n = ::SSL_shutdown(ssl);
     log_debug("ssl-shutdown => " << n);
 
-    log_debug("SSL_get_error(" << ssl << ", " << n << ')');
-    if ((err = SSL_get_error(ssl, n)) != SSL_ERROR_WANT_READ
-     && err != SSL_ERROR_WANT_WRITE)
-      checkSslError();
+    if (n == 1)
+      return;
 
-    if (getTimeout() == 0)
+    if (n == -1)
     {
-      log_debug("shutdown-timeout");
-      throw cxxtools::IOTimeout();
+      log_debug("SSL_get_error(" << ssl << ", " << n << ')');
+
+      err = SSL_get_error(ssl, n);
+
+      if (err != SSL_ERROR_WANT_READ
+       && err != SSL_ERROR_WANT_WRITE)
+        checkSslError();
+
+      if (getTimeout() == 0)
+      {
+        log_debug("shutdown-timeout");
+        throw cxxtools::IOTimeout();
+      }
     }
 
     do
@@ -347,11 +356,17 @@ namespace tnt
       n = ::SSL_shutdown(ssl);
       log_debug("SSL_shutdown returns " << n);
 
-      checkSslError();
+      if (n == 1)
+        return;
 
-    } while (n <= 0
-       && ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
-        || err == SSL_ERROR_WANT_WRITE));
+      if (n == 0)
+        continue;
+
+      checkSslError();
+      err = SSL_get_error(ssl, n);
+
+    } while (err == SSL_ERROR_WANT_READ
+          || err == SSL_ERROR_WANT_WRITE);
   }
 
   //////////////////////////////////////////////////////////////////////
