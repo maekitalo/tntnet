@@ -109,7 +109,7 @@ namespace tnt
     char* p = getEnd();
 
     size_t lk = std::strlen(key);     // length of key
-    size_t lk2 = key[lk-1] == ':' ? lk + 1 : lk;  // length of key including trailing ':'
+    size_t lk2 = key[lk-1] == ':' ? lk + 1 : lk + 2;  // length of key including trailing ':' and terminator
     size_t lv = std::strlen(value);   // length of value
 
     if (p - rawdata + lk2 + lv + 3 > MAXHEADERSIZE)

@@ -145,6 +145,7 @@ EOF
   <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
   <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
   <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
+  <!-- <server>Tntnet</server> -->
 
 </tntnet>
 EOF

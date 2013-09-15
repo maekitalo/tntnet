@@ -28,7 +28,6 @@
 
 
 #include "tnt/httpheader.h"
-#include "config.h"
 
 namespace tnt
 {
@@ -41,7 +40,6 @@ namespace tnt
     const char* connectionKeepAlive = "Keep-Alive";
     const char* lastModified = "Last-Modified:";
     const char* server = "Server:";
-    const char* serverName = "Tntnet/" VERSION;
     const char* location = "Location:";
     const char* accept = "Accept:";
     const char* acceptLanguage = "Accept-Language:";

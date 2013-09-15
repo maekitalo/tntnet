@@ -28,6 +28,7 @@
 
 #include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
+#include "config.h"
 
 log_define("tntnet.tntconfig")
 
@@ -169,6 +170,7 @@ namespace tnt
     si.getMember("backgroundTasks", config.backgroundTasks);
     si.getMember("timerSleep", config.timerSleep);
     si.getMember("documentRoot", config.documentRoot);
+    config.hasServer = !si.getMember("server", config.server) || !config.server.empty();
     si.getMember("includes", config.includes);
 
     config.config = si;
@@ -208,7 +210,9 @@ namespace tnt
       maxUrlMapCache(8192),
       defaultContentType("text/html; charset=UTF-8"),
       backgroundTasks(5),
-      timerSleep(10)
+      timerSleep(10),
+      hasServer(true),
+      server("Tntnet/" VERSION)
   { }
 
   TntConfig& TntConfig::it()

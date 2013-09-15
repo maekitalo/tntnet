@@ -43,7 +43,6 @@ namespace tnt
     extern const char* connectionKeepAlive;
     extern const char* lastModified;
     extern const char* server;
-    extern const char* serverName;
     extern const char* location;
     extern const char* accept;
     extern const char* acceptLanguage;
