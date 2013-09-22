@@ -502,7 +502,7 @@ int main(int argc, char* argv[])
     app.mapUrl("^/$", "${project}");
 
     // map /comp.* or /comp to comp
-    app.mapUrl("^/([^.]+)(\..+)?", "\$1");
+    app.mapUrl("^/([^.]+)(\\..+)?", "\$1");
 
     app.run();
   }
@@ -531,6 +531,7 @@ EOF
 <%cpp>
 // put your C++ code here
 </%cpp>
+<!DOCTYPE html>
 <html>
  <head>
   <title>ecpp application ${project}</title>
