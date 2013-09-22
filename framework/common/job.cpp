@@ -239,6 +239,9 @@ namespace tnt
     }
 
     jobs.push_back(j);
+    // We have to drop ownership before releasing the lock of the queue.
+    // Therefore we set the smart pointer to 0.
+    j = 0;
 
     if (waitThreads == 0)
       noWaitThreads.signal();
