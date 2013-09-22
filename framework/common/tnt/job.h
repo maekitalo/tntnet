@@ -117,7 +117,7 @@ namespace tnt
           capacity(capacity_)
         { }
 
-      void put(JobPtr j, bool force = false);
+      void put(JobPtr& j, bool force = false);
       JobPtr get();
 
       void setCapacity(unsigned c)

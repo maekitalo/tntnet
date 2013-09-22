@@ -89,7 +89,8 @@ namespace tnt
       queue(q)
   {
     doListenRetry(server, ipaddr_.c_str(), port_);
-    queue.put(new Tcpjob(application, server, queue));
+    Jobqueue::JobPtr p = new Tcpjob(application, server, queue);
+    queue.put(p);
   }
 
   void Listener::doTerminate()
@@ -122,7 +123,8 @@ namespace tnt
       queue(q)
   {
     doListenRetry(server, ipaddr_.c_str(), port_);
-    queue.put(new SslTcpjob(application, server, queue));
+    Jobqueue::JobPtr p = new SslTcpjob(application, server, queue);
+    queue.put(p);
   }
 
   void Ssllistener::doTerminate()
