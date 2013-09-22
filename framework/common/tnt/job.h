@@ -71,7 +71,7 @@ namespace tnt
   class Tntnet;
 
   /** Job - one per request */
-  class Job : public cxxtools::AtomicRefCounted
+  class Job : public cxxtools::RefCounted
   {
       unsigned keepAliveCounter;
 
