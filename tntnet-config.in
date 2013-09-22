@@ -213,6 +213,7 @@ project()
 <%cpp>
 // put your C++ code here
 </%cpp>
+<!DOCTYPE html>
 <html>
  <head>
   <title>ecpp application $P</title>
@@ -456,6 +457,7 @@ EOF
   foo.setStringValue("Hello world!");
 
 </%cpp>
+<!DOCTYPE html>
 <html>
  <head>
   <title>ecpp application $P</title>
