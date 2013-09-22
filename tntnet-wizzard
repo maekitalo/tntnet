@@ -326,13 +326,13 @@ EOF
 
 pages()
 {
-    if ! -d view
+    if [ ! -d view ]
     then
         echo ERROR: view directory not found
         exit 1
     fi
 
-    if ! -d controller
+    if [ ! -d controller ]
     then
         echo ERROR: controller directory not found
         exit 1
