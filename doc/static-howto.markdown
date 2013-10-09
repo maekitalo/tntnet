@@ -1,4 +1,4 @@
-﻿Static files with Tntnet
+Static files with Tntnet
 ========================
 
 Introduction
