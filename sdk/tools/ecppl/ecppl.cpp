@@ -41,6 +41,13 @@ int main(int argc, char* argv[])
   std::ios::sync_with_stdio(false);
   try
   {
+    cxxtools::Arg<bool> version(argc, argv, "--version");
+    if (version)
+    {
+      std::cout << PACKAGE_STRING "\n" << std::flush;
+      return 0;
+    }
+
     cxxtools::Arg<bool> lang(argc, argv, 'l');
     cxxtools::Arg<bool> nolang(argc, argv, 'n');
     cxxtools::Arg<const char*> ofile(argc, argv, 'o');
