@@ -62,7 +62,7 @@ namespace tnt
       {
         unsigned slen = it->second - it->first + std::strlen(it->second) + 1;
 
-        std::memcpy(
+        std::memmove(
             const_cast<char*>(it->first),
             it->first + slen,
             p - it->first + slen);
