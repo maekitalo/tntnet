@@ -40,7 +40,7 @@ namespace tnt
 class HttpRequest;
 class HttpReply;
 class QueryParams;
-class TntConfig;
+struct TntConfig;
 
 class Component
 {
