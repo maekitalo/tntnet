@@ -407,7 +407,7 @@ each request to a existing value. This accumulation is our business logic, which
 is held in a C++ class. Another new concept, what we need here is some sort of
 persistence between requests. We actually need a session.
 
-We create a project `accumulate` usint `tntnet-config --project=accumulate`.
+We create a project `accumulate` using `tntnet-config --project=accumulate`.
 
 We create a C++ class `Accumulator` next, which implements the actual
 calculation. So our header `accumulator.h` might look like that:
