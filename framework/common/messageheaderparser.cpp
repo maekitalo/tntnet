@@ -204,6 +204,7 @@ namespace tnt
                    break;
       }
 
+      *headerdataPtr = '\0';
       return true;
     }
     else if (std::isspace(ch))
@@ -259,7 +260,10 @@ namespace tnt
   void Messageheader::Parser::checkHeaderspace(unsigned chars) const
   {
     if (headerdataPtr + chars >= header.rawdata + sizeof(header.rawdata))
+    {
+      header.rawdata[sizeof(header.rawdata) - 1] = '\0';
       throw HttpError(HTTP_REQUEST_ENTITY_TOO_LARGE, "header too large");
+    }
   }
 
   void Messageheader::Parser::reset()
