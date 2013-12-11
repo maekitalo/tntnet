@@ -93,10 +93,14 @@ namespace tnt
 
   void Tcpjob::regenerateJob()
   {
+    Jobqueue::JobPtr p;
+
     if (Tntnet::shouldStop())
-      queue.put(this);
+      p = this;
     else
-      queue.put(new Tcpjob(getRequest().getApplication(), listener, queue));
+      p = new Tcpjob(getRequest().getApplication(), listener, queue);
+
+    queue.put(p);
   }
 
   std::iostream& Tcpjob::getStream()
@@ -172,10 +176,14 @@ namespace tnt
 
   void SslTcpjob::regenerateJob()
   {
+    Jobqueue::JobPtr p;
+
     if (Tntnet::shouldStop())
-      queue.put(this);
+      p = this;
     else
-      queue.put(new SslTcpjob(getRequest().getApplication(), listener, queue));
+      p = new SslTcpjob(getRequest().getApplication(), listener, queue);
+
+    queue.put(p);
   }
 
   std::iostream& SslTcpjob::getStream()
@@ -223,7 +231,7 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // Jobqueue
   //
-  void Jobqueue::put(JobPtr j, bool force)
+  void Jobqueue::put(JobPtr& j, bool force)
   {
     j->touch();
 

@@ -223,7 +223,12 @@ int main(int argc, char* argv[])
 
   try
   {
-    std::cout << PACKAGE_STRING "\n" << std::flush;
+    cxxtools::Arg<bool> version(argc, argv, "--version");
+    if (version)
+    {
+      std::cout << PACKAGE_STRING "\n" << std::flush;
+      return 0;
+    }
 
     cxxtools::Arg<bool> help1(argc, argv, 'h');
     cxxtools::Arg<bool> help2(argc, argv, '?');

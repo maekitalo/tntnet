@@ -243,6 +243,13 @@ int main(int argc, char* argv[])
 
   try
   {
+    cxxtools::Arg<bool> version(argc, argv, "--version");
+    if (version)
+    {
+      std::cout << PACKAGE_STRING "\n" << std::flush;
+      return 0;
+    }
+
     cxxtools::Arg<const char*> ofile(argc, argv, 'o');
     cxxtools::Arg<bool> fail_on_warn(argc, argv, 'F');
 

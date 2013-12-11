@@ -1,8 +1,8 @@
 Installation from git
 =====================
 
-In the git-repository there is no configure-script, but configure.ac,
-which is the source for configure. You need autoconf and automake to
-create configure.
+In the git repository there is no configure-script, but configure.ac,
+which is the source for configure. You need autoconf, automake and libtool
+to create configure.
 
-Run `autoscan -i` to generate a configure script.
+Run `autoreconf -i` to generate a configure script.

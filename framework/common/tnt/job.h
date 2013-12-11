@@ -71,7 +71,7 @@ namespace tnt
   class Tntnet;
 
   /** Job - one per request */
-  class Job : public cxxtools::AtomicRefCounted
+  class Job : public cxxtools::RefCounted
   {
       unsigned keepAliveCounter;
 
@@ -120,7 +120,7 @@ namespace tnt
           capacity(capacity_)
         { }
 
-      void put(JobPtr j, bool force = false);
+      void put(JobPtr& j, bool force = false);
       JobPtr get();
 
       void setCapacity(unsigned c)
