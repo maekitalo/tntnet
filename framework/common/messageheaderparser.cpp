@@ -194,14 +194,10 @@ namespace tnt
     else if (ch == '\n')
     {
       log_debug("header " << fieldnamePtr << ": " << fieldbodyPtr);
-      switch (header.onField(fieldnamePtr, fieldbodyPtr))
+      if (header.onField(fieldnamePtr, fieldbodyPtr) == FAIL)
       {
-        case OK:
-        case END:  return true;
-                   break;
-        case FAIL: failedFlag = true;
-                   log_warn("invalid character " << chartoprint(ch) << " in fieldbody");
-                   break;
+        failedFlag = true;
+        log_warn("invalid character " << chartoprint(ch) << " in fieldbody");
       }
 
       *headerdataPtr = '\0';
