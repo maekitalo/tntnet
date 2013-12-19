@@ -266,6 +266,10 @@ namespace tnt
   unsigned Static::doCall(HttpRequest& request,
     HttpReply& reply, QueryParams& qparams, bool top)
   {
+    if (!tnt::HttpRequest::checkUrl(request.getPathInfo())
+      || request.getPathInfo().find('\0') != std::string::npos)
+      throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
+
     // fetch document root from arguments or take global setting as default
 
     std::string file = request.getArg("documentRoot", TntConfig::it().documentRoot);
