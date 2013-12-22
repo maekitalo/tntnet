@@ -71,7 +71,8 @@ namespace tnt
   unsigned Fstatic::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {
-    if (!tnt::HttpRequest::checkUrl(request.getPathInfo()))
+    if (!tnt::HttpRequest::checkUrl(request.getPathInfo())
+      || request.getPathInfo().find('\0') != std::string::npos)
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
     std::string file;
