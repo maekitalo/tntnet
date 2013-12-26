@@ -1,3 +1,23 @@
+2013-12-?? tommi@tntnet.org
+
+ - release version 2.2.1
+
+2013-12-26 tommi@tntnet.org
+
+ - fix changing root dir of tntnet
+
+2013-12-11 tommi@tntnet.org
+
+ - fix possible information leak
+
+2013-09-22 tommi@tntnet.org
+
+ - fix racing condition: releasing request may result in a pthread unlock error
+
+2013-04-21 tommi@tntnet.org
+
+ - release version 2.2
+
 2013-04-08 tommi@tntnet.org
 
  - release candidate 2.2rc3
