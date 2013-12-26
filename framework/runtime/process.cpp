@@ -94,7 +94,7 @@ namespace
 
   void setRootdir(const std::string& dir)
   {
-    if (!::chroot(dir.c_str()) == -1)
+    if (::chroot(dir.c_str()) == -1)
       throw cxxtools::SystemError("chroot");
   }
 
