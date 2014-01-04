@@ -35,6 +35,7 @@
 
 namespace tnt
 {
+  /// @cond internal
   class PollerIf : private cxxtools::NonCopyable
   {
     public:
@@ -44,8 +45,10 @@ namespace tnt
       virtual void addIdleJob(Jobqueue::JobPtr job) = 0;
   };
 
+  /// @cond internal
   class Poller
   {
+    private:
       PollerIf* impl;
 
     public:
@@ -57,7 +60,6 @@ namespace tnt
       void doStop()                          { impl->doStop(); }
       void addIdleJob(Jobqueue::JobPtr job)  { impl->addIdleJob(job); }
   };
-
 }
 
 #endif // TNT_POLLER_H

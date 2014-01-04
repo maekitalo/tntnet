@@ -124,7 +124,10 @@ namespace tnt
       static cxxtools::Mutex timeStopMutex;
 
     public:
-      /// Create a Tntnet object with default configuration
+      /** Create a Tntnet object with default configuration
+
+          For information on the default configuration options, see TntConfig
+       */
       Tntnet();
 
       /// Load server configuration from a TntConfig object
@@ -149,13 +152,15 @@ namespace tnt
 
           See listen() for more information.
        */
-      void sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ipaddr, unsigned short int port);
+      void sslListen(const std::string& certificateFile, const std::string& keyFile,
+                     const std::string& ipaddr, unsigned short int port);
 
       /** Set up a ssl listener for the specified port which listens on all local interfaces
 
           See listen() for more information.
        */
-      void sslListen(const std::string& certificateFile, const std::string& keyFile, unsigned short int port)
+      void sslListen(const std::string& certificateFile, const std::string& keyFile,
+                     unsigned short int port)
       { sslListen(certificateFile, keyFile, std::string(), port); }
 
       /** Start all needed threads and the application loop
@@ -172,16 +177,16 @@ namespace tnt
       /// Tells whether a shutdown request was initiated
       static bool shouldStop()                { return stop; }
 
-      /// Get the queue which holds active http requests
+      /// @cond internal
       Jobqueue&   getQueue()                  { return queue; }
 
-      /// Get the poller thread object
+      /// @cond internal
       Poller&     getPoller()                 { return poller; }
 
-      /// Get the dispatcher object
+      /// @cond internal
       const Dispatcher& getDispatcher() const { return dispatcher; }
 
-      /// Get the scope manager object
+      /// @cond internal
       ScopeManager& getScopemanager()         { return scopemanager; }
 
       /// Get the minimum number of worker threads

@@ -70,8 +70,8 @@ namespace tnt
 {
   class Tntnet;
 
-  /** Job - one per request */
-  class Job : public cxxtools::RefCounted
+  /// @cond internal
+  class Job : public cxxtools::RefCounted // one per request
   {
       unsigned keepAliveCounter;
 
@@ -98,8 +98,8 @@ namespace tnt
       int msecToTimeout(time_t currentTime) const;
   };
 
-  /** Jobqueue - one per process */
-  class Jobqueue
+  /// @cond internal
+  class Jobqueue // one per process
   {
     public:
       typedef cxxtools::SmartPtr<Job> JobPtr;
