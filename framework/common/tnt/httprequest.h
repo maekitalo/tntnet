@@ -207,6 +207,9 @@ namespace tnt
       bool isMultipart() const               { return getContentType().isMultipart(); }
       const Multipart& getMultipart() const  { return mp; }
 
+      /**
+       * return the number of request.
+       */
       cxxtools::atomic_t getSerial() const   { return serial; }
 
       const std::locale& getLocale() const;
