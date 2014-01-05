@@ -1,0 +1,15 @@
+[Unit]
+Description=tntnet web application server
+ 
+[Service]
+Type=forking
+EnvironmentFile=/etc/tntnet/tntnet.conf
+EnvironmentFile=/etc/tntnet/tntnet.properties
+PIDFile=/var/run/tntnet.pid
+ExecStart=/usr/bin/tntnet
+ExecStop=/bin/kill -15 $MAINPID
+ExecReload=/bin/kill -HUP $MAINPID
+ 
+[Install]
+WantedBy=multi-user.target
+
