@@ -145,6 +145,7 @@ EOF
   <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
   <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
   <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
+  <!-- <server>Tntnet</server> -->
 
 </tntnet>
 EOF
@@ -212,6 +213,7 @@ project()
 <%cpp>
 // put your C++ code here
 </%cpp>
+<!DOCTYPE html>
 <html>
  <head>
   <title>ecpp application $P</title>
@@ -256,9 +258,9 @@ Running make, finally compiles the application.
 To run the application, change to the webapp directory and enter "tntnet".
 You find your webapplication on port 8000.
 
-You may want to add your e-mail adress to the AC_INIT macro in configure.in.
+You may want to add your e-mail adress to the AC_INIT macro in configure.ac.
 EOF
-  cat >$P/configure.in <<EOF
+  cat >$P/configure.ac <<EOF
 AC_INIT($P, 0.1, [])
 AM_INIT_AUTOMAKE
 
@@ -276,7 +278,6 @@ AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 
 AC_LANG(C++)
 AC_CHECK_HEADER([tnt/tntnet.h], , AC_MSG_ERROR([tntnet headers not found]))
@@ -455,6 +456,7 @@ EOF
   foo.setStringValue("Hello world!");
 
 </%cpp>
+<!DOCTYPE html>
 <html>
  <head>
   <title>ecpp application $P</title>

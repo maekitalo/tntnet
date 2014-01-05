@@ -369,6 +369,19 @@ The default value is 1000.
 .fi
 .RE
 .PP
+\fB\fC<server>\fR\fIname\fP\fB\fC</server>\fR
+.IP
+Set the server response header. Tntnet sets the http header "Server:" to
+"Tntnet/version" by default. Whith this setting the header can be changed.
+.IP
+\fIExample\fP
+.PP
+.RS
+.nf
+<server>Myserver version 1.2</server>
+.fi
+.RE
+.PP
 \fB\fC<sessionTimeout>\fR\fIseconds\fP\fB\fC</sessionTimeout>\fR
 .IP
 This sets the number of seconds without requests after which a sesssion is

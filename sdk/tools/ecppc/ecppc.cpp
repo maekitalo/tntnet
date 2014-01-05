@@ -387,6 +387,13 @@ int main(int argc, char* argv[])
 
   try
   {
+    cxxtools::Arg<bool> version(argc, argv, "--version");
+    if (version)
+    {
+      std::cout << PACKAGE_STRING "\n" << std::flush;
+      return 0;
+    }
+
     log_init();
     tnt::ecppc::Ecppc app(argc, argv);
     return app.run();

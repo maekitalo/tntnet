@@ -291,6 +291,15 @@ This section describes the variables, used by Tntnet (8).
 
     <queueSize>50</queueSize>
 
+`<server>`*name*`</server>`
+
+  Set the server response header. Tntnet sets the http header "Server:" to
+  "Tntnet/version" by default. Whith this setting the header can be changed.
+
+  *Example*
+
+    <server>Myserver version 1.2</server>
+
 `<sessionTimeout>`*seconds*`</sessionTimeout>`
 
   This sets the number of seconds without requests after which a sesssion is

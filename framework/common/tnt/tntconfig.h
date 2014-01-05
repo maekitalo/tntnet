@@ -111,6 +111,8 @@ namespace tnt
     cxxtools::SerializationInfo config;
     EnvironmentType environment;
     std::string documentRoot;
+    bool hasServer;
+    std::string server;
     std::vector<std::string> includes;
 
     TntConfig();

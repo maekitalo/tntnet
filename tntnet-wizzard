@@ -7,9 +7,11 @@ usage()
     cat <<EOF
 Usage: $0 [OPTION]
 
-  --simple=app      create a simple project directory
-  --mvc=app         create a mvc project directory
-  --page=app        add a page to the existing project
+  --project=<projectname>  create a minmal project
+  --app=<projectname>      create a minmal project as a standalone application
+  --mvc=<projectname>      create a mvc project
+  --page=<pagename>        add a page to the existing mvc project
+  --config=<projectname>   create a tntnet.xml file for the application
 EOF
 
     exit $1
@@ -29,19 +31,124 @@ checkSystem()
 {
     if [ -e "$1" ]
     then
-        echo ERROR: $1 does already exits
+        echo ERROR: $1 does already exists
         exit 1
     fi
     checkProc autoreconf
     checkProc automake
 }
 
+tntnet_xml()
+{
+    if [ -f "tntnet.xml" ]
+    then
+        echo ERROR: tntnet.xml does already exists
+        exit 1
+    fi
+
+    echo create tntnet.xml
+    project=$1
+    cat >tntnet.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is the main configuration file for tntnet.
+
+  You can find documentation about the parameters in the man page tntnet.xml(7)
+  -->
+<tntnet>
+  <mappings>
+    <!-- map / to $project@$project -->
+    <mapping>
+      <target>$project@$project</target>
+      <url>^/$</url>
+    </mapping>
+    <!-- map /comp.* or /comp to comp@$project -->
+    <mapping>
+      <target>\$1@$project</target>
+      <url>^/([^.]+)(\..+)?</url>
+    </mapping>
+  </mappings>
+
+  <!-- listen to a port (empty string means any local interface) -->
+  <listeners>
+    <listener>
+      <port>8000</port>
+    </listener>
+  <!-- a certificate enables ssl -->
+  <!--
+    <listener>
+      <port>8443</port>
+      <certificate>tntnet.pem</certificate>
+    </listener>
+    -->
+  </listeners>
+
+  <logging>
+    <rootlogger>INFO</rootlogger>
+
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+      <logger>
+        <category>component.$project</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+
+    <!--
+    <file>tntnet.log</file>
+    <maxfilesize>10M</maxfilesize>
+    <maxbackupindex>2</maxbackupindex>
+    -->
+
+  </logging>
+
+  <!-- <maxRequestSize>65536</maxRequestSize> -->
+  <!-- <maxRequestTime>600</maxRequestTime> -->
+  <!-- <user>tntnet</user> -->
+  <!-- <group>tntnet</group> -->
+  <!-- <dir>/</dir> -->
+  <!-- <chrootdir>/var/safedir</chrootdir> -->
+  <!-- <pidfile>/var/run/tntnet.pid</pidfile> -->
+  <!-- <daemon>0</daemon> -->
+  <!-- <minThreads>5</minThreads> -->
+  <!-- <maxThreads>100</maxThreads> -->
+  <!-- <threadStartDelay>10</threadStartDelay> -->
+  <!-- <queueSize>1000</queueSize> -->
+  <compPath>
+    <entry>.libs</entry>
+  </compPath>
+  <!-- <bufferSize>16384</bufferSize> -->
+  <!-- <socketReadTimeout>10</socketReadTimeout> -->
+  <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
+  <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->
+  <!-- <keepAliveMax>1000</keepAliveMax> -->
+  <!-- <sessionTimeout>300</sessionTimeout> -->
+  <!-- <listenBacklog>64</listenBacklog> -->
+  <!-- <listenRetry>5</listenRetry> -->
+  <!-- <enableCompression>no</enableCompression> -->
+  <!-- <mimeDb>/etc/mime.types</mimeDb> -->
+  <!-- <minCompressSize>1024</minCompressSize> -->
+  <!-- <maxUrlMapCache>8192</maxUrlMapCache> -->
+  <!-- <defaultContentType>text/html; charset=UTF-8</defaultContentType> -->
+  <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
+  <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
+  <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
+  <!-- <server>Tntnet</server> -->
+
+</tntnet>
+EOF
+}
+
 project()
 {
     project=$1
+    srcdir=$project/src
 
-    echo create directories $project $project/manager $project/model $project/view $project/controller $project/resources
-    mkdir $project $project/manager $project/model $project/view $project/controller $project/resources
+    echo create directories $project $srcdir $srcdir/manager $srcdir/model $srcdir/view $srcdir/controller $srcdir/resources
+    mkdir $project $srcdir $srcdir/manager $srcdir/model $srcdir/view $srcdir/controller $srcdir/resources
 
     echo create $project/configure.ac
     cat >$project/configure.ac <<EOF
@@ -60,11 +167,18 @@ AC_PROG_SED
 
 AC_OUTPUT([
     Makefile
+    src/Makefile
 ])
 EOF
 
     echo create $project/Makefile.am
     cat >$project/Makefile.am <<EOF
+SUBDIRS = src
+ACLOCAL_AMFLAGS = -I m4 --install
+EOF
+
+    echo create $srcdir/Makefile.am
+    cat >$srcdir/Makefile.am <<EOF
 AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = ${project}
@@ -113,8 +227,8 @@ SUFFIXES=.ecpp .ico .cpp
 -include \$(ecppSources:.ecpp=.deps)
 EOF
 
-    echo create $project/main.cpp
-    cat >$project/main.cpp <<EOF
+    echo create $srcdir/main.cpp
+    cat >$srcdir/main.cpp <<EOF
 #include <iostream>
 #include <configuration.h>
 #include <tnt/tntnet.h>
@@ -168,8 +282,8 @@ int main(int argc, char* argv[])
 
 EOF
 
-    echo create $project/webmain.ecpp
-    cat >$project/webmain.ecpp <<EOF
+    echo create $srcdir/webmain.ecpp
+    cat >$srcdir/webmain.ecpp <<EOF
 <%session scope="shared">
 </%session>
 <%request scope="shared">
@@ -199,8 +313,8 @@ EOF
 </html>
 EOF
 
-    echo create $project/${project}.conf
-    cat >$project/${project}.conf <<EOF
+    echo create $srcdir/${project}.conf
+    cat >$srcdir/${project}.conf <<EOF
 listen.port 8000
 sessiontimeout 3600
 
@@ -210,15 +324,15 @@ rootlogger    INFO
 logger.${project}  INFO
 EOF
 
-    echo create $project/index.ecpp
-    cat >$project/index.ecpp <<EOF
+    echo create $srcdir/index.ecpp
+    cat >$srcdir/index.ecpp <<EOF
 <h1>${project}</h1>
 
 Welcome to the ${project} application.
 EOF
 
-    echo create $project/configuration.cpp
-    cat >$project/configuration.cpp <<EOF
+    echo create $srcdir/configuration.cpp
+    cat >$srcdir/configuration.cpp <<EOF
 /*
  * Copyright (C) 2013 Tommi Maekitalo
  *
@@ -269,8 +383,8 @@ Configuration& Configuration::it()
 }
 EOF
 
-    echo create $project/configuration.h
-    cat >$project/configuration.h <<EOF
+    echo create $srcdir/configuration.h
+    cat >$srcdir/configuration.h <<EOF
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
@@ -316,8 +430,8 @@ class Configuration
 #endif // CONFIGURATION_H
 EOF
 
-    echo create $project/$project.css
-    cat >$project/resources/$project.css <<EOF
+    echo create $srcdir/$project.css
+    cat >$srcdir/resources/$project.css <<EOF
 /* add your css here */
 EOF
 
@@ -326,13 +440,13 @@ EOF
 
 pages()
 {
-    if ! -d view
+    if [ ! -d view ]
     then
         echo ERROR: view directory not found
         exit 1
     fi
 
-    if ! -d controller
+    if [ ! -d controller ]
     then
         echo ERROR: controller directory not found
         exit 1
@@ -365,7 +479,7 @@ EOF
 #include <tnt/httpreply.h>
 #include <cxxtools/log.h>
 
-log_define("controller.page1")
+log_define("controller.$page")
 
 namespace
 {
@@ -417,6 +531,120 @@ EOF
 }
 
 simpleproject()
+{
+    project=$1
+
+    echo create directory $project
+    mkdir $project
+
+    (
+        cd $project
+        tntnet_xml $project
+    )
+
+    echo create $project/configure.ac
+    cat >$project/configure.ac <<EOF
+AC_INIT([${project}], [0.1], [your-email@somewhere])
+AM_INIT_AUTOMAKE([foreign])
+LT_INIT([disable-static])
+
+AC_PROG_CXX
+AC_LANG(C++)
+
+AC_CONFIG_HEADERS([config.h])
+AC_CHECK_HEADER([cxxtools/mutex.h], , AC_MSG_ERROR([cxxtools headers not found]))
+AC_CHECK_HEADER([tnt/tntnet.h], , AC_MSG_ERROR([tntnet headers not found]))
+#AC_CHECK_HEADER([tntdb/connection.h], , AC_MSG_ERROR([tntdb headers not found]))
+AC_CHECK_PROGS(ECPPC, [ecppc])
+AC_PROG_SED
+
+AC_OUTPUT([
+    Makefile
+])
+EOF
+
+    echo create $project/Makefile.am
+    cat >$project/Makefile.am <<EOF
+AUTOMAKE_OPTIONS = subdir-objects
+
+pkglib_LTLIBRARIES = ${project}.la
+
+ecppSources = \\
+	${project}.ecpp
+
+${project}_la_SOURCES = \\
+	\$(ecppSources)
+
+${project}_la_LDFLAGS = -module -shared -lcxxtools -ltntnet
+
+CLEANFILES = \$(ecppSources:.ecpp=.cpp) \$(ecppSources:.ecpp=.deps) resources.cpp
+
+#
+# Rules for tntnet applications
+#
+
+SUFFIXES=.ecpp .ico .cpp
+
+.ecpp.cpp:
+	\$(ECPPC) -I \$(top_srcdir)/src -n \$(basename \$<) -o \$@ \$<
+.ecpp.deps:
+	\$(ECPPC) -M -n \$* -I \$(srcdir) -I \$(srcdir)/include \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
+.ico.cpp:
+	\$(ECPPC) -b -m image/x-icon -o \$@ \$<
+
+-include \$(ecppSources:.ecpp=.deps)
+EOF
+
+    echo create $project.ecpp
+    cat >$project/$project.ecpp <<EOF
+<%pre>
+// put your includes here
+// #include "${project}.h"
+</%pre>
+<%args>
+// define the query parameters
+// bar;
+</%args>
+<%session>
+// define your session scope variables here
+// std::string mySessionState;
+</%session>
+<%cpp>
+// put your C++ code here
+</%cpp>
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>ecpp application ${project}</title>
+ </head>
+ <body>
+  <h1>${project}</h1>
+  <p>Hello world!</p>
+ </body>
+</html>
+EOF
+
+    echo create log.properties
+    cat >$project/log.properties <<EOF
+rootlogger    INFO
+logger.${project}  INFO
+
+#file = ${project}     # this enables logging to a file
+
+# setting maxfilesize and maxbackupindex enables rolling of file
+# when file reaches maxfilesize, it is renamed to file.0 and a new file is created
+# file.0 gets file.1 and so on up to maxbackupindex
+#maxfilesize = 1M
+#maxbackupindex = 2
+
+#stdout = 1          # log to stdout instead of stderr if set
+
+#loghost = hostname  # send loging via udp to host
+#broadcast = 1       # set when loghost is a network address
+EOF
+}
+
+appproject()
 {
     project=$1
 
@@ -502,7 +730,7 @@ int main(int argc, char* argv[])
     app.mapUrl("^/$", "${project}");
 
     // map /comp.* or /comp to comp
-    app.mapUrl("^/([^.]+)(\..+)?", "\$1");
+    app.mapUrl("^/([^.]+)(\\..+)?", "\$1");
 
     app.run();
   }
@@ -531,6 +759,7 @@ EOF
 <%cpp>
 // put your C++ code here
 </%cpp>
+<!DOCTYPE html>
 <html>
  <head>
   <title>ecpp application ${project}</title>
@@ -617,33 +846,28 @@ do
     esac
 
     case "$1" in
-        --simple=*)
+        --config=*)
             project=$optarg
-            simple=1
+            config=1
             ;;
 
-        --simple|-s)
-            project=$2
-            simple=1
+        --project=*)
+            project=$optarg
+            simpleproject=1
+            ;;
+
+        --app=*)
+            project=$optarg
+            appproject=1
             shift
             ;;
 
-        --mvc=*|-m=*)
+        --mvc=*)
             project=$optarg
-            ;;
-
-        --mvc|-m)
-            project=$2
-            shift
             ;;
 
         --page=*)
             pages="$pages $optarg"
-            ;;
-
-        --page)
-            pages="$pages $2"
-            shift
             ;;
 
     *)
@@ -655,15 +879,44 @@ do
     shift
 done
 
-if [ ! "$project" -a ! "$pages" ]
+if [ ! "$project" -a ! "$pages" -a ! "$config" ]
 then
-  echo failed
     usage
     exit 1
 fi
 
+if [ "$config" ]
+then
+    tntnet_xml $project
+    exit 0
+fi
+
 echo project=$project pages="$pages"
-if [ "$simple" ]
+if [ "$appproject" ]
+then
+    checkSystem $project
+    appproject $project
+
+    cd $project
+
+    if [ "$pages" ]
+    then
+        simplepages $pages
+    fi
+
+    echo run autoreconf -i
+    autoreconf -i
+
+    echo run configure
+    ./configure
+
+    echo "============================================================"
+    echo "= project <$project> created"
+    echo "= change to directory <$project> and run <make> to build the application"
+    echo "= execute <./$project> there to run the application"
+    echo "============================================================"
+
+elif [ "$simpleproject" ]
 then
     checkSystem $project
     simpleproject $project
@@ -684,7 +937,7 @@ then
     echo "============================================================"
     echo "= project <$project> created"
     echo "= change to directory <$project> and run <make> to build the application"
-    echo "= execute <./$project> there to run the application"
+    echo "= execute <tntnet> there to run the application"
     echo "============================================================"
 
 elif [ "$project" ]
@@ -709,7 +962,7 @@ then
     echo "============================================================"
     echo "= project <$project> created"
     echo "= change to directory <$project> and run <make> to build the application"
-    echo "= execute <./$project> there to run the application"
+    echo "= execute <./$project> in the src directory to run the application"
     echo "============================================================"
 
 else
