@@ -99,8 +99,8 @@ namespace tnt
 
   };
 
-  // Dispatcher - one per host
-  class Dispatcher : public Urlmapper
+  /// @cond internal
+  class Dispatcher : public Urlmapper // one per host
   {
       typedef std::vector<Mapping> urlmap_type;
       urlmap_type urlmap;   // map url to soname/compname

@@ -42,6 +42,7 @@ namespace tnt
   class HttpRequest;
   class HttpReply;
 
+  /// @cond internal
   class ScopeManager
   {
     public:
