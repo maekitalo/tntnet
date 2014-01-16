@@ -53,8 +53,8 @@
   </listeners>
 
   <daemon>1</daemon>
-  <user>www-data</user>
-  <group>www-data</group>
+  <user>tntnet</user>
+  <group>tntnet</group>
   <pidfile>@localstatedir@/run/tntnet.pid</pidfile>
   <documentRoot>/var/www</documentRoot>
   <compPath>

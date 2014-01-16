@@ -1,0 +1,34 @@
+<%args>
+str = "Hello";
+</%args>
+<%cpp>
+
+/*
+ we could put the string directly to the img tag using:
+
+  <img src="imgstr?str=<$ str $>">
+
+ but then the string is not correctly url encoded. Hence we build a QueryParams
+ object which has a method getUrl(), which returns a url encoded string with
+ the parameters.
+*/
+
+cxxtools::QueryParams q;
+q.add("str", str);
+
+</%cpp>
+<html>
+ <head>
+  <title>ecpp-application gd</title>
+ </head>
+ <body>
+  <h1>gd</h1>
+  <p>enter your text</p>
+  <form>
+    <input type="text" name="str" value="<$ str $>">
+    <input type="submit" value="update">
+  </form>
+
+  <img src="imgstr?<$ q.getUrl() $>">
+ </body>
+</html>
