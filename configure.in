@@ -3,7 +3,7 @@ AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
 
-abi_current=11
+abi_current=12
 abi_revision=0
 abi_age=0
 sonumber=${abi_current}:${abi_revision}:${abi_age}
