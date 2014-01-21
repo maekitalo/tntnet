@@ -167,7 +167,6 @@ namespace tnt
     si.getMember("defaultContentType", config.defaultContentType);
     si.getMember("accessLog", config.accessLog);
     si.getMember("errorLog", config.errorLog);
-    si.getMember("backgroundTasks", config.backgroundTasks);
     si.getMember("timerSleep", config.timerSleep);
     si.getMember("documentRoot", config.documentRoot);
     config.hasServer = !si.getMember("server", config.server) || !config.server.empty();
@@ -209,7 +208,6 @@ namespace tnt
       mimeDb("/etc/mime.types"),
       maxUrlMapCache(8192),
       defaultContentType("text/html; charset=UTF-8"),
-      backgroundTasks(5),
       timerSleep(10),
       hasServer(true),
       server("Tntnet/" VERSION)

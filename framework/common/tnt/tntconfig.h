@@ -340,13 +340,6 @@ namespace tnt
     // TODO: doc or flag internal
     /** 
 
-        default: 5
-     */
-    unsigned backgroundTasks;
-
-    // TODO: doc or flag internal
-    /** 
-
         default: 10
      */
     unsigned timerSleep;

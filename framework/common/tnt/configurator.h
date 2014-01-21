@@ -33,7 +33,6 @@
 #include <tnt/worker.h>
 #include <tnt/sessionscope.h>
 #include <tnt/httpreply.h>
-#include <tnt/backgroundworker.h>
 #include <tnt/tntconfig.h>
 
 namespace tnt
@@ -214,11 +213,6 @@ namespace tnt
 
       void setAccessLog(const std::string& accessLog)
         { TntConfig::it().accessLog = accessLog; }
-
-      void setMaxBackgroundTasks(unsigned n)
-        { TntConfig::it().backgroundTasks = n; }
-      unsigned getMaxBackgroundTasks() const
-        { return TntConfig::it().backgroundTasks; }
   };
 
 }

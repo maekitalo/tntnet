@@ -191,7 +191,6 @@ AC_CONFIG_FILES([
     sdk/tools/ecppl/Makefile
     sdk/tools/ecppll/Makefile
     sdk/demos/Makefile
-    sdk/demos/backgroundjob/Makefile
     sdk/demos/calc/Makefile
     sdk/demos/calcajax/Makefile
     sdk/demos/calcapp/Makefile
