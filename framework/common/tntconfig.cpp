@@ -169,7 +169,7 @@ namespace tnt
     si.getMember("errorLog", config.errorLog);
     si.getMember("timerSleep", config.timerSleep);
     si.getMember("documentRoot", config.documentRoot);
-    config.hasServer = !si.getMember("server", config.server) || !config.server.empty();
+    si.getMember("server", config.server);
     si.getMember("includes", config.includes);
 
     config.config = si;
@@ -209,7 +209,6 @@ namespace tnt
       maxUrlMapCache(8192),
       defaultContentType("text/html; charset=UTF-8"),
       timerSleep(10),
-      hasServer(true),
       server("Tntnet/" VERSION)
   { }
 

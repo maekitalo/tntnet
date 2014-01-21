@@ -308,7 +308,6 @@ namespace tnt
     }
 
     if (!TntConfig::it().server.empty()
-      && TntConfig::it().hasServer
       && !hasHeader(httpheader::server))
     {
       log_debug(httpheader::server << ' ' << TntConfig::it().server);

@@ -17,6 +17,7 @@ SETTINGS
 This section describes the variables, used by Tntnet (8).
 
 `<accessLog>`*filename*`</accessLog>`
+
   Writes a log entry for each request in a common format. This format is
   compatible with most log file analyze systems for http servers.
 
@@ -77,6 +78,17 @@ This section describes the variables, used by Tntnet (8).
 
     <dir>/var/tntnet</dir>
 
+`<defaultContentType>`*contentType*`</defaultContentType>`
+
+  Sets the content type header of the reply. The content type may be changed in
+  the application using `reply.setContentType("something")`.
+
+  By default "text/html; charset=UTF-8" is set.
+
+  *Example*
+
+    <defaultContentType>text/html; charset=ISO-8858-1</defaultContentType>
+
 `<enableCompression>`*yes|no*`</enableCompression>`
 
   Specifies, if Tntnet should use gzip compression at http level. By default
@@ -94,6 +106,10 @@ This section describes the variables, used by Tntnet (8).
   *Example*
 
     <enableCompression>no</enableCompression>
+
+`<environment>` `<name1>`*value1*`</name1>` `<name2>`*value2*`</name2>` `</environment>`
+
+  Sets environment variables.
 
 `<errorLog>`*filename*`</errorLog>`
 

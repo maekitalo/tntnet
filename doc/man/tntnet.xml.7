@@ -12,8 +12,9 @@ order.
 .SH SETTINGS
 .PP
 This section describes the variables, used by Tntnet (8).
-.TP
+.PP
 \fB\fC<accessLog>\fR\fIfilename\fP\fB\fC</accessLog>\fR
+.IP
 Writes a log entry for each request in a common format. This format is
 compatible with most log file analyze systems for http servers.
 .IP
@@ -92,6 +93,21 @@ Changes the current working directory of the process on startup.
 .fi
 .RE
 .PP
+\fB\fC<defaultContentType>\fR\fIcontentType\fP\fB\fC</defaultContentType>\fR
+.IP
+Sets the content type header of the reply. The content type may be changed in
+the application using \fB\fCreply.setContentType("something")\fR.
+.IP
+By default "text/html; charset=UTF\-8" is set.
+.IP
+\fIExample\fP
+.PP
+.RS
+.nf
+<defaultContentType>text/html; charset=ISO-8858-1</defaultContentType>
+.fi
+.RE
+.PP
 \fB\fC<enableCompression>\fR\fIyes|no\fP\fB\fC</enableCompression>\fR
 .IP
 Specifies, if Tntnet should use gzip compression at http level. By default
@@ -113,6 +129,10 @@ up to 30%.
 <enableCompression>no</enableCompression>
 .fi
 .RE
+.PP
+\fB\fC<environment>\fR \fB\fC<name1>\fR\fIvalue1\fP\fB\fC</name1>\fR \fB\fC<name2>\fR\fIvalue2\fP\fB\fC</name2>\fR \fB\fC</environment>\fR
+.IP
+Sets environment variables.
 .PP
 \fB\fC<errorLog>\fR\fIfilename\fP\fB\fC</errorLog>\fR
 .IP

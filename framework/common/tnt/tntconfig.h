@@ -40,9 +40,62 @@ namespace tnt
   static const int SSL_NO  = 1;
   static const int SSL_YES = 2;
 
+  /** TntConfig represents the configuration of the tntnet server.
+
+      On startup tntnet reads the configuration from tntnet.xml or tntnet.json
+      into a static instance of TntConfig. The static configuration can be
+      accessed using tnt::TntConfig::it().
+
+      The configuration have many fixed configuration parameters but may
+      contain more custom attributes, which can be used in own applications
+      using the `config` member, which is a cxxtools::SerializationInfo. The
+      easiest way is to use a <%config>-section in a ecpp, which automatically
+      deserialize objects from that static configuration.
+
+      When tntnet is used in library mode, the configuration files are not
+      read. It is up to the user to configure the application. Still this
+      class can help setting up a server. Using `tnt::Tntnet::init` the user
+      can pass a configuration to the application class.
+
+      Since the class is deserializable with cxxtools, it is easy to read the
+      configuration from a file. E.g. to read the configuration from a tntnet.xml
+      as the tntnet server does, this code can be used:
+
+      @code
+        // instantiate a tntnet application object
+        tnt::Tntnet app;
+
+        // create a configuration
+        tnt::TntConfig config;
+
+        // alternatively the static instance can be used:
+        // tnt::TntConfig& config = tnt::TntConfig::it();
+
+        // Open the file
+        std::ifstream tntnetXml("tntnet.xml");
+
+        // read the content as xml into the configuration
+        tntnetXml >> cxxtools::Xml(config);
+
+        // pass the configuration to the application object to configure it
+        app.init(config)
+
+      @endcode
+
+      You have to include the header <cxxtools/xml.h> for that.
+      Note that the header is available in cxxtools version >= 2.3. In previous
+      versions deserialization needs 2 steps instead of one:
+
+      @code
+        // read the content as xml into the configuration
+        cxxtools::xml::XmlDeserializer deserializer(tntnetXml);
+        deserializer.deserialize(config);
+      @endcode
+
+   */
   struct TntConfig
   {
-    // TODO: doc
+    /// represents a mapping entry in the configuration
     struct Mapping
     {
       std::string target;
@@ -57,14 +110,14 @@ namespace tnt
       ArgsType args;
     };
 
-    // TODO: doc
+    /// represents a listener entry in the configuration
     struct Listener
     {
       std::string ip;
       unsigned short port;
     };
 
-    // TODO: doc
+    /// extends the listener entry with attributes needed for a ssl socket
     struct SslListener : public Listener
     {
       std::string certificate;
@@ -173,7 +226,6 @@ namespace tnt
      */
     bool daemon;
 
-    // TODO: Add link to documentation of thread model
     /** The minimal number of worker threads
 
         default: 5
@@ -204,33 +256,40 @@ namespace tnt
      */
     unsigned queueSize;
 
-    // TODO: What happens if this is omitted (empty) as it is default?
-    /** The paths where tntnet searches for the compiled webapps
+    /** The paths where tntnet searches for the compiled webapps.
 
-        This is only relevant if the webapps are compiled into
-        shared libraries instead of a standalone executable.
+        By default only the normal library search path of the operating system is used.
 
         default: (none)
      */
     CompPathType compPath;
 
-    // TODO: Why is this named socketBufferSize here and bufferSize in tntnet.xml?
-    //       And what is this for???
     /** Size (in bytes) of data bundled for a system call
+
+        This setting tunes the size of the input and output buffer for the
+        socket. Each connection allocates that many bytes for the buffer.
 
         default: 16384
      */
     unsigned socketBufferSize;
 
-    // TODO: I didn't fully understand the documentation on this,
-    //       a complete explanation should be added here.
     /** The timeout (in milliseconds) for reading data from a client
+
+        After a request is sent to the client and keep alive is used (which is
+        normally), tntnet start waiting for the next request. To reduce context
+        switches between threads the current thread waits for a short period if
+        there is more to do on that connection before passing the reuqest to the
+        queue of idle connections.
 
         default: 10 milliseconds
      */
     unsigned socketReadTimeout;
 
     /** The timeout (in milliseconds) for writing data to a client
+
+        Writing to the client is done fully in the current thread. Normally writing
+        never blocks and hence we just need some timeout to make sure, it do not
+        lock the whole server.
 
         default: 10000 milliseconds
      */
@@ -245,7 +304,7 @@ namespace tnt
      */
     unsigned keepAliveTimeout;
 
-    /** Maximal amount of requests per TCP connection
+    /** Maximal amount of requests per TCP connection in keep alive
 
         default: 1000
      */
@@ -285,7 +344,6 @@ namespace tnt
      */
     bool enableCompression;
 
-    // TODO: Size in bytes correct?
     /** Minimal size (in bytes) of http reply body to be compressed
 
         If an http body is smaller than this, it will not be compressed.
@@ -312,14 +370,15 @@ namespace tnt
      */
     unsigned maxUrlMapCache;
 
-    // TODO: This is not enough information, why is this option not documented for tntnet.xml?
     /** The default mime-type for the http header
+
+        Sets the content type header of the reply. The content type may be changed in
+        the application using `reply.setContentType("something")`.
 
         default: "text/html; charset=UTF-8"
      */
     std::string defaultContentType;
 
-    // TODO: Does specifying this option remove the access log on stdout?
     /** Logfile for server requests
 
         The format of the logging entries is compatible with logging tools for http servers.
@@ -337,50 +396,76 @@ namespace tnt
      */
     std::string errorLog;
 
-    // TODO: doc or flag internal
-    /** 
+    /** The timer interval, when session timeout are monitored.
 
-        default: 10
+       A timer thread checks periodically whether a session times out.
+       This setting specifies, how often this is checked.
+
+        default: 10 (seconds)
      */
     unsigned timerSleep;
 
-    // TODO: doc or flag internal
+    /** Contains the whole configuration as a cxxtools::SerializationInfo
+
+        The cxxtools::SerializatioInfo is a generic structure, which can be used
+        to read custom information from the configuration file.
+     */
     cxxtools::SerializationInfo config;
 
-    // TODO: doc or flag internal
+    /** Sets environment variables.
+
+        `environment` is a std::map of environment variables, which are set when
+        Tntnet starts.
+
+     */
     EnvironmentType environment;
 
-    // TODO: doc or flag internal
+    /** This value is used by the static@tntnet component to build a full path
+        to the requested file
+     */
     std::string documentRoot;
 
-    // TODO: doc or flag internal
-    /** 
+    /** Sets the Server header in http reply.
 
-        default: true
+        The server header in the http reply is normally set to the used server
+        software.  Here it is of course Tntnet, but can be set differently. If
+        the field is empty the server header is omitted.
+
+        default: Tntnet/'version-number'
      */
-    bool hasServer;
-
-    // TODO: doc or flag internal
     std::string server;
 
-    // TODO: doc or flag internal
+    /** The tntnet server reads additional configuration files from these files.
+
+        On startup configurations are read from tntnet.xml or tntnet.json, which
+        may contain additional files, which are processed.
+     */
     std::vector<std::string> includes;
 
     /// Create a TntConfig object with default configuration
     TntConfig();
 
-    // TODO: doc or flag internal
+    /** Returns true if a setting with the specified key is found in the
+        configuration.
+     */
     bool hasValue(const std::string& key) const
     { return config.findMember(key) != 0; }
 
-    // TODO: doc or flag internal
+    /** Returns the instance of TntConfig used by the tntnet server at startup.
+
+        The configuration is read by the tntnet server at startup from a xml or json
+        file. Applications get access to the configuration here.
+     */
     static TntConfig& it();
   };
 
-  // TODO: doc or flag internal
+  /// Deserialization operator for mappings
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping);
+  /// Deserialization operator for listener
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener);
+  /// Deserialization operator for ssllistener
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::SslListener& ssllistener);
+  /// Deserialization operator for config
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config);
 }
 
