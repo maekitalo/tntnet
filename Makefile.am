@@ -44,7 +44,10 @@ EXTRA_DIST = ecpp.vim \
     doc/logo-tntnet.cdr \
     doc/tntnet.svg \
     doc/tntnet-dynamite.svg \
+    doc/jquery-howto.markdown \
     doc/quick-start-guide.markdown \
+    doc/static-howto.markdown \
+    doc/upload-howto.markdown \
     COPYING \
     sdk/demos/newsdb/Makefile \
     sdk/demos/newsdb/README \
