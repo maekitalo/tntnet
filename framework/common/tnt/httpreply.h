@@ -75,6 +75,7 @@ namespace tnt
       { return redirect(newLocation, temporarily); }
       unsigned redirectPermantently(const std::string& newLocation)
       { return redirect(newLocation, permanently); }
+
       /// Throws an exception, which results in a login dialog in the browser.
       unsigned notAuthorized(const std::string& realm);
       /// alias for notAuthorized
@@ -103,6 +104,31 @@ namespace tnt
       std::string::size_type getContentSize() const;
       std::ostream& getDirectStream();
 
+      /** Set chunked encoding for the current request.
+
+          When setting chunked encoding, the content is sent immediately in
+          chunks instead of collecting content into a string before sending.
+          After setting chunked encoding, no exceptions must be thrown. Headers
+          are sent immediately after setting chunked encoding and hence setting
+          headers must happen before calling this method.
+
+          Also a session cookie can't be sent and hence when a new session is
+          created, chunked encoding must not be used. A session is created
+          automatically when a session variable is used and no session cookie
+          was received.
+
+      */
+      void setChunkedEncoding(unsigned ret = HTTP_OK, const char* msg = "OK");
+
+      /// Returns true when chunked encoding is enabled already.
+      bool isChunkedEncoding() const;
+
+      /** Sets the content-md5 header.
+
+          The current content is used to calculate the md5 header. Hence no
+          output must be created after calling that method. Normally there is
+          no good reason to call that method at all.
+      */
       void setMd5Sum();
 
       void setCookie(const std::string& name, const Cookie& value);

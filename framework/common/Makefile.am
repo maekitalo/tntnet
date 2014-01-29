@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = libtntnet.la
 
 libtntnet_la_SOURCES = \
+	chunkedostream.cpp \
 	cmd.cpp \
 	compident.cpp \
 	comploader.cpp \
@@ -52,6 +53,7 @@ libtntnet_la_SOURCES = \
 
 nobase_include_HEADERS = \
 	tnt/applicationunlocker.h \
+	tnt/chunkedostream.h \
 	tnt/cmd.h \
 	tnt/compident.h \
 	tnt/comploader.h \

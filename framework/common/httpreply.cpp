@@ -36,6 +36,7 @@
 #include <tnt/htmlescostream.h>
 #include <tnt/urlescostream.h>
 #include <tnt/encoding.h>
+#include <tnt/chunkedostream.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 #include <cxxtools/mutex.h>
@@ -94,6 +95,7 @@ namespace tnt
     std::ostringstream outstream;
     HtmlEscOstream safe_outstream;
     UrlEscOstream url_outstream;
+    ChunkedOStream chunked_outstream;
 
     Encoding acceptEncoding;
 
@@ -147,6 +149,7 @@ namespace tnt
     impl->clearSession = false;
     impl->acceptEncoding.clear();
     impl->safe_outstream.setSink(impl->outstream.rdbuf());
+    impl->chunked_outstream.setSink(impl->outstream.rdbuf());
 
     return impl;
   }
@@ -160,6 +163,7 @@ namespace tnt
       inst->outstream.str(std::string());
       inst->safe_outstream.clear();
       inst->url_outstream.clear();
+      inst->chunked_outstream.clear();
       pool.push_back(inst);
     }
     else
@@ -180,6 +184,7 @@ namespace tnt
     : socket(&s),
       safe_outstream(outstream),
       url_outstream(outstream),
+      chunked_outstream(s),
       keepAliveCounter(0),
       sendStatusLine(sendStatusLine_),
       headRequest(false),
@@ -316,19 +321,27 @@ namespace tnt
 
     if (ready)
     {
-      if (body.size() >= TntConfig::it().minCompressSize
-        && !hasHeader(httpheader::contentEncoding)
-        && impl->acceptEncoding.accept("gzip")
-        && tryCompress(body))
+      if (current_outstream == &impl->chunked_outstream)
       {
-        log_debug(httpheader::contentEncoding << " gzip");
-        hsocket << httpheader::contentEncoding << " gzip\r\n";
+        log_debug(httpheader::transferEncoding << " chunked");
+        hsocket << httpheader::transferEncoding << " chunked\r\n";
       }
-
-      if (!hasHeader(httpheader::contentLength))
+      else
       {
-        log_debug(httpheader::contentLength << ' ' << body.size());
-        hsocket << httpheader::contentLength << ' ' << body.size() << "\r\n";
+        if (body.size() >= TntConfig::it().minCompressSize
+          && !hasHeader(httpheader::contentEncoding)
+          && impl->acceptEncoding.accept("gzip")
+          && tryCompress(body))
+        {
+          log_debug(httpheader::contentEncoding << " gzip");
+          hsocket << httpheader::contentEncoding << " gzip\r\n";
+        }
+
+        if (!hasHeader(httpheader::contentLength))
+        {
+          log_debug(httpheader::contentLength << ' ' << body.size());
+          hsocket << httpheader::contentLength << ' ' << body.size() << "\r\n";
+        }
       }
 
       if (!hasHeader(httpheader::contentType))
@@ -382,20 +395,36 @@ namespace tnt
       log_debug("HEAD-request - empty body");
     else
     {
-      log_debug("send " << body.size() << " bytes body");
-      // We send in chunks just to leave to ostream operator from time to time.
-      // There are iostream libraries, which do have a global lock, which
-      // block other iostreams while writing.
-      const unsigned chunkSize = 65536;
-      for (unsigned n = 0; n < body.size(); n += chunkSize)
-        hsocket.write(body.data() + n, std::min(static_cast<unsigned>(body.size() - n), chunkSize));
+      if (current_outstream == &impl->chunked_outstream)
+      {
+        current_outstream->write(body.data(), body.size());
+      }
+      else
+      {
+        log_debug("send " << body.size() << " bytes body");
+        // We send in chunks just to leave to ostream operator from time to time.
+        // There are iostream libraries, which do have a global lock, which
+        // block other iostreams while writing.
+        const unsigned chunkSize = 65536;
+        for (unsigned n = 0; n < body.size(); n += chunkSize)
+          hsocket.write(body.data() + n, std::min(static_cast<unsigned>(body.size() - n), chunkSize));
+      }
     }
   }
 
   void HttpReply::sendReply(unsigned ret, const char* msg)
   {
-    if (!isDirectMode())
+    log_debug("sendReply");
+    if (current_outstream == &impl->chunked_outstream)
     {
+      log_debug("finish chunked encoding");
+      impl->chunked_outstream.finish();
+      *impl->socket << "\r\n";
+      impl->socket->flush();
+    }
+    else if (!isDirectMode())
+    {
+      log_debug("send data");
       send(ret, msg, true);
       impl->socket->flush();
     }
@@ -482,6 +511,7 @@ namespace tnt
   {
     if (!isDirectMode())
     {
+      log_debug("enable chunked mode");
       send(ret, msg, false);
       current_outstream = impl->socket;
       impl->safe_outstream.setSink(*impl->socket);
@@ -492,6 +522,19 @@ namespace tnt
   {
     current_outstream = impl->socket;
     impl->safe_outstream.setSink(*impl->socket);
+  }
+
+  void HttpReply::setChunkedEncoding(unsigned ret, const char* msg)
+  {
+    log_debug("set chunked encoding");
+    current_outstream = &impl->chunked_outstream;
+    impl->chunked_outstream.setSink(*impl->socket);
+    send(ret, msg, true);
+  }
+
+  bool HttpReply::isChunkedEncoding() const
+  {
+    return current_outstream == &impl->chunked_outstream;
   }
 
   void HttpReply::setCookie(const std::string& name, const Cookie& value)

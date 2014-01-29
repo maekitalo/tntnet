@@ -66,5 +66,6 @@ namespace tnt
     const char* contentLocation = "Content-Location:";
     const char* contentDisposition = "Content-Disposition:";
     const char* age = "Age:";
+    const char* transferEncoding = "Transfer-Encoding:";
   }
 }
