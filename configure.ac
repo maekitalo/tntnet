@@ -1,10 +1,10 @@
-AC_INIT(tntnet, 2.2rc2, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 2.3, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 LT_INIT([disable-static])
 
 AM_INIT_AUTOMAKE
 
-abi_current=11
+abi_current=13
 abi_revision=0
 abi_age=0
 sonumber=${abi_current}:${abi_revision}:${abi_age}
@@ -191,7 +191,6 @@ AC_CONFIG_FILES([
     sdk/tools/ecppl/Makefile
     sdk/tools/ecppll/Makefile
     sdk/demos/Makefile
-    sdk/demos/backgroundjob/Makefile
     sdk/demos/calc/Makefile
     sdk/demos/calcajax/Makefile
     sdk/demos/calcapp/Makefile

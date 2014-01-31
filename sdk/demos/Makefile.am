@@ -1,5 +1,4 @@
 SUBDIRS = \
-    backgroundjob \
     calc \
     calcajax \
     calcapp \

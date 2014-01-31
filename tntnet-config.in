@@ -129,7 +129,7 @@ EOF
     <entry>path2</entry>
   </compPath>
    -->
-  <!-- <bufferSize>16384</bufferSize> -->
+  <!-- <socketBufferSize>16384</socketBufferSize> -->
   <!-- <socketReadTimeout>10</socketReadTimeout> -->
   <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
   <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->

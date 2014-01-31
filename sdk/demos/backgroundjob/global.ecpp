@@ -1,7 +1,0 @@
-<%pre>
-#include <set>
-#include <tnt/backgroundworker.h>
-</%pre>
-<%session scope="shared">
-std::set<unsigned> activeJobs;
-</%session>
