@@ -864,10 +864,10 @@ do
             pages="$pages $optarg"
             ;;
 
-    *)
-        usage
-        exit 1
-        ;;
+        *)
+            usage
+            exit 1
+            ;;
     esac
 
     shift
