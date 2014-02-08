@@ -135,7 +135,7 @@ namespace tnt
 
       /** Set up a listener for the specified ip address and port.
 
-          The strings "0.0.0.0" and "" (empty string) mean listening on all interfaces
+          The empty string means listening on all interfaces
           (though you can simply use the listen() method with one parameter to do that)
           This method solely does the setup, the actual listening starts in run().
        */
