@@ -1986,7 +1986,7 @@ namespace tnt
       }
 
       if (state != state_html && state != state_html0 && state != state_nl && state != state_cpp1)
-        throw parse_error("parse error", state, curfile, curline);
+        throw parse_error("unexpected end of file", state, curfile, curline);
 
       if (inComp)
         throw parse_error("</%def> missing", state, curfile, curline);
