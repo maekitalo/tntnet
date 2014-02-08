@@ -1978,7 +1978,14 @@ namespace tnt
         log_debug("line " << curline << " char " << ch << " state " << state << " bc " << bracket_count);
       }  // while(in.get(ch))
 
-      if (state != state_html && state != state_html0 && state != state_nl)
+      if (state == state_cpp1)
+      {
+        code += '\n';
+        log_debug("onCpp(\"" << code << "\")");
+        handler.onCpp(code);
+      }
+
+      if (state != state_html && state != state_html0 && state != state_nl && state != state_cpp1)
         throw parse_error("parse error", state, curfile, curline);
 
       if (inComp)
