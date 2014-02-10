@@ -178,16 +178,16 @@ namespace tnt
       static bool shouldStop()                { return stop; }
 
       /// @cond internal
+
       Jobqueue&   getQueue()                  { return queue; }
 
-      /// @cond internal
       Poller&     getPoller()                 { return poller; }
 
-      /// @cond internal
       const Dispatcher& getDispatcher() const { return dispatcher; }
 
-      /// @cond internal
       ScopeManager& getScopemanager()         { return scopemanager; }
+
+      /// @endcond internal
 
       /// Get the minimum number of worker threads
       unsigned getMinThreads() const          { return minthreads; }
