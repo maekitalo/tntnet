@@ -31,6 +31,7 @@
 #include "tnt/tntnet.h"
 #include <cxxtools/mutex.h>
 #include <cxxtools/log.h>
+#include <unistd.h>
 #include <sstream>
 #include <sys/poll.h>
 #include <errno.h>

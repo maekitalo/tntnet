@@ -135,7 +135,7 @@ namespace tnt
 
       /** Set up a listener for the specified ip address and port.
 
-          The strings "0.0.0.0" and "" (empty string) mean listening on all interfaces
+          The empty string means listening on all interfaces
           (though you can simply use the listen() method with one parameter to do that)
           This method solely does the setup, the actual listening starts in run().
        */
@@ -178,16 +178,16 @@ namespace tnt
       static bool shouldStop()                { return stop; }
 
       /// @cond internal
+
       Jobqueue&   getQueue()                  { return queue; }
 
-      /// @cond internal
       Poller&     getPoller()                 { return poller; }
 
-      /// @cond internal
       const Dispatcher& getDispatcher() const { return dispatcher; }
 
-      /// @cond internal
       ScopeManager& getScopemanager()         { return scopemanager; }
+
+      /// @endcond internal
 
       /// Get the minimum number of worker threads
       unsigned getMinThreads() const          { return minthreads; }

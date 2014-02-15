@@ -380,7 +380,8 @@ namespace tnt
 
       if (!configs.empty())
       {
-        out << "    // <%config>\n";
+        out << "    virtual void configure(const tnt::TntConfig& config);\n"
+               "    // <%config>\n";
         for (variable_declarations::const_iterator it = configs.begin();
              it != configs.end(); ++it)
           it->getConfigHDecl(out);
@@ -434,20 +435,11 @@ namespace tnt
                 "      { }\n"
                 "    tnt::Component* doCreate(const tnt::Compident& ci,\n"
                 "      const tnt::Urlmapper& um, tnt::Comploader& cl);\n"
-                "    virtual void doConfigure(const tnt::TntConfig& config);\n"
                 "};\n\n"
                 "tnt::Component* _component_Factory::doCreate(const tnt::Compident& ci,\n"
                 "  const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
                 "{\n"
                 "  return new _component_(ci, um, cl);\n"
-                "}\n\n"
-                "void _component_Factory::doConfigure(const tnt::TntConfig& config)\n"
-                "{\n"
-                "  // <%config>\n";
-        for (variable_declarations::const_iterator it = configs.begin();
-             it != configs.end(); ++it)
-          it->getConfigInit(code);
-        code << "  // </%config>\n"
                 "}\n\n"
                 "static _component_Factory factory;\n\n";
       }
@@ -615,8 +607,20 @@ namespace tnt
         if (compress)
           code << "  rawData.release();\n";
 
-        code << "}\n\n"
-                "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
+        code << "}\n\n";
+
+        if (!configs.empty())
+        {
+          code << "void _component_::configure(const tnt::TntConfig& config)\n"
+                  "{\n"
+                  "  // <%config>\n";
+          for (variable_declarations::const_iterator it = configs.begin();
+               it != configs.end(); ++it)
+            it->getConfigInit(code);
+          code << "  // </%config>\n"
+                  "}\n\n";
+        }
+        code << "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
              << "{\n"
                 "  log_trace(\"" << maincomp.getName() << " \" << qparam.getUrl());\n\n";
 

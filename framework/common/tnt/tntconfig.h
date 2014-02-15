@@ -420,7 +420,7 @@ namespace tnt
      */
     EnvironmentType environment;
 
-    /** This value is used by the static@tntnet component to build a full path
+    /** This value is used by the static\@tntnet component to build a full path
         to the requested file
      */
     std::string documentRoot;

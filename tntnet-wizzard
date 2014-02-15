@@ -145,10 +145,9 @@ EOF
 project()
 {
     project=$1
-    srcdir=$project/src
 
-    echo create directories $project $srcdir $srcdir/manager $srcdir/model $srcdir/view $srcdir/controller $srcdir/resources
-    mkdir $project $srcdir $srcdir/manager $srcdir/model $srcdir/view $srcdir/controller $srcdir/resources
+    echo create directories $project $project/manager $project/model $project/view $project/controller $project/resources
+    mkdir $project $project/manager $project/model $project/view $project/controller $project/resources
 
     echo create $project/configure.ac
     cat >$project/configure.ac <<EOF
@@ -167,18 +166,12 @@ AC_PROG_SED
 
 AC_OUTPUT([
     Makefile
-    src/Makefile
 ])
 EOF
 
     echo create $project/Makefile.am
     cat >$project/Makefile.am <<EOF
-SUBDIRS = src
 ACLOCAL_AMFLAGS = -I m4 --install
-EOF
-
-    echo create $srcdir/Makefile.am
-    cat >$srcdir/Makefile.am <<EOF
 AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = ${project}
@@ -211,24 +204,24 @@ EXTRA_DIST = \$(staticSources)
 # Rules for tntnet applications
 #
 
+ECPPFLAGS=-I\$(top_srcdir)
+
 # resources
 resources.cpp: \$(staticSources) Makefile.am
-	\$(ECPPC) -bb -z -n resources -p -o resources.cpp -I\$(srcdir) \$(staticSources)
+	\$(ECPPC) -bb -z -n resources -p -o resources.cpp \$(ECPPFLAGS) \$(staticSources)
 
 SUFFIXES=.ecpp .ico .cpp
 
 .ecpp.cpp:
-	\$(ECPPC) -I \$(top_srcdir)/src -n \$(basename \$<) -o \$@ \$<
+	\$(ECPPC) -n \$(basename \$<) \$(ECPPFLAGS) -o \$@ \$<
 .ecpp.deps:
-	\$(ECPPC) -M -n \$* -I \$(srcdir) -I \$(srcdir)/include \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
-.ico.cpp:
-	\$(ECPPC) -b -m image/x-icon -o \$@ \$<
+	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
 -include \$(ecppSources:.ecpp=.deps)
 EOF
 
-    echo create $srcdir/main.cpp
-    cat >$srcdir/main.cpp <<EOF
+    echo create $project/main.cpp
+    cat >$project/main.cpp <<EOF
 #include <iostream>
 #include <configuration.h>
 #include <tnt/tntnet.h>
@@ -244,9 +237,9 @@ int main(int argc, char* argv[])
     Configuration& configuration = Configuration::it();
 
     if (argc > 1)
-      configuration.readConfiguration(argv[1]);
+      Configuration::readConfiguration(argv[1]);
     else
-      configuration.readConfiguration("${project}.conf");
+      Configuration::readConfiguration("${project}.conf");
 
     log_init(configuration.loggingConfiguration());
 
@@ -282,8 +275,8 @@ int main(int argc, char* argv[])
 
 EOF
 
-    echo create $srcdir/webmain.ecpp
-    cat >$srcdir/webmain.ecpp <<EOF
+    echo create $project/webmain.ecpp
+    cat >$project/webmain.ecpp <<EOF
 <%session scope="shared">
 </%session>
 <%request scope="shared">
@@ -313,8 +306,8 @@ EOF
 </html>
 EOF
 
-    echo create $srcdir/${project}.conf
-    cat >$srcdir/${project}.conf <<EOF
+    echo create $project/${project}.conf
+    cat >$project/${project}.conf <<EOF
 listen.port 8000
 sessiontimeout 3600
 
@@ -324,15 +317,15 @@ rootlogger    INFO
 logger.${project}  INFO
 EOF
 
-    echo create $srcdir/index.ecpp
-    cat >$srcdir/index.ecpp <<EOF
+    echo create $project/index.ecpp
+    cat >$project/index.ecpp <<EOF
 <h1>${project}</h1>
 
 Welcome to the ${project} application.
 EOF
 
-    echo create $srcdir/configuration.cpp
-    cat >$srcdir/configuration.cpp <<EOF
+    echo create $project/configuration.cpp
+    cat >$project/configuration.cpp <<EOF
 /*
  * Copyright (C) 2013 Tommi Maekitalo
  *
@@ -383,8 +376,8 @@ Configuration& Configuration::it()
 }
 EOF
 
-    echo create $srcdir/configuration.h
-    cat >$srcdir/configuration.h <<EOF
+    echo create $project/configuration.h
+    cat >$project/configuration.h <<EOF
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
@@ -396,9 +389,10 @@ class Configuration
     friend void operator>>= (const cxxtools::SerializationInfo& si, Configuration& config);
 
   public:
+    // return the static instance
     static Configuration& it();
 
-    void readConfiguration(const std::string& file);
+    static void readConfiguration(const std::string& file);
 
     const std::string& listenIp() const
     { return _listenIp; }
@@ -430,8 +424,8 @@ class Configuration
 #endif // CONFIGURATION_H
 EOF
 
-    echo create $srcdir/$project.css
-    cat >$srcdir/resources/$project.css <<EOF
+    echo create $project/$project.css
+    cat >$project/resources/$project.css <<EOF
 /* add your css here */
 EOF
 
@@ -585,12 +579,12 @@ CLEANFILES = \$(ecppSources:.ecpp=.cpp) \$(ecppSources:.ecpp=.deps) resources.cp
 
 SUFFIXES=.ecpp .ico .cpp
 
+ECPPFLAGS=-I\$(top_srcdir)
+
 .ecpp.cpp:
-	\$(ECPPC) -I \$(top_srcdir)/src -n \$(basename \$<) -o \$@ \$<
+	\$(ECPPC) -n \$(basename \$<) \$(ECPPFLAGS) -o \$@ \$<
 .ecpp.deps:
-	\$(ECPPC) -M -n \$* -I \$(srcdir) -I \$(srcdir)/include \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
-.ico.cpp:
-	\$(ECPPC) -b -m image/x-icon -o \$@ \$<
+	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
 -include \$(ecppSources:.ecpp=.deps)
 EOF
@@ -694,12 +688,12 @@ CLEANFILES = \$(ecppSources:.ecpp=.cpp) \$(ecppSources:.ecpp=.deps) resources.cp
 
 SUFFIXES=.ecpp .ico .cpp
 
+ECPPFLAGS=-I\$(top_srcdir)
+
 .ecpp.cpp:
-	\$(ECPPC) -I \$(top_srcdir)/src -n \$(basename \$<) -o \$@ \$<
+	\$(ECPPC) -n \$(basename \$<) \$(ECPPFLAGS) -o \$@ \$<
 .ecpp.deps:
-	\$(ECPPC) -M -n \$* -I \$(srcdir) -I \$(srcdir)/include \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
-.ico.cpp:
-	\$(ECPPC) -b -m image/x-icon -o \$@ \$<
+	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
 -include \$(ecppSources:.ecpp=.deps)
 EOF
@@ -730,7 +724,7 @@ int main(int argc, char* argv[])
     app.mapUrl("^/$", "${project}");
 
     // map /comp.* or /comp to comp
-    app.mapUrl("^/([^.]+)(\\..+)?", "\$1");
+    app.mapUrl("^/([^.]+)(\\\\..+)?", "\$1");
 
     app.run();
   }
@@ -870,10 +864,10 @@ do
             pages="$pages $optarg"
             ;;
 
-    *)
-        usage
-        exit 1
-        ;;
+        *)
+            usage
+            exit 1
+            ;;
     esac
 
     shift
@@ -962,7 +956,7 @@ then
     echo "============================================================"
     echo "= project <$project> created"
     echo "= change to directory <$project> and run <make> to build the application"
-    echo "= execute <./$project> in the src directory to run the application"
+    echo "= execute <./$project> in the build directory to run the application"
     echo "============================================================"
 
 else
