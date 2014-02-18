@@ -8,7 +8,7 @@ nodist_mvc_la_SOURCES = \
 EXTRA_DIST = \
 	mvc.ecpp
 
-AM_CPPFLAGS = -I$(top_srcdir)/framework/common -Imodel
+AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I$(srcdir)/model
 mvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 mvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
