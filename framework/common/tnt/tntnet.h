@@ -47,7 +47,7 @@ namespace tnt
 
   /** Main application class for stand-alone tntnet web application
 
-      The tntnet class is used to compile a web application into a simple executable.
+      The Tntnet class is used to compile a web application into a simple executable.
       The compiled program then works as a webserver, handling the server requests
       for the web application.
       This is the alternative to compiling it into a shared library and using the
@@ -135,8 +135,9 @@ namespace tnt
 
       /** Set up a listener for the specified ip address and port.
 
-          The empty string means listening on all interfaces
-          (though you can simply use the listen() method with one parameter to do that)
+          An empty string means listening on all interfaces – you can simply
+          use the listen() method with one parameter to do that though.
+
           This method solely does the setup, the actual listening starts in run().
        */
       void listen(const std::string& ipaddr, unsigned short int port);
@@ -239,7 +240,7 @@ namespace tnt
       void setAppName(const std::string& appname_)
         { appname = appname_; }
 
-      /// Get the app name
+      /// Get the app name – for details see setAppName()
       const std::string& getAppName() const
         { return appname; }
 

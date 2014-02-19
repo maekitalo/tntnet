@@ -39,7 +39,7 @@ namespace tnt
   class Savepoint;
   class Encoding;
 
-  /// HTTP-Reply-message
+  /// HTTP reply message
   class HttpReply : public HttpMessage
   {
       struct Impl;
@@ -63,11 +63,13 @@ namespace tnt
 
       void setHeadRequest(bool sw = true);
 
+      // TODO: ???
       /// Session is cleared after the current request.
       void clearSession();
       /// Returns true, if the session is cleared after the current request.
       bool isClearSession() const;
 
+      // TODO: Group appropriately
       /// Throws an exception, which results in a redirect.
       enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_MOVED_TEMPORARILY };
       unsigned redirect(const std::string& newLocation, Redirect type = temporarily);
@@ -76,8 +78,9 @@ namespace tnt
       unsigned redirectPermantently(const std::string& newLocation)
       { return redirect(newLocation, permanently); }
 
-      /// Throws an exception, which results in a login dialog in the browser.
+      /// Throw an exception which results in a login dialog in the browser.
       unsigned notAuthorized(const std::string& realm);
+      // TODO: Why does this exist?
       /// alias for notAuthorized
       unsigned notAuthorised(const std::string& realm) { return notAuthorized(realm); }
 
@@ -87,10 +90,13 @@ namespace tnt
 
       /// returns outputstream
       std::ostream& out()    { return *current_outstream; }
+
       /// returns safe outputstream (unsafe html-chars are escaped)
       std::ostream& sout()   { return *safe_outstream; }
+
       /// returns outputstream, which url encodes output
       std::ostream& uout()   { return *url_outstream; }
+
       void resetContent();
       void rollbackContent(unsigned size);
 
@@ -104,7 +110,7 @@ namespace tnt
       std::string::size_type getContentSize() const;
       std::ostream& getDirectStream();
 
-      /** Set chunked encoding for the current request.
+      /** Enable chunked encoding for the current request
 
           When setting chunked encoding, the content is sent immediately in
           chunks instead of collecting content into a string before sending.
@@ -120,9 +126,10 @@ namespace tnt
       */
       void setChunkedEncoding(unsigned ret = HTTP_OK, const char* msg = "OK");
 
-      /// Returns true when chunked encoding is enabled already.
+      /// Get whether chunked encoding is enabled
       bool isChunkedEncoding() const;
 
+      // TODO
       /** Sets the content-md5 header.
 
           The current content is used to calculate the md5 header. Hence no
