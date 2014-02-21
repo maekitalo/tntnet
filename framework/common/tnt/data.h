@@ -43,7 +43,7 @@ namespace tnt
     public:
       DataChunk(const char* data_, const char* end_)
         : data(data_),
-          len(end_ - data_)
+          len(static_cast<unsigned>(end_ - data_))
       { }
       DataChunk(const char* data_, unsigned len_)
         : data(data_),

@@ -136,12 +136,68 @@ std::vector with the specified type or std::string, if no type is specified.
 This way multiple values with the same name can be received. If a type is
 specified, each value is converted to the target type.
 .TP
+\fB\fC<%attr>...</%attr>\fR
+Components may define attributes, which can be queried from other components.
+These values are strings and are defined by specifying a name followed by '='
+and the string value. No type is allowed here.
+.TP
+A other component can the fetch a reference to the component using
+\fB\fCfetchComp(name)`. \fRfetchComp\fB\fCis a member of the base class
+\fRtnt::EcppComponent` of components built with ecpp.
+.IP
+The component has then a member method \fB\fCgetAttribute(name)`, which returns the
+attribute or a empty string when not found. A different default string can be
+passed as a second parameter to\fRgetAttribute`.
+.SS Example:
+.IP
+A content component specifies a title:
+.PP
+.RS
+.nf
+<%attr>
+title = "my title";
+</%attr>
+.fi
+.RE
+.IP
+A component \fB\fCwebmain\fR want to add a title depending on a content component:
+.PP
+.RS
+.nf
+<head>
+  <title>
+    <$ fetchComp("theContent").getAttribute("title", "default title") $>
+  </title>
+  ...
+.fi
+.RE
+.IP
+To separte the C++ code from the html, the actual doing can be moved to a C++
+section. The component can then be also called later to generate the content:
+.PP
+.RS
+.nf
+<%cpp>
+  tnt::Component& theContent = fetchComp("theContent");
+  std::string title = theContent.getAttribute("title", "default title");
+</%cpp>
+<head>
+  <title><$ title $></title>
+  ...
+  <div id="contnent">
+    <{ theContent(request, reply, qparam); }>
+  </div>
+.fi
+.RE
+.TP
 \fB\fC<%close>...</%close>\fR
 Code in these tags is placed into the calling component, when a closing tag
 \fB\fC</&component>\fR is found.
 .IP
 The \fB\fC<%close>\fR receives the same parameters like the corresponding normal
 component call.
+.IP
+This tag is deprecated and should not be used any more.
 .TP
 \fB\fC<%config>...</%config>\fR
 Often webapplications need some configuration like database names or
@@ -153,8 +209,7 @@ std::istream.
 .IP
 You can also specify a default value by appending a '=' and the value to the
 variable.
-.PP
-\fB\fCExample:\fR
+.SS Example:
 .PP
 .RS
 .nf
