@@ -156,12 +156,57 @@ TAGS
   specified, each value is converted to the target type.
 
 
+`<%attr>...</%attr>`
+  Components may define attributes, which can be queried from other components.
+  These values are strings and are defined by specifying a name followed by '='
+  and the string value. No type is allowed here.
+
+  A other component can the fetch a reference to the component using
+  `fetchComp(name)`. `fetchComp` is a member of the base class
+  `tnt::EcppComponent` of components built with ecpp.
+
+  The component has then a member method `getAttribute(name)`, which returns the
+  attribute or a empty string when not found. A different default string can be
+  passed as a second parameter to `getAttribute`.
+
+### Example:
+
+  A content component specifies a title:
+
+    <%attr>
+    title = "my title";
+    </%attr>
+
+  A component `webmain` want to add a title depending on a content component:
+
+    <head>
+      <title>
+        <$ fetchComp("theContent").getAttribute("title", "default title") $>
+      </title>
+      ...
+
+  To separte the C++ code from the html, the actual doing can be moved to a C++
+  section. The component can then be also called later to generate the content:
+
+    <%cpp>
+      tnt::Component& theContent = fetchComp("theContent");
+      std::string title = theContent.getAttribute("title", "default title");
+    </%cpp>
+    <head>
+      <title><$ title $></title>
+      ...
+      <div id="contnent">
+        <{ theContent(request, reply, qparam); }>
+      </div>
+
 `<%close>...</%close>`
   Code in these tags is placed into the calling component, when a closing tag
   `</&component>` is found.
 
   The `<%close>` receives the same parameters like the corresponding normal
   component call.
+
+  This tag is deprecated and should not be used any more.
 
 
 `<%config>...</%config>`
@@ -175,7 +220,7 @@ TAGS
   You can also specify a default value by appending a '=' and the value to the
   variable.
 
-`Example:`
+### Example:
 
     <%config>
       dburl = "sqlite:db=mydbfile.sqlite";
