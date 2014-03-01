@@ -36,9 +36,12 @@
 
 namespace tnt
 {
+
+  /// @cond internal
+
   class Maptarget : public Compident
   {
-      friend class Dispatcher;
+    friend class Dispatcher;
 
     public:
       typedef std::map<std::string, std::string> args_type;
@@ -76,6 +79,8 @@ namespace tnt
       Maptarget& setArg(const std::string& name, const std::string& value)
         { args[name] = value; return *this; }
   };
+
+  /// @endcond internal
 
 }
 

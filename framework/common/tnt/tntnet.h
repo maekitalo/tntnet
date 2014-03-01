@@ -147,7 +147,7 @@ namespace tnt
           As the above method, this doesn't start the actual listening.
        */
       void listen(unsigned short int port)
-      { listen(std::string(), port); }
+        { listen(std::string(), port); }
 
       /** Set up a ssl listener for the specified ip address and port
 
@@ -162,7 +162,7 @@ namespace tnt
        */
       void sslListen(const std::string& certificateFile, const std::string& keyFile,
                      unsigned short int port)
-      { sslListen(certificateFile, keyFile, std::string(), port); }
+        { sslListen(certificateFile, keyFile, std::string(), port); }
 
       /** Start all needed threads and the application loop
 
@@ -202,11 +202,19 @@ namespace tnt
       /// Set the maximum number of worker threads
       void setMaxThreads(unsigned n)          { maxthreads = n; }
 
+      /// @{
       /** Add a mapping from a url to a component
 
           The matching url's are specified using a regular expression.
           The mapping target may contain back references to the expression
           using $1, $2 and so on.
+
+          @param url The path requested by the client
+            The path includes everything between the domain name and the get parameters.
+            It always starts with a '/'.
+
+          @param ci The identifier for the component to which the url is mapped
+            This identifier may be only the name, or component name + '@' + library name.
        */
       Mapping& mapUrl(const std::string& url, const std::string& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
@@ -223,6 +231,7 @@ namespace tnt
 
       Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
+      /// @}
 
       /** Set the app name
 
@@ -244,8 +253,15 @@ namespace tnt
       const std::string& getAppName() const
         { return appname; }
 
-      void setAccessLog(const std::string& accesslog)
-      { accessLog.open(accesslog.c_str(), std::ios::out | std::ios::app); }
+      /** Enable access logging
+
+          The used log format is the common logfile format (CLF),
+          the same format Apache uses for its access logs.
+
+          @param logfile_path The path to the log file.
+       */
+      void setAccessLog(const std::string& logfile_path)
+        { accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
   };
 }
 
