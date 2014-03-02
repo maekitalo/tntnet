@@ -37,7 +37,7 @@
 
 namespace tnt
 {
-  /// Baseclass for HTTP-messages.
+  /// Base class for HTTP messages
   class HttpMessage
   {
     public:
@@ -59,55 +59,70 @@ namespace tnt
       virtual ~HttpMessage()
       { }
 
-      /// Removes all request-specific content.
+      /// Remove all request-specific content
       virtual void clear();
 
-      /// returns true, if the message has the specified header.
+      /// @{
+      /// Check whether the message has the specified header
       bool hasHeader(const char* key) const        { return header.hasHeader(key); }
       bool hasHeader(const std::string& key) const { return header.hasHeader(key); }
-      /// returns the content of the specified header or the passed default
-      /// when not set.
+      /// @}
+      
+      /// Get the content of the specified header if it is set,
+      /// the passed default otherwise
       const char* getHeader(const char* key, const char* def = "") const;
 
-      /// returns the http-major-version-number.
+      /// Get the major http version number
       unsigned short getMajorVersion() const
         { return majorVersion; }
-      /// returns the http-minor-version-number.
+
+      /// Get the minor http version number
       unsigned short getMinorVersion() const
         { return minorVersion; }
-      /// sets the http-version-number
+
+      /// Set the http version number
       void setVersion(unsigned short major, unsigned short minor)
         { majorVersion = major; minorVersion = minor; }
 
-      /// Returns a constant Iterator, which points to the first header.
-      /// The value of the iterator is a std::pair<std::string, std::string>.
+      /** Get a constant iterator which points to the first header
+
+          The value type of the iterator is std::pair<std::string, std::string>
+       */
       header_type::const_iterator header_begin() const
         { return header.begin(); }
-      /// Returns a constant Iterator, which points past the last header.
+
+      /// Get a constant iterator which points past the last header
       header_type::const_iterator header_end() const
         { return header.end(); }
 
-      /// Adds the specified header to the message.
+      /// Add the specified header to the message
       void setHeader(const std::string& key, const std::string& value, bool replace = true)
         { header.setHeader(key, value, replace); }
-      /// Removes the header with the specified name from the message.
+
+      /// Remove the specified header from the message
       void removeHeader(const std::string& key)
         { header.removeHeader(key); }
 
-      /// Returns all headers as a string.
+      /// Get all headers in one string
       std::string dumpHeader() const;
-      /// Prints all headers to the specified output-stream.
+
+      /// Print all headers to the specified output-stream
       void dumpHeader(std::ostream& out) const;
 
-      /// Returns a properly formatted date-string, as needed in http.
+      /// @{
+      /// Get a date string, formatted as needed in http
       static std::string htdate(time_t t);
-      /// Returns a properly formatted date-string, as needed in http.
       static std::string htdate(struct ::tm* tm);
-      /// Returns a properly formatted current time-string, as needed in http.
+      /// @}
+
+      /// Get a string for the current time, formatted as needed in http
       static std::string htdateCurrent();
 
-      /// Checks for double-dot-url. Returns false, if the url used as
-      /// a filename would escape from the basedir.
+      // TODO [Revision]: Is this meant to check for absolute URLs?
+      /** Check for double-dot-url
+
+          @return false if the url used as a filename would escape from the basedir
+       */
       static bool checkUrl(const std::string& url);
   };
 }

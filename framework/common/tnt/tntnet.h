@@ -47,7 +47,7 @@ namespace tnt
 
   /** Main application class for stand-alone tntnet web application
 
-      The tntnet class is used to compile a web application into a simple executable.
+      The Tntnet class is used to compile a web application into a simple executable.
       The compiled program then works as a webserver, handling the server requests
       for the web application.
       This is the alternative to compiling it into a shared library and using the
@@ -135,8 +135,9 @@ namespace tnt
 
       /** Set up a listener for the specified ip address and port.
 
-          The empty string means listening on all interfaces
-          (though you can simply use the listen() method with one parameter to do that)
+          An empty string means listening on all interfaces – you can simply
+          use the listen() method with one parameter to do that though.
+
           This method solely does the setup, the actual listening starts in run().
        */
       void listen(const std::string& ipaddr, unsigned short int port);
@@ -146,7 +147,7 @@ namespace tnt
           As the above method, this doesn't start the actual listening.
        */
       void listen(unsigned short int port)
-      { listen(std::string(), port); }
+        { listen(std::string(), port); }
 
       /** Set up a ssl listener for the specified ip address and port
 
@@ -161,12 +162,12 @@ namespace tnt
        */
       void sslListen(const std::string& certificateFile, const std::string& keyFile,
                      unsigned short int port)
-      { sslListen(certificateFile, keyFile, std::string(), port); }
+        { sslListen(certificateFile, keyFile, std::string(), port); }
 
       /** Start all needed threads and the application loop
 
           If no listeners were set up through listen or sslListen, a default
-          listener is instantiated. It listens on all local interfaces on either 
+          listener is instantiated. It listens on all local interfaces on either
           port 80 (when the program is executed as root) or port 8000 (other users).
        */
       void run();
@@ -201,13 +202,19 @@ namespace tnt
       /// Set the maximum number of worker threads
       void setMaxThreads(unsigned n)          { maxthreads = n; }
 
+      /// @{
       /** Add a mapping from a url to a component
 
           The matching url's are specified using a regular expression.
           The mapping target may contain back references to the expression
           using $1, $2 and so on.
-          @arg url A url
-          @arg ci component name
+
+          @param url The path requested by the client
+            The path includes everything between the domain name and the get parameters.
+            It always starts with a '/'.
+
+          @param ci The identifier for the component to which the url is mapped
+            This identifier may be only the name, or component name + '@' + library name.
        */
       Mapping& mapUrl(const std::string& url, const std::string& ci)
         { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
@@ -248,6 +255,7 @@ namespace tnt
        */
       Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
         { return dispatcher.addUrlMapEntry(vhost, url, ci); }
+      /// @}
 
       /** Set the app name
 
@@ -267,16 +275,19 @@ namespace tnt
         { appname = appname_; }
 
 
-      /// Get the app name
+      /// Get the app name – for details see setAppName()
       const std::string& getAppName() const
         { return appname; }
 
-      /**
-       * Set a access log
-       * @arg accesslog Pass to log file.
+      /** Enable access logging
+
+          The used log format is the common logfile format (CLF),
+          the same format Apache uses for its access logs.
+
+          @param logfile_path The path to the log file.
        */
-      void setAccessLog(const std::string& accesslog)
-      { accessLog.open(accesslog.c_str(), std::ios::out | std::ios::app); }
+      void setAccessLog(const std::string& logfile_path)
+        { accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
   };
 }
 

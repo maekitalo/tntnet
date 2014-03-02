@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -51,7 +51,7 @@ namespace tnt
   class Sessionscope;
   class Tntnet;
 
-  /// HTTP-Request-message
+  /// HTTP request message
   class HttpRequest : public HttpMessage
   {
     public:
@@ -126,35 +126,49 @@ namespace tnt
 
       void clear();
 
-      /// returns the body of the message.
+      /// Get the body of the message
       const std::string& getBody() const        { return body; }
-      /// sets the body of the message.
+
+      /// Set the body of the message
       void setBody(const std::string& body_)    { body = body_; }
-      /// Returns the http-method (normally GET or POST) of a request.
+
+      /// @{
+      /// Get the http method of a request (usually GET or POST)
       std::string getMethod() const             { return method; }
       const char* getMethod_cstr() const        { return method; }
+      /// @}
+
+      /// Check whether http method used is GET
       bool isMethodGET() const                  { return std::strcmp(method, "GET") == 0; }
+
+      /// Check whether http method used is POST
       bool isMethodPOST() const                 { return std::strcmp(method, "POST") == 0; }
+
+      /// Check whether http method used is HEAD
       bool isMethodHEAD() const                 { return std::strcmp(method, "HEAD") == 0; }
+
       /// sets the http-method of this request.
       void setMethod(const char* method);
 
       /// returns url with get-parameters.
       std::string getQuery() const
         { return queryString.empty() ? url : url + '?' + queryString; }
+
       /// returns the request-url without parameters.
       const std::string& getUrl() const         { return url; }
+
       /// returns get-parameters as string.
       const std::string& getQueryString() const { return queryString; }
+
       /// sets query-string
       void setQueryString(const std::string& queryString_)
         { queryString = queryString_; }
 
       void setPathInfo(const std::string& p)       { pathinfo = p; }
       const std::string& getPathInfo() const       { return pathinfo; }
-      
+
       /**
-       * With this function, you can manipulating the url-path. 
+       * With this function, you can manipulating the url-path.
        * @todo compliment the doxygen comment with a example
        * @arg a The argument is a std::map with name/value pair strings.
        * @code{.cpp}
@@ -162,28 +176,21 @@ namespace tnt
        * @endcode
        */
       void setArgs(const args_type& a)             { args = a; }
-      
-      
+
+
       const args_type& getArgs() const             { return args; }
       args_type& getArgs()                         { return args; }
 
-      /**
-       * @deprecated
-       */
+
+      /// @{
+      /// @deprecated
       std::string getArgDef(args_type::size_type n, const std::string& def = std::string()) const;
-      
-      /**
-       * @deprecated
-       */      
       std::string getArg(args_type::size_type n) const { return getArgDef(n); }
-      
-      /**
-       * @deprecated
-       */
-      args_type::size_type getArgsCount() const    { return args.size(); }
+      args_type::size_type getArgsCount() const { return args.size(); }
+      /// @}
 
       /**
-       * return a argument for a http request. 
+       * return a argument for a http request.
        * @arg name the name of a argument.
        * @return the value of a argument.
        */
@@ -219,6 +226,7 @@ namespace tnt
           getLocale();
         return lang;
       }
+
       void setLocale(const std::locale& loc);
       void setLang(const std::string& lang);
 
@@ -242,17 +250,19 @@ namespace tnt
       bool verifyPassword(const std::string& password) const;
 
       bool keepAlive() const;
-      bool acceptGzipEncoding() const           { return getEncoding().accept("gzip"); }
+
+      /// @return Whether the client accepts gzip compression
+      bool acceptGzipEncoding() const { return getEncoding().accept("gzip"); }
 
       void setApplicationScope(Scope* s);
-      void setApplicationScope(Scope& s)  { setApplicationScope(&s); }
+      void setApplicationScope(Scope& s) { setApplicationScope(&s); }
 
       void setSessionScope(Sessionscope* s);
-      void setSessionScope(Sessionscope& s)      { setSessionScope(&s); }
+      void setSessionScope(Sessionscope& s) { setSessionScope(&s); }
       void setSecureSessionScope(Sessionscope* s);
-      void setSecureSessionScope(Sessionscope& s)      { setSecureSessionScope(&s); }
+      void setSecureSessionScope(Sessionscope& s) { setSecureSessionScope(&s); }
 
-      void setThreadContext(ThreadContext* ctx)    { threadContext = ctx; }
+      void setThreadContext(ThreadContext* ctx) { threadContext = ctx; }
 
       Scope& getRequestScope();
       Scope& getApplicationScope();
@@ -262,25 +272,25 @@ namespace tnt
       bool   hasSessionScope() const;
       bool   hasSecureSessionScope() const;
 
-      /// returns the value of the content-size-header as read from the client.
+      /// Get the value of the content-size header as reported by the client
       size_t getContentSize() const
         { return contentSize; }
 
-      /// returns the virtual-host-header of this request.
+      /// Get the virtual-host header of this request
       std::string getVirtualHost() const
         { return getHeader(httpheader::host); }
 
       Tntnet& getApplication()
         { return application; }
 
-      /// rewind watchdog timer.
-      void touch()                               { threadContext->touch(); }
+      /// Rewind watchdog timer
+      void touch() { threadContext->touch(); }
 
       static void postRunCleanup();
   };
 
   inline std::istream& operator>> (std::istream& in, HttpRequest& msg)
-  { msg.parse(in); return in; }
+    { msg.parse(in); return in; }
 
 }
 
