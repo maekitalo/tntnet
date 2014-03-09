@@ -44,8 +44,8 @@ namespace tnt
       typedef Messageheader header_type;
 
     private:
-      unsigned short majorVersion;
-      unsigned short minorVersion;
+      unsigned short _majorVersion;
+      unsigned short _minorVersion;
 
     protected:
       header_type header;
@@ -53,8 +53,8 @@ namespace tnt
 
     public:
       HttpMessage()
-        : majorVersion(1),
-          minorVersion(0)
+        : _majorVersion(1),
+          _minorVersion(0)
         { }
       virtual ~HttpMessage()
       { }
@@ -74,15 +74,15 @@ namespace tnt
 
       /// Get the major http version number
       unsigned short getMajorVersion() const
-        { return majorVersion; }
+        { return _majorVersion; }
 
       /// Get the minor http version number
       unsigned short getMinorVersion() const
-        { return minorVersion; }
+        { return _minorVersion; }
 
       /// Set the http version number
-      void setVersion(unsigned short major, unsigned short minor)
-        { majorVersion = major; minorVersion = minor; }
+      void setVersion(unsigned short majorVersion, unsigned short minorVersion)
+        { _majorVersion = majorVersion; _minorVersion = minorVersion; }
 
       /** Get a constant iterator which points to the first header
 
@@ -106,7 +106,7 @@ namespace tnt
       /// Get all headers in one string
       std::string dumpHeader() const;
 
-      /// Print all headers to the specified output-stream
+      /// Print all headers to the specified output stream
       void dumpHeader(std::ostream& out) const;
 
       /// @{
@@ -118,7 +118,7 @@ namespace tnt
       /// Get a string for the current time, formatted as needed in http
       static std::string htdateCurrent();
 
-      // TODO [Revision]: Is this meant to check for absolute URLs?
+      // TODO: Documentation revision: Is this meant to check for absolute URLs?
       /** Check for double-dot-url
 
           @return false if the url used as a filename would escape from the basedir

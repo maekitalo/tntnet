@@ -63,8 +63,8 @@ namespace tnt
       typedef std::map<std::string, std::string> args_type;
 
     private:
-      std::string body;
-      unsigned methodLen;
+      std::string _body;
+      unsigned _methodLen;
       char method[8];
       std::string url;
       std::string queryString;
@@ -127,10 +127,10 @@ namespace tnt
       void clear();
 
       /// Get the body of the message
-      const std::string& getBody() const        { return body; }
+      const std::string& getBody() const        { return _body; }
 
       /// Set the body of the message
-      void setBody(const std::string& body_)    { body = body_; }
+      void setBody(const std::string& body)     { _body = body; }
 
       /// @{
       /// Get the http method of a request (usually GET or POST)
@@ -147,20 +147,20 @@ namespace tnt
       /// Check whether http method used is HEAD
       bool isMethodHEAD() const                 { return std::strcmp(method, "HEAD") == 0; }
 
-      /// sets the http-method of this request.
+      /// Set the http method of this request
       void setMethod(const char* method);
 
-      /// returns url with get-parameters.
+      /// Get url with get parameters
       std::string getQuery() const
         { return queryString.empty() ? url : url + '?' + queryString; }
 
-      /// returns the request-url without parameters.
+      /// Get the request url without GET parameters
       const std::string& getUrl() const         { return url; }
 
-      /// returns get-parameters as string.
+      /// Get the query string (GET parameters string)
       const std::string& getQueryString() const { return queryString; }
 
-      /// sets query-string
+      /// Set the query string
       void setQueryString(const std::string& queryString_)
         { queryString = queryString_; }
 
