@@ -55,18 +55,19 @@ namespace tnt
           || (libname == ci.libname && compname < ci.compname);
       }
 
-      /// Create an empty Compident
+      /// Create an empty Compident object
       Compident() { }
 
-      /// Create a Compident with a library and component name
-      Compident(const std::string& l, const std::string& n)
-        : libname(l),
-          compname(n)
+      /// Create a Compident object with the given library and component name
+      Compident(const std::string& lib, const std::string& comp)
+        : libname(lib),
+          compname(comp)
       { }
 
-      /** Look for '@' and split the identifier string into libname and compname parts
+      /** Create a Compident from an identification string
 
-          When the string includes no '@', the library part will be empty.
+          The string has to be either only the component name or
+          the library name + the character '@' + the component name.
        */
       explicit Compident(const std::string& ident);
 
@@ -74,11 +75,11 @@ namespace tnt
       const std::string& toString() const
         { return libname.empty() ? compname : (compident.empty() ? (compident = compname + '@' + libname) : compident); }
 
-      /// Get whether the Compident is completely empty
+      /// Check whether the Compident is empty
       bool empty() const
         { return libname.empty() && compname.empty(); }
 
-      /// Erase the content of library and component strings
+      /// Erase the content of the library and component strings
       void clear()
         { libname.clear(); compname.clear(); }
   };
