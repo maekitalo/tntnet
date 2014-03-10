@@ -76,25 +76,25 @@ namespace tnt
   // Tntnet
   //
   Tntnet::Tntnet()
-    : minthreads(TntConfig::it().minThreads),
-      maxthreads(TntConfig::it().maxThreads),
-      pollerthread(cxxtools::callable(poller, &Poller::run)),
-      poller(queue)
+    : _minthreads(TntConfig::it().minThreads),
+      _maxthreads(TntConfig::it().maxThreads),
+      _pollerthread(cxxtools::callable(_poller, &Poller::run)),
+      _poller(_queue)
   { }
 
-  bool Tntnet::stop = false;
-  cxxtools::Mutex Tntnet::timeStopMutex;
-  cxxtools::Condition Tntnet::timerStopCondition;
+  bool Tntnet::_stop = false;
+  cxxtools::Mutex Tntnet::_timeStopMutex;
+  cxxtools::Condition Tntnet::_timerStopCondition;
 
   
-  Tntnet::listeners_type Tntnet::allListeners;
+  Tntnet::listeners_type Tntnet::_allListeners;
 
   void Tntnet::init(const TntConfig& config)
   {
-    minthreads = config.minThreads;
-    maxthreads = config.maxThreads;
+    _minthreads = config.minThreads;
+    _maxthreads = config.maxThreads;
 
-    queue.setCapacity(config.queueSize);
+    _queue.setCapacity(config.queueSize);
 
     for (TntConfig::EnvironmentType::const_iterator it = config.environment.begin(); it != config.environment.end(); ++it)
     {
@@ -115,7 +115,7 @@ namespace tnt
 #endif
     }
 
-    configureDispatcher(dispatcher);
+    configureDispatcher(_dispatcher);
 
     // initialize listeners
     for (TntConfig::ListenersType::const_iterator it = config.listeners.begin(); it != config.listeners.end(); ++it)
@@ -150,9 +150,9 @@ namespace tnt
   void Tntnet::listen(const std::string& ip, unsigned short int port)
   {
     log_debug("listen on ip " << ip << " port " << port);
-    ListenerBase* listener = new Listener(*this, ip, port, queue);
-    listeners.insert(listener);
-    allListeners.insert(listener);
+    ListenerBase* listener = new Listener(*this, ip, port, _queue);
+    _listeners.insert(listener);
+    _allListeners.insert(listener);
   }
 
   void Tntnet::sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ip, unsigned short int port)
@@ -160,9 +160,9 @@ namespace tnt
 #ifdef USE_SSL
     log_debug("listen on ip " << ip << " port " << port << " (ssl)");
     ListenerBase* listener = new Ssllistener(*this, certificateFile.c_str(),
-        keyFile.c_str(), ip, port, queue);
-    listeners.insert(listener);
-    allListeners.insert(listener);
+        keyFile.c_str(), ip, port, _queue);
+    _listeners.insert(listener);
+    _allListeners.insert(listener);
 #else
     log_error("cannot add ssl listener - ssl is not compiled into tntnet");
 #endif // USE_SSL
@@ -172,38 +172,38 @@ namespace tnt
   {
     log_debug("worker-process");
 
-    stop = false;
+    _stop = false;
 
-    if (listeners.empty())
+    if (_listeners.empty())
       throwRuntimeError("no listeners defined");
 
-    log_debug(listeners.size() << " listeners");
+    log_debug(_listeners.size() << " listeners");
 
-    if (listeners.size() >= minthreads)
+    if (_listeners.size() >= _minthreads)
     {
       log_warn("at least one more worker than listeners needed - set MinThreads to "
-        << listeners.size() + 1);
-      minthreads = listeners.size() + 1;
+        << _listeners.size() + 1);
+      _minthreads = _listeners.size() + 1;
     }
 
-    if (maxthreads < minthreads)
+    if (_maxthreads < _minthreads)
     {
-      log_warn("MaxThreads < MinThreads - set MaxThreads = MinThreads = " << minthreads);
-      maxthreads = minthreads;
+      log_warn("MaxThreads < MinThreads - set MaxThreads = MinThreads = " << _minthreads);
+      _maxthreads = _minthreads;
     }
 
     // initialize worker-process
 
     // set FD_CLOEXEC
-    for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
+    for (listeners_type::iterator it = _listeners.begin(); it != _listeners.end(); ++it)
       (*it)->initialize();
 
     // SIGPIPE must be ignored
     ::signal(SIGPIPE, SIG_IGN);
 
     // create worker-threads
-    log_info("create " << minthreads << " worker threads");
-    for (unsigned i = 0; i < minthreads; ++i)
+    log_info("create " << _minthreads << " worker threads");
+    for (unsigned i = 0; i < _minthreads; ++i)
     {
       log_debug("create worker " << i);
       Worker* s = new Worker(*this);
@@ -212,7 +212,7 @@ namespace tnt
 
     // create poller-thread
     log_debug("start poller thread");
-    pollerthread.start();
+    _pollerthread.start();
 
     log_debug("start timer thread");
     cxxtools::AttachedThread timerThread(cxxtools::callable(*this, &Tntnet::timerTask));
@@ -225,24 +225,24 @@ namespace tnt
 
     // mainloop
     cxxtools::Mutex mutex;
-    while (!stop)
+    while (!_stop)
     {
       {
         cxxtools::MutexLock lock(mutex);
-        queue.noWaitThreads.wait(lock);
+        _queue.noWaitThreads.wait(lock);
       }
 
-      if (stop)
+      if (_stop)
         break;
 
-      if (Worker::getCountThreads() < maxthreads)
+      if (Worker::getCountThreads() < _maxthreads)
       {
         log_info("create workerthread");
         Worker* s = new Worker(*this);
         s->create();
       }
       else
-        log_info("max worker-threadcount " << maxthreads << " reached");
+        log_info("max worker-threadcount " << _maxthreads << " reached");
 
       if (TntConfig::it().threadStartDelay > 0)
         usleep(TntConfig::it().threadStartDelay * 1000);
@@ -256,12 +256,12 @@ namespace tnt
     }
 
     log_info("stop listener");
-    for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
+    for (listeners_type::iterator it = _listeners.begin(); it != _listeners.end(); ++it)
       (*it)->doTerminate();
 
     log_info("stop poller thread");
-    poller.doStop();
-    pollerthread.join();
+    _poller.doStop();
+    _pollerthread.join();
 
     log_info("stop timer thread");
     timerThread.join();
@@ -277,9 +277,9 @@ namespace tnt
     }
 
     log_debug("destroy listener");
-    for (listeners_type::iterator it = listeners.begin(); it != listeners.end(); ++it)
+    for (listeners_type::iterator it = _listeners.begin(); it != _listeners.end(); ++it)
       delete *it;
-    listeners.clear();
+    _listeners.clear();
 
     HttpReply::postRunCleanup();
     HttpRequest::postRunCleanup();
@@ -289,14 +289,14 @@ namespace tnt
 
   void Tntnet::setMinThreads(unsigned n)
   {
-    if (listeners.size() >= n)
+    if (_listeners.size() >= n)
     {
       log_warn("at least one more worker than listeners needed - set MinThreads to "
-        << listeners.size() + 1);
-      minthreads = listeners.size() + 1;
+        << _listeners.size() + 1);
+      _minthreads = _listeners.size() + 1;
     }
     else
-      minthreads = n;
+      _minthreads = n;
 
   }
 
@@ -307,8 +307,8 @@ namespace tnt
     while (true)
     {
       {
-        cxxtools::MutexLock timeStopLock(timeStopMutex);
-        if (stop || timerStopCondition.wait(timeStopLock, TntConfig::it().timerSleep * 1000))
+        cxxtools::MutexLock timeStopLock(_timeStopMutex);
+        if (_stop || _timerStopCondition.wait(timeStopLock, TntConfig::it().timerSleep * 1000))
           break;
       }
 
@@ -316,14 +316,14 @@ namespace tnt
       Worker::timer();
     }
 
-    queue.noWaitThreads.signal();
-    minthreads = maxthreads = 0;
+    _queue.noWaitThreads.signal();
+    _minthreads = _maxthreads = 0;
   }
 
   void Tntnet::shutdown()
   {
-    stop = true;
-    timerStopCondition.broadcast();
+    _stop = true;
+    _timerStopCondition.broadcast();
   }
 
 }

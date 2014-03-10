@@ -180,7 +180,7 @@ Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
           ci.setPathInfo(formatter(src.getPathInfo()));
 
         for (Maptarget::args_type::const_iterator it = src.getArgs().begin(); it != src.getArgs().end(); ++it)
-          ci.args[it->first] = formatter(it->second);
+          ci._args[it->first] = formatter(it->second);
 
         if (TntConfig::it().maxUrlMapCache > 0)
         {

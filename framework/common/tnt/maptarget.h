@@ -36,46 +36,51 @@
 
 namespace tnt
 {
+
+  /// @cond internal
+
   class Maptarget : public Compident
   {
-      friend class Dispatcher;
+    friend class Dispatcher;
 
     public:
       typedef std::map<std::string, std::string> args_type;
 
     private:
-      std::string pathinfo;
-      args_type args;
-      bool pathinfo_set;
+      std::string _pathinfo;
+      args_type _args;
+      bool _pathinfo_set;
 
     public:
       Maptarget()
-        : pathinfo_set(false)
+        : _pathinfo_set(false)
         { }
 
       explicit Maptarget(const std::string& ident)
         : Compident(ident),
-          pathinfo_set(false)
+          _pathinfo_set(false)
         { }
 
       Maptarget(const Compident& ident)
         : Compident(ident),
-          pathinfo_set(false)
+          _pathinfo_set(false)
         { }
 
       bool hasPathInfo() const
-        { return pathinfo_set; }
+        { return _pathinfo_set; }
       Maptarget& setPathInfo(const std::string& p)
-        { pathinfo = p; pathinfo_set = true; return *this; }
+        { _pathinfo = p; _pathinfo_set = true; return *this; }
       void setArgs(const args_type& a)
-        { args = a; }
+        { _args = a; }
       const std::string& getPathInfo() const
-        { return pathinfo; }
+        { return _pathinfo; }
       const args_type& getArgs() const
-        { return args; }
+        { return _args; }
       Maptarget& setArg(const std::string& name, const std::string& value)
-        { args[name] = value; return *this; }
+        { _args[name] = value; return *this; }
   };
+
+  /// @endcond internal
 
 }
 

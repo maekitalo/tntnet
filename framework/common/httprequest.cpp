@@ -87,7 +87,7 @@ namespace tnt
   }
 
   HttpRequest::HttpRequest(const HttpRequest& r)
-    : methodLen(0),
+    : _methodLen(0),
       pathinfo(r.pathinfo),
       args(r.args),
       getparam(r.getparam),
@@ -168,8 +168,8 @@ namespace tnt
   void HttpRequest::clear()
   {
     HttpMessage::clear();
-    body.clear();
-    methodLen = 0;
+    _body.clear();
+    _methodLen = 0;
     method[0] = '\0';
     url.clear();
     queryString.clear();

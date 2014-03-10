@@ -35,51 +35,57 @@
 
 namespace tnt
 {
-/// This is a class, which names tntnet components.
-/// tntnet components are identified by the library, where they reside and a name
-/// inside the library. The name is actually a string constant, which was passed
-/// to the component factory ctor.
-struct Compident
-{
-  std::string libname;
-  std::string compname;
+  /** This class is an identifier for a tntnet component
 
-private:
-  mutable std::string compident;
-
-public:
-
-  bool operator< (const Compident& ci) const
+      It encapsulates the name of a component plus optionally the library it is in.
+   */
+  struct Compident
   {
-    return libname < ci.libname
-      || (libname == ci.libname && compname < ci.compname);
-  }
+      std::string libname;
+      std::string compname;
 
-  Compident() { }
+    private:
+      mutable std::string compident;
 
-  /// Creates a component identifyer with a library and component name.
-  Compident(const std::string& l, const std::string& n)
-    : libname(l),
-      compname(n)
-  { }
+    public:
 
-  /// looks for '@' and splits the passed string into libname and compname parts.
-  /// When no '@' is found, the library part is left empty.
-  explicit Compident(const std::string& ident);
+      bool operator< (const Compident& ci) const
+      {
+        return libname < ci.libname
+          || (libname == ci.libname && compname < ci.compname);
+      }
 
-  /// return component identifyer as a string
-  const std::string& toString() const
-  { return libname.empty() ? compname : (compident.empty() ? (compident = compname + '@' + libname) : compident); }
+      /// Create an empty Compident object
+      Compident() { }
 
-  bool empty() const
-    { return libname.empty() && compname.empty(); }
-  void clear()
-    { libname.clear(); compname.clear(); }
-};
+      /// Create a Compident object with the given library and component name
+      Compident(const std::string& lib, const std::string& comp)
+        : libname(lib),
+          compname(comp)
+      { }
 
-inline std::ostream& operator<< (std::ostream& out, const Compident& comp)
-{ return out << comp.toString(); }
+      /** Create a Compident from an identification string
 
+          The string has to be either only the component name or
+          the library name + the character '@' + the component name.
+       */
+      explicit Compident(const std::string& ident);
+
+      /// Get component identifier as a string
+      const std::string& toString() const
+        { return libname.empty() ? compname : (compident.empty() ? (compident = compname + '@' + libname) : compident); }
+
+      /// Check whether the Compident is empty
+      bool empty() const
+        { return libname.empty() && compname.empty(); }
+
+      /// Erase the content of the library and component strings
+      void clear()
+        { libname.clear(); compname.clear(); }
+  };
+
+  inline std::ostream& operator<< (std::ostream& out, const Compident& comp)
+    { return out << comp.toString(); }
 }
 
 #endif // TNT_COMPIDENT_H

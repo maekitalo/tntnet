@@ -47,7 +47,7 @@ namespace tnt
 
   /** Main application class for stand-alone tntnet web application
 
-      The tntnet class is used to compile a web application into a simple executable.
+      The Tntnet class is used to compile a web application into a simple executable.
       The compiled program then works as a webserver, handling the server requests
       for the web application.
       This is the alternative to compiling it into a shared library and using the
@@ -94,25 +94,27 @@ namespace tnt
     friend class Worker;
 
     private:
-      unsigned minthreads;
-      unsigned maxthreads;
-
-      Jobqueue queue;
-
-      static bool stop;
       typedef std::set<ListenerBase*> listeners_type;
-      listeners_type listeners;
-      static listeners_type allListeners;
 
-      cxxtools::AttachedThread pollerthread;
-      Poller poller;
-      Dispatcher dispatcher;
+      unsigned _minthreads;
+      unsigned _maxthreads;
 
-      ScopeManager scopemanager;
-      std::string appname;
+      Jobqueue _queue;
 
-      std::ofstream accessLog;
-      cxxtools::Mutex accessLogMutex;
+      static bool _stop;
+
+      listeners_type _listeners;
+      static listeners_type _allListeners;
+
+      cxxtools::AttachedThread _pollerthread;
+      Poller _poller;
+      Dispatcher _dispatcher;
+
+      ScopeManager _scopemanager;
+      std::string _appname;
+
+      std::ofstream _accessLog;
+      cxxtools::Mutex _accessLogMutex;
 
       // noncopyable
       Tntnet(const Tntnet&);
@@ -120,8 +122,8 @@ namespace tnt
 
       void timerTask();
 
-      static cxxtools::Condition timerStopCondition;
-      static cxxtools::Mutex timeStopMutex;
+      static cxxtools::Condition _timerStopCondition;
+      static cxxtools::Mutex _timeStopMutex;
 
     public:
       /** Create a Tntnet object with default configuration
@@ -135,8 +137,9 @@ namespace tnt
 
       /** Set up a listener for the specified ip address and port.
 
-          The empty string means listening on all interfaces
-          (though you can simply use the listen() method with one parameter to do that)
+          An empty string means listening on all interfaces &ndash; you can simply
+          use the listen() method with one parameter to do that though.
+
           This method solely does the setup, the actual listening starts in run().
        */
       void listen(const std::string& ipaddr, unsigned short int port);
@@ -146,7 +149,7 @@ namespace tnt
           As the above method, this doesn't start the actual listening.
        */
       void listen(unsigned short int port)
-      { listen(std::string(), port); }
+        { listen(std::string(), port); }
 
       /** Set up a ssl listener for the specified ip address and port
 
@@ -161,7 +164,7 @@ namespace tnt
        */
       void sslListen(const std::string& certificateFile, const std::string& keyFile,
                      unsigned short int port)
-      { sslListen(certificateFile, keyFile, std::string(), port); }
+        { sslListen(certificateFile, keyFile, std::string(), port); }
 
       /** Start all needed threads and the application loop
 
@@ -175,53 +178,66 @@ namespace tnt
       static void shutdown();
 
       /// Tells whether a shutdown request was initiated
-      static bool shouldStop()                { return stop; }
+      static bool shouldStop()                { return _stop; }
 
       /// @cond internal
 
-      Jobqueue&   getQueue()                  { return queue; }
+      Jobqueue&   getQueue()                  { return _queue; }
 
-      Poller&     getPoller()                 { return poller; }
+      Poller&     getPoller()                 { return _poller; }
 
-      const Dispatcher& getDispatcher() const { return dispatcher; }
+      const Dispatcher& getDispatcher() const { return _dispatcher; }
 
-      ScopeManager& getScopemanager()         { return scopemanager; }
+      ScopeManager& getScopemanager()         { return _scopemanager; }
 
       /// @endcond internal
 
       /// Get the minimum number of worker threads
-      unsigned getMinThreads() const          { return minthreads; }
+      unsigned getMinThreads() const          { return _minthreads; }
 
       /// Set the minimum number of worker threads
       void setMinThreads(unsigned n);
 
       /// Get the maximum number of worker threads
-      unsigned getMaxThreads() const          { return maxthreads; }
+      unsigned getMaxThreads() const          { return _maxthreads; }
 
       /// Set the maximum number of worker threads
-      void setMaxThreads(unsigned n)          { maxthreads = n; }
+      void setMaxThreads(unsigned n)          { _maxthreads = n; }
 
-      /** Add a mapping from a url to a component
+      /// @{
+      /** @name URL mapping
+
+          Add a mapping from a url to a component
 
           The matching url's are specified using a regular expression.
           The mapping target may contain back references to the expression
           using $1, $2 and so on.
+
+          @param url The path requested by the client.
+            The path includes everything between the domain name and the get parameters.
+            It always begins with a '/'.
+
+          @param ci The identifier for the component to which the url is mapped.
+            The first method simply passes the string to the CompIdent constructor.
        */
       Mapping& mapUrl(const std::string& url, const std::string& ci)
-        { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
+        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
 
-      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)
-      {
-        Maptarget ci(ci_);
-        ci.setPathInfo(pathinfo);
-        dispatcher.addUrlMapEntry(std::string(), url, ci);
-      }
+      Mapping& mapUrl(const std::string& url, const Compident& ci)
+        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
 
+      /// @deprecated
+      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci)
+        { _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)).setPathInfo(pathinfo); }
+
+      /// @deprecated
       Mapping& mapUrl(const std::string& url, const Maptarget& ci)
-        { return dispatcher.addUrlMapEntry(std::string(), url, ci); }
+        { return _dispatcher.addUrlMapEntry(std::string(), url, ci); }
 
+      /// @deprecated
       Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
-        { return dispatcher.addUrlMapEntry(vhost, url, ci); }
+        { return _dispatcher.addUrlMapEntry(vhost, url, ci); }
+      /// @}
 
       /** Set the app name
 
@@ -236,15 +252,22 @@ namespace tnt
           multiple tntnet application servers are run on the same host on
           different ports.
        */
-      void setAppName(const std::string& appname_)
-        { appname = appname_; }
+      void setAppName(const std::string& appname)
+        { _appname = appname; }
 
-      /// Get the app name
+      /// Get the app name &ndash; for details see setAppName()
       const std::string& getAppName() const
-        { return appname; }
+        { return _appname; }
 
-      void setAccessLog(const std::string& accesslog)
-      { accessLog.open(accesslog.c_str(), std::ios::out | std::ios::app); }
+      /** Enable access logging
+
+          The used log format is the common logfile format (CLF),
+          the same format Apache uses for its access logs.
+
+          @param logfile_path The path to the log file.
+       */
+      void setAccessLog(const std::string& logfile_path)
+        { _accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
   };
 }
 

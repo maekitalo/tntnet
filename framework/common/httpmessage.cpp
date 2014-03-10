@@ -42,8 +42,8 @@ namespace tnt
   void HttpMessage::clear()
   {
     header.clear();
-    majorVersion = 1;
-    minorVersion = 0;
+    _majorVersion = 1;
+    _minorVersion = 0;
   }
 
   const char* HttpMessage::getHeader(const char* key, const char* def) const

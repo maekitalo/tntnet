@@ -103,7 +103,7 @@ namespace tnt
     if (istokenchar(ch))
     {
       message.method[0] = ch;
-      message.methodLen = 1;
+      message._methodLen = 1;
       SET_STATE(state_cmd);
     }
     else if (ch != ' ' && ch != '\t')
@@ -119,16 +119,16 @@ namespace tnt
   {
     if (istokenchar(ch))
     {
-      if (message.methodLen >= sizeof(message.method) - 1)
+      if (message._methodLen >= sizeof(message.method) - 1)
       {
-        log_debug("invalid method field; method=" << std::string(message.method, message.methodLen) << ", len=" << message.methodLen);
+        log_debug("invalid method field; method=" << std::string(message.method, message._methodLen) << ", len=" << message._methodLen);
         throw HttpError(HTTP_BAD_REQUEST, "invalid method field");
       }
-      message.method[message.methodLen++] = ch;
+      message.method[message._methodLen++] = ch;
     }
     else if (ch == ' ')
     {
-      message.method[message.methodLen] = '\0';
+      message.method[message._methodLen] = '\0';
       log_debug("method=" << message.method);
       SET_STATE(state_url0);
     }
@@ -426,7 +426,7 @@ namespace tnt
         else
         {
           SET_STATE(state_body);
-          message.body.reserve(bodySize);
+          message._body.reserve(bodySize);
           return false;
         }
       }
@@ -439,7 +439,7 @@ namespace tnt
 
   bool HttpRequest::Parser::state_body(char ch)
   {
-    message.body += ch;
+    message._body += ch;
     return --bodySize == 0;
   }
 
