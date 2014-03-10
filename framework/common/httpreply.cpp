@@ -181,14 +181,14 @@ namespace tnt
   }
 
   HttpReply::Impl::Impl(std::ostream& s, bool sendStatusLine_)
-    : socket(&s)
-    , safe_outstream(outstream)
-    , url_outstream(outstream)
-    , chunked_outstream(s)
-    , keepAliveCounter(0)
-    , sendStatusLine(sendStatusLine_)
-    , headRequest(false)
-    , clearSession(false)
+    : socket(&s),
+      safe_outstream(outstream),
+      url_outstream(outstream),
+      chunked_outstream(s),
+      keepAliveCounter(0),
+      sendStatusLine(sendStatusLine_),
+      headRequest(false),
+      clearSession(false)
   {
   }
 
@@ -196,10 +196,10 @@ namespace tnt
   // HttpReply
   //
   HttpReply::HttpReply(std::ostream& s, bool sendStatusLine_)
-    : _impl(Impl::pool.getInstance(s, sendStatusLine_))
-    , _current_outstream(&_impl->outstream)
-    , _safe_outstream(&_impl->safe_outstream)
-    , _url_outstream(&_impl->url_outstream)
+    : _impl(Impl::pool.getInstance(s, sendStatusLine_)),
+      _current_outstream(&_impl->outstream),
+      _safe_outstream(&_impl->safe_outstream),
+      _url_outstream(&_impl->url_outstream)
   {
   }
 

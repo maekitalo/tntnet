@@ -54,59 +54,59 @@ namespace tnt
   cxxtools::atomic_t HttpRequest::serial_ = 0;
 
   HttpRequest::HttpRequest(Tntnet& application_, const SocketIf* socketIf_)
-    : socketIf(socketIf_)
-    , locale_init(false)
-    , encodingRead(false)
-    , requestScope(0)
-    , applicationScope(0)
-    , sessionScope(0)
-    , secureSessionScope(0)
-    , threadContext(0)
-    , applicationScopeLocked(false)
-    , sessionScopeLocked(false)
-    , secureSessionScopeLocked(false)
-    , application(application_)
+    : socketIf(socketIf_),
+      locale_init(false),
+      encodingRead(false),
+      requestScope(0),
+      applicationScope(0),
+      sessionScope(0),
+      secureSessionScope(0),
+      threadContext(0),
+      applicationScopeLocked(false),
+      sessionScopeLocked(false),
+      secureSessionScopeLocked(false),
+      application(application_)
   {
   }
 
   HttpRequest::HttpRequest(Tntnet& application_, const std::string& url_, const SocketIf* socketIf_)
-    : socketIf(socketIf_)
-    , locale_init(false)
-    , requestScope(0)
-    , applicationScope(0)
-    , sessionScope(0)
-    , secureSessionScope(0)
-    , threadContext(0)
-    , applicationScopeLocked(false)
-    , sessionScopeLocked(false)
-    , secureSessionScopeLocked(false)
-    , application(application_)
+    : socketIf(socketIf_),
+      locale_init(false),
+      requestScope(0),
+      applicationScope(0),
+      sessionScope(0),
+      secureSessionScope(0),
+      threadContext(0),
+      applicationScopeLocked(false),
+      sessionScopeLocked(false),
+      secureSessionScopeLocked(false),
+      application(application_)
   {
     std::istringstream s("GET " + url_ + " HTTP/1.1\r\n\r\n");
     parse(s);
   }
 
   HttpRequest::HttpRequest(const HttpRequest& r)
-    : _methodLen(0)
-    , pathinfo(r.pathinfo)
-    , args(r.args)
-    , getparam(r.getparam)
-    , postparam(r.postparam)
-    , qparam(r.qparam)
-    , socketIf(r.socketIf)
-    , ct(r.ct)
-    , mp(r.mp)
-    , serial(r.serial)
-    , locale_init(r.locale_init)
-    , requestScope(r.requestScope)
-    , applicationScope(r.applicationScope)
-    , sessionScope(r.sessionScope)
-    , secureSessionScope(r.secureSessionScope)
-    , threadContext(r.threadContext)
-    , applicationScopeLocked(false)
-    , sessionScopeLocked(false)
-    , secureSessionScopeLocked(false)
-    , application(r.application)
+    : _methodLen(0),
+      pathinfo(r.pathinfo),
+      args(r.args),
+      getparam(r.getparam),
+      postparam(r.postparam),
+      qparam(r.qparam),
+      socketIf(r.socketIf),
+      ct(r.ct),
+      mp(r.mp),
+      serial(r.serial),
+      locale_init(r.locale_init),
+      requestScope(r.requestScope),
+      applicationScope(r.applicationScope),
+      sessionScope(r.sessionScope),
+      secureSessionScope(r.secureSessionScope),
+      threadContext(r.threadContext),
+      applicationScopeLocked(false),
+      sessionScopeLocked(false),
+      secureSessionScopeLocked(false),
+      application(r.application)
   {
     if (requestScope)
       requestScope->addRef();
