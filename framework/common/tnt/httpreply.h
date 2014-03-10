@@ -121,9 +121,9 @@ namespace tnt
 
       /** Enable chunked encoding for the current request
 
-          When setting chunked encoding, the content is sent immediately in
+          When enabling chunked encoding, the content is sent immediately in
           chunks instead of collecting content into a string before sending.
-          After setting chunked encoding, it must be ensured that no exceptions
+          After enabling chunked encoding, it must be ensured that no exceptions
           are thrown. Also, headers are sent immediately after enabling chunked
           encoding and hence setting headers must happen before calling this method.
 

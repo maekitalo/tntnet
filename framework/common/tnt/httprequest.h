@@ -150,7 +150,7 @@ namespace tnt
       /// Set the http method of this request
       void setMethod(const char* method);
 
-      /// Get url with get parameters
+      /// Get url with GET parameters
       std::string getQuery() const
         { return queryString.empty() ? url : url + '?' + queryString; }
 
