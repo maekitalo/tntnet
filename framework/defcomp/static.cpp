@@ -78,8 +78,6 @@ namespace tnt
         state_e
       } state = state_0;
 
-      std::string token;
-
       const char* prefix = "bytes=";
       off_t firstPos = 0;
       off_t lastPos = count;
@@ -153,9 +151,6 @@ namespace tnt
               state = state_e;
             else
               return false;
-            break;
-
-          case state_e:
             break;
         }
       }

@@ -256,9 +256,6 @@ namespace tnt
           else
             in.setstate(std::ios::failbit);
           break;
-
-        case state_end:
-          break;
       }
 
       if (state != state_end)

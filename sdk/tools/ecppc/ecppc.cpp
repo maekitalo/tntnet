@@ -223,13 +223,12 @@ namespace tnt
           if (stat(ifile.c_str(), &st) != 0)
           {
             // search for input file in includes list
-            int ret;
             for (includes_type::const_iterator incl = includes.begin();
               incl != includes.end(); ++incl)
             {
               std::string inputfile_ = *incl + '/' + it->second;
               log_debug("check for input file " << inputfile_);
-              if ((ret = stat(inputfile_.c_str(), &st)) == 0)
+              if (stat(inputfile_.c_str(), &st) == 0)
               {
                 ifile = inputfile_;
                 break;

@@ -67,10 +67,7 @@ namespace tnt
       }
 
       if (!inp)
-      {
-        std::ostringstream msg;
         throw std::runtime_error("cannot open include file \"" + file + '"');
-      }
 
       std::string curfileSave = curfile;
       unsigned curlineSave = curline;
@@ -195,7 +192,7 @@ namespace tnt
 
       state_type state = state_nl;
       std::string tag, etag, tagarg;
-      std::string html, code, arg, argtype, value;
+      std::string html, code, arg, value;
       std::string comp;
       std::string cond, expr;
       comp_args_type comp_args;
