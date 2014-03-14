@@ -78,8 +78,7 @@ namespace tnt
         tntnetXml >> cxxtools::Xml(config);
 
         // pass the configuration to the application object to configure it
-        app.init(config)
-
+        app.init(config);
       @endcode
 
       You have to include the header <cxxtools/xml.h> for that.

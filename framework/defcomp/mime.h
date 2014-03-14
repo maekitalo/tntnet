@@ -50,7 +50,7 @@ namespace tnt
 
       ~Mime();
 
-      virtual void configure(tnt::TntConfig& config);
+      virtual void configure(const tnt::TntConfig& config);
       virtual unsigned operator() (tnt::HttpRequest& request,
         tnt::HttpReply& reply, tnt::QueryParams& qparam);
   };

@@ -50,7 +50,7 @@ namespace tnt
     delete handler;
   }
 
-  void Mime::configure(tnt::TntConfig& config)
+  void Mime::configure(const tnt::TntConfig& config)
   {
     if (handler == 0)
       handler = new MimeHandler();

@@ -45,14 +45,23 @@ namespace tnt
   class ComponentFactory;
 
   /// @cond internal
-  class LibraryNotFound
+  class LibraryNotFound : public std::exception
   {
-      std::string libname;
+    private:
+      std::string _libname;
+      std::string _msg;
+
     public:
-      explicit LibraryNotFound(const std::string& libname_)
-        : libname(libname_)
+      explicit LibraryNotFound(const std::string& libname)
+        : _libname(libname),
+          _msg("Library not found: " + libname)
         { }
-      const std::string& getLibname() const  { return libname; }
+      ~LibraryNotFound() throw() { }
+
+      const char* what() const throw()
+        { return _msg.c_str(); }
+
+      const std::string& getLibname() const { return _libname; }
   };
 
   template <typename objectType>
