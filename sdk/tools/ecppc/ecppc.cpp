@@ -48,6 +48,7 @@ namespace tnt
   {
     Ecppc::Ecppc(int& argc, char* argv[])
       : requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
+        inputfile(0),
         ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),

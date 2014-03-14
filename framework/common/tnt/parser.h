@@ -45,8 +45,8 @@ namespace tnt
   class Parser : public PrePostProcessor
   {
     protected:
-
       typedef bool (this_type::*state_type)(char);
+
       state_type state;
       state_type nextState;
 
@@ -72,6 +72,7 @@ namespace tnt
     public:
       explicit Parser(state_type initialState)
         : state(initialState),
+          nextState(0),
           failedFlag(false)
         { }
 
