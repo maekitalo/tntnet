@@ -111,31 +111,31 @@ AM_CONDITIONAL(MAKE_OPENSSL, test x$with_openssl = x1)
 #
 # optional components
 #
-AC_ARG_WITH([server],
-  AS_HELP_STRING([--with-server=yes|no], [build tntnet-server (default: yes)]),
-  [with_server=$withval],
-  [with_server=yes])
+AC_ARG_ENABLE([server],
+  AS_HELP_STRING([--disable-server], [disable building tntnet server]),
+  [enable_server=$enableval],
+  [enable_server=yes])
 
-AM_CONDITIONAL(MAKE_SERVER, test x$with_server = xyes)
+AM_CONDITIONAL(MAKE_SERVER, test x$enable_server = xyes)
 
-AC_ARG_WITH([sdk],
-  AS_HELP_STRING([--with-sdk=yes|no], [build sdk (default: yes)]),
-  [with_sdk=$withval],
-  [with_sdk=yes])
+AC_ARG_ENABLE([sdk],
+  AS_HELP_STRING([--disable-sdk], [disable building sdk]),
+  [enable_sdk=$enableval],
+  [enable_sdk=yes])
 
-AM_CONDITIONAL(MAKE_SDK, test x$with_sdk = xyes)
+AM_CONDITIONAL(MAKE_SDK, test x$enable_sdk = xyes)
 
-AC_ARG_WITH([demos],
-  AS_HELP_STRING([--with-demos=yes|no], [build demos (default: same as with-sdk)]),
-  [with_demos=$withval],
-  [with_demos=$with_sdk])
+AC_ARG_ENABLE([demos],
+  AS_HELP_STRING([--enable-demos], [enable building demos]),
+  [enable_demos=$enableval],
+  [enable_demos=no])
 
-AM_CONDITIONAL(MAKE_DEMOS, test "$with_demos" = "yes" -o "$with_demos" = "install")
-AM_CONDITIONAL(INSTALL_DEMOS, test "$with_demos" = "install")
+AM_CONDITIONAL(MAKE_DEMOS, test "$enable_demos" = "yes" -o "$enable_demos" = "install")
+AM_CONDITIONAL(INSTALL_DEMOS, test "$enable_demos" = "install")
 
-AS_IF([test "$with_demos" = "yes"],
+AS_IF([test "$enable_demos" = "yes"],
   [
-    AS_IF([test "$with_sdk" != "yes"],
+    AS_IF([test "$enable_sdk" != "yes"],
         [AC_MSG_ERROR([demos cannott be built without building sdk])])
 
   AC_CHECK_PROG(ZIP, zip, 1)
