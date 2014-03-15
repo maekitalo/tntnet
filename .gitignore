@@ -4,9 +4,7 @@
 /aclocal.m4
 /autom4te.cache
 /compile
-/config.log
 /config.guess
-/config.status
 /config.sub
 /configure
 /depcomp
@@ -21,21 +19,24 @@
 
 Makefile.in
 Makefile
+config.log
+config.status
+libtool
 stamp-h1
 
 # Files generated or compiled in the build process
 
-framework/common/config.h
-framework/common/config.h.in
-framework/runtime/tntnet
-sdk/tools/ecppc/ecppc
-sdk/tools/ecppl/ecppl
-sdk/tools/ecppll/ecppll
-etc/init.d/tntnet
-etc/tntnet/tntnet.xml
-utest/utest
-
 tntnet-config
+
+**/framework/common/config.h
+**/framework/common/config.h.in
+**/framework/runtime/tntnet
+**/sdk/tools/ecppc/ecppc
+**/sdk/tools/ecppl/ecppl
+**/sdk/tools/ecppll/ecppll
+**/etc/init.d/tntnet
+**/etc/tntnet/tntnet.xml
+**/utest/utest
 
 *.l[ao]
 *.o
