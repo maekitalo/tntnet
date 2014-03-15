@@ -152,6 +152,9 @@ namespace tnt
             else
               return false;
             break;
+
+          case state_e: // not reachable but to satisfy the compiler we put it here
+            break;
         }
       }
 
