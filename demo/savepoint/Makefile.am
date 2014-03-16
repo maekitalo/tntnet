@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = savepoint.la
 
-nodist_savepoint_la_SOURCES = \
+savepoint_la_SOURCES = \
 	savepoint.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common

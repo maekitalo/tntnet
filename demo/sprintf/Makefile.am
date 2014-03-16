@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = sprintf.la
 
-nodist_sprintf_la_SOURCES = \
+sprintf_la_SOURCES = \
 	sprintf.ecpp \
 	subcomp.ecpp
 

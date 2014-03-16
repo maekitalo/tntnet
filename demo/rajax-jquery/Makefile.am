@@ -4,7 +4,7 @@ noinst_HEADERS = \
     message.h \
     modificationtracker.h
 
-nodist_message_la_SOURCES = \
+message_la_SOURCES = \
 	get.ecpp \
 	jquery.js \
 	message.ecpp \

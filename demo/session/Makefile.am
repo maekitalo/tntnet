@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = session.la
 
-nodist_session_la_SOURCES = \
+session_la_SOURCES = \
 	session.ecpp \
 	appsession.ecpp
 

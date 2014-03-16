@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = controls.la
 
-nodist_controls_la_SOURCES = \
+controls_la_SOURCES = \
 	controls.ecpp \
 	index.ecpp \
 	treemenu.ecpp \

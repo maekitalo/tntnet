@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = upload.la
 
-nodist_upload_la_SOURCES = \
+upload_la_SOURCES = \
 	upload.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common

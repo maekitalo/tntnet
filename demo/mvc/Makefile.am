@@ -1,7 +1,7 @@
 pkglib_LTLIBRARIES = mvc.la
 AUTOMAKE_OPTIONS = subdir-objects
 
-nodist_mvc_la_SOURCES = \
+mvc_la_SOURCES = \
 	controller/counter.cpp \
 	view/counter.ecpp
 

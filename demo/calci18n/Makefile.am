@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = calci18n.la
 
-nodist_calci18n_la_SOURCES = \
+calci18n_la_SOURCES = \
 	calci18n.ecpp \
 	en.cpp \
 	fi.cpp \

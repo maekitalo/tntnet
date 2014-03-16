@@ -1,10 +1,10 @@
 pkglib_LTLIBRARIES = comp.la extlib.la
 
-nodist_comp_la_SOURCES = \
+comp_la_SOURCES = \
 	comp.ecpp \
     subcomp.ecpp
 
-nodist_extlib_la_SOURCES = \
+extlib_la_SOURCES = \
 	extcomp.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common

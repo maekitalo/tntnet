@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = config.la
 
-nodist_config_la_SOURCES = \
+config_la_SOURCES = \
 	config.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common

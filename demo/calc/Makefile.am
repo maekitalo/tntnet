@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = calc.la
 
-nodist_calc_la_SOURCES = \
+calc_la_SOURCES = \
 	calc.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common

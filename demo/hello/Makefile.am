@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = hello.la
 
-nodist_hello_la_SOURCES = \
+hello_la_SOURCES = \
 	hello.ecpp \
 	tntnet.jpg
 

@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = chat.la
 
-nodist_chat_la_SOURCES = \
+chat_la_SOURCES = \
 	chat.ecpp \
 	ajax.js \
 	getchat.ecpp \
@@ -13,7 +13,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 chat_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 chat_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
-noinst_DATA = tntnet.xml global.ecpp
+dist_noinst_DATA = tntnet.xml global.ecpp
 CLEANFILES = chat.cpp ajax.cpp getchat.cpp putchat.cpp \
     sad.cpp smile.cpp wink.cpp \
     tntnet.xml
