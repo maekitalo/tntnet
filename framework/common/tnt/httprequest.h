@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -140,7 +140,7 @@ namespace tnt
 
       /// Check whether http method used is GET
       bool isMethodGET() const                  { return std::strcmp(method, "GET") == 0; }
-      
+
       /// Check whether http method used is POST
       bool isMethodPOST() const                 { return std::strcmp(method, "POST") == 0; }
 
@@ -167,9 +167,20 @@ namespace tnt
       void setPathInfo(const std::string& p)       { pathinfo = p; }
       const std::string& getPathInfo() const       { return pathinfo; }
 
+      /**
+       * With this function, you can manipulating the url-path.
+       * @todo compliment the doxygen comment with a example
+       * @arg a The argument is a std::map with name/value pair strings.
+       * @code{.cpp}
+         // please fill me!
+       * @endcode
+       */
       void setArgs(const args_type& a)             { args = a; }
+
+
       const args_type& getArgs() const             { return args; }
       args_type& getArgs()                         { return args; }
+
 
       /// @{
       /// @deprecated
@@ -178,6 +189,11 @@ namespace tnt
       args_type::size_type getArgsCount() const { return args.size(); }
       /// @}
 
+      /**
+       * return a argument for a http request.
+       * @arg name the name of a argument.
+       * @return the value of a argument.
+       */
       std::string getArg(const std::string& name, const std::string& def = std::string()) const;
 
       void parse(std::istream& in);
@@ -198,6 +214,9 @@ namespace tnt
       bool isMultipart() const               { return getContentType().isMultipart(); }
       const Multipart& getMultipart() const  { return mp; }
 
+      /**
+       * return the number of request.
+       */
       cxxtools::atomic_t getSerial() const   { return serial; }
 
       const std::locale& getLocale() const;
@@ -231,7 +250,7 @@ namespace tnt
       bool verifyPassword(const std::string& password) const;
 
       bool keepAlive() const;
-      
+
       /// @return Whether the client accepts gzip compression
       bool acceptGzipEncoding() const { return getEncoding().accept("gzip"); }
 

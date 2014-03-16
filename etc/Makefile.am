@@ -11,3 +11,4 @@ tntnet/tntnet.xml: tntnet/tntnet.xml.in
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
 	    -e 's,@localstatedir\@,@localstatedir@,g;' \
 		-e 's,@datadir\@,@datadir@,g;' < $(srcdir)/tntnet/tntnet.xml.in > tntnet/tntnet.xml
+
