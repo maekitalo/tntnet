@@ -5,8 +5,8 @@ nodist_mvc_la_SOURCES = \
 	controller/counter.cpp \
 	view/counter.ecpp
 
-EXTRA_DIST = \
-	mvc.ecpp
+nobase_include_HEADERS = \
+	model/counter.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I$(srcdir)/model
 mvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@

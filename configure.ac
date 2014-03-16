@@ -136,7 +136,7 @@ AM_CONDITIONAL(INSTALL_DEMOS, test "$enable_demos" = "install")
 AS_IF([test "$enable_demos" = "yes"],
   [
     AS_IF([test "$enable_sdk" != "yes"],
-        [AC_MSG_ERROR([demos cannott be built without building sdk])])
+        [AC_MSG_ERROR([demos cannot be built without building sdk])])
 
   AC_CHECK_PROG(ZIP, zip, 1)
   AS_IF([! test "$ZIP"],
@@ -190,25 +190,25 @@ AC_CONFIG_FILES([
     sdk/tools/ecppc/Makefile
     sdk/tools/ecppl/Makefile
     sdk/tools/ecppll/Makefile
-    sdk/demos/Makefile
-    sdk/demos/calc/Makefile
-    sdk/demos/calcajax/Makefile
-    sdk/demos/calcapp/Makefile
-    sdk/demos/calcmvc/Makefile
-    sdk/demos/calci18n/Makefile
-    sdk/demos/chat/Makefile
-    sdk/demos/comp/Makefile
-    sdk/demos/config/Makefile
-    sdk/demos/controls/Makefile
-    sdk/demos/cookie/Makefile
-    sdk/demos/hello/Makefile
-    sdk/demos/mvc/Makefile
-    sdk/demos/savepoint/Makefile
-    sdk/demos/session/Makefile
-    sdk/demos/sprintf/Makefile
-    sdk/demos/strings/Makefile
-    sdk/demos/rajax-jquery/Makefile
-    sdk/demos/upload/Makefile
+    demo/Makefile
+    demo/calc/Makefile
+    demo/calcajax/Makefile
+    demo/calcapp/Makefile
+    demo/calcmvc/Makefile
+    demo/calci18n/Makefile
+    demo/chat/Makefile
+    demo/comp/Makefile
+    demo/config/Makefile
+    demo/controls/Makefile
+    demo/cookie/Makefile
+    demo/hello/Makefile
+    demo/mvc/Makefile
+    demo/savepoint/Makefile
+    demo/session/Makefile
+    demo/sprintf/Makefile
+    demo/strings/Makefile
+    demo/rajax-jquery/Makefile
+    demo/upload/Makefile
     utest/Makefile
     doc/man/Makefile
     etc/Makefile
