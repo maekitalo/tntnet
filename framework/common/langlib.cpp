@@ -35,7 +35,7 @@ log_define("tntnet.langlib")
 
 namespace tnt
 {
-  LangLib::LangLib(const std::string lib, const std::string& lang_)
+  LangLib::LangLib(const std::string& lib, const std::string& lang_)
     : file(lib + '.' + lang_),
       lang(lang_)
   { }

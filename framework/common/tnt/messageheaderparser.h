@@ -58,7 +58,9 @@ namespace tnt
       explicit Parser(Messageheader& header_)
         : tnt::Parser<Parser>(&Parser::state_0),
           header(header_),
-          headerdataPtr(header.rawdata)
+          headerdataPtr(header.rawdata),
+          fieldnamePtr(0),
+          fieldbodyPtr(0)
           { }
 
       void reset();

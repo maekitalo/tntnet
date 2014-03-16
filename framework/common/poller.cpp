@@ -150,7 +150,7 @@ namespace tnt
 
       append_new_jobs();
 
-      if (jobs.size() == 0)
+      if (jobs.empty())
         poll_timeout = -1;
 
       int ret = ::epoll_wait(pollFd, events, 16, poll_timeout);

@@ -54,7 +54,7 @@ namespace tnt
       LangLib()
         { }
 
-      LangLib(const std::string lib, const std::string& lang_);
+      LangLib(const std::string& lib, const std::string& lang_);
 
       const char* getData(const std::string& compname);
 

@@ -56,8 +56,6 @@ namespace tnt
   {
     std::string doCompress(const std::string& body)
     {
-      std::string ret;
-
       std::ostringstream b;
       char f[] = "\x1f\x8b\x08\x00"
            "\x00\x00\x00\x00"

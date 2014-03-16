@@ -1,6 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
-bin_SCRIPTS = tntnet-config tntnet-wizzard
+bin_SCRIPTS = tntnet-config
+dist_bin_SCRIPTS = tntnet-wizzard
 pkgdata_SCRIPTS = tntnet-conf2xml.pl
 
 tntnet-config: tntnet-config.in
@@ -22,7 +23,7 @@ endif
 
 if MAKE_DEMOS
 DEMOSDIRS = \
-    sdk/demos
+    demo
 endif
 
 if MAKE_UNITTEST
@@ -49,15 +50,15 @@ EXTRA_DIST = ecpp.vim \
     doc/static-howto.markdown \
     doc/upload-howto.markdown \
     COPYING \
-    sdk/demos/newsdb/Makefile \
-    sdk/demos/newsdb/README \
-    sdk/demos/newsdb/global.ecpp \
-    sdk/demos/newsdb/index.ecpp \
-    sdk/demos/newsdb/news.ecpp \
-    sdk/demos/newsdb/newscss.css \
-    sdk/demos/newsdb/newsdata.sh \
-    sdk/demos/newsdb/newsdb.sql \
-    sdk/demos/newsdb/tntnet.xml \
+    demo/newsdb/Makefile \
+    demo/newsdb/README \
+    demo/newsdb/global.ecpp \
+    demo/newsdb/index.ecpp \
+    demo/newsdb/news.ecpp \
+    demo/newsdb/newscss.css \
+    demo/newsdb/newsdata.sh \
+    demo/newsdb/newsdb.sql \
+    demo/newsdb/tntnet.xml \
     m4/acx_pthread.m4 \
     m4/ax_check_compile_flag.m4 \
     m4/ax_compiler_vendor.m4 \

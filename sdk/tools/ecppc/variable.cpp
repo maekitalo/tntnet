@@ -44,8 +44,6 @@ namespace tnt
       //   " int var "
       //   " var"
       //   " ns :: someclass  param"
-      std::ostringstream a;
-
       std::string::size_type e = arg.size();
       while (e > 0 && std::isspace(arg.at(e - 1)))
         --e;
