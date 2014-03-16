@@ -48,6 +48,7 @@ namespace tnt
   {
     Ecppc::Ecppc(int& argc, char* argv[])
       : requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
+        inputfile(0),
         ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),
@@ -223,13 +224,12 @@ namespace tnt
           if (stat(ifile.c_str(), &st) != 0)
           {
             // search for input file in includes list
-            int ret;
             for (includes_type::const_iterator incl = includes.begin();
               incl != includes.end(); ++incl)
             {
               std::string inputfile_ = *incl + '/' + it->second;
               log_debug("check for input file " << inputfile_);
-              if ((ret = stat(inputfile_.c_str(), &st)) == 0)
+              if (stat(inputfile_.c_str(), &st) == 0)
               {
                 ifile = inputfile_;
                 break;

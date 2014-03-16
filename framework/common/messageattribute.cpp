@@ -257,7 +257,7 @@ namespace tnt
             in.setstate(std::ios::failbit);
           break;
 
-        case state_end:
+        case state_end: // not reachable but to satisfy the compiler we put it here
           break;
       }
 

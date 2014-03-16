@@ -305,11 +305,11 @@ namespace tnt
     if (fname.empty())
       return;
 
-    std::ofstream& accessLog = application.accessLog;
+    std::ofstream& accessLog = application._accessLog;
 
     if (!accessLog.is_open())
     {
-      cxxtools::MutexLock lock(application.accessLogMutex);
+      cxxtools::MutexLock lock(application._accessLogMutex);
 
       if (!accessLog.is_open())
       {
@@ -342,7 +342,7 @@ namespace tnt
     time_t t;
     ::time(&t);
 
-    cxxtools::MutexLock lock(application.accessLogMutex);
+    cxxtools::MutexLock lock(application._accessLogMutex);
 
     // cache for timestamp of access log
     static time_t lastLogTime = 0;

@@ -42,11 +42,12 @@ namespace tnt
   /// HTTP reply message
   class HttpReply : public HttpMessage
   {
+    private:
       struct Impl;
-      Impl* impl;
-      std::ostream* current_outstream;
-      std::ostream* safe_outstream;
-      std::ostream* url_outstream;
+      Impl* _impl;
+      std::ostream* _current_outstream;
+      std::ostream* _safe_outstream;
+      std::ostream* _url_outstream;
 
       void send(unsigned ret, const char* msg, bool ready) const;
 
@@ -63,23 +64,31 @@ namespace tnt
 
       void setHeadRequest(bool sw = true);
 
-      // TODO: ???
-      /// Session is cleared after the current request.
+      /// Configure the session to be cleared after the current request
       void clearSession();
-      /// Returns true, if the session is cleared after the current request.
+
+      /// Check if the session is configured to be cleared after the current request
       bool isClearSession() const;
 
-      // TODO: Group appropriately
-      /// Throws an exception, which results in a redirect.
       enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_MOVED_TEMPORARILY };
+      /// @{
+      /** Redirect the user to another URL
+
+          This function never returns as it throws an exception to actually send the redirect header.
+       */
       unsigned redirect(const std::string& newLocation, Redirect type = temporarily);
       unsigned redirectTemporary(const std::string& newLocation)
-      { return redirect(newLocation, temporarily); }
+        { return redirect(newLocation, temporarily); }
       unsigned redirectPermantently(const std::string& newLocation)
-      { return redirect(newLocation, permanently); }
+        { return redirect(newLocation, permanently); }
+      /// @}
 
-      /// Throw an exception which results in a login dialog in the browser.
+      /** Request authorization from the client
+
+          This will result in a dialog being shown in the user's web browser.
+       */
       unsigned notAuthorized(const std::string& realm);
+
       // TODO: Why does this exist?
       /// alias for notAuthorized
       unsigned notAuthorised(const std::string& realm) { return notAuthorized(realm); }
@@ -88,14 +97,14 @@ namespace tnt
       void sendReply(unsigned ret, const std::string& msg)
         { sendReply(ret, msg.c_str()); }
 
-      /// returns outputstream
-      std::ostream& out()    { return *current_outstream; }
+      /// Get output stream
+      std::ostream& out()    { return *_current_outstream; }
 
-      /// returns safe outputstream (unsafe html-chars are escaped)
-      std::ostream& sout()   { return *safe_outstream; }
+      /// Get safe output stream (unsafe html characters written into this stream are escaped)
+      std::ostream& sout()   { return *_safe_outstream; }
 
-      /// returns outputstream, which url encodes output
-      std::ostream& uout()   { return *url_outstream; }
+      /// Get url output stream (everything written into this stream is url-encoded)
+      std::ostream& uout()   { return *_url_outstream; }
 
       void resetContent();
       void rollbackContent(unsigned size);
@@ -112,24 +121,23 @@ namespace tnt
 
       /** Enable chunked encoding for the current request
 
-          When setting chunked encoding, the content is sent immediately in
+          When enabling chunked encoding, the content is sent immediately in
           chunks instead of collecting content into a string before sending.
-          After setting chunked encoding, no exceptions must be thrown. Headers
-          are sent immediately after setting chunked encoding and hence setting
-          headers must happen before calling this method.
+          After enabling chunked encoding, it must be ensured that no exceptions
+          are thrown. Also, headers are sent immediately after enabling chunked
+          encoding and hence setting headers must happen before calling this method.
 
-          Also a session cookie can't be sent and hence when a new session is
-          created, chunked encoding must not be used. A session is created
-          automatically when a session variable is used and no session cookie
-          was received.
-
+          Furthermore, session cookies cannot be sent with chunked encoding enabled,
+          hence when a new session is created, chunked encoding must not be used.
+          Sessions are created automatically when a session variable is used and
+          no session cookie was received.
       */
       void setChunkedEncoding(unsigned ret = HTTP_OK, const char* msg = "OK");
 
-      /// Get whether chunked encoding is enabled
+      /// Check whether chunked encoding is enabled
       bool isChunkedEncoding() const;
 
-      // TODO
+      // TODO: Documentation revision
       /** Sets the content-md5 header.
 
           The current content is used to calculate the md5 header. Hence no
@@ -158,7 +166,8 @@ namespace tnt
 
       bool keepAlive() const;
 
-      void setLocale(const std::locale& loc)    { out().imbue(loc); sout().imbue(loc); }
+      void setLocale(const std::locale& loc)
+        { out().imbue(loc); sout().imbue(loc); }
   };
 }
 

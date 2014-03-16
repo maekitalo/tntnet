@@ -94,25 +94,27 @@ namespace tnt
     friend class Worker;
 
     private:
-      unsigned minthreads;
-      unsigned maxthreads;
-
-      Jobqueue queue;
-
-      static bool stop;
       typedef std::set<ListenerBase*> listeners_type;
-      listeners_type listeners;
-      static listeners_type allListeners;
 
-      cxxtools::AttachedThread pollerthread;
-      Poller poller;
-      Dispatcher dispatcher;
+      unsigned _minthreads;
+      unsigned _maxthreads;
 
-      ScopeManager scopemanager;
-      std::string appname;
+      Jobqueue _queue;
 
-      std::ofstream accessLog;
-      cxxtools::Mutex accessLogMutex;
+      static bool _stop;
+
+      listeners_type _listeners;
+      static listeners_type _allListeners;
+
+      cxxtools::AttachedThread _pollerthread;
+      Poller _poller;
+      Dispatcher _dispatcher;
+
+      ScopeManager _scopemanager;
+      std::string _appname;
+
+      std::ofstream _accessLog;
+      cxxtools::Mutex _accessLogMutex;
 
       // noncopyable
       Tntnet(const Tntnet&);
@@ -120,8 +122,8 @@ namespace tnt
 
       void timerTask();
 
-      static cxxtools::Condition timerStopCondition;
-      static cxxtools::Mutex timeStopMutex;
+      static cxxtools::Condition _timerStopCondition;
+      static cxxtools::Mutex _timeStopMutex;
 
     public:
       /** Create a Tntnet object with default configuration
@@ -135,7 +137,7 @@ namespace tnt
 
       /** Set up a listener for the specified ip address and port.
 
-          An empty string means listening on all interfaces – you can simply
+          An empty string means listening on all interfaces &ndash; you can simply
           use the listen() method with one parameter to do that though.
 
           This method solely does the setup, the actual listening starts in run().
@@ -176,85 +178,65 @@ namespace tnt
       static void shutdown();
 
       /// Tells whether a shutdown request was initiated
-      static bool shouldStop()                { return stop; }
+      static bool shouldStop()                { return _stop; }
 
       /// @cond internal
 
-      Jobqueue&   getQueue()                  { return queue; }
+      Jobqueue&   getQueue()                  { return _queue; }
 
-      Poller&     getPoller()                 { return poller; }
+      Poller&     getPoller()                 { return _poller; }
 
-      const Dispatcher& getDispatcher() const { return dispatcher; }
+      const Dispatcher& getDispatcher() const { return _dispatcher; }
 
-      ScopeManager& getScopemanager()         { return scopemanager; }
+      ScopeManager& getScopemanager()         { return _scopemanager; }
 
       /// @endcond internal
 
       /// Get the minimum number of worker threads
-      unsigned getMinThreads() const          { return minthreads; }
+      unsigned getMinThreads() const          { return _minthreads; }
 
       /// Set the minimum number of worker threads
       void setMinThreads(unsigned n);
 
       /// Get the maximum number of worker threads
-      unsigned getMaxThreads() const          { return maxthreads; }
+      unsigned getMaxThreads() const          { return _maxthreads; }
 
       /// Set the maximum number of worker threads
-      void setMaxThreads(unsigned n)          { maxthreads = n; }
+      void setMaxThreads(unsigned n)          { _maxthreads = n; }
 
       /// @{
-      /** Add a mapping from a url to a component
+      /** @name URL mapping
+
+          Add a mapping from a url to a component
 
           The matching url's are specified using a regular expression.
           The mapping target may contain back references to the expression
           using $1, $2 and so on.
 
-          @param url The path requested by the client
+          @param url The path requested by the client.
             The path includes everything between the domain name and the get parameters.
-            It always starts with a '/'.
+            It always begins with a '/'.
 
-          @param ci The identifier for the component to which the url is mapped
-            This identifier may be only the name, or component name + '@' + library name.
+          @param ci The identifier for the component to which the url is mapped.
+            The first method simply passes the string to the CompIdent constructor.
        */
       Mapping& mapUrl(const std::string& url, const std::string& ci)
-        { return dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
+        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
 
-       /**
-       * Adds a mapping from a url to a component.
-       * The url is specified using a regular expression and the mapped target
-       * may contain back references to the expression using $1, $2, ... .
-       * @arg url A url
-       * @arg pathinfo
-       * @arg ci component name
-       */
-      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci_)
-      {
-        Maptarget ci(ci_);
-        ci.setPathInfo(pathinfo);
-        dispatcher.addUrlMapEntry(std::string(), url, ci);
-      }
+      Mapping& mapUrl(const std::string& url, const Compident& ci)
+        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
 
-      /**
-       * Adds a mapping from a url to a component.
-       * The url is specified using a regular expression and the mapped target
-       * may contain back references to the expression using $1, $2, ... .
-       * @arg url A url
-       * @arg ci component name
-       */
+      /// @deprecated
+      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci)
+        { _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)).setPathInfo(pathinfo); }
+
+      /// @deprecated
       Mapping& mapUrl(const std::string& url, const Maptarget& ci)
-        { return dispatcher.addUrlMapEntry(std::string(), url, ci); }
+        { return _dispatcher.addUrlMapEntry(std::string(), url, ci); }
 
-
-      /**
-       * Adds a mapping from a url to a component.
-       * The url is specified using a regular expression and the mapped target
-       * may contain back references to the expression using $1, $2, ... .
-       * @arg vhost A virtual host name
-       * @arg url A url
-       * @arg ci component name
-       */
+      /// @deprecated
       Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
-        { return dispatcher.addUrlMapEntry(vhost, url, ci); }
+        { return _dispatcher.addUrlMapEntry(vhost, url, ci); }
       /// @}
 
       /** Set the app name
@@ -271,13 +253,12 @@ namespace tnt
           different ports.
           @arg appname_ Application name
        */
-      void setAppName(const std::string& appname_)
-        { appname = appname_; }
+      void setAppName(const std::string& appname)
+        { _appname = appname; }
 
-
-      /// Get the app name – for details see setAppName()
+      /// Get the app name &ndash; for details see setAppName()
       const std::string& getAppName() const
-        { return appname; }
+        { return _appname; }
 
       /** Enable access logging
 
@@ -287,7 +268,7 @@ namespace tnt
           @param logfile_path The path to the log file.
        */
       void setAccessLog(const std::string& logfile_path)
-        { accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
+        { _accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
   };
 }
 
