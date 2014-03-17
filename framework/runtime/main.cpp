@@ -68,6 +68,10 @@ namespace tnt
         glob_t gl;
         unsigned n;
 
+        // disable copy and assignment
+        Glob(const Glob&)  { }
+        Glob& operator= (const Glob&) { return *this; }
+
       public:
         explicit Glob(const std::string& pattern, int flags = 0);
         ~Glob();
@@ -103,8 +107,7 @@ namespace tnt
 
     Glob::~Glob()
     {
-      if (gl.gl_pathv)
-        globfree(&gl);
+      globfree(&gl);
     }
 
     template <typename Deserializer>
