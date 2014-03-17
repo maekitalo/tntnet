@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,21 +37,22 @@ namespace tnt
 {
   class DataChunk
   {
-      const char* data;
-      unsigned len;
+    private:
+      const char* _data;
+      unsigned _len;
 
     public:
-      DataChunk(const char* data_, const char* end_)
-        : data(data_),
-          len(static_cast<unsigned>(end_ - data_))
-      { }
-      DataChunk(const char* data_, unsigned len_)
-        : data(data_),
-          len(len_)
-      { }
+      DataChunk(const char* data, const char* end)
+        : _data(data),
+          _len(static_cast<unsigned>(end - data))
+        { }
+      DataChunk(const char* data, unsigned len)
+        : _data(data),
+          _len(len)
+        { }
 
-      const char* getData() const  { return data; }
-      unsigned getLength() const   { return len; }
+      const char* getData() const { return _data; }
+      unsigned getLength() const  { return _len; }
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -62,46 +63,47 @@ namespace tnt
   //
   class DataChunks
   {
-      const char* dataObject;
+    private:
+      const char* _dataObject;
 
       const unsigned* udata() const
       {
-        const char* d = dataObject;
+        const char* d = _dataObject;
         return reinterpret_cast<const unsigned*>(d);
       }
 
     public:
       DataChunks(const char* d = 0)
-        : dataObject(d)
-      { }
+        : _dataObject(d)
+        { }
 
       const char* data() const
-      { return dataObject; }
+        { return _dataObject; }
 
       void setData(const char* d)
-      { dataObject = d; }
+        { _dataObject = d; }
 
       // number of chunks
       unsigned size() const
-      { return (udata()[0] / sizeof(unsigned)) - 1; }
+        { return (udata()[0] / sizeof(unsigned)) - 1; }
 
       // offset of n-th chunk from start
       unsigned offset(unsigned n) const
-      { return udata()[n] - udata()[0]; }
+        { return udata()[n] - udata()[0]; }
 
       // size of nth chunk in bytes
       unsigned size(unsigned n) const
-      { return udata()[n + 1] - udata()[n]; }
+        { return udata()[n + 1] - udata()[n]; }
 
       // pointer to n-th chunk
       const char* ptr(unsigned n) const
       {
-        const char* d = dataObject;
+        const char* d = _dataObject;
         return d + udata()[n];
       }
 
       DataChunk operator[] (unsigned n) const
-      { return DataChunk(ptr(n), size(n)); }
+        { return DataChunk(ptr(n), size(n)); }
   };
 
   inline std::ostream& operator << (std::ostream& out, const DataChunk& c)
@@ -109,7 +111,6 @@ namespace tnt
     out.write(c.getData(), c.getLength());
     return out;
   }
-
 }
 /// @endcond internal
 

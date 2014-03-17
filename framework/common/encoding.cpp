@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -43,7 +43,7 @@ namespace tnt
 
   void Encoding::parse(const char* header)
   {
-    encodingMap.clear();
+    _encodingMap.clear();
 
     if (header == 0)
       return;
@@ -81,7 +81,7 @@ namespace tnt
             state = state_qualityq;
           else if (ch == ',')
           {
-            encodingMap.insert(encodingMapType::value_type(encoding, 1));
+            _encodingMap.insert(encodingMapType::value_type(encoding, 1));
             state = state_0;
           }
           else
@@ -117,7 +117,7 @@ namespace tnt
             state = state_qualitytenth;
           else if (ch == ';')
           {
-            encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
             state = state_0;
           }
           else
@@ -128,7 +128,7 @@ namespace tnt
           if (std::isdigit(ch))
           {
             quality += ch - '0';
-            encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
             state = state_qualityign;
           }
           else if (ch == ';')
@@ -145,13 +145,13 @@ namespace tnt
     switch (state)
     {
       case state_encoding:
-        encodingMap.insert(encodingMapType::value_type(encoding, 1));
+        _encodingMap.insert(encodingMapType::value_type(encoding, 1));
         break;
 
       case state_quality:
       case state_qualitypoint:
       case state_qualitytenth:
-        encodingMap.insert(encodingMapType::value_type(encoding, quality));
+        _encodingMap.insert(encodingMapType::value_type(encoding, quality));
         break;
 
       default:
@@ -163,17 +163,17 @@ namespace tnt
   {
     // check, if encoding is specified
 
-    encodingMapType::const_iterator it =  encodingMap.find(encoding);
-    if (it != encodingMap.end())
+    encodingMapType::const_iterator it = _encodingMap.find(encoding);
+    if (it != _encodingMap.end())
       return it->second;
 
     // check, if a wildcard-rule is specified
-    it = encodingMap.find("*");
-    if (it != encodingMap.end())
+    it = _encodingMap.find("*");
+    if (it != _encodingMap.end())
       return it->second;
 
     // return 10 (accept), if encoding is identity, 0 otherwise
     return encoding == "identity" ? 10 : 0;
   }
-
 }
+

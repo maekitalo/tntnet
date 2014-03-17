@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -42,7 +42,7 @@ namespace tnt
   // Subcompident
   //
   inline std::ostream& operator<< (std::ostream& out, const Subcompident& comp)
-  { return out << comp.toString(); }
+    { return out << comp.toString(); }
 
   Subcompident::Subcompident(const std::string& ident)
     : tnt::Compident(ident)
@@ -69,15 +69,14 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // EcppComponent
   //
-  EcppComponent::EcppComponent(const Compident& ci, const Urlmapper& um,
-    Comploader& cl)
-    : myident(ci),
-      rootmapper(um),
-      loader(cl)
-  { }
+  EcppComponent::EcppComponent(const Compident& ci, const Urlmapper& um, Comploader& cl)
+    : _myident(ci),
+      _rootmapper(um),
+      _loader(cl)
+    { }
 
   EcppComponent::~EcppComponent()
-  { }
+    { }
 
   void EcppComponent::registerSubComp(const std::string& name, EcppSubComponent* comp)
   {
@@ -96,14 +95,14 @@ namespace tnt
 
     Subcompident ci(url);
     if (ci.libname.empty())
-      ci.libname = myident.libname;
+      ci.libname = _myident.libname;
     if (ci.compname.empty())
-      ci.compname = myident.compname;
+      ci.compname = _myident.compname;
 
     Component* comp;
 
     // fetch component by name
-    comp = &loader.fetchComp(ci, rootmapper);
+    comp = &_loader.fetchComp(ci, _rootmapper);
 
     // if there is a subcomponent, fetch it
     if (!ci.subname.empty())
@@ -131,11 +130,11 @@ namespace tnt
     if (ci.libname.empty())
     {
       Compident cii(ci);
-      cii.libname = myident.libname;
-      return loader.fetchComp(cii, rootmapper);
+      cii.libname = _myident.libname;
+      return _loader.fetchComp(cii, _rootmapper);
     }
     else
-      return loader.fetchComp(ci, rootmapper);
+      return _loader.fetchComp(ci, _rootmapper);
   }
 
   Component* EcppComponent::createComp(const Compident& ci) const
@@ -144,11 +143,11 @@ namespace tnt
     if (ci.libname.empty())
     {
       Compident cii(ci);
-      cii.libname = myident.libname;
-      return loader.createComp(cii, rootmapper);
+      cii.libname = _myident.libname;
+      return _loader.createComp(cii, _rootmapper);
     }
     else
-      return loader.createComp(ci, rootmapper);
+      return _loader.createComp(ci, _rootmapper);
   }
 
   EcppSubComponent& EcppComponent::fetchSubComp(const std::string& sub) const
@@ -166,7 +165,7 @@ namespace tnt
     std::string lang = request.getLang();
     if (!lang.empty())
     {
-      const char* data = loader.getLangData(myident, lang);
+      const char* data = _loader.getLangData(_myident, lang);
       if (data)
         return data;
     }
@@ -178,6 +177,5 @@ namespace tnt
   // ecppSubComponent
   //
   void EcppSubComponent::drop()
-  { }
-
+    { }
 }

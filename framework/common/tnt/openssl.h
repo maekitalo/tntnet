@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -39,16 +39,16 @@ namespace tnt
 {
   class OpensslException : public std::runtime_error
   {
-      unsigned long code;
+    private:
+      unsigned long _code;
 
     public:
-      OpensslException(const std::string& what, unsigned long code_)
+      OpensslException(const std::string& what, unsigned long code)
         : std::runtime_error(what),
-          code(code_)
-      { }
+          _code(code)
+        { }
 
-      unsigned long getCode() const
-      { return code; }
+      unsigned long getCode() const { return _code; }
   };
 
   // destroy policy for smart pointer
@@ -66,23 +66,22 @@ namespace tnt
 
   class OpensslServer : public cxxtools::net::TcpServer
   {
-    public:
-
     private:
-      SslCtxPtr ctx;
+      SslCtxPtr _ctx;
       void installCertificates(const char* certificateFile, const char* privateKeyFile);
 
     public:
       explicit OpensslServer(const char* certificateFile);
       OpensslServer(const char* certificateFile, const char* privateKeyFile);
 
-      SslCtxPtr getSslContext() const        { return ctx; }
+      SslCtxPtr getSslContext() const { return _ctx; }
   };
 
   class OpensslStream : public cxxtools::net::TcpSocket
   {
-      SslCtxPtr ctx;
-      SSL* ssl;
+    private:
+      SslCtxPtr _ctx;
+      SSL* _ssl;
 
     public:
       OpensslStream();
@@ -100,17 +99,17 @@ namespace tnt
 
   class openssl_streambuf : public std::streambuf
   {
-      OpensslStream& m_stream;
-      char_type* m_buffer;
-      unsigned m_bufsize;
+    private:
+      OpensslStream& _stream;
+      char_type* _buffer;
+      unsigned _bufsize;
 
     public:
       explicit openssl_streambuf(OpensslStream& stream, unsigned bufsize = 8192, int timeout = -1);
-      ~openssl_streambuf()
-      { delete[] m_buffer; }
+      ~openssl_streambuf() { delete[] _buffer; }
 
-      void setTimeout(int t)   { m_stream.setTimeout(t); }
-      int getTimeout() const   { return m_stream.getTimeout(); }
+      void setTimeout(int t) { _stream.setTimeout(t); }
+      int getTimeout() const { return _stream.getTimeout(); }
 
       /// overload std::streambuf
       int_type overflow(int_type c);
@@ -122,22 +121,23 @@ namespace tnt
 
   class openssl_iostream : public OpensslStream, public std::iostream
   {
-      openssl_streambuf m_buffer;
+    private:
+      openssl_streambuf _buffer;
 
     public:
       explicit openssl_iostream(unsigned bufsize = 8192, int timeout = -1)
         : std::iostream(0),
-          m_buffer(*this, bufsize, timeout)
-        { init(&m_buffer); }
+          _buffer(*this, bufsize, timeout)
+          { init(&_buffer); }
 
       explicit openssl_iostream(const OpensslServer& server, unsigned bufsize = 8192, int timeout = -1)
         : OpensslStream(server),
           std::iostream(0),
-          m_buffer(*this, bufsize, timeout)
-        { init(&m_buffer); }
+          _buffer(*this, bufsize, timeout)
+          { init(&_buffer); }
 
-      void setTimeout(int timeout)  { m_buffer.setTimeout(timeout); }
-      int getTimeout() const        { return m_buffer.getTimeout(); }
+      void setTimeout(int timeout) { _buffer.setTimeout(timeout); }
+      int getTimeout() const       { return _buffer.getTimeout(); }
   };
 }
 /// @endcond internal
