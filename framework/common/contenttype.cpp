@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -75,13 +75,11 @@ namespace tnt
     if (s.empty())
       return FAIL;
 
-    type = t;
-    subtype = s;
+    _type = t;
+    _subtype = s;
 
-    std::transform(type.begin(), type.end(), type.begin(),
-      ::tolower);
-    std::transform(subtype.begin(), subtype.end(), subtype.begin(),
-      ::tolower);
+    std::transform(_type.begin(), _type.end(), _type.begin(), ::tolower);
+    std::transform(_subtype.begin(), _subtype.end(), _subtype.begin(), ::tolower);
 
     return OK;
   }
@@ -94,9 +92,9 @@ namespace tnt
     std::transform(att.begin(), att.end(), att.begin(),
       ::tolower);
 
-    parameter.insert(parameter_type::value_type(att, value));
+    _parameter.insert(parameter_type::value_type(att, value));
     if (attribute == "boundary")
-      boundary = value;
+      _boundary = value;
     return OK;
   }
 }

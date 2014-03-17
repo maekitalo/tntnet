@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2008 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,22 +38,23 @@
 namespace tnt
 {
   /** Helper class for easier configuration of tntnet when used as library.
-   * 
-   *  Configuration of tntnet is spread througout the system and it is a
-   *  tendious task to search the right place, where to set some setting. This
-   *  Class helps here and offers methods for all settings in one place. The
-   *  methods dispatch the setting to the right place, so the user needs to
-   *  know only this class, when he wants to set some settings.
-   *
-   *  This is yet deprecated since all configuration is done in tnt::TntConfig.
+
+      Configuration of tntnet is spread througout the system and it is a
+      tendious task to search the right place, where to set some setting. This
+      Class helps here and offers methods for all settings in one place. The
+      methods dispatch the setting to the right place, so the user needs to
+      know only this class, when he wants to set some settings.
+
+      This is yet deprecated since all configuration is done in tnt::TntConfig.
    */
   class Configurator
   {
+    private:
       Tntnet& tntnet;
 
     public:
-      explicit Configurator(tnt::Tntnet& tntnet_)
-        : tntnet(tntnet_)
+      explicit Configurator(tnt::Tntnet& tntnet)
+        : _tntnet(tntnet)
         { }
 
       /// Returns the minimum number of worker threads.
@@ -214,7 +215,6 @@ namespace tnt
       void setAccessLog(const std::string& accessLog)
         { TntConfig::it().accessLog = accessLog; }
   };
-
 }
 
 #endif // TNT_CONFIGURATOR_H

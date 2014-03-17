@@ -5,7 +5,7 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -35,44 +35,43 @@ namespace tnt
 {
   /** Unlocks the application (and session) as long as the object is in scope.
 
-      Normally the application is locked as soon as a request uses somewhere
-      a application variable. Sometimes it is desirable to explicitly release
-      that lock, e.g. when a request has some longer task to do.
+      Normally the application is locked as soon as a request uses an
+      application-scope variable somewhere. Sometimes it is desirable to
+      explicitly release that lock, e.g. when a request will take some time.
    */
   class ApplicationUnlocker
   {
-      HttpRequest& request;
-      bool locked;
+    private:
+      HttpRequest& _request;
+      bool _locked;
 
     public:
-      explicit ApplicationUnlocker(HttpRequest& request_, bool release = true)
-        : request(request_),
-          locked(request_.applicationScopeLocked)
+      explicit ApplicationUnlocker(HttpRequest& request, bool release = true)
+        : _request(request),
+          locked(request.applicationScopeLocked)
       {
-        if (locked && release)
-          request.releaseApplicationScopeLock();
+        if (_locked && release)
+          _request.releaseApplicationScopeLock();
       }
 
       ~ApplicationUnlocker()
       {
-        if (locked)
-          request.ensureApplicationScopeLock();
+        if (_locked)
+          _request.ensureApplicationScopeLock();
       }
 
       void unlock()
       {
-        request.releaseApplicationScopeLock();
-        locked = false;
+        _request.releaseApplicationScopeLock();
+        _locked = false;
       }
 
       void lock()
       {
-        request.ensureApplicationScopeLock();
-        locked = true;
+        _request.ensureApplicationScopeLock();
+        _locked = true;
       }
-
   };
-
 }
 
 #endif // TNT_APPLICATIONUNLOCKER_H

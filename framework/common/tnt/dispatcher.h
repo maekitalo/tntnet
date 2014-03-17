@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -45,86 +45,116 @@ namespace tnt
   class Mapping
   {
     private:
-      std::string vhost;
-      std::string url;
-      std::string method;
-      int ssl;
+      std::string _vhost;
+      std::string _url;
+      std::string _method;
+      int _ssl;
 
-      cxxtools::Regex r_vhost;
-      cxxtools::Regex r_url;
-      cxxtools::Regex r_method;
+      cxxtools::Regex _r_vhost;
+      cxxtools::Regex _r_url;
+      cxxtools::Regex _r_method;
 
-      Maptarget target;
+      Maptarget _target;
 
     public:
       typedef Maptarget::args_type args_type;
 
       Mapping() { }
 
-      Mapping(const std::string& vhost_, const std::string& url_,
-          const std::string& method_, int ssl_, const Maptarget& target_);
+      Mapping(const std::string& vhost, const std::string& url, const std::string& method, int ssl, const Maptarget& target);
 
-      const std::string& getVHost() const   { return vhost; }
-      const std::string& getUrl() const     { return url; }
-      const std::string& getMethod() const  { return method; }
-      int getSsl() const                    { return ssl; }
+      const std::string& getVHost() const  { return _vhost; }
+      const std::string& getUrl() const    { return _url; }
+      const std::string& getMethod() const { return _method; }
+      int getSsl() const                   { return _ssl; }
 
-      const Maptarget& getTarget() const    { return target; }
+      const Maptarget& getTarget() const   { return _target; }
 
       Mapping& setPathInfo(const std::string& p)
-        { target.setPathInfo(p); return *this; }
+      {
+        _target.setPathInfo(p);
+        return *this;
+      }
 
       Mapping& setArgs(const args_type& a)
-        { target.setArgs(a); return *this; }
+      {
+        _target.setArgs(a);
+        return *this;
+      }
 
       Mapping& setArg(const std::string& name, const std::string& value)
-        { target.setArg(name, value); return *this; }
+      {
+        _target.setArg(name, value);
+        return *this;
+      }
 
-      Mapping& setVHost(const std::string& vhost_)
-        { vhost = vhost_; r_vhost = cxxtools::Regex(vhost_); return *this; }
+      Mapping& setVHost(const std::string& vhost)
+      {
+        _vhost = vhost;
+        _r_vhost = cxxtools::Regex(vhost);
+        return *this;
+      }
 
-      Mapping& setUrl(const std::string& url_)
-        { url = url_; r_url = cxxtools::Regex(url_); return *this; }
+      Mapping& setUrl(const std::string& url)
+      {
+        _url = url;
+        _r_url = cxxtools::Regex(url);
+        return *this;
+      }
 
-      Mapping& setMethod(const std::string& method_)
-        { method = method_; r_method = cxxtools::Regex(method_); return *this; }
+      Mapping& setMethod(const std::string& method)
+      {
+        _method = method;
+        _r_method = cxxtools::Regex(method);
+        return *this;
+      }
 
       Mapping& setSsl(bool sw)
-        { ssl = (sw ? SSL_YES : SSL_NO); return *this; }
+      {
+        _ssl = (sw ? SSL_YES : SSL_NO);
+        return *this;
+      }
 
       Mapping& unsetSsl()
-        { ssl = SSL_ALL; return *this; }
+      {
+        _ssl = SSL_ALL;
+        return *this;
+      }
 
       bool match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const;
-
   };
 
   /// @cond internal
   class Dispatcher : public Urlmapper // one per host
   {
+    friend class PosType;
+
+    private:
       typedef std::vector<Mapping> urlmap_type;
-      urlmap_type urlmap;   // map url to soname/compname
-      mutable cxxtools::ReadWriteMutex mutex;
+
+      urlmap_type _urlmap; // map url to soname/compname
+      mutable cxxtools::ReadWriteMutex _mutex;
 
       class UrlMapCacheKey
       {
-          std::string vhost;
-          std::string url;
-          std::string method;
-          bool ssl;
-          urlmap_type::size_type pos;
+        private:
+          std::string _vhost;
+          std::string _url;
+          std::string _method;
+          bool _ssl;
+          urlmap_type::size_type _pos;
 
         public:
           UrlMapCacheKey() { }
-          UrlMapCacheKey(const HttpRequest& request, urlmap_type::size_type pos_);
+          UrlMapCacheKey(const HttpRequest& request, urlmap_type::size_type pos);
 
           bool operator< (const UrlMapCacheKey& other) const;
 
-          const std::string& getHost() const  { return vhost; }
-          const std::string& getUrl() const  { return url; }
-          const std::string& getMethod() const  { return method; }
-          bool getSsl() const  { return ssl; }
-          urlmap_type::size_type getPos() const  { return pos; }
+          const std::string& getHost() const    { return _vhost; }
+          const std::string& getUrl() const     { return _url; }
+          const std::string& getMethod() const  { return _method; }
+          bool getSsl() const                   { return _ssl; }
+          urlmap_type::size_type getPos() const { return _pos; }
       };
 
       struct UrlMapCacheValue
@@ -140,44 +170,41 @@ namespace tnt
       };
 
       typedef std::map<UrlMapCacheKey, UrlMapCacheValue> urlMapCacheType;
-      mutable cxxtools::ReadWriteMutex urlMapCacheMutex;
-      mutable urlMapCacheType urlMapCache;
+
+      mutable cxxtools::ReadWriteMutex _urlMapCacheMutex;
+      mutable urlMapCacheType _urlMapCache;
 
       Maptarget mapCompNext(const HttpRequest& request, urlmap_type::size_type& pos) const;
 
     public:
       virtual ~Dispatcher()  { }
 
-      Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url,
-        const std::string& method, int ssl, const Maptarget& ci);
+      Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const std::string& method, int ssl, const Maptarget& ci);
 
-      Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url,
-        const Maptarget& ci)
+      Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const Maptarget& ci)
       { return addUrlMapEntry(vhost, url, std::string(), SSL_ALL, ci); }
-
-      friend class PosType;
 
       class PosType
       {
-          const Dispatcher& dis;
-          cxxtools::ReadLock lock;
-          urlmap_type::size_type pos;
-          const HttpRequest& request;
-          bool first;
+        private:
+          const Dispatcher& _dis;
+          cxxtools::ReadLock _lock;
+          urlmap_type::size_type _pos;
+          const HttpRequest& _request;
+          bool _first;
 
         public:
           PosType(const Dispatcher& d, const HttpRequest& r)
-            : dis(d),
-              lock(dis.mutex),
-              pos(0),
-              request(r),
-              first(true)
-          { }
+            : _dis(d),
+              _lock(d._mutex),
+              _pos(0),
+              _request(r),
+              _first(true)
+            { }
 
           Maptarget getNext();
       };
   };
-
 }
 
 #endif // TNT_DISPATCHER_H
