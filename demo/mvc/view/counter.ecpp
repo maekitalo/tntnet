@@ -1,11 +1,14 @@
+<%doc>
+
+  This defines, how the view of our applicaton.
+
+  In our small case we show the current counter value and define a form, which
+  the user use to interact with the application.
+
+</%doc>
 <%session scope="shared" include="counter.h">
   Counter counter;
 </%session>
-<!DOCTYPE html>
-<html>
-  <head>
-  </head>
-  <body>
     <h1>Counter</h1>
     value=<$ counter.value() $>
 
@@ -13,5 +16,3 @@
       <input type='submit' name='increment' value='increment'>
       <input type='submit' name='decrement' value='decrement'>
     </form>
-  </body>
-</html>
