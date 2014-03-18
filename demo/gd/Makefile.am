@@ -19,9 +19,9 @@ ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
 SUFFIXES=.ecpp .jpg .cpp
 .ecpp.cpp:
-	$(ECPPC) -o $@ $<
+	$(AM_V_GEN)$(ECPPC) -o $@ $<
 .jpg.cpp:
-	$(ECPPC) -b -m image/jpeg -o $@ $<
+	$(AM_V_GEN)$(ECPPC) -b -m image/jpeg -o $@ $<
 
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=gd|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=gd|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

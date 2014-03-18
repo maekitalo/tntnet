@@ -21,4 +21,4 @@ CLEANFILES = calcmvc.cpp view/accumulator.cpp view/calc.cpp
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -p -I $(srcdir) $<
+	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -p -I $(srcdir) $<

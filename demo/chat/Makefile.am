@@ -26,11 +26,11 @@ putchat.cpp: putchat.ecpp \
 
 SUFFIXES=.ecpp .js .png .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
+	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
 .js.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m application/x-javascript -o $@ $<
+	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -b -m application/x-javascript -o $@ $<
 .png.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png -o $@ $<
+	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png -o $@ $<
 
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=chat|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=chat|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

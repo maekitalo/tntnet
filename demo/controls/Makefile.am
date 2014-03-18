@@ -42,11 +42,11 @@ ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
 SUFFIXES=.ecpp .png .css .cpp
 .ecpp.cpp:
-	$(ECPPC) -o $@ $<
+	$(AM_V_GEN)$(ECPPC) -o $@ $<
 .png.cpp:
-	$(ECPPC) -b -m image/png -o $@ $<
+	$(AM_V_GEN)$(ECPPC) -b -m image/png -o $@ $<
 .css.cpp:
-	$(ECPPC) -b -m text/css -o $@ $<
+	$(AM_V_GEN)$(ECPPC) -b -m text/css -o $@ $<
 
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=controls|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=controls|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
