@@ -140,7 +140,7 @@ namespace tnt
 
       /// Check whether http method used is GET
       bool isMethodGET() const                  { return std::strcmp(method, "GET") == 0; }
-      
+
       /// Check whether http method used is POST
       bool isMethodPOST() const                 { return std::strcmp(method, "POST") == 0; }
 
