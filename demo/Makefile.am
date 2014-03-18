@@ -12,6 +12,7 @@ SUBDIRS = \
     gd \
     hello \
     mvc \
+    newsdb \
     savepoint \
     session \
     sprintf \

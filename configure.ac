@@ -144,6 +144,7 @@ AS_IF([test "$enable_demos" = "yes"],
   ]
 
   AC_CHECK_HEADER([gd.h], , AC_MSG_ERROR([gd headers not found]))
+  AC_CHECK_HEADER([tntdb.h], , AC_MSG_ERROR([tntdb headers not found]))
 )
 
 #
@@ -206,6 +207,7 @@ AC_CONFIG_FILES([
     demo/gd/Makefile
     demo/hello/Makefile
     demo/mvc/Makefile
+    demo/newsdb/Makefile
     demo/savepoint/Makefile
     demo/session/Makefile
     demo/sprintf/Makefile
