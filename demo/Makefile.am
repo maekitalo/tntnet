@@ -9,6 +9,7 @@ SUBDIRS = \
     config \
     controls \
     cookie \
+    gd \
     hello \
     mvc \
     savepoint \

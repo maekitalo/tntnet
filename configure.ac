@@ -142,6 +142,8 @@ AS_IF([test "$enable_demos" = "yes"],
   AS_IF([! test "$ZIP"],
     AC_MSG_ERROR([zip program not found (needed for calci18n demo)]))
   ]
+
+  AC_CHECK_HEADER([gd.h], , AC_MSG_ERROR([gd headers not found]))
 )
 
 #
@@ -201,6 +203,7 @@ AC_CONFIG_FILES([
     demo/config/Makefile
     demo/controls/Makefile
     demo/cookie/Makefile
+    demo/gd/Makefile
     demo/hello/Makefile
     demo/mvc/Makefile
     demo/savepoint/Makefile
