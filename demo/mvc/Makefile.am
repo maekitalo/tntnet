@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 mvc_la_SOURCES = \
 	controller/counter.cpp \
+	main.ecpp \
 	view/counter.ecpp
 
 nobase_include_HEADERS = \
