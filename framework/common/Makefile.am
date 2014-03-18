@@ -15,7 +15,6 @@ libtntnet_la_SOURCES = \
 	ecpp.cpp \
 	encoding.cpp \
 	htmlescostream.cpp \
-	http.cpp \
 	httperror.cpp \
 	httpheader.cpp \
 	httpmessage.cpp \
