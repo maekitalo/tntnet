@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2006 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -100,21 +100,22 @@ namespace
 
   class PidFile
   {
-      std::string pidFileName;
+    private:
+      std::string _pidFileName;
     public:
       PidFile(const std::string& pidFileName, pid_t pid);
       ~PidFile();
 
-      void releasePidFile()  { pidFileName.clear(); }
+      void releasePidFile() { _pidFileName.clear(); }
   };
 
-  PidFile::PidFile(const std::string& pidFileName_, pid_t pid)
-    : pidFileName(pidFileName_)
+  PidFile::PidFile(const std::string& pidFileName, pid_t pid)
+    : _pidFileName(pidFileName)
   {
-    if (pidFileName.empty())
+    if (_pidFileName.empty())
       return;
 
-    if (pidFileName[0] != '/')
+    if (_pidFileName[0] != '/')
     {
       // prepend current working-directory to pidfilename if not absolute
       std::vector<char> buf(256);
@@ -129,24 +130,24 @@ namespace
         else
           throw cxxtools::SystemError("getcwd");
       }
-      pidFileName = std::string(cwd) + '/' + pidFileName;
-      log_debug("pidfile=" << pidFileName);
+      _pidFileName = std::string(cwd) + '/' + _pidFileName;
+      log_debug("pidfile=" << _pidFileName);
     }
 
-    std::ofstream pidfile(pidFileName.c_str());
+    std::ofstream pidfile(_pidFileName.c_str());
     if (pidfile.fail())
-      throw std::runtime_error("unable to open pid-file " + pidFileName);
+      throw std::runtime_error("unable to open pid-file " + _pidFileName);
 
     pidfile << pid;
 
     if (pidfile.fail())
-      throw std::runtime_error("error writing to pid-file " + pidFileName);
+      throw std::runtime_error("error writing to pid-file " + _pidFileName);
   }
 
   PidFile::~PidFile()
   {
-    if (!pidFileName.empty())
-      ::unlink(pidFileName.c_str());
+    if (!_pidFileName.empty())
+      ::unlink(_pidFileName.c_str());
   }
 
   void closeStdHandles(const std::string& errorLog = std::string())
@@ -163,15 +164,12 @@ namespace
         throw cxxtools::SystemError("freopen(stderr)");
     }
   }
-
 }
 
 namespace tnt
 {
   Process::Process()
-  {
-    theProcess = this;
-  }
+    { theProcess = this; }
 
   Process::~Process()
   {
@@ -214,12 +212,12 @@ namespace tnt
         log_debug("close standard-handles");
         closeStdHandles(tnt::TntConfig::it().errorLog);
 
-        exitRestart = false;
+        _exitRestart = false;
         log_debug("do work");
         doWork();
 
         // normal shutdown
-        if (exitRestart)
+        if (_exitRestart)
           log_debug("restart");
         else
         {
@@ -350,13 +348,12 @@ namespace tnt
   }
 
   void Process::shutdown()
-  {
-    doShutdown();
-  }
+    { doShutdown(); }
 
   void Process::restart()
   {
-    exitRestart = true;
+    _exitRestart = true;
     doShutdown();
   }
 }
+
