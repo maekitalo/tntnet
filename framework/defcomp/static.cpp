@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003,2007 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -182,22 +182,23 @@ namespace tnt
 #if defined(HAVE_SENDFILE) && defined(HAVE_SYS_SENDFILE_H)
     class Fdfile
     {
-        int fd;
+      private:
+        int _fd;
       public:
         Fdfile(const char* pathname, int flags)
-          : fd(open(pathname, flags))
+          : _fd(open(pathname, flags))
         {
-          if (fd < 0)
+          if (_fd < 0)
             throw cxxtools::SystemError("open");
         }
 
         ~Fdfile()
         {
-          if (fd >= 0)
-            ::close(fd);
+          if (_fd >= 0)
+            ::close(_fd);
         }
 
-        int getFd() const  { return fd; }
+        int getFd() const { return _fd; }
     };
 
     void pollout(int fd, int timeout)
@@ -228,14 +229,12 @@ namespace tnt
   }
 
   Static::~Static()
-  {
-    delete handler;
-  }
+    { delete _handler; }
 
   void Static::configure(const TntConfig& config)
   {
-    if (handler == 0)
-      handler = new MimeHandler();
+    if (_handler == 0)
+      _handler = new MimeHandler();
   }
 
   static ComponentFactoryImpl<Static> staticFactory("static");
@@ -245,24 +244,17 @@ namespace tnt
   //
   void Static::setContentType(HttpRequest& request, HttpReply& reply)
   {
-    if (handler)
-      reply.setContentType(handler->getMimeType(request.getPathInfo()).c_str());
+    if (_handler)
+      reply.setContentType(_handler->getMimeType(request.getPathInfo()).c_str());
   }
 
-  unsigned Static::operator() (HttpRequest& request,
-    HttpReply& reply, QueryParams& qparams)
-  {
-    return doCall(request, reply, qparams, false);
-  }
+  unsigned Static::operator() (HttpRequest& request, HttpReply& reply, QueryParams& qparams)
+    { return doCall(request, reply, qparams, false); }
 
-  unsigned Static::topCall(HttpRequest& request,
-    HttpReply& reply, QueryParams& qparams)
-  {
-    return doCall(request, reply, qparams, true);
-  }
+  unsigned Static::topCall(HttpRequest& request, HttpReply& reply, QueryParams& qparams)
+    { return doCall(request, reply, qparams, true); }
 
-  unsigned Static::doCall(HttpRequest& request,
-    HttpReply& reply, QueryParams& qparams, bool top)
+  unsigned Static::doCall(HttpRequest& request, HttpReply& reply, QueryParams& qparams, bool top)
   {
     if (!tnt::HttpRequest::checkUrl(request.getPathInfo())
       || request.getPathInfo().find('\0') != std::string::npos)
@@ -467,5 +459,5 @@ namespace tnt
 
     return httpOkReturn;
   }
-
 }
+
