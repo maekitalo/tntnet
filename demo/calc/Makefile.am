@@ -15,7 +15,7 @@ ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 SUFFIXES=.ecpp .cpp
 
 .ecpp.cpp: $(ECPPC)
-	$(ECPPC) -o $@ $<
+	$(AM_V_GEN)$(ECPPC) -o $@ $<
 
 tntnet.xml:
-	$(SHELL) $(top_builddir)/tntnet-config --config=calc|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=calc|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

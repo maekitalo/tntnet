@@ -69,6 +69,10 @@ namespace tnt
         glob_t _gl;
         unsigned _n;
 
+        // disable copy and assignment
+        Glob(const Glob&) { }
+        Glob& operator= (const Glob&) { return *this; }
+
       public:
         explicit Glob(const std::string& pattern, int flags = 0);
         ~Glob();
@@ -100,11 +104,7 @@ namespace tnt
       }
     }
 
-    Glob::~Glob()
-    {
-      if (_gl.gl_pathv)
-        globfree(&_gl);
-    }
+    Glob::~Glob() { globfree(&_gl); }
 
     template <typename Deserializer>
     void processConfigFile(const std::string& configFile, std::set<std::string>& filesProcessed)

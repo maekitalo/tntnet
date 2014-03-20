@@ -1,0 +1,35 @@
+MVC demo application
+====================
+
+This demo application shows how to use a model view controller pattern in
+tntnet.
+
+The application has a counter, which can be incremented and decremented by the
+user using 2 buttons.
+
+The model can be found in the `model` sub directory. In our case it is a simple
+all in line class `Counter`, which holds the current counter state. Typical
+applications have more complex and many objects.
+
+The model define the classes, which are needed to held the state of our
+application.
+
+The `view` sub directory defines the screens, which defines the interactions
+with the user. In our case it shows the current counter value and a form with 2
+buttons to increment or decrement the counter.
+
+Note that the view contain only the body of our html page. The html frame can be
+found in the top level directory in `main.ecpp`. The trick is here to create a
+mapping, where instead of calling the view directly this main layout component
+is called. The name of the component is passed as a argument named `next` to the
+main component. After printing the html header it calls that component and after
+returning it prints to bottom of the page. Here we can define the layout for all
+pages including menus, css or javascript definitions.
+
+The remaining sub directory is the `controller`. Here we define the actions,
+which makes our application complete. The controller queries whether one of the
+buttons was pressed and do whatever is needed.
+
+The controller is again called using mapping. This is done before calling the
+view, so that the controller gets the chance to do whatever manipulations are
+needed in the model.

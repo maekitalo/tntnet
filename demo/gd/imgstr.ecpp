@@ -1,0 +1,32 @@
+<%args>
+str = "Hello";
+unsigned x = 200;
+unsigned y = 20;
+int red = 255;
+int green = 0;
+int blue = 0;
+</%args>
+<%pre>
+
+#include "gd++.h"
+
+</%pre>
+<%cpp>
+
+  // create image
+  gd::Gd image(x, y);
+
+  // allocate background color (background color is the first allocated color in gd)
+  int white = image.colorAllocate(255, 255, 255);
+
+  // allocate color for string
+  int color = image.colorAllocate(red, green, blue);
+
+  // write text to image
+  image.drawString(0, 0, str.c_str(), color);
+
+  // output image
+  reply.setContentType("image/png");
+  reply.out() << image;
+
+</%cpp>

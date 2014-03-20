@@ -1,36 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is the main configuration file for tntnet.
+
+  You can find documentation about the parameters in the man page tntnet.xml(7)
+  -->
 <tntnet>
   <mappings>
-    <mapurl>
+    <!-- map / to index@newsdb -->
+    <mapping>
       <target>index@newsdb</target>
-      <url>/$</url>
-    </mapurl>
-    <mapurl>
+      <url>^/$</url>
+    </mapping>
+    <!-- map /comp.* or /comp to comp@newsdb -->
+    <mapping>
       <target>$1@newsdb</target>
-      <url>/([^.]+)(\..+)?</url>
-    </mapurl>
+      <url>^/([^.]+)(\..+)?</url>
+    </mapping>
   </mappings>
 
+  <!-- listen to a port (empty string means any local interface) -->
   <listeners>
     <listener>
-      <ip></ip>
       <port>8000</port>
     </listener>
+  <!-- a certificate enables ssl -->
+  <!--
+    <listener>
+      <port>8443</port>
+      <certificate>tntnet.pem</certificate>
+    </listener>
+    -->
   </listeners>
 
   <logging>
     <rootlogger>INFO</rootlogger>
+
     <loggers>
       <logger>
         <category>tntnet</category>
         <level>INFO</level>
       </logger>
+      <logger>
+        <category>component.newsdb</category>
+        <level>INFO</level>
+      </logger>
     </loggers>
-    <!-- <file>tntnet.log</file> -->      <!--uncomment if you want to log to a file -->
-    <!-- <maxfilesize>1MB</maxfilesize> -->
-    <!-- <maxbackupindex>2</maxbackupindex> -->
-    <!-- <host>localhost:1234</host> --> <!--  # send log-messages with udp -->
+
+    <!--
+    <file>tntnet.log</file>
+    <maxfilesize>10M</maxfilesize>
+    <maxbackupindex>2</maxbackupindex>
+    -->
+
   </logging>
 
-  <dburl>sqlite:newsdb.db</dburl>
+  <!-- <maxRequestSize>65536</maxRequestSize> -->
+  <!-- <maxRequestTime>600</maxRequestTime> -->
+  <!-- <user>tntnet</user> -->
+  <!-- <group>tntnet</group> -->
+  <!-- <dir>/</dir> -->
+  <!-- <chrootdir>/var/safedir</chrootdir> -->
+  <!-- <pidfile>/var/run/tntnet.pid</pidfile> -->
+  <!-- <daemon>0</daemon> -->
+  <!-- <minThreads>5</minThreads> -->
+  <!-- <maxThreads>100</maxThreads> -->
+  <!-- <threadStartDelay>10</threadStartDelay> -->
+  <!-- <queueSize>1000</queueSize> -->
+  <!--
+  <compPath>
+    <entry>path1</entry>
+    <entry>path2</entry>
+  </compPath>
+   -->
+  <!-- <socketBufferSize>16384</socketBufferSize> -->
+  <!-- <socketReadTimeout>10</socketReadTimeout> -->
+  <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
+  <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->
+  <!-- <keepAliveMax>1000</keepAliveMax> -->
+  <!-- <sessionTimeout>300</sessionTimeout> -->
+  <!-- <listenBacklog>64</listenBacklog> -->
+  <!-- <listenRetry>5</listenRetry> -->
+  <!-- <enableCompression>no</enableCompression> -->
+  <!-- <mimeDb>/etc/mime.types</mimeDb> -->
+  <!-- <minCompressSize>1024</minCompressSize> -->
+  <!-- <maxUrlMapCache>8192</maxUrlMapCache> -->
+  <!-- <defaultContentType>text/html; charset=UTF-8</defaultContentType> -->
+  <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
+  <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
+  <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
+  <!-- <server>Tntnet</server> -->
+
+  <compPath>
+    <entry>.libs</entry>
+  </compPath>
 </tntnet>

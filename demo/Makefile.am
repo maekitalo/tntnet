@@ -9,8 +9,10 @@ SUBDIRS = \
     config \
     controls \
     cookie \
+    gd \
     hello \
     mvc \
+    newsdb \
     savepoint \
     session \
     sprintf \

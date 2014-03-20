@@ -6,14 +6,11 @@
   -->
 <tntnet>
   <mappings>
-    <!-- map / to mvc@mvc -->
+    <!-- redirect / to /counter -->
     <mapping>
       <target>redirect@tntnet</target>
       <url>^/$</url>
       <pathinfo>/counter</pathinfo>
-      <args>
-        <type>permanently</type>
-      </args>
     </mapping>
 
     <!-- map /comp controller/comp@mvc -->
@@ -22,10 +19,13 @@
       <url>^/(.*)$</url>
     </mapping>
 
-    <!-- map /comp view/comp@mvc -->
+    <!-- map /comp to the main component -->
     <mapping>
-      <target>view/$1@mvc</target>
+      <target>main@mvc</target>
       <url>^/(.*)$</url>
+      <args>
+        <next>view/$1</next>
+      </args>
     </mapping>
   </mappings>
 

@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 mvc_la_SOURCES = \
 	controller/counter.cpp \
+	main.ecpp \
 	view/counter.ecpp
 
 nobase_include_HEADERS = \
@@ -14,4 +15,4 @@ mvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -p $<
+	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -p $<

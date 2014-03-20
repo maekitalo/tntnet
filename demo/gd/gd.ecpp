@@ -1,0 +1,63 @@
+<%args>
+str = "Hello";
+red = "255";
+green = "0";
+blue = "0";
+</%args>
+<%cpp>
+
+/*
+ we could put the string directly to the img tag using:
+
+  <img src="imgstr?str=<$ str $>">
+
+ but then the string is not correctly url encoded. Hence we build a QueryParams
+ object which has a method getUrl(), which returns a url encoded string with
+ the parameters.
+*/
+
+cxxtools::QueryParams q;
+q.add("str", str);
+q.add("red", red);
+q.add("green", green);
+q.add("blue", blue);
+
+</%cpp>
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>ecpp-application gd</title>
+ </head>
+ <body>
+  <h1>gd demo application</h1>
+  <p>
+   This application demostrates how to create graphics dynamically in tntnet
+   using the famous <a href="http://www.boutell.com/gd/">gd library</a>.
+  </p>
+  <form>
+    <table>
+     <tr>
+      <td>Text</td>
+      <td><input type="text" name="str" value="<$ str $>"></td>
+     </tr>
+     <tr>
+      <td>Red</td>
+      <td><input type="number" name="red" value="<$ red $>"></td>
+     </tr>
+     <tr>
+      <td>Green</td>
+      <td><input type="number" name="green" value="<$ green $>"></td>
+     </tr>
+     <tr>
+      <td>Blue</td>
+      <td><input type="number" name="blue" value="<$ blue $>"></td>
+     </tr>
+    </table>
+    <input type="submit" value="update">
+  </form>
+
+  <hr>
+
+  <img src="imgstr?<$ q.getUrl() $>">
+ </body>
+</html>

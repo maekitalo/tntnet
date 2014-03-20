@@ -1,0 +1,26 @@
+gd demo Tntnet application
+==========================
+
+This application demonstrates the use of dynamically generated images in tntnet.
+
+The dynamically generated images uses the famous GD Graphics Library from
+Boutell.Com. To make it more C++ style, we created a small C++ wrapper around
+that.
+
+The application has 2 parts: the html screen `gd.ecpp`, which displays a
+form and the generated image and the actual image creation component
+`imgstr.ecpp`. The image creation component expects a query parameter `str` and
+generates a image with that text drawn into a small image. For output the png
+format is used.
+
+Building and running
+--------------------
+
+To build the application you need to install tntnet and gd. For common linux
+distributions you need the development package of gd, which contains the
+headers and link libraries. The package is named gd-devel in fedora at least.
+
+Running `make` build the application and running `tntnet` starts the server.
+You can access the application using a browser using the url
+http://localhost:8000/ or the hostname of the server if you want to access the
+application remotely.

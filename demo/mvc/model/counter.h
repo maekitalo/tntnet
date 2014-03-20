@@ -20,6 +20,16 @@
 #ifndef COUNTER_H
 #define COUNTER_H
 
+// This is the data object of our small mvc application.
+//
+// The data objects held the state of our web application.
+//
+// Since our application has just one state - the counter value - the
+// data object is trivial. Since it is that trivial, we inline everything
+// and hence do not need a implementation file model/counter.cpp.
+//
+// Typical applications have more complex and many data objects.
+//
 class Counter
 {
     int _value;

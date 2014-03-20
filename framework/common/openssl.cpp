@@ -313,12 +313,13 @@ namespace tnt
     cxxtools::MutexLock lock(mutex);
 
     int n, err;
-    // non-blocking/with timeout
 
-    // try read
-    log_debug("SSL_shutdown(" << _ssl << ')');
-    n = ::SSL_shutdown(_ssl);
-    log_debug("ssl-shutdown => " << n);
+    do
+    {
+      log_debug("SSL_shutdown(" << _ssl << ')');
+      n = ::SSL_shutdown(_ssl);
+      log_debug("ssl-shutdown => " << n);
+    } while (n == 0);
 
     if (n == 1)
       return;
@@ -342,7 +343,7 @@ namespace tnt
 
     do
     {
-      log_debug("poll");
+      log_debug("poll " << (err == SSL_ERROR_WANT_WRITE ? "POLLIN|POLLOUT" : "POLLIN"));
       poll(err == SSL_ERROR_WANT_WRITE ? POLLIN|POLLOUT : POLLIN);
 
       log_debug("SSL_shutdown(" << _ssl << ')');
