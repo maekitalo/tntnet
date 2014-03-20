@@ -102,7 +102,7 @@ namespace tnt
   {
     if (istokenchar(ch))
     {
-      _message.method[0] = ch;
+      _message._method[0] = ch;
       _message._methodLen = 1;
       SET_STATE(state_cmd);
     }
@@ -119,17 +119,17 @@ namespace tnt
   {
     if (istokenchar(ch))
     {
-      if (_message._methodLen >= sizeof(_message.method) - 1)
+      if (_message._methodLen >= sizeof(_message._method) - 1)
       {
-        log_debug("invalid method field; method=" << std::string(_message.method, _message._methodLen) << ", len=" << _message._methodLen);
+        log_debug("invalid method field; method=" << std::string(_message._method, _message._methodLen) << ", len=" << _message._methodLen);
         throw HttpError(HTTP_BAD_REQUEST, "invalid method field");
       }
-      _message.method[_message._methodLen++] = ch;
+      _message._method[_message._methodLen++] = ch;
     }
     else if (ch == ' ')
     {
-      _message.method[_message._methodLen] = '\0';
-      log_debug("method=" << _message.method);
+      _message._method[_message._methodLen] = '\0';
+      log_debug("method=" << _message._method);
       SET_STATE(state_url0);
     }
     else
@@ -148,9 +148,9 @@ namespace tnt
     }
     else if (ch == '/')
     {
-      _message.url.clear();
-      _message.url.reserve(32);
-      _message.url += ch;
+      _message._url.clear();
+      _message._url.reserve(32);
+      _message._url += ch;
       SET_STATE(state_url);
     }
     else if (std::isalpha(ch))
@@ -213,9 +213,9 @@ namespace tnt
   {
     if (ch == '/')
     {
-      _message.url.clear();
-      _message.url.reserve(32);
-      _message.url += ch;
+      _message._url.clear();
+      _message._url.reserve(32);
+      _message._url += ch;
       SET_STATE(state_url);
     }
     else if (!std::isalpha(ch)
@@ -237,31 +237,31 @@ namespace tnt
   {
     if (ch == '?')
     {
-      log_debug("url=" << _message.url);
+      log_debug("url=" << _message._url);
       SET_STATE(state_qparam);
     }
     else if (ch == '\r')
     {
-      log_debug("url=" << _message.url);
+      log_debug("url=" << _message._url);
       SET_STATE(state_end0);
     }
     else if (ch == '\n')
     {
-      log_debug("url=" << _message.url);
+      log_debug("url=" << _message._url);
       SET_STATE(state_header);
     }
     else if (ch == ' ' || ch == '\t')
     {
-      log_debug("url=" << _message.url);
+      log_debug("url=" << _message._url);
       SET_STATE(state_version);
     }
     else if (ch == '%')
     {
       SET_STATE(state_urlesc);
-      _message.url += ch;
+      _message._url += ch;
     }
     else if (ch > ' ')
-      _message.url += ch;
+      _message._url += ch;
     else
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
@@ -275,18 +275,18 @@ namespace tnt
   {
     if (isHexDigit(ch))
     {
-      if (_message.url.size() >= 2 && _message.url[_message.url.size() - 2] == '%')
+      if (_message._url.size() >= 2 && _message._url[_message._url.size() - 2] == '%')
       {
-        unsigned v = (valueOfHexDigit(_message.url[_message.url.size() - 1]) << 4) | valueOfHexDigit(ch);
+        unsigned v = (valueOfHexDigit(_message._url[_message._url.size() - 1]) << 4) | valueOfHexDigit(ch);
         if (v == 0)
           throw HttpError(HTTP_BAD_REQUEST, "invalid value in url");
-        _message.url[_message.url.size() - 2] = static_cast<char>(v);
-        _message.url.resize(_message.url.size() - 1);
-        SET_STATE(state_url);
+        _message._url[_message._url.size() - 2] = static_cast<char>(v);
+        _message._url.resize(_message._url.size() - 1);
+        SET_STATE(state__url);
       }
       else
       {
-        _message.url += ch;
+        _message._url += ch;
       }
       return false;
     }
