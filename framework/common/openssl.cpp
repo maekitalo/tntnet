@@ -428,8 +428,5 @@ namespace tnt
       return traits_type::eof();
     }
   }
-
-  //////////////////////////////////////////////////////////////////////
-  // openssl_iostream
-  //
 }
+

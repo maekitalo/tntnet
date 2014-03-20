@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -43,25 +43,25 @@ log_define("tntnet.job")
 
 namespace tnt
 {
-  Job::Job(Tntnet& app_, const SocketIf* socketIf_)
-    : keepAliveCounter(TntConfig::it().keepAliveMax),
-      request(app_, socketIf_),
-      parser(request),
-      lastAccessTime(0)
+  Job::Job(Tntnet& app, const SocketIf* socketIf)
+    : _keepAliveCounter(TntConfig::it().keepAliveMax),
+      _request(app, socketIf),
+      _parser(_request),
+      _lastAccessTime(0)
     { }
 
   Job::~Job()
-  { }
+    { }
 
   void Job::clear()
   {
-    parser.reset();
-    request.clear();
+    _parser.reset();
+    _request.clear();
   }
 
   int Job::msecToTimeout(time_t currentTime) const
   {
-    return (lastAccessTime - currentTime + 1) * 1000
+    return (_lastAccessTime - currentTime + 1) * 1000
          + TntConfig::it().keepAliveTimeout
          - TntConfig::it().socketReadTimeout;
   }
@@ -69,15 +69,14 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // Tcpjob
   //
-
   std::string Tcpjob::getPeerIp() const
   {
-    return socket.getPeerAddr();
+    return _socket.getPeerAddr();
   }
 
   std::string Tcpjob::getServerIp() const
   {
-    return socket.getSockAddr();
+    return _socket.getSockAddr();
   }
 
   bool Tcpjob::isSsl() const
@@ -87,7 +86,7 @@ namespace tnt
 
   void Tcpjob::accept()
   {
-    socket.accept(listener);
+    _socket.accept(_listener);
     log_debug("connection accepted from " << getPeerIp());
   }
 
@@ -98,14 +97,14 @@ namespace tnt
     if (Tntnet::shouldStop())
       p = this;
     else
-      p = new Tcpjob(getRequest().getApplication(), listener, queue);
+      p = new Tcpjob(getRequest().getApplication(), _listener, _queue);
 
-    queue.put(p);
+    _queue.put(p);
   }
 
   std::iostream& Tcpjob::getStream()
   {
-    if (!socket.isConnected())
+    if (!_socket.isConnected())
     {
       try
       {
@@ -122,22 +121,22 @@ namespace tnt
       regenerateJob();
     }
 
-    return socket;
+    return _socket;
   }
 
   int Tcpjob::getFd() const
   {
-    return socket.getFd();
+    return _socket.getFd();
   }
 
   void Tcpjob::setRead()
   {
-    socket.setTimeout(TntConfig::it().socketReadTimeout);
+    _socket.setTimeout(TntConfig::it().socketReadTimeout);
   }
 
   void Tcpjob::setWrite()
   {
-    socket.setTimeout(TntConfig::it().socketWriteTimeout);
+    _socket.setTimeout(TntConfig::it().socketWriteTimeout);
   }
 
 #ifdef USE_SSL
@@ -147,12 +146,12 @@ namespace tnt
 
   std::string SslTcpjob::getPeerIp() const
   {
-    return socket.getPeerAddr();
+    return _socket.getPeerAddr();
   }
 
   std::string SslTcpjob::getServerIp() const
   {
-    return socket.getSockAddr();
+    return _socket.getSockAddr();
   }
 
   bool SslTcpjob::isSsl() const
@@ -162,14 +161,14 @@ namespace tnt
 
   void SslTcpjob::accept()
   {
-    socket.accept(listener, cxxtools::net::TcpSocket::DEFER_ACCEPT);
+    _socket.accept(_listener, cxxtools::net::TcpSocket::DEFER_ACCEPT);
   }
 
   void SslTcpjob::handshake()
   {
-    socket.handshake(listener);
+    _socket.handshake(_listener);
 
-    fcntl(socket.getFd(), F_SETFD, FD_CLOEXEC);
+    fcntl(_socket.getFd(), F_SETFD, FD_CLOEXEC);
 
     setRead();
   }
@@ -181,14 +180,14 @@ namespace tnt
     if (Tntnet::shouldStop())
       p = this;
     else
-      p = new SslTcpjob(getRequest().getApplication(), listener, queue);
+      p = new SslTcpjob(getRequest().getApplication(), _listener, _queue);
 
-    queue.put(p);
+    _queue.put(p);
   }
 
   std::iostream& SslTcpjob::getStream()
   {
-    if (!socket.isConnected())
+    if (!_socket.isConnected())
     {
       try
       {
@@ -208,22 +207,22 @@ namespace tnt
         handshake();
     }
 
-    return socket;
+    return _socket;
   }
 
   int SslTcpjob::getFd() const
   {
-    return socket.getFd();
+    return _socket.getFd();
   }
 
   void SslTcpjob::setRead()
   {
-    socket.setTimeout(TntConfig::it().socketReadTimeout);
+    _socket.setTimeout(TntConfig::it().socketReadTimeout);
   }
 
   void SslTcpjob::setWrite()
   {
-    socket.setTimeout(TntConfig::it().socketWriteTimeout);
+    _socket.setTimeout(TntConfig::it().socketWriteTimeout);
   }
 
 #endif // USE_SSL
@@ -235,51 +234,51 @@ namespace tnt
   {
     j->touch();
 
-    cxxtools::MutexLock lock(mutex);
+    cxxtools::MutexLock lock(_mutex);
 
-    if (!force && capacity > 0)
+    if (!force && _capacity > 0)
     {
-      while (jobs.size() >= capacity)
+      while (_jobs.size() >= _capacity)
       {
         log_warn("Jobqueue full");
-        notFull.wait(lock);
+        _notFull.wait(lock);
       }
     }
 
-    jobs.push_back(j);
+    _jobs.push_back(j);
     // We have to drop ownership before releasing the lock of the queue.
     // Therefore we set the smart pointer to 0.
     j = 0;
 
-    if (waitThreads == 0)
+    if (_waitThreads == 0)
       noWaitThreads.signal();
 
-    notEmpty.signal();
+    _notEmpty.signal();
   }
 
   Jobqueue::JobPtr Jobqueue::get()
   {
-    cxxtools::MutexLock lock(mutex);
+    cxxtools::MutexLock lock(_mutex);
 
     // wait, until a job is available
-    ++waitThreads;
+    ++_waitThreads;
 
-    while (jobs.empty())
-      notEmpty.wait(lock);
+    while (_jobs.empty())
+      _notEmpty.wait(lock);
 
-    --waitThreads;
+    --_waitThreads;
 
     // take next job (queue is locked)
-    JobPtr j = jobs.front();
-    jobs.pop_front();
+    JobPtr j = _jobs.front();
+    _jobs.pop_front();
 
     // if there are threads waiting, wake another
-    if (!jobs.empty() && waitThreads > 0)
-      notEmpty.signal();
+    if (!_jobs.empty() && _waitThreads > 0)
+      _notEmpty.signal();
 
-    notFull.signal();
+    _notFull.signal();
 
     return j;
   }
-
 }
+

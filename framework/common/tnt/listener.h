@@ -38,13 +38,14 @@ namespace tnt
 {
   class ListenerBase
   {
-      std::string ipaddr;
-      unsigned short int port;
+    private:
+      std::string _ipaddr;
+      unsigned short int _port;
 
     public:
-      ListenerBase(const std::string& ipaddr_, unsigned short int port_)
-        : ipaddr(ipaddr_),
-          port(port_)
+      ListenerBase(const std::string& ipaddr, unsigned short int port)
+        : _ipaddr(ipaddr),
+          _port(port)
           { }
       virtual ~ListenerBase() { }
 
@@ -52,16 +53,15 @@ namespace tnt
       virtual void doTerminate() = 0;
       virtual void initialize();
 
-      const std::string& getIpaddr() const
-        { return ipaddr; }
-      unsigned short int getPort() const
-        { return port; }
+      const std::string& getIpaddr() const { return _ipaddr; }
+      unsigned short int getPort() const   { return _port; }
   };
 
   class Listener : public ListenerBase
   {
-      cxxtools::net::TcpServer server;
-      Jobqueue& queue;
+    private:
+      cxxtools::net::TcpServer _server;
+      Jobqueue& _queue;
 
     public:
       Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q);
@@ -73,8 +73,9 @@ namespace tnt
 #ifdef USE_SSL
   class Ssllistener : public ListenerBase
   {
-      SslServer server;
-      Jobqueue& queue;
+    private:
+      SslServer _server;
+      Jobqueue& _queue;
 
     public:
       Ssllistener(Tntnet& application, const char* certificateFile, const char* keyFile,

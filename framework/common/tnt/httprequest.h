@@ -166,12 +166,12 @@ namespace tnt
       void setQueryString(const std::string& queryString)
         { _queryString = queryString; }
 
-      void setPathInfo(const std::string& p)       { _pathinfo = p; }
-      const std::string& getPathInfo() const       { return _pathinfo; }
+      void setPathInfo(const std::string& p)    { _pathinfo = p; }
+      const std::string& getPathInfo() const    { return _pathinfo; }
 
-      void setArgs(const args_type& a)             { _args = a; }
-      const args_type& getArgs() const             { return _args; }
-      args_type& getArgs()                         { return _args; }
+      void setArgs(const args_type& a)          { _args = a; }
+      const args_type& getArgs() const          { return _args; }
+      args_type& getArgs()                      { return _args; }
 
       /// @{
       /// @deprecated
@@ -185,11 +185,11 @@ namespace tnt
       void parse(std::istream& in);
       void doPostParse();
 
-      tnt::QueryParams& getQueryParams()               { return _qparam; }
-      const tnt::QueryParams& getQueryParams() const   { return _qparam; }
-      const tnt::QueryParams& getGetParams() const     { return _getparam; }
-      const tnt::QueryParams& getPostParams() const    { return _postparam; }
-      void setQueryParams(const tnt::QueryParams& q)   { _qparam = q; }
+      tnt::QueryParams& getQueryParams()             { return _qparam; }
+      const tnt::QueryParams& getQueryParams() const { return _qparam; }
+      const tnt::QueryParams& getGetParams() const   { return _getparam; }
+      const tnt::QueryParams& getPostParams() const  { return _postparam; }
+      void setQueryParams(const tnt::QueryParams& q) { _qparam = q; }
 
       std::string getPeerIp() const   { return _socketIf ? _socketIf->getPeerIp()   : std::string(); }
       std::string getServerIp() const { return _socketIf ? _socketIf->getServerIp() : std::string(); }

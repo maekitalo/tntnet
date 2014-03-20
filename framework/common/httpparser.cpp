@@ -35,7 +35,7 @@
 #include <sstream>
 #include <algorithm>
 
-#define SET_STATE(new_state)  state = &Parser::new_state
+#define SET_STATE(new_state) _state = &Parser::new_state
 
 namespace tnt
 {
@@ -93,7 +93,7 @@ namespace tnt
     _message.clear();
     SET_STATE(state_cmd0);
     _httpCode = HTTP_OK;
-    failedFlag = false;
+    _failedFlag = false;
     RequestSizeMonitor::reset();
     _headerParser.reset();
   }
@@ -110,9 +110,9 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in method");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_cmd(char ch)
@@ -136,9 +136,9 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in method");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_url0(char ch)
@@ -161,10 +161,10 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
 
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_protocol(char ch)
@@ -175,10 +175,10 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
 
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_protocol_slash1(char ch)
@@ -189,10 +189,10 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
 
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_protocol_slash2(char ch)
@@ -203,10 +203,10 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
 
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_protocol_host(char ch)
@@ -227,10 +227,10 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
 
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_url(char ch)
@@ -266,9 +266,9 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in url");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_urlesc(char ch)
@@ -282,7 +282,7 @@ namespace tnt
           throw HttpError(HTTP_BAD_REQUEST, "invalid value in url");
         _message._url[_message._url.size() - 2] = static_cast<char>(v);
         _message._url.resize(_message._url.size() - 1);
-        SET_STATE(state__url);
+        SET_STATE(state_url);
       }
       else
       {
@@ -301,11 +301,11 @@ namespace tnt
   {
     if (ch == ' ' || ch == '\t')
     {
-      log_debug("queryString=" << _message.queryString);
+      log_debug("queryString=" << _message._queryString);
       SET_STATE(state_version);
     }
     else
-      _message.queryString += ch;
+      _message._queryString += ch;
     return false;
   }
 
@@ -320,9 +320,9 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in version");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_version_major(char ch)
@@ -337,9 +337,9 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in version-major");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_version_major_sp(char ch)
@@ -350,14 +350,14 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in version-major");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_version_minor0(char ch)
   {
-    return ch == ' ' || ch == '\t' ? failedFlag
+    return ch == ' ' || ch == '\t' ? _failedFlag
                                    : state_version_minor(ch);
   }
 
@@ -373,9 +373,9 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in version-minor");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_end0(char ch)
@@ -386,9 +386,9 @@ namespace tnt
     {
       log_warn("invalid character " << chartoprint(ch) << " in end");
       _httpCode = HTTP_BAD_REQUEST;
-      failedFlag = true;
+      _failedFlag = true;
     }
-    return failedFlag;
+    return _failedFlag;
   }
 
   bool HttpRequest::Parser::state_header(char ch)
@@ -398,7 +398,7 @@ namespace tnt
       if (_headerParser.failed())
       {
         _httpCode = HTTP_BAD_REQUEST;
-        failedFlag = true;
+        _failedFlag = true;
         return true;
       }
 
@@ -420,7 +420,7 @@ namespace tnt
           return true;
         }
 
-        _message.contentSize = _bodySize;
+        _message._contentSize = _bodySize;
         if (_bodySize == 0)
           return true;
         else
@@ -447,7 +447,7 @@ namespace tnt
   {
     log_warn("max request size " << TntConfig::it().maxRequestSize << " exceeded");
     _httpCode = HTTP_REQUEST_ENTITY_TOO_LARGE;
-    failedFlag = true;
+    _failedFlag = true;
   }
 }
 

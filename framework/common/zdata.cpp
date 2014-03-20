@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -39,15 +39,15 @@ namespace tnt
 {
   void Zdata::addRef()
   {
-    if (cxxtools::atomicIncrement(refs) == 1)
+    if (cxxtools::atomicIncrement(_refs) == 1)
     {
       // allocate uncompressed data
-      data = new char[data_len];
+      _data = new char[_data_len];
 
       // uncompress Zdata => data
-      log_debug("uncompress " << zdata_len << " to " << data_len << " bytes");
-      uLong dest_len = data_len;
-      int z_ret = uncompress((Bytef*)data, &dest_len, (const Bytef*)zptr, zdata_len);
+      log_debug("uncompress " << _zdata_len << " to " << _data_len << " bytes");
+      uLong dest_len = _data_len;
+      int z_ret = uncompress((Bytef*)_data, &dest_len, (const Bytef*)_zptr, _zdata_len);
       if (z_ret != Z_OK)
       {
         throwRuntimeError(std::string("error uncompressing data: ") +
@@ -61,12 +61,13 @@ namespace tnt
 
   void Zdata::release()
   {
-    if (cxxtools::atomicDecrement(refs) == 0)
+    if (cxxtools::atomicDecrement(_refs) == 0)
     {
-      log_debug("release " << data_len << " uncompressed bytes");
-      delete[] data;
-      data = 0;
+      log_debug("release " << _data_len << " uncompressed bytes");
+      delete[] _data;
+      _data = 0;
     }
   }
 
 }
+

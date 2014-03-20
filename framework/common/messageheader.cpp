@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -75,7 +75,7 @@ namespace tnt
         ++it;
     }
 
-    endOffset = p - rawdata;
+    _endOffset = p - _rawdata;
   }
 
   Messageheader::const_iterator Messageheader::find(const char* key) const
@@ -94,8 +94,8 @@ namespace tnt
 #ifdef DEBUG
     std::memset(rawdata, '\xfe', sizeof(rawdata));
 #endif
-    rawdata[0] = rawdata[1] = '\0';
-    endOffset = 0;
+    _rawdata[0] = _rawdata[1] = '\0';
+    _endOffset = 0;
   }
 
   void Messageheader::setHeader(const char* key, const char* value, bool replace)
@@ -112,7 +112,7 @@ namespace tnt
     size_t lk2 = key[lk-1] == ':' ? lk + 1 : lk + 2;  // length of key including trailing ':' and terminator
     size_t lv = std::strlen(value);   // length of value
 
-    if (p - rawdata + lk2 + lv + 3 > MAXHEADERSIZE)
+    if (p - _rawdata + lk2 + lv + 3 > MAXHEADERSIZE)
       throw std::runtime_error("message header too big");
 
     std::strcpy(p, key);   // copy key
@@ -122,7 +122,7 @@ namespace tnt
     std::strcpy(p, value); // copy value
     p[lv + 1] = '\0';      // put new message end marker in place
 
-    endOffset = (p + lv + 1) - rawdata;
+    _endOffset = (p + lv + 1) - _rawdata;
   }
 
   Messageheader::return_type Messageheader::onField(const char* name, const char* value)
@@ -137,5 +137,5 @@ namespace tnt
     p.parse(in);
     return in;
   }
-
 }
+

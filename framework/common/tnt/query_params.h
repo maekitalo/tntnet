@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,7 +46,7 @@ namespace tnt
     public:
       explicit ConversionError(const std::string& msg)
         : std::runtime_error(msg)
-      { }
+        { }
 
       static void doThrow(const std::string& argname, unsigned argnum, const char* typeto, const std::string& value);
   };
@@ -117,56 +117,60 @@ namespace tnt
 
   class QueryParams : public cxxtools::QueryParams
   {
-      Scope* paramScope;
+    private:
+      Scope* _paramScope;
       std::locale _locale;
 
     public:
       QueryParams()
-        : paramScope(0),
+        : _paramScope(0),
           _locale(std::locale::classic())
-      { }
+        { }
 
       QueryParams(const QueryParams& src)
         : cxxtools::QueryParams(src),
-          paramScope(src.paramScope),
+          _paramScope(src._paramScope),
           _locale(src._locale)
-      { if (paramScope) paramScope->addRef(); }
+        {
+          if (_paramScope)
+            _paramScope->addRef();
+        }
 
       explicit QueryParams(const std::string& url)
         : cxxtools::QueryParams(url),
-          paramScope(0),
+          _paramScope(0),
           _locale(std::locale::classic())
-      { }
+        { }
 
       QueryParams& operator= (const QueryParams& src)
       {
         cxxtools::QueryParams::operator=(src);
-        if (paramScope != src.paramScope)
+        if (_paramScope != src._paramScope)
         {
-          if (paramScope->release() == 0)
-            delete paramScope;
-          paramScope = src.paramScope;
-          if (paramScope)
-            paramScope->addRef();
+          if (_paramScope->release() == 0)
+            delete _paramScope;
+          _paramScope = src._paramScope;
+          if (_paramScope)
+            _paramScope->addRef();
         }
         _locale = src._locale;
         return *this;
       }
       ~QueryParams()
       {
-        if (paramScope && paramScope->release() == 0)
-          delete paramScope;
+        if (_paramScope && _paramScope->release() == 0)
+          delete _paramScope;
       }
 
       Scope& getScope()
       {
-        if (!paramScope)
-          paramScope = new Scope();
-        return *paramScope;
+        if (!_paramScope)
+          _paramScope = new Scope();
+        return *_paramScope;
       }
 
-      const std::locale& locale() const     { return _locale; }
-      void locale(const std::locale& loc)   { _locale = loc; }
+      const std::locale& locale() const   { return _locale; }
+      void locale(const std::locale& loc) { _locale = loc; }
 
       template <typename Type>
       Type arg(const std::string& name, const Type& def = Type()) const
@@ -219,7 +223,7 @@ namespace tnt
       { qhelper::QAdd<Type>::add(*this, name, value); return *this; }
 
       QueryParams& add(const std::string& name, const char* value)
-      { 
+      {
         cxxtools::QueryParams::add(name, value);
         return *this;
       }
@@ -318,9 +322,8 @@ namespace tnt
     {
       static_cast<cxxtools::QueryParams&>(q).add(name, value ? std::string(1, '1') : std::string());
     }
-
   }
-
 }
 
 #endif // TNT_QUERY_PARAMS_H
+

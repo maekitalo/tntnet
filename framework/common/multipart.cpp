@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,45 +38,46 @@
 namespace
 {
   template <typename iterator>
-    class iterator_streambuf : public std::streambuf
+  class iterator_streambuf : public std::streambuf
   {
     public:
       typedef unsigned long streamsize;
 
     private:
-      iterator& begin;
-      iterator end;
-      char_type buffer[2];
+      iterator& _begin;
+      iterator _end;
+      char_type _buffer[2];
 
     protected:
       std::streambuf::int_type overflow(std::streambuf::int_type ch)
         { return traits_type::eof(); }
+
       int sync()
-        {
-          if (gptr() == buffer + 1)
-            ++begin;
-          setg(0, 0, 0);
-          return 0;
-        }
+      {
+        if (gptr() == _buffer + 1)
+          ++_begin;
+        setg(0, 0, 0);
+        return 0;
+      }
+
       std::streambuf::int_type underflow()
-        {
-          if (begin == end)
-            return traits_type::eof();
+      {
+        if (_begin == _end)
+          return traits_type::eof();
 
-          if (gptr() == buffer + 1)
-            ++begin;
+        if (gptr() == _buffer + 1)
+          ++_begin;
 
-          buffer[0] = *begin;
-          setg(buffer, buffer, buffer + 1);
-          return buffer[0];
-        }
+        _buffer[0] = *_begin;
+        setg(_buffer, _buffer, _buffer + 1);
+        return _buffer[0];
+      }
 
     public:
       iterator_streambuf(iterator& b, iterator e)
-        : begin(b),
-          end(e)
+        : _begin(b),
+          _end(e)
         { }
-
   };
 }
 
@@ -88,7 +89,7 @@ namespace tnt
     if (tnt::StringCompareIgnoreCase<const char*>(name, "Content-Disposition:") == 0)
     {
       std::istringstream in(value);
-      in >> cd;
+      in >> _cd;
       if (!in)
         return FAIL;
     }
@@ -100,19 +101,19 @@ namespace tnt
   {
     iterator_streambuf<const_iterator> buf(b, e);
     std::istream in(&buf);
-    in >> header;
+    in >> _header;
     if (!in)
       throwRuntimeError("error in parsing message-header");
     in.sync();
 
-    bodyBegin = b;
-    bodyEnd = e;
+    _bodyBegin = b;
+    _bodyEnd = e;
   }
 
   std::string Part::getHeader(const std::string& key) const
   {
-    Messageheader::const_iterator it = header.find(key);
-    if (it != header.end())
+    Messageheader::const_iterator it = _header.find(key);
+    if (it != _header.end())
       return it->second;
     return std::string();
   }
@@ -125,33 +126,33 @@ namespace tnt
 
   void Multipart::set(const std::string& boundary, const std::string& b)
   {
-    body = b;
+    _body = b;
 
-    std::string::size_type bpos = body.find(boundary);
+    std::string::size_type bpos = _body.find(boundary);
     while (bpos != std::string::npos)
     {
       bpos += boundary.size();
-      if (body[bpos] == '\r')
+      if (_body[bpos] == '\r')
         ++bpos;
-      if (body[bpos] == '\n')
+      if (_body[bpos] == '\n')
         ++bpos;
 
-      std::string::size_type bend = body.find(boundary, bpos);
+      std::string::size_type bend = _body.find(boundary, bpos);
       if (bend == std::string::npos)
         return;
 
       std::string::size_type nbegin = bend;
 
-      if (body[bend-1] == '-')
+      if (_body[bend-1] == '-')
         --bend;
-      if (body[bend-1] == '-')
+      if (_body[bend-1] == '-')
         --bend;
-      if (body[bend-1] == '\n')
+      if (_body[bend-1] == '\n')
         --bend;
-      if (body[bend-1] == '\r')
+      if (_body[bend-1] == '\r')
         --bend;
 
-      parts.push_back(part_type(body.begin() + bpos, body.begin() + bend));
+      _parts.push_back(part_type(_body.begin() + bpos, _body.begin() + bend));
       bpos = nbegin;
     }
   }

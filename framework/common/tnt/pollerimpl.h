@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2007 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -47,21 +47,21 @@ namespace tnt
 {
   class PollerImpl : public PollerIf
   {
-      Jobqueue& queue;
+    private:
+      Jobqueue& _queue;
 
-      cxxtools::posix::Pipe notify_pipe;
+      cxxtools::posix::Pipe _notify_pipe;
+      cxxtools::Mutex _mutex;
 
 #ifdef WITH_EPOLL
 
-      int pollFd;
+      int _pollFd;
 
       typedef std::map<int, Jobqueue::JobPtr> jobs_type;
       typedef std::vector<Jobqueue::JobPtr> new_jobs_type;
-      jobs_type jobs;
-      new_jobs_type new_jobs;
-      int poll_timeout;
-
-      cxxtools::Mutex mutex;
+      jobs_type _jobs;
+      new_jobs_type _new_jobs;
+      int _poll_timeout;
 
       void addFd(int fd);
       bool removeFd(int fd);
@@ -72,13 +72,11 @@ namespace tnt
       typedef std::deque<Jobqueue::JobPtr> jobs_type;
       typedef std::vector<pollfd> pollfds_type;
 
-      jobs_type current_jobs;
-      pollfds_type pollfds;
+      jobs_type _current_jobs;
+      pollfds_type _pollfds;
+      jobs_type _new_jobs;
 
-      jobs_type new_jobs;
-
-      cxxtools::Mutex mutex;
-      int poll_timeout;
+      int _poll_timeout;
 
       void append_new_jobs();
       void append(Jobqueue::JobPtr& job);
