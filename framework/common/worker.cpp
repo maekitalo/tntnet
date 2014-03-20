@@ -49,6 +49,7 @@
 #include <cxxtools/net/tcpserver.h>
 #include <pthread.h>
 #include <string.h>
+#include "config.h"
 
 log_define("tntnet.worker")
 
