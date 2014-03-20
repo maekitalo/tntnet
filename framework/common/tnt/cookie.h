@@ -69,19 +69,19 @@ namespace tnt
         : _secureFlag(false)
         { }
 
-      Cookie(const std::string& v, unsigned maxAge_ = 0)
+      Cookie(const std::string& v, unsigned maxAge = 0)
         : _value(v),
           _secureFlag(false)
       {
-        if (maxAge_)
-          setMaxAge(maxAge_);
+        if (maxAge)
+          setMaxAge(maxAge);
       }
-      Cookie(const char* v, unsigned maxAge_ = 0)
+      Cookie(const char* v, unsigned maxAge = 0)
         : _value(v),
           _secureFlag(false)
       {
-        if (maxAge_)
-          setMaxAge(maxAge_);
+        if (maxAge)
+          setMaxAge(maxAge);
       }
 
       const std::string& getValue() const { return _value; }
@@ -100,12 +100,12 @@ namespace tnt
         { return _attrs.find(name) != _attrs.end(); }
 
       unsigned    getMaxAge() const;
-      std::string getComment() const { return getAttr(comment); }
-      std::string getDomain() const  { return getAttr(domain); }
-      std::string getPath() const    { return getAttr(path); }
-      std::string getVersion() const { return getAttr(version); }
-      std::string getExpires() const { return getAttr(expires); }
-      bool        isSecure() const   { return _secureFlag; }
+      std::string getComment() const            { return getAttr(comment); }
+      std::string getDomain() const             { return getAttr(domain); }
+      std::string getPath() const               { return getAttr(path); }
+      std::string getVersion() const            { return getAttr(version); }
+      std::string getExpires() const            { return getAttr(expires); }
+      bool        isSecure() const              { return _secureFlag; }
 
       void setMaxAge(unsigned seconds);
       void setComment(const std::string& value) { setAttr(comment, value); }
@@ -115,12 +115,12 @@ namespace tnt
       void setExpires(const std::string& value) { setAttr(expires, value); }
       void setSecure(bool f = true)             { _secureFlag = f; }
 
-      bool hasMaxAge() const                     { return hasAttr(maxAge); }
-      bool hasComment() const                    { return hasAttr(comment); }
-      bool hasDomain() const                     { return hasAttr(domain); }
-      bool hasPath() const                       { return hasAttr(path); }
-      bool hasVersion() const                    { return hasAttr(version); }
-      bool hasExpires() const                    { return hasAttr(expires); }
+      bool hasMaxAge() const                    { return hasAttr(maxAge); }
+      bool hasComment() const                   { return hasAttr(comment); }
+      bool hasDomain() const                    { return hasAttr(domain); }
+      bool hasPath() const                      { return hasAttr(path); }
+      bool hasVersion() const                   { return hasAttr(version); }
+      bool hasExpires() const                   { return hasAttr(expires); }
 
   };
 
