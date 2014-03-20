@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,10 +38,10 @@
 #include <sstream>
 #include <stdexcept>
 
+log_define("tntnet.cookie")
+
 namespace tnt
 {
-  log_define("tntnet.cookie")
-
   namespace
   {
     bool ishexdigit(char ch)
@@ -69,7 +69,7 @@ namespace tnt
     }
   }
 
-  const Cookie Cookies::emptyCookie;
+  const Cookie Cookies::_emptyCookie;
 
   const std::string Cookie::maxAge  = "Max-Age";
   const std::string Cookie::comment = "Comment";
@@ -102,8 +102,8 @@ namespace tnt
 
   void Cookies::clearCookie(const std::string& name)
   {
-    cookies_type::iterator it = data.find(name);
-    if (it != data.end())
+    cookies_type::iterator it = _data.find(name);
+    if (it != _data.end())
     {
       it->second.setAttr(Cookie::maxAge, "0");
       it->second.setAttr(Cookie::expires, HttpMessage::htdate(static_cast<time_t>(0)));
@@ -160,7 +160,7 @@ namespace tnt
   {
     if (!mycookies.hasCookie(current_cookie_name))
       mycookies.setCookie(current_cookie_name, current_cookie);
-    current_cookie.value.clear();
+    current_cookie._value.clear();
   }
 
   void CookieParser::process_nv()
@@ -170,7 +170,7 @@ namespace tnt
       if (name == Cookie::secure)
       {
         log_debug("attribute: secure");
-        current_cookie.secureFlag = true;
+        current_cookie._secureFlag = true;
       }
       else
       {
@@ -187,11 +187,11 @@ namespace tnt
       log_debug("Cookie: " << name << '=' << value);
 
       current_cookie_name = name;
-      current_cookie.value = value;
-      current_cookie.secureFlag = false;
+      current_cookie._value = value;
+      current_cookie._secureFlag = false;
       name.clear();
-      current_attrs = &current_cookie.attrs;
-      current_cookie.attrs = common_attrs;
+      current_attrs = &current_cookie._attrs;
+      current_cookie._attrs = common_attrs;
     }
   }
 
@@ -467,7 +467,7 @@ namespace tnt
       throwInvalidCookie(header);
     }
 
-    if (!current_cookie.value.empty())
+    if (!current_cookie._value.empty())
       store_cookie();
   }
 
@@ -479,14 +479,14 @@ namespace tnt
     u << getValue();
 
     // print secure-attribute
-    if (secureFlag)
+    if (_secureFlag)
       out << "; " << Cookie::secure;
 
     // print attributes
-    for (Cookie::attrs_type::const_iterator a = attrs.begin();
-         a != attrs.end(); ++a)
+    for (Cookie::attrs_type::const_iterator a = _attrs.begin();
+         a != _attrs.end(); ++a)
       out << "; " << a->first << '=' << a->second;
-    if (attrs.find(Cookie::version) == attrs.end())
+    if (_attrs.find(Cookie::version) == _attrs.end())
       out << ";Version=1";
   }
 
@@ -495,8 +495,8 @@ namespace tnt
     // Set-Cookie: Customer="WILE_E_COYOTE"; Version="1"; Path="/acme"
 
     bool first = true;
-    for (Cookies::cookies_type::const_iterator it = c.data.begin();
-         it != c.data.end(); ++it)
+    for (Cookies::cookies_type::const_iterator it = c._data.begin();
+         it != c._data.end(); ++it)
     {
       if (first)
         first = false;

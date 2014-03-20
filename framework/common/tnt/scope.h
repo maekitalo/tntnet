@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -53,8 +53,8 @@ namespace tnt
     private:
       typedef std::map<std::string, pointer_type> container_type;
 
-      container_type data;
-      mutable cxxtools::Mutex mutex;
+      container_type _data;
+      mutable cxxtools::Mutex _mutex;
 
       void privatePut(const std::string& key, pointer_type o);
 
@@ -66,17 +66,18 @@ namespace tnt
       Scope();
       virtual ~Scope();
 
-      void lock()   { mutex.lock(); }
-      void unlock() { mutex.unlock(); }
+      void lock()   { _mutex.lock(); }
+      void unlock() { _mutex.unlock(); }
 
       bool has(const std::string& key) const
-        { return data.find(key) != data.end(); }
+        { return _data.find(key) != _data.end(); }
 
-      template <typename T> T* get(const std::string& key)
-        {
-          container_type::iterator it = data.find(key);
-          return it == data.end() ? 0 : it->second->cast<T>();
-        }
+      template <typename T> T*
+      get(const std::string& key)
+      {
+        container_type::iterator it = _data.find(key);
+        return it == _data.end() ? 0 : it->second->cast<T>();
+      }
 
       /// Put new Object in scope. If key already exists,
       /// it is replaced and old Object released.
@@ -108,17 +109,17 @@ namespace tnt
           put<T, NullDestroyPolicy>(key, o);
       }
 
-      void erase(const std::string& key)  { data.erase(key); }
-      bool empty() const  { return data.empty(); }
-      void clear()        { data.clear(); }
+      void erase(const std::string& key) { _data.erase(key); }
+      bool empty() const                 { return _data.empty(); }
+      void clear()                       { _data.clear(); }
 
       typedef container_type::const_iterator const_iterator;
       typedef container_type::iterator iterator;
       typedef container_type::value_type value_type;
-      const_iterator begin() const   { return data.begin(); }
-      const_iterator end()  const    { return data.end(); }
-      iterator begin()               { return data.begin(); }
-      iterator end()                 { return data.end(); }
+      const_iterator begin() const   { return _data.begin(); }
+      const_iterator end()  const    { return _data.end(); }
+      iterator begin()               { return _data.begin(); }
+      iterator end()                 { return _data.end(); }
   };
 }
 

@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,8 +37,8 @@ namespace tnt
   class PrePostNop
   {
     protected:
-      void pre(char ch)    { }
-      bool post(bool ret)  { return ret; }
+      void pre(char ch)   { }
+      bool post(bool ret) { return ret; }
   };
 
   template <typename this_type, class PrePostProcessor = PrePostNop>
@@ -47,40 +47,40 @@ namespace tnt
     protected:
       typedef bool (this_type::*state_type)(char);
 
-      state_type state;
-      state_type nextState;
+      state_type _state;
+      state_type _nextState;
 
-      bool failedFlag;
+      bool _failedFlag;
 
       bool state_skipws(char ch)
       {
         if (ch != ' ' && ch != '\t')
         {
-          state = nextState;
-          return (static_cast<this_type*>(this)->*state)(ch);
+          _state = _nextState;
+          return (static_cast<this_type*>(this)->*_state)(ch);
         }
         else
           return false;
       }
 
-      void skipWs(state_type nextState_)
+      void skipWs(state_type nextState)
       {
-        state = &Parser::state_skipws;
-        nextState = nextState_;
+        _state = &Parser::state_skipws;
+        _nextState = nextState;
       }
 
     public:
       explicit Parser(state_type initialState)
-        : state(initialState),
-          nextState(0),
-          failedFlag(false)
+        : _state(initialState),
+          _nextState(0),
+          _failedFlag(false)
         { }
 
       bool parse(char ch)
       {
         PrePostProcessor::pre(ch);
         return PrePostProcessor::post(
-          (static_cast<this_type*>(this)->*state)(ch) );
+          (static_cast<this_type*>(this)->*_state)(ch) );
       }
 
       bool parse(const char* str, unsigned size)
@@ -102,11 +102,9 @@ namespace tnt
         return false;
       }
 
-      bool failed() const
-      {
-        return failedFlag;
-      }
+      bool failed() const { return _failedFlag; }
   };
 }
 
 #endif // TNT_PARSER_H
+

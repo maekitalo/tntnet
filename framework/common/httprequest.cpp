@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -51,116 +51,116 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpRequest
   //
-  cxxtools::atomic_t HttpRequest::serial_ = 0;
+  cxxtools::atomic_t HttpRequest::_nextSerial = 0;
 
-  HttpRequest::HttpRequest(Tntnet& application_, const SocketIf* socketIf_)
-    : socketIf(socketIf_),
-      locale_init(false),
-      encodingRead(false),
-      requestScope(0),
-      applicationScope(0),
-      sessionScope(0),
-      secureSessionScope(0),
-      threadContext(0),
-      applicationScopeLocked(false),
-      sessionScopeLocked(false),
-      secureSessionScopeLocked(false),
-      application(application_)
+  HttpRequest::HttpRequest(Tntnet& application, const SocketIf* socketIf)
+    : _socketIf(socketIf),
+      _localeInit(false),
+      _encodingRead(false),
+      _requestScope(0),
+      _applicationScope(0),
+      _sessionScope(0),
+      _secureSessionScope(0),
+      _threadContext(0),
+      _applicationScopeLocked(false),
+      _sessionScopeLocked(false),
+      _secureSessionScopeLocked(false),
+      _application(application)
   {
   }
 
-  HttpRequest::HttpRequest(Tntnet& application_, const std::string& url_, const SocketIf* socketIf_)
-    : socketIf(socketIf_),
-      locale_init(false),
-      requestScope(0),
-      applicationScope(0),
-      sessionScope(0),
-      secureSessionScope(0),
-      threadContext(0),
-      applicationScopeLocked(false),
-      sessionScopeLocked(false),
-      secureSessionScopeLocked(false),
-      application(application_)
+  HttpRequest::HttpRequest(Tntnet& application, const std::string& url, const SocketIf* socketIf)
+    : _socketIf(socketIf),
+      _localeInit(false),
+      _requestScope(0),
+      _applicationScope(0),
+      _sessionScope(0),
+      _secureSessionScope(0),
+      _threadContext(0),
+      _applicationScopeLocked(false),
+      _sessionScopeLocked(false),
+      _secureSessionScopeLocked(false),
+      _application(application)
   {
-    std::istringstream s("GET " + url_ + " HTTP/1.1\r\n\r\n");
+    std::istringstream s("GET " + url + " HTTP/1.1\r\n\r\n");
     parse(s);
   }
 
   HttpRequest::HttpRequest(const HttpRequest& r)
     : _methodLen(0),
-      pathinfo(r.pathinfo),
-      args(r.args),
-      getparam(r.getparam),
-      postparam(r.postparam),
-      qparam(r.qparam),
-      socketIf(r.socketIf),
-      ct(r.ct),
-      mp(r.mp),
-      serial(r.serial),
-      locale_init(r.locale_init),
-      requestScope(r.requestScope),
-      applicationScope(r.applicationScope),
-      sessionScope(r.sessionScope),
-      secureSessionScope(r.secureSessionScope),
-      threadContext(r.threadContext),
-      applicationScopeLocked(false),
-      sessionScopeLocked(false),
-      secureSessionScopeLocked(false),
-      application(r.application)
+      _pathinfo(r._pathinfo),
+      _args(r._args),
+      _getparam(r._getparam),
+      _postparam(r._postparam),
+      _qparam(r._qparam),
+      _socketIf(r._socketIf),
+      _ct(r._ct),
+      _mp(r._mp),
+      _serial(r._serial),
+      _localeInit(r._localeInit),
+      _requestScope(r._requestScope),
+      _applicationScope(r._applicationScope),
+      _sessionScope(r._sessionScope),
+      _secureSessionScope(r._secureSessionScope),
+      _threadContext(r._threadContext),
+      _applicationScopeLocked(false),
+      _sessionScopeLocked(false),
+      _secureSessionScopeLocked(false),
+      _application(r._application)
   {
-    if (requestScope)
-      requestScope->addRef();
-    if (applicationScope)
-      applicationScope->addRef();
-    if (sessionScope)
-      sessionScope->addRef();
-    if (secureSessionScope)
-      secureSessionScope->addRef();
+    if (_requestScope)
+      _requestScope->addRef();
+    if (_applicationScope)
+      _applicationScope->addRef();
+    if (_sessionScope)
+      _sessionScope->addRef();
+    if (_secureSessionScope)
+      _secureSessionScope->addRef();
   }
 
   HttpRequest::~HttpRequest()
   {
     releaseLocks();
 
-    if (requestScope && requestScope->release() == 0)
-      delete requestScope;
-    if (applicationScope && applicationScope->release() == 0)
-      delete applicationScope;
-    if (sessionScope && sessionScope->release() == 0)
-      delete sessionScope;
-    if (secureSessionScope && secureSessionScope->release() == 0)
-      delete secureSessionScope;
+    if (_requestScope && _requestScope->release() == 0)
+      delete _requestScope;
+    if (_applicationScope && _applicationScope->release() == 0)
+      delete _applicationScope;
+    if (_sessionScope && _sessionScope->release() == 0)
+      delete _sessionScope;
+    if (_secureSessionScope && _secureSessionScope->release() == 0)
+      delete _secureSessionScope;
   }
 
   HttpRequest& HttpRequest::operator= (const HttpRequest& r)
   {
-    pathinfo = r.pathinfo;
-    args = r.args;
-    getparam = r.getparam;
-    postparam = r.postparam;
-    qparam = r.qparam;
-    ct = r.ct;
-    mp = r.mp;
-    socketIf = r.socketIf;
-    serial = r.serial;
-    locale_init = r.locale_init;
-    requestScope = r.requestScope;
-    applicationScope = r.applicationScope;
-    sessionScope = r.sessionScope;
-    secureSessionScope = r.secureSessionScope;
-    threadContext = r.threadContext;
-    applicationScopeLocked = false;
-    sessionScopeLocked = false;
-    secureSessionScopeLocked = false;
+    _pathinfo = r._pathinfo;
+    _args = r._args;
+    _getparam = r._getparam;
+    _postparam = r._postparam;
+    _qparam = r._qparam;
+    _ct = r._ct;
+    _mp = r._mp;
+    _socketIf = r._socketIf;
+    _serial = r._serial;
+    _localeInit = r._localeInit;
+    _requestScope = r._requestScope;
+    _applicationScope = r._applicationScope;
+    _sessionScope = r._sessionScope;
+    _secureSessionScope = r._secureSessionScope;
+    _threadContext = r._threadContext;
+    _applicationScopeLocked = false;
+    _sessionScopeLocked = false;
+    _secureSessionScopeLocked = false;
 
-    if (requestScope)
-      requestScope->addRef();
-    if (applicationScope)
-      applicationScope->addRef();
-    if (sessionScope)
-      sessionScope->addRef();
-    if (secureSessionScope)
-      secureSessionScope->addRef();
+    if (_requestScope)
+      _requestScope->addRef();
+    if (_applicationScope)
+      _applicationScope->addRef();
+    if (_sessionScope)
+      _sessionScope->addRef();
+    if (_secureSessionScope)
+      _secureSessionScope->addRef();
 
     return *this;
   }
@@ -170,60 +170,60 @@ namespace tnt
     HttpMessage::clear();
     _body.clear();
     _methodLen = 0;
-    method[0] = '\0';
-    url.clear();
-    queryString.clear();
-    contentSize = 0;
-    pathinfo.clear();
-    args.clear();
-    getparam.clear();
-    postparam.clear();
-    qparam.clear();
-    ct = Contenttype();
-    mp = Multipart();
-    locale_init = false;
-    if (requestScope)
+    _method[0] = '\0';
+    _url.clear();
+    _queryString.clear();
+    _contentSize = 0;
+    _pathinfo.clear();
+    _args.clear();
+    _getparam.clear();
+    _postparam.clear();
+    _qparam.clear();
+    _ct = Contenttype();
+    _mp = Multipart();
+    _localeInit = false;
+    if (_requestScope)
     {
-      if (requestScope->release() == 0)
-        delete requestScope;
-      requestScope = 0;
+      if (_requestScope->release() == 0)
+        delete _requestScope;
+      _requestScope = 0;
     }
     httpcookies.clear();
-    encodingRead = false;
-    username.clear();
-    password.clear();
+    _encodingRead = false;
+    _username.clear();
+    _password.clear();
 
     releaseLocks();
 
-    if (applicationScope)
+    if (_applicationScope)
     {
-      if (applicationScope->release() == 0)
-        delete applicationScope;
-      applicationScope = 0;
+      if (_applicationScope->release() == 0)
+        delete _applicationScope;
+      _applicationScope = 0;
     }
 
-    if (sessionScope)
+    if (_sessionScope)
     {
-      if (sessionScope->release() == 0)
-        delete sessionScope;
-      sessionScope = 0;
+      if (_sessionScope->release() == 0)
+        delete _sessionScope;
+      _sessionScope = 0;
     }
 
-    if (secureSessionScope)
+    if (_secureSessionScope)
     {
-      if (secureSessionScope->release() == 0)
-        delete secureSessionScope;
-      secureSessionScope = 0;
+      if (_secureSessionScope->release() == 0)
+        delete _secureSessionScope;
+      _secureSessionScope = 0;
     }
 
-    threadContext = 0;
+    _threadContext = 0;
   }
 
   void HttpRequest::setMethod(const char* m)
   {
     if (strlen(m) >= 7)
       throw HttpError(HTTP_BAD_REQUEST, "invalid method");
-    std::strcpy(method, m);
+    std::strcpy(_method, m);
   }
 
   std::string HttpRequest::getArgDef(args_type::size_type n, const std::string& def) const
@@ -235,8 +235,8 @@ namespace tnt
 
   std::string HttpRequest::getArg(const std::string& name, const std::string& def) const
   {
-    args_type::const_iterator it = args.find(name);
-    return it == args.end() ? def : it->second;
+    args_type::const_iterator it = _args.find(name);
+    return it == _args.end() ? def : it->second;
   }
 
   void HttpRequest::parse(std::istream& in)
@@ -252,42 +252,41 @@ namespace tnt
     if (hasHeader("Expect:"))
       throw HttpError(HTTP_EXPECTATION_FAILED, "expectation failed", "Expect not supported by this server");
 
-    getparam.parse_url(getQueryString());
+    _getparam.parse_url(getQueryString());
 
     if (isMethodPOST())
     {
       std::istringstream in(getHeader(httpheader::contentType));
-      in >> ct;
+      in >> _ct;
 
       if (in)
       {
-        if (ct.isMultipart())
+        if (_ct.isMultipart())
         {
-          mp.set(ct.getBoundary(), getBody());
-          for (Multipart::const_iterator it = mp.begin();
-               it != mp.end(); ++it)
+          _mp.set(_ct.getBoundary(), getBody());
+          for (Multipart::const_iterator it = _mp.begin(); it != _mp.end(); ++it)
           {
             // don't copy uploaded files into qparam to prevent unnecessery
             // copies of large chunks
             if (it->getFilename().empty())
             {
               std::string multipartBody(it->getBodyBegin(), it->getBodyEnd());
-              postparam.add(it->getName(), multipartBody);
+              _postparam.add(it->getName(), multipartBody);
             }
           }
         }
-        else if (ct.getType() == "application"
-              && ct.getSubtype() == "x-www-form-urlencoded")
+        else if (_ct.getType() == "application"
+              && _ct.getSubtype() == "x-www-form-urlencoded")
         {
-          postparam.parse_url(getBody());
+          _postparam.parse_url(getBody());
         }
       }
     }
 
-    qparam.add(getparam);
-    qparam.add(postparam);
+    _qparam.add(_getparam);
+    _qparam.add(_postparam);
 
-    serial = cxxtools::atomicIncrement(serial_);
+    _serial = cxxtools::atomicIncrement(_nextSerial);
   }
 
   namespace
@@ -356,17 +355,17 @@ namespace tnt
   const std::locale& HttpRequest::getLocale() const
   {
 #ifdef ENABLE_LOCALE
-    if (!locale_init)
+    if (!_localeInit)
     {
       static const std::string LANG = "LANG";
-      lang = qparam[LANG];
-      const_cast<QueryParams&>(qparam).locale(getCacheLocale(qparam[LANG]));
-      if (lang.empty())
-        lang = qparam.locale().name();
-      locale_init = true;
+      _lang = _qparam[LANG];
+      const_cast<QueryParams&>(_qparam).locale(getCacheLocale(_qparam[LANG]));
+      if (_lang.empty())
+        _lang = _qparam.locale().name();
+      _localeInit = true;
     }
 
-    return qparam.locale();
+    return _qparam.locale();
 #else
     return std::locale::classic();
 #endif
@@ -375,18 +374,18 @@ namespace tnt
   void HttpRequest::setLocale(const std::locale& loc)
   {
 #ifdef ENABLE_LOCALE
-    locale_init = true;
-    qparam.locale(loc);
-    lang = loc.name();
+    _localeInit = true;
+    _qparam.locale(loc);
+    _lang = loc.name();
 #endif
   }
 
-  void HttpRequest::setLang(const std::string& lang_)
+  void HttpRequest::setLang(const std::string& lang)
   {
 #ifdef ENABLE_LOCALE
-    lang = lang_;
-    qparam.locale(getCacheLocale(lang_));
-    locale_init = true;
+    _lang = lang;
+    _qparam.locale(getCacheLocale(lang));
+    _localeInit = true;
 #endif
   }
 
@@ -404,39 +403,39 @@ namespace tnt
 
   const Encoding& HttpRequest::getEncoding() const
   {
-    if (!encodingRead)
+    if (!_encodingRead)
     {
-      encoding.parse(getHeader(httpheader::acceptEncoding));
-      encodingRead = true;
+      _encoding.parse(getHeader(httpheader::acceptEncoding));
+      _encodingRead = true;
     }
-    return encoding;
+    return _encoding;
   }
 
   const std::string& HttpRequest::getUsername() const
   {
-    if (username.empty() && hasHeader(httpheader::authorization))
+    if (_username.empty() && hasHeader(httpheader::authorization))
     {
       std::istringstream authHeader(getHeader(httpheader::authorization));
       while (authHeader && authHeader.get() != ' ')
         ;
       cxxtools::Base64istream in(authHeader);
-      std::getline(in, username, ':');
-      std::getline(in, password);
+      std::getline(in, _username, ':');
+      std::getline(in, _password);
     }
 
-    return username;
+    return _username;
   }
 
   const std::string& HttpRequest::getPassword() const
   {
     getUsername();
-    return password;
+    return _password;
   }
 
-  bool HttpRequest::verifyPassword(const std::string& password_) const
+  bool HttpRequest::verifyPassword(const std::string& password) const
   {
     getUsername();
-    return password == password_;
+    return _password == password;
   }
 
   bool HttpRequest::keepAlive() const
@@ -454,167 +453,166 @@ namespace tnt
   const Contenttype& HttpRequest::getContentTypePriv() const
   {
     std::istringstream in(getHeader(httpheader::contentType));
-    in >> ct;
-    return ct;
+    in >> _ct;
+    return _ct;
   }
 
   void HttpRequest::setApplicationScope(Scope* s)
   {
-    if (applicationScope == s)
+    if (_applicationScope == s)
       return;
 
-    if (applicationScope)
+    if (_applicationScope)
     {
       releaseApplicationScopeLock();
-      if (applicationScope->release() == 0)
-        delete applicationScope;
+      if (_applicationScope->release() == 0)
+        delete _applicationScope;
     }
 
     if (s)
       s->addRef();
-    applicationScope = s;
+    _applicationScope = s;
   }
 
   void HttpRequest::setSessionScope(Sessionscope* s)
   {
-    if (sessionScope == s)
+    if (_sessionScope == s)
       return;
 
-    if (sessionScope)
+    if (_sessionScope)
     {
-      if (sessionScopeLocked)
+      if (_sessionScopeLocked)
       {
-        sessionScope->unlock();
-        sessionScopeLocked = false;
+        _sessionScope->unlock();
+        _sessionScopeLocked = false;
       }
-      if (sessionScope->release() == 0)
-        delete sessionScope;
+      if (_sessionScope->release() == 0)
+        delete _sessionScope;
     }
 
     if (s)
       s->addRef();
 
-    sessionScope = s;
+    _sessionScope = s;
   }
 
   void HttpRequest::setSecureSessionScope(Sessionscope* s)
   {
-    if (secureSessionScope == s)
+    if (_secureSessionScope == s)
       return;
 
-    if (secureSessionScope)
+    if (_secureSessionScope)
     {
-      if (secureSessionScopeLocked)
+      if (_secureSessionScopeLocked)
       {
-        secureSessionScope->unlock();
-        secureSessionScopeLocked = false;
+        _secureSessionScope->unlock();
+        _secureSessionScopeLocked = false;
       }
-      if (secureSessionScope->release() == 0)
-        delete secureSessionScope;
+      if (_secureSessionScope->release() == 0)
+        delete _secureSessionScope;
     }
 
     if (s)
       s->addRef();
 
-    secureSessionScope = s;
+    _secureSessionScope = s;
   }
 
   void HttpRequest::ensureApplicationScopeLock()
   {
     ensureSessionScopeLock();
-    if (applicationScope && !applicationScopeLocked)
+    if (_applicationScope && !_applicationScopeLocked)
     {
-      applicationScope->lock();
-      applicationScopeLocked = true;
+      _applicationScope->lock();
+      _applicationScopeLocked = true;
     }
   }
 
   void HttpRequest::ensureSessionScopeLock()
   {
-    if (sessionScope && !sessionScopeLocked)
+    if (_sessionScope && !_sessionScopeLocked)
     {
-      sessionScope->lock();
-      sessionScopeLocked = true;
+      _sessionScope->lock();
+      _sessionScopeLocked = true;
     }
 
-    if (secureSessionScope && !secureSessionScopeLocked)
+    if (_secureSessionScope && !_secureSessionScopeLocked)
     {
-      secureSessionScope->lock();
-      secureSessionScopeLocked = true;
+      _secureSessionScope->lock();
+      _secureSessionScopeLocked = true;
     }
-
   }
 
   void HttpRequest::releaseApplicationScopeLock()
   {
     releaseSessionScopeLock();
 
-    if (applicationScope && applicationScopeLocked)
+    if (_applicationScope && _applicationScopeLocked)
     {
-      applicationScopeLocked = false;
-      applicationScope->unlock();
+      _applicationScopeLocked = false;
+      _applicationScope->unlock();
     }
   }
 
   void HttpRequest::releaseSessionScopeLock()
   {
-    if (secureSessionScope && secureSessionScopeLocked)
+    if (_secureSessionScope && _secureSessionScopeLocked)
     {
-      secureSessionScopeLocked = false;
-      secureSessionScope->unlock();
+      _secureSessionScopeLocked = false;
+      _secureSessionScope->unlock();
     }
 
-    if (sessionScope && sessionScopeLocked)
+    if (_sessionScope && _sessionScopeLocked)
     {
-      sessionScopeLocked = false;
-      sessionScope->unlock();
+      _sessionScopeLocked = false;
+      _sessionScope->unlock();
     }
   }
 
   Scope& HttpRequest::getRequestScope()
   {
-    if (requestScope == 0)
-      requestScope = new Scope();
-    return *requestScope;
+    if (_requestScope == 0)
+      _requestScope = new Scope();
+    return *_requestScope;
   }
 
   Scope& HttpRequest::getThreadScope()
   {
-    if (threadContext == 0)
+    if (_threadContext == 0)
       throwRuntimeError("threadcontext not set");
-    return threadContext->getScope();
+    return _threadContext->getScope();
   }
 
   Scope& HttpRequest::getApplicationScope()
   {
     ensureApplicationScopeLock();
-    return *applicationScope;
+    return *_applicationScope;
   }
 
   Sessionscope& HttpRequest::getSessionScope()
   {
-    if (!sessionScope)
-      sessionScope = new Sessionscope();
+    if (!_sessionScope)
+      _sessionScope = new Sessionscope();
     ensureSessionScopeLock();
-    return *sessionScope;
+    return *_sessionScope;
   }
 
   Sessionscope& HttpRequest::getSecureSessionScope()
   {
-    if (!secureSessionScope)
-      secureSessionScope = new Sessionscope();
+    if (!_secureSessionScope)
+      _secureSessionScope = new Sessionscope();
     ensureSessionScopeLock();
-    return *secureSessionScope;
+    return *_secureSessionScope;
   }
 
   bool HttpRequest::hasSessionScope() const
   {
-    return sessionScope != 0 && !sessionScope->empty();
+    return _sessionScope != 0 && !_sessionScope->empty();
   }
 
   bool HttpRequest::hasSecureSessionScope() const
   {
-    return secureSessionScope != 0 && !secureSessionScope->empty();
+    return _secureSessionScope != 0 && !_secureSessionScope->empty();
   }
 
   void HttpRequest::postRunCleanup()

@@ -45,6 +45,5 @@ namespace tnt
 
     throw ConversionError(msg.str());
   }
-
 }
 

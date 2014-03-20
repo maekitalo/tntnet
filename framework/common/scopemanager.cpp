@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2006 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,22 +46,22 @@ namespace tnt
 
   ScopeManager::~ScopeManager()
   {
-    for (sessionscopes_type::iterator it = sessionScopes.begin(); it != sessionScopes.end(); ++it)
+    for (sessionscopes_type::iterator it = _sessionScopes.begin(); it != _sessionScopes.end(); ++it)
       delete it->second;
-    for (scopes_type::iterator it = applicationScopes.begin(); it != applicationScopes.end(); ++it)
+    for (scopes_type::iterator it = _applicationScopes.begin(); it != _applicationScopes.end(); ++it)
       delete it->second;
   }
 
   Scope* ScopeManager::getApplicationScope(const std::string& appname)
   {
-    cxxtools::MutexLock lock(applicationScopesMutex);
+    cxxtools::MutexLock lock(_applicationScopesMutex);
 
-    scopes_type::iterator it = applicationScopes.find(appname);
-    if (it == applicationScopes.end())
+    scopes_type::iterator it = _applicationScopes.find(appname);
+    if (it == _applicationScopes.end())
     {
       log_debug("applicationscope not found - create new");
       Scope* s = new Scope();
-      it = applicationScopes.insert(scopes_type::value_type(appname, s)).first;
+      it = _applicationScopes.insert(scopes_type::value_type(appname, s)).first;
       return s;
     }
     else
@@ -74,9 +74,9 @@ namespace tnt
   {
     log_debug("getSessionScope(\"" << sessioncookie << "\")");
 
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    if (it == sessionScopes.end())
+    cxxtools::MutexLock lock(_sessionScopesMutex);
+    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
+    if (it == _sessionScopes.end())
     {
       log_debug("session " << sessioncookie << " not found");
       return 0;
@@ -91,49 +91,49 @@ namespace tnt
 
   bool ScopeManager::hasSessionScope(const std::string& sessioncookie)
   {
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    return it != sessionScopes.end();
+    cxxtools::MutexLock lock(_sessionScopesMutex);
+    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
+    return it != _sessionScopes.end();
   }
 
   void ScopeManager::putSessionScope(const std::string& sessioncookie, Sessionscope* s)
   {
     s->addRef();
 
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    if (it != sessionScopes.end())
+    cxxtools::MutexLock lock(_sessionScopesMutex);
+    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
+    if (it != _sessionScopes.end())
     {
       if (it->second->release() == 0)
         delete it->second;
       it->second = s;
     }
     else
-      sessionScopes[sessioncookie] = s;
+      _sessionScopes[sessioncookie] = s;
   }
 
 
   void ScopeManager::removeApplicationScope(const std::string& appname)
   {
-    cxxtools::MutexLock lock(applicationScopesMutex);
-    scopes_type::iterator it = applicationScopes.find(appname);
-    if (it != applicationScopes.end())
+    cxxtools::MutexLock lock(_applicationScopesMutex);
+    scopes_type::iterator it = _applicationScopes.find(appname);
+    if (it != _applicationScopes.end())
     {
       if (it->second->release() == 0)
         delete it->second;
-      applicationScopes.erase(it);
+      _applicationScopes.erase(it);
     }
   }
 
   void ScopeManager::removeSessionScope(const std::string& sessioncookie)
   {
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.find(sessioncookie);
-    if (it != sessionScopes.end())
+    cxxtools::MutexLock lock(_sessionScopesMutex);
+    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
+    if (it != _sessionScopes.end())
     {
       if (it->second->release() == 0)
         delete it->second;
-      sessionScopes.erase(it);
+      _sessionScopes.erase(it);
     }
   }
 
@@ -159,17 +159,17 @@ namespace tnt
     {
       log_debug("session cookie " << currentSessionCookieName << " found: " << c.getValue());
 
-      cxxtools::MutexLock lock(sessionScopesMutex);
+      cxxtools::MutexLock lock(_sessionScopesMutex);
 
       Sessionscope* sessionScope;
 
-      sessionscopes_type::iterator it = sessionScopes.find(c.getValue());
-      if (it == sessionScopes.end())
+      sessionscopes_type::iterator it = _sessionScopes.find(c.getValue());
+      if (it == _sessionScopes.end())
       {
         log_debug("session not found - create new");
         sessionScope = new Sessionscope();
         sessionScope->addRef();
-        sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
+        _sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
       }
       else
       {
@@ -194,17 +194,17 @@ namespace tnt
         log_debug("secure session cookie " << currentSessionCookieName
             << " found: " << c.getValue());
 
-        cxxtools::MutexLock lock(sessionScopesMutex);
+        cxxtools::MutexLock lock(_sessionScopesMutex);
 
         Sessionscope* sessionScope;
 
-        sessionscopes_type::iterator it = sessionScopes.find(c.getValue());
-        if (it == sessionScopes.end())
+        sessionscopes_type::iterator it = _sessionScopes.find(c.getValue());
+        if (it == _sessionScopes.end())
         {
           log_debug("session not found - create new");
           sessionScope = new Sessionscope();
           sessionScope->addRef();
-          sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
+          _sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
         }
         else
         {
@@ -320,10 +320,10 @@ namespace tnt
   {
     time_t currentTime;
     time(&currentTime);
-    cxxtools::MutexLock lock(sessionScopesMutex);
-    sessionscopes_type::iterator it = sessionScopes.begin();
+    cxxtools::MutexLock lock(_sessionScopesMutex);
+    sessionscopes_type::iterator it = _sessionScopes.begin();
     unsigned count = 0;
-    while (it != sessionScopes.end())
+    while (it != _sessionScopes.end())
     {
       Sessionscope* s = it->second;
       if (static_cast <unsigned> (currentTime - s->getAtime()) > s->getTimeout())
@@ -333,7 +333,7 @@ namespace tnt
         ++it;
         if (s->release() == 0)
           delete s;
-        sessionScopes.erase(it2);
+        _sessionScopes.erase(it2);
         ++count;
       }
       else
@@ -342,3 +342,4 @@ namespace tnt
 
   }
 }
+

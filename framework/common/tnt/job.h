@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -73,14 +73,15 @@ namespace tnt
   /// @cond internal
   class Job : public cxxtools::RefCounted // one per request
   {
-      unsigned keepAliveCounter;
+    private:
+      unsigned _keepAliveCounter;
 
-      HttpRequest request;
-      HttpRequest::Parser parser;
-      time_t lastAccessTime;
+      HttpRequest _request;
+      HttpRequest::Parser _parser;
+      time_t _lastAccessTime;
 
     public:
-      explicit Job(Tntnet& app_, const SocketIf* socketIf_ = 0);
+      explicit Job(Tntnet& app, const SocketIf* socketIf = 0);
       virtual ~Job();
 
       virtual std::iostream& getStream() = 0;
@@ -88,13 +89,13 @@ namespace tnt
       virtual void setRead() = 0;
       virtual void setWrite() = 0;
 
-      HttpRequest& getRequest()         { return request; }
-      HttpRequest::Parser& getParser()  { return parser; }
+      HttpRequest& getRequest()        { return _request; }
+      HttpRequest::Parser& getParser() { return _parser; }
 
       unsigned decrementKeepAliveCounter()
-        { return keepAliveCounter > 0 ? --keepAliveCounter : 0; }
+        { return _keepAliveCounter > 0 ? --_keepAliveCounter : 0; }
       void clear();
-      void touch()     { time(&lastAccessTime); }
+      void touch() { time(&_lastAccessTime); }
       int msecToTimeout(time_t currentTime) const;
   };
 
@@ -107,30 +108,30 @@ namespace tnt
       cxxtools::Condition noWaitThreads;
 
     private:
-      std::deque<JobPtr> jobs;
-      cxxtools::Mutex mutex;
-      cxxtools::Condition notEmpty;
-      cxxtools::Condition notFull;
-      unsigned waitThreads;
-      unsigned capacity;
+      std::deque<JobPtr> _jobs;
+      cxxtools::Mutex _mutex;
+      cxxtools::Condition _notEmpty;
+      cxxtools::Condition _notFull;
+      unsigned _waitThreads;
+      unsigned _capacity;
 
     public:
-      explicit Jobqueue(unsigned capacity_ = 1000)
-        : waitThreads(0),
-          capacity(capacity_)
+      explicit Jobqueue(unsigned capacity = 1000)
+        : _waitThreads(0),
+          _capacity(capacity)
         { }
 
       void put(JobPtr& j, bool force = false);
       JobPtr get();
 
       void setCapacity(unsigned c)
-        { capacity = c; }
+        { _capacity = c; }
       unsigned getCapacity() const
-        { return capacity; }
+        { return _capacity; }
       unsigned getWaitThreadCount() const
-        { return waitThreads; }
+        { return _waitThreads; }
       bool empty() const
-        { return jobs.empty(); }
+        { return _jobs.empty(); }
   };
 }
 

@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -132,40 +132,37 @@ namespace tnt
   {
     class Pstr
     {
-        const char* start;
-        const char* end;
+      private:
+        const char* _start;
+        const char* _end;
 
       public:
         typedef size_t size_type;
 
         Pstr(const char* s, const char* e)
-          : start(s), end(e)
+          : _start(s), _end(e)
           { }
 
         void setStart(const char* s)
-        {
-          start = s;
-        }
+          { _start = s; }
 
         void setEnd(const char* e)
-        {
-          end = e;
-        }
+          { _end = e; }
 
-        size_type size() const  { return end - start; }
-        bool empty() const      { return start == end; }
+        size_type size() const { return _end - _start; }
+        bool empty() const     { return _start == _end; }
 
         bool operator== (const Pstr& s) const
         {
           return size() == s.size()
-            && std::equal(start, end, s.start);
+            && std::equal(_start, _end, s._start);
         }
 
         bool operator== (const char* str) const
         {
           size_type i;
           for (i = 0; i < size() && str[i] != '\0'; ++i)
-            if (start[i] != str[i])
+            if (_start[i] != str[i])
               return false;
           return i == size() && str[i] == '\0';
         }
@@ -205,5 +202,5 @@ namespace tnt
 
     return true;
   }
-
 }
+

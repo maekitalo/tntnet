@@ -5,7 +5,7 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,29 +30,23 @@
 
 namespace tnt
 {
-  Cmd::Cmd(std::ostream& out)
-    : reply(out, false)
-  {
-    reply.setDirectModeNoFlush();
-  }
-
   void Cmd::call(const Compident& ci, const QueryParams& queryParams)
   {
-    HttpRequest request(application, &socketIf);
+    HttpRequest request(_application, &socketIf);
     request.setQueryParams(queryParams);
 
     // set thread context for thread scope
     request.setThreadContext(&threadContext);
 
     // sets session and application scope
-    scopeManager.preCall(request, ci.libname);
-    scopeManager.setSessionId(request, sessionId);
+    _scopeManager.preCall(request, ci.libname);
+    _scopeManager.setSessionId(request, _sessionId);
 
     // fetch and call the component
-    comploader.fetchComp(ci)(request, reply, request.getQueryParams());
+    _comploader.fetchComp(ci)(request, _reply, request.getQueryParams());
 
     // sets session cookie if needed
-    sessionId = scopeManager.postCall(request, reply, application.getAppName());
+    _sessionId = _scopeManager.postCall(request, _reply, _application.getAppName());
   }
-
 }
+

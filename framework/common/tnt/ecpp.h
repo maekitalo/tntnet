@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -55,11 +55,11 @@ namespace tnt
       Subcompident(const tnt::Compident& ci, const std::string& sub)
         : tnt::Compident(ci),
           subname(sub)
-         { }
+          { }
       Subcompident(const std::string& lib, const std::string& comp, const std::string& sub)
         : tnt::Compident(lib, comp),
           subname(sub)
-         { }
+          { }
 
       explicit Subcompident(const std::string& ident);
       std::string toString() const;
@@ -70,19 +70,19 @@ namespace tnt
   //
   class EcppComponent : public Component
   {
-      friend class EcppSubComponent;
+    friend class EcppSubComponent;
 
-      Compident myident;
-      const Urlmapper& rootmapper;
-      Comploader& loader;
-
+    private:
       typedef std::map<std::string, EcppSubComponent*> subcomps_type;
-      subcomps_type subcomps;
-
-      virtual subcomps_type& getSubcomps()               { return subcomps; }
-      virtual const subcomps_type& getSubcomps() const   { return subcomps; }
-
       typedef std::set<Compident> compnotfound_type;
+
+      Compident _myident;
+      const Urlmapper& _rootmapper;
+      Comploader& _loader;
+      subcomps_type _subcomps;
+
+      virtual subcomps_type& getSubcomps()             { return _subcomps; }
+      virtual const subcomps_type& getSubcomps() const { return _subcomps; }
 
     protected:
       virtual ~EcppComponent();
@@ -130,7 +130,7 @@ namespace tnt
     public:
       EcppComponent(const Compident& ci, const Urlmapper& um, Comploader& cl);
 
-      const Compident& getCompident() const  { return myident; }
+      const Compident& getCompident() const { return _myident; }
 
       EcppSubComponent& fetchSubComp(const std::string& sub) const;
 
@@ -156,28 +156,28 @@ namespace tnt
   //
   class EcppSubComponent : public EcppComponent
   {
-      EcppComponent& main;
-      std::string subcompname;
+      EcppComponent& _main;
+      std::string _subcompname;
 
       virtual subcomps_type& getSubcomps()
-        { return main.getSubcomps(); }
+        { return _main.getSubcomps(); }
       virtual const subcomps_type& getSubcomps() const
-        { return main.getSubcomps(); }
+        { return _main.getSubcomps(); }
 
     public:
       EcppSubComponent(EcppComponent& p, const std::string& name)
-        : EcppComponent(p.myident, p.rootmapper, p.loader),
-          main(p),
-          subcompname(name)
+        : EcppComponent(p._myident, p._rootmapper, p._loader),
+          _main(p),
+          _subcompname(name)
         {
           p.registerSubComp(name, this);
         }
 
       virtual void drop();
       Subcompident getCompident() const
-        { return Subcompident(main.getCompident(), subcompname); }
+        { return Subcompident(_main.getCompident(), _subcompname); }
 
-      EcppComponent& getMainComponent() const { return main; }
+      EcppComponent& getMainComponent() const { return _main; }
   };
 
   //////////////////////////////////////////////////////////////////////

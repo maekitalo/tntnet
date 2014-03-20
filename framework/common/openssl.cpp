@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -45,9 +45,7 @@ namespace tnt
   namespace
   {
     void throwOpensslException(const char* what, unsigned long code)
-    {
-      throw OpensslException(what, code);
-    }
+      { throw OpensslException(what, code); }
 
     void checkSslError()
     {
@@ -72,12 +70,9 @@ namespace tnt
   static cxxtools::Mutex *openssl_mutex;
 
   static unsigned long pthreads_thread_id()
-  {
-    return (unsigned long)pthread_self();
-  }
+    { return (unsigned long)pthread_self(); }
 
-  static void pthreads_locking_callback(int mode, int n, const char *file,
-    int line)
+  static void pthreads_locking_callback(int mode, int n, const char *file, int line)
   {
     /*
     log_debug("pthreads_locking_callback " << CRYPTO_thread_id()
@@ -124,15 +119,15 @@ namespace tnt
   void OpensslServer::installCertificates(const char* certificateFile, const char* privateKeyFile)
   {
     log_debug("use certificate file " << certificateFile);
-    if (SSL_CTX_use_certificate_chain_file(ctx.getPointer(), certificateFile) <= 0)
+    if (SSL_CTX_use_certificate_chain_file(_ctx.getPointer(), certificateFile) <= 0)
       checkSslError();
 
     log_debug("use private key file " << privateKeyFile);
-    if (SSL_CTX_use_PrivateKey_file(ctx.getPointer(), privateKeyFile, SSL_FILETYPE_PEM) <= 0)
+    if (SSL_CTX_use_PrivateKey_file(_ctx.getPointer(), privateKeyFile, SSL_FILETYPE_PEM) <= 0)
       checkSslError();
 
     log_debug("check private key");
-    if (!SSL_CTX_check_private_key(ctx.getPointer()))
+    if (!SSL_CTX_check_private_key(_ctx.getPointer()))
       throwOpensslException("private key does not match the certificate public key", 0);
 
     log_debug("private key ok");
@@ -143,7 +138,7 @@ namespace tnt
     openssl_init();
 
     log_debug("SSL_CTX_new(SSLv23_server_method())");
-    ctx = SSL_CTX_new(SSLv23_server_method());
+    _ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
 
     installCertificates(certificateFile, certificateFile);
@@ -154,7 +149,7 @@ namespace tnt
     openssl_init();
 
     log_debug("SSL_CTX_new(SSLv23_server_method())");
-    ctx = SSL_CTX_new(SSLv23_server_method());
+    _ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
 
     installCertificates(certificateFile, privateKeyFile);
@@ -170,14 +165,12 @@ namespace tnt
   // OpensslStream
   //
   OpensslStream::OpensslStream()
-    : ssl(0)
-  {
-    openssl_init();
-  }
+    : _ssl(0)
+    { openssl_init(); }
 
   OpensslStream::OpensslStream(const OpensslServer& server, bool inherit)
-    : ctx(server.getSslContext()),
-      ssl(0)
+    : _ctx(server.getSslContext()),
+      _ssl(0)
   {
     openssl_init();
     accept(server, inherit);
@@ -185,7 +178,7 @@ namespace tnt
 
   OpensslStream::~OpensslStream()
   {
-    if (ssl && !Tntnet::shouldStop())
+    if (_ssl && !Tntnet::shouldStop())
     {
       try
       {
@@ -196,7 +189,7 @@ namespace tnt
         log_debug("error shutting down ssl-conneciton: " << e.what());
       }
 
-      SSL_free(ssl);
+      SSL_free(_ssl);
     }
   }
 
@@ -211,14 +204,14 @@ namespace tnt
     log_debug("tcp-connection established - build ssltunnel");
 
     log_debug("SSL_new(" << server.getSslContext().getPointer() << ')');
-    ssl = SSL_new( server.getSslContext().getPointer() );
+    _ssl = SSL_new( server.getSslContext().getPointer() );
     checkSslError();
 
-    log_debug("SSL_set_fd(" << ssl << ", " << getFd() << ')');
-    SSL_set_fd(ssl, getFd());
+    log_debug("SSL_set_fd(" << _ssl << ", " << getFd() << ')');
+    SSL_set_fd(_ssl, getFd());
 
-    log_debug("SSL_set_accept_state(" << ssl << ')');
-    SSL_set_accept_state(ssl);
+    log_debug("SSL_set_accept_state(" << _ssl << ')');
+    SSL_set_accept_state(_ssl);
   }
 
   int OpensslStream::sslRead(char* buffer, int bufsize) const
@@ -236,15 +229,15 @@ namespace tnt
     // non-blocking/with timeout
 
     // try read
-    log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
-    n = ::SSL_read(ssl, buffer, bufsize);
+    log_debug("SSL_read(" << _ssl << ", buffer, " << bufsize << ')');
+    n = ::SSL_read(_ssl, buffer, bufsize);
     log_debug("ssl-read => " << n);
 
     if (n > 0)
       return n;
 
-    log_debug("SSL_get_error(" << ssl << ", " << n << ')');
-    if ((err = SSL_get_error(ssl, n)) != SSL_ERROR_WANT_READ
+    log_debug("SSL_get_error(" << _ssl << ", " << n << ')');
+    if ((err = SSL_get_error(_ssl, n)) != SSL_ERROR_WANT_READ
      && err != SSL_ERROR_WANT_WRITE)
       checkSslError();
 
@@ -257,16 +250,16 @@ namespace tnt
     // no read, timeout > 0 - poll
     do
     {
-      poll(SSL_get_error(ssl, n) == SSL_ERROR_WANT_WRITE
+      poll(SSL_get_error(_ssl, n) == SSL_ERROR_WANT_WRITE
                   ? POLLIN|POLLOUT : POLLIN);
 
-      log_debug("SSL_read(" << ssl << ", buffer, " << bufsize << ')');
-      n = ::SSL_read(ssl, buffer, bufsize);
+      log_debug("SSL_read(" << _ssl << ", buffer, " << bufsize << ')');
+      n = ::SSL_read(_ssl, buffer, bufsize);
       log_debug("SSL_read returns " << n);
       checkSslError();
 
     } while (n < 0
-       && ((err = SSL_get_error(ssl, n)) == SSL_ERROR_WANT_READ
+       && ((err = SSL_get_error(_ssl, n)) == SSL_ERROR_WANT_READ
         || err == SSL_ERROR_WANT_WRITE
         || (err == SSL_ERROR_SYSCALL && errno == EAGAIN)));
 
@@ -285,8 +278,8 @@ namespace tnt
 
     while (true)
     {
-      log_debug("SSL_write(" << ssl << ", buffer, " << s << ')');
-      n = SSL_write(ssl, buffer, s);
+      log_debug("SSL_write(" << _ssl << ", buffer, " << s << ')');
+      n = SSL_write(_ssl, buffer, s);
       checkSslError();
 
       int err = SSL_ERROR_WANT_WRITE;
@@ -296,7 +289,7 @@ namespace tnt
         s -= n;
       }
       else if (n < 0
-              && (err = SSL_get_error(ssl, n)) != SSL_ERROR_WANT_READ
+              && (err = SSL_get_error(_ssl, n)) != SSL_ERROR_WANT_READ
               && err != SSL_ERROR_WANT_WRITE
               && (err != SSL_ERROR_SYSCALL || errno != EAGAIN))
       {
@@ -323,8 +316,8 @@ namespace tnt
 
     do
     {
-      log_debug("SSL_shutdown(" << ssl << ')');
-      n = ::SSL_shutdown(ssl);
+      log_debug("SSL_shutdown(" << _ssl << ')');
+      n = ::SSL_shutdown(_ssl);
       log_debug("ssl-shutdown => " << n);
     } while (n == 0);
 
@@ -333,9 +326,9 @@ namespace tnt
 
     if (n == -1)
     {
-      log_debug("SSL_get_error(" << ssl << ", " << n << ')');
+      log_debug("SSL_get_error(" << _ssl << ", " << n << ')');
 
-      err = SSL_get_error(ssl, n);
+      err = SSL_get_error(_ssl, n);
 
       if (err != SSL_ERROR_WANT_READ
        && err != SSL_ERROR_WANT_WRITE)
@@ -353,8 +346,8 @@ namespace tnt
       log_debug("poll " << (err == SSL_ERROR_WANT_WRITE ? "POLLIN|POLLOUT" : "POLLIN"));
       poll(err == SSL_ERROR_WANT_WRITE ? POLLIN|POLLOUT : POLLIN);
 
-      log_debug("SSL_shutdown(" << ssl << ')');
-      n = ::SSL_shutdown(ssl);
+      log_debug("SSL_shutdown(" << _ssl << ')');
+      n = ::SSL_shutdown(_ssl);
       log_debug("SSL_shutdown returns " << n);
 
       if (n == 1)
@@ -364,7 +357,7 @@ namespace tnt
         continue;
 
       checkSslError();
-      err = SSL_get_error(ssl, n);
+      err = SSL_get_error(_ssl, n);
 
     } while (err == SSL_ERROR_WANT_READ
           || err == SSL_ERROR_WANT_WRITE);
@@ -374,12 +367,10 @@ namespace tnt
   // openssl_streambuf
   //
   openssl_streambuf::openssl_streambuf(OpensslStream& stream, unsigned bufsize, int timeout)
-    : m_stream(stream),
-      m_buffer(new char_type[bufsize]),
-      m_bufsize(bufsize)
-  {
-    setTimeout(timeout);
-  }
+    : _stream(stream),
+      _buffer(new char_type[bufsize]),
+      _bufsize(bufsize)
+    { setTimeout(timeout); }
 
   openssl_streambuf::int_type openssl_streambuf::overflow(openssl_streambuf::int_type c)
   {
@@ -387,12 +378,12 @@ namespace tnt
     {
       if (pptr() != pbase())
       {
-        int n = m_stream.sslWrite(pbase(), pptr() - pbase());
+        int n = _stream.sslWrite(pbase(), pptr() - pbase());
         if (n <= 0)
           return traits_type::eof();
       }
 
-      setp(m_buffer, m_buffer + m_bufsize);
+      setp(_buffer, _buffer + _bufsize);
       if (c != traits_type::eof())
       {
         *pptr() = (char_type)c;
@@ -410,12 +401,12 @@ namespace tnt
 
   openssl_streambuf::int_type openssl_streambuf::underflow()
   {
-    int n = m_stream.sslRead(m_buffer, m_bufsize);
+    int n = _stream.sslRead(_buffer, _bufsize);
     if (n <= 0)
       return traits_type::eof();
 
-    setg(m_buffer, m_buffer, m_buffer + n);
-    return (int_type)(unsigned char)m_buffer[0];
+    setg(_buffer, _buffer, _buffer + n);
+    return (int_type)(unsigned char)_buffer[0];
   }
 
   int openssl_streambuf::sync()
@@ -424,11 +415,11 @@ namespace tnt
     {
       if (pptr() != pbase())
       {
-        int n = m_stream.sslWrite(pbase(), pptr() - pbase());
+        int n = _stream.sslWrite(pbase(), pptr() - pbase());
         if (n <= 0)
           return -1;
         else
-          setp(m_buffer, m_buffer + m_bufsize);
+          setp(_buffer, _buffer + _bufsize);
       }
       return 0;
     }
@@ -438,8 +429,5 @@ namespace tnt
       return traits_type::eof();
     }
   }
-
-  //////////////////////////////////////////////////////////////////////
-  // openssl_iostream
-  //
 }
+

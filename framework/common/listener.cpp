@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -76,32 +76,27 @@ namespace tnt
 
   void ListenerBase::terminate()
   {
-    log_info("stop listener " << ipaddr << ':' << port);
+    log_info("stop listener " << _ipaddr << ':' << _port);
     doTerminate();
   }
 
   void ListenerBase::initialize()
-  {
-  }
+    { }
 
-  Listener::Listener(Tntnet& application, const std::string& ipaddr_, unsigned short int port_, Jobqueue& q)
-    : ListenerBase(ipaddr_, port_),
-      queue(q)
+  Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q)
+    : ListenerBase(ipaddr, port),
+      _queue(q)
   {
-    doListenRetry(server, ipaddr_.c_str(), port_);
-    Jobqueue::JobPtr p = new Tcpjob(application, server, queue);
-    queue.put(p);
+    doListenRetry(_server, ipaddr.c_str(), port);
+    Jobqueue::JobPtr p = new Tcpjob(application, _server, _queue);
+    _queue.put(p);
   }
 
   void Listener::doTerminate()
-  {
-    server.terminateAccept();
-  }
+    { _server.terminateAccept(); }
 
   void Listener::initialize()
-  {
-    log_info("listen ip=" << getIpaddr() << " port=" << getPort());
-  }
+    { log_info("listen ip=" << getIpaddr() << " port=" << getPort()); }
 
 #ifdef WITH_GNUTLS
 #define USE_SSL
@@ -115,28 +110,23 @@ namespace tnt
 
 #ifdef USE_SSL
   Ssllistener::Ssllistener(Tntnet& application, const char* certificateFile,
-      const char* keyFile,
-      const std::string& ipaddr_, unsigned short int port_,
+      const char* keyFile, const std::string& ipaddr, unsigned short int port,
       Jobqueue& q)
-    : ListenerBase(ipaddr_, port_),
-      server(certificateFile, keyFile),
-      queue(q)
+    : ListenerBase(ipaddr, port),
+      _server(certificateFile, keyFile),
+      _queue(q)
   {
-    doListenRetry(server, ipaddr_.c_str(), port_);
-    Jobqueue::JobPtr p = new SslTcpjob(application, server, queue);
-    queue.put(p);
+    doListenRetry(_server, ipaddr.c_str(), port);
+    Jobqueue::JobPtr p = new SslTcpjob(application, _server, _queue);
+    _queue.put(p);
   }
 
   void Ssllistener::doTerminate()
-  {
-    server.terminateAccept();
-  }
+    { _server.terminateAccept(); }
 
   void Ssllistener::initialize()
-  {
-    log_info("listen ip=" << getIpaddr() << " port=" << getPort() << " (ssl)");
-  }
+    { log_info("listen ip=" << getIpaddr() << " port=" << getPort() << " (ssl)"); }
 
 #endif // USE_SSL
-
 }
+
