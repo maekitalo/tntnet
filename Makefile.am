@@ -1,11 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
 
-bin_SCRIPTS = tntnet-config
-dist_bin_SCRIPTS = tntnet-wizzard
-pkgdata_SCRIPTS = tntnet-conf2xml.pl
-
-tntnet-config: tntnet-config.in
-
 if MAKE_SERVER
 SERVERDIRS = \
     framework/runtime \
@@ -18,37 +12,29 @@ SDKDIRS = \
     sdk/tools/common \
     sdk/tools/ecppc \
     sdk/tools/ecppl \
-    sdk/tools/ecppll
+    sdk/tools/ecppll \
+    misc
 endif
 
 if MAKE_DEMOS
-DEMOSDIRS = \
+DEMODIRS = \
     demo
 endif
 
 if MAKE_UNITTEST
-  UNITTESTDIR = utest
+TESTDIRS = \
+    test
 endif
 
 SUBDIRS = \
     framework/common \
     doc/man \
     $(SERVERDIRS) \
-    $(CGIDIRS) \
     $(SDKDIRS) \
-    $(DEMOSDIRS) \
-    $(UNITTESTDIR)
+    $(DEMODIRS) \
+    $(TESTDIRS)
 
-EXTRA_DIST = ecpp.vim \
-    doc/tntnet.pdf \
-    doc/tntnet.odt \
-    doc/logo-tntnet.cdr \
-    doc/tntnet.svg \
-    doc/tntnet-dynamite.svg \
-    doc/jquery-howto.markdown \
-    doc/quick-start-guide.markdown \
-    doc/static-howto.markdown \
-    doc/upload-howto.markdown \
+EXTRA_DIST = \
     COPYING \
     demo/newsdb/Makefile \
     demo/newsdb/README \
@@ -59,8 +45,18 @@ EXTRA_DIST = ecpp.vim \
     demo/newsdb/newsdata.sh \
     demo/newsdb/newsdb.sql \
     demo/newsdb/tntnet.xml \
+    doc/tntnet.pdf \
+    doc/tntnet.odt \
+    doc/jquery-howto.markdown \
+    doc/quick-start-guide.markdown \
+    doc/static-howto.markdown \
+    doc/upload-howto.markdown \
     m4/acx_pthread.m4 \
     m4/ax_check_compile_flag.m4 \
     m4/ax_compiler_vendor.m4 \
     m4/pkg.m4 \
+    misc/logo-tntnet.cdr \
+    misc/ecpp.vim \
+    misc/tntnet.svg \
+    misc/tntnet-dynamite.svg \
     $(pkgdata_SCRIPTS)
