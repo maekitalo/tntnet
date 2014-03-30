@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -69,28 +69,28 @@ namespace
 
 namespace tnt
 {
-  cxxtools::Mutex Worker::mutex;
-  Worker::workers_type Worker::workers;
-  Comploader Worker::comploader;
+  cxxtools::Mutex Worker::_mutex;
+  Worker::workers_type Worker::_workers;
+  Comploader Worker::_comploader;
 
   Worker::Worker(Tntnet& app)
-    : application(app),
-      threadId(0),
-      state(stateStarting),
-      lastWaitTime(0)
+    : _application(app),
+      _threadId(0),
+      _state(stateStarting),
+      _lastWaitTime(0)
   {
-    cxxtools::MutexLock lock(mutex);
-    workers.insert(this);
+    cxxtools::MutexLock lock(_mutex);
+    _workers.insert(this);
   }
 
   void Worker::run()
   {
-    threadId = pthread_self();
-    Jobqueue& queue = application.getQueue();
-    log_debug("start thread " << threadId);
-    while (queue.getWaitThreadCount() < application.getMinThreads())
+    _threadId = pthread_self();
+    Jobqueue& queue = _application.getQueue();
+    log_debug("start thread " << _threadId);
+    while (queue.getWaitThreadCount() < _application.getMinThreads())
     {
-      state = stateWaitingForJob;
+      _state = stateWaitingForJob;
       Jobqueue::JobPtr j = queue.get();
       if (Tntnet::shouldStop())
       {
@@ -108,20 +108,20 @@ namespace tnt
         bool keepAlive;
         do
         {
-          time(&lastWaitTime);
+          time(&_lastWaitTime);
 
           keepAlive = false;
-          state = stateParsing;
+          _state = stateParsing;
           try
           {
             j->getParser().parse(socket);
-            state = statePostParsing;
+            _state = statePostParsing;
 
             if (socket.eof())
               log_debug("eof");
             else if (j->getParser().failed())
             {
-              state = stateSendError;
+              _state = stateSendError;
               log_warn("bad request");
               tnt::HttpReply errorReply(socket);
               errorReply.setVersion(1, 0);
@@ -165,7 +165,7 @@ namespace tnt
                     if (::poll(&fd, 1, TntConfig::it().socketReadTimeout) == 0)
                     {
                       log_debug("pass job to poll-thread");
-                      application.getPoller().addIdleJob(j);
+                      _application.getPoller().addIdleJob(j);
                       keepAlive = false;
                     }
                   }
@@ -176,7 +176,7 @@ namespace tnt
           catch (const HttpError& e)
           {
             keepAlive = false;
-            state = stateSendError;
+            _state = stateSendError;
             log_warn("http-Error: " << e.what());
             HttpReply errorReply(socket);
             errorReply.setVersion(1, 0);
@@ -193,7 +193,7 @@ namespace tnt
       }
       catch (const cxxtools::IOTimeout& e)
       {
-        application.getPoller().addIdleJob(j);
+        _application.getPoller().addIdleJob(j);
       }
       catch (const cxxtools::net::AcceptTerminated&)
       {
@@ -206,15 +206,15 @@ namespace tnt
       }
     }
 
-    time(&lastWaitTime);
+    time(&_lastWaitTime);
 
-    state = stateStopping;
+    _state = stateStopping;
 
-    cxxtools::MutexLock lock(mutex);
-    workers.erase(this);
+    cxxtools::MutexLock lock(_mutex);
+    _workers.erase(this);
 
-    log_debug("end worker thread " << threadId << " - " << workers.size()
-      << " threads left - " << application.getQueue().getWaitThreadCount()
+    log_debug("end worker thread " << _threadId << " - " << _workers.size()
+      << " threads left - " << _application.getQueue().getWaitThreadCount()
       << " waiting threads");
   }
 
@@ -276,7 +276,7 @@ namespace tnt
     }
     catch (const HttpError& e)
     {
-      state = stateSendError;
+      _state = stateSendError;
       log_warn("http-Error: " << e.what());
       HttpReply errorReply(socket);
       errorReply.setVersion(request.getMajorVersion(), request.getMinorVersion());
@@ -305,11 +305,11 @@ namespace tnt
     if (fname.empty())
       return;
 
-    std::ofstream& accessLog = application._accessLog;
+    std::ofstream& accessLog = _application._accessLog;
 
     if (!accessLog.is_open())
     {
-      cxxtools::MutexLock lock(application._accessLogMutex);
+      cxxtools::MutexLock lock(_application._accessLogMutex);
 
       if (!accessLog.is_open())
       {
@@ -342,7 +342,7 @@ namespace tnt
     time_t t;
     ::time(&t);
 
-    cxxtools::MutexLock lock(application._accessLogMutex);
+    cxxtools::MutexLock lock(_application._accessLogMutex);
 
     // cache for timestamp of access log
     static time_t lastLogTime = 0;
@@ -375,7 +375,7 @@ namespace tnt
 
   void Worker::dispatch(HttpRequest& request, HttpReply& reply)
   {
-    state = stateDispatch;
+    _state = stateDispatch;
     const std::string& url = request.getUrl();
 
     if (!HttpRequest::checkUrl(url))
@@ -386,10 +386,10 @@ namespace tnt
 
     request.setThreadContext(this);
 
-    Dispatcher::PosType pos(application.getDispatcher(), request);
+    Dispatcher::PosType pos(_application.getDispatcher(), request);
     while (true)
     {
-      state = stateDispatch;
+      _state = stateDispatch;
 
       // pos.getNext() throws NotFoundException at end
       Maptarget ci = pos.getNext();
@@ -398,7 +398,7 @@ namespace tnt
         Component* comp = 0;
         try
         {
-          if (ci.libname == application.getAppName())
+          if (ci.libname == _application.getAppName())
           {
             // if the libname is the app name look first, if the component is
             // linked directly
@@ -406,7 +406,7 @@ namespace tnt
             {
               Compident cii = ci;
               cii.libname = std::string();
-              comp = &comploader.fetchComp(cii, application.getDispatcher());
+              comp = &_comploader.fetchComp(cii, _application.getDispatcher());
             }
             catch (const NotFoundException&)
             {
@@ -417,7 +417,7 @@ namespace tnt
           }
 
           if (comp == 0)
-            comp = &comploader.fetchComp(ci, application.getDispatcher());
+            comp = &_comploader.fetchComp(ci, _application.getDispatcher());
         }
         catch (const NotFoundException& e)
         {
@@ -428,11 +428,11 @@ namespace tnt
         request.setPathInfo(ci.hasPathInfo() ? ci.getPathInfo() : url);
         request.setArgs(ci.getArgs());
 
-        std::string appname = application.getAppName().empty() ? ci.libname : application.getAppName();
+        std::string appname = _application.getAppName().empty() ? ci.libname : _application.getAppName();
 
-        application.getScopemanager().preCall(request, appname);
+        _application.getScopemanager().preCall(request, appname);
 
-        state = stateProcessingRequest;
+        _state = stateProcessingRequest;
         unsigned http_return;
         const char* http_msg;
         std::string msg;
@@ -453,16 +453,16 @@ namespace tnt
           if (reply.isDirectMode())
           {
             log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg);
-            state = stateFlush;
+            _state = stateFlush;
             reply.out().flush();
           }
           else
           {
             log_info("request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.getContentSize());
 
-            application.getScopemanager().postCall(request, reply, appname);
+            _application.getScopemanager().postCall(request, reply, appname);
 
-            state = stateSendReply;
+            _state = stateSendReply;
             reply.sendReply(http_return, http_msg);
           }
 
@@ -495,9 +495,8 @@ namespace tnt
     time_t currentTime;
     time(&currentTime);
 
-    cxxtools::MutexLock lock(mutex);
-    for (workers_type::iterator it = workers.begin();
-         it != workers.end(); ++it)
+    cxxtools::MutexLock lock(_mutex);
+    for (workers_type::iterator it = _workers.begin(); it != _workers.end(); ++it)
     {
       (*it)->healthCheck(currentTime);
     }
@@ -505,33 +504,30 @@ namespace tnt
 
   void Worker::healthCheck(time_t currentTime)
   {
-    if (state == stateProcessingRequest
-        && lastWaitTime != 0
+    if (_state == stateProcessingRequest
+        && _lastWaitTime != 0
         && TntConfig::it().maxRequestTime > 0)
     {
-      if (static_cast<unsigned>(currentTime - lastWaitTime) > TntConfig::it().maxRequestTime)
+      if (static_cast<unsigned>(currentTime - _lastWaitTime) > TntConfig::it().maxRequestTime)
       {
         log_fatal("requesttime " << TntConfig::it().maxRequestTime << " seconds in thread "
-          << threadId << " exceeded - exit process");
-        log_info("current state: " << state);
+          << _threadId << " exceeded - exit process");
+        log_info("current state: " << _state);
         ::_exit(111);
       }
     }
   }
 
   void Worker::touch()
-  {
-    time(&lastWaitTime);
-  }
+    { time(&_lastWaitTime); }
 
   Scope& Worker::getScope()
-  {
-    return threadScope;
-  }
+    { return _threadScope; }
 
   Worker::workers_type::size_type Worker::getCountThreads()
   {
-    cxxtools::MutexLock lock(mutex);
-    return workers.size();
+    cxxtools::MutexLock lock(_mutex);
+    return _workers.size();
   }
 }
+

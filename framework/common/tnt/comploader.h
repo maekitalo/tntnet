@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -61,7 +61,8 @@ namespace tnt
       const char* what() const throw()
         { return _msg.c_str(); }
 
-      const std::string& getLibname() const { return _libname; }
+      const std::string& getLibname() const
+        { return _libname; }
   };
 
   template <typename objectType>
@@ -78,19 +79,21 @@ namespace tnt
 
   class ComponentLibrary
   {
-      friend class Comploader;
+    friend class Comploader;
 
+    private:
       typedef void* HandleType;
       typedef cxxtools::SmartPtr<HandleType, cxxtools::ExternalRefCounted, Dlcloser> HandlePointer;
-      HandlePointer handlePtr;
 
       typedef std::map<std::string, ComponentFactory*> factoryMapType;
-      factoryMapType factoryMap;
 
-      std::string libname;
-      std::string path;
       typedef std::map<std::string, LangLib::PtrType> langlibsType;
-      langlibsType langlibs;
+
+      HandlePointer _handlePtr;
+      factoryMapType _factoryMap;
+      std::string _libname;
+      std::string _path;
+      langlibsType _langlibs;
 
       void* dlopen(const std::string& name, bool local);
       void init(const std::string& name, bool local);
@@ -99,28 +102,29 @@ namespace tnt
       ComponentLibrary()
         { }
 
-      ComponentLibrary(const std::string& path_, const std::string& name, bool local)
-        : libname(name),
-          path(path_)
-        { init(path_ + '/' + name, local); }
+      ComponentLibrary(const std::string& path, const std::string& name, bool local)
+        : _libname(name),
+          _path(path)
+        { init(path + '/' + name, local); }
 
       ComponentLibrary(const std::string& name, bool local)
-        : libname(name)
+        : _libname(name)
         { init(name, local); }
 
-      operator const void* () const  { return handlePtr.getPointer(); }
+      operator const void* () const { return _handlePtr.getPointer(); }
 
-      Component* create(const std::string& component_name, Comploader& cl,
-        const Urlmapper& rootmapper);
+      Component* create(const std::string& compname, Comploader& cl, const Urlmapper& rootmapper);
       LangLib::PtrType getLangLib(const std::string& lang);
 
-      const std::string& getName() const  { return libname; }
-      void registerFactory(const std::string& component_name, ComponentFactory* factory)
-        { factoryMap.insert(factoryMapType::value_type(component_name, factory)); }
+      const std::string& getName() const { return _libname; }
+
+      void registerFactory(const std::string& compname, ComponentFactory* factory)
+        { _factoryMap.insert(factoryMapType::value_type(compname, factory)); }
   };
 
   class Comploader
   {
+    private:
       typedef std::map<std::string, ComponentLibrary> librarymap_type;
       typedef std::map<Compident, Component*> componentmap_type;
 
@@ -132,16 +136,14 @@ namespace tnt
       static ComponentLibrary::factoryMapType* currentFactoryMap;
 
     public:
-      Component& fetchComp(const Compident& compident,
-        const Urlmapper& rootmapper = Urlmapper());
-      Component* createComp(const Compident& compident,
-        const Urlmapper& rootmapper);
+      Component& fetchComp(const Compident& compident, const Urlmapper& rootmapper = Urlmapper());
+      Component* createComp(const Compident& compident, const Urlmapper& rootmapper);
       const char* getLangData(const Compident& compident, const std::string& lang);
 
       // lookup library; load if needed
       ComponentLibrary& fetchLib(const std::string& libname);
 
-      static void registerFactory(const std::string& component_name, ComponentFactory* factory);
+      static void registerFactory(const std::string& compname, ComponentFactory* factory);
   };
 }
 

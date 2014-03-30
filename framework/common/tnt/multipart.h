@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -40,14 +40,15 @@ namespace tnt
   /// header of a MIME-multipart-object
   class Partheader : public Messageheader
   {
-      Contentdisposition cd;
+    private:
+      Contentdisposition _cd;
 
     protected:
       return_type onField(const char* name, const char* value);
 
     public:
       const Contentdisposition& getContentDisposition() const
-        { return cd; }
+        { return _cd; }
       std::string getMimetype() const;
   };
 
@@ -65,39 +66,45 @@ namespace tnt
       typedef std::string::difference_type difference_type;
 
     private:
-      Partheader header;
-      const_iterator bodyBegin;
-      const_iterator bodyEnd;
+      Partheader _header;
+      const_iterator _bodyBegin;
+      const_iterator _bodyEnd;
 
     public:
-      Part()
-        { }
+      Part() { }
 
       Part(const_iterator b, const_iterator e);
 
       /// returns the Partheader-object of this Part.
-      const Partheader& getHeader() const      { return header; }
+      const Partheader& getHeader() const { return _header; }
+
       /// returns a single header-value or empty string if not set.
       std::string getHeader(const std::string& key) const;
 
       /// returns the type of this Part
       const std::string& getType() const
-        { return header.getContentDisposition().getType(); }
+        { return _header.getContentDisposition().getType(); }
+
       /// returns the type of this Part
       std::string getMimetype() const
-        { return header.getMimetype(); }
+        { return _header.getMimetype(); }
+
       /// returns the name of this Part (name-attribute of html-input-field)
       const std::string& getName() const
-        { return header.getContentDisposition().getName(); }
+        { return _header.getContentDisposition().getName(); }
+
       /// returns the passed filename of the Part or empty string.
       const std::string& getFilename() const
-        { return header.getContentDisposition().getFilename(); }
+        { return _header.getContentDisposition().getFilename(); }
+
       /// returns a const iterator to the start of data.
       const_iterator getBodyBegin() const
-        { return bodyBegin; }
+        { return _bodyBegin; }
+
       /// returns a const iterator past the end of data.
       const_iterator getBodyEnd() const
-        { return bodyEnd; }
+        { return _bodyEnd; }
+
       /// less efficient (a temporary string is created), but easier to use:
       std::string getBody() const
         { return std::string(getBodyBegin(), getBodyEnd()); }
@@ -107,10 +114,10 @@ namespace tnt
         { return getBodyEnd() - getBodyBegin(); }
 
       // stl-style accessors
-      const_iterator begin() const  { return getBodyBegin(); }
-      const_iterator end() const    { return getBodyEnd(); }
-      size_type size() const        { return getSize(); }
-      bool empty() const            { return isEmpty(); }
+      const_iterator begin() const { return getBodyBegin(); }
+      const_iterator end() const   { return getBodyEnd(); }
+      size_type size() const       { return getSize(); }
+      bool empty() const           { return isEmpty(); }
   };
 
   /// a MIME-Multipart-Object
@@ -123,22 +130,19 @@ namespace tnt
       typedef parts_type::value_type value_type;
 
     private:
-      std::string body;
-      parts_type parts;
+      std::string _body;
+      parts_type _parts;
 
     public:
-      Multipart()
-        { }
+      Multipart() { }
       void set(const std::string& boundary, const std::string& body);
 
-      const_iterator begin() const { return parts.begin(); }
-      const_iterator end() const   { return parts.end(); }
-      const_iterator find(const std::string& partName,
-        const_iterator start) const;
+      const_iterator begin() const { return _parts.begin(); }
+      const_iterator end() const   { return _parts.end(); }
+      const_iterator find(const std::string& partName, const_iterator start) const;
       const_iterator find(const std::string& partName) const
         { return find(partName, begin()); }
   };
-
 }
 
 #endif // TNT_MULTIPART_H

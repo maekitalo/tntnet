@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -39,7 +39,6 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpError
   //
-
   namespace
   {
     std::string httpErrorFormat(unsigned errcode, const std::string& msg)
@@ -119,21 +118,18 @@ namespace tnt
     const static HttpMsg* httpMsgsEnd = httpMsgs + sizeof(httpMsgs)/sizeof(HttpMsg);
 
     inline bool operator< (const HttpMsg& m1, const HttpMsg& m2)
-    { return m1.statusCode < m2.statusCode; }
-
+      { return m1.statusCode < m2.statusCode; }
   }
 
-  HttpReturn::HttpReturn(unsigned returncode_)
-    : returncode(returncode_),
-      msg(httpMessage(returncode_))
-  {
-  }
+  HttpReturn::HttpReturn(unsigned returncode)
+    : _returncode(returncode),
+      _msg(httpMessage(returncode))
+    { }
 
-  HttpReturn::HttpReturn(unsigned returncode_, const char* msg_)
-    : returncode(returncode_),
-      msg(msg_)
-  {
-  }
+  HttpReturn::HttpReturn(unsigned returncode, const char* msg)
+    : _returncode(returncode),
+      _msg(msg)
+    { }
 
   const char* HttpReturn::httpMessage(unsigned httpstatus)
   {
@@ -144,21 +140,21 @@ namespace tnt
   }
 
   HttpError::HttpError(unsigned errcode)
-    : msg(HttpReturn::httpMessage(errcode))
+    : _msg(HttpReturn::httpMessage(errcode))
   {
     std::ostringstream b;
     HtmlEscOstream sb(b);
 
     b << "<html><body><h1>Error</h1><p>";
-    sb << msg;
+    sb << _msg;
     b << "</p></body></html>";
-    body = b.str();
+    _body = b.str();
 
-    msg = httpErrorFormat(errcode, msg);
+    _msg = httpErrorFormat(errcode, _msg);
   }
 
   HttpError::HttpError(unsigned errcode, const std::string& m)
-    : msg(httpErrorFormat(errcode, m))
+    : _msg(httpErrorFormat(errcode, m))
   {
     std::ostringstream b;
     HtmlEscOstream sb(b);
@@ -166,19 +162,18 @@ namespace tnt
     b << "<html><body><h1>Error</h1><p>";
     sb << m;
     b << "</p></body></html>";
-    body = b.str();
+    _body = b.str();
   }
 
   HttpError::HttpError(unsigned errcode, const std::string& m, const std::string& b)
-    : msg(httpErrorFormat(errcode, m)),
-      body(b)
-  {
-  }
+    : _msg(httpErrorFormat(errcode, m)),
+      _body(b)
+    { }
 
   std::string HttpError::getErrmsg() const
   {
-    std::string::size_type p = msg.find('\n', 4);
-    return p == std::string::npos ? msg.substr(4) : msg.substr(4, p - 4);
+    std::string::size_type p = _msg.find('\n', 4);
+    return p == std::string::npos ? _msg.substr(4) : _msg.substr(4, p - 4);
   }
 
   namespace
@@ -198,24 +193,20 @@ namespace tnt
     }
   }
 
-  NotFoundException::NotFoundException(const std::string& url_, const std::string& vhost_)
-    : HttpError(HTTP_NOT_FOUND, notFoundMsg(url_, vhost_)),
-      url(url_),
-      vhost(vhost_)
-  {
-  }
+  NotFoundException::NotFoundException(const std::string& url, const std::string& vhost)
+    : HttpError(HTTP_NOT_FOUND, notFoundMsg(url, vhost)),
+      _url(url),
+      _vhost(vhost)
+    { }
 
   NotAuthorized::NotAuthorized(const std::string& realm)
     : HttpError(HTTP_UNAUTHORIZED, "Unauthorized", "<html><body><h1>not authorized</h1></body></html>")
-  {
-    setHeader(httpheader::wwwAuthenticate, "Basic realm=\"" + realm + '"');
-  }
+    { setHeader(httpheader::wwwAuthenticate, "Basic realm=\"" + realm + '"'); }
 
   MovedTemporarily::MovedTemporarily(const std::string& url)
     : HttpError(HTTP_MOVED_TEMPORARILY,
                 "Moved Temporarily",
                 "<html><body>moved to <a href=\"" + url + "\">" + url + "</a></body></html>")
-  {
-    setHeader(httpheader::location, url);
-  }
+    { setHeader(httpheader::location, url); }
 }
+

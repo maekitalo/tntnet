@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2005-2006 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -44,43 +44,38 @@ log_define("tntnet.poller")
 
 namespace tnt
 {
-  PollerIf::~PollerIf()
-  { }
+  PollerIf::~PollerIf() { }
 
   Poller::Poller(Jobqueue& q)
-    : impl(new PollerImpl(q))
-  { }
+    : _impl(new PollerImpl(q))
+    { }
 
   void Poller::run()
-  {
-    impl->run();
-  }
+    { _impl->run(); }
 
 #ifdef WITH_EPOLL
 
   PollerImpl::PollerImpl(Jobqueue& q)
-    : queue(q),
-      pollFd(-1)
+    : _queue(q),
+      _pollFd(-1)
   {
-    pollFd = ::epoll_create(256);
-    if (pollFd < 0)
+    _pollFd = ::epoll_create(256);
+    if (_pollFd < 0)
       throw cxxtools::SystemError("epoll_create");
 
-    fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
-    addFd(notify_pipe.getReadFd());
+    fcntl(_notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
+    addFd(_notify_pipe.getReadFd());
   }
 
   PollerImpl::~PollerImpl()
-  {
-    close(pollFd);
-  }
+    { close(_pollFd); }
 
   void PollerImpl::addFd(int fd)
   {
     epoll_event e;
     e.events = EPOLLIN;
     e.data.fd = fd;
-    int ret = ::epoll_ctl(pollFd, EPOLL_CTL_ADD, fd, &e);
+    int ret = ::epoll_ctl(_pollFd, EPOLL_CTL_ADD, fd, &e);
     if (ret < 0)
       throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_ADD)");
   }
@@ -89,7 +84,7 @@ namespace tnt
   {
     epoll_event e;
     e.data.fd = fd;
-    int ret = ::epoll_ctl(pollFd, EPOLL_CTL_DEL, fd, &e);
+    int ret = ::epoll_ctl(_pollFd, EPOLL_CTL_DEL, fd, &e);
     if (ret < 0)
     {
       if (errno == EBADF || errno == ENOENT)
@@ -102,39 +97,37 @@ namespace tnt
   }
 
   void PollerImpl::doStop()
-  {
-    notify_pipe.write('A');
-  }
+    { _notify_pipe.write('A'); }
 
   void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
   {
-    cxxtools::MutexLock lock(mutex);
-    new_jobs.push_back(job);
-    notify_pipe.write('A');
+    cxxtools::MutexLock lock(_mutex);
+    _new_jobs.push_back(job);
+    _notify_pipe.write('A');
   }
 
   void PollerImpl::append_new_jobs()
   {
-    cxxtools::MutexLock lock(mutex);
-    if (!new_jobs.empty())
+    cxxtools::MutexLock lock(_mutex);
+    if (!_new_jobs.empty())
     {
       // append new jobs to current
       time_t currentTime;
       time(&currentTime);
-      for (new_jobs_type::iterator it = new_jobs.begin();
-           it != new_jobs.end(); ++it)
+      for (new_jobs_type::iterator it = _new_jobs.begin();
+           it != _new_jobs.end(); ++it)
       {
         addFd((*it)->getFd());
-        jobs[(*it)->getFd()] = *it;
+        _jobs[(*it)->getFd()] = *it;
 
         int msec = (*it)->msecToTimeout(currentTime);
-        if (poll_timeout < 0)
-          poll_timeout = msec;
-        else if (msec < poll_timeout)
-          poll_timeout = msec;
+        if (_poll_timeout < 0)
+          _poll_timeout = msec;
+        else if (msec < _poll_timeout)
+          _poll_timeout = msec;
       }
 
-      new_jobs.clear();
+      _new_jobs.clear();
     }
   }
 
@@ -150,10 +143,10 @@ namespace tnt
 
       append_new_jobs();
 
-      if (jobs.empty())
-        poll_timeout = -1;
+      if (_jobs.empty())
+        _poll_timeout = -1;
 
-      int ret = ::epoll_wait(pollFd, events, 16, poll_timeout);
+      int ret = ::epoll_wait(_pollFd, events, 16, _poll_timeout);
 
       if (ret < 0)
       {
@@ -164,22 +157,22 @@ namespace tnt
       {
         // timeout reached - check for timed out requests and get next timeout
 
-        poll_timeout = -1;
+        _poll_timeout = -1;
         time_t currentTime;
         time(&currentTime);
-        for (jobs_type::iterator it = jobs.begin(); it != jobs.end(); )
+        for (jobs_type::iterator it = _jobs.begin(); it != _jobs.end(); )
         {
           int msec = it->second->msecToTimeout(currentTime);
           if (msec <= 0)
           {
             log_debug("timeout for fd " << it->second->getFd() << " reached");
             jobs_type::iterator it2 = it++;
-            jobs.erase(it2);
+            _jobs.erase(it2);
           }
           else
           {
-            if (poll_timeout < 0 || msec < poll_timeout)
-              poll_timeout = msec;
+            if (_poll_timeout < 0 || msec < _poll_timeout)
+              _poll_timeout = msec;
             ++it;
           }
         }
@@ -188,9 +181,9 @@ namespace tnt
       {
         time_t currentTime;
         time(&currentTime);
-        poll_timeout -= (currentTime - pollTime) * 1000;
-        if (poll_timeout <= 0)
-          poll_timeout = 100;
+        _poll_timeout -= (currentTime - pollTime) * 1000;
+        if (_poll_timeout <= 0)
+          _poll_timeout = 100;
 
         pollTime = currentTime;
 
@@ -200,7 +193,7 @@ namespace tnt
 
         for (int i = 0; i < ret; ++i)
         {
-          if (events[i].data.fd == notify_pipe.getReadFd())
+          if (events[i].data.fd == _notify_pipe.getReadFd())
           {
             if (Tntnet::shouldStop())
             {
@@ -209,12 +202,12 @@ namespace tnt
             }
 
             char buffer[64];
-            notify_pipe.read(buffer, sizeof(buffer));
+            _notify_pipe.read(buffer, sizeof(buffer));
           }
           else
           {
-            jobs_type::iterator it = jobs.find(events[i].data.fd);
-            if (it == jobs.end())
+            jobs_type::iterator it = _jobs.find(events[i].data.fd);
+            if (it == _jobs.end())
             {
               log_fatal("internal error: job for fd " << events[i].data.fd << " not found in jobs-list");
               ::close(events[i].data.fd);
@@ -223,14 +216,14 @@ namespace tnt
             else
             {
               Jobqueue::JobPtr j = it->second;
-              int ev = events[i].events;  
-              jobs.erase(it);
+              int ev = events[i].events;
+              _jobs.erase(it);
 
               if (!removeFd(events[i].data.fd))
                 rebuildPollFd = true;
 
               if (ev & EPOLLIN)
-                queue.put(j);
+                _queue.put(j);
             }
           }
         }
@@ -239,17 +232,17 @@ namespace tnt
         {
           // rebuild poll-structure
           log_warn("need to rebuild poll structure");
-          close(pollFd);
-          pollFd = ::epoll_create(256);
-          if (pollFd < 0)
+          close(_pollFd);
+          _pollFd = ::epoll_create(256);
+          if (_pollFd < 0)
             throw cxxtools::SystemError("epoll_create");
 
-          int ret = fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
+          int ret = fcntl(_notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
           if (ret < 0)
             throw cxxtools::SystemError("fcntl");
 
-          addFd(notify_pipe.getReadFd());
-          for (jobs_type::iterator it = jobs.begin(); it != jobs.end(); ++it)
+          addFd(_notify_pipe.getReadFd());
+          for (jobs_type::iterator it = _jobs.begin(); it != _jobs.end(); ++it)
             addFd(it->first);
         }
       }
@@ -259,10 +252,10 @@ namespace tnt
 #else
 
   PollerImpl::PollerImpl(Jobqueue& q)
-    : queue(q),
-      poll_timeout(-1)
+    : _queue(q),
+      _poll_timeout(-1)
   {
-    fcntl(notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
+    fcntl(_notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
 
     pollfds.push_back(pollfd());
     pollfds.back().fd = notify_pipe.getReadFd();

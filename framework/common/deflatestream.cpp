@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -53,62 +53,62 @@ namespace tnt
     }
   }
 
-  DeflateStreamBuf::DeflateStreamBuf(std::streambuf* sink_, int level, unsigned bufsize_)
-    : obuffer(bufsize_),
-      sink(sink_)
+  DeflateStreamBuf::DeflateStreamBuf(std::streambuf* sink, int level, unsigned bufsize)
+    : _obuffer(bufsize),
+      _sink(sink)
   {
-    memset(&stream, 0, sizeof(z_stream));
-    stream.zalloc = Z_NULL;
-    stream.zfree = Z_NULL;
-    stream.opaque = 0;
-    stream.total_out = 0;
-    stream.total_in = 0;
-    stream.next_in = Z_NULL;
-    stream.next_out = Z_NULL;
-    stream.avail_in = 0;
-    stream.avail_out = 0;
+    memset(&_stream, 0, sizeof(z_stream));
+    _stream.zalloc = Z_NULL;
+    _stream.zfree = Z_NULL;
+    _stream.opaque = 0;
+    _stream.total_out = 0;
+    _stream.total_in = 0;
+    _stream.next_in = Z_NULL;
+    _stream.next_out = Z_NULL;
+    _stream.avail_in = 0;
+    _stream.avail_out = 0;
 
     int strategy = Z_DEFAULT_STRATEGY;
     level = 6;
-    checkError(::deflateInit2(&stream, level, Z_DEFLATED, -MAX_WBITS, 8, strategy), stream);
+    checkError(::deflateInit2(&_stream, level, Z_DEFLATED, -MAX_WBITS, 8, strategy), _stream);
 
-    setp(&obuffer[0], &obuffer[0] + obuffer.size());
+    setp(&_obuffer[0], &_obuffer[0] + _obuffer.size());
   }
 
   DeflateStreamBuf::~DeflateStreamBuf()
   {
-    ::deflateEnd(&stream);
+    ::deflateEnd(&_stream);
   }
 
   DeflateStreamBuf::int_type DeflateStreamBuf::overflow(int_type c)
   {
     // initialize input-stream
-    stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
-    stream.avail_in = pptr() - &obuffer[0];
+    _stream.next_in = reinterpret_cast<Bytef*>(&_obuffer[0]);
+    _stream.avail_in = pptr() - &_obuffer[0];
 
     // initialize zbuffer for deflated data
     char zbuffer[8192];
-    stream.next_out = reinterpret_cast<Bytef*>(zbuffer);
-    stream.avail_out = sizeof(zbuffer);
+    _stream.next_out = reinterpret_cast<Bytef*>(zbuffer);
+    _stream.avail_out = sizeof(zbuffer);
 
     // deflate
-    checkError(::deflate(&stream, Z_NO_FLUSH), stream);
+    checkError(::deflate(&_stream, Z_NO_FLUSH), _stream);
 
     // copy zbuffer to sink / consume deflated data
-    std::streamsize count = sizeof(zbuffer) - stream.avail_out;
+    std::streamsize count = sizeof(zbuffer) - _stream.avail_out;
     if (count > 0)
     {
-      std::streamsize n = sink->sputn(zbuffer, count);
+      std::streamsize n = _sink->sputn(zbuffer, count);
       if (n < count)
         return traits_type::eof();
     }
 
     // move remaining characters to start of obuffer
-    if (stream.avail_in > 0)
-      memmove(&obuffer[0], stream.next_in, stream.avail_in);
+    if (_stream.avail_in > 0)
+      memmove(&_obuffer[0], _stream.next_in, _stream.avail_in);
 
     // reset outbuffer
-    setp(&obuffer[0] + stream.avail_in, &obuffer[0] + obuffer.size());
+    setp(&_obuffer[0] + _stream.avail_in, &_obuffer[0] + _obuffer.size());
     if (c != traits_type::eof())
       sputc(traits_type::to_char_type(c));
 
@@ -123,29 +123,29 @@ namespace tnt
   int DeflateStreamBuf::sync()
   {
     // initialize input-stream for
-    stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
-    stream.avail_in = pptr() - pbase();
+    _stream.next_in = reinterpret_cast<Bytef*>(&_obuffer[0]);
+    _stream.avail_in = pptr() - pbase();
     char zbuffer[8192];
-    while (stream.avail_in > 0)
+    while (_stream.avail_in > 0)
     {
       // initialize zbuffer
-      stream.next_out = (Bytef*)zbuffer;
-      stream.avail_out = sizeof(zbuffer);
+      _stream.next_out = (Bytef*)zbuffer;
+      _stream.avail_out = sizeof(zbuffer);
 
-      checkError(::deflate(&stream, Z_SYNC_FLUSH), stream);
+      checkError(::deflate(&_stream, Z_SYNC_FLUSH), _stream);
 
       // copy zbuffer to sink
-      std::streamsize count = sizeof(zbuffer) - stream.avail_out;
+      std::streamsize count = sizeof(zbuffer) - _stream.avail_out;
       if (count > 0)
       {
-        std::streamsize n = sink->sputn(zbuffer, count);
+        std::streamsize n = _sink->sputn(zbuffer, count);
         if (n < count)
           return -1;
       }
     };
 
     // reset outbuffer
-    setp(&obuffer[0], &obuffer[0] + obuffer.size());
+    setp(&_obuffer[0], &_obuffer[0] + _obuffer.size());
     return 0;
   }
 
@@ -153,21 +153,21 @@ namespace tnt
   {
     char zbuffer[8192];
     // initialize input-stream for
-    stream.next_in = reinterpret_cast<Bytef*>(&obuffer[0]);
-    stream.avail_in = pptr() - pbase();
+    _stream.next_in = reinterpret_cast<Bytef*>(&_obuffer[0]);
+    _stream.avail_in = pptr() - pbase();
     while (true)
     {
       // initialize zbuffer
-      stream.next_out = (Bytef*)zbuffer;
-      stream.avail_out = sizeof(zbuffer);
+      _stream.next_out = (Bytef*)zbuffer;
+      _stream.avail_out = sizeof(zbuffer);
 
-      int ret = checkError(::deflate(&stream, Z_FINISH), stream);
+      int ret = checkError(::deflate(&_stream, Z_FINISH), _stream);
 
       // copy zbuffer to sink
-      std::streamsize count = sizeof(zbuffer) - stream.avail_out;
+      std::streamsize count = sizeof(zbuffer) - _stream.avail_out;
       if (count > 0)
       {
-        std::streamsize n = sink->sputn(zbuffer, count);
+        std::streamsize n = _sink->sputn(zbuffer, count);
         if (n < count)
           return -1;
       }
@@ -176,13 +176,13 @@ namespace tnt
     };
 
     // reset outbuffer
-    setp(&obuffer[0], &obuffer[0] + obuffer.size());
+    setp(&_obuffer[0], &_obuffer[0] + _obuffer.size());
     return 0;
   }
 
   void DeflateStream::end()
   {
-    if (streambuf.end() != 0)
+    if (_streambuf.end() != 0)
       setstate(failbit);
   }
 }

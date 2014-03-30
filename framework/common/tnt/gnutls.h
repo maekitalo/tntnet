@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2006 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,56 +38,58 @@ namespace tnt
 {
   class GnuTlsException : public std::runtime_error
   {
-      unsigned long code;
-      static std::string formatMessage(const char* function, int code_);
+    private:
+      unsigned long _code;
+      static std::string formatMessage(const char* function, int code);
 
     public:
       explicit GnuTlsException(const std::string& message)
         : std::runtime_error(message),
-          code(0)
-      { }
+          _code(0)
+        { }
 
-      GnuTlsException(const char* function, int code_)
-        : std::runtime_error(formatMessage(function, code_)),
-          code(code_)
-      { }
+      GnuTlsException(const char* function, int code)
+        : std::runtime_error(formatMessage(function, code)),
+          _code(code)
+        { }
 
       unsigned long getCode() const
-      { return code; }
+        { return _code; }
   };
 
   class GnuTlsInit
   {
-      static unsigned initCount;
-      static gnutls_dh_params dhParams;
+    private:
+      static unsigned _initCount;
+      static gnutls_dh_params _dhParams;
 
     public:
       GnuTlsInit();
       ~GnuTlsInit();
 
-      gnutls_dh_params getDhParams() const  { return dhParams; }
+      gnutls_dh_params getDhParams() const { return _dhParams; }
   };
 
   class GnuTlsX509Cred
   {
-      gnutls_certificate_credentials x509_cred;
-      GnuTlsInit init;
+      gnutls_certificate_credentials _x509_cred;
+      GnuTlsInit _init;
 
     public:
       GnuTlsX509Cred(const char* certificateFile, const char* privateKeyFile);
       ~GnuTlsX509Cred();
 
-      operator gnutls_certificate_credentials() const { return x509_cred; }
+      operator gnutls_certificate_credentials() const { return _x509_cred; }
   };
 
   class GnuTlsServer : public cxxtools::net::TcpServer
   {
-      GnuTlsX509Cred cred;
+      GnuTlsX509Cred _cred;
 
     public:
       GnuTlsServer(const char* certificateFile, const char* privateKeyFile);
 
-      gnutls_certificate_credentials getCred() const  { return cred; }
+      gnutls_certificate_credentials getCred() const { return _cred; }
   };
 
   class GnuTlsStream : public cxxtools::net::TcpSocket
@@ -100,19 +102,19 @@ namespace tnt
       };
 
     private:
-      gnutls_session session;
-      bool connected;
-      mutable FdInfo fdInfo;
+      gnutls_session _session;
+      bool _connected;
+      mutable FdInfo _fdInfo;
 
     public:
       GnuTlsStream()
-        : session(0),
-          connected(false)
+        : _session(0),
+          _connected(false)
         { }
 
       explicit GnuTlsStream(const GnuTlsServer& server, bool inherit = false)
-        : session(0),
-          connected(false)
+        : _session(0),
+          _connected(false)
         { accept(server, inherit); }
 
       ~GnuTlsStream();
@@ -126,17 +128,17 @@ namespace tnt
 
   class GnuTls_streambuf : public std::streambuf
   {
-      GnuTlsStream& m_stream;
-      char_type* m_buffer;
-      unsigned m_bufsize;
+      GnuTlsStream& _stream;
+      char_type* _buffer;
+      unsigned _bufsize;
 
     public:
       explicit GnuTls_streambuf(GnuTlsStream& stream, unsigned bufsize = 256, int timeout = -1);
       ~GnuTls_streambuf()
-      { delete[] m_buffer; }
+      { delete[] _buffer; }
 
-      void setTimeout(int t)   { m_stream.setTimeout(t); }
-      int getTimeout() const   { return m_stream.getTimeout(); }
+      void setTimeout(int t) { _stream.setTimeout(t); }
+      int getTimeout() const { return _stream.getTimeout(); }
 
       /// overload std::streambuf
       int_type overflow(int_type c);
@@ -148,22 +150,22 @@ namespace tnt
 
   class GnuTls_iostream : public GnuTlsStream, public std::iostream
   {
-      GnuTls_streambuf m_buffer;
+      GnuTls_streambuf _buffer;
 
     public:
       explicit GnuTls_iostream(unsigned bufsize = 8192, int timeout = -1)
         : std::iostream(0),
-          m_buffer(*this, bufsize, timeout)
-        { init(&m_buffer); }
+          _buffer(*this, bufsize, timeout)
+        { init(&_buffer); }
 
       explicit GnuTls_iostream(const GnuTlsServer& server, unsigned bufsize = 8192, int timeout = -1)
         : GnuTlsStream(server),
           std::iostream(0),
-          m_buffer(*this, bufsize, timeout)
-        { init(&m_buffer); }
+          _buffer(*this, bufsize, timeout)
+        { init(&_buffer); }
 
-      void setTimeout(int timeout)  { m_buffer.setTimeout(timeout); }
-      int getTimeout() const        { return m_buffer.getTimeout(); }
+      void setTimeout(int timeout) { _buffer.setTimeout(timeout); }
+      int getTimeout() const       { return _buffer.getTimeout(); }
   };
 }
 /// @endcond internal

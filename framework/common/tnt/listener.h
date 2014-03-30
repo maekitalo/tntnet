@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,13 +38,14 @@ namespace tnt
 {
   class ListenerBase
   {
-      std::string ipaddr;
-      unsigned short int port;
+    private:
+      std::string _ipaddr;
+      unsigned short int _port;
 
     public:
-      ListenerBase(const std::string& ipaddr_, unsigned short int port_)
-        : ipaddr(ipaddr_),
-          port(port_)
+      ListenerBase(const std::string& ipaddr, unsigned short int port)
+        : _ipaddr(ipaddr),
+          _port(port)
           { }
       virtual ~ListenerBase() { }
 
@@ -52,16 +53,15 @@ namespace tnt
       virtual void doTerminate() = 0;
       virtual void initialize();
 
-      const std::string& getIpaddr() const
-        { return ipaddr; }
-      unsigned short int getPort() const
-        { return port; }
+      const std::string& getIpaddr() const { return _ipaddr; }
+      unsigned short int getPort() const   { return _port; }
   };
 
   class Listener : public ListenerBase
   {
-      cxxtools::net::TcpServer server;
-      Jobqueue& queue;
+    private:
+      cxxtools::net::TcpServer _server;
+      Jobqueue& _queue;
 
     public:
       Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q);
@@ -73,8 +73,9 @@ namespace tnt
 #ifdef USE_SSL
   class Ssllistener : public ListenerBase
   {
-      SslServer server;
-      Jobqueue& queue;
+    private:
+      SslServer _server;
+      Jobqueue& _queue;
 
     public:
       Ssllistener(Tntnet& application, const char* certificateFile, const char* keyFile,

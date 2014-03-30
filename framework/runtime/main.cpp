@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2007 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -65,11 +65,12 @@ namespace tnt
   {
     class Glob
     {
-        glob_t gl;
-        unsigned n;
+      private:
+        glob_t _gl;
+        unsigned _n;
 
         // disable copy and assignment
-        Glob(const Glob&)  { }
+        Glob(const Glob&) { }
         Glob& operator= (const Glob&) { return *this; }
 
       public:
@@ -77,25 +78,23 @@ namespace tnt
         ~Glob();
 
         const char* current() const
-        {
-          return gl.gl_pathv ? gl.gl_pathv[n] : 0;
-        }
+          { return _gl.gl_pathv ? _gl.gl_pathv[_n] : 0; }
 
         const char* next()
         {
-          if (gl.gl_pathv && gl.gl_pathv[n])
-            ++n;
+          if (_gl.gl_pathv && _gl.gl_pathv[_n])
+            ++_n;
           return current();
         }
     };
 
     Glob::Glob(const std::string& pattern, int flags)
-      : n(0)
+      : _n(0)
     {
-      int ret = ::glob(pattern.c_str(), flags, 0, &gl);
+      int ret = ::glob(pattern.c_str(), flags, 0, &_gl);
       if (ret == GLOB_NOMATCH)
       {
-        gl.gl_pathv = 0;
+        _gl.gl_pathv = 0;
       }
       else if (ret != 0)
       {
@@ -105,10 +104,7 @@ namespace tnt
       }
     }
 
-    Glob::~Glob()
-    {
-      globfree(&gl);
-    }
+    Glob::~Glob() { globfree(&_gl); }
 
     template <typename Deserializer>
     void processConfigFile(const std::string& configFile, std::set<std::string>& filesProcessed)
@@ -140,8 +136,8 @@ namespace tnt
 
   class TntnetProcess : public Process
   {
-      tnt::Tntnet tntnet;
-      bool logall;
+      tnt::Tntnet _tntnet;
+      bool _logall;
 
       void initializeLogging();
 
@@ -155,7 +151,7 @@ namespace tnt
   };
 
   TntnetProcess::TntnetProcess(int& argc, char* argv[])
-    : logall(cxxtools::Arg<bool>(argc, argv, "--logall"))
+    : _logall(cxxtools::Arg<bool>(argc, argv, "--logall"))
   {
     std::string configFile;
 
@@ -190,7 +186,7 @@ namespace tnt
     else
       processConfigFile<cxxtools::xml::XmlDeserializer>(configFile, filesProcessed);
 
-    if (logall)
+    if (_logall)
       initializeLogging();
   }
 
@@ -202,22 +198,18 @@ namespace tnt
   }
 
   void TntnetProcess::onInit()
-  {
-    tntnet.init(TntConfig::it());
-  }
+    { _tntnet.init(TntConfig::it()); }
 
   void TntnetProcess::doWork()
   {
-    if (!logall)
+    if (!_logall)
       initializeLogging();
 
-    tntnet.run();
+    _tntnet.run();
   }
 
   void TntnetProcess::doShutdown()
-  {
-    tnt::Tntnet::shutdown();
-  }
+    { tnt::Tntnet::shutdown(); }
 }
 
 int main(int argc, char* argv[])
@@ -280,3 +272,4 @@ int main(int argc, char* argv[])
     return -1;
   }
 }
+

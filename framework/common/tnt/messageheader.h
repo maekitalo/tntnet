@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -44,53 +44,51 @@ namespace tnt
       static const unsigned MAXHEADERSIZE = 4096;
 
     private:
-      char rawdata[MAXHEADERSIZE];  // key_1\0value_1\0key_2\0value_2\0...key_n\0value_n\0\0
-      unsigned endOffset;
-      char* getEnd() { return rawdata + endOffset; }
+      char _rawdata[MAXHEADERSIZE];  // key_1\0value_1\0key_2\0value_2\0...key_n\0value_n\0\0
+      unsigned _endOffset;
+
+      char* getEnd() { return _rawdata + _endOffset; }
 
     public:
       class Parser;
-      friend class Parser;
 
       typedef std::pair<const char*, const char*> value_type;
 
-      class const_iterator
-        : public std::iterator<std::forward_iterator_tag, value_type>
+      class const_iterator : public std::iterator<std::forward_iterator_tag, value_type>
       {
-          friend class Messageheader;
+        friend class Messageheader;
 
-          value_type current_value;
+        private:
+          value_type _current_value;
 
           void fixup()
           {
-            if (*current_value.first)
-              current_value.second = current_value.first + std::strlen(current_value.first) + 1;
+            if (*_current_value.first)
+              _current_value.second = _current_value.first + std::strlen(_current_value.first) + 1;
             else
-              current_value.first = current_value.second = 0;
+              _current_value.first = _current_value.second = 0;
           }
 
           void moveForward()
           {
-            current_value.first = current_value.second + std::strlen(current_value.second) + 1;
+            _current_value.first = _current_value.second + std::strlen(_current_value.second) + 1;
             fixup();
           }
 
         public:
           const_iterator()
-            : current_value(static_cast<const char*>(0), static_cast<const char*>(0))
+            : _current_value(static_cast<const char*>(0), static_cast<const char*>(0))
             { }
 
           explicit const_iterator(const char* p)
-            : current_value(p, p)
-          {
-            fixup();
-          }
+            : _current_value(p, p)
+            { fixup(); }
 
           bool operator== (const const_iterator& it) const
-          { return current_value.first == it.current_value.first; }
+            { return _current_value.first == it._current_value.first; }
 
           bool operator!= (const const_iterator& it) const
-          { return current_value.first != it.current_value.first; }
+            { return _current_value.first != it._current_value.first; }
 
           const_iterator& operator++()
           {
@@ -105,8 +103,8 @@ namespace tnt
             return ret;
           }
 
-          const value_type& operator* () const   { return current_value; }
-          const value_type* operator-> () const  { return &current_value; }
+          const value_type& operator* () const  { return _current_value; }
+          const value_type* operator-> () const { return &_current_value; }
       };
 
     protected:
@@ -123,10 +121,10 @@ namespace tnt
       Messageheader()
         { clear(); }
 
-      virtual ~Messageheader()   { }
+      virtual ~Messageheader() { }
 
       const_iterator begin() const
-        { return const_iterator(rawdata); }
+        { return const_iterator(_rawdata); }
       const_iterator end() const
         { return const_iterator(); }
 
@@ -156,7 +154,6 @@ namespace tnt
   };
 
   std::istream& operator>> (std::istream& in, Messageheader& data);
-
 }
 
 #endif // TNT_MESSAGEHEADER_H
