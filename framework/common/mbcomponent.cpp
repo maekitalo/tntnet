@@ -93,9 +93,12 @@ namespace tnt
       reply.setKeepAliveHeader();
       reply.setContentType(_mimetypes[url_idx]);
 
-      std::string maxAgeStr = request.getArg("maxAge");
-      unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
-      reply.setMaxAgeHeader(maxAge);
+      if (!reply.hasHeader(httpheader::cacheControl))
+      {
+        std::string maxAgeStr = request.getArg("maxAge");
+        unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
+        reply.setMaxAgeHeader(maxAge);
+      }
 
       std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);
       if (s == _ctimes[url_idx])

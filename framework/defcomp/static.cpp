@@ -334,9 +334,12 @@ namespace tnt
       reply.setKeepAliveHeader();
       reply.setHeader(httpheader::acceptRanges, "bytes");
 
-      std::string maxAgeStr = request.getArg("maxAge");
-      unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
-      reply.setMaxAgeHeader(maxAge);
+      if (!reply.hasHeader(httpheader::cacheControl))
+      {
+        std::string maxAgeStr = request.getArg("maxAge");
+        unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
+        reply.setMaxAgeHeader(maxAge);
+      }
 
       // check for byte range (only "bytes=from-" or "bytes=from-to" are supported)
       const char* range = request.getHeader(httpheader::range, 0);
