@@ -18,7 +18,6 @@ AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(dlopen, dl, , AC_MSG_ERROR([dlopen not found]))
 
 AC_PROG_CXX
-AC_PROG_LIBTOOL
 
 AC_LANG(C++)
 ACX_PTHREAD
@@ -182,23 +181,16 @@ then
   AC_DEFINE(ENABLE_LOCALE, [], [Defined if locale is used])
 fi
 
-AC_CONFIG_FILES([tntnet-config], [chmod +x tntnet-config])
+AC_CONFIG_FILES([misc/tntnet-config], [chmod +x misc/tntnet-config])
 
 AC_CONFIG_FILES([
     Makefile
-    framework/common/Makefile
-    framework/runtime/Makefile
-    framework/defcomp/Makefile
-    sdk/tools/common/Makefile
-    sdk/tools/ecppc/Makefile
-    sdk/tools/ecppl/Makefile
-    sdk/tools/ecppll/Makefile
     demo/Makefile
     demo/calc/Makefile
     demo/calcajax/Makefile
     demo/calcapp/Makefile
-    demo/calcmvc/Makefile
     demo/calci18n/Makefile
+    demo/calcmvc/Makefile
     demo/chat/Makefile
     demo/comp/Makefile
     demo/config/Makefile
@@ -208,15 +200,23 @@ AC_CONFIG_FILES([
     demo/hello/Makefile
     demo/mvc/Makefile
     demo/newsdb/Makefile
+    demo/rajax-jquery/Makefile
     demo/savepoint/Makefile
     demo/session/Makefile
     demo/sprintf/Makefile
     demo/strings/Makefile
-    demo/rajax-jquery/Makefile
     demo/upload/Makefile
-    utest/Makefile
     doc/man/Makefile
     etc/Makefile
+    framework/common/Makefile
+    framework/runtime/Makefile
+    framework/defcomp/Makefile
+    misc/Makefile
+    sdk/tools/common/Makefile
+    sdk/tools/ecppc/Makefile
+    sdk/tools/ecppl/Makefile
+    sdk/tools/ecppll/Makefile
+    test/Makefile
     ])
 
 AC_OUTPUT
