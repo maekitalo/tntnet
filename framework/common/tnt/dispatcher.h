@@ -205,6 +205,7 @@ namespace tnt
           Maptarget getNext();
       };
   };
+  /// @endcond internal
 }
 
 #endif // TNT_DISPATCHER_H
