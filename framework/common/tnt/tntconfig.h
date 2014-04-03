@@ -478,13 +478,13 @@ namespace tnt
     static TntConfig& it();
   };
 
-  /// Deserialization operator for #Mapping
+  /// Deserialization operator for TntConfig::Mapping
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping);
-  /// Deserialization operator for #Listener
+  /// Deserialization operator for TntConfig::Listener
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener);
-  /// Deserialization operator for #SslListener
+  /// Deserialization operator for TntConfig::SslListener
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::SslListener& ssllistener);
-  /// Deserialization operator for %TntConfig
+  /// Deserialization operator for TntConfig
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config);
 }
 
