@@ -257,40 +257,40 @@ namespace tnt
   {
     fcntl(_notify_pipe.getReadFd(), F_SETFL, O_NONBLOCK);
 
-    pollfds.push_back(pollfd());
-    pollfds.back().fd = notify_pipe.getReadFd();
-    pollfds.back().events = POLLIN;
-    pollfds.back().revents = 0;
+    _pollfds.push_back(pollfd());
+    _pollfds.back().fd = _notify_pipe.getReadFd();
+    _pollfds.back().events = POLLIN;
+    _pollfds.back().revents = 0;
   }
 
   void PollerImpl::append_new_jobs()
   {
-    cxxtools::MutexLock lock(mutex);
-    if (!new_jobs.empty())
+    cxxtools::MutexLock lock(_mutex);
+    if (!_new_jobs.empty())
     {
       // append new jobs to current
       time_t currentTime;
       time(&currentTime);
-      for (jobs_type::iterator it = new_jobs.begin();
-           it != new_jobs.end(); ++it)
+      for (jobs_type::iterator it = _new_jobs.begin();
+           it != _new_jobs.end(); ++it)
       {
         append(*it);
         int msec = (*it)->msecToTimeout(currentTime);
-        if (poll_timeout < 0 || msec < poll_timeout)
-          poll_timeout = msec;
+        if (_poll_timeout < 0 || msec < _poll_timeout)
+          _poll_timeout = msec;
       }
 
-      new_jobs.clear();
+      _new_jobs.clear();
     }
   }
 
   void PollerImpl::append(Jobqueue::JobPtr& job)
   {
-    current_jobs.push_back(job);
+    _current_jobs.push_back(job);
 
-    pollfds.push_back(pollfd());
-    pollfds.back().fd = job->getFd();
-    pollfds.back().events = POLLIN;
+    _pollfds.push_back(pollfd());
+    _pollfds.back().fd = job->getFd();
+    _pollfds.back().events = POLLIN;
   }
 
   void PollerImpl::run()
@@ -302,10 +302,10 @@ namespace tnt
 
       try
       {
-        ::poll(&pollfds[0], pollfds.size(), poll_timeout);
-        poll_timeout = -1;
+        ::poll(&_pollfds[0], _pollfds.size(), _poll_timeout);
+        _poll_timeout = -1;
 
-        if (pollfds[0].revents != 0)
+        if (_pollfds[0].revents != 0)
         {
           if (Tntnet::shouldStop())
           {
@@ -314,11 +314,11 @@ namespace tnt
           }
 
           char buffer[64];
-          notify_pipe.read(buffer, sizeof(buffer));
-          pollfds[0].revents = 0;
+          _notify_pipe.read(buffer, sizeof(buffer));
+          _pollfds[0].revents = 0;
         }
 
-        if (current_jobs.size() > 0)
+        if (_current_jobs.size() > 0)
           dispatch();
       }
       catch (const std::exception& e)
@@ -330,31 +330,31 @@ namespace tnt
 
   void PollerImpl::doStop()
   {
-    notify_pipe.write('A');
+    _notify_pipe.write('A');
   }
 
   void PollerImpl::dispatch()
   {
     time_t currentTime;
     time(&currentTime);
-    for (unsigned i = 0; i < current_jobs.size(); )
+    for (unsigned i = 0; i < _current_jobs.size(); )
     {
-      if (pollfds[i + 1].revents & POLLIN)
+      if (_pollfds[i + 1].revents & POLLIN)
       {
         // put job into work-queue
-        queue.put(current_jobs[i]);
+        _queue.put(_current_jobs[i]);
         remove(i);
       }
-      else if (pollfds[i + 1].revents != 0)
+      else if (_pollfds[i + 1].revents != 0)
         remove(i);
       else
       {
         // check timeout
-        int msec = current_jobs[i]->msecToTimeout(currentTime);
+        int msec = _current_jobs[i]->msecToTimeout(currentTime);
         if (msec <= 0)
           remove(i);
-        else if (poll_timeout < 0 || msec < poll_timeout)
-          poll_timeout = msec;
+        else if (_poll_timeout < 0 || msec < _poll_timeout)
+          _poll_timeout = msec;
 
         ++i;
       }
@@ -364,26 +364,26 @@ namespace tnt
   void PollerImpl::remove(jobs_type::size_type n)
   {
     // replace job with last job in poller-list
-    jobs_type::size_type last = current_jobs.size() - 1;
+    jobs_type::size_type last = _current_jobs.size() - 1;
 
     if (n != last)
     {
-      pollfds[n + 1] = pollfds[last + 1];
-      current_jobs[n] = current_jobs[last];
+      _pollfds[n + 1] = _pollfds[last + 1];
+      _current_jobs[n] = _current_jobs[last];
     }
 
-    pollfds.pop_back();
-    current_jobs.pop_back();
+    _pollfds.pop_back();
+    _current_jobs.pop_back();
   }
 
   void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
   {
     {
-      cxxtools::MutexLock lock(mutex);
-      new_jobs.push_back(job);
+      cxxtools::MutexLock lock(_mutex);
+      _new_jobs.push_back(job);
     }
 
-    notify_pipe.write('A');
+    _notify_pipe.write('A');
   }
 #endif // #else HAVE_EPOLL
 
