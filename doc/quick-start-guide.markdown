@@ -19,8 +19,8 @@ Installation
 
 To install Tntnet you will first need to install cxxtools.
 
-You can find cxxtools on the tntnet homepage
-[http://www.tntnet.org/download.html] and install it with:
+You can find cxxtools on the tntnet [homepage]
+(http://www.tntnet.org/download.html) and install it with:
 
     tar xzf cxxtools-2.x.tar.gz
     cd cxxtools-2.x
@@ -628,6 +628,6 @@ screen.
 Next steps
 ----------
 
- * read the man pages starting at tntnet(8)
- * look at the demo programs in directory "sdk/demos"
+ * read the [man pages](http://www.tntnet.org/man.html) starting at tntnet(8)
+ * look at the [demo](http://www.tntnet.org/demos.html) programs in directory "demo"
  * choose a better build system (I suggest autoconf/automake)
