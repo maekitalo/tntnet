@@ -115,6 +115,7 @@ namespace tnt
 
   }
 
+  /// Container for GET and POST parameters
   class QueryParams : public cxxtools::QueryParams
   {
     private:
@@ -122,6 +123,7 @@ namespace tnt
       std::locale _locale;
 
     public:
+      /// Create an empty %QueryParams object
       QueryParams()
         : _paramScope(0),
           _locale(std::locale::classic())
@@ -156,6 +158,7 @@ namespace tnt
         _locale = src._locale;
         return *this;
       }
+
       ~QueryParams()
       {
         if (_paramScope && _paramScope->release() == 0)
@@ -169,36 +172,39 @@ namespace tnt
         return *_paramScope;
       }
 
+      /// Get the locale used for parsing floating-point numbers
       const std::locale& locale() const   { return _locale; }
+
+      /// Set the locale used for parsing floating-point numbers
       void locale(const std::locale& loc) { _locale = loc; }
 
       template <typename Type>
       Type arg(const std::string& name, const Type& def = Type()) const
-      { return qhelper::QArg<Type>::arg(*this, name, 0, def); }
+        { return qhelper::QArg<Type>::arg(*this, name, 0, def); }
 
       template <typename Type>
       Type argt(const std::string& name, const char* typeName = 0) const
-      { return qhelper::QArg<Type>::argt(*this, name, 0, typeName); }
+        { return qhelper::QArg<Type>::argt(*this, name, 0, typeName); }
 
       template <typename Type>
       Type argn(const std::string& name, size_type n, const Type& def = Type()) const
-      { return qhelper::QArg<Type>::arg(*this, name, n, def); }
+        { return qhelper::QArg<Type>::arg(*this, name, n, def); }
 
       template <typename Type>
       Type argnt(const std::string& name, size_type n, const char* typeName = 0) const
-      { return qhelper::QArg<Type>::argt(*this, name, n, typeName); }
+        { return qhelper::QArg<Type>::argt(*this, name, n, typeName); }
 
       template <typename Type>
       Type argt(const std::string& name, size_type n, const char* typeName = 0) const
-      { return qhelper::QArg<Type>::argt(*this, name, n, typeName); }
+        { return qhelper::QArg<Type>::argt(*this, name, n, typeName); }
 
       template <typename Type>
       Type arg(size_type n, const Type& def = Type()) const
-      { return qhelper::QArg<Type>::arg(*this, std::string(), n, def); }
+        { return qhelper::QArg<Type>::arg(*this, std::string(), n, def); }
 
       template <typename Type>
       Type argt(size_type n, const char* typeName = 0) const
-      { return qhelper::QArg<Type>::argt(*this, std::string(), n, typeName); }
+        { return qhelper::QArg<Type>::argt(*this, std::string(), n, typeName); }
 
       template <typename Type>
       typename std::vector<Type> args(const std::string& name, const Type& def = Type()) const
@@ -220,7 +226,7 @@ namespace tnt
 
       template <typename Type>
       QueryParams& add(const std::string& name, const Type& value)
-      { qhelper::QAdd<Type>::add(*this, name, value); return *this; }
+        { qhelper::QAdd<Type>::add(*this, name, value); return *this; }
 
       QueryParams& add(const std::string& name, const char* value)
       {
@@ -264,14 +270,10 @@ namespace tnt
     }
 
     inline std::string QArg<std::string>::arg(const QueryParams& q, const std::string& name, unsigned n, const std::string& def)
-    {
-      return q.param(name, n, def);
-    }
+      { return q.param(name, n, def); }
 
     inline std::string QArg<std::string>::argt(const QueryParams& q, const std::string& name, unsigned n, const char*)
-    {
-      return q.param(name, n);
-    }
+      { return q.param(name, n); }
 
     inline char QArg<char>::arg(const QueryParams& q, const std::string& name, unsigned n, char def)
     {
@@ -309,19 +311,13 @@ namespace tnt
     }
 
     inline void QAdd<std::string>::add(QueryParams& q, const std::string& name, const std::string& value)
-    {
-      static_cast<cxxtools::QueryParams&>(q).add(name, value);
-    }
+      { static_cast<cxxtools::QueryParams&>(q).add(name, value); }
 
     inline void QAdd<char>::add(QueryParams& q, const std::string& name, char value)
-    {
-      static_cast<cxxtools::QueryParams&>(q).add(name, std::string(1, value));
-    }
+      { static_cast<cxxtools::QueryParams&>(q).add(name, std::string(1, value)); }
 
     inline void QAdd<bool>::add(QueryParams& q, const std::string& name, bool value)
-    {
-      static_cast<cxxtools::QueryParams&>(q).add(name, value ? std::string(1, '1') : std::string());
-    }
+      { static_cast<cxxtools::QueryParams&>(q).add(name, value ? std::string(1, '1') : std::string()); }
   }
 }
 

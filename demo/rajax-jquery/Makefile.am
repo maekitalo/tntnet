@@ -25,4 +25,4 @@ SUFFIXES=.ecpp .js .cpp
 	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -m application/x-javascript -b -o $@ $<
 
 tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=message|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=message|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

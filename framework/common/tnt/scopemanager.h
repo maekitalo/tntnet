@@ -71,6 +71,7 @@ namespace tnt
       std::string postCall(HttpRequest& request, HttpReply& reply, const std::string& app);
       void checkSessionTimeout();
   };
+  /// @endcond internal
 }
 
 #endif // TNT_SCOPEMANAGER_H

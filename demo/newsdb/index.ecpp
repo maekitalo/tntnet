@@ -36,18 +36,18 @@ tntdb::Statement stmt = conn.prepareCached(
       continue;
 
     tntdb::Row row = *cur;
-    int id;
+    int id = 0;
     std::string title;
     std::string shorttext;
     row[0].get(id);
     row[1].get(title);
     row[2].get(shorttext);
 }>
-  <h1 class="title"><a href="news?id=<$id$>"><$title$></a></h2>
+  <h1 class="title"><a href="news?id=<$ id $>"><$ title $></a></h2>
 
-  <p class="shorttext"><$shorttext$></p>
+  <p class="shorttext"><$ shorttext $></p>
 
-  <p class="link"><a href="news?id=<$id$>">more...</a></p>
+  <p class="link"><a href="news?id=<$ id $>">more...</a></p>
 
 % }
 
