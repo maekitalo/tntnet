@@ -182,7 +182,7 @@ namespace tnt
       Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const std::string& method, int ssl, const Maptarget& ci);
 
       Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const Maptarget& ci)
-      { return addUrlMapEntry(vhost, url, std::string(), SSL_ALL, ci); }
+        { return addUrlMapEntry(vhost, url, std::string(), SSL_ALL, ci); }
 
       class PosType
       {
@@ -205,6 +205,7 @@ namespace tnt
           Maptarget getNext();
       };
   };
+  /// @endcond internal
 }
 
 #endif // TNT_DISPATCHER_H

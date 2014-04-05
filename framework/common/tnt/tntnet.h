@@ -62,31 +62,31 @@ namespace tnt
 
       Example:
       @code
-      #include <iostream>
-      #include <tnt/tntnet.h>
+        #include <iostream>
+        #include <tnt/tntnet.h>
 
-      int main()
-      {
-        try
+        int main()
         {
-          tnt::Tntnet app;
+          try
+          {
+            tnt::Tntnet app;
 
-          app.listen(8000);
+            app.listen(8000);
 
-          app.mapUrl("^/$", "index");
-          app.mapUrl("^/(.*)$", "$1");
-          app.mapUrl("^/.*$", "404");
+            app.mapUrl("^/$", "index");
+            app.mapUrl("^/(.*)$", "$1");
+            app.mapUrl("^/.*$", "404");
 
-          app.run();
+            app.run();
+          }
+          catch(const std::exception& e)
+          {
+            std::cerr << e.what() << std::endl;
+            return 1;
+          }
+
+          return 0;
         }
-        catch(const std::exception& e)
-        {
-          std::cerr << e.what() << std::endl;
-          return 1;
-        }
-
-        return 0;
-      }
       @endcode
    */
   class Tntnet
@@ -126,9 +126,9 @@ namespace tnt
       static cxxtools::Mutex _timeStopMutex;
 
     public:
-      /** Create a Tntnet object with default configuration
+      /** Create a %Tntnet object with default configuration
 
-          For information on the default configuration options, see TntConfig
+          For information on the default configuration options, see TntConfig.
        */
       Tntnet();
 
@@ -174,7 +174,7 @@ namespace tnt
        */
       void run();
 
-      /// Request all Tntnet instances to shut down
+      /// Request all %Tntnet instances to shut down
       static void shutdown();
 
       /// Tells whether a shutdown request was initiated

@@ -99,7 +99,6 @@ namespace tnt
       int msecToTimeout(time_t currentTime) const;
   };
 
-  /// @cond internal
   class Jobqueue // one per process
   {
     public:
@@ -133,6 +132,7 @@ namespace tnt
       bool empty() const
         { return _jobs.empty(); }
   };
+  /// @endcond internal
 }
 
 #endif // TNT_JOB_H
