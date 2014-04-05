@@ -213,7 +213,7 @@ resources.cpp: \$(staticSources) Makefile.am
 SUFFIXES=.ecpp .ico .cpp
 
 .ecpp.cpp:
-	\$(ECPPC) -n \$(basename \$<) \$(ECPPFLAGS) -o \$@ \$<
+	\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
 .ecpp.deps:
 	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
@@ -582,7 +582,7 @@ SUFFIXES=.ecpp .ico .cpp
 ECPPFLAGS=-I\$(top_srcdir)
 
 .ecpp.cpp:
-	\$(ECPPC) -n \$(basename \$<) \$(ECPPFLAGS) -o \$@ \$<
+	\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
 .ecpp.deps:
 	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
@@ -691,7 +691,7 @@ SUFFIXES=.ecpp .ico .cpp
 ECPPFLAGS=-I\$(top_srcdir)
 
 .ecpp.cpp:
-	\$(ECPPC) -n \$(basename \$<) \$(ECPPFLAGS) -o \$@ \$<
+	\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
 .ecpp.deps:
 	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
@@ -901,12 +901,9 @@ then
     echo run autoreconf -i
     autoreconf -i
 
-    echo run configure
-    ./configure
-
     echo "============================================================"
     echo "= project <$project> created"
-    echo "= change to directory <$project> and run <make> to build the application"
+    echo "= change to directory <$project> and run <./configure && make> to build the application"
     echo "= execute <./$project> there to run the application"
     echo "============================================================"
 
@@ -925,12 +922,9 @@ then
     echo run autoreconf -i
     autoreconf -i
 
-    echo run configure
-    ./configure
-
     echo "============================================================"
     echo "= project <$project> created"
-    echo "= change to directory <$project> and run <make> to build the application"
+    echo "= change to directory <$project> and run <./configure && make> to build the application"
     echo "= execute <tntnet> there to run the application"
     echo "============================================================"
 
@@ -950,12 +944,9 @@ then
     echo run autoreconf -i
     autoreconf -i
 
-    echo run configure
-    ./configure
-
     echo "============================================================"
     echo "= project <$project> created"
-    echo "= change to directory <$project> and run <make> to build the application"
+    echo "= change to directory <$project> and run <./configure && make> to build the application"
     echo "= execute <./$project> in the build directory to run the application"
     echo "============================================================"
 
