@@ -34,21 +34,21 @@ SUFFIXES=.ecpp .cpp .png
 	$(AM_V_GEN)$(ECPPC) -b -o $@ $<
 
 tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=calci18n|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=calci18n|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
 
 calci18n.txt: $(srcdir)/calci18n.ecpp
 	$(AM_V_GEN)$(ECPPL) -o calci18n.txt calci18n.ecpp
 
 calci18n.fi: $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.fi
-	[ -d fi ] || mkdir fi
-	rm -f calci18n.fi
-	( $(AM_V_GEN)$(ECPPLL) -o fi/calci18n.tntdata $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.fi && \
+	$(AM_V_GEN)( [ -d fi ] || mkdir fi; \
+		rm -f calci18n.fi; \
+		$(ECPPLL) -o fi/calci18n.tntdata $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.fi && \
 		cd fi && \
 		zip ../calci18n.fi calci18n.tntdata )
 
 calci18n.de: $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.de
-	[ -d de ] || mkdir de
-	rm -f calci18n.de
-	( $(AM_V_GEN)$(ECPPLL) -o de/calci18n.tntdata $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.de && \
+	$(AM_V_GEN)( [ -d de ] || mkdir de; \
+		rm -f calci18n.de; \
+		$(ECPPLL) -o de/calci18n.tntdata $(srcdir)/calci18n.ecpp $(srcdir)/calci18n.txt.de && \
 		cd de && \
 		zip ../calci18n.de calci18n.tntdata )

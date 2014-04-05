@@ -15,4 +15,4 @@ SUFFIXES=.ecpp .cpp
 	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
 tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=config|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>\n\n  <dburl>some_config_value</dburl>\n  <values>\n    <value>5</value>\n    <value>9</value>\n  </values>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=config|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>\n\n  <dburl>some_config_value</dburl>\n  <values>\n    <value>5</value>\n    <value>9</value>\n  </values>"} {print}' >$@

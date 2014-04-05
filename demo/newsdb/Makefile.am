@@ -14,12 +14,13 @@ dist_noinst_DATA = global.ecpp newsdb.sql README
 CLEANFILES = newsdb.cpp tntnet.cpp tntnet.xml
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
+ECPPFLAGS=-I $(top_srcdir)/demo/newsdb
 
 SUFFIXES=.ecpp .css .cpp
 .ecpp.cpp:
-	$(AM_V_GEN)$(ECPPC) -o $@ $<
+	$(AM_V_GEN)$(ECPPC) $(ECPPFLAGS) -o $@ $<
 .css.cpp:
 	$(AM_V_GEN)$(ECPPC) -b -m text/css -o $@ $<
 
 tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=newsdb|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=newsdb|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
