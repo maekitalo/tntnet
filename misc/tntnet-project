@@ -208,14 +208,14 @@ ECPPFLAGS=-I\$(top_srcdir)
 
 # resources
 resources.cpp: \$(staticSources) Makefile.am
-	\$(ECPPC) -bb -z -n resources -p -o resources.cpp \$(ECPPFLAGS) \$(staticSources)
+	\$(AM_V_GEN)\$(ECPPC) -bb -z -n resources -p -o resources.cpp \$(ECPPFLAGS) \$(staticSources)
 
 SUFFIXES=.ecpp .ico .cpp
 
 .ecpp.cpp:
-	\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
+	\$(AM_V_GEN)\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
 .ecpp.deps:
-	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
+	\$(AM_V_GEN)\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
 -include \$(ecppSources:.ecpp=.deps)
 EOF
@@ -582,9 +582,9 @@ SUFFIXES=.ecpp .ico .cpp
 ECPPFLAGS=-I\$(top_srcdir)
 
 .ecpp.cpp:
-	\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
+	\$(AM_V_GEN)\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
 .ecpp.deps:
-	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
+	\$(AM_V_GEN)\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
 -include \$(ecppSources:.ecpp=.deps)
 EOF
@@ -691,9 +691,9 @@ SUFFIXES=.ecpp .ico .cpp
 ECPPFLAGS=-I\$(top_srcdir)
 
 .ecpp.cpp:
-	\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
+	\$(AM_V_GEN)\$(ECPPC) -n \`echo \$<|\$(SED) 's|\$(srcdir)/||; s|\\.ecpp\$\$||'\` \$(ECPPFLAGS) -o \$@ $<
 .ecpp.deps:
-	\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
+	\$(AM_V_GEN)\$(ECPPC) -M \$(ECPPFLAGS) \$< | \$(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > \$@
 
 -include \$(ecppSources:.ecpp=.deps)
 EOF
