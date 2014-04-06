@@ -57,7 +57,8 @@ namespace
       virtual void onEndCall(const std::string& comp);
       virtual void onShared(const std::string& code);
       virtual void onScope(tnt::ecpp::scope_container_type container, tnt::ecpp::scope_type scope,
-        const std::string& type, const std::string& var, const std::string& init);
+        const std::string& type, const std::string& var, const std::string& init,
+        const std::vector<std::string>& includes);
       virtual void startComp(const std::string& name, const cppargs_type& cppargs);
       virtual void startClose();
       virtual void endClose();
@@ -152,9 +153,32 @@ namespace
     _result << "onShared()";
   }
 
-  void Handler::onScope(tnt::ecpp::scope_container_type container, tnt::ecpp::scope_type scope, const std::string& type, const std::string& var, const std::string& init)
+  void Handler::onScope(tnt::ecpp::scope_container_type container, tnt::ecpp::scope_type scope, const std::string& type, const std::string& var, const std::string& init,
+          const std::vector<std::string>& includes)
   {
-    _result << "onScope()";
+    _result << "onScope(";
+
+    switch (container)
+    {
+      case tnt::ecpp::application_container: _result << "application"; break;
+      case tnt::ecpp::thread_container: _result << "thread"; break;
+      case tnt::ecpp::session_container: _result << "session"; break;
+      case tnt::ecpp::secure_session_container: _result << "secure_session"; break;
+      case tnt::ecpp::request_container: _result << "request"; break;
+      case tnt::ecpp::param_container: _result << "param"; break;
+    }
+
+    _result << ',';
+
+    switch (scope)
+    {
+      case tnt::ecpp::default_scope: _result << "default"; break;
+      case tnt::ecpp::shared_scope: _result << "shared"; break;
+      case tnt::ecpp::page_scope: _result << "page"; break;
+      case tnt::ecpp::component_scope: _result << "component"; break;
+    }
+
+    _result << ',' << type << ',' << var << ',' << init << ')';
   }
 
   void Handler::startComp(const std::string& name, const cppargs_type& cppargs)
@@ -231,6 +255,15 @@ class EcppTest : public cxxtools::unit::TestSuite
       registerMethod("testStringVectorArgs", *this, &EcppTest::testStringVectorArgs);
       registerMethod("testTypedVectorArgs", *this, &EcppTest::testTypedVectorArgs);
       registerMethod("testAttr", *this, &EcppTest::testAttr);
+      registerMethod("testApplicationScope", *this, &EcppTest::testApplicationScope);
+      registerMethod("testThreadScope", *this, &EcppTest::testThreadScope);
+      registerMethod("testSessionScope", *this, &EcppTest::testSessionScope);
+      registerMethod("testSecureSessionScope", *this, &EcppTest::testSecureSessionScope);
+      registerMethod("testRequestScope", *this, &EcppTest::testRequestScope);
+      registerMethod("testScopeVar", *this, &EcppTest::testScopeVar);
+      registerMethod("testScopeShared", *this, &EcppTest::testScopeShared);
+      registerMethod("testScopePage", *this, &EcppTest::testScopePage);
+      registerMethod("testScopeComponent", *this, &EcppTest::testScopeComponent);
     }
 
     void testPlain()
@@ -353,6 +386,87 @@ class EcppTest : public cxxtools::unit::TestSuite
       tnt::ecpp::Parser parser(handler, std::string());
       parser.parse(ecpp);
       CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onAttr(method, \"post\")onHtml(</foo>)end()");
+    }
+
+    void testApplicationScope()
+    {
+      std::istringstream ecpp("<foo><%application>blah;</%application></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(application,component,,blah,)onHtml(</foo>)end()");
+    }
+
+    void testThreadScope()
+    {
+      std::istringstream ecpp("<foo><%thread>blah;</%thread></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(thread,component,,blah,)onHtml(</foo>)end()");
+    }
+
+    void testSessionScope()
+    {
+      std::istringstream ecpp("<foo><%session>blah;</%session></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(session,component,,blah,)onHtml(</foo>)end()");
+    }
+
+    void testSecureSessionScope()
+    {
+      std::istringstream ecpp("<foo><%securesession>blah;</%securesession></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(secure_session,component,,blah,)onHtml(</foo>)end()");
+    }
+
+    void testRequestScope()
+    {
+      std::istringstream ecpp("<foo><%request>blah;</%request></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,component,,blah,)onHtml(</foo>)end()");
+    }
+
+    void testScopeVar()
+    {
+      std::istringstream ecpp("<foo><%request>\nfoo bar=5;\n</%request></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,component,foo,bar,5)onHtml(</foo>)end()");
+    }
+
+    void testScopeShared()
+    {
+      std::istringstream ecpp("<foo><%request scope=\"shared\">\nfoo;\n</%request></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,shared,,foo,)onHtml(</foo>)end()");
+    }
+
+    void testScopePage()
+    {
+      std::istringstream ecpp("<foo><%request scope=\"page\">\nfoo;\n</%request></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,page,,foo,)onHtml(</foo>)end()");
+    }
+
+    void testScopeComponent()
+    {
+      std::istringstream ecpp("<foo><%request \n\t scope=\"component\">\nfoo;\n</%request></foo>");
+      Handler handler;
+      tnt::ecpp::Parser parser(handler, std::string());
+      parser.parse(ecpp);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,component,,foo,)onHtml(</foo>)end()");
     }
 
 };
