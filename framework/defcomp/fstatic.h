@@ -34,9 +34,6 @@
 
 namespace tnt
 {
-  //////////////////////////////////////////////////////////////////////
-  // componentdeclaration
-  //
   class Fstatic : public Static
   {
     friend class FstaticFactory;

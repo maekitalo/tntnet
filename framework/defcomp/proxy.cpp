@@ -48,7 +48,7 @@ namespace tnt
   class Comploader;
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  // component declaration
   //
   class Proxy : public tnt::EcppComponent
   {
@@ -81,7 +81,7 @@ namespace tnt
   static ProxyFactory proxyFactory("proxy");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
   unsigned Proxy::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
   {

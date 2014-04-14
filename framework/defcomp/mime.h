@@ -36,19 +36,16 @@ namespace tnt
 {
   class MimeHandler;
 
-  ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
-  //
   class Mime : public tnt::Component
   {
     friend class MimeFactory;
 
     private:
-      MimeHandler* handler;
+      MimeHandler* _handler;
 
     public:
       Mime()
-        : handler(0)
+        : _handler(0)
         { }
 
       ~Mime();

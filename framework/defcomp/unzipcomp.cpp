@@ -46,7 +46,7 @@ namespace tnt
   class MimeHandler;
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  // component declaration
   //
   class Unzip : public Static
   {
@@ -59,7 +59,7 @@ namespace tnt
   static ComponentFactoryImpl<Unzip> factory("unzip");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
   unsigned Unzip::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparams)
   {

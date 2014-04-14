@@ -39,6 +39,7 @@ namespace tnt
   {
     class Variable
     {
+      private:
         std::string name;
         std::string type;
         std::string value;

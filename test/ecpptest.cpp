@@ -36,6 +36,7 @@ namespace
 {
   class Handler : public tnt::ecpp::ParseHandler
   {
+    private:
       std::ostringstream _result;
 
       virtual void start();
@@ -57,9 +58,10 @@ namespace
         const paramargs_type& paramargs, const std::string& cppargs);
       virtual void onEndCall(const std::string& comp);
       virtual void onShared(const std::string& code);
-      virtual void onScope(tnt::ecpp::scope_container_type container, tnt::ecpp::scope_type scope,
-        const std::string& type, const std::string& var, const std::string& init,
-        const std::vector<std::string>& includes);
+      virtual void onScope(tnt::ecpp::scope_container_type container,
+                           tnt::ecpp::scope_type scope, const std::string& type,
+                           const std::string& var, const std::string& init,
+                           const std::vector<std::string>& includes);
       virtual void startComp(const std::string& name, const cppargs_type& cppargs);
       virtual void startClose();
       virtual void endClose();
@@ -74,88 +76,62 @@ namespace
 
     public:
       void clear()
-      { _result.clear(); _result.str(std::string()); }
+        { _result.clear(); _result.str(std::string()); }
 
       std::string result() const
-      { return _result.str(); }
+        { return _result.str(); }
   };
 
   void Handler::start()
-  {
-    _result << "start()";
-  }
+    { _result << "start()"; }
 
   void Handler::end()
-  {
-    _result << "end()";
-  }
+    { _result << "end()"; }
 
   void Handler::onLine(unsigned lineno, const std::string& file)
-  {
-  }
+    { }
 
   void Handler::onHtml(const std::string& html)
-  {
-    _result << "onHtml(" << html << ')';
-  }
+    { _result << "onHtml(" << html << ')'; }
 
   void Handler::onExpression(const std::string& expr)
-  {
-    _result << "onExpression(" << expr << ')';
-  }
+    { _result << "onExpression(" << expr << ')'; }
 
   void Handler::onHtmlExpression(const std::string& expr)
-  {
-    _result << "onHtmlExpression(" << expr << ')';
-  }
+    { _result << "onHtmlExpression(" << expr << ')'; }
 
   void Handler::onCpp(const std::string& code)
-  {
-    _result << "onCpp(" << code << ')';
-  }
+    { _result << "onCpp(" << code << ')'; }
 
   void Handler::onPre(const std::string& code)
-  {
-    _result << "onPre(" << code << ')';
-  }
+    { _result << "onPre(" << code << ')'; }
 
   void Handler::onInit(const std::string& code)
-  {
-    _result << "onInit(" << code << ')';
-  }
+    { _result << "onInit(" << code << ')'; }
 
   void Handler::onCleanup(const std::string& code)
-  {
-    _result << "onCleanup(" << code << ')';
-  }
+    { _result << "onCleanup(" << code << ')'; }
 
   void Handler::onArg(const std::string& name, const std::string& value)
-  {
-    _result << "onArg(" << name << ", " << value << ')';
-  }
+    { _result << "onArg(" << name << ", " << value << ')'; }
 
   void Handler::onAttr(const std::string& name, const std::string& value)
-  {
-    _result << "onAttr(" << name << ", " << value << ')';
-  }
+    { _result << "onAttr(" << name << ", " << value << ')'; }
 
-  void Handler::onCall(const std::string& comp, const comp_args_type& args, const std::string& pass_cgi, const paramargs_type& paramargs, const std::string& cppargs)
-  {
-    _result << "onCall()";
-  }
+  void Handler::onCall(const std::string& comp, const comp_args_type& args,
+                       const std::string& pass_cgi, const paramargs_type& paramargs,
+                       const std::string& cppargs)
+    { _result << "onCall()"; }
 
   void Handler::onEndCall(const std::string& comp)
-  {
-    _result << "onEndCall()";
-  }
+    { _result << "onEndCall()"; }
 
   void Handler::onShared(const std::string& code)
-  {
-    _result << "onShared()";
-  }
+    { _result << "onShared()"; }
 
-  void Handler::onScope(tnt::ecpp::scope_container_type container, tnt::ecpp::scope_type scope, const std::string& type, const std::string& var, const std::string& init,
-          const std::vector<std::string>& includes)
+  void Handler::onScope(tnt::ecpp::scope_container_type container, tnt::ecpp::scope_type scope,
+                        const std::string& type, const std::string& var, const std::string& init,
+                        const std::vector<std::string>& includes)
   {
     _result << "onScope(";
 
@@ -183,59 +159,37 @@ namespace
   }
 
   void Handler::startComp(const std::string& name, const cppargs_type& cppargs)
-  {
-    _result << "startComp()";
-  }
+    { _result << "startComp()"; }
 
   void Handler::startClose()
-  {
-    _result << "startClose()";
-  }
+    { _result << "startClose()"; }
 
   void Handler::endClose()
-  {
-    _result << "endClose()";
-  }
+    { _result << "endClose()"; }
 
   void Handler::onComp(const std::string& code)
-  {
-    _result << "onComp()";
-  }
+    { _result << "onComp()"; }
 
   void Handler::onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr)
-  {
-    _result << "onCondExpr()";
-  }
+    { _result << "onCondExpr()"; }
 
   void Handler::onConfig(const std::string& code, const std::string& value)
-  {
-    _result << "onConfig()";
-  }
+    { _result << "onConfig()"; }
 
   void Handler::tokenSplit(bool start)
-  {
-    _result << "tokenSplit()";
-  }
+    { _result << "tokenSplit()"; }
 
   void Handler::onInclude(const std::string& file)
-  {
-    _result << "onInclude()";
-  }
+    { _result << "onInclude()"; }
 
   void Handler::onIncludeEnd(const std::string& file)
-  {
-    _result << "onIncludeEnd()";
-  }
+    { _result << "onIncludeEnd()"; }
 
   void Handler::startI18n()
-  {
-    _result << "startI18n()";
-  }
+    { _result << "startI18n()"; }
 
   void Handler::endI18n()
-  {
-    _result << "endI18n()";
-  }
+    { _result << "endI18n()"; }
 }
 
 class EcppTest : public cxxtools::unit::TestSuite

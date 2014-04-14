@@ -45,12 +45,12 @@ namespace tnt
 {
   namespace ecppc
   {
-
     ////////////////////////////////////////////////////////////////////////
     // Generator
     //
     class Generator : public tnt::ecpp::ParseHandler
     {
+      private:
         bool raw;
         std::string mimetype;
 
@@ -169,7 +169,6 @@ namespace tnt
 
         void getCpp(std::ostream& out, const std::string& filename) const;
     };
-
   }
 }
 

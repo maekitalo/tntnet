@@ -47,6 +47,7 @@ namespace tnt
     {
       class BStringPrinter
       {
+        private:
           std::ostream& out;
           unsigned mincol, maxcol, col;
 

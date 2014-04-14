@@ -41,7 +41,7 @@ namespace tnt
   class Comploader;
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  // component declaration
   //
   class Error : public tnt::Component
   {
@@ -59,7 +59,7 @@ namespace tnt
   static ComponentFactoryImpl<Error> errorFactory("error");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
   unsigned Error::operator() (tnt::HttpRequest& request,
     tnt::HttpReply& reply, tnt::QueryParams&)

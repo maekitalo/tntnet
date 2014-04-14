@@ -47,24 +47,23 @@ namespace tnt
   //
 
   Mime::~Mime()
-    { delete handler; }
+    { delete _handler; }
 
   void Mime::configure(const tnt::TntConfig& config)
   {
-    if (handler == 0)
-      handler = new MimeHandler();
+    if (_handler == 0)
+      _handler = new MimeHandler();
   }
 
   unsigned Mime::operator() (HttpRequest& request, HttpReply& reply, QueryParams& qparams)
   {
     std::string mimeType = request.getArg("contenttype");
     if (mimeType.empty())
-      reply.setContentType(handler->getMimeType(request.getPathInfo()).c_str());
+      reply.setContentType(_handler->getMimeType(request.getPathInfo()).c_str());
     else
       reply.setContentType(mimeType);
 
-    // we do not produce any content, so we pass the request
-    // to the next handler:
+    // we do not produce any content, so we pass the request to the next handler:
     return DECLINED;
   }
 }

@@ -37,9 +37,6 @@ namespace tnt
 {
   class MimeHandler;
 
-  //////////////////////////////////////////////////////////////////////
-  // componentdeclaration
-  //
   class Static : public Component
   {
     friend class StaticFactory;

@@ -46,6 +46,7 @@ namespace tnt
 
     class Bodypart : public cxxtools::RefCounted
     {
+      private:
         unsigned curline;
         std::string curfile;
         static bool linenumbersEnabled;
@@ -69,6 +70,7 @@ namespace tnt
 
     class BodypartStatic : public Bodypart
     {
+      private:
         std::string data;
 
       public:
@@ -80,6 +82,7 @@ namespace tnt
 
     class BodypartCall : public Bodypart
     {
+      private:
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::set<std::string> subcomps_type;
@@ -129,7 +132,9 @@ namespace tnt
 
     class BodypartEndCall : public Bodypart
     {
+      private:
         BodypartCall& bpc;
+
       public:
         BodypartEndCall(unsigned line, const std::string& file,
             BodypartCall& bpc_)
@@ -141,6 +146,7 @@ namespace tnt
 
     class Body
     {
+      private:
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef cxxtools::SmartPtr<Bodypart> body_part_pointer;
@@ -175,12 +181,10 @@ namespace tnt
                         const std::string& comp);
 
         void addSubcomp(const std::string& comp)
-        {
-          mysubcomps.insert(comp);
-        }
+          { mysubcomps.insert(comp); }
 
         bool hasSubcomp(const std::string& comp)
-        { return subcomps.find(comp) != subcomps.end(); }
+          { return subcomps.find(comp) != subcomps.end(); }
 
         void getBody(std::ostream& out) const;
     };

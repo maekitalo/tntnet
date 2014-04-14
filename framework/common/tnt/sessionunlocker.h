@@ -45,6 +45,7 @@ namespace tnt
    */
   class SessionUnlocker
   {
+    private:
       HttpRequest& _request;
       bool _locked;
 

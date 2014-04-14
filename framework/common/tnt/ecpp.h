@@ -50,19 +50,19 @@ namespace tnt
   //
   struct Subcompident : public tnt::Compident
   {
-      std::string subname;
+    std::string subname;
 
-      Subcompident(const tnt::Compident& ci, const std::string& sub)
-        : tnt::Compident(ci),
-          subname(sub)
-          { }
-      Subcompident(const std::string& lib, const std::string& comp, const std::string& sub)
-        : tnt::Compident(lib, comp),
-          subname(sub)
-          { }
+    Subcompident(const tnt::Compident& ci, const std::string& sub)
+      : tnt::Compident(ci),
+        subname(sub)
+        { }
+    Subcompident(const std::string& lib, const std::string& comp, const std::string& sub)
+      : tnt::Compident(lib, comp),
+        subname(sub)
+        { }
 
-      explicit Subcompident(const std::string& ident);
-      std::string toString() const;
+    explicit Subcompident(const std::string& ident);
+    std::string toString() const;
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -156,6 +156,7 @@ namespace tnt
   //
   class EcppSubComponent : public EcppComponent
   {
+    private:
       EcppComponent& _main;
       std::string _subcompname;
 

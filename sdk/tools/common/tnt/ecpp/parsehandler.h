@@ -84,7 +84,6 @@ namespace tnt
         virtual void startI18n();
         virtual void endI18n();
     };
-
   }
 }
 

@@ -38,7 +38,6 @@ namespace tnt
   {
     class Closecomponent : public Component
     {
-
       public:
         Closecomponent(const std::string& componentName)
           : Component(componentName)

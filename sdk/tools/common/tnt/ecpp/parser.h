@@ -45,6 +45,7 @@ namespace tnt
 
     class Parser
     {
+      private:
         ParseHandler& handler;
         std::string curfile;
         unsigned curline;
@@ -80,6 +81,7 @@ namespace tnt
 
     class parse_error : public std::runtime_error
     {
+      private:
         std::string msg;
 
       public:
@@ -88,7 +90,6 @@ namespace tnt
         { }
         const char* what() const throw();
     };
-
   }
 }
 

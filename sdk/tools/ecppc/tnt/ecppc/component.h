@@ -40,6 +40,7 @@ namespace tnt
   {
     class Component
     {
+      private:
         std::string componentName;
         std::string logCategory;
         typedef ecpp::Parser::comp_args_type comp_args_type;

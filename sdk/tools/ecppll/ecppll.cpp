@@ -50,6 +50,7 @@
 //
 class Ecppll : public tnt::ecpp::ParseHandler
 {
+  private:
     tnt::ecpp::Parser parser;
     int ret;
 
@@ -60,8 +61,8 @@ class Ecppll : public tnt::ecpp::ParseHandler
 
     bool failOnWarn;
 
-    void fail(int _ret = 1)  { ret = _ret; }
-    void warn(int _ret = 1)  { if (failOnWarn) ret = _ret; };
+    void fail(int _ret = 1) { ret = _ret; }
+    void warn(int _ret = 1) { if (failOnWarn) ret = _ret; };
 
     typedef std::list<std::pair<std::string, std::string> > replacetokens_type;
 
@@ -80,25 +81,20 @@ class Ecppll : public tnt::ecpp::ParseHandler
     virtual void onHtml(const std::string& html);
     virtual void tokenSplit(bool start);
 
-    void setFailOnWarn(bool sw = true)
-      { failOnWarn = sw; }
+    void setFailOnWarn(bool sw = true)      { failOnWarn = sw; }
 
     void print(std::ostream& out);
-    int getRet() const  { return ret; }
+    int getRet() const                      { return ret; }
 
-    void addInclude(const std::string& dir)
-      { parser.addInclude(dir); }
-
-    void parse(std::istream& in)              { parser.parse(in); }
+    void addInclude(const std::string& dir) { parser.addInclude(dir); }
+    void parse(std::istream& in)            { parser.parse(in); }
 };
 
 ////////////////////////////////////////////////////////////////////////
 // Funktionen zur Applikationsklasse
 //
 void Ecppll::tokenSplit(bool start)
-{
-  inLang = start;
-}
+  { inLang = start; }
 
 void Ecppll::print(std::ostream& out)
 {
@@ -337,3 +333,4 @@ int main(int argc, char* argv[])
     return -1;
   }
 }
+

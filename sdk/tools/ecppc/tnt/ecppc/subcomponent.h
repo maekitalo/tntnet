@@ -38,6 +38,7 @@ namespace tnt
   {
     class Subcomponent : public Component
     {
+      private:
         typedef ecpp::Parser::cppargs_type cppargs_type;
         cppargs_type cppargs;
         const Component* outerclass;

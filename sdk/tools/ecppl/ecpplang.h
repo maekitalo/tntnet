@@ -36,6 +36,7 @@
 
 class Ecpplang : public tnt::ecpp::ParseHandler
 {
+  private:
     bool inLang;
     unsigned count;
 
@@ -56,10 +57,8 @@ class Ecpplang : public tnt::ecpp::ParseHandler
     virtual void onHtml(const std::string& html);
     virtual void tokenSplit(bool start);
 
-    void setLang(bool sw = true)
-      { lang = sw; }
-    void setNoLang(bool sw = true)
-      { nolang = sw; }
+    void setLang(bool sw = true)   { lang = sw; }
+    void setNoLang(bool sw = true) { nolang = sw; }
 
     void print(std::ostream& out) const;
 };

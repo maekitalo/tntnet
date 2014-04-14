@@ -36,90 +36,90 @@
 
 class MessageheaderTest : public cxxtools::unit::TestSuite
 {
-    public:
-        MessageheaderTest()
-        : cxxtools::unit::TestSuite("messageheader-Test")
-        {
-            registerMethod("testMessageheader", *this, &MessageheaderTest::testMessageheader);
-            registerMethod("testMessageheaderColon", *this, &MessageheaderTest::testMessageheaderColon);
-            registerMethod("testMessageheaderRemove", *this, &MessageheaderTest::testMessageheaderRemove);
-            registerMethod("testMessageheaderParser", *this, &MessageheaderTest::testMessageheaderParser);
-            registerMethod("testMessageheaderParserSize", *this, &MessageheaderTest::testMessageheaderParserSize);
-        }
+  public:
+    MessageheaderTest()
+      : cxxtools::unit::TestSuite("messageheader-Test")
+    {
+      registerMethod("testMessageheader", *this, &MessageheaderTest::testMessageheader);
+      registerMethod("testMessageheaderColon", *this, &MessageheaderTest::testMessageheaderColon);
+      registerMethod("testMessageheaderRemove", *this, &MessageheaderTest::testMessageheaderRemove);
+      registerMethod("testMessageheaderParser", *this, &MessageheaderTest::testMessageheaderParser);
+      registerMethod("testMessageheaderParserSize", *this, &MessageheaderTest::testMessageheaderParserSize);
+    }
 
-        void testMessageheader()
-        {
-            tnt::Messageheader mh;
-            mh.setHeader("blah:", "tntnet", false);
-            mh.setHeader("foo:", "bar", false);
-            mh.setHeader("xyz:", "abc", false);
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
-        }
+    void testMessageheader()
+    {
+      tnt::Messageheader mh;
+      mh.setHeader("blah:", "tntnet", false);
+      mh.setHeader("foo:", "bar", false);
+      mh.setHeader("xyz:", "abc", false);
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
+    }
 
-        void testMessageheaderColon()
-        {
-            tnt::Messageheader mh;
-            mh.setHeader("blah", "tntnet", false);
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
-        }
+    void testMessageheaderColon()
+    {
+      tnt::Messageheader mh;
+      mh.setHeader("blah", "tntnet", false);
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
+    }
 
-        void testMessageheaderRemove()
-        {
-            tnt::Messageheader mh;
-            mh.setHeader("blah:", "tntnet", false);
-            mh.setHeader("foo:", "bar", false);
-            mh.setHeader("xyz:", "abc", false);
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
+    void testMessageheaderRemove()
+    {
+      tnt::Messageheader mh;
+      mh.setHeader("blah:", "tntnet", false);
+      mh.setHeader("foo:", "bar", false);
+      mh.setHeader("xyz:", "abc", false);
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
 
-            mh.removeHeader("foo:");
-            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+      mh.removeHeader("foo:");
+      CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
 
-            mh.removeHeader("xyz:");
-            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
-            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("xyz:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+      mh.removeHeader("xyz:");
+      CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
+      CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("xyz:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
 
-            mh.setHeader("xyz:", "abc", false);
-            CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
-        }
+      mh.setHeader("xyz:", "abc", false);
+      CXXTOOLS_UNIT_ASSERT(!mh.hasHeader("foo:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+    }
 
-        void testMessageheaderParser()
-        {
-            tnt::Messageheader mh;
-            tnt::Messageheader::Parser parser(mh);
-            std::istringstream in("blah:tntnet\r\nfoo : bar\nXYZ:Abc\r\n\r\n");
-            parser.parse(in);
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
-            CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
-            CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
-        }
+    void testMessageheaderParser()
+    {
+      tnt::Messageheader mh;
+      tnt::Messageheader::Parser parser(mh);
+      std::istringstream in("blah:tntnet\r\nfoo : bar\nXYZ:Abc\r\n\r\n");
+      parser.parse(in);
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
+    }
 
-        void testMessageheaderParserSize()
-        {
-            tnt::Messageheader mh;
-            tnt::Messageheader::Parser parser(mh);
-            for (unsigned c = 0; c < tnt::Messageheader::MAXHEADERSIZE - 1; ++c)
-                parser.parse('A');
-            CXXTOOLS_UNIT_ASSERT_THROW(parser.parse('B'), tnt::HttpError);
-        }
+    void testMessageheaderParserSize()
+    {
+      tnt::Messageheader mh;
+      tnt::Messageheader::Parser parser(mh);
+      for (unsigned c = 0; c < tnt::Messageheader::MAXHEADERSIZE - 1; ++c)
+          parser.parse('A');
+      CXXTOOLS_UNIT_ASSERT_THROW(parser.parse('B'), tnt::HttpError);
+    }
 };
 
 cxxtools::unit::RegisterTest<MessageheaderTest> register_MessageheaderTest;

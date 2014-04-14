@@ -40,7 +40,7 @@ namespace tnt
   class Comploader;
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  // component declaration
   //
   class Redirect : public tnt::Component
   {
@@ -53,7 +53,7 @@ namespace tnt
   static ComponentFactoryImpl<Redirect> redirectFactory("redirect");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
   unsigned Redirect::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&)
   {

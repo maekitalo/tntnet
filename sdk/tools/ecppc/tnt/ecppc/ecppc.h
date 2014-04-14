@@ -43,6 +43,7 @@ namespace tnt
   {
     class Ecppc
     {
+      private:
         std::string requestname;
         std::string extname;
         const char* inputfile;
@@ -77,6 +78,7 @@ namespace tnt
 
     class Usage : public std::exception
     {
+      private:
         std::string msg;
       public:
         Usage(const char* progname);

@@ -136,6 +136,7 @@ namespace tnt
 
   class TntnetProcess : public Process
   {
+    private:
       tnt::Tntnet _tntnet;
       bool _logall;
 
