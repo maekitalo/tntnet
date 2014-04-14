@@ -35,19 +35,19 @@
 
 namespace tnt
 {
-  void Component::configure(const tnt::TntConfig& config)
+  void Component::configure(const tnt::TntConfig&)
     { }
 
   unsigned Component::topCall(HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam)
     { return operator() (request, reply, qparam); }
 
-  unsigned Component::operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam)
+  unsigned Component::operator() (HttpRequest&, HttpReply&, tnt::QueryParams&)
     { return DECLINED; }
 
-  unsigned Component::endTag(HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam)
+  unsigned Component::endTag(HttpRequest&, HttpReply&, tnt::QueryParams&)
     { return DECLINED; }
 
-  std::string Component::getAttribute(const std::string& name, const std::string& def) const
+  std::string Component::getAttribute(const std::string& /* name */, const std::string& def) const
     { return def; }
 
   unsigned Component::call(HttpRequest& request, HttpReply& reply)

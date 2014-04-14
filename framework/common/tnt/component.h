@@ -26,8 +26,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
-
 #ifndef TNT_COMPONENT_H
 #define TNT_COMPONENT_H
 
@@ -52,9 +50,13 @@ namespace tnt
       virtual unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
       virtual unsigned endTag (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
 
+      /** Get the value of the given attribute, or `def` if the attribute is unset
+
+          Attributes are set using the ECPP tag `<%attr>`.
+       */
       virtual std::string getAttribute(const std::string& name, const std::string& def = std::string()) const;
 
-      /// Explicitly call operator() - sometimes more readable
+      /// Component call - sometimes more readable than operator()
       unsigned call(HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam)
         { return operator() (request, reply, qparam); }
 
