@@ -229,7 +229,6 @@ namespace tnt
         return new ComponentType(ci, um, cl);
       }
   };
-
 }
 
 #endif // TNT_ECPP_H

@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <cxxtools/unit/testsuite.h>
 #include <cxxtools/unit/registertest.h>
 #include <tnt/stringlessignorecase.h>
@@ -67,3 +68,4 @@ class StrTest : public cxxtools::unit::TestSuite
 };
 
 cxxtools::unit::RegisterTest<StrTest> register_StrTest;
+

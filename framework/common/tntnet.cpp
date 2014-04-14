@@ -325,6 +325,5 @@ namespace tnt
     _stop = true;
     _timerStopCondition.broadcast();
   }
-
 }
 

@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include "tnt/stringlessignorecase.h"
 
 namespace tnt
@@ -53,6 +54,5 @@ namespace tnt
     return *it1 ? 1
                 : *it2 ? -1 : 0;
   }
-
 }
 

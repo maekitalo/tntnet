@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <cxxtools/unit/testsuite.h>
 #include <cxxtools/unit/registertest.h>
 #include <tnt/ecpp/parsehandler.h>
@@ -235,7 +236,6 @@ namespace
   {
     _result << "endI18n()";
   }
-
 }
 
 class EcppTest : public cxxtools::unit::TestSuite
@@ -468,7 +468,7 @@ class EcppTest : public cxxtools::unit::TestSuite
       parser.parse(ecpp);
       CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,component,,foo,)onHtml(</foo>)end()");
     }
-
 };
 
 cxxtools::unit::RegisterTest<EcppTest> register_EcppTest;
+

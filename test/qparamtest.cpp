@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <cxxtools/unit/testsuite.h>
 #include <cxxtools/unit/registertest.h>
 #include <tnt/query_params.h>
@@ -111,7 +112,7 @@ class QParamTest : public cxxtools::unit::TestSuite
           CXXTOOLS_UNIT_ASSERT_EQUALS(a[1], 4);
           CXXTOOLS_UNIT_ASSERT_EQUALS(a[2], 28);
         }
-
 };
 
 cxxtools::unit::RegisterTest<QParamTest> register_QParamTest;
+

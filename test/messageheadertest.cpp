@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <cxxtools/unit/testsuite.h>
 #include <cxxtools/unit/registertest.h>
 #include <tnt/messageheader.h>
@@ -119,7 +120,7 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
                 parser.parse('A');
             CXXTOOLS_UNIT_ASSERT_THROW(parser.parse('B'), tnt::HttpError);
         }
-
 };
 
 cxxtools::unit::RegisterTest<MessageheaderTest> register_MessageheaderTest;
+

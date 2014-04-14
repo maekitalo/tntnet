@@ -95,7 +95,6 @@ namespace tnt
       void doStop();
       void addIdleJob(Jobqueue::JobPtr job);
   };
-
 }
 
 #endif // TNT_POLLER_H

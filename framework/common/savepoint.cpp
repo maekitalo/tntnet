@@ -59,6 +59,5 @@ namespace tnt
     else
       log_error("not rolling back not active Savepoint");
   }
-
 }
 

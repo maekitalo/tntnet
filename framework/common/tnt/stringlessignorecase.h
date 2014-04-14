@@ -73,7 +73,6 @@ namespace tnt
       bool operator()(const stringType& s1, const stringType& s2) const
         { return StringCompareIgnoreCase(s1, s2) < 0; }
   };
-
 }
 
 #endif // TNT_STRINGLESSIGNORECASE_H
