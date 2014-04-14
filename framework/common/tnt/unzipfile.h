@@ -168,5 +168,5 @@ namespace tnt
   };
 }
 
-#endif // UNZIPFILE_H
+#endif // TNT_UNZIPFILE_H
 
