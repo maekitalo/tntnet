@@ -88,7 +88,7 @@ namespace
   void Handler::end()
     { _result << "end()"; }
 
-  void Handler::onLine(unsigned lineno, const std::string& file)
+  void Handler::onLine(unsigned /* lineno */, const std::string& /* file */)
     { }
 
   void Handler::onHtml(const std::string& html)
@@ -118,20 +118,20 @@ namespace
   void Handler::onAttr(const std::string& name, const std::string& value)
     { _result << "onAttr(" << name << ", " << value << ')'; }
 
-  void Handler::onCall(const std::string& comp, const comp_args_type& args,
-                       const std::string& passCgi, const paramargs_type& paramargs,
-                       const std::string& cppargs)
+  void Handler::onCall(const std::string& /* comp */, const comp_args_type& /* args */,
+                       const std::string& /* passCgi */, const paramargs_type& /* paramargs */,
+                       const std::string& /* cppargs */)
     { _result << "onCall()"; }
 
-  void Handler::onEndCall(const std::string& comp)
+  void Handler::onEndCall(const std::string& /* comp */)
     { _result << "onEndCall()"; }
 
-  void Handler::onShared(const std::string& code)
+  void Handler::onShared(const std::string& /* code */)
     { _result << "onShared()"; }
 
   void Handler::onScope(tnt::ecpp::scope_container_type container, tnt::ecpp::scope_type scope,
                         const std::string& type, const std::string& var, const std::string& init,
-                        const std::vector<std::string>& includes)
+                        const std::vector<std::string>& /* includes */)
   {
     _result << "onScope(";
 
@@ -158,7 +158,7 @@ namespace
     _result << ',' << type << ',' << var << ',' << init << ')';
   }
 
-  void Handler::startComp(const std::string& name, const cppargs_type& cppargs)
+  void Handler::startComp(const std::string& /* name */, const cppargs_type& /* cppargs */)
     { _result << "startComp()"; }
 
   void Handler::startClose()
@@ -167,22 +167,22 @@ namespace
   void Handler::endClose()
     { _result << "endClose()"; }
 
-  void Handler::onComp(const std::string& code)
+  void Handler::onComp(const std::string& /* code */)
     { _result << "onComp()"; }
 
-  void Handler::onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr)
+  void Handler::onCondExpr(const std::string& /* cond */, const std::string& /* expr */, bool /* htmlexpr */)
     { _result << "onCondExpr()"; }
 
-  void Handler::onConfig(const std::string& code, const std::string& value)
+  void Handler::onConfig(const std::string& /* code */, const std::string& /* value */)
     { _result << "onConfig()"; }
 
-  void Handler::tokenSplit(bool start)
+  void Handler::tokenSplit(bool /* start */)
     { _result << "tokenSplit()"; }
 
-  void Handler::onInclude(const std::string& file)
+  void Handler::onInclude(const std::string& /* file */)
     { _result << "onInclude()"; }
 
-  void Handler::onIncludeEnd(const std::string& file)
+  void Handler::onIncludeEnd(const std::string& /* file */)
     { _result << "onIncludeEnd()"; }
 
   void Handler::startI18n()

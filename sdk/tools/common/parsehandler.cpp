@@ -39,31 +39,31 @@ namespace tnt
     void ParseHandler::end()
       { }
 
-    void ParseHandler::onLine(unsigned lineno, const std::string& file)
+    void ParseHandler::onLine(unsigned /* lineno */, const std::string& /* file */)
       { }
 
-    void ParseHandler::onHtml(const std::string& html)
+    void ParseHandler::onHtml(const std::string& /* html */)
       { }
 
-    void ParseHandler::onExpression(const std::string& code)
+    void ParseHandler::onExpression(const std::string& /* code */)
       { }
 
-    void ParseHandler::onHtmlExpression(const std::string& code)
+    void ParseHandler::onHtmlExpression(const std::string& /* code */)
       { }
 
-    void ParseHandler::onCpp(const std::string& code)
+    void ParseHandler::onCpp(const std::string& /* code */)
       { }
 
-    void ParseHandler::onPre(const std::string& code)
+    void ParseHandler::onPre(const std::string& /* code */)
       { }
 
-    void ParseHandler::onInit(const std::string& code)
+    void ParseHandler::onInit(const std::string& /* code */)
       { }
 
-    void ParseHandler::onCleanup(const std::string& code)
+    void ParseHandler::onCleanup(const std::string& /* code */)
       { }
 
-    void ParseHandler::onArg(const std::string& name, const std::string& value)
+    void ParseHandler::onArg(const std::string& /* name */, const std::string& /* value */)
       { }
 
     void ParseHandler::onGet(const std::string& name, const std::string& value)
@@ -72,26 +72,27 @@ namespace tnt
     void ParseHandler::onPost(const std::string& name, const std::string& value)
       { onArg(name, value); }
 
-    void ParseHandler::onAttr(const std::string& name, const std::string& value)
+    void ParseHandler::onAttr(const std::string& /* name */, const std::string& /* value */)
       { }
 
-    void ParseHandler::onCall(const std::string& comp,const comp_args_type& args,
-                              const std::string& passCgi, const paramargs_type& paramargs,
-                              const std::string& cppargs)
+    void ParseHandler::onCall(const std::string& /* comp */, const comp_args_type& /* args */,
+                              const std::string& /* passCgi */, const paramargs_type& /* paramargs */,
+                              const std::string& /* cppargs */)
       { }
 
-    void ParseHandler::onEndCall(const std::string& comp)
+    void ParseHandler::onEndCall(const std::string& /* comp */)
       { }
 
-    void ParseHandler::onShared(const std::string& code)
+    void ParseHandler::onShared(const std::string& /* code */)
       { }
 
-    void ParseHandler::onScope(scope_container_type container, scope_type scope,
-                               const std::string& type, const std::string& var,
-                               const std::string& init, const std::vector<std::string>& includes)
+    void ParseHandler::onScope(scope_container_type /* container */, scope_type /* scope */,
+                               const std::string& /* type */, const std::string& /* var */,
+                               const std::string& /* init */,
+                               const std::vector<std::string>& /* includes */)
       { }
 
-    void ParseHandler::startComp(const std::string& arg, const cppargs_type& cppargs)
+    void ParseHandler::startComp(const std::string& /* arg */, const cppargs_type& /* cppargs */)
       { }
 
     void ParseHandler::startClose()
@@ -100,22 +101,23 @@ namespace tnt
     void ParseHandler::endClose()
       { }
 
-    void ParseHandler::onComp(const std::string& code)
+    void ParseHandler::onComp(const std::string& /* code */)
       { }
 
-    void ParseHandler::onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr)
+    void ParseHandler::onCondExpr(const std::string& /* cond */, const std::string& /* expr */,
+                                  bool /* htmlexpr */)
       { }
 
-    void ParseHandler::onConfig(const std::string& cond, const std::string& value)
+    void ParseHandler::onConfig(const std::string& /* cond */, const std::string& /* value */)
       { }
 
-    void ParseHandler::tokenSplit(bool start)
+    void ParseHandler::tokenSplit(bool/*  start */)
       { }
 
-    void ParseHandler::onInclude(const std::string& file)
+    void ParseHandler::onInclude(const std::string& /* file */)
       { }
 
-    void ParseHandler::onIncludeEnd(const std::string& file)
+    void ParseHandler::onIncludeEnd(const std::string& /* file */)
       { }
 
     void ParseHandler::startI18n()

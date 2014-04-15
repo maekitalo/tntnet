@@ -76,7 +76,7 @@ namespace tnt
 
     }
 
-    void Variable::getParamCodeVector(std::ostream& o, const std::string& qparam) const
+    void Variable::getParamCodeVector(std::ostream& o, const std::string& /* qparam */) const
     {
       std::string ltype = _type;
       if (ltype.empty())

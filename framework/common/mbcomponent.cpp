@@ -63,7 +63,7 @@ namespace tnt
   unsigned MbComponent::topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
     { return doCall(request, reply, qparam, true); }
 
-  unsigned MbComponent::doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top)
+  unsigned MbComponent::doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&, bool top)
   {
     log_trace("MbComponent " << getCompident());
 

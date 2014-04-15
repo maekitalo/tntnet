@@ -101,29 +101,29 @@ namespace tnt
                 typename parameter1_type,
                 typename parameter2_type>
         unsigned callComp(const compident_type& ci, HttpRequest& request,
-            parameter1_type& p1, parameter2_type& p2)
-        { return fetchComp(ci).call(request, p1, p2); }
+                          parameter1_type& p1, parameter2_type& p2)
+          { return fetchComp(ci).call(request, p1, p2); }
 
       template <typename compident_type,
                 typename parameter_type>
         unsigned callComp(const compident_type& ci, HttpRequest& request,
-            parameter_type& p1)
-        { return fetchComp(ci).call(request, p1); }
+                          parameter_type& p1)
+          { return fetchComp(ci).call(request, p1); }
 
       template <typename compident_type>
         unsigned callComp(const compident_type& ci, HttpRequest& request)
-        { return fetchComp(ci).call(request); }
+          { return fetchComp(ci).call(request); }
 
       /// helper-methods for fetching contents of components
       template <typename compident_type,
                 typename parameter1_type>
         std::string scallComp(const compident_type& ci, HttpRequest& request,
-            parameter1_type& p1)
-        { return fetchComp(ci).scall(request, p1); }
+                              parameter1_type& p1)
+          { return fetchComp(ci).scall(request, p1); }
 
       template <typename compident_type>
         std::string scallComp(const compident_type& ci, HttpRequest& request)
-        { return fetchComp(ci).scall(request); }
+          { return fetchComp(ci).scall(request); }
 
       const char* getData(const HttpRequest& request, const char* def) const;
 
@@ -138,17 +138,16 @@ namespace tnt
       template <typename parameter1_type,
                 typename parameter2_type>
         unsigned callSubComp(const std::string& sub, HttpRequest& request,
-            parameter1_type& p1,
-            parameter2_type& p2) const;
+                             parameter1_type& p1, parameter2_type& p2) const;
 
       template <typename parameter1_type>
         unsigned callSubComp(const std::string& sub, HttpRequest& request,
-            parameter1_type& p1) const;
+                             parameter1_type& p1) const;
 
       /// helper-methods for fetching contents of subcomponents
       template <typename parameter1_type>
         std::string scallSubComp(const std::string& sub, HttpRequest& request,
-            parameter1_type& p1) const;
+                                 parameter1_type& p1) const;
   };
 
   //////////////////////////////////////////////////////////////////////

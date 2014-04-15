@@ -240,7 +240,7 @@ namespace tnt
   Static::~Static()
     { delete _handler; }
 
-  void Static::configure(const TntConfig& config)
+  void Static::configure(const TntConfig&)
   {
     if (_handler == 0)
       _handler = new MimeHandler();

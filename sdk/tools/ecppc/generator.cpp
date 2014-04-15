@@ -237,13 +237,13 @@ namespace tnt
       _maincomp.addSubcomp(name);
     }
 
-    void Generator::onComp(const std::string& code)
+    void Generator::onComp(const std::string& /* code */)
       { _currentComp = &_maincomp; }
 
     void Generator::startClose()
     {
       if (_haveCloseComp)
-        throw std::runtime_error("dumplicate close-part");
+        throw std::runtime_error("duplicate close-part");
       _haveCloseComp = true;
       _currentComp = &_closeComp;
     }
@@ -285,7 +285,7 @@ namespace tnt
     void Generator::onInclude(const std::string& file)
       { _currentComp->addHtml("  // <%include> " + file + '\n'); }
 
-    void Generator::onIncludeEnd(const std::string& file)
+    void Generator::onIncludeEnd(const std::string& /* file */)
       { _currentComp->addHtml("  // </%include>\n"); }
 
     void Generator::startI18n()

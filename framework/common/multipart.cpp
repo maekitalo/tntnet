@@ -49,7 +49,7 @@ namespace
       char_type _buffer[2];
 
     protected:
-      std::streambuf::int_type overflow(std::streambuf::int_type ch)
+      std::streambuf::int_type overflow(std::streambuf::int_type /* ch */)
         { return traits_type::eof(); }
 
       int sync()

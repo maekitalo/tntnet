@@ -61,7 +61,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // component definition
   //
-  unsigned Error::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&)
+  unsigned Error::operator() (tnt::HttpRequest& request, tnt::HttpReply&, tnt::QueryParams&)
   {
     std::istringstream s(request.getArg("code"));
     unsigned errorcode;

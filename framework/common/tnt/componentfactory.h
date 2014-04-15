@@ -70,7 +70,7 @@ namespace tnt
         : ComponentFactory(componentName)
         { }
 
-      virtual Component* doCreate(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)
+      virtual Component* doCreate(const tnt::Compident&, const tnt::Urlmapper&, tnt::Comploader&)
         { return new ComponentType(); }
   };
 }
