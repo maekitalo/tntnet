@@ -43,19 +43,18 @@ namespace tnt
   static ComponentFactoryImpl<Mime> mimeFactory("mime");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
-
   Mime::~Mime()
     { delete _handler; }
 
-  void Mime::configure(const tnt::TntConfig& config)
+  void Mime::configure(const tnt::TntConfig&)
   {
     if (_handler == 0)
       _handler = new MimeHandler();
   }
 
-  unsigned Mime::operator() (HttpRequest& request, HttpReply& reply, QueryParams& qparams)
+  unsigned Mime::operator() (HttpRequest& request, HttpReply& reply, QueryParams&)
   {
     std::string mimeType = request.getArg("contenttype");
     if (mimeType.empty())

@@ -46,12 +46,13 @@ namespace tnt
     class Parser
     {
       private:
-        ParseHandler& handler;
-        std::string curfile;
-        unsigned curline;
-
         typedef std::list<std::string> includes_type;
-        includes_type includes;
+
+        ParseHandler& _handler;
+        std::string _curfile;
+        unsigned _curline;
+
+        includes_type _includes;
 
         std::istream& get(char& ch);
         void doInclude(const std::string& file);
@@ -59,35 +60,33 @@ namespace tnt
         void parsePriv(std::istream& in);
 
       public:
-        Parser(ParseHandler& handler_, const std::string& fname)
-          : handler(handler_),
-            curfile(fname),
-            curline(0)
+        typedef std::multimap<std::string, std::string> comp_args_type;
+        typedef std::list<std::pair<std::string, std::string> > cppargs_type;
+        typedef std::map<std::string, std::string> paramargs_type;
+
+        Parser(ParseHandler& handler, const std::string& fname)
+          : _handler(handler),
+            _curfile(fname),
+            _curline(0)
         { }
 
         void addInclude(const std::string& dir)
-          { includes.push_back(dir); }
+          { _includes.push_back(dir); }
+
         void parse(std::istream& in);
 
-        typedef std::multimap<std::string, std::string> comp_args_type;
-        typedef std::list<std::pair<std::string, std::string> > cppargs_type;
-
-        typedef std::map<std::string, std::string> paramargs_type;
-
       private:
-        void processNV(const std::string& tag, const std::string& name,
-            const std::string& value);
+        void processNV(const std::string& tag, const std::string& name, const std::string& value);
     };
 
     class parse_error : public std::runtime_error
     {
       private:
-        std::string msg;
+        std::string _msg;
 
       public:
         parse_error(const std::string& msg, int state, const std::string& file, unsigned line);
-        ~parse_error() throw()
-        { }
+        ~parse_error() throw() { }
         const char* what() const throw();
     };
   }

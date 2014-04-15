@@ -50,7 +50,7 @@ namespace tnt
     public:
       Error() { }
 
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
   };
 
   ////////////////////////////////////////////////////////////////////////
@@ -61,8 +61,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // component definition
   //
-  unsigned Error::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, tnt::QueryParams&)
+  unsigned Error::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&)
   {
     std::istringstream s(request.getArg("code"));
     unsigned errorcode;

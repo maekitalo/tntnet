@@ -195,7 +195,7 @@ namespace tnt
 
       if (fork.child())
       {
-        // worker-process
+        // worker process
 
         log_debug("close read-fd of monitor-pipe");
         monitorPipe.closeReadFd();
@@ -234,7 +234,7 @@ namespace tnt
         return;
       }
 
-      // monitor-process
+      // monitor process
 
       log_debug("write pid " << fork.getPid() << " to \"" << tnt::TntConfig::it().pidfile << '"');
       PidFile p(tnt::TntConfig::it().pidfile, fork.getPid());

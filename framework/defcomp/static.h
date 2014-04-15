@@ -44,10 +44,10 @@ namespace tnt
     private:
       MimeHandler* _handler;
 
-      unsigned doCall(HttpRequest& request, HttpReply& reply, QueryParams& qparam, bool top);
+      unsigned doCall(HttpRequest&, HttpReply&, QueryParams&, bool top);
 
     protected:
-      void setContentType(HttpRequest& request, HttpReply& reply);
+      void setContentType(HttpRequest&, HttpReply&);
 
     public:
       Static()
@@ -55,9 +55,9 @@ namespace tnt
         { }
       ~Static();
 
-      virtual void configure(const TntConfig& config);
-      virtual unsigned topCall(HttpRequest& request, HttpReply& reply, QueryParams& qparam);
-      virtual unsigned operator() (HttpRequest& request, HttpReply& reply, QueryParams& qparam);
+      virtual void configure(const TntConfig&);
+      virtual unsigned topCall(HttpRequest&, HttpReply&, QueryParams&);
+      virtual unsigned operator() (HttpRequest&, HttpReply&, QueryParams&);
   };
 }
 

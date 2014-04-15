@@ -45,44 +45,40 @@ namespace tnt
 {
   namespace ecppc
   {
-    ////////////////////////////////////////////////////////////////////////
-    // Generator
-    //
     class Generator : public tnt::ecpp::ParseHandler
     {
       private:
-        bool raw;
-        std::string mimetype;
-
         typedef std::list<tnt::ecppc::Variable> variable_declarations;
-
-        variable_declarations configs;
-
-        std::string pre;
-        std::string init;
-        std::string cleanup;
-        std::string shared;
-
-        tnt::ecppc::Component maincomp;
-
         typedef std::list<tnt::ecppc::Subcomponent> subcomps_type;
-        subcomps_type subcomps;
-
-        bool haveCloseComp;
-        tnt::ecppc::Closecomponent closeComp;
-
-        tnt::ecppc::Component* currentComp;
-
         typedef std::map<std::string, std::string> attr_type;
-        attr_type attr;
 
-        tnt::DatachunksCreator data;
+        bool _raw;
+        std::string _mimetype;
 
-        bool externData;
-        bool compress;
+        variable_declarations _configs;
 
-        time_t c_time;
-        const char* gentime;
+        std::string _pre;
+        std::string _init;
+        std::string _cleanup;
+        std::string _shared;
+
+        tnt::ecppc::Component _maincomp;
+        subcomps_type _subcomps;
+
+        bool _haveCloseComp;
+        tnt::ecppc::Closecomponent _closeComp;
+
+        tnt::ecppc::Component* _currentComp;
+
+        attr_type _attr;
+
+        tnt::DatachunksCreator _data;
+
+        bool _externData;
+        bool _compress;
+
+        time_t _c_time;
+        const char* _gentime;
 
         struct MultiImageType
         {
@@ -90,13 +86,14 @@ namespace tnt
           std::string mime;
           time_t c_time;
         };
+
         typedef std::list<MultiImageType> MultiImagesType;
-        MultiImagesType multiImages;
+        MultiImagesType _multiImages;
 
-        unsigned curline;
-        std::string curfile;
+        unsigned _curline;
+        std::string _curfile;
 
-        bool linenumbersEnabled;
+        bool _linenumbersEnabled;
 
         bool hasScopevars() const;
 
@@ -116,25 +113,25 @@ namespace tnt
       public:
         Generator(const std::string& componentName);
 
-        void setMimetype(const std::string& type)    { mimetype = type; }
-        const std::string& getMimetype()             { return mimetype; }
+        void setMimetype(const std::string& type)   { _mimetype = type; }
+        const std::string& getMimetype()            { return _mimetype; }
 
-        void setRawMode(bool sw = true)              { raw = sw; }
-        bool isRawMode() const                       { return raw; }
+        void setRawMode(bool sw = true)             { _raw = sw; }
+        bool isRawMode() const                      { return _raw; }
 
-        void setCompress(bool sw = true)             { compress = sw; }
-        bool isCompress() const                      { return compress; }
+        void setCompress(bool sw = true)            { _compress = sw; }
+        bool isCompress() const                     { return _compress; }
 
-        void setLastModifiedTime(time_t t)           { c_time = t; }
-        time_t getLastModifiedTime() const           { return c_time; }
+        void setLastModifiedTime(time_t t)          { _c_time = t; }
+        time_t getLastModifiedTime() const          { return _c_time; }
 
-        void enableLinenumbers(bool sw = true)       { linenumbersEnabled = sw; }
-        bool isLinenumbersEnabled() const            { return linenumbersEnabled; }
+        void enableLinenumbers(bool sw = true)      { _linenumbersEnabled = sw; }
+        bool isLinenumbersEnabled() const           { return _linenumbersEnabled; }
 
-        void setLogCategory(const std::string& cat)  { maincomp.setLogCategory(cat); }
+        void setLogCategory(const std::string& cat) { _maincomp.setLogCategory(cat); }
 
         void addImage(const std::string& name, const std::string& content,
-            const std::string& mime, time_t c_time);
+                      const std::string& mime, time_t c_time);
 
         virtual void onLine(unsigned lineno, const std::string& file);
         virtual void onHtml(const std::string& html);
@@ -147,11 +144,10 @@ namespace tnt
         virtual void onArg(const std::string& name, const std::string& value);
         virtual void onGet(const std::string& name, const std::string& value);
         virtual void onPost(const std::string& name, const std::string& value);
-        virtual void onAttr(const std::string& name,
-          const std::string& value);
-        virtual void onCall(const std::string& comp,
-          const comp_args_type& args, const std::string&  pass_cgi,
-          const paramargs_type& paramargs, const std::string& cppargs);
+        virtual void onAttr(const std::string& name, const std::string& value);
+        virtual void onCall(const std::string& comp, const comp_args_type& args,
+                            const std::string& passCgi, const paramargs_type& paramargs,
+                            const std::string& cppargs);
         virtual void onEndCall(const std::string& comp);
         virtual void onShared(const std::string& code);
         virtual void startComp(const std::string& name, const cppargs_type& cppargs);
@@ -161,8 +157,9 @@ namespace tnt
         virtual void onCondExpr(const std::string& cond, const std::string& expr, bool htmlexpr);
         virtual void onConfig(const std::string& name, const std::string& value);
         virtual void onScope(scope_container_type container, scope_type scope,
-          const std::string& type, const std::string& var, const std::string& init,
-          const std::vector<std::string>& includes);
+                             const std::string& type, const std::string& var,
+                             const std::string& init,
+                             const std::vector<std::string>& includes);
         virtual void onInclude(const std::string& file);
         virtual void onIncludeEnd(const std::string& file);
         virtual void startI18n();

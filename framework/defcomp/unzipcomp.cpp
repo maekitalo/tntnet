@@ -53,7 +53,7 @@ namespace tnt
     friend class UnzipFactory;
 
     public:
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
   };
 
   static ComponentFactoryImpl<Unzip> factory("unzip");
@@ -61,7 +61,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // component definition
   //
-  unsigned Unzip::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparams)
+  unsigned Unzip::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&)
   {
     std::string pi = request.getPathInfo();
 

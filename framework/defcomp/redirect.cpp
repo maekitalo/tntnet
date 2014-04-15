@@ -47,7 +47,7 @@ namespace tnt
     friend class RedirectFactory;
 
     public:
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
   };
 
   static ComponentFactoryImpl<Redirect> redirectFactory("redirect");

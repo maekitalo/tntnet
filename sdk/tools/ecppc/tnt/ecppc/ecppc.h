@@ -44,28 +44,29 @@ namespace tnt
     class Ecppc
     {
       private:
-        std::string requestname;
-        std::string extname;
-        const char* inputfile;
-
         typedef std::map<std::string, std::string> inputfiles_type;
-        inputfiles_type inputfiles;
-
-        std::string ofile;
-        std::string odir;
-        std::string mimetype;
-        std::string mimedb;
-        std::string logCategory;
-        bool binary;
-        bool multibinary;
-        bool keepPath;
-        bool compress;
-        bool verbose;
-        bool generateDependencies;
-        bool disableLinenumbers;
-
         typedef std::list<std::string> includes_type;
-        includes_type includes;
+
+        std::string _requestname;
+        std::string _extname;
+        const char* _inputfile;
+
+        inputfiles_type _inputfiles;
+
+        std::string _ofile;
+        std::string _odir;
+        std::string _mimetype;
+        std::string _mimedb;
+        std::string _logCategory;
+        bool _binary;
+        bool _multibinary;
+        bool _keepPath;
+        bool _compress;
+        bool _verbose;
+        bool _generateDependencies;
+        bool _disableLinenumbers;
+
+        includes_type _includes;
 
         int runDependencies();
         int runGenerator();
@@ -79,13 +80,13 @@ namespace tnt
     class Usage : public std::exception
     {
       private:
-        std::string msg;
+        std::string _msg;
       public:
         Usage(const char* progname);
-        ~Usage() throw()  { }
+        ~Usage() throw() { }
 
         const char* what() const throw()
-        { return msg.c_str(); }
+          { return _msg.c_str(); }
     };
   }
 }

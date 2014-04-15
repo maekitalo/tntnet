@@ -44,7 +44,7 @@ namespace tnt
       MimeDbType _mimeDb;
 
     public:
-      MimeDb() {}
+      MimeDb() { }
       explicit MimeDb(const std::string& mimefile)
         { read(mimefile); }
       explicit MimeDb(const char* mimefile)

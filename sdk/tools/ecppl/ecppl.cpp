@@ -76,7 +76,6 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-
     std::ifstream in(argv[1]);
 
     Ecpplang generator;

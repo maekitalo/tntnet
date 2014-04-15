@@ -54,7 +54,7 @@ namespace
       virtual void onAttr(const std::string& name,
         const std::string& value);
       virtual void onCall(const std::string& comp,
-        const comp_args_type& args, const std::string& pass_cgi,
+        const comp_args_type& args, const std::string& passCgi,
         const paramargs_type& paramargs, const std::string& cppargs);
       virtual void onEndCall(const std::string& comp);
       virtual void onShared(const std::string& code);
@@ -119,7 +119,7 @@ namespace
     { _result << "onAttr(" << name << ", " << value << ')'; }
 
   void Handler::onCall(const std::string& comp, const comp_args_type& args,
-                       const std::string& pass_cgi, const paramargs_type& paramargs,
+                       const std::string& passCgi, const paramargs_type& paramargs,
                        const std::string& cppargs)
     { _result << "onCall()"; }
 

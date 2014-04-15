@@ -39,7 +39,7 @@ namespace tnt
     friend class FstaticFactory;
 
     public:
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
       virtual void drop();
   };
 }

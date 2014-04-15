@@ -44,33 +44,30 @@ namespace tnt
     class Scopevar
     {
       private:
-        scope_container_type scope_container;
-        scope_type scope;
-        std::string type;
-        std::string var;
-        std::string init;
-        unsigned myline;
-        std::string myfile;
+        scope_container_type _scopeContainer;
+        scope_type _scope;
+        std::string _type;
+        std::string _var;
+        std::string _init;
+        unsigned _myline;
+        std::string _myfile;
 
       public:
-        Scopevar()  { }
-        Scopevar(scope_container_type scope_container_, scope_type scope_,
-                 const std::string& type_,
-                 const std::string& var_, const std::string& init_,
-                 unsigned myline_, const std::string& myfile_)
-          : scope_container(scope_container_),
-            scope(scope_),
-            type(type_),
-            var(var_),
-            init(init_),
-            myline(myline_),
-            myfile(myfile_)
+        Scopevar() { }
+        Scopevar(scope_container_type scopeContainer, scope_type scope,
+                 const std::string& type, const std::string& var,
+                 const std::string& init, unsigned myline, const std::string& myfile)
+          : _scopeContainer(scopeContainer),
+            _scope(scope),
+            _type(type),
+            _var(var),
+            _init(init),
+            _myline(myline),
+            _myfile(myfile)
             { }
 
-        scope_container_type getScopeContainer() const
-          { return scope_container; }
-        scope_type getScope() const
-          { return scope; }
+        scope_container_type getScopeContainer() const { return _scopeContainer; }
+        scope_type getScope() const                    { return _scope; }
 
         void get(std::ostream& o, bool linenumbersEnabled) const;
     };

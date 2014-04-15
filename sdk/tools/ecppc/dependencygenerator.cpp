@@ -37,25 +37,23 @@ namespace tnt
 {
   namespace ecppc
   {
-    ////////////////////////////////////////////////////////////////////////
-    // Dependencygenerator
-    //
     void Dependencygenerator::onInclude(const std::string& file)
     {
       log_trace("onInclude(\"" << file << "\")");
 
-      dependencies.push_back(file);
+      _dependencies.push_back(file);
     }
 
     void Dependencygenerator::getDependencies(std::ostream& out) const
     {
       log_trace("getDependencies");
 
-      out << classname << ".cpp: " << inputfile;
-      for (dependencies_type::const_iterator it = dependencies.begin();
-           it != dependencies.end(); ++it)
+      out << _classname << ".cpp: " << _inputfile;
+      for (dependencies_type::const_iterator it = _dependencies.begin();
+           it != _dependencies.end(); ++it)
         out << " \\\n  " << *it;
       out << '\n';
     }
   }
 }
+
