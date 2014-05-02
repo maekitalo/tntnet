@@ -444,7 +444,7 @@ namespace tnt
       return DECLINED;
     }
 
-    if (offset == 0 && count == st.st_size)
+    if (offset == 0 && count == st.st_size && count > 0)
     {
       reply.out() << in.rdbuf() << std::flush;
       if (in.fail())
