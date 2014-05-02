@@ -507,7 +507,7 @@ namespace tnt
   {
     if (!isDirectMode())
     {
-      log_debug("enable chunked mode");
+      log_debug("enable direct mode");
       send(ret, msg, false);
       _current_outstream = _impl->socket;
       _impl->safe_outstream.setSink(*_impl->socket);
