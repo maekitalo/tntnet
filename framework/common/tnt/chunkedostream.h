@@ -67,11 +67,13 @@ namespace tnt
 
     public:
       explicit ChunkedOStream(std::ostream& sink)
-        : _streambuf(sink.rdbuf())
+        : std::ostream(0),
+          _streambuf(sink.rdbuf())
         { std::ostream::init(&_streambuf); }
 
       explicit ChunkedOStream(std::streambuf* obuf)
-        : _streambuf(obuf)
+        : std::ostream(0),
+          _streambuf(obuf)
         { std::ostream::init(&_streambuf); }
 
       void finish()
