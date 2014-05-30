@@ -49,7 +49,7 @@ namespace tnt
 
     public:
       explicit SessionUnlocker(HttpRequest& request, bool release = true)
-        : _request(request)
+        : _request(request),
           _locked(request.sessionScopeLocked)
       {
         if (locked && release)
