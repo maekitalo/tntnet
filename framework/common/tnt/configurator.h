@@ -50,7 +50,7 @@ namespace tnt
   class Configurator
   {
     private:
-      Tntnet& tntnet;
+      Tntnet& _tntnet;
 
     public:
       explicit Configurator(tnt::Tntnet& tntnet)
