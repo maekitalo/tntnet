@@ -88,6 +88,10 @@ namespace tnt
         return *this;
       }
 
+      /// Emulate old positional argument list.
+      /// @deprecated
+      Mapping& pushArg(const std::string& value);
+
       Mapping& setVHost(const std::string& vhost)
       {
         _vhost = vhost;

@@ -34,6 +34,7 @@
 #include <functional>
 #include <iterator>
 #include <algorithm>
+#include <sstream>
 #include <cxxtools/log.h>
 
 log_define("tntnet.dispatcher")
@@ -70,6 +71,13 @@ namespace tnt
       _r_method(method),
       _target(target)
   { }
+
+  Mapping& Mapping::pushArg(const std::string& value)
+  {
+    std::ostringstream k;
+    k << "arg" << _target.getArgs().size();
+    return setArg(k.str(), value);
+  }
 
   bool Mapping::match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const
   {
