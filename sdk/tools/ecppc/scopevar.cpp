@@ -71,7 +71,8 @@ namespace tnt
       if (linenumbersEnabled)
         out << "#line " << (myline + 1) << " \"" << myfile << "\"\n";
 
-      out << "  " << macro << '(' << type << ", " << var
+      out << "  typedef " << type << ' ' << var << "_type;\n"
+             "  " << macro << '(' << var << "_type, " << var
           << ", (" << init << ")); " 
              "  // <%" << tag << "> " << type << ' ' << var;
 
