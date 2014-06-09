@@ -182,6 +182,7 @@ then
 fi
 
 AC_CONFIG_FILES([misc/tntnet-config], [chmod +x misc/tntnet-config])
+AC_CONFIG_FILES([misc/tntnet-project], [chmod +x misc/tntnet-project])
 
 AC_CONFIG_FILES([
     Makefile

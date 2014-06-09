@@ -1,0 +1,25 @@
+<%pre>
+// put your includes here
+// #include "@PROJECT@.h"
+</%pre>
+<%args>
+// define the query parameters
+// bar;
+</%args>
+<%session>
+// define your session scope variables here
+// std::string mySessionState;
+</%session>
+<%cpp>
+// put your C++ code here
+</%cpp>
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>ecpp application @PROJECT@</title>
+ </head>
+ <body>
+  <h1>@PROJECT@</h1>
+  <p>Hello world!</p>
+ </body>
+</html>
