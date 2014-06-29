@@ -362,7 +362,7 @@ namespace tnt
       }
 
       // set Content-Length
-      reply.setContentLengthHeader(count);
+      reply.setContentLengthHeader(reply.getContentSize() + count);
 
       if (request.isMethodHEAD())
       {
