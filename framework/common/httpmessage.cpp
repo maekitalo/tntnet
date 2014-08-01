@@ -33,6 +33,7 @@
 #include <list>
 #include <sstream>
 #include <stdio.h>
+#include <cstring>
 
 namespace tnt
 {
@@ -70,28 +71,51 @@ namespace tnt
   {
     struct ::tm tm;
     gmtime_r(&t, &tm);
-    return htdate(&tm);
+
+    char date[30];
+    htdate(date, t);
+
+    return date;
   }
 
-  std::string HttpMessage::htdate(struct ::tm* tm)
+  void HttpMessage::htdate(char* date, time_t t)
+  {
+    struct ::tm tm;
+    gmtime_r(&t, &tm);
+    htdate(date, &tm);
+  }
+
+  std::string HttpMessage::htdate(const struct ::tm* tm)
+  {
+    char date[30];
+    htdate(date, tm);
+    return date;
+  }
+
+  void HttpMessage::htdate(char* date, const struct ::tm* tm)
   {
     static const char* wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     static const char* monthn[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    char buffer[80];
 
-    sprintf(buffer, "%s, %02d %s %d %02d:%02d:%02d GMT",
+    sprintf(date, "%s, %02d %s %d %02d:%02d:%02d GMT",
       wday[tm->tm_wday], tm->tm_mday, monthn[tm->tm_mon], tm->tm_year + 1900,
       tm->tm_hour, tm->tm_min, tm->tm_sec);
-    return buffer;
   }
 
   std::string HttpMessage::htdateCurrent()
   {
+    char current[30];
+    htdateCurrent(current);
+    return current;
+  }
+
+  void HttpMessage::htdateCurrent(char* current)
+  {
     static struct ::tm lastTm;
     static time_t lastDay = 0;
     static time_t lastTime = 0;
-    static std::string lastHtdate;
+    static char lastHtdate[30];
     static cxxtools::Mutex mutex;
 
     /*
@@ -119,13 +143,12 @@ namespace tnt
       lastTm.tm_min = t % 60;
       t /= 60;
       lastTm.tm_hour = t % 24;
-      lastHtdate = htdate(&lastTm);
+      htdate(lastHtdate, &lastTm);
       lastTime = t;
     }
 
     // we do a copy of lastHtdate first to make sure we have the lock
-    std::string ret = lastHtdate;
-    return ret;
+    std::strcpy(current, lastHtdate);
   }
 
   namespace

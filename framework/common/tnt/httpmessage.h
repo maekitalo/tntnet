@@ -112,11 +112,18 @@ namespace tnt
       /// @{
       /// Get a date string, formatted as needed in http
       static std::string htdate(time_t t);
-      static std::string htdate(struct ::tm* tm);
+      static std::string htdate(const struct ::tm* tm);
+
+      // date buffer must be at least 30 bytes long
+      static void htdate(char* date, time_t t);
+      static void htdate(char* date, const struct ::tm* tm);
       /// @}
 
       /// Get a string for the current time, formatted as needed in http
       static std::string htdateCurrent();
+      /// Get a string for the current time, formatted as needed in http
+      /// buffer must point to at least 30 bytes
+      static void htdateCurrent(char* current);
 
       // TODO: Documentation revision: Is this meant to check for absolute URLs?
       /** Check for double-dot-url

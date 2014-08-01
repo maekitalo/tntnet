@@ -305,7 +305,8 @@ namespace tnt
 
     if (!hasHeader(httpheader::date))
     {
-      std::string current = htdateCurrent();
+      char current[50];
+      htdateCurrent(current);
       log_debug(httpheader::date << ' ' << current);
       hsocket << httpheader::date << ' ' << current << "\r\n";
     }
