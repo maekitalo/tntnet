@@ -71,10 +71,23 @@ namespace tnt
       if (linenumbersEnabled)
         out << "#line " << (myline + 1) << " \"" << myfile << "\"\n";
 
-      out << "  typedef " << type << ' ' << var << "_type;\n"
-             "  " << macro << '(' << var << "_type, " << var
-          << ", (" << init << ")); " 
-             "  // <%" << tag << "> " << type << ' ' << var;
+      std::string t = type;
+      if (t.empty())
+        t = "std::string";
+
+      out << "  typedef " << t << ' ' << var << "_type;\n";
+      if (type.find(',') == std::string::npos)
+      {
+        out << "  " << macro << '(' << t << ", " << var
+            << ", (" << init << ")); "
+               "  // <%" << tag << "> " << t << ' ' << var;
+      }
+      else
+      {
+        out << "  " << macro << '(' << var << "_type, " << var
+            << ", (" << init << ")); "
+               "  // <%" << tag << "> " << type << ' ' << var;
+      }
 
       if (!init.empty())
       {
