@@ -47,7 +47,6 @@ namespace tnt
 {
   class PollerImpl : public PollerIf
   {
-    private:
       Jobqueue& _queue;
 
       cxxtools::posix::Pipe _notify_pipe;

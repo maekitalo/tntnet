@@ -42,7 +42,6 @@ namespace tnt
    */
   class ApplicationUnlocker
   {
-    private:
       HttpRequest& _request;
       bool _locked;
 

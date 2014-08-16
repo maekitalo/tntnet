@@ -118,7 +118,6 @@ namespace tnt
   /// Container for GET and POST parameters
   class QueryParams : public cxxtools::QueryParams
   {
-    private:
       Scope* _paramScope;
       std::locale _locale;
 

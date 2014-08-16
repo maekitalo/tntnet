@@ -40,7 +40,6 @@ namespace tnt
 {
   class Tcpjob : public Job, private SocketIf
   {
-    private:
       cxxtools::net::iostream _socket;
       const cxxtools::net::TcpServer& _listener;
       Jobqueue& _queue;
@@ -70,7 +69,6 @@ namespace tnt
 #ifdef USE_SSL
   class SslTcpjob : public Job, private SocketIf
   {
-    private:
       ssl_iostream _socket;
       const SslServer& _listener;
       Jobqueue& _queue;

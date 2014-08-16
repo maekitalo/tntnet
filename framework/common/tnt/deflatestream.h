@@ -39,7 +39,6 @@ namespace tnt
 {
   class DeflateError : public std::runtime_error
   {
-    private:
       int _zRet;
 
     public:
@@ -53,7 +52,6 @@ namespace tnt
 
   class DeflateStreamBuf : public std::streambuf
   {
-    private:
       z_stream _stream;
       std::vector<char_type> _obuffer;
       std::streambuf* _sink;
@@ -77,7 +75,6 @@ namespace tnt
 
   class DeflateStream : public std::ostream
   {
-    private:
       DeflateStreamBuf _streambuf;
 
     public:

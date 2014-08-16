@@ -73,7 +73,6 @@ namespace tnt
   /// @cond internal
   class Job : public cxxtools::RefCounted // one per request
   {
-    private:
       unsigned _keepAliveCounter;
 
       HttpRequest _request;

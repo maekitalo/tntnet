@@ -43,7 +43,6 @@ namespace tnt
 
     class Scopevar
     {
-      private:
         scope_container_type _scopeContainer;
         scope_type _scope;
         std::string _type;

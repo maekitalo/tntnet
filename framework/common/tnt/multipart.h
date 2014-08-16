@@ -40,7 +40,6 @@ namespace tnt
   /// header of a MIME-multipart-object
   class Partheader : public Messageheader
   {
-    private:
       Contentdisposition _cd;
 
     protected:

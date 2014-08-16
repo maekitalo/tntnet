@@ -39,7 +39,6 @@ namespace tnt
 {
   class stringescaper : public std::unary_function<const char*, char>
   {
-    private:
       bool _escQuote;
       mutable char _data[5];
 

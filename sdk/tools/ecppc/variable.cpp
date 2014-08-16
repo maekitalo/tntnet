@@ -112,7 +112,7 @@ namespace tnt
       else
       {
         // type defaults to std::string
-        o << "std::string " << _name 
+        o << "std::string " << _name
           << " = " << qparam << ".param(\"" << _name << '"';
         if (!_value.empty())
           o << ", (" << _value << ')';

@@ -56,9 +56,8 @@ namespace tnt
 
       class const_iterator : public std::iterator<std::forward_iterator_tag, value_type>
       {
-        friend class Messageheader;
+          friend class Messageheader;
 
-        private:
           value_type _current_value;
 
           void fixup()

@@ -40,7 +40,6 @@ namespace tnt
   {
     class Component
     {
-      private:
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::list<Variable> variables_type;

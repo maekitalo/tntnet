@@ -42,7 +42,6 @@ namespace tnt
 {
   class LangLib : public cxxtools::RefCounted
   {
-    private:
       unzipFile _file;
       std::string _lang;
       typedef std::map<std::string, std::string> dataMapType;

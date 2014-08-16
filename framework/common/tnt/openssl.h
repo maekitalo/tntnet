@@ -39,7 +39,6 @@ namespace tnt
 {
   class OpensslException : public std::runtime_error
   {
-    private:
       unsigned long _code;
 
     public:
@@ -66,7 +65,6 @@ namespace tnt
 
   class OpensslServer : public cxxtools::net::TcpServer
   {
-    private:
       SslCtxPtr _ctx;
       void installCertificates(const char* certificateFile, const char* privateKeyFile);
 
@@ -79,7 +77,6 @@ namespace tnt
 
   class OpensslStream : public cxxtools::net::TcpSocket
   {
-    private:
       SslCtxPtr _ctx;
       SSL* _ssl;
 
@@ -99,7 +96,6 @@ namespace tnt
 
   class openssl_streambuf : public std::streambuf
   {
-    private:
       OpensslStream& _stream;
       char_type* _buffer;
       unsigned _bufsize;
@@ -121,7 +117,6 @@ namespace tnt
 
   class openssl_iostream : public OpensslStream, public std::iostream
   {
-    private:
       openssl_streambuf _buffer;
 
     public:

@@ -36,7 +36,6 @@ namespace tnt
 {
   class Savepoint
   {
-    private:
       bool _active;
       HttpReply& _reply;
       std::string::size_type _pos;

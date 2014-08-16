@@ -37,7 +37,6 @@ namespace tnt
 {
   class DatachunksCreator
   {
-    private:
       typedef std::list<std::string> chunks_type;
 
       chunks_type _chunks;

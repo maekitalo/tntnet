@@ -39,7 +39,6 @@ namespace tnt
 
   class MbComponent : public EcppComponent
   {
-    private:
       const char* _rawData;
       const char** _urls;
       const char** _mimetypes;

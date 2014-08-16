@@ -36,7 +36,6 @@ namespace tnt
 {
   class HtmlEscStreamBuf : public std::streambuf
   {
-    private:
       std::streambuf* _sink;
 
       std::streambuf::int_type overflow(std::streambuf::int_type ch);
@@ -54,7 +53,6 @@ namespace tnt
 
   class HtmlEscOstream : public std::ostream
   {
-    private:
       HtmlEscStreamBuf _streambuf;
 
     public:

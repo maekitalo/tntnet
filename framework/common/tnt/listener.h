@@ -38,7 +38,6 @@ namespace tnt
 {
   class ListenerBase
   {
-    private:
       std::string _ipaddr;
       unsigned short int _port;
 
@@ -59,7 +58,6 @@ namespace tnt
 
   class Listener : public ListenerBase
   {
-    private:
       cxxtools::net::TcpServer _server;
       Jobqueue& _queue;
 
@@ -73,7 +71,6 @@ namespace tnt
 #ifdef USE_SSL
   class Ssllistener : public ListenerBase
   {
-    private:
       SslServer _server;
       Jobqueue& _queue;
 

@@ -45,7 +45,6 @@ namespace tnt
 
     class Parser
     {
-      private:
         typedef std::list<std::string> includes_type;
 
         ParseHandler& _handler;
@@ -81,7 +80,6 @@ namespace tnt
 
     class parse_error : public std::runtime_error
     {
-      private:
         std::string _msg;
 
       public:

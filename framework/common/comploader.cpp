@@ -206,7 +206,6 @@ namespace tnt
     template <typename T>
     class ValueResetter
     {
-      private:
         T& _value;
         T _null;
 

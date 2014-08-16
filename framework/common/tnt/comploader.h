@@ -47,7 +47,6 @@ namespace tnt
   /// @cond internal
   class LibraryNotFound : public std::exception
   {
-    private:
       std::string _libname;
       std::string _msg;
 
@@ -79,9 +78,8 @@ namespace tnt
 
   class ComponentLibrary
   {
-    friend class Comploader;
+      friend class Comploader;
 
-    private:
       typedef void* HandleType;
       typedef cxxtools::SmartPtr<HandleType, cxxtools::ExternalRefCounted, Dlcloser> HandlePointer;
 
@@ -124,7 +122,6 @@ namespace tnt
 
   class Comploader
   {
-    private:
       typedef std::map<std::string, ComponentLibrary> librarymap_type;
       typedef std::map<Compident, Component*> componentmap_type;
 

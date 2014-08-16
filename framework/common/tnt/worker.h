@@ -45,7 +45,6 @@ namespace tnt
 
   class Worker : public cxxtools::DetachedThread, private ThreadContext
   {
-    private:
       typedef std::set<Worker*> workers_type;
 
       static cxxtools::Mutex _mutex;

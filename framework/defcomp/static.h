@@ -39,9 +39,8 @@ namespace tnt
 
   class Static : public Component
   {
-    friend class StaticFactory;
+      friend class StaticFactory;
 
-    private:
       MimeHandler* _handler;
 
       unsigned doCall(HttpRequest&, HttpReply&, QueryParams&, bool top);

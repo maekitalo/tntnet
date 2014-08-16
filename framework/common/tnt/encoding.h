@@ -37,7 +37,6 @@ namespace tnt
 {
   class Encoding
   {
-    private:
       typedef std::map<std::string, unsigned> encodingMapType;
       encodingMapType _encodingMap;
 

@@ -39,7 +39,6 @@ namespace tnt
   {
     class Dependencygenerator : public tnt::ecpp::ParseHandler
     {
-      private:
         typedef std::list<std::string> dependencies_type;
 
         std::string _classname;

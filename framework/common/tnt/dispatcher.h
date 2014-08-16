@@ -44,7 +44,6 @@ namespace tnt
 
   class Mapping
   {
-    private:
       std::string _vhost;
       std::string _url;
       std::string _method;
@@ -131,9 +130,8 @@ namespace tnt
   /// @cond internal
   class Dispatcher : public Urlmapper // one per host
   {
-    friend class PosType;
+      friend class PosType;
 
-    private:
       typedef std::vector<Mapping> urlmap_type;
 
       urlmap_type _urlmap; // map url to soname/compname
@@ -141,7 +139,6 @@ namespace tnt
 
       class UrlMapCacheKey
       {
-        private:
           std::string _vhost;
           std::string _url;
           std::string _method;
@@ -190,7 +187,6 @@ namespace tnt
 
       class PosType
       {
-        private:
           const Dispatcher& _dis;
           cxxtools::ReadLock _lock;
           urlmap_type::size_type _pos;

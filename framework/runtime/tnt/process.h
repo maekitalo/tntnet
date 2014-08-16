@@ -37,7 +37,6 @@ namespace tnt
 {
   class Process
   {
-    private:
       bool _exitRestart;
 
       int mkDaemon(cxxtools::posix::Pipe& pipe);

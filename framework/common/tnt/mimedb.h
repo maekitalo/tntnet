@@ -39,7 +39,6 @@ namespace tnt
 {
   class MimeDb
   {
-    private:
       typedef std::map<std::string, std::string, StringLessIgnoreCase<std::string> > MimeDbType;
       MimeDbType _mimeDb;
 

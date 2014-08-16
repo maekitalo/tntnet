@@ -36,7 +36,6 @@ namespace tnt
 {
   class UrlEscStreamBuf : public std::streambuf
   {
-    private:
       std::streambuf* _sink;
 
       std::streambuf::int_type overflow(std::streambuf::int_type ch);

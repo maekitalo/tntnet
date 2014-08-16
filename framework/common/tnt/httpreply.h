@@ -42,7 +42,6 @@ namespace tnt
   /// HTTP reply message
   class HttpReply : public HttpMessage
   {
-    private:
       struct Impl;
       Impl* _impl;
       std::ostream* _current_outstream;

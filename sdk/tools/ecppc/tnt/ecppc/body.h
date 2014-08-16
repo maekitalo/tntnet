@@ -46,7 +46,6 @@ namespace tnt
 
     class Bodypart : public cxxtools::RefCounted
     {
-      private:
         unsigned _curline;
         std::string _curfile;
         static bool _linenumbersEnabled;
@@ -70,7 +69,6 @@ namespace tnt
 
     class BodypartStatic : public Bodypart
     {
-      private:
         std::string _data;
 
       public:
@@ -82,7 +80,6 @@ namespace tnt
 
     class BodypartCall : public Bodypart
     {
-      private:
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::set<std::string> subcomps_type;
@@ -132,7 +129,6 @@ namespace tnt
 
     class BodypartEndCall : public Bodypart
     {
-      private:
         BodypartCall& _bpc;
 
       public:
@@ -145,7 +141,6 @@ namespace tnt
 
     class Body
     {
-      private:
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef cxxtools::SmartPtr<Bodypart> body_part_pointer;

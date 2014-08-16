@@ -38,7 +38,6 @@ namespace tnt
 {
   class HttpReturn
   {
-    private:
       unsigned _returncode;
       const char* _msg;
 
@@ -56,7 +55,6 @@ namespace tnt
   /// HTTP-error-class
   class HttpError : public std::exception, public HttpMessage
   {
-    private:
       std::string _msg;
       std::string _body;
 
@@ -88,7 +86,6 @@ namespace tnt
   /// HTTP-error 404
   class NotFoundException : public HttpError
   {
-    private:
       std::string _url;
       std::string _vhost;
 

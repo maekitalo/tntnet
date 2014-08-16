@@ -37,7 +37,6 @@ namespace tnt
 {
   class MimeHandler
   {
-    private:
       tnt::MimeDb _mimeDb;
 
     public:

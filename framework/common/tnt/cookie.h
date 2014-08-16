@@ -42,9 +42,9 @@ namespace tnt
 
   class Cookie
   {
-    friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
-    friend class CookieParser;
-    friend class HttpReply;
+      friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
+      friend class CookieParser;
+      friend class HttpReply;
 
     public:
       static const std::string maxAge;
@@ -126,10 +126,9 @@ namespace tnt
 
   class Cookies
   {
-    friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
-    friend class HttpReply;
+      friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
+      friend class HttpReply;
 
-    private:
       typedef std::map<std::string, Cookie, StringLessIgnoreCase<std::string> > cookies_type;
       cookies_type _data;
 

@@ -43,7 +43,6 @@ namespace tnt
   {
     class Ecppc
     {
-      private:
         typedef std::map<std::string, std::string> inputfiles_type;
         typedef std::list<std::string> includes_type;
 
@@ -79,7 +78,6 @@ namespace tnt
 
     class Usage : public std::exception
     {
-      private:
         std::string _msg;
       public:
         Usage(const char* progname);

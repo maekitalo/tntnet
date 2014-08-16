@@ -50,7 +50,6 @@ namespace tnt
    */
   class Configurator
   {
-    private:
       Tntnet& _tntnet;
 
     public:

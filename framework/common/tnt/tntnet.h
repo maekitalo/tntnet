@@ -91,9 +91,8 @@ namespace tnt
    */
   class Tntnet
   {
-    friend class Worker;
+      friend class Worker;
 
-    private:
       typedef std::set<ListenerBase*> listeners_type;
 
       unsigned _minthreads;

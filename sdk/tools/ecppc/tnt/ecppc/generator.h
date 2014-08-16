@@ -47,7 +47,6 @@ namespace tnt
   {
     class Generator : public tnt::ecpp::ParseHandler
     {
-      private:
         typedef std::list<tnt::ecppc::Variable> variable_declarations;
         typedef std::list<tnt::ecppc::Subcomponent> subcomps_type;
         typedef std::map<std::string, std::string> attr_type;

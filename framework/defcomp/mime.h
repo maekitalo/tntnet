@@ -38,9 +38,8 @@ namespace tnt
 
   class Mime : public tnt::Component
   {
-    friend class MimeFactory;
+      friend class MimeFactory;
 
-    private:
       MimeHandler* _handler;
 
     public:

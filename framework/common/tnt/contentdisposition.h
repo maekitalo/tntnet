@@ -40,7 +40,6 @@ namespace tnt
    */
   class Contentdisposition : public MessageattributeParser
   {
-    private:
       std::string _type;
       std::string _name;
       std::string _filename;

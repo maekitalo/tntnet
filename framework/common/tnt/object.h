@@ -49,7 +49,6 @@ namespace tnt
   template <typename data_type, template <class> class destroyPolicy = cxxtools::DeletePolicy>
   class PointerObject : public Object, public destroyPolicy<data_type>
   {
-    private:
       data_type* _ptr;
 
     public:

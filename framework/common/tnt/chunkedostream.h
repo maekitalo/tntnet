@@ -36,7 +36,6 @@ namespace tnt
 {
   class ChunkedWriter : public std::streambuf
   {
-    private:
       std::streambuf* _obuf;
       char* _buffer;
       unsigned _bufsize;
@@ -63,7 +62,6 @@ namespace tnt
 
   class ChunkedOStream : public std::ostream
   {
-    private:
       ChunkedWriter _streambuf;
 
     public:

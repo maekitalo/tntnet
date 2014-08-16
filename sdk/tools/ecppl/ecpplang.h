@@ -36,7 +36,6 @@
 
 class Ecpplang : public tnt::ecpp::ParseHandler
 {
-  private:
     typedef std::map<unsigned, std::string> data_type;
 
     bool _inLang;

@@ -44,7 +44,6 @@ namespace tnt
 {
   class Cmd
   {
-    private:
       Tntnet _application;
       HttpReply _reply;
       ScopeManager _scopeManager;
@@ -63,8 +62,8 @@ namespace tnt
       // thread context methods
       class MyThreadContext : public ThreadContext
       {
-        private:
           Scope _threadScope;
+
         public:
           void touch() { }
           Scope& getScope() { return _threadScope; }

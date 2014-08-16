@@ -70,9 +70,8 @@ namespace tnt
   //
   class EcppComponent : public Component
   {
-    friend class EcppSubComponent;
+      friend class EcppSubComponent;
 
-    private:
       typedef std::map<std::string, EcppSubComponent*> subcomps_type;
       typedef std::set<Compident> compnotfound_type;
 
@@ -155,7 +154,6 @@ namespace tnt
   //
   class EcppSubComponent : public EcppComponent
   {
-    private:
       EcppComponent& _main;
       std::string _subcompname;
 

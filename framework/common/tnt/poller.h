@@ -47,7 +47,6 @@ namespace tnt
 
   class Poller
   {
-    private:
       PollerIf* _impl;
 
     public:

@@ -41,7 +41,6 @@ namespace tnt
    */
   struct Compident
   {
-    private:
       mutable std::string compident;
 
     public:

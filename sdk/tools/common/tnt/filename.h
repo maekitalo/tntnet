@@ -36,7 +36,6 @@ namespace tnt
 {
   class Filename
   {
-    private:
       std::string _path;
       std::string _basename;
       std::string _ext;

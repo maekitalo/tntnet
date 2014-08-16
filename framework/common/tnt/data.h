@@ -37,7 +37,6 @@ namespace tnt
 {
   class DataChunk
   {
-    private:
       const char* _data;
       unsigned _len;
 
@@ -63,7 +62,6 @@ namespace tnt
   //
   class DataChunks
   {
-    private:
       const char* _dataObject;
 
       const unsigned* udata() const

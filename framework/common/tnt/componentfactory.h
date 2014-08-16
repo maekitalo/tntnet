@@ -44,7 +44,6 @@ namespace tnt
 
   class ComponentFactory
   {
-    private:
       // noncopyable
       ComponentFactory(const ComponentFactory&);
       ComponentFactory& operator= (const ComponentFactory&);

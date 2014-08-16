@@ -38,7 +38,6 @@ namespace tnt
 {
   class GnuTlsException : public std::runtime_error
   {
-    private:
       unsigned long _code;
       static std::string formatMessage(const char* function, int code);
 
@@ -59,7 +58,6 @@ namespace tnt
 
   class GnuTlsInit
   {
-    private:
       static unsigned _initCount;
       static gnutls_dh_params _dhParams;
 
@@ -72,7 +70,6 @@ namespace tnt
 
   class GnuTlsX509Cred
   {
-    private:
       gnutls_certificate_credentials _x509_cred;
       GnuTlsInit _init;
 
@@ -85,7 +82,6 @@ namespace tnt
 
   class GnuTlsServer : public cxxtools::net::TcpServer
   {
-    private:
       GnuTlsX509Cred _cred;
 
     public:
@@ -130,7 +126,6 @@ namespace tnt
 
   class GnuTls_streambuf : public std::streambuf
   {
-    private:
       GnuTlsStream& _stream;
       char_type* _buffer;
       unsigned _bufsize;
@@ -153,7 +148,6 @@ namespace tnt
 
   class GnuTls_iostream : public GnuTlsStream, public std::iostream
   {
-    private:
       GnuTls_streambuf _buffer;
 
     public:

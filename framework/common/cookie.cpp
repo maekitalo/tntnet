@@ -126,7 +126,6 @@ namespace tnt
 
   class CookieParser
   {
-    private:
       // Cookie: $Version="1"; Customer="WILE_E_COYOTE"; $Path="/acme"
       Cookie::attrs_type common_attrs;
       Cookie::attrs_type* current_attrs;

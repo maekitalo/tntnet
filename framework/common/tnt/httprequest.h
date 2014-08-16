@@ -54,8 +54,8 @@ namespace tnt
   /// HTTP request message
   class HttpRequest : public HttpMessage
   {
-    friend class SessionUnlocker;
-    friend class ApplicationUnlocker;
+      friend class SessionUnlocker;
+      friend class ApplicationUnlocker;
 
     public:
       // forward declaration of subclass defined in httpparser.h

@@ -39,7 +39,6 @@ namespace tnt
 {
   class RequestSizeMonitor
   {
-    private:
       size_t _requestSize;
 
     protected:
@@ -62,7 +61,6 @@ namespace tnt
   class HttpRequest::Parser
     : public tnt::Parser<HttpRequest::Parser, RequestSizeMonitor>
   {
-    private:
       HttpRequest& _message;
       Messageheader::Parser _headerParser;
 

@@ -37,7 +37,6 @@ namespace tnt
 {
   class Messageheader::Parser : public tnt::Parser<Messageheader::Parser>
   {
-    private:
       Messageheader& _header;
       char* _headerdataPtr;
       char* _fieldnamePtr;
