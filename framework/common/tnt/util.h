@@ -26,8 +26,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #ifndef TNT_UTIL_H
-#define UTIL_H
+#define TNT_UTIL_H
 
 #include <string>
 
@@ -37,5 +38,5 @@ namespace tnt
   void throwRuntimeError(const char* msg);
 }
 
-#endif // UTIL_H
+#endif // TNT_UTIL_H
 

@@ -33,9 +33,6 @@ namespace tnt
 {
   namespace ecppc
   {
-    ////////////////////////////////////////////////////////////////////////
-    // Closecomponent
-    //
     void Closecomponent::getDefinition(std::ostream& code, bool externData, bool linenumbersEnabled) const
     {
       code << "unsigned _component_::endTag (tnt::HttpRequest& request, tnt::HttpReply& reply,\n"

@@ -68,6 +68,5 @@ namespace tnt
       _data = 0;
     }
   }
-
 }
 

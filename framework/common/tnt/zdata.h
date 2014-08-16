@@ -37,6 +37,7 @@ namespace tnt
 {
   class Zdata
   {
+    private:
       const char* _zptr;
       const unsigned _zdata_len;
       const unsigned _data_len;

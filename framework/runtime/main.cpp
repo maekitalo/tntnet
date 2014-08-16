@@ -69,9 +69,10 @@ namespace tnt
         glob_t _gl;
         unsigned _n;
 
-        // disable copy and assignment
-        Glob(const Glob&) { }
-        Glob& operator= (const Glob&) { return *this; }
+        // non-copyable
+        // TODO [tntnet-3.0]: use C++11 " = delete" syntax
+        Glob(const Glob&);
+        Glob& operator= (const Glob&);
 
       public:
         explicit Glob(const std::string& pattern, int flags = 0);
@@ -104,7 +105,8 @@ namespace tnt
       }
     }
 
-    Glob::~Glob() { globfree(&_gl); }
+    Glob::~Glob()
+      { globfree(&_gl); }
 
     template <typename Deserializer>
     void processConfigFile(const std::string& configFile, std::set<std::string>& filesProcessed)
@@ -132,10 +134,11 @@ namespace tnt
         }
       }
     }
-  }
+  } // namespace
 
   class TntnetProcess : public Process
   {
+    private:
       tnt::Tntnet _tntnet;
       bool _logall;
 

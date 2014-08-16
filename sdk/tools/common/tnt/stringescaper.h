@@ -39,45 +39,45 @@ namespace tnt
 {
   class stringescaper : public std::unary_function<const char*, char>
   {
-      bool escQuote;
-      mutable char data[5];
+    private:
+      bool _escQuote;
+      mutable char _data[5];
 
     public:
-      explicit stringescaper(bool escQuote_ = true)
-        : escQuote(escQuote_)
-      { }
+      explicit stringescaper(bool escQuote = true)
+        : _escQuote(escQuote)
+        { }
 
       const char* operator() (char ch) const
       {
         if (ch == '\n')
-          strcpy(data, "\\n");
+          strcpy(_data, "\\n");
         else if (ch == '\t')
-          strcpy(data, "\\t");
+          strcpy(_data, "\\t");
         else if (ch == '?')
-          strcpy(data, "\\?");
-        else if (escQuote && ch == '"')
-          strcpy(data, "\\\"");
+          strcpy(_data, "\\?");
+        else if (_escQuote && ch == '"')
+          strcpy(_data, "\\\"");
         else if (std::isprint(ch) && ch != '\\')
         {
-          data[0] = ch;
-          data[1] = '\0';
+          _data[0] = ch;
+          _data[1] = '\0';
         }
         else
         {
-          data[0] = '\\';
-          data[1] = (char)(((unsigned char)ch >> 6) + '0');
-          data[2] = (char)((((unsigned char)ch >> 3) & 0x7) + '0');
-          data[3] = (char)(((unsigned char)ch & 0x7) + '0');
-          data[4] = '\0';
+          _data[0] = '\\';
+          _data[1] = (char)(((unsigned char)ch >> 6) + '0');
+          _data[2] = (char)((((unsigned char)ch >> 3) & 0x7) + '0');
+          _data[3] = (char)(((unsigned char)ch & 0x7) + '0');
+          _data[4] = '\0';
         }
 
-        return data;
+        return _data;
       }
 
-      static std::string escape(const std::string& str,
-          const stringescaper& se = stringescaper(false));
-      static std::string mk_stringconst(const std::string& str,
-          unsigned maxcols = 0, const stringescaper& se = stringescaper(true));
+      static std::string escape(const std::string& str, const stringescaper& = stringescaper(false));
+      static std::string mk_stringconst(const std::string& str, unsigned maxcols = 0,
+                                        const stringescaper& = stringescaper(true));
   };
 }
 

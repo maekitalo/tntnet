@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #ifndef TNT_MIME_H
 #define TNT_MIME_H
 
@@ -35,25 +36,22 @@ namespace tnt
 {
   class MimeHandler;
 
-  ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
-  //
   class Mime : public tnt::Component
   {
     friend class MimeFactory;
 
     private:
-      MimeHandler* handler;
+      MimeHandler* _handler;
 
     public:
       Mime()
-        : handler(0)
+        : _handler(0)
         { }
 
       ~Mime();
 
-      virtual void configure(const tnt::TntConfig& config);
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual void configure(const tnt::TntConfig&);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
   };
 }
 

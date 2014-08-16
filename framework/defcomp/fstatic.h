@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #ifndef TNT_FSTATIC_H
 #define TNT_FSTATIC_H
 
@@ -33,15 +34,12 @@
 
 namespace tnt
 {
-  //////////////////////////////////////////////////////////////////////
-  // componentdeclaration
-  //
   class Fstatic : public Static
   {
     friend class FstaticFactory;
 
     public:
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
       virtual void drop();
   };
 }

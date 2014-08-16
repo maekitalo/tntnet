@@ -159,7 +159,7 @@ namespace tnt
   // unzipFileStreamBuf
   //
 
-  unzipFileStreamBuf::int_type unzipFileStreamBuf::overflow(unzipFileStreamBuf::int_type c)
+  unzipFileStreamBuf::int_type unzipFileStreamBuf::overflow(unzipFileStreamBuf::int_type /* c */)
     { return traits_type::eof(); }
 
   unzipFileStreamBuf::int_type unzipFileStreamBuf::underflow()

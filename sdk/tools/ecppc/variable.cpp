@@ -35,7 +35,7 @@ namespace tnt
 {
   namespace ecppc
   {
-    Variable::Variable(const std::string& arg, const std::string& value_)
+    Variable::Variable(const std::string& arg, const std::string& value)
     {
       // 'name' might be prefixed by a type
       // the variablename is the last word in 'name'
@@ -52,13 +52,13 @@ namespace tnt
 
       if (e > 1 && arg.at(e - 2) == '[' && arg.at(e-1) == ']')
       {
-        isvector = true;
+        _isVector = true;
         e -= 2;
         while (e > 0 && std::isspace(arg.at(e - 1)))
           --e;
       }
       else
-        isvector = false;
+        _isVector = false;
 
       std::string::size_type b = e;
       while (b > 0 && !std::isspace(arg.at(b - 1)))
@@ -70,76 +70,75 @@ namespace tnt
         --t;
       // t points past the last character of the type
 
-      name = std::string(arg.begin() + b, arg.begin() + e);
-      type = std::string(arg.begin(), arg.begin() + t);
-      value = value_;
+      _name = std::string(arg.begin() + b, arg.begin() + e);
+      _type = std::string(arg.begin(), arg.begin() + t);
+      _value = value;
 
     }
 
-    void Variable::getParamCodeVector(std::ostream& o, const std::string& qparam) const
+    void Variable::getParamCodeVector(std::ostream& o, const std::string& /* qparam */) const
     {
-      std::string ltype = type;
+      std::string ltype = _type;
       if (ltype.empty())
         ltype = "std::string";
 
-      o << "typedef std::vector<" << ltype << "> " << name << "_type;\n"
-        << name << "_type " << name << " = qparam.argst<" << ltype << ">(\"" << name << "\", \"" << ltype << "\");\n";
+      o << "typedef std::vector<" << ltype << "> " << _name << "_type;\n"
+        << _name << "_type " << _name << " = qparam.argst<" << ltype
+        << ">(\"" << _name << "\", \"" << ltype << "\");\n";
     }
 
     void Variable::getParamCode(std::ostream& o, const std::string& qparam) const
     {
-      if (isvector)
+      if (_isVector)
         getParamCodeVector(o, qparam);
-      else if (!type.empty())
+      else if (!_type.empty())
       {
         // we have a type
 
         // print out type and name
-        o << type << ' ' << name << " = ";
+        o << _type << ' ' << _name << " = ";
 
-        if (value.empty())
+        if (_value.empty())
         {
           // no default-value
-          o << qparam << ".argt<" << type << ">(\"" << name << "\", \"" << type << "\");\n";
+          o << qparam << ".argt<" << _type << ">(\"" << _name << "\", \"" << _type << "\");\n";
         }
         else
         {
           // with default-value
-          o << qparam << ".arg<" << type << ">(\"" << name << "\", (" << value << "));\n";
+          o << qparam << ".arg<" << _type << ">(\"" << _name << "\", (" << _value << "));\n";
         }
       }
       else
       {
         // type defaults to std::string
-        o << "std::string " << name 
-          << " = " << qparam << ".param(\"" << name << '"';
-        if (!value.empty())
-          o << ", (" << value << ')';
+        o << "std::string " << _name 
+          << " = " << qparam << ".param(\"" << _name << '"';
+        if (!_value.empty())
+          o << ", (" << _value << ')';
 
         o << ");\n";
       }
     }
 
     void Variable::getConfigInit(std::ostream& o) const
-    {
-      o << "  config.config.getMember(\"" << name << "\", _component_::" << name << ");\n";
-    }
+      { o << "  config.config.getMember(\"" << _name << "\", _component_::" << _name << ");\n"; }
 
     void Variable::getConfigDecl(std::ostream& o) const
     {
-      std::string t = type.empty() ? "std::string" : type;
+      std::string t = _type.empty() ? "std::string" : _type;
 
-      o << t << " _component_::" << name;
-      if (!value.empty())
-        o << " = " << value;
+      o << t << " _component_::" << _name;
+      if (!_value.empty())
+        o << " = " << _value;
       o << ";\n";
     }
 
     void Variable::getConfigHDecl(std::ostream& o) const
     {
-      std::string t = type.empty() ? "std::string" : type;
+      std::string t = _type.empty() ? "std::string" : _type;
 
-      o << "    static " << t << " " << name << ";\n";
+      o << "    static " << t << " " << _name << ";\n";
     }
   }
 }

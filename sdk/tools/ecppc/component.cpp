@@ -33,39 +33,36 @@ namespace tnt
 {
   namespace ecppc
   {
-    ////////////////////////////////////////////////////////////////////////
-    // Component
-    //
-
     std::string Component::getLogCategory() const
     {
-      if (!logCategory.empty())
-        return logCategory;
+      if (!_logCategory.empty())
+        return _logCategory;
 
-      std::string ret = "component." + componentName;
+      std::string ret = "component." + _componentName;
       std::string::size_type pos;
       while ((pos = ret.find('/')) != std::string::npos)
         ret[pos] = '.';
+
       return ret;
     }
 
     void Component::getBody(std::ostream& body, bool linenumbersEnabled) const
     {
-      if (!args.empty())
+      if (!_args.empty())
       {
         body << "  // <%args>\n";
         getArgs(body);
         body << "  // </%args>\n\n";
       }
 
-      if (!get.empty())
+      if (!_get.empty())
       {
         body << "  // <%get>\n";
         getGet(body);
         body << "  // </%get>\n\n";
       }
 
-      if (!post.empty())
+      if (!_post.empty())
       {
         body << "  // <%post>\n";
         getPost(body);
@@ -76,7 +73,7 @@ namespace tnt
 
       body << "  // <%cpp>\n";
 
-      compbody.getBody(body);
+      _compbody.getBody(body);
 
       body << "  // <%/cpp>\n"
            << "  return HTTP_OK;\n";
@@ -84,38 +81,31 @@ namespace tnt
 
     void Component::getArgs(std::ostream& body) const
     {
-      for (variables_type::const_iterator it = args.begin();
-           it != args.end(); ++it)
+      for (variables_type::const_iterator it = _args.begin(); it != _args.end(); ++it)
         it->getParamCode(body, "qparam");
     }
 
     void Component::getGet(std::ostream& body) const
     {
-      for (variables_type::const_iterator it = get.begin();
-           it != get.end(); ++it)
+      for (variables_type::const_iterator it = _get.begin(); it != _get.end(); ++it)
         it->getParamCode(body, "request.getGetParams()");
     }
 
     void Component::getPost(std::ostream& body) const
     {
-      for (variables_type::const_iterator it = post.begin();
-           it != post.end(); ++it)
+      for (variables_type::const_iterator it = _post.begin(); it != _post.end(); ++it)
         it->getParamCode(body, "request.getPostParams()");
     }
 
     void Component::getScopevars(std::ostream& body, bool linenumbersEnabled) const
     {
-      for (scopevars_type::const_iterator it = scopevars.begin();
-           it != scopevars.end(); ++it)
-      {
+      for (scopevars_type::const_iterator it = _scopevars.begin(); it != _scopevars.end(); ++it)
         it->get(body, linenumbersEnabled);
-      }
     }
 
     void Component::getScopevars(std::ostream& body, ecpp::scope_type scope, bool linenumbersEnabled) const
     {
-      for (scopevars_type::const_iterator it = scopevars.begin();
-           it != scopevars.end(); ++it)
+      for (scopevars_type::const_iterator it = _scopevars.begin(); it != _scopevars.end(); ++it)
       {
         if (it->getScope() == scope)
           it->get(body, linenumbersEnabled);
@@ -123,3 +113,4 @@ namespace tnt
     }
   }
 }
+

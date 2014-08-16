@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <tnt/component.h>
 #include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
@@ -40,7 +41,7 @@ namespace tnt
   class Comploader;
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  // component declaration
   //
   class Error : public tnt::Component
   {
@@ -49,7 +50,7 @@ namespace tnt
     public:
       Error() { }
 
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
   };
 
   ////////////////////////////////////////////////////////////////////////
@@ -58,10 +59,9 @@ namespace tnt
   static ComponentFactoryImpl<Error> errorFactory("error");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
-  unsigned Error::operator() (tnt::HttpRequest& request,
-    tnt::HttpReply& reply, tnt::QueryParams&)
+  unsigned Error::operator() (tnt::HttpRequest& request, tnt::HttpReply&, tnt::QueryParams&)
   {
     std::istringstream s(request.getArg("code"));
     unsigned errorcode;

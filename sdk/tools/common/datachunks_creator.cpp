@@ -33,18 +33,16 @@ namespace tnt
 {
   void DatachunksCreator::createChunks() const
   {
-    unsigned offset = (chunks.size() + 1) * sizeof(unsigned);
-    chunks_cache.append(reinterpret_cast<char*>(&offset), sizeof(unsigned));
+    unsigned offset = (_chunks.size() + 1) * sizeof(unsigned);
+    _chunkCache.append(reinterpret_cast<char*>(&offset), sizeof(unsigned));
 
-    for (chunks_type::const_iterator it = chunks.begin();
-         it != chunks.end(); ++it)
+    for (chunks_type::const_iterator it = _chunks.begin(); it != _chunks.end(); ++it)
     {
       offset += it->size();
-      chunks_cache.append(reinterpret_cast<char*>(&offset), sizeof(unsigned));
+      _chunkCache.append(reinterpret_cast<char*>(&offset), sizeof(unsigned));
     }
 
-    for (chunks_type::const_iterator it = chunks.begin();
-         it != chunks.end(); ++it)
-      chunks_cache.append(*it);
+    for (chunks_type::const_iterator it = _chunks.begin(); it != _chunks.end(); ++it)
+      _chunkCache.append(*it);
   }
 }

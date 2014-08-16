@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include "fstatic.h"
 #include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
@@ -53,7 +54,7 @@ namespace tnt
       FstaticFactory(const std::string& componentName)
         : tnt::SingletonComponentFactory(componentName)
         { }
-      virtual tnt::Component* doCreate(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);
+      virtual tnt::Component* doCreate(const tnt::Compident&, const tnt::Urlmapper&, tnt::Comploader&);
   };
 
   tnt::Component* FstaticFactory::doCreate(const tnt::Compident&, const tnt::Urlmapper&, tnt::Comploader&)
@@ -62,12 +63,12 @@ namespace tnt
   TNT_COMPONENTFACTORY(fstatic, FstaticFactory)
 
   //////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
-  unsigned Fstatic::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparams)
+  unsigned Fstatic::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&)
   {
-    if (!tnt::HttpRequest::checkUrl(request.getPathInfo())
-      || request.getPathInfo().find('\0') != std::string::npos)
+    if (!tnt::HttpRequest::checkUrl(request.getPathInfo()) ||
+        request.getPathInfo().find('\0') != std::string::npos)
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
     std::string file;

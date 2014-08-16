@@ -45,65 +45,52 @@
 
 #include "config.h"
 
-////////////////////////////////////////////////////////////////////////
-// Ecppll - Applicationclass
-//
 class Ecppll : public tnt::ecpp::ParseHandler
 {
-    tnt::ecpp::Parser parser;
-    int ret;
+  private:
+    tnt::ecpp::Parser _parser;
+    int _ret;
 
   protected:
     typedef std::list<std::string> data_type;
-    data_type data;
-    bool inLang;
-
-    bool failOnWarn;
-
-    void fail(int _ret = 1)  { ret = _ret; }
-    void warn(int _ret = 1)  { if (failOnWarn) ret = _ret; };
-
     typedef std::list<std::pair<std::string, std::string> > replacetokens_type;
 
-    replacetokens_type replacetokens;
-    replacetokens_type::const_iterator next;
+    data_type _data;
+    bool _inLang;
+
+    bool _failOnWarn;
+
+    void fail(int ret = 1) { _ret = ret; }
+    void warn(int ret = 1) { if (_failOnWarn) _ret = ret; };
+
+    replacetokens_type _replacetokens;
+    replacetokens_type::const_iterator _next;
 
   public:
     explicit Ecppll(const std::string& fname)
-      : parser(*this, fname),
-        ret(0),
-        inLang(false),
-        failOnWarn(false)
+      : _parser(*this, fname),
+        _ret(0),
+        _inLang(false),
+        _failOnWarn(false)
       { }
 
     virtual void readReplaceTokens(std::istream& in);
     virtual void onHtml(const std::string& html);
-    virtual void tokenSplit(bool start);
+    virtual void tokenSplit(bool start)     { _inLang = start; }
 
-    void setFailOnWarn(bool sw = true)
-      { failOnWarn = sw; }
+    void setFailOnWarn(bool sw = true)      { _failOnWarn = sw; }
 
     void print(std::ostream& out);
-    int getRet() const  { return ret; }
+    int getRet() const                      { return _ret; }
 
-    void addInclude(const std::string& dir)
-      { parser.addInclude(dir); }
-
-    void parse(std::istream& in)              { parser.parse(in); }
+    void addInclude(const std::string& dir) { _parser.addInclude(dir); }
+    void parse(std::istream& in)            { _parser.parse(in); }
 };
-
-////////////////////////////////////////////////////////////////////////
-// Funktionen zur Applikationsklasse
-//
-void Ecppll::tokenSplit(bool start)
-{
-  inLang = start;
-}
 
 void Ecppll::print(std::ostream& out)
 {
   tnt::DatachunksCreator dc;
-  std::copy(data.begin(), data.end(), std::back_inserter(dc));
+  std::copy(_data.begin(), _data.end(), std::back_inserter(dc));
   out.write(dc.ptr(), dc.size());
 }
 
@@ -145,7 +132,7 @@ void Ecppll::readReplaceTokens(std::istream& in)
       case state_token:
         if (ch == '\n')
         {
-          replacetokens.push_back(std::make_pair(key, token));
+          _replacetokens.push_back(std::make_pair(key, token));
           key.clear();
           token.clear();
           state = state_key;
@@ -171,72 +158,64 @@ void Ecppll::readReplaceTokens(std::istream& in)
   }
 
   if (state == state_token)
-    replacetokens.push_back(std::make_pair(key, token));
+    _replacetokens.push_back(std::make_pair(key, token));
 
-  next = replacetokens.begin();
+  _next = _replacetokens.begin();
 }
 
 void Ecppll::onHtml(const std::string& html)
 {
-  if (inLang)
+  if (_inLang)
   {
     std::ostringstream msg;
-    std::transform(
-      html.begin(),
-      html.end(),
+    std::transform(html.begin(), html.end(),
       std::ostream_iterator<const char*>(msg),
       tnt::stringescaper(false));
 
     bool found = true;
 
-    if (next == replacetokens.end()
-     || next->first != msg.str())
+    if (_next == _replacetokens.end()
+        || _next->first != msg.str())
     {
-      // nächster Token passt nicht (oder kommt keiner mehr) - suche, ob wir ihn
-      // noch finden
+      // next token doesn't match (or this one is the last) - search for matching one
       replacetokens_type::const_iterator it;
-      for (it = next;
-           it != replacetokens.end() && it->first != msg.str();
-           ++it)
+      for (it = _next; it != _replacetokens.end() && it->first != msg.str(); ++it)
         ;
 
-      if (it == replacetokens.end())
+      if (it == _replacetokens.end())
       {
         std::cerr << "warning: replacement-text \"" << html << "\" not found ("
-          << data.size() << ')'
+          << _data.size() << ')'
           << std::endl;
         warn();
         found = false;
       }
       else
       {
-        for (replacetokens_type::const_iterator it2 = next;
-             it2 != it; ++it2)
+        for (replacetokens_type::const_iterator it2 = _next; it2 != it; ++it2)
           std::cerr << "warning: replacement-text \"" << it2->first << "\" skipped ("
-            << data.size() << ')'
+            << _data.size() << ')'
             << std::endl;
-        next = it;
+
+        _next = it;
         warn();
       }
     }
 
     if (found)
     {
-      data.push_back(next->second);
-      ++next;
+      _data.push_back(_next->second);
+      ++_next;
     }
     else
-      data.push_back(html);
+      _data.push_back(html);
   }
   else
   {
-    data.push_back(html);
+    _data.push_back(html);
   }
 }
 
-////////////////////////////////////////////////////////////////////////
-// main
-//
 int main(int argc, char* argv[])
 {
   std::ios::sync_with_stdio(false);
@@ -337,3 +316,4 @@ int main(int argc, char* argv[])
     return -1;
   }
 }
+

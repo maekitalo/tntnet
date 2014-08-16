@@ -27,7 +27,6 @@
  */
 
 
-
 #ifndef TNT_COMPONENT_H
 #define TNT_COMPONENT_H
 
@@ -46,25 +45,29 @@ namespace tnt
     public:
       virtual ~Component() { }
 
-      virtual void configure(const tnt::TntConfig& config);
+      virtual void configure(const tnt::TntConfig&);
 
-      virtual unsigned topCall(HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
-      virtual unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
-      virtual unsigned endTag (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned topCall(HttpRequest&, HttpReply&, tnt::QueryParams&);
+      virtual unsigned operator() (HttpRequest&, HttpReply&, tnt::QueryParams&);
+      virtual unsigned endTag (HttpRequest&, HttpReply&, tnt::QueryParams&);
 
+      /** Get the value of the given attribute, or `def` if the attribute is unset
+
+          Attributes are set using the ECPP tag `<%attr>`.
+       */
       virtual std::string getAttribute(const std::string& name, const std::string& def = std::string()) const;
 
-      /// Explicitly call operator() - sometimes more readable
+      /// Component call - sometimes more readable than operator()
       unsigned call(HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam)
         { return operator() (request, reply, qparam); }
 
       /// Call component without parameters
-      unsigned call(HttpRequest& request, HttpReply& reply);
+      unsigned call(HttpRequest&, HttpReply&);
 
       /// Get output as a string rather than outputting to stream
-      std::string scall(HttpRequest& request, tnt::QueryParams& qparam);
+      std::string scall(HttpRequest&, tnt::QueryParams&);
       /// Get output as a string rather than outputting to stream without query-parameters
-      std::string scall(HttpRequest& request);
+      std::string scall(HttpRequest&);
   };
 
 #define TNT_VAR(scope, type, varname, key, construct)                          \

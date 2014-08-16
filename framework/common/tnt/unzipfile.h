@@ -125,6 +125,7 @@ namespace tnt
 
   class unzipFileStreamBuf : public std::streambuf
   {
+    private:
       char_type _buffer[512];
       unzipFile& _file;
 
@@ -168,5 +169,5 @@ namespace tnt
   };
 }
 
-#endif // UNZIPFILE_H
+#endif // TNT_UNZIPFILE_H
 

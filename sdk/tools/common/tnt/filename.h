@@ -36,35 +36,25 @@ namespace tnt
 {
   class Filename
   {
-      std::string path;
-      std::string basename;
-      std::string ext;
+    private:
+      std::string _path;
+      std::string _basename;
+      std::string _ext;
 
     public:
       Filename(const std::string& filename);
 
-      void setPath(const std::string& p)
-      {
-        path = p;
-        if (p.size() == 0 || p.at(p.size()) != '/')
-          path += '/';
-      }
+      void setPath(const std::string&);
+      const std::string& getPath() const     { return _path; }
 
-      const std::string& getPath() const       { return path; }
+      void setBasename(const std::string& b) { _basename = b; }
+      const std::string& getBasename() const { return _basename; }
 
-      void setBasename(const std::string& b)   { basename = b; }
-      const std::string& getBasename() const   { return basename; }
+      void setExt(const std::string&);
+      const std::string& getExt() const      { return _ext; }
 
-      void setExt(const std::string& e)
-      {
-        ext = e;
-        if (e.size() > 0 && e.at(0) != '.')
-          ext.insert(std::string::size_type(0), std::string::size_type(1), '.');
-      }
-      const std::string& getExt() const        { return ext; }
-
-      std::string getFilename() const          { return basename + ext; }
-      std::string getFullPath() const          { return path + basename + ext; }
+      std::string getFilename() const        { return _basename + _ext; }
+      std::string getFullPath() const        { return _path + _basename + _ext; }
   };
 }
 

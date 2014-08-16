@@ -40,70 +40,64 @@ namespace tnt
   {
     class Component
     {
-        std::string componentName;
-        std::string logCategory;
+      private:
         typedef ecpp::Parser::comp_args_type comp_args_type;
         typedef ecpp::Parser::paramargs_type paramargs_type;
         typedef std::list<Variable> variables_type;
         typedef std::list<Scopevar> scopevars_type;
 
-        variables_type args;
-        variables_type get;
-        variables_type post;
-        scopevars_type scopevars;
-        Body compbody;
+        std::string _componentName;
+        std::string _logCategory;
+
+        variables_type _args;
+        variables_type _get;
+        variables_type _post;
+        scopevars_type _scopevars;
+        Body _compbody;
 
       protected:
-        Component(const Component& main, const std::string& componentName_,
-          const std::string& ns_ = std::string())
-          : componentName(componentName_),
-            compbody(main.compbody, 1)
+        Component(const Component& main, const std::string& componentName,
+                  const std::string& /* ns */ = std::string())
+          : _componentName(componentName),
+            _compbody(main._compbody, 1)
           { }
 
       public:
-        explicit Component(const std::string& componentName_)
-          : componentName(componentName_)
+        explicit Component(const std::string& componentName)
+          : _componentName(componentName)
           { }
-        virtual ~Component() {}
+        virtual ~Component() { }
 
-        const std::string& getName() const  { return componentName; }
+        const std::string& getName() const { return _componentName; }
         std::string getLogCategory() const;
-        void setLogCategory(const std::string& logCategory_)
-          { logCategory = logCategory_; }
+        void setLogCategory(const std::string& logCategory)
+          { _logCategory = logCategory; }
 
         void addHtml(const std::string& code)
-          { compbody.addHtml(code); }
+          { _compbody.addHtml(code); }
 
-        void addCall(unsigned line, const std::string& file,
-                     const std::string& comp,
-                     const comp_args_type& args_,
-                     const std::string& pass_cgi,
-                     const paramargs_type& paramargs,
-                     const std::string& cppargs)
-          { compbody.addCall(line, file, comp, args_, pass_cgi, paramargs, cppargs); }
+        void addCall(unsigned line, const std::string& file, const std::string& comp,
+                     const comp_args_type& args, const std::string& passCgi,
+                     const paramargs_type& paramargs, const std::string& cppargs)
+          { _compbody.addCall(line, file, comp, args, passCgi, paramargs, cppargs); }
+
         void addArg(const std::string& name, const std::string& value)
-        {
-          args.push_back(Variable(name, value));
-        }
+          { _args.push_back(Variable(name, value)); }
+
         void addGet(const std::string& name, const std::string& value)
-        {
-          get.push_back(Variable(name, value));
-        }
+          { _get.push_back(Variable(name, value)); }
+
         void addPost(const std::string& name, const std::string& value)
-        {
-          post.push_back(Variable(name, value));
-        }
-        void addEndCall(unsigned line, const std::string& file,
-                        const std::string& comp)
-          { compbody.addEndCall(line, file, comp); }
+          { _post.push_back(Variable(name, value)); }
+
+        void addEndCall(unsigned line, const std::string& file, const std::string& comp)
+          { _compbody.addEndCall(line, file, comp); }
 
         void addSubcomp(const std::string& comp)
-          { compbody.addSubcomp(comp); }
+          { _compbody.addSubcomp(comp); }
 
         void addScopevar(const Scopevar& s)
-        {
-          scopevars.push_back(s);
-        }
+          { _scopevars.push_back(s); }
 
         void getBody(std::ostream& o, bool linenumbersEnabled) const;
         void getArgs(std::ostream& o) const;
@@ -111,7 +105,8 @@ namespace tnt
         void getPost(std::ostream& o) const;
         virtual void getScopevars(std::ostream& o, bool linenumbersEnabled) const;
         void getScopevars(std::ostream& o, ecpp::scope_type scope, bool linenumbersEnabled) const;
-        bool hasScopevars() const  { return !scopevars.empty(); }
+
+        bool hasScopevars() const { return !_scopevars.empty(); }
     };
   }
 }

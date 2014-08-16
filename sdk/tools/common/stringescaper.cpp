@@ -34,18 +34,17 @@
 
 namespace tnt
 {
-  std::string stringescaper::escape(const std::string& str,
-      const stringescaper& se)
+  std::string stringescaper::escape(const std::string& str, const stringescaper& se)
   {
     std::ostringstream c_str;
-    std::transform(str.begin(), str.end(),
-      std::ostream_iterator<const char*>(c_str),
-      se);
+    std::transform(str.begin(), str.end(), std::ostream_iterator<const char*>(c_str), se);
+
     return c_str.str();
   }
 
   std::string stringescaper::mk_stringconst(const std::string& str,
-      unsigned maxcols, const stringescaper& se)
+                                            unsigned maxcols,
+                                            const stringescaper& se)
   {
     std::ostringstream c_str;
     unsigned col = 1;

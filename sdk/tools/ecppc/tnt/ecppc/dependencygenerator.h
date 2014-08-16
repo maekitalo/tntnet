@@ -37,29 +37,28 @@ namespace tnt
 {
   namespace ecppc
   {
-
-    ////////////////////////////////////////////////////////////////////////
-    // Dependencygenerator
-    //
     class Dependencygenerator : public tnt::ecpp::ParseHandler
     {
-        std::string classname;
-        std::string inputfile;
+      private:
         typedef std::list<std::string> dependencies_type;
-        dependencies_type dependencies;
+
+        std::string _classname;
+        std::string _inputfile;
+
+        dependencies_type _dependencies;
 
       public:
-        Dependencygenerator(const std::string& classname_, const std::string& inputfile_)
-          : classname(classname_),
-            inputfile(inputfile_)
-        { }
+        Dependencygenerator(const std::string& classname, const std::string& inputfile)
+          : _classname(classname),
+            _inputfile(inputfile)
+          { }
 
         virtual void onInclude(const std::string& file);
 
         void getDependencies(std::ostream& out) const;
     };
-
   }
 }
 
 #endif // TNT_ECPP_DEPENDENCYGENERATOR_H
+

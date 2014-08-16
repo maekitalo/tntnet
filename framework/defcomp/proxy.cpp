@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <tnt/component.h>
 #include <tnt/componentfactory.h>
 #include <tnt/ecpp.h>
@@ -47,7 +48,7 @@ namespace tnt
   class Comploader;
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  // component declaration
   //
   class Proxy : public tnt::EcppComponent
   {
@@ -80,7 +81,7 @@ namespace tnt
   static ProxyFactory proxyFactory("proxy");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
   unsigned Proxy::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
   {

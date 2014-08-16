@@ -39,16 +39,17 @@ namespace tnt
   {
     class Variable
     {
-        std::string name;
-        std::string type;
-        std::string value;
-        bool isvector;
+      private:
+        std::string _name;
+        std::string _type;
+        std::string _value;
+        bool _isVector;
 
         void getParamCodeVector(std::ostream& o, const std::string& qparam) const;
 
       public:
         Variable()  { }
-        Variable(const std::string& arg, const std::string& value_);
+        Variable(const std::string& arg, const std::string& value);
 
         void getParamCode(std::ostream& o, const std::string& qparam) const;
         void getConfigInit(std::ostream& o) const;

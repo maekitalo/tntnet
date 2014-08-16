@@ -72,7 +72,7 @@ namespace tnt
   static unsigned long pthreads_thread_id()
     { return (unsigned long)pthread_self(); }
 
-  static void pthreads_locking_callback(int mode, int n, const char *file, int line)
+  static void pthreads_locking_callback(int mode, int n, const char* /* file */, int /* line */)
   {
     /*
     log_debug("pthreads_locking_callback " << CRYPTO_thread_id()

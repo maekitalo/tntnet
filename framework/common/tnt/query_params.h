@@ -289,7 +289,7 @@ namespace tnt
       return v[0];
     }
 
-    inline bool QArg<bool>::argt(const QueryParams& q, const std::string& name, unsigned n, const char* typeName)
+    inline bool QArg<bool>::argt(const QueryParams& q, const std::string& name, unsigned n, const char* /* typeName */)
     {
       std::string v = q.param(name, n);
       return !v.empty();

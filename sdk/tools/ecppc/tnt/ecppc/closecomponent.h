@@ -38,12 +38,11 @@ namespace tnt
   {
     class Closecomponent : public Component
     {
-
       public:
         Closecomponent(const std::string& componentName)
           : Component(componentName)
           { }
-        virtual ~Closecomponent() {}
+        virtual ~Closecomponent() { }
 
         void getDefinition(std::ostream& o, bool externData, bool linenumbersEnabled) const;
     };

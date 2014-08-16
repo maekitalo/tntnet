@@ -185,14 +185,28 @@ namespace tnt
       void parse(std::istream& in);
       void doPostParse();
 
+      /// @{
+      /// Get query parameters (GET and POST)
       tnt::QueryParams& getQueryParams()             { return _qparam; }
       const tnt::QueryParams& getQueryParams() const { return _qparam; }
+      /// @}
+
+      /// Get GET parameters
       const tnt::QueryParams& getGetParams() const   { return _getparam; }
+
+      /// Get POST parameters
       const tnt::QueryParams& getPostParams() const  { return _postparam; }
+
+      /// Set query parameters (GET and POST)
       void setQueryParams(const tnt::QueryParams& q) { _qparam = q; }
 
+      /// Get the IP the request was sent from
       std::string getPeerIp() const   { return _socketIf ? _socketIf->getPeerIp()   : std::string(); }
+
+      /// Get the IP the request was sent to
       std::string getServerIp() const { return _socketIf ? _socketIf->getServerIp() : std::string(); }
+
+      /// Check whether the request was sent over an SSL (https) connection
       bool isSsl() const              { return _socketIf && _socketIf->isSsl(); }
 
       const Contenttype& getContentType() const
@@ -223,18 +237,27 @@ namespace tnt
         { return getCookies().getCookie(name); }
 
       const Encoding& getEncoding() const;
+
+      /// Get the user agent (webbrowser) HTTP header
       const char* getUserAgent() const
         { return getHeader(httpheader::userAgent); }
+
+      /// Get the host (operating system) HTTP header
       const char* getHost() const
         { return getHeader(httpheader::host); }
 
+			/// Get the HTTP-Auth username
       const std::string& getUsername() const;
+
+      /// Get the HTTP-Auth password
       const std::string& getPassword() const;
+
+      /// Check equality of the HTTP-Auth password and the parameter
       bool verifyPassword(const std::string& password) const;
 
       bool keepAlive() const;
 
-      /// @return Whether the client accepts gzip compression
+      /// Check whether the client accepts gzip compression
       bool acceptGzipEncoding() const { return getEncoding().accept("gzip"); }
 
       void setApplicationScope(Scope* s);
@@ -255,11 +278,11 @@ namespace tnt
       bool hasSessionScope() const;
       bool hasSecureSessionScope() const;
 
-      /// Get the value of the content-size header as reported by the client
+      /// Get the value of the content-size HTTP header
       size_t getContentSize() const
         { return _contentSize; }
 
-      /// Get the virtual-host header of this request
+      /// Get the virtual-host HTTP header
       std::string getVirtualHost() const
         { return getHeader(httpheader::host); }
 

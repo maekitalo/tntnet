@@ -37,9 +37,11 @@ namespace tnt
 {
   class DatachunksCreator
   {
+    private:
       typedef std::list<std::string> chunks_type;
-      chunks_type chunks;
-      mutable std::string chunks_cache;
+
+      chunks_type _chunks;
+      mutable std::string _chunkCache;
 
       void createChunks() const;
 
@@ -49,32 +51,31 @@ namespace tnt
       typedef chunks_type::value_type value_type;
 
       void push_back(const std::string& data)
-        { chunks.push_back(data); chunks_cache.clear(); }
+      {
+        _chunks.push_back(data);
+        _chunkCache.clear();
+      }
       void push_back(const char* data, unsigned len)
         { push_back(std::string(data, len)); }
 
       const char* ptr() const
       {
-        if (chunks_cache.empty())
+        if (_chunkCache.empty())
           createChunks();
-        return chunks_cache.data();
+        return _chunkCache.data();
       }
 
-      unsigned count() const
-      { return chunks.size(); }
+      unsigned count() const { return _chunks.size(); }
 
       unsigned size() const
       {
-        if (chunks_cache.empty())
+        if (_chunkCache.empty())
           createChunks();
-        return chunks_cache.size();
+        return _chunkCache.size();
       }
 
-      bool empty() const
-      { return chunks.empty(); }
-
-      operator const char*() const
-      { return ptr(); }
+      bool empty() const           { return _chunks.empty(); }
+      operator const char*() const { return ptr(); }
   };
 }
 

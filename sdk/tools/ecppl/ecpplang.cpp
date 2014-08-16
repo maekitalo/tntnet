@@ -37,27 +37,25 @@
 
 void Ecpplang::onHtml(const std::string& html)
 {
-  if ((inLang && lang)
-    || (!inLang && nolang))
-    data[count] = html;
-  ++count;
+  if ((_inLang && _lang) ||
+      (!_inLang && _nolang))
+    _data[_count] = html;
+  ++_count;
 }
 
 void Ecpplang::tokenSplit(bool start)
 {
-  inLang = start;
+  _inLang = start;
 }
 
 void Ecpplang::print(std::ostream& out) const
 {
-  for (data_type::const_iterator it = data.begin();
-       it != data.end(); ++it)
+  for (data_type::const_iterator it = _data.begin(); it != _data.end(); ++it)
   {
-    std::transform(
-      it->second.begin(),
-      it->second.end(),
+    std::transform(it->second.begin(), it->second.end(),
       std::ostream_iterator<const char*>(out),
       tnt::stringescaper(false));
     out << '\n';
   }
 }
+

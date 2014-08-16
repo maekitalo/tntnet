@@ -33,9 +33,6 @@ namespace tnt
 {
   namespace ecppc
   {
-    ////////////////////////////////////////////////////////////////////////
-    // Subcomponent
-    //
     void Subcomponent::getHeader(std::ostream& o) const
     {
       o << "    class " << getName() << "_type : public tnt::EcppSubComponent\n"
@@ -48,8 +45,7 @@ namespace tnt
            "            mainComp(m)\n"
            "          { }\n"
            "        unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam";
-      for (cppargs_type::const_iterator j = cppargs.begin();
-           j != cppargs.end(); ++j)
+      for (cppargs_type::const_iterator j = _cppargs.begin(); j != _cppargs.end(); ++j)
       {
         o << ", " << j->first;
         if (!j->second.empty())
@@ -63,12 +59,13 @@ namespace tnt
     {
       code << "unsigned _component_::" << getName()
            << "_type::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam";
-      for (cppargs_type::const_iterator j = cppargs.begin();
-           j != cppargs.end(); ++j)
+
+      for (cppargs_type::const_iterator j = _cppargs.begin(); j != _cppargs.end(); ++j)
         code << ", " << j->first;
+
       code << ")\n"
               "{\n"
-              "  log_trace(\"" << outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n";
+              "  log_trace(\"" << _outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n";
 
       if (externData)
         code << "  tnt::DataChunks data(getData(request, rawData));\n";
@@ -82,8 +79,9 @@ namespace tnt
     void Subcomponent::getScopevars(std::ostream& o, bool linenumbersEnabled) const
     {
       Component::getScopevars(o, linenumbersEnabled);
-      outerclass->getScopevars(o, ecpp::page_scope, linenumbersEnabled);
-      outerclass->getScopevars(o, ecpp::shared_scope, linenumbersEnabled);
+      _outerclass->getScopevars(o, ecpp::page_scope, linenumbersEnabled);
+      _outerclass->getScopevars(o, ecpp::shared_scope, linenumbersEnabled);
     }
   }
 }
+

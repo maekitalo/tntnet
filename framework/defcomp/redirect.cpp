@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <tnt/component.h>
 #include <tnt/componentfactory.h>
 #include <tnt/httprequest.h>
@@ -39,20 +40,20 @@ namespace tnt
   class Comploader;
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdeclaration
+  // component declaration
   //
   class Redirect : public tnt::Component
   {
     friend class RedirectFactory;
 
     public:
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+      virtual unsigned operator() (tnt::HttpRequest&, tnt::HttpReply&, tnt::QueryParams&);
   };
 
   static ComponentFactoryImpl<Redirect> redirectFactory("redirect");
 
   ////////////////////////////////////////////////////////////////////////
-  // componentdefinition
+  // component definition
   //
   unsigned Redirect::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&)
   {

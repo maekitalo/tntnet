@@ -47,33 +47,32 @@ namespace tnt
   namespace ecppc
   {
     Ecppc::Ecppc(int& argc, char* argv[])
-      : requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
-        inputfile(0),
-        ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
-        odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
-        mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),
-        mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types"))
+      : _requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
+        _inputfile(0),
+        _ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
+        _odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
+        _mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),
+        _mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types"))
     {
-
       while (true)
       {
         cxxtools::Arg<std::string> include(argc, argv, 'I');
         if (!include.isSet())
           break;
         log_debug("include: " << include.getValue());
-        includes.push_back(include);
+        _includes.push_back(include);
       }
 
-      binary = cxxtools::Arg<bool>(argc, argv, 'b');
-      multibinary = cxxtools::Arg<bool>(argc, argv, 'b');
-      keepPath = cxxtools::Arg<bool>(argc, argv, 'p');
-      compress = cxxtools::Arg<bool>(argc, argv, 'z');
-      verbose = cxxtools::Arg<bool>(argc, argv, 'v');
-      generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
-      disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
-      logCategory = cxxtools::Arg<std::string>(argc, argv, 'l');
+      _binary = cxxtools::Arg<bool>(argc, argv, 'b');
+      _multibinary = cxxtools::Arg<bool>(argc, argv, 'b');
+      _keepPath = cxxtools::Arg<bool>(argc, argv, 'p');
+      _compress = cxxtools::Arg<bool>(argc, argv, 'z');
+      _verbose = cxxtools::Arg<bool>(argc, argv, 'v');
+      _generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
+      _disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
+      _logCategory = cxxtools::Arg<std::string>(argc, argv, 'l');
 
-      if (multibinary)
+      if (_multibinary)
       {
         cxxtools::Arg<const char*> ifiles(argc, argv, 'i');
         if (ifiles.isSet())
@@ -83,7 +82,7 @@ namespace tnt
           while (std::getline(in, ifile))
           {
             std::string key = ifile;
-            if (!keepPath)
+            if (!_keepPath)
             {
               // strip path
               std::string::size_type p;
@@ -91,7 +90,7 @@ namespace tnt
                 key.erase(0, p + 1);
             }
 
-            inputfiles.insert(inputfiles_type::value_type(key, ifile));
+            _inputfiles.insert(inputfiles_type::value_type(key, ifile));
           }
         }
 
@@ -99,7 +98,7 @@ namespace tnt
         {
           std::string ifile = argv[a];
           std::string key = ifile;
-          if (!keepPath)
+          if (!_keepPath)
           {
             // strip path
             std::string::size_type p;
@@ -107,50 +106,50 @@ namespace tnt
               key.erase(0, p + 1);
           }
 
-          inputfiles.insert(inputfiles_type::value_type(key, ifile));
+          _inputfiles.insert(inputfiles_type::value_type(key, ifile));
         }
       }
       else
       {
         if (argc < 2 || argv[1][0] == '-')
           throw Usage(argv[0]);
-        inputfile = argv[1];
+        _inputfile = argv[1];
       }
     }
 
     int Ecppc::run()
     {
       // requestname from inputfilename
-      if (requestname.empty())
+      if (_requestname.empty())
       {
-        if (multibinary)
+        if (_multibinary)
         {
           std::cerr << "warning: no requestname passed (with -n) - using \"images\"" << std::endl;
-          requestname = "images";
+          _requestname = "images";
         }
         else
         {
-          std::string input = inputfile;
+          std::string input = _inputfile;
           std::string::size_type pos_dot = input.find_last_of(".");
           if (pos_dot != std::string::npos)
           {
             std::string::size_type pos_slash;
-            if (keepPath || (pos_slash = input.find_last_of("\\/")) == std::string::npos)
-              requestname = input.substr(0, pos_dot);
+            if (_keepPath || (pos_slash = input.find_last_of("\\/")) == std::string::npos)
+              _requestname = input.substr(0, pos_dot);
             else if (pos_slash < pos_dot)
-              requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
+              _requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
 
-            if (ofile.empty() && !generateDependencies)
-              ofile = input.substr(0, pos_dot);
+            if (_ofile.empty() && !_generateDependencies)
+              _ofile = input.substr(0, pos_dot);
 
-            extname = input.substr(pos_dot + 1);
+            _extname = input.substr(pos_dot + 1);
           }
           else
           {
-            requestname = input;
+            _requestname = input;
           }
 
-          if (requestname.empty())
+          if (_requestname.empty())
           {
             std::cerr << "cannot derive component name from filename. Use -n" << std::endl;
             return -1;
@@ -158,10 +157,10 @@ namespace tnt
         }
       }
 
-      if (ofile.empty() && !generateDependencies)
-        ofile = requestname;
+      if (_ofile.empty() && !_generateDependencies)
+        _ofile = _requestname;
 
-      if (generateDependencies)
+      if (_generateDependencies)
         return runDependencies();
       else
         return runGenerator();
@@ -170,51 +169,50 @@ namespace tnt
     int Ecppc::runGenerator()
     {
       // strip cpp-extension from outputfilename
-      if (ofile.size() == ofile.rfind(".cpp") + 4)
-        ofile = ofile.substr(0, ofile.size() - 4);
+      if (_ofile.size() == _ofile.rfind(".cpp") + 4)
+        _ofile = _ofile.substr(0, _ofile.size() - 4);
 
       // create generator
-      tnt::ecppc::Generator generator(requestname);
+      tnt::ecppc::Generator generator(_requestname);
 
       // initialize
-      generator.enableLinenumbers(!disableLinenumbers);
-      Bodypart::enableLinenumbers(!disableLinenumbers);
+      generator.enableLinenumbers(!_disableLinenumbers);
+      Bodypart::enableLinenumbers(!_disableLinenumbers);
 
-      if (!mimetype.empty())
-        generator.setMimetype(mimetype);
-      else if (!extname.empty() && !multibinary)
+      if (!_mimetype.empty())
+        generator.setMimetype(_mimetype);
+      else if (!_extname.empty() && !_multibinary)
       {
-        tnt::MimeDb db(mimedb);
-        std::string mimeType = db.getMimetype(extname);
+        tnt::MimeDb db(_mimedb);
+        std::string mimeType = db.getMimetype(_extname);
         if (mimeType.empty())
         {
-          if (extname != "ecpp")
+          if (_extname != "ecpp")
             std::cerr << "warning: unknown mimetype" << std::endl;
         }
         else
           generator.setMimetype(mimeType);
       }
 
-      generator.setCompress(compress);
-      generator.setLogCategory(logCategory);
+      generator.setCompress(_compress);
+      generator.setLogCategory(_logCategory);
 
-      std::string obase = odir;
+      std::string obase = _odir;
       if (!obase.empty())
         obase += '/';
-      obase += ofile;
+      obase += _ofile;
       
       //
       // parse sourcefile
       //
 
-      if (multibinary)
+      if (_multibinary)
       {
         tnt::MimeDb mimeDb;
-        if (mimetype.empty())
-          mimeDb.read(mimedb);
+        if (_mimetype.empty())
+          mimeDb.read(_mimedb);
 
-        for (inputfiles_type::const_iterator it = inputfiles.begin();
-             it != inputfiles.end(); ++it)
+        for (inputfiles_type::const_iterator it = _inputfiles.begin(); it != _inputfiles.end(); ++it)
         {
           std::string key = it->first;
           std::string ifile = it->second;
@@ -224,14 +222,13 @@ namespace tnt
           if (stat(ifile.c_str(), &st) != 0)
           {
             // search for input file in includes list
-            for (includes_type::const_iterator incl = includes.begin();
-              incl != includes.end(); ++incl)
+            for (includes_type::const_iterator incl = _includes.begin(); incl != _includes.end(); ++incl)
             {
-              std::string inputfile_ = *incl + '/' + it->second;
-              log_debug("check for input file " << inputfile_);
-              if (stat(inputfile_.c_str(), &st) == 0)
+              std::string inputfile = *incl + '/' + it->second;
+              log_debug("check for input file " << inputfile);
+              if (stat(inputfile.c_str(), &st) == 0)
               {
-                ifile = inputfile_;
+                ifile = inputfile;
                 break;
               }
             }
@@ -246,8 +243,8 @@ namespace tnt
           content << in.rdbuf();
 
           std::string mime;
-          if (!mimetype.empty())
-            mime = mimetype;
+          if (!_mimetype.empty())
+            mime = _mimetype;
           else
           {
             mime = mimeDb.getMimetype(ifile);
@@ -263,11 +260,11 @@ namespace tnt
       }
       else
       {
-        std::ifstream in(inputfile);
+        std::ifstream in(_inputfile);
         if (!in)
-          throw std::runtime_error(std::string("can't read ") + inputfile);
+          throw std::runtime_error(std::string("can't read ") + _inputfile);
 
-        if (binary)
+        if (_binary)
         {
           std::ostringstream html;
           html << in.rdbuf();
@@ -275,7 +272,7 @@ namespace tnt
           generator.setRawMode();
 
           struct stat st;
-          if (stat(inputfile, &st) == 0)
+          if (stat(_inputfile, &st) == 0)
             generator.setLastModifiedTime(st.st_ctime);
         }
         else
@@ -289,14 +286,14 @@ namespace tnt
       //
       // generate Code
       //
-      if (verbose)
+      if (_verbose)
         std::cout << "generate " << obase << ".cpp" << std::endl;
       std::ofstream sout((obase + ".cpp").c_str());
-      generator.getCpp(sout, ofile + ".cpp");
+      generator.getCpp(sout, _ofile + ".cpp");
       sout.close();
 
       if (!sout)
-        throw std::runtime_error("error writing file \"" + ofile + ".cpp\"");
+        throw std::runtime_error("error writing file \"" + _ofile + ".cpp\"");
 
       return 0;
     }
@@ -305,20 +302,20 @@ namespace tnt
     {
       log_trace("runDependencies");
 
-      tnt::ecppc::Dependencygenerator generator(requestname, inputfile);
+      tnt::ecppc::Dependencygenerator generator(_requestname, _inputfile);
 
-      std::ifstream in(inputfile);
+      std::ifstream in(_inputfile);
       if (!in)
-        throw std::runtime_error(std::string("can't read ") + inputfile);
+        throw std::runtime_error(std::string("can't read ") + _inputfile);
 
-      if (!binary)
+      if (!_binary)
         runParser(in, generator, false);
 
-      if (ofile.empty())
+      if (_ofile.empty())
         generator.getDependencies(std::cout);
       else
       {
-        std::ofstream out(ofile.c_str());
+        std::ofstream out(_ofile.c_str());
         generator.getDependencies(out);
       }
 
@@ -328,11 +325,10 @@ namespace tnt
     bool Ecppc::runParser(std::istream& in, tnt::ecpp::ParseHandler& handler, bool continueOnError)
     {
       // create parser
-      tnt::ecpp::Parser parser(handler, inputfile);
+      tnt::ecpp::Parser parser(handler, _inputfile);
 
       // initialize parser
-      for (includes_type::const_iterator it = includes.begin();
-           it != includes.end(); ++it)
+      for (includes_type::const_iterator it = _includes.begin(); it != _includes.end(); ++it)
         parser.addInclude(*it);
 
       // call parser
@@ -376,7 +372,7 @@ namespace tnt
            "  -p               keep path when generating component name from filename\n"
            "  -l log-category  set log category (default: component.compname)\n"
            "  -L               disable generation of #line-directives\n";
-      msg = o.str();
+      _msg = o.str();
     }
   }
 }
@@ -404,3 +400,4 @@ int main(int argc, char* argv[])
     return 1;
   }
 }
+

@@ -38,6 +38,7 @@ namespace tnt
 {
   class Sessionscope : public Scope
   {
+    private:
       time_t _atime;
       unsigned _timeout;
 

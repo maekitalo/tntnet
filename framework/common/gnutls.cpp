@@ -465,6 +465,5 @@ namespace tnt
       return traits_type::eof();
     }
   }
-
 }
 

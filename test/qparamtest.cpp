@@ -26,92 +26,93 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include <cxxtools/unit/testsuite.h>
 #include <cxxtools/unit/registertest.h>
 #include <tnt/query_params.h>
 
 class QParamTest : public cxxtools::unit::TestSuite
 {
-    public:
-        QParamTest()
-        : cxxtools::unit::TestSuite("qparam")
-        {
-            registerMethod("qparam", *this, &QParamTest::testQParam);
-            registerMethod("intarg", *this, &QParamTest::testIntarg);
-            registerMethod("locale", *this, &QParamTest::testLocale);
-            registerMethod("defaultValue", *this, &QParamTest::testDefaultValue);
-            registerMethod("addValue", *this, &QParamTest::testAddValue);
-            registerMethod("multipleValues", *this, &QParamTest::testMultipleValues);
-        }
+  public:
+    QParamTest()
+      : cxxtools::unit::TestSuite("qparam")
+    {
+      registerMethod("qparam", *this, &QParamTest::testQParam);
+      registerMethod("intarg", *this, &QParamTest::testIntarg);
+      registerMethod("locale", *this, &QParamTest::testLocale);
+      registerMethod("defaultValue", *this, &QParamTest::testDefaultValue);
+      registerMethod("addValue", *this, &QParamTest::testAddValue);
+      registerMethod("multipleValues", *this, &QParamTest::testMultipleValues);
+    }
 
-        void testQParam()
-        {
-          tnt::QueryParams q("aa=5&bb=7");
-          std::string aa = q.arg<std::string>("aa");
-          std::string bb = q.arg<std::string>("bb");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(aa, "5");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(bb, "7");
-        }
+    void testQParam()
+    {
+      tnt::QueryParams q("aa=5&bb=7");
+      std::string aa = q.arg<std::string>("aa");
+      std::string bb = q.arg<std::string>("bb");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(aa, "5");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(bb, "7");
+    }
 
-        void testIntarg()
-        {
-          tnt::QueryParams q("aa=5&bb=7");
-          int aa = q.arg<int>("aa");
-          int bb = q.arg<int>("bb");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(aa, 5);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(bb, 7);
-        }
+    void testIntarg()
+    {
+      tnt::QueryParams q("aa=5&bb=7");
+      int aa = q.arg<int>("aa");
+      int bb = q.arg<int>("bb");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(aa, 5);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(bb, 7);
+    }
 
-        void testLocale()
-        {
-          tnt::QueryParams q("aa=5,5&bb=7,25");
-          q.locale(std::locale("de_DE"));
-          double aa = q.arg<double>("aa");
-          double bb = q.arg<double>("bb");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(aa, 5.5);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(bb, 7.25);
-        }
+    void testLocale()
+    {
+      tnt::QueryParams q("aa=5,5&bb=7,25");
+      q.locale(std::locale("de_DE"));
+      double aa = q.arg<double>("aa");
+      double bb = q.arg<double>("bb");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(aa, 5.5);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(bb, 7.25);
+    }
 
-        void testDefaultValue()
-        {
-          tnt::QueryParams q;
-          std::string aa = q.arg<std::string>("aa", "Hi");
-          std::string bb = q.arg<std::string>("bb", "there");
-          std::string cc = q.arg<std::string>("cc", "Hi there");
-          double dd = q.arg<double>("dd", 42);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(aa, "Hi");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(bb, "there");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(cc, "Hi there");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(dd, 42);
-        }
+    void testDefaultValue()
+    {
+      tnt::QueryParams q;
+      std::string aa = q.arg<std::string>("aa", "Hi");
+      std::string bb = q.arg<std::string>("bb", "there");
+      std::string cc = q.arg<std::string>("cc", "Hi there");
+      double dd = q.arg<double>("dd", 42);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(aa, "Hi");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(bb, "there");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(cc, "Hi there");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(dd, 42);
+    }
 
-        void testAddValue()
-        {
-          tnt::QueryParams q;
-          q.add("a", 17);
-          q.add("b", "Hi there");
-          q.add("c", true);
-          q.add("d", false);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<unsigned>("a"), 17);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<std::string>("b"), "Hi there");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("c"), true);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("d"), false);
-        }
+    void testAddValue()
+    {
+      tnt::QueryParams q;
+      q.add("a", 17);
+      q.add("b", "Hi there");
+      q.add("c", true);
+      q.add("d", false);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<unsigned>("a"), 17);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<std::string>("b"), "Hi there");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("c"), true);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("d"), false);
+    }
 
-        void testMultipleValues()
-        {
-          tnt::QueryParams q("a=17&a=4&b=Hi&a=28");
-          CXXTOOLS_UNIT_ASSERT_EQUALS(q.paramcount("a"), 3);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(q.paramcount("b"), 1);
+    void testMultipleValues()
+    {
+      tnt::QueryParams q("a=17&a=4&b=Hi&a=28");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.paramcount("a"), 3);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.paramcount("b"), 1);
 
-          std::vector<int> a = q.args<int>("a");
+      std::vector<int> a = q.args<int>("a");
 
-          CXXTOOLS_UNIT_ASSERT_EQUALS(a.size(), 3);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(a[0], 17);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(a[1], 4);
-          CXXTOOLS_UNIT_ASSERT_EQUALS(a[2], 28);
-        }
-
+      CXXTOOLS_UNIT_ASSERT_EQUALS(a.size(), 3);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(a[0], 17);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(a[1], 4);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(a[2], 28);
+    }
 };
 
 cxxtools::unit::RegisterTest<QParamTest> register_QParamTest;
+

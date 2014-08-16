@@ -86,7 +86,6 @@ namespace tnt
   //////////////////////////////////////////////////////////////////////
   // HttpReply::Impl
   //
-
   struct HttpReply::Impl
   {
     std::ostream* socket;
@@ -187,44 +186,32 @@ namespace tnt
       sendStatusLine(sendStatusLine_),
       headRequest(false),
       clearSession(false)
-  {
-  }
+    { }
 
   //////////////////////////////////////////////////////////////////////
   // HttpReply
   //
-  HttpReply::HttpReply(std::ostream& s, bool sendStatusLine_)
-    : _impl(Impl::pool.getInstance(s, sendStatusLine_)),
+  HttpReply::HttpReply(std::ostream& s, bool sendStatusLine)
+    : _impl(Impl::pool.getInstance(s, sendStatusLine)),
       _current_outstream(&_impl->outstream),
       _safe_outstream(&_impl->safe_outstream),
       _url_outstream(&_impl->url_outstream)
-  {
-  }
+    { }
 
   HttpReply::~HttpReply()
-  {
-    Impl::pool.releaseInstance(_impl);
-  }
+    { Impl::pool.releaseInstance(_impl); }
 
   void HttpReply::setHeadRequest(bool sw)
-  {
-    _impl->headRequest = sw;
-  }
+    { _impl->headRequest = sw; }
 
   void HttpReply::clearSession()
-  {
-    _impl->clearSession = true;
-  }
+    { _impl->clearSession = true; }
 
   bool HttpReply::isClearSession() const
-  {
-    return _impl->clearSession;
-  }
+    { return _impl->clearSession; }
 
   void HttpReply::resetContent()
-  {
-    _impl->outstream.str(std::string());
-  }
+    { _impl->outstream.str(std::string()); }
 
   void HttpReply::rollbackContent(unsigned size)
   {
@@ -233,34 +220,22 @@ namespace tnt
   }
 
   bool HttpReply::isDirectMode() const
-  {
-    return _current_outstream == _impl->socket;
-  }
+    { return _current_outstream == _impl->socket; }
 
   std::string::size_type HttpReply::getContentSize() const
-  {
-    return _impl->outstream.str().size();
-  }
+    { return _impl->outstream.str().size(); }
 
   std::ostream& HttpReply::getDirectStream()
-  {
-    return *_impl->socket;
-  }
+    { return *_impl->socket; }
 
   void HttpReply::setKeepAliveCounter(unsigned c)
-  {
-    _impl->keepAliveCounter = c;
-  }
+    { _impl->keepAliveCounter = c; }
 
   unsigned HttpReply::getKeepAliveCounter() const
-  {
-    return _impl->keepAliveCounter;
-  }
+    { return _impl->keepAliveCounter; }
 
   void HttpReply::setAcceptEncoding(const Encoding& enc)
-  {
-    _impl->acceptEncoding = enc;
-  }
+    { _impl->acceptEncoding = enc;}
 
   bool HttpReply::tryCompress(std::string& body)
   {
@@ -282,9 +257,7 @@ namespace tnt
   }
 
   void HttpReply::postRunCleanup()
-  {
-    Impl::pool.clear();
-  }
+    { Impl::pool.clear();}
 
   void HttpReply::send(unsigned ret, const char* msg, bool ready) const
   {
@@ -328,9 +301,9 @@ namespace tnt
       else
       {
         if (body.size() >= TntConfig::it().minCompressSize
-          && !hasHeader(httpheader::contentEncoding)
-          && _impl->acceptEncoding.accept("gzip")
-          && tryCompress(body))
+            && !hasHeader(httpheader::contentEncoding)
+            && _impl->acceptEncoding.accept("gzip")
+            && tryCompress(body))
         {
           log_debug(httpheader::contentEncoding << " gzip");
           hsocket << httpheader::contentEncoding << " gzip\r\n";
@@ -567,3 +540,4 @@ namespace tnt
     }
   }
 }
+

@@ -26,6 +26,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include "static.h"
 #include "mimehandler.h"
 #include <tnt/httprequest.h>
@@ -228,40 +229,42 @@ namespace tnt
 #endif
   }
 
+  //////////////////////////////////////////////////////////////////////
+  // factory
+  //
+  static ComponentFactoryImpl<Static> staticFactory("static");
+
+  //////////////////////////////////////////////////////////////////////
+  // component definition
+  //
   Static::~Static()
     { delete _handler; }
 
-  void Static::configure(const TntConfig& config)
+  void Static::configure(const TntConfig&)
   {
     if (_handler == 0)
       _handler = new MimeHandler();
   }
 
-  static ComponentFactoryImpl<Static> staticFactory("static");
-
-  //////////////////////////////////////////////////////////////////////
-  // componentdefinition
-  //
   void Static::setContentType(HttpRequest& request, HttpReply& reply)
   {
     if (_handler)
       reply.setContentType(_handler->getMimeType(request.getPathInfo()).c_str());
   }
 
-  unsigned Static::operator() (HttpRequest& request, HttpReply& reply, QueryParams& qparams)
-    { return doCall(request, reply, qparams, false); }
+  unsigned Static::operator() (HttpRequest& request, HttpReply& reply, QueryParams& qparam)
+    { return doCall(request, reply, qparam, false); }
 
-  unsigned Static::topCall(HttpRequest& request, HttpReply& reply, QueryParams& qparams)
-    { return doCall(request, reply, qparams, true); }
+  unsigned Static::topCall(HttpRequest& request, HttpReply& reply, QueryParams& qparam)
+    { return doCall(request, reply, qparam, true); }
 
-  unsigned Static::doCall(HttpRequest& request, HttpReply& reply, QueryParams& qparams, bool top)
+  unsigned Static::doCall(HttpRequest& request, HttpReply& reply, QueryParams&, bool top)
   {
-    if (!tnt::HttpRequest::checkUrl(request.getPathInfo())
-      || request.getPathInfo().find('\0') != std::string::npos)
+    if (!tnt::HttpRequest::checkUrl(request.getPathInfo()) ||
+        request.getPathInfo().find('\0') != std::string::npos)
       throw tnt::HttpError(HTTP_BAD_REQUEST, "illegal url");
 
     // fetch document root from arguments or take global setting as default
-
     std::string file = request.getArg("documentRoot", TntConfig::it().documentRoot);
     log_debug("document root =\"" << file << '"');
 

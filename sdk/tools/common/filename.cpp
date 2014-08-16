@@ -37,7 +37,7 @@ namespace tnt
     std::string::size_type pos_slash = filename.find_last_of("\\/");
 
     if (pos_slash != std::string::npos)
-      path = filename.substr(0, ++pos_slash);
+      _path = filename.substr(0, ++pos_slash);
     else
       pos_slash = 0;
 
@@ -45,10 +45,24 @@ namespace tnt
 
     if (pos_dot != std::string::npos && pos_dot > pos_slash)
     {
-      basename = filename.substr(pos_slash, pos_dot - pos_slash);
-      ext = filename.substr(pos_dot);
+      _basename = filename.substr(pos_slash, pos_dot - pos_slash);
+      _ext = filename.substr(pos_dot);
     }
     else
-      basename = filename.substr(pos_slash);
+      _basename = filename.substr(pos_slash);
+  }
+
+  void Filename::setPath(const std::string& p)
+  {
+    _path = p;
+    if (p.size() == 0 || p.at(p.size()) != '/')
+      _path += '/';
+  }
+
+  void Filename::setExt(const std::string& e)
+  {
+    _ext = e;
+    if (e.size() > 0 && e.at(0) != '.')
+      _ext.insert(std::string::size_type(0), std::string::size_type(1), '.');
   }
 }
