@@ -34,6 +34,7 @@
 #include <cxxtools/log.h>
 #include <cxxtools/convert.h>
 #include <cstring>
+#include <climits>
 
 log_define("tntnet.mbcomponent")
 
@@ -63,6 +64,24 @@ namespace tnt
   unsigned MbComponent::topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
     { return doCall(request, reply, qparam, true); }
 
+  unsigned MbComponent::searchFile(const std::string& url, const tnt::DataChunks& data) const
+  {
+    log_debug("search for \"" << url << '"');
+
+    const char** urls_end = _urls + data.size();
+    const char** it = std::lower_bound(_urls, urls_end, url.c_str(), charpLess);
+
+    if (it == urls_end || std::strcmp(url.c_str(), *it) != 0)
+    {
+      log_debug("file \"" << url << "\" not found");
+      return UINT_MAX;
+    }
+
+    const unsigned idx = it - _urls;
+    log_debug("file \"" << url << "\" found; idx=" << idx);
+    return idx;
+  }
+
   unsigned MbComponent::doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&, bool top)
   {
     log_trace("MbComponent " << getCompident());
@@ -70,23 +89,16 @@ namespace tnt
     tnt::DataChunks data(_rawData);
 
     unsigned url_idx = 0;
+
+    const std::string url(request.getPathInfo());
+
     if (_urls)
     {
-      const char* url = request.getPathInfo().c_str();
-
-      log_debug("search for \"" << url << '"');
-
-      const char** urls_end = _urls + data.size();
-      const char** it = std::lower_bound(_urls, urls_end, url, charpLess);
-      if (it == urls_end || std::strcmp(url, *it) != 0)
-      {
-        log_debug("file \"" << url << "\" not found");
+      url_idx = searchFile(url, data);
+      if(url_idx == UINT_MAX) {
+        //file was not found
         return DECLINED;
       }
-
-      url_idx = it - _urls;
-
-      log_debug("file \"" << url << "\" found; idx=" << url_idx);
     }
 
     if (top)
@@ -107,8 +119,28 @@ namespace tnt
 
       reply.setHeader(tnt::httpheader::lastModified, _ctimes[url_idx]);
 
-      if (request.getEncoding().accept("gzip"))
+      if (request.getEncoding().accept("gzip") && TntConfig::it().enableCompression)
       {
+
+        //search for a file ending with .gz, containing the requested content already compressed
+        if(url.substr(url.size()-3, 3) != ".gz") 
+        {
+          unsigned comp_url_idx = searchFile(url + ".gz", data);
+          if (comp_url_idx != UINT_MAX)
+          {
+            //file was found
+            log_debug("size canged from " << data[url_idx].getLength() << " to " << data[comp_url_idx].getLength());
+            reply.setContentLengthHeader(data[comp_url_idx].getLength());
+            reply.setHeader(httpheader::contentEncoding, "gzip");
+            if (!request.isMethodHEAD())
+            {
+              reply.setDirectMode();
+              reply.out() << data[comp_url_idx];
+            }
+            return HTTP_OK;
+          }
+        }
+
         cxxtools::ReadLock lock(_mutex);
         if (_compressedData[url_idx].empty())
         {
