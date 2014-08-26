@@ -321,10 +321,10 @@ namespace tnt
       log_debug("ssl-shutdown => " << n);
     } while (n == 0);
 
-    if (n == 1)
+    if (n > 0)
       return;
 
-    if (n == -1)
+    if (n < 0)
     {
       log_debug("SSL_get_error(" << _ssl << ", " << n << ')');
 
