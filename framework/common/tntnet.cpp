@@ -91,6 +91,12 @@ namespace tnt
 
   void Tntnet::init(const TntConfig& config)
   {
+    TntConfig::it() = config;
+
+    const cxxtools::SerializationInfo* psi = config.config.findMember("logging");
+    if (psi)
+      log_init(*psi);
+
     _minthreads = config.minThreads;
     _maxthreads = config.maxThreads;
 

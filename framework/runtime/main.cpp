@@ -205,9 +205,6 @@ namespace tnt
 
   void TntnetProcess::doWork()
   {
-    if (!_logall)
-      initializeLogging();
-
     _tntnet.run();
   }
 
