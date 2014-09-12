@@ -52,6 +52,8 @@ namespace tnt
       _obuf->sputc('\r');
       _obuf->sputc('\n');
       setp(_buffer, _buffer + _bufsize);
+
+      return _obuf->pubsync();
     }
 
     return 0;
