@@ -38,7 +38,7 @@
 #include <cxxtools/http/reply.h>
 #include <cxxtools/net/uri.h>
 #include <cxxtools/log.h>
-#include <string.h>
+#include <strings.h>
 
 log_define("tntnet.proxy")
 
