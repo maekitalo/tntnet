@@ -20,6 +20,7 @@ AC_SEARCH_LIBS(dlopen, dl, , AC_MSG_ERROR([dlopen not found]))
 AC_PROG_CXX
 
 AC_LANG(C++)
+AX_CXX_COMPILE_STDCXX_11(noext, optional)
 ACX_PTHREAD
 
 LIBS="$PTHREAD_LIBS $LIBS"
