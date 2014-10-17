@@ -69,7 +69,7 @@ namespace tnt
       /// Check if the session is configured to be cleared after the current request
       bool isClearSession() const;
 
-      enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_MOVED_TEMPORARILY };
+      enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_TEMPORARY_REDIRECT };
       /// @{
       /** Redirect the user to another URL
 
