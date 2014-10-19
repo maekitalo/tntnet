@@ -353,6 +353,9 @@ namespace tnt
           if (offset > st.st_size)
             return HTTP_RANGE_NOT_SATISFIABLE;
 
+          if (offset + count > st.st_size)
+            count = st.st_size - offset;
+
           reply.setHeader(httpheader::contentLocation, request.getUrl());
           std::ostringstream contentRange;
           contentRange << offset << '-' << (offset+count)-1 << '/' << st.st_size;
@@ -361,7 +364,10 @@ namespace tnt
           httpOkReturn = HTTP_PARTIAL_CONTENT;
         }
         else
-          log_debug("ignore invalid byte range " << range);
+        {
+          log_debug("invalid byte range " << range);
+          return HTTP_RANGE_NOT_SATISFIABLE;
+        }
       }
 
       // set Content-Length
@@ -412,7 +418,7 @@ namespace tnt
           if (s < 0 && errno != EAGAIN)
             throw cxxtools::SystemError("sendfile");
 
-          if (offset >= count)
+          if (offset >= count || s == 0)
             break;
 
           log_debug("poll");
