@@ -34,7 +34,7 @@ ECPPFLAGS=-I$(top_srcdir)
 resources.cpp: $(staticSources) Makefile.am
 	$(AM_V_GEN)$(ECPPC) -bb -z -n resources -p -o resources.cpp $(ECPPFLAGS) $(staticSources)
 
-SUFFIXES=.ecpp .ico .cpp
+SUFFIXES=.ecpp .cpp
 
 .ecpp.cpp:
 	$(AM_V_GEN)$(ECPPC) -n `echo $<|$(SED) 's|^$(srcdir)/||; s|\.ecpp$$||'` $(ECPPFLAGS) -o $@ $<

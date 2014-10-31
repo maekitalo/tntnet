@@ -6,6 +6,7 @@ nobase_dist_pkgdata_DATA = \
 	template/classic-module/configure.ac \
 	template/classic-module/@PROJECT@.ecpp \
 	template/classic-module/log.properties \
+	template/classic-module/resources/@PROJECT@.css \
 	template/mvc-module/Makefile.am \
 	template/mvc-module/resources/@PROJECT@.css \
 	template/mvc-module/tntnet.xml \
@@ -17,6 +18,7 @@ nobase_dist_pkgdata_DATA = \
 	template/classic-standalone/configure.ac \
 	template/classic-standalone/@PROJECT@.ecpp \
 	template/classic-standalone/log.properties \
+	template/classic-standalone/resources/@PROJECT@.css \
 	template/mvc-standalone/configuration.h \
 	template/mvc-standalone/Makefile.am \
 	template/mvc-standalone/main.cpp \

@@ -15,11 +15,14 @@
 </%cpp>
 <!DOCTYPE html>
 <html>
- <head>
-  <title>ecpp application @PROJECT@</title>
- </head>
- <body>
-  <h1>@PROJECT@</h1>
-  <p>Hello world!</p>
- </body>
+  <head>
+    <title>ecpp application @PROJECT@</title>
+    <meta charset="utf-8">
+    <meta name="description" content="@PROJECT@ application">
+    <link rel="stylesheet" href="/@PROJECT@.css" type="text/css">
+  </head>
+  <body>
+    <h1>@PROJECT@</h1>
+    <p>Hello world!</p>
+  </body>
 </html>

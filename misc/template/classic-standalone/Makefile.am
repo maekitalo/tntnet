@@ -6,9 +6,15 @@ bin_PROGRAMS = @PROJECT@
 ecppSources = \
 	@PROJECT@.ecpp
 
+staticSources = \
+	resources/@PROJECT@.css
+
 @PROJECT@_SOURCES = \
 	main.cpp \
 	$(ecppSources)
+
+nodist_@PROJECT@_SOURCES = \
+	resources.cpp
 
 @PROJECT@_LDFLAGS = -lcxxtools -ltntnet
 
@@ -17,10 +23,12 @@ CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) resources.cpp
 #
 # Rules for tntnet applications
 #
-
-SUFFIXES=.ecpp .ico .cpp
-
 ECPPFLAGS=-I$(top_srcdir)
+
+resources.cpp: $(staticSources) Makefile.am
+	$(AM_V_GEN)$(ECPPC) -bb -z -n resources -p -o resources.cpp $(ECPPFLAGS) $(staticSources)
+
+SUFFIXES=.ecpp .cpp
 
 .ecpp.cpp:
 	$(AM_V_GEN)$(ECPPC) -n `echo $<|$(SED) 's|^$(srcdir)/||; s|\.ecpp$$||'` $(ECPPFLAGS) -o $@ $<

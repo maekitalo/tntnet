@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>ecpp application @PROJECT@</title>
     <meta charset="utf-8">
     <meta name="description" content="@PROJECT@ application">
     <link rel="stylesheet" href="/@PROJECT@.css" type="text/css">

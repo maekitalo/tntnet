@@ -119,10 +119,10 @@ namespace tnt
           {
             // check for compression
             std::string body(data[url_idx].getData(), data[url_idx].getLength());
-            log_info("try compress");
+            log_debug("compress");
             if (reply.tryCompress(body))
             {
-              log_info("compressed successfully from " << data[url_idx].getLength() << " to " << body.size());
+              log_info("compressed from " << data[url_idx].getLength() << " to " << body.size());
               _compressedData[url_idx] = body;
             }
             else
