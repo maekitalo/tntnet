@@ -1,6 +1,486 @@
-2013-04-08 tommi@tntnet.org
+2014-10-19 Tommi Mäkitalo <tommi@tntnet.org>
 
- - release candidate 2.2rc3
+ - fix handling of ranges in static@tntnet when using sendfile
+
+2014-10-17 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update http redirect code, use 307 instead of 302 for temporary redirects
+
+2014-10-08 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - use c++ 11 mode of compiler if supported for better optimization
+
+2014-10-08 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - do not log content size when chunked encoding is used since it is not really known
+
+2014-09-12 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - forward flush of chunked output stream buffer to underlying stream buffer after writing chunk
+
+2014-08-26 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix configuring tntnet using a own TntConfig object
+ - fix compiler warning in openssl.cpp
+
+2014-04-15 Jonas Platte <mail@jonasplatte.de>
+
+ - Last big style update:
+   fixed all warnings from gcc with -Wall -Wextra (without building demos, with ssl=openssl)
+
+2014-04-14 Jonas Platte <mail@jonasplatte.de>
+
+ - Some style updates:
+   Added explicitly "private:" to classes where it was missing,
+   Corrected indentation and line breaks,
+   Updated private member variable names (more to come)
+ - Unified blank lines in source files
+ - Added missing TNT_ prefix for include guard macros
+ - Small style and doc update for Component
+ - Removed duplicate libtool entry in .gitignore
+
+2014-04-08 Jonas Platte <mail@jonasplatte.de>
+
+ - Added some documentation to HttpRequest
+
+2014-08-01 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - change in ecppc: use typedefs for scoped variables only when really needed (when typename contains a comma)
+
+2014-07-23 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - small optimization when setting date header
+
+2014-06-29 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add content size of previous components to content length header in static@tntnet
+
+2014-06-09 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - create projects using templates in tntnet-project
+
+2014-06-03 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add emulation for old pushArg method for positional parameters in mappings
+ - revert component variable definition due to problems with types with commas (like std::map<std::string,std::string>)
+
+2014-05-30 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix syntax error in tnt/sessionunlocker.h (looks like nobody use it)
+
+2014-05-29 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - build fix: according to the standard std::ostream do not have a default constructor (but in gcc)
+
+2014-05-02 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - do not report a warning when a empty file is send on systems without sendfile
+
+2014-04-07 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix generating projects with special characters in tntnet-project
+
+2014-04-06 Jonas Platte <mail@jonasplatte.de>
+
+ - Added $(AM_V_GEN) to alldemos, tntnet-project
+
+2014-04-06 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix unittest for scopes and add scope tests
+
+2014-04-05 Jonas Platte <mail@jonasplatte.de>
+
+ - Fixed build + some small improvements for the demos
+
+2014-04-04 Ralf Schülke <ralf.schuelke@gmail.com>
+
+ - Update quick-start-guide.markdown
+
+2014-04-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix build on systems without epoll (build was broken since style revision)
+ - tntnet-wizzard was renamed to tntnet-project - do so also in Makefile.am
+
+2014-04-03 Jonas Platte <mail@jonasplatte.de>
+
+ - Little fix for non-working references
+ - Added missing "@endcond internal" doxygen label
+
+2014-04-02 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - rename tntnet-wizzard to tntnet-project
+ - make out of tree build working in tntnet-wizzard generated projects
+
+2014-03-31 Jonas Platte <mail@jonasplatte.de>
+
+ - Various small doc and style updates
+ - Another documentation revision for TntConfig
+ - Small fixes in Tntnet documentation
+
+2014-03-30 Jonas Platte <mail@jonasplatte.de>
+
+ - Cleaned up the source tree a bit
+
+2014-03-30 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - set cache-control header only when not already set by user
+ - fix licence header from GPL to LGPL
+
+2014-03-30 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - set cache control header just once
+
+2014-03-20 Jonas Platte <jonasplatte@myopera.com>
+
+ - A little last style update in cookie.h
+ - Style revisions
+
+2014-03-18 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - integrate newsdb demo into build of demos
+
+2014-03-18 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - do not use C++ style comments in C source
+ - improve mvc demo including adding documentation
+ - improve mvc demo including adding documentation
+ - add gd demo application to demonstrate how to create dynamic graphics using the famous gd library
+
+2014-03-18 Jonas Platte <mail@jonasplatte.de>
+
+ - Further style revision
+
+2014-03-17 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update unzip stuff
+ - fix memory leak when reading configuration files
+ - fix invalid use of return code in SSL_shutdown
+
+2014-03-17 Jonas Platte <mail@jonasplatte.de>
+
+ - Style revision for everything from applicationunlocker to dispatcher {.h|.cpp}
+
+2014-03-16 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - move and rename directory sdk/demos to demo
+ - use configure flag --enable/--disable for server, sdk and demos and disable building demos by default
+
+2014-03-15 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add unused switch-cases back to reduce compiler warnings
+
+2014-03-15 Jonas Platte <jonasplatte@myopera.com>
+
+ - Fixed Mime class not overwriting virtual function configure from its base class Component, removed .dirstamp files
+
+2014-03-14 Jonas Platte <jonasplatte@myopera.com>
+
+ - Added null initialization for member pointers that previously were not initialized on object construction
+
+2014-03-11 Jonas Platte <mail@jonasplatte.de>
+
+ - Some minor bugfixes
+ - Removed dead and unused code
+ - Little documentation update
+
+2014-03-10 Jonas Platte <mail@jonasplatte.de>
+
+ - Reverted style changes
+
+2014-03-09 Jonas Platte <jonasplatte@myopera.com>
+
+ - Style revision on HttpMessage and HttpReply, partial style revision on HttpRequest,
+   partial documentation revision on all three
+ - Completed style and documentation revision of Compident, Maptarget and Tntnet,
+   added a new mapUrl overload and deprecated old ones including vMapUrl
+
+2014-03-01 Jonas Platte <mail@jonasplatte.de>
+
+ - Revised code style and documentation for Compident
+
+2014-02-21 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix handling scoped variables - scope was forgot when variables were initialized
+
+2014-02-19 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - make type conversion explicit to reduce compiler warnings
+
+2014-02-19 Jonas Platte <mail@jonasplatte.de>
+
+ - Started documentation revision on httpmessage.h,
+   httpreply.h and httprequest.h; some minor changes in the documentation of tntnet.h
+
+2014-02-18 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - check in generated man page of ecpp with documentaion of <%attr> included
+ - add documentation about <%attr> tag
+ - Fixed building in a subdirectory
+
+2014-02-10 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix some doxygen comments
+
+2014-02-08 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - better error message in ecpp parser on unexpected end of file
+ - fix doxygen comment of listen method in tnt::Tntnet
+ - allow one line c++ section (% at start of line) to be closed with eof
+
+2014-02-05 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add missing include in gnutls.cpp
+
+2014-02-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix formatting in tntnet-wizzard
+
+2014-02-03 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - make <%config> working again - was broken for quite some time
+
+2014-02-01 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove one directory level in generated projects of tntnet-wizzard to simplify project structure
+
+2014-01-29 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - implement chunked encoding transfer mode
+
+2014-01-22 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add new jquery with tntnet howto
+
+2014-01-21 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update doxygen documentation in tnt::TntConfig
+ - remove background worker feature - it was never used I guess
+
+2014-01-20 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update version number and abi version (must be higher than version 2.2 and 2.2.1)
+
+2014-01-05 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - change default user of tntnet to tntnet
+ - remove init script from tntnet - the packager has to write it depending on the distribution
+
+2014-01-04 Jonas Platte <mail@jonasplatte.de>
+
+ - Started documenting TntConfig, flagged some classes internal
+
+2013-12-26 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix changing root dir of tntnet
+
+2013-12-25 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add missing linkflag -lz to ecppc
+
+2013-12-22 Jonas Platte <mail@jonasplatte.de>
+
+ - Reformatted multiline doc comments in tntnet.h
+
+2013-12-21 Jonas Platte <mail@jonasplatte.de>
+
+ - Revised documentation in tnt/tntnet.h
+   (still some bits missing)
+
+2013-12-19 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add some sanity checks for urls in static component
+
+2013-12-11 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix possible information leak
+
+2013-11-29 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update installation hints
+
+2013-11-10 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update tntnet-wizzard (move source to src subdirectory and other changes)
+ - replace configure.in with configure.ac in tntnet-config generated autoproject
+ - fix some minor stuff in quick start guide
+
+2013-11-06 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix typo in quick start guide
+
+2013-11-05 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix forward declaration of struct TntConfig (produced a compiler warning)
+
+2013-10-31 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - use memmove instead of memcpy when removing message header since the areas may overlap
+
+2013-10-11 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add --version switch to all tntnet tools
+
+2013-10-03 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - autoscan.sh is obsolete - use "autoreconf -i" instead
+
+2013-09-22 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - the tnt::Job do not need to be atomic ref counted; making it simple ref counted speeds up tntnet for about 1%
+ - add doctype to tntnet-config template
+ - fix escape sequence and add doctype to template in tntnet wizzard
+ - fix racing condition: releasing request may result in a pthread unlock error
+
+2013-09-20 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix syntax error in wizzard
+
+2013-09-07 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - do not try to write access log when it is disabled
+ - do not call SSL_shutdown twice when the first call completed the shutdown already
+
+2013-08-25 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - empty setting for server will omit server header
+
+2013-08-23 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - make server response header configurable
+ - fix setting http header without trailing colon
+
+2013-08-21 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - do not accept %00 in url since it is not processed correctly anyway
+
+2013-08-16 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix url encoding (%xx accepted every alphanumeric character instead of just hex digits)
+
+2013-08-05 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - tntnet has a new logo
+
+2013-08-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - make dburl configuration parameter optional in mvc project of tntnet-wizzard
+ - tntnet-wizzard can now create a simple project in addition to a mvc project
+ - add check for autoconf and automake to tntnet-wizzard
+ - add upload howto from homepage to documentation
+
+2013-08-03 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix setting include directory in tntnet-wizzard
+
+2013-07-29 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add tntnet-wizzard to dist package and fix dist target in the generated project
+ - create tntnet-wizzard, which creates web applications with the mvc pattern
+
+2013-07-28 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix another bug in ecpp parser where scope could be set only once per page
+
+2013-07-26 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix ecpp parser: scope could be set only once per page
+
+2013-07-22 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - repalce deprecated GLOBAL with SHARED in calcmvc demo application
+
+2013-07-20 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - rename scope="global" to scope="shared"
+
+2013-07-10 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - disable static build by default and other small cleanups in the build system
+
+2013-07-09 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update build; autoconf wants configure.ac instead of configure.in
+ - simplify reading listeners from configuration
+
+2013-07-06 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove StressJob class - it was for load testing but not used any more
+ - fix vim syntax highlighting for ecpp: allow scope definition to spread multiple lines
+
+2013-06-21 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - set max age of files in multi binary components to 4 hours and allow it to be modified using maxAge arg
+
+2013-06-20 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - no need to check url in static@tntnet since it is already done before
+ - fix handling of documentRoot and change MaxAge setting to maxAge for consistency
+
+2013-06-19 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add cache control header to static files and make setting cache control header more intuitive in ecpp components
+ - reduce warning level in tnt::Savepoint
+ - initialize variables in calcmvc demo
+
+2013-06-16 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - bugfix: scope was set only for first defined variable; the bug is quite new - version 2.2 is not affected
+
+2013-06-02 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix section in tntnet.xml man page
+ - use jquery in calcajax demo
+ - function in cpp must not be inline to be usable
+ - add support for permanent redirects as well as temporary in API and redirect@tntnet
+ - make controls demo working again
+
+2013-06-01 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove request.clearSession(), which do not work anyway - use reply.clearSession() instead
+
+2013-05-30 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove obsolete demo cgi-getenv
+
+2013-05-29 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add configuration for calcmvc demo
+
+2013-05-28 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - multiple changes:
+   * simplify definition components from cpp
+   * simplify configuration of components
+   * session and application unlocker lock scope on destruction only if scope was locked before
+   * move macros to define scoped variables to header tnt/component.h from tnt/ecpp.h to make them
+   available in components defined in cpp and construct the key parameter from type and varname
+   instead of expecting it as a parameter
+   * document default components of tntnet from tntnet.so in man page tntnet-defcomp(1)
+   * use the simplified way to define components in demos
+   * add include attribute to scope tags
+
+2013-05-20 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix case of pidfile and compPath in documentation and example file
+ - fix fetching vector of query parameters
+ - implemented easier api for accessing and converting query arguments
+
+2013-05-17 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - implement virtualhosts configuration, so that all mappings for a virtual host can be combined into one section
+
+2013-05-15 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix references to other man pages in man pages
+ - do not set http headers when static@tntnet is not called as top level component
+
+2013-05-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - helper method tnt::Mapping::setArg to add arguments to mapping in application mode easier
+
+2013-04-15 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - implement controller feature in ecpp - scoped variables get a chance to handle the request
 
 2013-04-07 tommi@tntnet.org
 
