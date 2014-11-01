@@ -39,7 +39,6 @@ tntnet-config
 **/sdk/tools/ecppc/ecppc
 **/sdk/tools/ecppl/ecppl
 **/sdk/tools/ecppll/ecppll
-**/etc/init.d/tntnet
 **/etc/tntnet/tntnet.xml
 **/test/tntnet-test
 
