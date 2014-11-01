@@ -16,6 +16,12 @@
       <target>$1@@PROJECT@</target>
       <url>^/([^.]+)(\..+)?</url>
     </mapping>
+    <mapping>
+      <!-- static resources -->
+      <target>resources@@PROJECT@</target>
+      <url>^/(.*)</url>
+      <pathinfo>resources/$1</pathinfo>
+    </mapping>
   </mappings>
 
   <!-- listen to a port (empty string means any local interface) -->

@@ -9,13 +9,13 @@ ecppSources = \
 staticSources = \
 	resources/@PROJECT@.css
 
-@PROJECT@_la_SOURCES = \
+@CPROJECT@_la_SOURCES = \
 	$(ecppSources)
 
-nodist_@PROJECT@_SOURCES = \
+nodist_@CPROJECT@_la_SOURCES = \
 	resources.cpp
 
-@PROJECT@_la_LDFLAGS = -module -shared -lcxxtools -ltntnet
+@CPROJECT@_la_LDFLAGS = -module -shared -lcxxtools -ltntnet
 
 CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) resources.cpp
 

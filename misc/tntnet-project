@@ -1,0 +1,166 @@
+#!/bin/sh
+
+EMAIL=your-email@somewhere
+
+usage()
+{
+    cat <<EOF
+Usage: $0 [OPTION] <projectname>
+
+Options:
+  -t <type>, --type=<type>        specify application type
+  -m <model>, --model=<model>     specify application model
+
+Types:
+  classic    create a simple application with one page (default)
+  mvc        create a application with the mvc pattern
+
+Models:
+  standalone    create a standalone web application (default)
+  module        create a module to be loaded into the tntnet application server
+
+EOF
+
+    exit $1
+}
+
+checkProc()
+{
+    echo checking for $2
+    if ! which $1 >/dev/null 2>&1
+    then
+        echo ERROR: $2 not installed
+        exit 1
+    fi
+}
+
+checkSystem()
+{
+    if [ -e "$1" ]
+    then
+        echo ERROR: $1 does already exist
+        exit 1
+    fi
+    checkProc autoreconf autoconf
+    checkProc automake   automake
+}
+
+prefix=/usr/local
+TEMPLATEDIR=${prefix}/share/tntnet/template
+USERTEMPLATEDIR=~/.tntnet/template
+TEMPLATE=
+TYPE=classic
+MODEL=standalone
+
+########################################################################
+# main
+#
+while [ $# -gt 1 ]
+do
+    arg=$1
+    shift
+
+    case "$arg" in
+        -*=*)
+            optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'`
+            echo "longopt; optarg=$optarg"
+            ;;
+        *)
+            optarg=$1
+            echo "short; optarg=$optarg"
+            shift
+            ;;
+    esac
+
+    case "$arg" in
+        --template=*)
+            TEMPLATE=$optarg
+            ;;
+
+        --type=*|-t)
+            TYPE=$optarg
+            ;;
+
+        --model=*|-m)
+            MODEL=$optarg
+            ;;
+
+        *)
+            echo arg=$arg
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+project=$1
+
+if [ -z "$TEMPLATE" -a "$TYPE" ]
+then
+    TEMPLATE="$TYPE-$MODEL"
+fi
+
+if [ ! "$project" -o ! "$TEMPLATE" ]
+then
+    usage
+    exit 1
+fi
+
+if [ -e "$USERTEMPLATEDIR/$TEMPLATE" ]
+then
+    TDIR="$USERTEMPLATEDIR/$TEMPLATE"
+else
+    TDIR="$TEMPLATEDIR/$TEMPLATE"
+fi 
+
+if [ ! -d "$TDIR" ]
+then
+    echo Template $TEMPLATE not found
+    exit 1
+fi
+
+echo project=$project template=$TDIR
+
+if [ -d "$project" ]
+then
+    echo Directory "$project" already exists
+    exit 1
+fi
+
+checkSystem $project
+
+mkdir "$project"
+cd "$project"
+cproject=$(echo $project|sed 's/-/_/g')
+
+# create directory structure
+for D in $(cd "$TDIR"; find . -type d|grep -v '^\.$')
+do
+    T=$(echo $D|sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
+    echo "$T"
+    mkdir "$T"
+done
+
+# copy files
+for F in $(cd "$TDIR"; find . -type f|grep -v '^\.$')
+do
+    T=$(echo $F|sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
+    echo "$T"
+    sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g" < "$TDIR/$F" > "$T"
+done
+
+if [ -f configure.ac ]
+then
+    echo run autoreconf -i
+    autoreconf -i
+
+    echo "============================================================"
+    echo "= project <$project> created"
+    echo "= change to directory <$project> and run <./configure && make> to build the application"
+    echo "= execute <./$project> there to run the application"
+    echo "============================================================"
+else
+    echo "============================================================"
+    echo "= project <$project> created"
+    echo "============================================================"
+fi

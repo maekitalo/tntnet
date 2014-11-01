@@ -24,6 +24,10 @@ int main(int argc, char* argv[])
     // map /comp.* or /comp to comp
     app.mapUrl("^/([^.]+)(\\..+)?", "$1");
 
+    // map static resources
+    app.mapUrl("^/(.*)", "resources")
+       .setPathInfo("resources/$1");
+
     app.run();
   }
   catch (const std::exception& e)

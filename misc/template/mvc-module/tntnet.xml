@@ -8,12 +8,6 @@
   <mappings>
     <!-- map / to @PROJECT@@@PROJECT@ -->
     <mapping>
-      <!-- static resources -->
-      <target>resources@@PROJECT@</target>
-      <url>^/(.*)$</url>
-      <pathinfo>resources/$1</pathinfo>
-    </mapping>
-    <mapping>
       <!-- index page -->
       <target>webmain@@PROJECT@</target>
       <url>^/$</url>
@@ -33,6 +27,12 @@
       <args>
         <next>view/$1</next>
       </args>
+    </mapping>
+    <mapping>
+      <!-- static resources -->
+      <target>resources@@PROJECT@</target>
+      <url>^/(.*)</url>
+      <pathinfo>resources/$1</pathinfo>
     </mapping>
   </mappings>
 
