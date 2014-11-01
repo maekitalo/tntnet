@@ -131,19 +131,22 @@ checkSystem $project
 
 mkdir "$project"
 cd "$project"
+cproject=$(echo $project|sed 's/-/_/g')
 
+# create directory structure
 for D in $(cd "$TDIR"; find . -type d|grep -v '^\.$')
 do
-    T=$(echo $D|sed "s/@PROJECT@/$project/g")
+    T=$(echo $D|sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
     echo "$T"
     mkdir "$T"
 done
 
+# copy files
 for F in $(cd "$TDIR"; find . -type f|grep -v '^\.$')
 do
-    T=$(echo $F|sed "s/@PROJECT@/$project/g")
+    T=$(echo $F|sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
     echo "$T"
-    sed "s/@PROJECT@/$project/g" < "$TDIR/$F" > "$T"
+    sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g" < "$TDIR/$F" > "$T"
 done
 
 if [ -f configure.ac ]
