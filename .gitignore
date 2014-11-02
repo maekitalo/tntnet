@@ -19,6 +19,8 @@
 !/m4/pkg.m4
 !/m4/ax_cxx_compile_stdcxx_11.m4
 
+/framework/common/config.h.in
+
 .deps
 .libs
 
@@ -31,19 +33,19 @@ stamp-h1
 
 # Files generated or compiled in the build process
 
-misc/tntnet-config
-misc/tntnet-project
-framework/common/config.h
-framework/common/config.h.in
-framework/runtime/tntnet
-sdk/tools/ecppc/ecppc
-sdk/tools/ecppl/ecppl
-sdk/tools/ecppll/ecppll
-etc/tntnet/tntnet.xml
-test/tntnet-test
+**/framework/common/config.h
+**/framework/runtime/tntnet
+**/misc/tntnet-config
+**/misc/tntnet-project
+**/sdk/tools/ecppc/ecppc
+**/sdk/tools/ecppl/ecppl
+**/sdk/tools/ecppll/ecppll
+**/etc/tntnet/tntnet.xml
+**/test/tntnet-test
 
 *.l[ao]
 *.o
+*.pc
 *.swp
 
 # Other
