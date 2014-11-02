@@ -214,6 +214,8 @@ AC_CONFIG_FILES([
     framework/runtime/Makefile
     framework/defcomp/Makefile
     misc/Makefile
+    pkgconfig/tntnet.pc
+    pkgconfig/tntnet_sdk.pc
     sdk/tools/common/Makefile
     sdk/tools/ecppc/Makefile
     sdk/tools/ecppl/Makefile

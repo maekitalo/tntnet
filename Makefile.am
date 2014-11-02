@@ -60,3 +60,9 @@ EXTRA_DIST = \
     misc/tntnet.svg \
     misc/tntnet-dynamite.svg \
     $(pkgdata_SCRIPTS)
+
+pkgconfigdir = $(libdir)/pkgconfig/
+
+pkgconfig_DATA = \
+    pkgconfig/tntnet.pc \
+    pkgconfig/tntnet_sdk.pc
