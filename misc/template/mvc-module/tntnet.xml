@@ -6,6 +6,12 @@
   -->
 <tntnet>
   <mappings>
+    <!-- static resources -->
+    <mapping>
+      <target>resources@@PROJECT@</target>
+      <url>^/(.*)</url>
+      <pathinfo>resources/$1</pathinfo>
+    </mapping>
     <!-- map / to @PROJECT@@@PROJECT@ -->
     <mapping>
       <!-- index page -->
@@ -27,12 +33,6 @@
       <args>
         <next>view/$1</next>
       </args>
-    </mapping>
-    <mapping>
-      <!-- static resources -->
-      <target>resources@@PROJECT@</target>
-      <url>^/(.*)</url>
-      <pathinfo>resources/$1</pathinfo>
     </mapping>
   </mappings>
 

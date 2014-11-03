@@ -18,15 +18,15 @@ int main(int argc, char* argv[])
     tnt::Tntnet app;
     app.listen(ip, port);
 
+    // map static resources
+    app.mapUrl("^/(.*)", "resources")
+       .setPathInfo("resources/$1");
+
     // map / to @PROJECT@
     app.mapUrl("^/$", "@PROJECT@");
 
     // map /comp.* or /comp to comp
     app.mapUrl("^/([^.]+)(\\..+)?", "$1");
-
-    // map static resources
-    app.mapUrl("^/(.*)", "resources")
-       .setPathInfo("resources/$1");
 
     app.run();
   }

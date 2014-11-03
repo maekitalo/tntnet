@@ -6,6 +6,12 @@
   -->
 <tntnet>
   <mappings>
+    <!-- static resources -->
+    <mapping>
+      <target>resources@@PROJECT@</target>
+      <url>^/(.*)</url>
+      <pathinfo>resources/$1</pathinfo>
+    </mapping>
     <!-- map / to @PROJECT@@@PROJECT@ -->
     <mapping>
       <target>@PROJECT@@@PROJECT@</target>
@@ -15,12 +21,6 @@
     <mapping>
       <target>$1@@PROJECT@</target>
       <url>^/([^.]+)(\..+)?</url>
-    </mapping>
-    <mapping>
-      <!-- static resources -->
-      <target>resources@@PROJECT@</target>
-      <url>^/(.*)</url>
-      <pathinfo>resources/$1</pathinfo>
     </mapping>
   </mappings>
 

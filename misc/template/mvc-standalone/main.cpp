@@ -26,6 +26,10 @@ int main(int argc, char* argv[])
     if (configuration.sessionTimeout())
       configurator.setSessionTimeout(configuration.sessionTimeout());
 
+    // map static resources
+    app.mapUrl("^/(.*)", "resources")
+       .setPathInfo("resources/$1");
+
     // index page
     app.mapUrl("^/$", "webmain")
        .setArg("next", "index");
@@ -36,10 +40,6 @@ int main(int argc, char* argv[])
     // view
     app.mapUrl("^/(.*)$", "webmain")
        .setArg("next", "view/$1");
-
-    // map static resources
-    app.mapUrl("^/(.*)", "resources")
-       .setPathInfo("resources/$1");
 
     app.run();
   }
