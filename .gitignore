@@ -31,16 +31,16 @@ stamp-h1
 
 # Files generated or compiled in the build process
 
-tntnet-config
-
-**/framework/common/config.h
-**/framework/common/config.h.in
-**/framework/runtime/tntnet
-**/sdk/tools/ecppc/ecppc
-**/sdk/tools/ecppl/ecppl
-**/sdk/tools/ecppll/ecppll
-**/etc/tntnet/tntnet.xml
-**/test/tntnet-test
+misc/tntnet-config
+misc/tntnet-project
+framework/common/config.h
+framework/common/config.h.in
+framework/runtime/tntnet
+sdk/tools/ecppc/ecppc
+sdk/tools/ecppl/ecppl
+sdk/tools/ecppll/ecppll
+etc/tntnet/tntnet.xml
+test/tntnet-test
 
 *.l[ao]
 *.o
