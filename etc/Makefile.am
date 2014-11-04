@@ -6,8 +6,8 @@ nobase_sysconf_DATA = \
 
 tntnet/tntnet.xml: tntnet/tntnet.xml.in
 	$(AM_V_GEN) \
-	mkdir -p tntnet && \
-	sed -e 's,@libdir\@,@libdir@,g;' \
+	$(MKDIR_P) tntnet && \
+	$(SED) -e 's,@libdir\@,@libdir@,g;' \
 	    -e 's,@pkglibdir\@,@pkglibdir@,g;' \
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
 	    -e 's,@localstatedir\@,@localstatedir@,g;' \
