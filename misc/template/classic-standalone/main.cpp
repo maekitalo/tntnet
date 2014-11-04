@@ -25,8 +25,8 @@ int main(int argc, char* argv[])
     // map / to @PROJECT@
     app.mapUrl("^/$", "@PROJECT@");
 
-    // map /comp.* or /comp to comp
-    app.mapUrl("^/([^.]+)(\\..+)?", "$1");
+    // map /comp to comp
+    app.mapUrl("^/(.*)", "$1");
 
     app.run();
   }

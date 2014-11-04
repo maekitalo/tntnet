@@ -49,10 +49,10 @@ EOF
       <target>\$2@\$1</target>
       <url>^/(.+)/([^.]+)(\..+)?</url>
     </mapping>
-    <!-- map /comp.* or /comp to comp@comp -->
+    <!-- map /comp to comp@comp -->
     <mapping>
       <target>\$1@\$1</target>
-      <url>^/([^.]+)(\..+)?</url>
+      <url>^/(.*)</url>
     </mapping>
   </mappings>
 EOF
@@ -64,10 +64,10 @@ EOF
       <target>$1@$1</target>
       <url>^/$</url>
     </mapping>
-    <!-- map /comp.* or /comp to comp@$1 -->
+    <!-- map /comp to comp@$1 -->
     <mapping>
       <target>\$1@$1</target>
-      <url>^/([^.]+)(\..+)?</url>
+      <url>^/(.*)</url>
     </mapping>
   </mappings>
 EOF

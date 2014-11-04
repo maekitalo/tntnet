@@ -17,10 +17,10 @@
       <target>@PROJECT@@@PROJECT@</target>
       <url>^/$</url>
     </mapping>
-    <!-- map /comp.* or /comp to comp@@PROJECT@ -->
+    <!-- map /comp to comp@@PROJECT@ -->
     <mapping>
       <target>$1@@PROJECT@</target>
-      <url>^/([^.]+)(\..+)?</url>
+      <url>^/(.*)</url>
     </mapping>
   </mappings>
 
