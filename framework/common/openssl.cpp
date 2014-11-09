@@ -312,7 +312,7 @@ namespace tnt
   {
     cxxtools::MutexLock lock(mutex);
 
-    int n, err;
+    int n;
 
     do
     {
@@ -324,21 +324,18 @@ namespace tnt
     if (n > 0)
       return;
 
-    if (n < 0)
+    log_debug("SSL_get_error(" << _ssl << ", " << n << ')');
+
+    int err = SSL_get_error(_ssl, n);
+
+    if (err != SSL_ERROR_WANT_READ
+     && err != SSL_ERROR_WANT_WRITE)
+      checkSslError();
+
+    if (getTimeout() == 0)
     {
-      log_debug("SSL_get_error(" << _ssl << ", " << n << ')');
-
-      err = SSL_get_error(_ssl, n);
-
-      if (err != SSL_ERROR_WANT_READ
-       && err != SSL_ERROR_WANT_WRITE)
-        checkSslError();
-
-      if (getTimeout() == 0)
-      {
-        log_debug("shutdown-timeout");
-        throw cxxtools::IOTimeout();
-      }
+      log_debug("shutdown-timeout");
+      throw cxxtools::IOTimeout();
     }
 
     do
