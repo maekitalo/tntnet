@@ -32,6 +32,7 @@
 #include <iostream>
 #include <fstream>
 #include <exception>
+#include <sstream>
 #include <cxxtools/arg.h>
 
 #include "config.h"
@@ -41,8 +42,39 @@ int main(int argc, char* argv[])
   std::ios::sync_with_stdio(false);
   try
   {
-    cxxtools::Arg<bool> version(argc, argv, "--version");
-    if (version)
+    cxxtools::Arg<bool> help(argc, argv, 'h');
+    cxxtools::Arg<bool> helpLong(argc, argv, "--help");
+
+    if (help || helpLong || argc != 2)
+    {
+      std::ostringstream helpMsg;
+
+      helpMsg
+        << PACKAGE_STRING "\n\n"
+           "usage: " << argv[0] << " [options] ecpp-source\n\n"
+           "  -o filename       outputfile\n"
+           "  -n                extract nolang\n"
+           "  -l                extract lang (default)\n"
+           "  -I dir            include-directory\n"
+           "\n"
+           "  -h, --help        display this information\n"
+           "  -V, --version     display program version\n";
+
+      if (help || helpLong) // user asked for help
+      {
+        std::cout << helpMsg.str() << std::endl;
+        return 0;
+      }
+      else // user invoked the program incorrectly
+      {
+        std::cerr << helpMsg.str() << std::endl;
+        return 1;
+      }
+    }
+
+    cxxtools::Arg<bool> version(argc, argv, 'v');
+    cxxtools::Arg<bool> versionLong(argc, argv, "--version");
+    if (version || versionLong)
     {
       std::cout << PACKAGE_STRING "\n" << std::flush;
       return 0;
@@ -63,27 +95,13 @@ int main(int argc, char* argv[])
       includes.push_back(include.getValue());
     }
 
-    if (argc != 2)
-    {
-      std::cerr
-        << PACKAGE_STRING "\n\n"
-           "usage: " << argv[0] << " [options] ecpp-source\n\n"
-           "  -o filename       outputfile\n"
-           "  -n                extract nolang\n"
-           "  -l                extract lang (default)\n"
-           "  -I dir            include-directory\n"
-        << std::endl;
-      return 1;
-    }
-
     std::ifstream in(argv[1]);
 
     Ecpplang generator;
 
     tnt::ecpp::Parser parser(generator, argv[1]);
 
-    for (includes_type::const_iterator it = includes.begin();
-         it != includes.end(); ++it)
+    for (includes_type::const_iterator it = includes.begin(); it != includes.end(); ++it)
       parser.addInclude(*it);
 
     generator.setLang(lang || !nolang);
@@ -102,6 +120,9 @@ int main(int argc, char* argv[])
   catch (const std::exception& e)
   {
     std::cerr << e.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }
 
