@@ -37,6 +37,7 @@ libtntnet_la_SOURCES = \
 	scope.cpp \
 	scopemanager.cpp \
 	stringlessignorecase.cpp \
+	tcpjob.cpp \
 	tntconfig.cpp \
 	tntnet.cpp \
 	unzip.c \
