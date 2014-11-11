@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -52,8 +52,23 @@ namespace tnt
         _ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         _odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         _mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),
-        _mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types"))
+        _mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types")),
+        _logCategory(cxxtools::Arg<std::string>(argc, argv, 'l')),
+        _binary(cxxtools::Arg<bool>(argc, argv, 'b')),
+        _multibinary(cxxtools::Arg<bool>(argc, argv, 'b')),
+        _keepPath(cxxtools::Arg<bool>(argc, argv, 'p')),
+        _compress(cxxtools::Arg<bool>(argc, argv, 'z')),
+        _verbose(cxxtools::Arg<bool>(argc, argv, 'v')),
+        _generateDependencies(cxxtools::Arg<bool>(argc, argv, 'M')),
+        _disableLinenumbers(cxxtools::Arg<bool>(argc, argv, 'L')),
+        _help(cxxtools::Arg<bool>(argc, argv, 'h')),
+        _helpLong(cxxtools::Arg<bool>(argc, argv, "--help"))
     {
+      // TODO: Rewrite usage string to simply be put to stdout
+      // instead of stderr as when throwing and catching in main
+      if(_help || _helpLong)
+        throw Usage(argv[0]);
+
       while (true)
       {
         cxxtools::Arg<std::string> include(argc, argv, 'I');
@@ -62,15 +77,6 @@ namespace tnt
         log_debug("include: " << include.getValue());
         _includes.push_back(include);
       }
-
-      _binary = cxxtools::Arg<bool>(argc, argv, 'b');
-      _multibinary = cxxtools::Arg<bool>(argc, argv, 'b');
-      _keepPath = cxxtools::Arg<bool>(argc, argv, 'p');
-      _compress = cxxtools::Arg<bool>(argc, argv, 'z');
-      _verbose = cxxtools::Arg<bool>(argc, argv, 'v');
-      _generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
-      _disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
-      _logCategory = cxxtools::Arg<std::string>(argc, argv, 'l');
 
       if (_multibinary)
       {
@@ -201,7 +207,7 @@ namespace tnt
       if (!obase.empty())
         obase += '/';
       obase += _ofile;
-      
+
       //
       // parse sourcefile
       //
@@ -284,7 +290,7 @@ namespace tnt
       }
 
       //
-      // generate Code
+      // generate code
       //
       if (_verbose)
         std::cout << "generate " << obase << ".cpp" << std::endl;
@@ -358,20 +364,23 @@ namespace tnt
       o << PACKAGE_STRING "\n\n"
            "ecppc-compiler\n\n"
            "usage: " << progname << " [options] ecpp-source\n\n"
-           "  -o filename      outputfile\n"
-           "  -n name          componentname\n"
-           "  -I dir           include-directory\n"
-           "  -m type          Mimetype\n"
-           "  --mimetypes file read mimetypes from file (default /etc/mime.types)\n"
-           "  -b               binary\n"
-           "  -bb              generate multibinary component\n"
-           "  -i filename      read filenames for multibinary component from specified file\n"
-           "  -z               compress constant data\n"
-           "  -v               verbose\n"
-           "  -M               generate dependency for Makefile\n"
-           "  -p               keep path when generating component name from filename\n"
-           "  -l log-category  set log category (default: component.compname)\n"
-           "  -L               disable generation of #line-directives\n";
+           "  -o filename       outputfile\n"
+           "  -n name           componentname\n"
+           "  -I dir            include-directory\n"
+           "  -m type           mimetype\n"
+           "  --mimetypes file  read mimetypes from file (default /etc/mime.types)\n"
+           "  -b                binary\n"
+           "  -bb               generate multibinary component\n"
+           "  -i filename       read filenames for multibinary component from specified file\n"
+           "  -z                compress constant data\n"
+           "  -v                verbose\n"
+           "  -M                generate dependency for Makefile\n"
+           "  -p                keep path when generating component name from filename\n"
+           "  -l log-category   set log category (default: component.compname)\n"
+           "  -L                disable generation of #line-directives\n"
+           "\n"
+           "  -h, --help        display this information\n"
+           "  -V, --version     display program version\n";
       _msg = o.str();
     }
   }
@@ -383,10 +392,11 @@ int main(int argc, char* argv[])
 
   try
   {
-    cxxtools::Arg<bool> version(argc, argv, "--version");
-    if (version)
+    cxxtools::Arg<bool> version(argc, argv, 'V');
+    cxxtools::Arg<bool> versionLong(argc, argv, "--version");
+    if (version || versionLong)
     {
-      std::cout << PACKAGE_STRING "\n" << std::flush;
+      std::cout << PACKAGE_STRING << std::endl;
       return 0;
     }
 
@@ -400,4 +410,3 @@ int main(int argc, char* argv[])
     return 1;
   }
 }
-
