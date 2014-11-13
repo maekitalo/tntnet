@@ -51,7 +51,7 @@ namespace tnt
         std::string _extname;
         const char* _inputfile;
 
-        inputfiles_type _inputfiles;
+        inputfiles_type _inputFiles;
 
         std::string _ofile;
         std::string _odir;
@@ -65,7 +65,6 @@ namespace tnt
         bool _verbose;
         bool _generateDependencies;
         bool _disableLinenumbers;
-        bool _help, _helpLong;
 
         includes_type _includes;
 
@@ -76,18 +75,6 @@ namespace tnt
       public:
         Ecppc(int& argc, char* argv[]);
         int run();
-    };
-
-    class Usage : public std::exception
-    {
-      private:
-        std::string _msg;
-      public:
-        Usage(const char* progname);
-        ~Usage() throw() { }
-
-        const char* what() const throw()
-          { return _msg.c_str(); }
     };
   }
 }
