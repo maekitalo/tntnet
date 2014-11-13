@@ -49,9 +49,9 @@ namespace tnt
       std::string _method;
       int _ssl;
 
-      cxxtools::Regex _r_vhost;
-      cxxtools::Regex _r_url;
-      cxxtools::Regex _r_method;
+      cxxtools::Regex _regexVhost;
+      cxxtools::Regex _regexUrl;
+      cxxtools::Regex _regexMethod;
 
       Maptarget _target;
 
@@ -94,21 +94,21 @@ namespace tnt
       Mapping& setVHost(const std::string& vhost)
       {
         _vhost = vhost;
-        _r_vhost = cxxtools::Regex(vhost);
+        _regexVhost = cxxtools::Regex(vhost);
         return *this;
       }
 
       Mapping& setUrl(const std::string& url)
       {
         _url = url;
-        _r_url = cxxtools::Regex(url);
+        _regexUrl = cxxtools::Regex(url);
         return *this;
       }
 
       Mapping& setMethod(const std::string& method)
       {
         _method = method;
-        _r_method = cxxtools::Regex(method);
+        _regexMethod = cxxtools::Regex(method);
         return *this;
       }
 
@@ -209,4 +209,3 @@ namespace tnt
 }
 
 #endif // TNT_DISPATCHER_H
-

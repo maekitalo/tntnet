@@ -58,36 +58,36 @@ namespace tnt
       {
           friend class Messageheader;
 
-          value_type _current_value;
+          value_type _currentVal;
 
           void fixup()
           {
-            if (*_current_value.first)
-              _current_value.second = _current_value.first + std::strlen(_current_value.first) + 1;
+            if (*_currentVal.first)
+              _currentVal.second = _currentVal.first + std::strlen(_currentVal.first) + 1;
             else
-              _current_value.first = _current_value.second = 0;
+              _currentVal.first = _currentVal.second = 0;
           }
 
           void moveForward()
           {
-            _current_value.first = _current_value.second + std::strlen(_current_value.second) + 1;
+            _currentVal.first = _currentVal.second + std::strlen(_currentVal.second) + 1;
             fixup();
           }
 
         public:
           const_iterator()
-            : _current_value(static_cast<const char*>(0), static_cast<const char*>(0))
+            : _currentVal(static_cast<const char*>(0), static_cast<const char*>(0))
             { }
 
           explicit const_iterator(const char* p)
-            : _current_value(p, p)
+            : _currentVal(p, p)
             { fixup(); }
 
           bool operator== (const const_iterator& it) const
-            { return _current_value.first == it._current_value.first; }
+            { return _currentVal.first == it._currentVal.first; }
 
           bool operator!= (const const_iterator& it) const
-            { return _current_value.first != it._current_value.first; }
+            { return _currentVal.first != it._currentVal.first; }
 
           const_iterator& operator++()
           {
@@ -102,8 +102,8 @@ namespace tnt
             return ret;
           }
 
-          const value_type& operator* () const  { return _current_value; }
-          const value_type* operator-> () const { return &_current_value; }
+          const value_type& operator* () const  { return _currentVal; }
+          const value_type* operator-> () const { return &_currentVal; }
       };
 
     protected:
@@ -156,4 +156,3 @@ namespace tnt
 }
 
 #endif // TNT_MESSAGEHEADER_H
-

@@ -32,7 +32,6 @@
 #include <iostream>
 #include <fstream>
 #include <exception>
-#include <sstream>
 #include <cxxtools/arg.h>
 
 #include "config.h"
@@ -45,34 +44,22 @@ int main(int argc, char* argv[])
     cxxtools::Arg<bool> help(argc, argv, 'h');
     cxxtools::Arg<bool> helpLong(argc, argv, "--help");
 
-    if (help || helpLong || argc != 2)
+    if (help || helpLong)
     {
-      std::ostringstream helpMsg;
+      std::cout << PACKAGE_STRING "\n\n"
+        "usage: " << argv[0] << " [options] ecpp-source\n\n"
+        "  -o filename       outputfile\n"
+        "  -n                extract nolang\n"
+        "  -l                extract lang (default)\n"
+        "  -I dir            include-directory\n"
+        "\n"
+        "  -h, --help        display this information\n"
+        "  -V, --version     display program version\n";
 
-      helpMsg
-        << PACKAGE_STRING "\n\n"
-           "usage: " << argv[0] << " [options] ecpp-source\n\n"
-           "  -o filename       outputfile\n"
-           "  -n                extract nolang\n"
-           "  -l                extract lang (default)\n"
-           "  -I dir            include-directory\n"
-           "\n"
-           "  -h, --help        display this information\n"
-           "  -V, --version     display program version\n";
-
-      if (help || helpLong) // user asked for help
-      {
-        std::cout << helpMsg.str() << std::endl;
-        return 0;
-      }
-      else // user invoked the program incorrectly
-      {
-        std::cerr << helpMsg.str() << std::endl;
-        return 1;
-      }
+      return 0;
     }
 
-    cxxtools::Arg<bool> version(argc, argv, 'v');
+    cxxtools::Arg<bool> version(argc, argv, 'V');
     cxxtools::Arg<bool> versionLong(argc, argv, "--version");
     if (version || versionLong)
     {
@@ -83,6 +70,15 @@ int main(int argc, char* argv[])
     cxxtools::Arg<bool> lang(argc, argv, 'l');
     cxxtools::Arg<bool> nolang(argc, argv, 'n');
     cxxtools::Arg<const char*> ofile(argc, argv, 'o');
+
+    if(argc != 2)
+    {
+      std::cerr << "error: exactly one input file has to be specified\n"
+                   "usage: " << argv[0] << " [options] ecpp-source\n"
+                   "more info with -h / --help"<< std::endl;
+
+      return 1;
+    }
 
     typedef std::list<std::string> includes_type;
     includes_type includes;
@@ -122,6 +118,4 @@ int main(int argc, char* argv[])
     std::cerr << e.what() << std::endl;
     return 1;
   }
-
-  return 0;
 }

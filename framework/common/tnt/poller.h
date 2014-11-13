@@ -47,6 +47,7 @@ namespace tnt
 
   class Poller
   {
+    private:
       PollerIf* _impl;
 
     public:
@@ -62,4 +63,3 @@ namespace tnt
 }
 
 #endif // TNT_POLLER_H
-

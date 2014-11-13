@@ -44,8 +44,7 @@ namespace tnt
   {
     const_iterator it = find(key);
     return it == end() ? false
-                       : tnt::StringCompareIgnoreCase<const char*>(
-                           it->second, value) == 0;
+                       : tnt::StringCompareIgnoreCase<const char*>(it->second, value) == 0;
   }
 
   void Messageheader::removeHeader(const char* key)
@@ -138,4 +137,3 @@ namespace tnt
     return in;
   }
 }
-

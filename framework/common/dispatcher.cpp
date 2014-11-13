@@ -66,9 +66,9 @@ namespace tnt
       _url(url),
       _method(method),
       _ssl(ssl),
-      _r_vhost(vhost),
-      _r_url(url),
-      _r_method(method),
+      _regexVhost(vhost),
+      _regexUrl(url),
+      _regexMethod(method),
       _target(target)
   { }
 
@@ -81,9 +81,9 @@ namespace tnt
 
   bool Mapping::match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const
   {
-    return (_vhost.empty()  || _r_vhost.match(request.getHost()))
-        && (_url.empty()    || _r_url.match(request.getUrl(), smatch))
-        && (_method.empty() || _r_method.match(request.getMethod()))
+    return (_vhost.empty()  || _regexVhost.match(request.getHost()))
+        && (_url.empty()    || _regexUrl.match(request.getUrl(), smatch))
+        && (_method.empty() || _regexMethod.match(request.getMethod()))
         && (_ssl == SSL_ALL
             || (_ssl == SSL_YES && request.isSsl())
             || (_ssl == SSL_NO && !request.isSsl()));
@@ -227,4 +227,3 @@ namespace tnt
     return _dis.mapCompNext(_request, _pos);
   }
 }
-

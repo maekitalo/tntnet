@@ -219,9 +219,7 @@ namespace tnt
     { _tntnet.init(TntConfig::it()); }
 
   void TntnetProcess::doWork()
-  {
-    _tntnet.run();
-  }
+    { _tntnet.run(); }
 
   void TntnetProcess::doShutdown()
     { tnt::Tntnet::shutdown(); }
@@ -233,17 +231,18 @@ int main(int argc, char* argv[])
 
   try
   {
-    cxxtools::Arg<bool> version(argc, argv, "--version");
-    if (version)
+    cxxtools::Arg<bool> version(argc, argv, 'V');
+    cxxtools::Arg<bool> versionLong(argc, argv, "--version");
+    if (version || versionLong)
     {
-      std::cout << PACKAGE_STRING "\n" << std::flush;
+      std::cout << PACKAGE_STRING << std::endl;
       return 0;
     }
 
-    cxxtools::Arg<bool> help1(argc, argv, 'h');
-    cxxtools::Arg<bool> help2(argc, argv, '?');
+    cxxtools::Arg<bool> help(argc, argv, 'h');
+    cxxtools::Arg<bool> helpLong(argc, argv, "--help");
 
-    if (help1 || help2)
+    if (help || helpLong)
     {
       std::cout << "usage: " << argv[0] << " configurationfile (default: " TNTNET_CONF ")"
                 << std::endl;
@@ -287,4 +286,3 @@ int main(int argc, char* argv[])
     return -1;
   }
 }
-
