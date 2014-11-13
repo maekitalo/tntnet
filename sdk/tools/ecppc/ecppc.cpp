@@ -60,15 +60,8 @@ namespace tnt
         _compress(cxxtools::Arg<bool>(argc, argv, 'z')),
         _verbose(cxxtools::Arg<bool>(argc, argv, 'v')),
         _generateDependencies(cxxtools::Arg<bool>(argc, argv, 'M')),
-        _disableLinenumbers(cxxtools::Arg<bool>(argc, argv, 'L')),
-        _help(cxxtools::Arg<bool>(argc, argv, 'h')),
-        _helpLong(cxxtools::Arg<bool>(argc, argv, "--help"))
+        _disableLinenumbers(cxxtools::Arg<bool>(argc, argv, 'L'))
     {
-      // TODO: Rewrite usage string to simply be put to stdout
-      // instead of stderr as when throwing and catching in main
-      if(_help || _helpLong)
-        throw Usage(argv[0]);
-
       while (true)
       {
         cxxtools::Arg<std::string> include(argc, argv, 'I');
@@ -96,7 +89,7 @@ namespace tnt
                 key.erase(0, p + 1);
             }
 
-            _inputfiles.insert(inputfiles_type::value_type(key, ifile));
+            _inputFiles.insert(inputfiles_type::value_type(key, ifile));
           }
         }
 
@@ -112,13 +105,18 @@ namespace tnt
               key.erase(0, p + 1);
           }
 
-          _inputfiles.insert(inputfiles_type::value_type(key, ifile));
+          _inputFiles.insert(inputfiles_type::value_type(key, ifile));
         }
       }
       else
       {
         if (argc < 2 || argv[1][0] == '-')
-          throw Usage(argv[0]);
+          throw std::runtime_error(
+            "error: exactly one input file has to be specified\n"
+            "usage: " + std::string(argv[0]) + " [options] ecpp-source\n"
+            "more info with -h / --help"
+          );
+
         _inputfile = argv[1];
       }
     }
@@ -218,7 +216,7 @@ namespace tnt
         if (_mimetype.empty())
           mimeDb.read(_mimedb);
 
-        for (inputfiles_type::const_iterator it = _inputfiles.begin(); it != _inputfiles.end(); ++it)
+        for (inputfiles_type::const_iterator it = _inputFiles.begin(); it != _inputFiles.end(); ++it)
         {
           std::string key = it->first;
           std::string ifile = it->second;
@@ -357,32 +355,6 @@ namespace tnt
 
       return success;
     }
-
-    Usage::Usage(const char* progname)
-    {
-      std::ostringstream o;
-      o << PACKAGE_STRING "\n\n"
-           "ecppc-compiler\n\n"
-           "usage: " << progname << " [options] ecpp-source\n\n"
-           "  -o filename       outputfile\n"
-           "  -n name           componentname\n"
-           "  -I dir            include-directory\n"
-           "  -m type           mimetype\n"
-           "  --mimetypes file  read mimetypes from file (default /etc/mime.types)\n"
-           "  -b                binary\n"
-           "  -bb               generate multibinary component\n"
-           "  -i filename       read filenames for multibinary component from specified file\n"
-           "  -z                compress constant data\n"
-           "  -v                verbose\n"
-           "  -M                generate dependency for Makefile\n"
-           "  -p                keep path when generating component name from filename\n"
-           "  -l log-category   set log category (default: component.compname)\n"
-           "  -L                disable generation of #line-directives\n"
-           "\n"
-           "  -h, --help        display this information\n"
-           "  -V, --version     display program version\n";
-      _msg = o.str();
-    }
   }
 }
 
@@ -397,6 +369,35 @@ int main(int argc, char* argv[])
     if (version || versionLong)
     {
       std::cout << PACKAGE_STRING << std::endl;
+      return 0;
+    }
+
+    cxxtools::Arg<bool> help(argc, argv, 'h');
+    cxxtools::Arg<bool> helpLong(argc, argv, "--help");
+
+    if(help || helpLong)
+    {
+      std::cout << PACKAGE_STRING "\n\n"
+        "ecppc-compiler\n\n"
+        "usage: " << argv[0] << " [options] ecpp-source\n\n"
+        "  -o filename       outputfile\n"
+        "  -n name           componentname\n"
+        "  -I dir            include-directory\n"
+        "  -m type           mimetype\n"
+        "  --mimetypes file  read mimetypes from file (default /etc/mime.types)\n"
+        "  -b                binary\n"
+        "  -bb               generate multibinary component\n"
+        "  -i filename       read filenames for multibinary component from specified file\n"
+        "  -z                compress constant data\n"
+        "  -v                verbose\n"
+        "  -M                generate dependency for Makefile\n"
+        "  -p                keep path when generating component name from filename\n"
+        "  -l log-category   set log category (default: component.compname)\n"
+        "  -L                disable generation of #line-directives\n"
+        "\n"
+        "  -h, --help        display this information\n"
+        "  -V, --version     display program version\n" << std::endl;
+
       return 0;
     }
 

@@ -244,8 +244,9 @@ int main(int argc, char* argv[])
 
     if (help || helpLong)
     {
-      std::cout << "usage: " << argv[0] << " configurationfile (default: " TNTNET_CONF ")"
-                << std::endl;
+      // TODO: Add short explanation of available options
+      std::cout << "usage: " << argv[0] << " [options] [config-file (default: " TNTNET_CONF ")]\n"
+                   "more info with \"man 8 tntnet\"" << std::endl;
       return 0;
     }
 
