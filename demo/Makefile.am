@@ -20,7 +20,7 @@ SUBDIRS = \
     rajax-jquery \
     upload
 
-pkglib_LTLIBRARIES = alldemos.la
+noinst_LTLIBRARIES = alldemos.la
 
 nodist_alldemos_la_SOURCES = \
 	alldemos.cpp

@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = cookie.la
+noinst_LTLIBRARIES = cookie.la
 
 cookie_la_SOURCES = \
 	cookie.ecpp

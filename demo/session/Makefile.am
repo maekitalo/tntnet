@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = session.la
+noinst_LTLIBRARIES = session.la
 
 session_la_SOURCES = \
 	session.ecpp \

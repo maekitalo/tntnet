@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = chat.la
+noinst_LTLIBRARIES = chat.la
 
 chat_la_SOURCES = \
 	chat.ecpp \

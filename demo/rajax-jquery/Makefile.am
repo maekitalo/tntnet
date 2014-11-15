@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = message.la
+noinst_LTLIBRARIES = message.la
 
 noinst_HEADERS = \
     message.h \

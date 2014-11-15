@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = calcmvc.la
+noinst_LTLIBRARIES = calcmvc.la
 AUTOMAKE_OPTIONS = subdir-objects
 
 calcmvc_la_SOURCES = \

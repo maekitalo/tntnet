@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = newsdb.la
+noinst_LTLIBRARIES = newsdb.la
 
 newsdb_la_SOURCES = \
 	index.ecpp \

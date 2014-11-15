@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = strings.la
+noinst_LTLIBRARIES = strings.la
 
 strings_la_SOURCES = \
 	strings.ecpp

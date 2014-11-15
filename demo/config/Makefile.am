@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = config.la
+noinst_LTLIBRARIES = config.la
 
 config_la_SOURCES = \
 	config.ecpp
