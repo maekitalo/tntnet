@@ -134,6 +134,17 @@ namespace tnt
         }
       }
     }
+
+#ifdef CXXTOOLS_XMLDESERIALISER_ATTR
+    class XmlDeserializer : public cxxtools::xml::XmlDeserializer
+    {
+      public:
+        XmlDeserializer(std::istream& is)
+          : cxxtools::xml::XmlDeserializer(is, true)
+          { }
+    };
+#endif
+
   } // namespace
 
   class TntnetProcess : public Process
@@ -187,7 +198,11 @@ namespace tnt
     if (jsonConfig)
       processConfigFile<cxxtools::JsonDeserializer>(configFile, filesProcessed);
     else
+#ifdef CXXTOOLS_XMLDESERIALISER_ATTR
+      processConfigFile<XmlDeserializer>(configFile, filesProcessed);
+#else
       processConfigFile<cxxtools::xml::XmlDeserializer>(configFile, filesProcessed);
+#endif
 
     if (_logall)
       initializeLogging();

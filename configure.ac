@@ -41,6 +41,15 @@ AC_CHECK_HEADER([cxxtools/net/tcpsocket.h], , AC_MSG_ERROR([cxxtools headers not
 AC_CHECK_FUNCS([fopen64], ,[AM_CFLAGS=-DUSE_FILE32API])
 AC_SUBST(AM_CFLAGS)
 
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([
+#include <cxxtools/xml/xmldeserializer.h>
+void f()
+{
+  cxxtools::xml::XmlDeserializer d;
+  d.readAttributes(true);
+}])], AC_DEFINE(CXXTOOLS_XMLDESERIALISER_ATTR, [], [Defined if cxxtools xmldeserializer can read attributes]))
+
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
   [epoll_option=$withval],
