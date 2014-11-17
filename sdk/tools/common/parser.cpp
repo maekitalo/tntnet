@@ -932,7 +932,7 @@ namespace tnt
             if (ch == '/')
               state = state_argscomment;
             else
-              throw parse_error("7", state, _curfile, _curline);
+              throw parse_error("invalid args definition", state, _curfile, _curline);
             break;
 
           case state_argsvar:
@@ -1019,7 +1019,7 @@ namespace tnt
             if (ch == '/')
               state = state_argscomment;
             else
-              throw parse_error("6", state, _curfile, _curline);
+              throw parse_error("invalid args definition", state, _curfile, _curline);
             break;
 
           case state_argscomment:
@@ -1061,7 +1061,7 @@ namespace tnt
             if (ch == '/')
               state = state_attrcomment;
             else
-              throw parse_error("7", state, _curfile, _curline);
+              throw parse_error("invalid attribute definition", state, _curfile, _curline);
             break;
 
           case state_attrvar:
@@ -1122,7 +1122,7 @@ namespace tnt
             if (ch == '/')
               state = state_attrcomment;
             else
-              throw parse_error("6", state, _curfile, _curline);
+              throw parse_error("invalid attribute definition", state, _curfile, _curline);
             break;
 
           case state_attrcomment:
@@ -1682,17 +1682,12 @@ namespace tnt
           case state_scopeargval:
             if (ch == '"')
             {
-              if (value == "shared")
+              if (value == "global" || value == "shared")
                 scope = shared_scope;
               else if (value == "page")
                 scope = page_scope;
               else if (value == "component")
                 scope = component_scope;
-              else if (value == "global")
-              {
-                std::cerr << _curfile << ':' << _curline << ": warning: scope=\"global\" is deprecated; use scope=\"shared\" instead" << std::endl;
-                scope = shared_scope;
-              }
               else
                 throw parse_error("scope shared, page or component expected", state, _curfile, _curline);
 

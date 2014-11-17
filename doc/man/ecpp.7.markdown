@@ -357,20 +357,17 @@ And 3 scopes:
   specify multiple internal subcomponents in a `<%def>` block. Variables, defined
   in page scope are shared between these subcomponents.
 
-`shared`
+`global` or `shared`
   Variables are shared between all components. If you define the same variable
   with shared scope in different components, they must have the same type. This
   is achieved most easily defining them in a separate file and include them
-  with a `<%include>` block.
+  with a `<%include>` block. The `global` and `shared` are just synonyms.
 
   Variables are automatically locked as needed.  If you use session variables,
   tntnet ensures, that all requests of the same session are serialized. If you
   use application variables, tntnet serializes all requests to the same
   application scope. Request and thread scope variables do not need to be
   locked at all, because they are not shared between threads.
-
-Additionally the scope `global` is accepted as a synonym for `shared`. It is
-deprecated. Do not use it any more.
 
 ### Syntax of scoped variables
 

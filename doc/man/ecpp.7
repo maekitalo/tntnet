@@ -16,23 +16,23 @@ namespace component. A ecpp file compiled into a C++ class is called component.
 The name of the class is the basename of the file.
 .SS \fB\fCrequest\fR, \fB\fCreply\fR, \fB\fCqparam\fR
 .PP
-Each component has 3 parameters: \fB\fCrequest\fR, \fB\fCreply\fR and \fB\fCqparam\fR.  \fB\fCrequest\fR
+Each component has 3 parameters: \fB\fCrequest\fR, \fB\fCreply\fR and \fB\fCqparam\fR\&.  \fB\fCrequest\fR
 holds information about the client request like http headers and the url, but
 also additional parameters specified in the config file 
 .BR tntnet.xml (7). 
 The
-type of request is \fB\fCtnt::HttpRequest\fR.
+type of request is \fB\fCtnt::HttpRequest\fR\&.
 .PP
 \fB\fCreply\fR receives the answer from the component. The component can set additional
 http headers here, set cookies and \- most important \- generate output. The most
-important methods here are \fB\fCreply.out()\fR and \fB\fCreply.sout()\fR. Both return a
+important methods here are \fB\fCreply.out()\fR and \fB\fCreply.sout()\fR\&. Both return a
 \fB\fCstd::ostream\fR, which receives the output of the component. \fB\fCreply.sout()\fR has a
 filter installed, which translates some characters, whith special meanings in
 html to the corresponding html entities. The characters are \fB\fC<\fR, \fB\fC>\fR, \fB\fC&\fR, \fB\fC"\fR
-and \fB\fC'\fR. This is useful for printing values from variables to the html code.
+and \fB\fC\&'\fR\&. This is useful for printing values from variables to the html code.
 .PP
 \fB\fCqparam\fR holds the query parameters parsed from GET\- or POST\-parameters or
-received from other components. The type of qparam is \fB\fCtnt::query_params\fR.
+received from other components. The type of qparam is \fB\fCtnt::query_params\fR\&.
 Normally you use a \fB\fC<%args>\fR block to specify the parameters, but there are
 special cases, where it is useful to access these directly.
 .SS component adressing
@@ -58,7 +58,7 @@ exceptions derived from std::exception, result in a http error code 500
 .TP
 \fB\fC<$ expr $>\fR
 Print expressions expr to the outputstream. The characters \fB\fC<\fR, \fB\fC>\fR, \fB\fC&\fR, \fB\fC"\fR
-and \fB\fC'\fR, which have special meanings in html, are translated to the
+and \fB\fC\&'\fR, which have special meanings in html, are translated to the
 corresponding html entities.
 .TP
 \fB\fC<$$ expr $>\fR
@@ -140,14 +140,14 @@ specified, each value is converted to the target type.
 Components may define attributes, which can be queried from other components.
 These values are strings and are defined by specifying a name followed by '='
 and the string value. No type is allowed here.
-.TP
-A other component can the fetch a reference to the component using
-\fB\fCfetchComp(name)`. \fRfetchComp\fB\fCis a member of the base class
-\fRtnt::EcppComponent` of components built with ecpp.
 .IP
-The component has then a member method \fB\fCgetAttribute(name)`, which returns the
+A other component can the fetch a reference to the component using
+\fB\fCfetchComp(name)\fR\&. \fB\fCfetchComp\fR is a member of the base class
+\fB\fCtnt::EcppComponent\fR of components built with ecpp.
+.IP
+The component has then a member method \fB\fCgetAttribute(name)\fR, which returns the
 attribute or a empty string when not found. A different default string can be
-passed as a second parameter to\fRgetAttribute`.
+passed as a second parameter to \fB\fCgetAttribute\fR\&.
 .SS Example:
 .IP
 A content component specifies a title:
@@ -260,7 +260,7 @@ difference is, that a parameter variable has no scope, since the parameter is
 always local to the component.
 .TP
 \fB\fC<%out> expr </%out>\fR
-Same as \fB\fC<$$ ... $>\fR. Prints the contained C++ expression expr.
+Same as \fB\fC<$$ ... $>\fR\&. Prints the contained C++ expression expr.
 .TP
 \fB\fC<%post>...</%post>\fR
 Works like a \fB\fC<%args>\fR block but receives only POST parameters.
@@ -291,8 +291,8 @@ If a variable defined here is used in a non ssl page, the variable values are
 lost after the current request.
 .TP
 \fB\fC<%sout> expr </%sout>\fR
-Same as \fB\fC<$ ... $>\fR. Prints the contained C++ expression expr. The characters
-\fB\fC<\fR, \fB\fC>\fR, \fB\fC&\fR, \fB\fC"\fR and \fB\fC'\fR, which have special meanings in html, are translated to the
+Same as \fB\fC<$ ... $>\fR\&. Prints the contained C++ expression expr. The characters
+\fB\fC<\fR, \fB\fC>\fR, \fB\fC&\fR, \fB\fC"\fR and \fB\fC\&'\fR, which have special meanings in html, are translated to the
 corresponding html entities.
 .TP
 \fB\fC<%thread [ scope="component|page|shared|global" ] >...</%thread>\fR
@@ -310,22 +310,22 @@ to declare the variable and the scope is passed as a parameter to the tag.
 There are 5 different lifetimes for scoped variables:
 .TP
 \fB\fCrequest\fR
-The variable is valid in the current request. The tag is \fB\fC<%request>\fR.
+The variable is valid in the current request. The tag is \fB\fC<%request>\fR\&.
 .TP
 \fB\fCapplication\fR
-The variable is valid in the application. The tag is \fB\fC<%application>\fR. The
+The variable is valid in the application. The tag is \fB\fC<%application>\fR\&. The
 application is specified by the shared library of the top level component.
 .TP
 \fB\fCsession\fR
-The variable is valid for the current session. The tag is \fB\fC<%session>\fR. If at
+The variable is valid for the current session. The tag is \fB\fC<%session>\fR\&. If at
 least session variable is declared in the current request, a session cookie is
 sent to the client.
 .TP
 \fB\fCthread\fR
-The variable is valid in the current thread. The tag is \fB\fC<%thread>\fR.
+The variable is valid in the current thread. The tag is \fB\fC<%thread>\fR\&.
 .TP
 \fB\fCparam\fR
-The variable receives parameters. The tag is \fB\fC<%param>\fR.
+The variable receives parameters. The tag is \fB\fC<%param>\fR\&.
 .PP
 And 3 scopes:
 .TP
@@ -337,20 +337,17 @@ The variable is shared between the components in a single ecpp file. You can
 specify multiple internal subcomponents in a \fB\fC<%def>\fR block. Variables, defined
 in page scope are shared between these subcomponents.
 .TP
-\fB\fCshared\fR
+\fB\fCglobal\fR or \fB\fCshared\fR
 Variables are shared between all components. If you define the same variable
 with shared scope in different components, they must have the same type. This
 is achieved most easily defining them in a separate file and include them
-with a \fB\fC<%include>\fR block.
+with a \fB\fC<%include>\fR block. The \fB\fCglobal\fR and \fB\fCshared\fR are just synonyms.
 .IP
 Variables are automatically locked as needed.  If you use session variables,
 tntnet ensures, that all requests of the same session are serialized. If you
 use application variables, tntnet serializes all requests to the same
 application scope. Request and thread scope variables do not need to be
 locked at all, because they are not shared between threads.
-.PP
-Additionally the scope \fB\fCglobal\fR is accepted as a synonym for \fB\fCshared\fR. It is
-deprecated. Do not use it any more.
 .SS Syntax of scoped variables
 .PP
 Scoped variables are declared with exactly the same syntax as normal variables
@@ -398,8 +395,7 @@ tntdb::Connection conn(dburl);
 .SH AUTHOR
 .PP
 This manual page was written by Tommi Mäkitalo 
-.MT tommi@tntnet.org
-.ME .
+\[la]tommi@tntnet.org\[ra]\&.
 .SH SEE ALSO
 .PP
 .BR tntnet (8), 
