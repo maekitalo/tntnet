@@ -41,6 +41,21 @@ int main(int argc, char* argv[])
   std::ios::sync_with_stdio(false);
   try
   {
+    typedef std::list<std::string> includes_type;
+    includes_type includes;
+
+    while (true)
+    {
+      cxxtools::Arg<const char*> include(argc, argv, 'I', 0);
+      if (!include.isSet())
+        break;
+      includes.push_back(include.getValue());
+    }
+
+    // boolean arguments have to be read after the includes
+    // because else parts of the include directory string
+    // might be interpreted as flags and taken out, often
+    // resulting in an missing include error message.
     cxxtools::Arg<bool> help(argc, argv, 'h');
     cxxtools::Arg<bool> helpLong(argc, argv, "--help");
 
@@ -78,17 +93,6 @@ int main(int argc, char* argv[])
                    "more info with -h / --help"<< std::endl;
 
       return 1;
-    }
-
-    typedef std::list<std::string> includes_type;
-    includes_type includes;
-
-    while (true)
-    {
-      cxxtools::Arg<const char*> include(argc, argv, 'I', 0);
-      if (!include.isSet())
-        break;
-      includes.push_back(include.getValue());
     }
 
     std::ifstream in(argv[1]);
