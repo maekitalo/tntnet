@@ -53,14 +53,7 @@ namespace tnt
         _odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         _mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),
         _mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types")),
-        _logCategory(cxxtools::Arg<std::string>(argc, argv, 'l')),
-        _binary(cxxtools::Arg<bool>(argc, argv, 'b')),
-        _multibinary(cxxtools::Arg<bool>(argc, argv, 'b')),
-        _keepPath(cxxtools::Arg<bool>(argc, argv, 'p')),
-        _compress(cxxtools::Arg<bool>(argc, argv, 'z')),
-        _verbose(cxxtools::Arg<bool>(argc, argv, 'v')),
-        _generateDependencies(cxxtools::Arg<bool>(argc, argv, 'M')),
-        _disableLinenumbers(cxxtools::Arg<bool>(argc, argv, 'L'))
+        _logCategory(cxxtools::Arg<std::string>(argc, argv, 'l'))
     {
       while (true)
       {
@@ -70,6 +63,55 @@ namespace tnt
         log_debug("include: " << include.getValue());
         _includes.push_back(include);
       }
+
+      // boolean arguments have to be read after the includes
+      // because else parts of the include directory string
+      // might be interpreted as flags and taken out, often
+      // resulting in an missing include error message.
+      cxxtools::Arg<bool> version(argc, argv, 'V');
+      cxxtools::Arg<bool> versionLong(argc, argv, "--version");
+      if (version || versionLong)
+      {
+          std::cout << PACKAGE_STRING << std::endl;
+          exit(0);
+      }
+
+      cxxtools::Arg<bool> help(argc, argv, 'h');
+      cxxtools::Arg<bool> helpLong(argc, argv, "--help");
+
+      if(help || helpLong)
+      {
+          std::cout << PACKAGE_STRING "\n\n"
+              "ecppc-compiler\n\n"
+              "usage: " << argv[0] << " [options] ecpp-source\n\n"
+              "  -o filename       outputfile\n"
+              "  -n name           componentname\n"
+              "  -I dir            include-directory\n"
+              "  -m type           mimetype\n"
+              "  --mimetypes file  read mimetypes from file (default /etc/mime.types)\n"
+              "  -b                binary\n"
+              "  -bb               generate multibinary component\n"
+              "  -i filename       read filenames for multibinary component from specified file\n"
+              "  -z                compress constant data\n"
+              "  -v                verbose\n"
+              "  -M                generate dependency for Makefile\n"
+              "  -p                keep path when generating component name from filename\n"
+              "  -l log-category   set log category (default: component.compname)\n"
+              "  -L                disable generation of #line-directives\n"
+              "\n"
+              "  -h, --help        display this information\n"
+              "  -V, --version     display program version\n" << std::endl;
+
+          exit(0);
+      }
+
+      _binary = cxxtools::Arg<bool>(argc, argv, 'b');
+      _multibinary = cxxtools::Arg<bool>(argc, argv, 'b');
+      _keepPath = cxxtools::Arg<bool>(argc, argv, 'p');
+      _compress = cxxtools::Arg<bool>(argc, argv, 'z');
+      _verbose = cxxtools::Arg<bool>(argc, argv, 'v');
+      _generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
+      _disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
 
       if (_multibinary)
       {
@@ -374,43 +416,6 @@ int main(int argc, char* argv[])
 
   try
   {
-    cxxtools::Arg<bool> version(argc, argv, 'V');
-    cxxtools::Arg<bool> versionLong(argc, argv, "--version");
-    if (version || versionLong)
-    {
-      std::cout << PACKAGE_STRING << std::endl;
-      return 0;
-    }
-
-    cxxtools::Arg<bool> help(argc, argv, 'h');
-    cxxtools::Arg<bool> helpLong(argc, argv, "--help");
-
-    if(help || helpLong)
-    {
-      std::cout << PACKAGE_STRING "\n\n"
-        "ecppc-compiler\n\n"
-        "usage: " << argv[0] << " [options] ecpp-source\n\n"
-        "  -o filename       outputfile\n"
-        "  -n name           componentname\n"
-        "  -I dir            include-directory\n"
-        "  -m type           mimetype\n"
-        "  --mimetypes file  read mimetypes from file (default /etc/mime.types)\n"
-        "  -b                binary\n"
-        "  -bb               generate multibinary component\n"
-        "  -i filename       read filenames for multibinary component from specified file\n"
-        "  -z                compress constant data\n"
-        "  -v                verbose\n"
-        "  -M                generate dependency for Makefile\n"
-        "  -p                keep path when generating component name from filename\n"
-        "  -l log-category   set log category (default: component.compname)\n"
-        "  -L                disable generation of #line-directives\n"
-        "\n"
-        "  -h, --help        display this information\n"
-        "  -V, --version     display program version\n" << std::endl;
-
-      return 0;
-    }
-
     log_init();
     tnt::ecppc::Ecppc app(argc, argv);
     return app.run();
