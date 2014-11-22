@@ -24,6 +24,13 @@ EOF
     exit $1
 }
 
+error()
+{
+    echo "error: $1"
+    echo "use \`$0 --help\` for usage information"
+    exit 1
+}
+
 checkProc()
 {
     echo checking for $2
@@ -48,26 +55,31 @@ checkSystem()
 prefix=@prefix@
 TEMPLATEDIR=@datarootdir@/tntnet/template
 USERTEMPLATEDIR=~/.tntnet/template
-TEMPLATE=
-TYPE=classic
-MODEL=standalone
+DEFAULT_TYPE=classic
+DEFAULT_MODEL=standalone
 
 ########################################################################
 # main
 #
-while [ $# -gt 1 ]
+while [ $# -gt 0 ]
 do
     arg=$1
     shift
 
     case "$arg" in
-        -*=*)
-            optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'`
-            echo "longopt; optarg=$optarg"
+        --help|-h)
+            usage
+            exit 0
             ;;
-        *)
+
+        --*=*)
+            optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'`
+            #echo "longopt; optarg=$optarg"
+            ;;
+
+        -*)
             optarg=$1
-            echo "short; optarg=$optarg"
+            #echo "short; optarg=$optarg"
             shift
             ;;
     esac
@@ -85,25 +97,38 @@ do
             MODEL=$optarg
             ;;
 
-        *)
-            echo arg=$arg
-            usage
-            exit 1
+        -*)
+            error "unkown option \`$arg\`"
             ;;
+
+        *)
+        if [ -n "$project" ]
+            then
+            error "multiple project names specified"
+        fi
+        project=$arg
+        ;;
     esac
 done
 
-project=$1
-
-if [ -z "$TEMPLATE" -a "$TYPE" ]
-then
-    TEMPLATE="$TYPE-$MODEL"
+if [ -z "$project" ]
+    then
+    error "no project name specified"
 fi
 
-if [ ! "$project" -o ! "$TEMPLATE" ]
-then
-    usage
-    exit 1
+if [ -z "$TYPE" ]
+    then
+    TYPE="$DEFAULT_TYPE"
+fi
+
+if [ -z "$MODEL" ]
+    then
+    MODEL="$DEFAULT_MODEL"
+fi
+
+if [ -z "$TEMPLATE" ]
+    then
+    TEMPLATE="$TYPE-$MODEL"
 fi
 
 if [ -e "$USERTEMPLATEDIR/$TEMPLATE" ]
@@ -111,20 +136,18 @@ then
     TDIR="$USERTEMPLATEDIR/$TEMPLATE"
 else
     TDIR="$TEMPLATEDIR/$TEMPLATE"
-fi 
+fi
 
 if [ ! -d "$TDIR" ]
 then
-    echo Template $TEMPLATE not found
-    exit 1
+    error "template $TEMPLATE not found"
 fi
 
 echo project=$project template=$TDIR
 
 if [ -d "$project" ]
 then
-    echo Directory "$project" already exists
-    exit 1
+    error "directory $project already exists"
 fi
 
 checkSystem $project
