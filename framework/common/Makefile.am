@@ -10,6 +10,7 @@ libtntnet_la_SOURCES = \
 	contentdisposition.cpp \
 	contenttype.cpp \
 	cookie.cpp \
+	cstream.cpp \
 	deflatestream.cpp \
 	dispatcher.cpp \
 	ecpp.cpp \
@@ -106,6 +107,7 @@ nobase_include_HEADERS = \
 	tnt/zdata.h
 
 noinst_HEADERS = \
+	tnt/cstream.h \
 	tnt/listener.h \
 	tnt/pollerimpl.h \
 	tnt/ssl.h \

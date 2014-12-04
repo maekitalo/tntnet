@@ -37,6 +37,7 @@
 #include <tnt/urlescostream.h>
 #include <tnt/encoding.h>
 #include <tnt/chunkedostream.h>
+#include <tnt/cstream.h>
 #include <cxxtools/log.h>
 #include <cxxtools/md5stream.h>
 #include <cxxtools/mutex.h>
@@ -49,39 +50,63 @@ namespace tnt
 {
   log_define("tntnet.httpreply")
 
+  namespace
+  {
+    class TryCompress
+    {
+        std::ostringstream _zbody;
+        DeflateStream _deflator;
+        uLong _crc;
+        unsigned _size;
+
+      public:
+        TryCompress()
+          : _deflator(_zbody),
+            _crc(0),
+            _size(0)
+        {
+          static const char f[] =
+               "\x1f\x8b\x08\x00"
+               "\x00\x00\x00\x00"
+               "\x04\x03";
+          _zbody.write(f, sizeof(f) - 1);
+        }
+
+        void update(const char* d, unsigned s)
+        {
+          _deflator.write(d, s);
+          _size += s;
+          _crc = crc32(_crc, reinterpret_cast<const Bytef*>(d), s);
+        }
+
+        void finalize()
+        {
+          _deflator.end();
+
+          uint32_t u = _crc;
+          _zbody.put(static_cast<char>(u & 0xFF));
+          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
+          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
+          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
+
+          u = _size;
+          _zbody.put(static_cast<char>(u & 0xFF));
+          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
+          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
+          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
+        }
+
+        std::string::size_type size()
+        { return _size; }
+
+        std::string str() const
+        { return _zbody.str(); }
+    };
+  }
+
   ////////////////////////////////////////////////////////////////////////
   // HttpReply
   //
-  namespace
-  {
-    std::string doCompress(const std::string& body)
-    {
-      std::ostringstream b;
-      char f[] = "\x1f\x8b\x08\x00"
-           "\x00\x00\x00\x00"
-           "\x04\x03";
-      b.write(f, sizeof(f) - 1);
-
-      DeflateStream deflator(b);
-      deflator.write(body.data(), body.size());
-      deflator.end();
-
-      uLong crc = crc32(0, reinterpret_cast<const Bytef*>(body.data()), body.size());
-      uint32_t u = crc;
-      b.put(static_cast<char>(u & 0xFF));
-      b.put(static_cast<char>((u >>= 8) & 0xFF));
-      b.put(static_cast<char>((u >>= 8) & 0xFF));
-      b.put(static_cast<char>((u >>= 8) & 0xFF));
-
-      u = body.size();
-      b.put(static_cast<char>(u & 0xFF));
-      b.put(static_cast<char>((u >>= 8) & 0xFF));
-      b.put(static_cast<char>((u >>= 8) & 0xFF));
-      b.put(static_cast<char>((u >>= 8) & 0xFF));
-
-      return b.str();
-    }
-  }
 
   //////////////////////////////////////////////////////////////////////
   // HttpReply::Impl
@@ -89,7 +114,7 @@ namespace tnt
   struct HttpReply::Impl
   {
     std::ostream* socket;
-    std::ostringstream outstream;
+    ocstream outstream;
     HtmlEscOstream safe_outstream;
     UrlEscOstream url_outstream;
     ChunkedOStream chunked_outstream;
@@ -157,7 +182,7 @@ namespace tnt
     if (pool.size() < 64)
     {
       inst->outstream.clear();
-      inst->outstream.str(std::string());
+      inst->outstream.makeEmpty();
       inst->safe_outstream.clear();
       inst->url_outstream.clear();
       inst->chunked_outstream.clear();
@@ -211,19 +236,18 @@ namespace tnt
     { return _impl->clearSession; }
 
   void HttpReply::resetContent()
-    { _impl->outstream.str(std::string()); }
+    { _impl->outstream.makeEmpty(); }
 
   void HttpReply::rollbackContent(unsigned size)
   {
-    _impl->outstream.str( _impl->outstream.str().substr(0, size) );
-    _impl->outstream.seekp(size);
+    _impl->outstream.rollback(size);
   }
 
   bool HttpReply::isDirectMode() const
     { return _current_outstream == _impl->socket; }
 
   std::string::size_type HttpReply::getContentSize() const
-    { return _impl->outstream.str().size(); }
+    { return _impl->outstream.size(); }
 
   std::ostream& HttpReply::getDirectStream()
     { return *_impl->socket; }
@@ -239,15 +263,15 @@ namespace tnt
 
   bool HttpReply::tryCompress(std::string& body)
   {
-    log_debug("gzip");
-
-    std::string cbody = doCompress(body);
+    TryCompress t;
+    t.update(body.data(), body.size());
+    t.finalize();
 
     std::string::size_type oldSize = body.size();
     // only send compressed data, if the data is compressed more than 1/8th
-    if (oldSize - (oldSize >> 3) > cbody.size())
+    if (oldSize - (oldSize >> 3) > t.size())
     {
-      body = cbody;
+      body = t.str();
       log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
 
       return true;
@@ -261,8 +285,6 @@ namespace tnt
 
   void HttpReply::send(unsigned ret, const char* msg, bool ready) const
   {
-    std::string body = _impl->outstream.str();
-
     std::ostream hsocket(_impl->socket->rdbuf());
     hsocket.imbue(std::locale::classic());
 
@@ -300,19 +322,31 @@ namespace tnt
       }
       else
       {
+        ocstream& body = _impl->outstream;
+
         if (body.size() >= TntConfig::it().minCompressSize
             && !hasHeader(httpheader::contentEncoding)
             && _impl->acceptEncoding.accept("gzip")
-            && tryCompress(body))
+            && !hasHeader(httpheader::contentLength))
         {
-          log_debug(httpheader::contentEncoding << " gzip");
-          hsocket << httpheader::contentEncoding << " gzip\r\n";
-        }
+          TryCompress t;
+          for (unsigned n = 0; n < body.chunkcount(); ++n)
+            t.update(body.chunk(n), body.chunksize(n));
+          t.finalize();
 
-        if (!hasHeader(httpheader::contentLength))
-        {
+          log_debug(httpheader::contentEncoding << " gzip");
           log_debug(httpheader::contentLength << ' ' << body.size());
-          hsocket << httpheader::contentLength << ' ' << body.size() << "\r\n";
+
+          hsocket << httpheader::contentLength << ' ' << body.size() << "\r\n"
+                  << httpheader::contentEncoding << " gzip\r\n";
+        }
+        else
+        {
+          if (!hasHeader(httpheader::contentLength))
+          {
+            log_debug(httpheader::contentLength << ' ' << body.size());
+            hsocket << httpheader::contentLength << ' ' << body.size() << "\r\n";
+          }
         }
       }
 
@@ -366,19 +400,15 @@ namespace tnt
       log_debug("HEAD-request - empty body");
     else
     {
+      ocstream& body = _impl->outstream;
       if (_current_outstream == &_impl->chunked_outstream)
       {
-        _current_outstream->write(body.data(), body.size());
+        body.output(*_current_outstream);
       }
       else
       {
         log_debug("send " << body.size() << " bytes body");
-        // We send in chunks just to leave to ostream operator from time to time.
-        // There are iostream libraries, which do have a global lock, which
-        // block other iostreams while writing.
-        const unsigned chunkSize = 65536;
-        for (unsigned n = 0; n < body.size(); n += chunkSize)
-          hsocket.write(body.data() + n, std::min(static_cast<unsigned>(body.size() - n), chunkSize));
+        body.output(hsocket);
       }
     }
   }
@@ -404,7 +434,9 @@ namespace tnt
   void HttpReply::setMd5Sum()
   {
     cxxtools::Md5stream md5;
-    md5 << _impl->outstream.str().size();
+    const tnt::ocstream& c = _impl->outstream;
+    for (unsigned n = 0; n < c.chunkcount(); ++n)
+      md5.write(c.chunk(n), c.chunksize(n));
     setHeader(httpheader::contentMD5, md5.getHexDigest());
   }
 
@@ -412,7 +444,7 @@ namespace tnt
   {
     setHeader(httpheader::location, newLocation);
 
-    _impl->outstream.str(std::string());
+    _impl->outstream.makeEmpty();
     _impl->outstream << "<html><body>moved to <a href=\"" << newLocation << "\">" << newLocation << "</a></body></html>";
 
     unsigned httpCode = static_cast<unsigned>(type);
@@ -425,7 +457,7 @@ namespace tnt
   {
     setHeader(httpheader::wwwAuthenticate, "Basic realm=\"" + realm + '"');
 
-    _impl->outstream.str(std::string());
+    _impl->outstream.makeEmpty();
     _impl->outstream << "<html><body><h1>not authorized</h1></body></html>";
 
     throw HttpReturn(HTTP_UNAUTHORIZED, "not authorized");
