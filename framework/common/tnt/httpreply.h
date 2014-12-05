@@ -48,6 +48,8 @@ namespace tnt
       std::ostream* _safe_outstream;
       std::ostream* _url_outstream;
 
+      void sendHttpStatus(std::ostream& hsocket, unsigned ret, const char* msg) const;
+      void sendHttpHeaders(std::ostream& hsocket) const;
       void send(unsigned ret, const char* msg, bool ready) const;
 
     public:

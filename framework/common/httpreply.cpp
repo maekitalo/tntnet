@@ -52,15 +52,15 @@ namespace tnt
 
   namespace
   {
-    class TryCompress
+    class Compressor
     {
-        std::ostringstream _zbody;
+        ocstream _zbody;
         DeflateStream _deflator;
         uLong _crc;
         unsigned _size;
 
       public:
-        TryCompress()
+        Compressor()
           : _deflator(_zbody),
             _crc(0),
             _size(0)
@@ -72,7 +72,7 @@ namespace tnt
           _zbody.write(f, sizeof(f) - 1);
         }
 
-        void update(const char* d, unsigned s)
+        void compress(const char* d, unsigned s)
         {
           _deflator.write(d, s);
           _size += s;
@@ -96,11 +96,24 @@ namespace tnt
           _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
         }
 
-        std::string::size_type size()
+        std::string::size_type uncompressedSize()
         { return _size; }
+
+        std::string::size_type zsize()
+        { return _zbody.size(); }
 
         std::string str() const
         { return _zbody.str(); }
+
+        void output(std::ostream& out)
+        { _zbody.output(out); }
+
+        void clear()
+        {
+          _zbody.makeEmpty();
+          _crc = 0;
+          _size = 0;
+        }
     };
   }
 
@@ -118,6 +131,7 @@ namespace tnt
     HtmlEscOstream safe_outstream;
     UrlEscOstream url_outstream;
     ChunkedOStream chunked_outstream;
+    Compressor compressor;
 
     Encoding acceptEncoding;
 
@@ -186,6 +200,7 @@ namespace tnt
       inst->safe_outstream.clear();
       inst->url_outstream.clear();
       inst->chunked_outstream.clear();
+      inst->compressor.clear();
       pool.push_back(inst);
     }
     else
@@ -263,16 +278,16 @@ namespace tnt
 
   bool HttpReply::tryCompress(std::string& body)
   {
-    TryCompress t;
-    t.update(body.data(), body.size());
-    t.finalize();
+    Compressor compressor;
+    compressor.compress(body.data(), body.size());
+    compressor.finalize();
 
     std::string::size_type oldSize = body.size();
     // only send compressed data, if the data is compressed more than 1/8th
-    if (oldSize - (oldSize >> 3) > t.size())
+    if (oldSize - (oldSize >> 3) > compressor.zsize())
     {
-      body = t.str();
-      log_info("gzip body " << oldSize << " bytes to " << body.size() << " bytes");
+      body = compressor.str();
+      log_info("gzip body " << oldSize << " bytes to " << compressor.zsize() << " bytes");
 
       return true;
     }
@@ -283,13 +298,8 @@ namespace tnt
   void HttpReply::postRunCleanup()
     { Impl::pool.clear();}
 
-  void HttpReply::send(unsigned ret, const char* msg, bool ready) const
+  void HttpReply::sendHttpStatus(std::ostream& hsocket, unsigned ret, const char* msg) const
   {
-    std::ostream hsocket(_impl->socket->rdbuf());
-    hsocket.imbue(std::locale::classic());
-
-    // send header
-
     if (_impl->sendStatusLine)
     {
       log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
@@ -297,7 +307,10 @@ namespace tnt
       hsocket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
               << ' ' << ret << ' ' << msg << "\r\n";
     }
+  }
 
+  void HttpReply::sendHttpHeaders(std::ostream& hsocket) const
+  {
     if (!hasHeader(httpheader::date))
     {
       char current[50];
@@ -312,6 +325,38 @@ namespace tnt
       log_debug(httpheader::server << ' ' << TntConfig::it().server);
       hsocket << httpheader::server << ' ' << TntConfig::it().server << "\r\n";
     }
+
+    for (header_type::const_iterator it = header.begin(); it != header.end(); ++it)
+    {
+      log_debug(it->first << ' ' << it->second);
+      hsocket << it->first << ' ' << it->second << "\r\n";
+    }
+
+    if (hasCookies())
+    {
+      log_debug(httpheader::setCookie << ' ' << httpcookies);
+
+      for (Cookies::cookies_type::const_iterator it = httpcookies._data.begin();
+        it != httpcookies._data.end(); ++it)
+      {
+        hsocket << httpheader::setCookie << ' ';
+        it->second.write(hsocket, it->first);
+        hsocket << "\r\n";
+      }
+    }
+
+  }
+
+  void HttpReply::send(unsigned ret, const char* msg, bool ready) const
+  {
+    std::ostream hsocket(_impl->socket->rdbuf());
+    hsocket.imbue(std::locale::classic());
+
+    // send header
+    sendHttpStatus(hsocket, ret, msg);
+    sendHttpHeaders(hsocket);
+
+    bool compressed = false;
 
     if (ready)
     {
@@ -329,15 +374,15 @@ namespace tnt
             && _impl->acceptEncoding.accept("gzip")
             && !hasHeader(httpheader::contentLength))
         {
-          TryCompress t;
           for (unsigned n = 0; n < body.chunkcount(); ++n)
-            t.update(body.chunk(n), body.chunksize(n));
-          t.finalize();
+            _impl->compressor.compress(body.chunk(n), body.chunksize(n));
+          _impl->compressor.finalize();
 
+          compressed = true;
           log_debug(httpheader::contentEncoding << " gzip");
-          log_debug(httpheader::contentLength << ' ' << body.size());
+          log_debug(httpheader::contentLength << ' ' << _impl->compressor.zsize());
 
-          hsocket << httpheader::contentLength << ' ' << body.size() << "\r\n"
+          hsocket << httpheader::contentLength << ' ' << _impl->compressor.zsize() << "\r\n"
                   << httpheader::contentEncoding << " gzip\r\n";
         }
         else
@@ -373,29 +418,9 @@ namespace tnt
       }
     }
 
-    for (header_type::const_iterator it = header.begin(); it != header.end(); ++it)
-    {
-      log_debug(it->first << ' ' << it->second);
-      hsocket << it->first << ' ' << it->second << "\r\n";
-    }
-
-    if (hasCookies())
-    {
-      log_debug(httpheader::setCookie << ' ' << httpcookies);
-
-      for (Cookies::cookies_type::const_iterator it = httpcookies._data.begin();
-        it != httpcookies._data.end(); ++it)
-      {
-        hsocket << httpheader::setCookie << ' ';
-        it->second.write(hsocket, it->first);
-        hsocket << "\r\n";
-      }
-    }
-
     hsocket << "\r\n";
 
     // send body
-
     if (_impl->headRequest)
       log_debug("HEAD-request - empty body");
     else
@@ -408,7 +433,10 @@ namespace tnt
       else
       {
         log_debug("send " << body.size() << " bytes body");
-        body.output(hsocket);
+        if (compressed)
+          _impl->compressor.output(hsocket);
+        else
+          body.output(hsocket);
       }
     }
   }
