@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = sprintf.la
+pkglib_LTLIBRARIES = sprintf.la
 
 sprintf_la_SOURCES = \
 	sprintf.ecpp \

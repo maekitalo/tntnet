@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = mvc.la
+pkglib_LTLIBRARIES = mvc.la
 AUTOMAKE_OPTIONS = subdir-objects
 
 mvc_la_SOURCES = \
@@ -8,8 +8,6 @@ mvc_la_SOURCES = \
 
 nobase_include_HEADERS = \
 	model/counter.h
-
-dist_noinst_DATA = tntnet.xml
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I$(srcdir)/model
 mvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@

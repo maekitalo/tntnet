@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = hello.la
+pkglib_LTLIBRARIES = hello.la
 
 hello_la_SOURCES = \
 	hello.ecpp \

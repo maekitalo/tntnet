@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = controls.la
+pkglib_LTLIBRARIES = controls.la
 
 controls_la_SOURCES = \
 	controls.ecpp \
