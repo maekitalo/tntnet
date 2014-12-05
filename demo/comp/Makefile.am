@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = comp.la extlib.la
+pkglib_LTLIBRARIES = comp.la extlib.la
 
 comp_la_SOURCES = \
 	comp.ecpp \

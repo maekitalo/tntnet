@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = upload.la
+pkglib_LTLIBRARIES = upload.la
 
 upload_la_SOURCES = \
 	upload.ecpp

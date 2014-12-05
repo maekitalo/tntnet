@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = calc.la
+pkglib_LTLIBRARIES = calc.la
 
 calc_la_SOURCES = \
 	calc.ecpp

@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = gd.la
+pkglib_LTLIBRARIES = gd.la
 
 gd_la_SOURCES = \
 	gd++.cpp \

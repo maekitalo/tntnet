@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = savepoint.la
+pkglib_LTLIBRARIES = savepoint.la
 
 savepoint_la_SOURCES = \
 	savepoint.ecpp

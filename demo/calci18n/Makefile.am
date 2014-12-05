@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = calci18n.la
+pkglib_LTLIBRARIES = calci18n.la
 
 calci18n_la_SOURCES = \
 	calci18n.ecpp \
