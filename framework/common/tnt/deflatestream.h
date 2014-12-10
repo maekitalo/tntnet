@@ -69,6 +69,7 @@ namespace tnt
 
       /// end deflate-stream
       int end();
+      void reinitialize(int level = Z_DEFAULT_COMPRESSION);
       void setSink(std::streambuf* sink) { _sink = sink; }
       uLong getAdler() const             { return _stream.adler; }
   };
@@ -88,6 +89,8 @@ namespace tnt
           { init(&_streambuf); }
 
       void end();
+      void reinitialize(int level = Z_DEFAULT_COMPRESSION)
+      { _streambuf.reinitialize(level); }
       void setSink(std::streambuf* sink) { _streambuf.setSink(sink); }
       void setSink(std::ostream& sink)   { _streambuf.setSink(sink.rdbuf()); }
       uLong getAdler() const             { return _streambuf.getAdler(); }

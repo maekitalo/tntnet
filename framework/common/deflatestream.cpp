@@ -69,7 +69,6 @@ namespace tnt
     _stream.avail_out = 0;
 
     int strategy = Z_DEFAULT_STRATEGY;
-    level = 6;
     checkError(::deflateInit2(&_stream, level, Z_DEFLATED, -MAX_WBITS, 8, strategy), _stream);
 
     setp(&_obuffer[0], &_obuffer[0] + _obuffer.size());
@@ -178,6 +177,12 @@ namespace tnt
     // reset outbuffer
     setp(&_obuffer[0], &_obuffer[0] + _obuffer.size());
     return 0;
+  }
+
+  void DeflateStreamBuf::reinitialize(int level)
+  {
+    log_debug("deflateReset(" << static_cast<const void*>(&_stream) << ')');
+    checkError(::deflateReset(&_stream), _stream);
   }
 
   void DeflateStream::end()

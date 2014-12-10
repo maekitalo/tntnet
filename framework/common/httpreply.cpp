@@ -111,6 +111,7 @@ namespace tnt
         void clear()
         {
           _zbody.makeEmpty();
+          _deflator.reinitialize();
           _crc = 0;
           _size = 0;
         }
@@ -449,14 +450,14 @@ namespace tnt
       log_debug("finish chunked encoding");
       _impl->chunked_outstream.finish();
       *_impl->socket << "\r\n";
-      _impl->socket->flush();
     }
     else if (!isDirectMode())
     {
       log_debug("send data");
       send(ret, msg, true);
-      _impl->socket->flush();
     }
+
+    _impl->socket->flush();
   }
 
   void HttpReply::setMd5Sum()
