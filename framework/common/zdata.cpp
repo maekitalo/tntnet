@@ -42,12 +42,12 @@ namespace tnt
     if (cxxtools::atomicIncrement(_refs) == 1)
     {
       // allocate uncompressed data
-      _data = new char[_data_len];
+      _data = new char[_dataLen];
 
       // uncompress Zdata => data
-      log_debug("uncompress " << _zdata_len << " to " << _data_len << " bytes");
-      uLong dest_len = _data_len;
-      int z_ret = uncompress((Bytef*)_data, &dest_len, (const Bytef*)_zptr, _zdata_len);
+      log_debug("uncompress " << _zdataLen << " to " << _dataLen << " bytes");
+      uLong dest_len = _dataLen;
+      int z_ret = uncompress((Bytef*)_data, &dest_len, (const Bytef*)_zptr, _zdataLen);
       if (z_ret != Z_OK)
       {
         throwRuntimeError(std::string("error uncompressing data: ") +
@@ -63,10 +63,9 @@ namespace tnt
   {
     if (cxxtools::atomicDecrement(_refs) == 0)
     {
-      log_debug("release " << _data_len << " uncompressed bytes");
+      log_debug("release " << _dataLen << " uncompressed bytes");
       delete[] _data;
       _data = 0;
     }
   }
 }
-

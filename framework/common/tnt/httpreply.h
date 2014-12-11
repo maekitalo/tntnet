@@ -42,11 +42,12 @@ namespace tnt
   /// HTTP reply message
   class HttpReply : public HttpMessage
   {
+    private:
       struct Impl;
       Impl* _impl;
-      std::ostream* _current_outstream;
-      std::ostream* _safe_outstream;
-      std::ostream* _url_outstream;
+      std::ostream* _currentOutstream;
+      std::ostream* _safeOutstream;
+      std::ostream* _urlOutstream;
 
       void send(unsigned ret, const char* msg, bool ready) const;
 
@@ -97,13 +98,13 @@ namespace tnt
         { sendReply(ret, msg.c_str()); }
 
       /// Get output stream
-      std::ostream& out()    { return *_current_outstream; }
+      std::ostream& out()    { return *_currentOutstream; }
 
       /// Get safe output stream (unsafe html characters written into this stream are escaped)
-      std::ostream& sout()   { return *_safe_outstream; }
+      std::ostream& sout()   { return *_safeOutstream; }
 
       /// Get url output stream (everything written into this stream is url-encoded)
-      std::ostream& uout()   { return *_url_outstream; }
+      std::ostream& uout()   { return *_urlOutstream; }
 
       void resetContent();
       void rollbackContent(unsigned size);
@@ -171,4 +172,3 @@ namespace tnt
 }
 
 #endif // TNT_HTTPREPLY_H
-

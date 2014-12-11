@@ -38,17 +38,17 @@ namespace tnt
   class Zdata
   {
       const char* _zptr;
-      const unsigned _zdata_len;
-      const unsigned _data_len;
+      const unsigned _zdataLen;
+      const unsigned _dataLen;
 
       cxxtools::atomic_t _refs;
       char* _data;
 
     public:
-      Zdata(const char* zptr, unsigned zdata_len, unsigned data_len)
+      Zdata(const char* zptr, unsigned zdataLen, unsigned dataLen)
         : _zptr(zptr),
-          _zdata_len(zdata_len),
-          _data_len(data_len),
+          _zdataLen(zdataLen),
+          _dataLen(dataLen),
           _refs(0),
           _data(0)
         { }
@@ -62,4 +62,3 @@ namespace tnt
 /// @endcond internal
 
 #endif // TNT_ZDATA_H
-

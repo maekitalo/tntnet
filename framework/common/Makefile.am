@@ -32,6 +32,7 @@ libtntnet_la_SOURCES = \
 	mimedb.cpp \
 	multipart.cpp \
 	poller.cpp \
+	pollerimpl.cpp \
 	query_params.cpp \
 	savepoint.cpp \
 	scope.cpp \

@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2003-2005 Tommi Maekitalo
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * As a special exception, you may use this file as part of a free
  * software library without restriction. Specifically, if other files
  * instantiate templates or use macros or inline functions from this
@@ -15,12 +15,12 @@
  * License. This exception does not however invalidate any other
  * reasons why the executable file might be covered by the GNU Library
  * General Public License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -52,7 +52,8 @@ namespace tnt
         _ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         _odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
         _mimetype(cxxtools::Arg<std::string>(argc, argv, 'm')),
-        _mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types"))
+        _mimedb(cxxtools::Arg<std::string>(argc, argv, "--mimetypes", "/etc/mime.types")),
+        _logCategory(cxxtools::Arg<std::string>(argc, argv, 'l'))
     {
       while (true)
       {
@@ -63,6 +64,47 @@ namespace tnt
         _includes.push_back(include);
       }
 
+      // boolean arguments have to be read after the includes
+      // because else parts of the include directory string
+      // might be interpreted as flags and taken out, often
+      // resulting in an missing include error message.
+      cxxtools::Arg<bool> version(argc, argv, 'V');
+      cxxtools::Arg<bool> versionLong(argc, argv, "--version");
+      if (version || versionLong)
+      {
+          std::cout << PACKAGE_STRING << std::endl;
+          exit(0);
+      }
+
+      cxxtools::Arg<bool> help(argc, argv, 'h');
+      cxxtools::Arg<bool> helpLong(argc, argv, "--help");
+
+      if(help || helpLong)
+      {
+          std::cout << PACKAGE_STRING "\n\n"
+              "ecppc-compiler\n\n"
+              "usage: " << argv[0] << " [options] ecpp-source\n\n"
+              "  -o filename       outputfile\n"
+              "  -n name           componentname\n"
+              "  -I dir            include-directory\n"
+              "  -m type           mimetype\n"
+              "  --mimetypes file  read mimetypes from file (default /etc/mime.types)\n"
+              "  -b                binary\n"
+              "  -bb               generate multibinary component\n"
+              "  -i filename       read filenames for multibinary component from specified file\n"
+              "  -z                compress constant data\n"
+              "  -v                verbose\n"
+              "  -M                generate dependency for Makefile\n"
+              "  -p                keep path when generating component name from filename\n"
+              "  -l log-category   set log category (default: component.compname)\n"
+              "  -L                disable generation of #line-directives\n"
+              "\n"
+              "  -h, --help        display this information\n"
+              "  -V, --version     display program version\n" << std::endl;
+
+          exit(0);
+      }
+
       _binary = cxxtools::Arg<bool>(argc, argv, 'b');
       _multibinary = cxxtools::Arg<bool>(argc, argv, 'b');
       _keepPath = cxxtools::Arg<bool>(argc, argv, 'p');
@@ -70,7 +112,6 @@ namespace tnt
       _verbose = cxxtools::Arg<bool>(argc, argv, 'v');
       _generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
       _disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
-      _logCategory = cxxtools::Arg<std::string>(argc, argv, 'l');
 
       if (_multibinary)
       {
@@ -90,7 +131,7 @@ namespace tnt
                 key.erase(0, p + 1);
             }
 
-            _inputfiles.insert(inputfiles_type::value_type(key, ifile));
+            _inputFiles.insert(inputfiles_type::value_type(key, ifile));
           }
         }
 
@@ -106,13 +147,18 @@ namespace tnt
               key.erase(0, p + 1);
           }
 
-          _inputfiles.insert(inputfiles_type::value_type(key, ifile));
+          _inputFiles.insert(inputfiles_type::value_type(key, ifile));
         }
       }
       else
       {
         if (argc < 2 || argv[1][0] == '-')
-          throw Usage(argv[0]);
+          throw std::runtime_error(
+            "error: exactly one input file has to be specified\n"
+            "usage: " + std::string(argv[0]) + " [options] ecpp-source\n"
+            "more info with -h / --help"
+          );
+
         _inputfile = argv[1];
       }
     }
@@ -201,7 +247,7 @@ namespace tnt
       if (!obase.empty())
         obase += '/';
       obase += _ofile;
-      
+
       //
       // parse sourcefile
       //
@@ -212,7 +258,7 @@ namespace tnt
         if (_mimetype.empty())
           mimeDb.read(_mimedb);
 
-        for (inputfiles_type::const_iterator it = _inputfiles.begin(); it != _inputfiles.end(); ++it)
+        for (inputfiles_type::const_iterator it = _inputFiles.begin(); it != _inputFiles.end(); ++it)
         {
           std::string key = it->first;
           std::string ifile = it->second;
@@ -284,7 +330,7 @@ namespace tnt
       }
 
       //
-      // generate Code
+      // generate code
       //
       if (_verbose)
         std::cout << "generate " << obase << ".cpp" << std::endl;
@@ -351,29 +397,6 @@ namespace tnt
 
       return success;
     }
-
-    Usage::Usage(const char* progname)
-    {
-      std::ostringstream o;
-      o << PACKAGE_STRING "\n\n"
-           "ecppc-compiler\n\n"
-           "usage: " << progname << " [options] ecpp-source\n\n"
-           "  -o filename      outputfile\n"
-           "  -n name          componentname\n"
-           "  -I dir           include-directory\n"
-           "  -m type          Mimetype\n"
-           "  --mimetypes file read mimetypes from file (default /etc/mime.types)\n"
-           "  -b               binary\n"
-           "  -bb              generate multibinary component\n"
-           "  -i filename      read filenames for multibinary component from specified file\n"
-           "  -z               compress constant data\n"
-           "  -v               verbose\n"
-           "  -M               generate dependency for Makefile\n"
-           "  -p               keep path when generating component name from filename\n"
-           "  -l log-category  set log category (default: component.compname)\n"
-           "  -L               disable generation of #line-directives\n";
-      _msg = o.str();
-    }
   }
 }
 
@@ -383,13 +406,6 @@ int main(int argc, char* argv[])
 
   try
   {
-    cxxtools::Arg<bool> version(argc, argv, "--version");
-    if (version)
-    {
-      std::cout << PACKAGE_STRING "\n" << std::flush;
-      return 0;
-    }
-
     log_init();
     tnt::ecppc::Ecppc app(argc, argv);
     return app.run();
@@ -400,4 +416,3 @@ int main(int argc, char* argv[])
     return 1;
   }
 }
-
