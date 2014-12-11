@@ -65,6 +65,10 @@ namespace tnt
             _crc(0),
             _size(0)
         {
+        }
+
+        void init()
+        {
           static const char f[] =
                "\x1f\x8b\x08\x00"
                "\x00\x00\x00\x00"
@@ -280,6 +284,7 @@ namespace tnt
   bool HttpReply::tryCompress(std::string& body)
   {
     Compressor compressor;
+    compressor.init();
     compressor.compress(body.data(), body.size());
     compressor.finalize();
 
@@ -375,6 +380,7 @@ namespace tnt
             && _impl->acceptEncoding.accept("gzip")
             && !hasHeader(httpheader::contentLength))
         {
+          _impl->compressor.init();
           for (unsigned n = 0; n < body.chunkcount(); ++n)
             _impl->compressor.compress(body.chunk(n), body.chunksize(n));
           _impl->compressor.finalize();
