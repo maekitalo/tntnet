@@ -69,6 +69,7 @@ namespace tnt
 
       /// end deflate-stream
       int end();
+      void reinitialize();
       void setSink(std::streambuf* sink) { _sink = sink; }
       uLong getAdler() const             { return _stream.adler; }
   };
@@ -88,6 +89,8 @@ namespace tnt
           { init(&_streambuf); }
 
       void end();
+      void reinitialize()
+      { _streambuf.reinitialize(); }
       void setSink(std::streambuf* sink) { _streambuf.setSink(sink); }
       void setSink(std::ostream& sink)   { _streambuf.setSink(sink.rdbuf()); }
       uLong getAdler() const             { return _streambuf.getAdler(); }
