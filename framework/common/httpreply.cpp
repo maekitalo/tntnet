@@ -550,8 +550,7 @@ namespace tnt
     {
       log_debug("enable direct mode");
       send(ret, msg, false);
-      _current_outstream = _impl->socket;
-      _impl->safe_outstream.setSink(*_impl->socket);
+      setDirectModeNoFlush();
     }
   }
 
@@ -559,6 +558,7 @@ namespace tnt
   {
     _current_outstream = _impl->socket;
     _impl->safe_outstream.setSink(*_impl->socket);
+    _impl->url_outstream.setSink(*_impl->socket);
   }
 
   void HttpReply::setChunkedEncoding(unsigned ret, const char* msg)
@@ -566,6 +566,8 @@ namespace tnt
     log_debug("set chunked encoding");
     _current_outstream = &_impl->chunked_outstream;
     _impl->chunked_outstream.setSink(*_impl->socket);
+    _impl->safe_outstream.setSink(_impl->chunked_outstream.rdbuf());
+    _impl->url_outstream.setSink(_impl->chunked_outstream.rdbuf());
     send(ret, msg, true);
   }
 
