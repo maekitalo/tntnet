@@ -1,36 +1,45 @@
-pkglib_LTLIBRARIES = chat.la
+noinst_PROGRAMS = chat
 
-chat_la_SOURCES = \
+ecppSources = \
 	chat.ecpp \
-	ajax.js \
-	getchat.ecpp \
-	putchat.ecpp \
-	sad.png \
-	smile.png \
-	wink.png
+	messages.ecpp \
+	put.ecpp
 
-AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-chat_la_LDFLAGS = -module @SHARED_LIB_FLAG@
-chat_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+staticSources = \
+	resources/jquery.js \
+	resources/chat.css \
+	resources/chat.js
 
-dist_noinst_DATA = tntnet.xml global.ecpp
-CLEANFILES = chat.cpp ajax.cpp getchat.cpp putchat.cpp \
-    sad.cpp smile.cpp wink.cpp \
-    tntnet.xml
+chat_SOURCES = \
+	main.cpp \
+	session.cpp \
+	$(ecppSources)
 
-getchat.cpp: getchat.ecpp \
-  global.ecpp
+nodist_chat_SOURCES = \
+	resources.cpp
 
-putchat.cpp: putchat.ecpp \
-  global.ecpp
+nobase_include_HEADERS = \
+	session.h
 
-SUFFIXES=.ecpp .js .png .cpp
+chat_LDFLAGS = -lcxxtools -ltntnet
+
+CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) resources.cpp
+
+#
+# Rules for tntnet applications
+#
+ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
+ECPPFLAGS=-I$(top_srcdir)
+
+resources.cpp: $(staticSources) Makefile.am
+	$(AM_V_GEN)$(ECPPC) -bb -z -n resources -p -o resources.cpp $(ECPPFLAGS) $(staticSources)
+
+SUFFIXES=.ecpp .cpp
+
 .ecpp.cpp:
-	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -I $(srcdir) $<
-.js.cpp:
-	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -b -m application/x-javascript -o $@ $<
-.png.cpp:
-	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -b -m image/png -o $@ $<
+	$(AM_V_GEN)$(ECPPC) -n `echo $<|$(SED) 's|^$(srcdir)/||; s|\.ecpp$$||'` $(ECPPFLAGS) -o $@ $<
+.ecpp.deps:
+	$(AM_V_GEN)$(ECPPC) -M $(ECPPFLAGS) $< | $(SED) '1s/\(.*\).cpp:/\1.cpp \1.deps:/' > $@
 
-tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=chat|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+-include $(ecppSources:.ecpp=.deps)
+

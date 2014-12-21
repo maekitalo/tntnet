@@ -17,7 +17,6 @@ SUBDIRS = \
     session \
     sprintf \
     strings \
-    rajax-jquery \
     upload
 
 pkglib_LTLIBRARIES = alldemos.la

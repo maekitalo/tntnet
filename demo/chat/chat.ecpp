@@ -1,105 +1,19 @@
+<!DOCTYPE html>
 <html>
- <head>
-  <title>ecpp-application chat</title>
-  <script src="ajax" type="text/javascript"></script>
-  <script type="text/javascript">
-
-   window.setInterval("updateChat()", 500);
-
-   function jsonRequest(request)
-   {
-     if (request.responseText != this.oldContent)
-     {
-       this.oldContent = request.responseText;
-
-       var content = JSON.parse(request.responseText);
-       var c = document.getElementById("chat");
-       var newContent = "<table>";
-
-       for(var i = 0; i < content.length; ++i)
-       {
-         obj = content[i];
-         newContent += "<tr>"
-                     + "<td class='person'>"
-                     + obj.person
-                     + "</td>"
-                     + "<td class='message'>"
-                     + obj.message
-                     + "</td>"
-                     + "</tr>";
-       }
-
-       newContent += "</table>";
-       c.innerHTML = newContent;
-     }
-   }
-
-   function updateChat()
-   {
-     <# jsonRequest gets a JSON answer from server and gives it to jsonRequest #>
-     ajaxGet("getchat", null, jsonRequest);
-   }
-
-   function sendMessage()
-   {
-     var p = document.getElementById("person");
-     var m = document.getElementById("message");
-     ajaxGet("putchat",
-       "person=" + escape(p.value) + "&message=" + escape(m.value),
-       jsonRequest);
-     m.value = "";
-     m.focus();
-   }
-
-   function addText(t)
-   {
-     var m = document.getElementById("message");
-     m.value += t;
-   }
-
-  </script>
-  <style type="text/css">
-   .person {
-     font-weight: bold;
-   }
-   .message {
-     color: blue;
-   }
-  </style>
- </head>
- <body>
-  <h1>Ajaxchat</h1>
-
-  <form>
-   <table>
-    <tr>
-     <td>
-      your Name
-     </td>
-     <td>
-      <input type="text" name="person" id="person" size="20">
-     </td>
-    </tr>
-    <tr>
-     <td>
-      your Message
-     </td>
-     <td>
-      <input type="text" name="message" id="message" size="80"><br>
-     </td>
-    </tr>
-   </table>
-   <input type="button" value="talk" onClick="sendMessage()">
-   <img src="smile" onClick='addText(" :) ")'>
-   <img src="sad" onClick='addText(" :( ")'>
-   <img src="wink" onClick='addText(" ;) ")'>
-  </form>
-  <script type="text/javascript">
-   document.getElementById("person").focus();
-  </script>
-
-  <hr>
-  <div id="chat"><table></table></div>
-
- </body>
+  <head>
+    <title>tntnet application chat</title>
+    <meta charset="utf-8">
+    <meta name="description" content="tntnet chat application">
+    <link rel="stylesheet" href="/chat.css" type="text/css">
+    <script src="jquery.js"></script>
+    <script src="chat.js"></script>
+  </head>
+  <body>
+    <h1>Chat</h1>
+    <fieldset>
+      <input type="text" id="message">
+      <input type="button" id="send" value="send">
+    </fieldset>
+    <div id="messages"></div>
+  </body>
 </html>

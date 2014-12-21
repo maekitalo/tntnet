@@ -1,0 +1,11 @@
+<%pre>
+
+#include "session.h"
+
+</%pre>
+<%args>
+msg;
+</%args>
+<%cpp>
+Session::broadcastMessage(msg);
+</%cpp>

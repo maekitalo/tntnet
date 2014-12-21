@@ -1,0 +1,30 @@
+<%pre>
+
+#include "session.h"
+
+</%pre>
+<%args>
+
+unsigned timeout = 30;
+
+</%args>
+<%session>
+
+Session session;
+
+</%session>
+<%cpp>
+
+Session::Messages messages = session.messages(timeout);
+
+if (messages.empty())
+  return HTTP_OK;
+
+</%cpp>
+<table>
+% for (Session::Messages::const_iterator it = messages.begin(); it != messages.end(); ++it) {
+  <tr>
+    <td><$ *it $></td>
+  <tr>
+% }
+</table>
