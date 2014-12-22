@@ -20,8 +20,7 @@ Features supported include: cookies, HTTP-upload, automatic request-parameter
 parsing and conversion, automatic sessionmanagement, scoped variables
 (application, request and session), internationalisation, keep-alive.
 
-Logging is done through cxxtools, which provides a unified API for log4cpp,
-log4cxx or simple logging to files or console.
+Logging is done through cxxtools.
 
 Tntnet is fully multithreaded, so it scales well on multiprocessor machines.
 It uses a dynamic pool of workerthreads, which answers requests from
@@ -39,9 +38,9 @@ You can find generic installation instructions in the file INSTALL.
 Quick start
 ===========
 
-To create a simple application run "tntnet-config --project=hello".
+To create a simple application run "tntnet-project hello".
 This creates a directory "hello" with a simple project and prints
-out a short message, how to run the application.
+a short message, how to run the application.
 
 There are some demo-applications you can try in _demos_. To run the demos
 without installing tntnet, change to the directory of the demo and run tntnet
@@ -49,8 +48,8 @@ from the directory framework/runtime:
     cd hello
     ../../framework/runtime/tntnet
 
-Tntnet listens on port 8000. Start your browser and enter the url:
-  http://localhost:8000/hello
+Tntnet listens on port 8000. Start your browser and navigate to:
+    http://localhost:8000/
 
 Documentation is provided in man pages and some documents found in the doc
 directory.
