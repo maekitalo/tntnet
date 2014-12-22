@@ -21,7 +21,9 @@ nodist_chat_SOURCES = \
 nobase_include_HEADERS = \
 	session.h
 
-chat_LDFLAGS = -lcxxtools -ltntnet
+chat_LDADD = $(top_builddir)/framework/common/libtntnet.la
+
+nobase_dist_noinst_DATA = $(staticSources)
 
 CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) resources.cpp
 

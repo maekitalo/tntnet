@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 2.3, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 2.3pre1, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 LT_INIT([disable-static])
 
@@ -197,6 +197,7 @@ AC_CONFIG_FILES([misc/tntnet-project], [chmod +x misc/tntnet-project])
 AC_CONFIG_FILES([
     Makefile
     demo/Makefile
+    demo/accumulator/Makefile
     demo/calc/Makefile
     demo/calcajax/Makefile
     demo/calcapp/Makefile
@@ -205,17 +206,13 @@ AC_CONFIG_FILES([
     demo/chat/Makefile
     demo/comp/Makefile
     demo/config/Makefile
-    demo/controls/Makefile
     demo/cookie/Makefile
     demo/gd/Makefile
     demo/hello/Makefile
     demo/mvc/Makefile
     demo/newsdb/Makefile
-    demo/rajax-jquery/Makefile
     demo/savepoint/Makefile
     demo/session/Makefile
-    demo/sprintf/Makefile
-    demo/strings/Makefile
     demo/upload/Makefile
     doc/man/Makefile
     etc/Makefile

@@ -1,8 +1,0 @@
-<%pre>
-
-#include <stdlib.h>
-
-</%pre>
-
-This is a subcomponent. Whe have a random value <$ rand() $> here, which
-changes on every call.

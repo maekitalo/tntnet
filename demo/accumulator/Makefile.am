@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = accumulator.la
+pkglib_LTLIBRARIES = accumulator.la
 
 accumulator_la_SOURCES = \
 	accumulator.ecpp

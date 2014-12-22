@@ -1,0 +1,37 @@
+<%args>
+// define variables which are filled from the form
+
+double value = 0;  // default value is 0
+bool add;
+bool sub;
+</%args>
+<%session>
+// define a session variable of type double with a initial value of 0
+double currentValue = 0;
+</%session>
+<%cpp>
+
+  if (add)
+    currentValue += value;
+  if (sub)
+    currentValue -= value;
+
+</%cpp>
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Tntnet accumulator</title>
+ </head>
+ <body>
+  <h1>Accumulator</h1>
+  <# this prints the session variable into the screen
+     (and btw: this is a comment) #>
+  The current value is <$ currentValue $>.
+  <form method='post'>
+   <input type='number' name='value' value='<$ value $>'><br>
+
+   <input type='submit' name='add' value='add value'>
+   <input type='submit' name='sub' value='subtract value'><br>
+  </form>
+ </body>
+</html>

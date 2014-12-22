@@ -32,5 +32,3 @@ nobase_dist_pkgdata_DATA = \
 	template/mvc-standalone/@PROJECT@.conf \
 	template/mvc-standalone/resources/@PROJECT@.css \
 	template/mvc-standalone/webmain.ecpp
-
-tntnet-config: tntnet-config.in

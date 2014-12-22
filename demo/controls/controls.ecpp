@@ -1,7 +1,0 @@
-  <&tooltip id="t1">
-   This is a greeting to the user
-  </&tooltip>
-
-  <&tooltipArea tooltipId="t1">
-   Hi
-  </&tooltipArea>

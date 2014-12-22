@@ -1,8 +1,0 @@
-<%args>
-href;
-form = "document.forms[0]";
-</%args>
-<a href="" onClick='<$form$>.action="<$href$>"; <$form$>.submit(); return false;'>
-<%close>
-</a><br>
-</%close>

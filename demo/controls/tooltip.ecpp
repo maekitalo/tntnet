@@ -1,8 +1,0 @@
-<%args>
-id;
-</%args>
- <div id="tooltip<$ id $>" style="position:absolute;
-   top:0px; left:0px; visibility:hidden; z-index:255" class="tooltip">
-<%close>
- </div>
-</%close>
