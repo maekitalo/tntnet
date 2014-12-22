@@ -28,7 +28,7 @@ EXTRA_DIST = $(staticSources)
 # Rules for tntnet applications
 #
 
-ECPPFLAGS=-I$(top_srcdir)
+ECPPFLAGS=-I$(srcdir)
 
 # resources
 resources.cpp: $(staticSources) Makefile.am

@@ -23,7 +23,7 @@ CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) resources.cpp
 #
 # Rules for tntnet applications
 #
-ECPPFLAGS=-I$(top_srcdir)
+ECPPFLAGS=-I$(srcdir)
 
 resources.cpp: $(staticSources) Makefile.am
 	$(AM_V_GEN)$(ECPPC) -bb -z -n resources -p -o resources.cpp $(ECPPFLAGS) $(staticSources)
