@@ -17,6 +17,8 @@ nodist_@CPROJECT@_la_SOURCES = \
 
 @CPROJECT@_la_LDFLAGS = -module -shared -lcxxtools -ltntnet
 
+nobase_dist_noinst_DATA = $(staticSources)
+
 CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) resources.cpp
 
 #
