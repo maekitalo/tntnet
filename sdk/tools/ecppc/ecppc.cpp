@@ -47,7 +47,7 @@ namespace tnt
   namespace ecppc
   {
     Ecppc::Ecppc(int& argc, char* argv[])
-      : _requestname(cxxtools::Arg<std::string>(argc, argv, 'n')),
+      : _componentname(cxxtools::Arg<std::string>(argc, argv, 'n')),
         _inputfile(0),
         _ofile(cxxtools::Arg<std::string>(argc, argv, 'o')),
         _odir(cxxtools::Arg<std::string>(argc, argv, 'O')),
@@ -119,37 +119,47 @@ namespace tnt
 
     int Ecppc::run()
     {
-      // requestname from inputfilename
-      if (_requestname.empty())
+      // componentname from inputfilename
+      if (_componentname.empty())
       {
         if (_multibinary)
         {
-          std::cerr << "warning: no requestname passed (with -n) - using \"images\"" << std::endl;
-          _requestname = "images";
+          std::cerr << "warning: no componentname passed (with -n) - using \"images\"" << std::endl;
+          _componentname = "images";
         }
         else
         {
-          std::string input = _inputfile;
-          std::string::size_type pos_dot = input.find_last_of(".");
-          if (pos_dot != std::string::npos)
+          _componentname = _inputfile;
+
+          std::string::size_type pos_slash = _componentname.find_last_of("\\/");
+          std::string::size_type pos_dot = _componentname.find_last_of(".");
+
+          // read file name extension
+          if (pos_dot != std::string::npos && (pos_slash == std::string::npos || pos_slash < pos_dot))
+            _extname = _componentname.substr(pos_dot + 1);
+          log_debug("componentname=" << _componentname << " extname=" << _extname);
+
+          // remove path unless disabled
+          if (!_keepPath &&  pos_slash != std::string::npos)
+              _componentname.erase(0, pos_slash + 1);
+          log_debug("componentname(1)=" << _componentname);
+
+          // remove extension .ecpp
+          bool ecpp = _componentname.size() >= 4 && _componentname.compare(_componentname.size() - 5, 5, ".ecpp") == 0;
+          if (ecpp)
+            _componentname.erase(_componentname.size() - 5);
+          log_debug("componentname(2)=" << _componentname << " ecpp=" << ecpp);
+
+          if (_ofile.empty() && !_generateDependencies)
           {
-            std::string::size_type pos_slash;
-            if (_keepPath || (pos_slash = input.find_last_of("\\/")) == std::string::npos)
-              _requestname = input.substr(0, pos_dot);
-            else if (pos_slash < pos_dot)
-              _requestname = input.substr(pos_slash + 1, pos_dot - pos_slash - 1);
-
-            if (_ofile.empty() && !_generateDependencies)
-              _ofile = input.substr(0, pos_dot);
-
-            _extname = input.substr(pos_dot + 1);
+            _ofile = _inputfile;
+            if (ecpp)
+              _ofile.erase(_ofile.size() - 5);
+            _ofile += ".cpp";
           }
-          else
-          {
-            _requestname = input;
-          }
+          log_debug("ofile=" << _ofile);
 
-          if (_requestname.empty())
+          if (_componentname.empty())
           {
             std::cerr << "cannot derive component name from filename. Use -n" << std::endl;
             return -1;
@@ -158,7 +168,7 @@ namespace tnt
       }
 
       if (_ofile.empty() && !_generateDependencies)
-        _ofile = _requestname;
+        _ofile = _componentname;
 
       if (_generateDependencies)
         return runDependencies();
@@ -173,7 +183,7 @@ namespace tnt
         _ofile = _ofile.substr(0, _ofile.size() - 4);
 
       // create generator
-      tnt::ecppc::Generator generator(_requestname);
+      tnt::ecppc::Generator generator(_componentname);
 
       // initialize
       generator.enableLinenumbers(!_disableLinenumbers);
@@ -302,7 +312,7 @@ namespace tnt
     {
       log_trace("runDependencies");
 
-      tnt::ecppc::Dependencygenerator generator(_requestname, _inputfile);
+      tnt::ecppc::Dependencygenerator generator(_componentname, _inputfile);
 
       std::ifstream in(_inputfile);
       if (!in)

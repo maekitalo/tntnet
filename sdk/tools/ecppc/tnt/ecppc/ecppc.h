@@ -46,7 +46,7 @@ namespace tnt
         typedef std::map<std::string, std::string> inputfiles_type;
         typedef std::list<std::string> includes_type;
 
-        std::string _requestname;
+        std::string _componentname;
         std::string _extname;
         const char* _inputfile;
 
