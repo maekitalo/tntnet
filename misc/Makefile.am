@@ -1,4 +1,4 @@
-bin_SCRIPTS = tntnet-config tntnet-project
+bin_SCRIPTS = tntnet-project
 
 nobase_dist_pkgdata_DATA = \
 	template/classic-module/configure.ac \

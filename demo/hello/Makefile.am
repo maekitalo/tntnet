@@ -2,7 +2,7 @@ pkglib_LTLIBRARIES = hello.la
 
 hello_la_SOURCES = \
 	hello.ecpp \
-	tntnet.jpg
+	tntnet.png
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 hello_la_LDFLAGS = -module @SHARED_LIB_FLAG@
@@ -13,11 +13,11 @@ CLEANFILES = hello.cpp tntnet.cpp tntnet.xml
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
-SUFFIXES=.ecpp .jpg .cpp
+SUFFIXES=.ecpp .png .cpp
 .ecpp.cpp:
 	$(AM_V_GEN)$(ECPPC) -o $@ $<
-.jpg.cpp:
-	$(AM_V_GEN)$(ECPPC) -b -m image/jpeg -o $@ $<
+.png.cpp:
+	$(AM_V_GEN)$(ECPPC) -b -m image/png -o $@ $<
 
 tntnet.xml:
 	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=hello|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

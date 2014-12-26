@@ -130,4 +130,4 @@ This manual page was written by Tommi Mäkitalo <tommi@tntnet.org>.
 SEE ALSO
 --------
 
-tntnet-config(1), ecpp(7), ecppc(1), ecppl(1), ecppll(1), tntnet.xml(7),
+tntnet-project(1), ecpp(7), ecppc(1), ecppl(1), ecppll(1), tntnet.xml(7),

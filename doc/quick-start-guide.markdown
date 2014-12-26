@@ -26,7 +26,8 @@ You can find cxxtools on the tntnet [homepage]
     cd cxxtools-2.x
     ./configure
     make
-    su -c 'make install'
+    sudo make install
+    sudo ldconfig
 
 The same installation procedure is used for tntnet. Install it with:
 
@@ -34,26 +35,34 @@ The same installation procedure is used for tntnet. Install it with:
     cd tntnet-2.x
     ./configure
     make
-    su -c 'make install'
+    sudo make install
+    sudo ldconfig
 
 Now you have a working Tntnet environment.
 
 How to create your first web application
 ----------------------------------------
 
-To create a web application it is necessary to create some initial project files.
-This is achieved by executing `tntnet-config`:
+To create a web application we need to create a project. The easiest way is to
+use the helper script `tntnet-project`. We execute on the command line:
 
-    tntnet-config --project=myfirstproject
+    tntnet-project myfirstproject
 
-This creates:
+This creates a initial web project, which uses autotools as a build system. It
+is created in a directory named myfirstproject. The most interesting files,
+which are created are:
 
- * a directory "myfirstproject"
- * a source file "myfirstproject.ecpp" containing your application
- * a configurationfile "tntnet.xml"
- * a Makefile
+ * configure.ac                 - the configuration file for autoconf
+ * Makefile.am                  - the rules to build the project with automake
+ * main.cpp                     - the file with the `main` function
+ * myfirstproject.ecpp          - our fist web page
+ * log.properties               - configuration file for logging
+ * resources/myfirstproject.css - a static file of our web application
 
-To build and execute your first enter the following commands:
+
+
+
+To build and execute your first application enter the following commands:
 
     cd myfirstproject
     make

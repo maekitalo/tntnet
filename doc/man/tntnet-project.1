@@ -1,0 +1,76 @@
+.TH tntnet\-project 1 "2014\-09\-09" Tntnet "Tntnet users guide"
+.SH NAME
+.PP
+tntnet\-project \- project builder for 
+.BR tntnet (8)
+.SH SYNOPSIS
+.PP
+\fItntnet\-project\fP [\fB\fCOPTIONS\fR] <\fIproject name\fP>
+.PP
+\fItntnet\-project\fP [\fB\fC\-t <type>\fR] [\fB\fC\-\-type=<type>\fR] [\fB\fC\-m <model>\fR] [\fB\fC\-\-model=<model>\fR] <\fIproject name\fP>
+.SH DESCRIPTION
+.PP
+This manual page documents briefly the \fB\fCtntnet\-project\fR command.
+.SH OPTIONS
+.PP
+This programs options start with one dash (\fB\fC\-\fR) or two dashes (\fB\fC\-\-\fR). A summary
+of options is included below.
+.PP
+\fB\fC\-t <type>, \-\-type=<type>\fR
+.IP
+specifies application type
+.PP
+\fB\fC\-m <model>, \-\-model=<model>\fR
+.IP
+specifies application model
+.SS Types:
+.TP
+\fB\fCclassic\fR
+create a simple application with one page (default)
+.TP
+\fB\fCmvc\fR
+create a application with the mvc pattern
+.SS Models:
+.TP
+\fB\fCstandalone\fR
+create a standalone web application (default)
+.TP
+\fB\fCmodule\fR
+create a module to be loaded into the tntnet application server
+.SH EXAMPLES
+.PP
+\fItntnet\-project\fP \fImyApp\fP
+.IP
+create a \fIdefault\fP tntnet project
+.PP
+\fItntnet\-project\fP \fB\fC\-t mvc\fR \fImyApp\fP
+.PP
+\fItntnet\-project\fP \fB\fC\-\-type=mvc\fR \fImyApp\fP
+.IP
+create a tntnet \fIstandalone application\fP project with \fImvc\fP pattern
+.PP
+\fItntnet\-project\fP \fB\fC\-m module\fR \fImyApp\fP
+.PP
+\fItntnet\-project\fP \fB\fC\-\-model=module\fR \fImyApp\fP
+.IP
+create a tntnet \fIapplication server\fP project
+.PP
+\fItntnet\-project\fP \fB\fC\-t mvc \-m module\fR \fImyApp\fP
+.PP
+\fItntnet\-project\fP \fB\fC\-\-type=mvc \-\-model=module\fR \fImyApp\fP
+.IP
+create a \fImvc\fP pattern \fIapplication server\fP project
+.SH AUTHOR
+.PP
+tntnet was written by Tommi Mäkitalo 
+\[la]tommi@tntnet.org\[ra]\&.
+.PP
+This manual page was written by Ralf Schülke 
+\[la]ralf.schuelke@gmail.com\[ra]
+.SH SEE ALSO
+.PP
+.BR tntnet (8), 
+.BR ecppc (1), 
+.BR tntnet.xml (7).
+.PP
+More documentation can be found in /usr/share/doc/tntnet\-doc/.

@@ -5,6 +5,7 @@
 name;            // define query-parameter
                  // this defines a variable of type std::string with
                  // the name "name"
+unsigned n = 1;
 </%args>
 <html>
  <head>
@@ -12,9 +13,11 @@ name;            // define query-parameter
  </head>
 
  <body bgcolor="#FFFFFF">
-  <img src="tntnet.jpg" align="right">
+  <img src="tntnet.png" align="right">
 
+% for (unsigned c = 0; c < n; ++c) {
   <h1>Hello <$ name.empty() ? "World" : name $></h1>
+% }
 
   <form>
    What's your name?
