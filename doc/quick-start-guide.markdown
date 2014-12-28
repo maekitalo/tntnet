@@ -6,10 +6,10 @@ Authors: Tommi Mäkitalo, Andreas Welchlin
 
 This quick start guide includes:
 
- * how to install tntnet
- * build and run your first application
- * explanation of this first application
- * further reading
+ * How to install tntnet
+ * Build and run your first application
+ * Explanation of this first application
+ * Further reading
 
 Tntnet is developed and tested on Linux. It is known to run on Sun Solaris,
 IBM AIX and freeBSD.
@@ -634,9 +634,9 @@ using the log macros e.g. `log_info`. Here is our new `main.cpp`:
 When you compile and run the application, you get the new log statement on the
 screen.
 
-Next steps
-----------
+Further reading
+---------------
 
- * read the [man pages](http://www.tntnet.org/man.html) starting at tntnet(8)
- * look at the [demo](http://www.tntnet.org/demos.html) programs in directory "demo"
- * choose a better build system (I suggest autoconf/automake)
+ * Read the [man pages](http://www.tntnet.org/man.html) starting at tntnet(8)
+ * Look at the [demo](http://www.tntnet.org/demos.html) programs in directory "demo"
+ * Choose a better build system (I suggest [GNU Autotools](https://en.wikipedia.org/wiki/GNU_build_system))
