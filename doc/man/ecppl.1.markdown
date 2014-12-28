@@ -11,6 +11,8 @@ SYNOPSIS
 
 `ecppl` [`-I` *dir*] [`-ln`] [`-o` *output-filename*] *ecpp-filename* ...
 
+`ecppl` [`OPTION`]
+
 
 DESCRIPTION
 -----------
@@ -40,6 +42,12 @@ OPTIONS
 
 `-o` *filename*
   Specify output filename
+  
+`-h, --help`
+  display this information
+  
+`-V, --version`
+  display program version
 
 AUTHOR
 ------
