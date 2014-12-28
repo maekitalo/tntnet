@@ -201,6 +201,7 @@ namespace tnt
     if (pool.size() < 64)
     {
       inst->outstream.clear();
+      inst->outstream.makeEmpty();
       inst->safeOutstream.clear();
       inst->urlOutstream.clear();
       inst->chunkedOutstream.clear();
@@ -435,11 +436,16 @@ namespace tnt
       }
       else
       {
-        log_debug("send " << body.size() << " bytes body");
         if (compressed)
+        {
+          log_debug("send " << _impl->compressor.zsize() << " bytes body (compressed)");
           _impl->compressor.output(hsocket);
+        }
         else
+        {
+          log_debug("send " << body.size() << " bytes body");
           body.output(hsocket);
+        }
       }
     }
   }
