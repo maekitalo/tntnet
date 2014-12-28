@@ -17,6 +17,8 @@ IBM AIX and freeBSD.
 Installation
 ------------
 
+You can install through the package manager in your operating system, if those packages are outdated (< cxxtools, tntnet 2.3), follow this instruction:
+
 To install Tntnet you will first need to install cxxtools.
 
 You can find cxxtools on the tntnet [homepage]
