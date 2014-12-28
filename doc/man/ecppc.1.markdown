@@ -13,6 +13,8 @@ SYNOPSIS
 
 `ecppc` `-bb` *filename* ...
 
+`ecppc` [`OPRION`]
+
 DESCRIPTION
 -----------
 
@@ -98,6 +100,12 @@ OPTIONS
   Compress the data in the component. Compressed data is automatically
   decopressed on first use. This reduces the code-size, but slightly slows down
   the first call of the component.
+  
+`-h, --help`
+  display this information
+  
+`-V, --version`
+  display program version
 
 AUTHOR
 ------
