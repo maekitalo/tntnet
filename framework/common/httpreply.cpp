@@ -133,9 +133,9 @@ namespace tnt
   {
     std::ostream* socket;
     ocstream outstream;
-    HtmlEscOstream safe_outstream;
-    UrlEscOstream url_outstream;
-    ChunkedOStream chunked_outstream;
+    HtmlEscOstream safeOutstream;
+    UrlEscOstream urlOutstream;
+    ChunkedOStream chunkedOutstream;
     Compressor compressor;
 
     Encoding acceptEncoding;
@@ -189,8 +189,8 @@ namespace tnt
     impl->headRequest = false;
     impl->clearSession = false;
     impl->acceptEncoding.clear();
-    impl->safe_outstream.setSink(impl->outstream.rdbuf());
-    impl->chunked_outstream.setSink(impl->outstream.rdbuf());
+    impl->safeOutstream.setSink(impl->outstream.rdbuf());
+    impl->chunkedOutstream.setSink(impl->outstream.rdbuf());
 
     return impl;
   }
@@ -201,10 +201,9 @@ namespace tnt
     if (pool.size() < 64)
     {
       inst->outstream.clear();
-      inst->outstream.makeEmpty();
-      inst->safe_outstream.clear();
-      inst->url_outstream.clear();
-      inst->chunked_outstream.clear();
+      inst->safeOutstream.clear();
+      inst->urlOutstream.clear();
+      inst->chunkedOutstream.clear();
       inst->compressor.clear();
       pool.push_back(inst);
     }
@@ -224,23 +223,20 @@ namespace tnt
 
   HttpReply::Impl::Impl(std::ostream& s, bool sendStatusLine_)
     : socket(&s),
-      safe_outstream(outstream),
-      url_outstream(outstream),
-      chunked_outstream(s),
+      safeOutstream(outstream),
+      urlOutstream(outstream),
+      chunkedOutstream(s),
       keepAliveCounter(0),
       sendStatusLine(sendStatusLine_),
       headRequest(false),
       clearSession(false)
     { }
 
-  //////////////////////////////////////////////////////////////////////
-  // HttpReply
-  //
   HttpReply::HttpReply(std::ostream& s, bool sendStatusLine)
     : _impl(Impl::pool.getInstance(s, sendStatusLine)),
-      _current_outstream(&_impl->outstream),
-      _safe_outstream(&_impl->safe_outstream),
-      _url_outstream(&_impl->url_outstream)
+      _currentOutstream(&_impl->outstream),
+      _safeOutstream(&_impl->safeOutstream),
+      _urlOutstream(&_impl->urlOutstream)
     { }
 
   HttpReply::~HttpReply()
@@ -264,7 +260,7 @@ namespace tnt
   }
 
   bool HttpReply::isDirectMode() const
-    { return _current_outstream == _impl->socket; }
+    { return _currentOutstream == _impl->socket; }
 
   std::string::size_type HttpReply::getContentSize() const
     { return _impl->outstream.size(); }
@@ -279,7 +275,7 @@ namespace tnt
     { return _impl->keepAliveCounter; }
 
   void HttpReply::setAcceptEncoding(const Encoding& enc)
-    { _impl->acceptEncoding = enc;}
+    { _impl->acceptEncoding = enc; }
 
   bool HttpReply::tryCompress(std::string& body)
   {
@@ -302,7 +298,7 @@ namespace tnt
   }
 
   void HttpReply::postRunCleanup()
-    { Impl::pool.clear();}
+    { Impl::pool.clear(); }
 
   void HttpReply::sendHttpStatus(std::ostream& hsocket, unsigned ret, const char* msg) const
   {
@@ -366,7 +362,7 @@ namespace tnt
 
     if (ready)
     {
-      if (_current_outstream == &_impl->chunked_outstream)
+      if (_currentOutstream == &_impl->chunkedOutstream)
       {
         log_debug(httpheader::transferEncoding << " chunked");
         hsocket << httpheader::transferEncoding << " chunked\r\n";
@@ -433,9 +429,9 @@ namespace tnt
     else
     {
       ocstream& body = _impl->outstream;
-      if (_current_outstream == &_impl->chunked_outstream)
+      if (_currentOutstream == &_impl->chunkedOutstream)
       {
-        body.output(*_current_outstream);
+        body.output(*_currentOutstream);
       }
       else
       {
@@ -451,10 +447,10 @@ namespace tnt
   void HttpReply::sendReply(unsigned ret, const char* msg)
   {
     log_debug("sendReply");
-    if (_current_outstream == &_impl->chunked_outstream)
+    if (_currentOutstream == &_impl->chunkedOutstream)
     {
       log_debug("finish chunked encoding");
-      _impl->chunked_outstream.finish();
+      _impl->chunkedOutstream.finish();
       *_impl->socket << "\r\n";
     }
     else if (!isDirectMode())
@@ -556,24 +552,24 @@ namespace tnt
 
   void HttpReply::setDirectModeNoFlush()
   {
-    _current_outstream = _impl->socket;
-    _impl->safe_outstream.setSink(*_impl->socket);
-    _impl->url_outstream.setSink(*_impl->socket);
+    _currentOutstream = _impl->socket;
+    _impl->safeOutstream.setSink(*_impl->socket);
+    _impl->urlOutstream.setSink(*_impl->socket);
   }
 
   void HttpReply::setChunkedEncoding(unsigned ret, const char* msg)
   {
     log_debug("set chunked encoding");
-    _current_outstream = &_impl->chunked_outstream;
-    _impl->chunked_outstream.setSink(*_impl->socket);
-    _impl->safe_outstream.setSink(_impl->chunked_outstream.rdbuf());
-    _impl->url_outstream.setSink(_impl->chunked_outstream.rdbuf());
+    _currentOutstream = &_impl->chunkedOutstream;
+    _impl->chunkedOutstream.setSink(*_impl->socket);
+    _impl->safeOutstream.setSink(_impl->chunkedOutstream.rdbuf());
+    _impl->urlOutstream.setSink(_impl->chunkedOutstream.rdbuf());
     send(ret, msg, true);
   }
 
   bool HttpReply::isChunkedEncoding() const
   {
-    return _current_outstream == &_impl->chunked_outstream;
+    return _currentOutstream == &_impl->chunkedOutstream;
   }
 
   void HttpReply::setCookie(const std::string& name, const Cookie& value)
@@ -609,4 +605,3 @@ namespace tnt
     }
   }
 }
-

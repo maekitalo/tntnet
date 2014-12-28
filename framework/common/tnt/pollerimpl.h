@@ -32,6 +32,7 @@
 
 #include <config.h>
 #include "tnt/job.h"
+#include "tnt/poller.h"
 #include <cxxtools/mutex.h>
 #include <cxxtools/posix/pipe.h>
 
@@ -45,11 +46,13 @@
 
 namespace tnt
 {
+  /// @cond internal
   class PollerImpl : public PollerIf
   {
+    private:
       Jobqueue& _queue;
 
-      cxxtools::posix::Pipe _notify_pipe;
+      cxxtools::posix::Pipe _notifyPipe;
       cxxtools::Mutex _mutex;
 
 #ifdef WITH_EPOLL
@@ -59,25 +62,25 @@ namespace tnt
       typedef std::map<int, Jobqueue::JobPtr> jobs_type;
       typedef std::vector<Jobqueue::JobPtr> new_jobs_type;
       jobs_type _jobs;
-      new_jobs_type _new_jobs;
-      int _poll_timeout;
+      new_jobs_type _newJobs;
+      int _pollTimeout;
 
       void addFd(int fd);
       bool removeFd(int fd);
-      void append_new_jobs();
+      void appendNewJobs();
 
 #else
 
       typedef std::deque<Jobqueue::JobPtr> jobs_type;
       typedef std::vector<pollfd> pollfds_type;
 
-      jobs_type _current_jobs;
+      jobs_type _currentJobs;
       pollfds_type _pollfds;
-      jobs_type _new_jobs;
+      jobs_type _newJobs;
 
-      int _poll_timeout;
+      int _pollTimeout;
 
-      void append_new_jobs();
+      void appendNewJobs();
       void append(Jobqueue::JobPtr& job);
       void dispatch();
       void remove(jobs_type::size_type n);
@@ -94,7 +97,7 @@ namespace tnt
       void doStop();
       void addIdleJob(Jobqueue::JobPtr job);
   };
+  /// @endcond internal
 }
 
 #endif // TNT_POLLER_H
-

@@ -47,27 +47,27 @@ namespace tnt
     private:
       std::string _pathinfo;
       args_type _args;
-      bool _pathinfo_set;
+      bool _pathinfoSet;
 
     public:
       Maptarget()
-        : _pathinfo_set(false)
+        : _pathinfoSet(false)
         { }
 
       explicit Maptarget(const std::string& ident)
         : Compident(ident),
-          _pathinfo_set(false)
+          _pathinfoSet(false)
         { }
 
       Maptarget(const Compident& ident)
         : Compident(ident),
-          _pathinfo_set(false)
+          _pathinfoSet(false)
         { }
 
       bool hasPathInfo() const
-        { return _pathinfo_set; }
+        { return _pathinfoSet; }
       Maptarget& setPathInfo(const std::string& p)
-        { _pathinfo = p; _pathinfo_set = true; return *this; }
+        { _pathinfo = p; _pathinfoSet = true; return *this; }
       void setArgs(const args_type& a)
         { _args = a; }
       const std::string& getPathInfo() const
@@ -81,4 +81,3 @@ namespace tnt
 }
 
 #endif // TNT_MAPTARGET_H
-
