@@ -11,8 +11,8 @@ This quick start guide includes:
  * Explanation of this first application
  * Further reading
 
-Tntnet is developed and tested on Linux. It is known to run on Sun Solaris,
-IBM AIX and freeBSD.
+Tntnet is developed and tested on GNU/Linux. It is known to run on Sun Solaris,
+IBM AIX and FreeBSD.
 
 Installation
 ------------
@@ -61,7 +61,8 @@ which are created are:
  * log.properties               - configuration file for logging
  * resources/myfirstproject.css - a static file of our web application
 
-
+For quick information about autotools using, read this mini howto:
+http://www.niksula.hut.fi/~mkomu/docs/autohowto.html
 
 
 To build and execute your first application enter the following commands:
