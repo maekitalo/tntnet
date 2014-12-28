@@ -5,39 +5,46 @@ ecppl \- language\-extractor for
 .BR ecpp (7)
 .SH SYNOPSIS
 .PP
-\fB\fCecppl\fR [\fB\fC-I\fR \fIdir\fP] [\fB\fC-ln\fR] [\fB\fC-o\fR \fIoutput\-filename\fP] \fIecpp\-filename\fP ...
+\fB\fCecppl\fR [\fB\fC\-I\fR \fIdir\fP] [\fB\fC\-ln\fR] [\fB\fC\-o\fR \fIoutput\-filename\fP] \fIecpp\-filename\fP ...
+.PP
+\fB\fCecppl\fR [\fB\fCOPTION\fR]
 .SH DESCRIPTION
 .PP
 \fB\fCecppl\fR is the language extractor for ecpp. Ecpp \- the template language used
 with tntnet \- supports internationalized applications. In ecpp templates a tag
 <i18n> changes the meaning of curly braces. A phrase, which is enclosed in curly
 braces, can be translated. At runtime the phrase is looked up in a
-language\-library. This mode can be quit with the tag </i18n>. Phrases must not
+language\-library. This mode can be quit with the tag </i18n>\&. Phrases must not
 have newlines or tabs.
 .PP
 Every phrase, which is marked as translatable, is extracted with ecppl and
 written to standard output or to a specified output\-filename line by line.
 .SH OPTIONS
 .TP
-\fB\fC-I\fR \fIdir\fP
+\fB\fC\-I\fR \fIdir\fP
 Search include\-files in directory. This option can be passed multiple times.
 All specified directories are searched in turn for include\-files.
 .TP
-\fB\fC-l\fR
+\fB\fC\-l\fR
 Extract language\-phrases (the default)
 .TP
-\fB\fC-n\fR
+\fB\fC\-n\fR
 Extract non\-language\-phrases
 .TP
-\fB\fC-o\fR \fIfilename\fP
+\fB\fC\-o\fR \fIfilename\fP
 Specify output filename
+.TP
+\fB\fC\-h, \-\-help\fR
+display this information
+.TP
+\fB\fC\-V, \-\-version\fR
+display program version
 .SH AUTHOR
 .PP
 This manual page was written by Tommi Mäkitalo 
-.MT tommi@tntnet.org
-.ME .
+\[la]tommi@tntnet.org\[ra]\&.
 .SH SEE ALSO
 .PP
-.BR tntnet (1), 
+.BR tntnet (8), 
 .BR ecpp (7), 
 .BR ecppll (1).

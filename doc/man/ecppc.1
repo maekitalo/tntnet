@@ -5,9 +5,11 @@ ecppc \- compiler for
 .BR ecpp (7)
 .SH SYNOPSIS
 .PP
-\fB\fCecppc\fR [\fB\fC-bhszvtM\fR] [\fB\fC-s-\fR] [\fB\fC-o\fR \fIfilename\fP]  [\fB\fC-n\fR \fIname\fP] [\fB\fC-m\fR \fImimetype\fP] [\fB\fC--mimetypes\fR \fIfilename\fP] [\fB\fC-I\fR \fIdir\fP] [\fB\fC-l\fR \fIlog\-category\fP] \fIfilename\fP
+\fB\fCecppc\fR [\fB\fC\-bhszvtM\fR] [\fB\fC\-s\-\fR] [\fB\fC\-o\fR \fIfilename\fP]  [\fB\fC\-n\fR \fIname\fP] [\fB\fC\-m\fR \fImimetype\fP] [\fB\fC\-\-mimetypes\fR \fIfilename\fP] [\fB\fC\-I\fR \fIdir\fP] [\fB\fC\-l\fR \fIlog\-category\fP] \fIfilename\fP
 .PP
-\fB\fCecppc\fR \fB\fC-bb\fR \fIfilename\fP ...
+\fB\fCecppc\fR \fB\fC\-bb\fR \fIfilename\fP ...
+.PP
+\fB\fCecppc\fR [\fB\fCOPRION\fR]
 .SH DESCRIPTION
 .PP
 \fB\fCecppc\fR is the compiler for the ecpp\-language. \fB\fCecpp\fR is a template language,
@@ -18,11 +20,11 @@ data into a C++\-class, which makes it possible to integrate them in a tntnet
 application.
 .SH OPTIONS
 .TP
-\fB\fC-b\fR
+\fB\fC\-b\fR
 This enables binary\-mode. Ecppc does not look for ecpp\-tags, but creates a
 class, which just copies the data
 .TP
-\fB\fC-bb\fR
+\fB\fC\-bb\fR
 This enables multi\-binary\-mode. Every binary\-file has some overhead, when
 packed into a tntnet\-application. This overhead can be quite significant, when
 binary\-files are small, like small icons in a web application. To reduce this
@@ -35,70 +37,75 @@ no filename matches the path\-info, processing is declined. The binaries need
 not be of same mime\-type, since the mime\-type is looked automatically from the
 mime\-database by file\- extension of the source\-file.
 .TP
-\fB\fC-i\fR \fIfilename\fP
-In multi binary mode (option \fB\fC-bb\fR) filenames can be read from the file
+\fB\fC\-i\fR \fIfilename\fP
+In multi binary mode (option \fB\fC\-bb\fR) filenames can be read from the file
 specified with this option. This can be useful when the command line gets too
 long or just for convenience.
 .TP
-\fB\fC-I\fR \fIdir\fP
+\fB\fC\-I\fR \fIdir\fP
 Search include\-files in directory. This option can be passed multiple times.
 All specified directories are searched in turn for include\-files.
 .TP
-\fB\fC-l\fR \fIlog\-category\fP
-Set log category. Default is \fIcomponent.componentname\fP.
+\fB\fC\-l\fR \fIlog\-category\fP
+Set log category. Default is \fIcomponent.componentname\fP\&.
 .TP
-\fB\fC-L\fR
+\fB\fC\-L\fR
 Disable generation of #line\-directives
 .TP
-\fB\fC-m\fR \fImimetype\fP
+\fB\fC\-m\fR \fImimetype\fP
 Set mimetype of output. This is the mimetype, sent by the component to the
 browser in the Content\-Type\- header. Without this parameter the mimetype is
 looked up from the mime\-database of your system using the file\-extension of
 the source\-file.
 .TP
-\fB\fC--mimetypes\fR \fIfile\fP
+\fB\fC\-\-mimetypes\fR \fIfile\fP
 Read mimetypes from file (default: /etc/mime.types).
 .TP
-\fB\fC-M\fR
+\fB\fC\-M\fR
 This disables normal processing and prints just the ecpp\-dependencies from
 this component. The output can be included into a Makefile. Ecpp\-dependencies
 are introduces by the <%include>\-tag.
 .TP
-\fB\fC-n\fR \fIname\fP
+\fB\fC\-n\fR \fIname\fP
 Set the name of the component. Normally this is derived from the
 source\-file\-name by removing the path and .ecpp\-extension.
 .TP
-\fB\fC-o\fR \fIfilename\fP
+\fB\fC\-o\fR \fIfilename\fP
 Write the generated file to the specified file instead of deriving the
 filename from the source\-file\-name.  The outputfilename is normally the
 source\-file where the extension is replaced by .cpp.
 .TP
-\fB\fC-p\fR
+\fB\fC\-p\fR
 Keep path name when deriving name of component from input file name.
 .TP
-\fB\fC-s\fR
+\fB\fC\-s\fR
 Generate singleton. Normally ecppc decides automatically, if the template is
 suitable for a singleton.  This option force ecppc to generate a singleton.
 .TP
-\fB\fC-s-\fR
+\fB\fC\-s\-\fR
 Do not generate a singleton.
 .TP
-\fB\fC-v\fR
+\fB\fC\-v\fR
 Enable verbose mode. This prints additional information about the processing
 on the standard\-output.
 .TP
-\fB\fC-z\fR
+\fB\fC\-z\fR
 Compress the data in the component. Compressed data is automatically
 decopressed on first use. This reduces the code\-size, but slightly slows down
 the first call of the component.
+.TP
+\fB\fC\-h, \-\-help\fR
+display this information
+.TP
+\fB\fC\-V, \-\-version\fR
+display program version
 .SH AUTHOR
 .PP
 This manual page was written by Tommi Mäkitalo 
-.MT tommi@tntnet.org
-.ME .
+\[la]tommi@tntnet.org\[ra]\&.
 .SH SEE ALSO
 .PP
-.BR tntnet (1), 
+.BR tntnet (8), 
 .BR ecpp (7), 
 .BR ecppl (1), 
 .BR ecppll (1)

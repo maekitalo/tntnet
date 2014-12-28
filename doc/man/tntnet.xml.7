@@ -5,7 +5,7 @@ tntnet.xml \- configuration file for
 .BR tntnet (8)
 .SH DESCRIPTION
 .PP
-Tntnet is configured using a xml file. The name of the file is \fItntnet.xml\fP. The
+Tntnet is configured using a xml file. The name of the file is \fItntnet.xml\fP\&. The
 root node of \fItntnet.xml\fP should be \fB\fCtntnet\fR while it is not checked. Most of
 the settings are just single values. They are described here in alphabetical
 order.
@@ -19,11 +19,11 @@ Writes a log entry for each request in a common format. This format is
 compatible with most log file analyze systems for http servers.
 .IP
 The log file has the fields: \fB\fCpeer ip\fR \- \fB\fCusername\fR [\fB\fCtime\fR] "\fB\fChttp method\fR
-\fB\fCquery string\fR HTTP/\fB\fCmajor version\fR.\fB\fCminor version\fR" \fB\fChttp return code\fR
+\fB\fCquery string\fR HTTP/\fB\fCmajor version\fR\&.\fB\fCminor version\fR" \fB\fChttp return code\fR
 \fB\fCcontent size\fR "\fB\fCreferer\fR" "\fB\fCuser agent\fR"
 .IP
 The \fB\fCusername\fR, \fB\fCreferer\fR and \fB\fCuser agent\fR may be '\-' when the value is not
-available. Also the \fB\fCcontent-size\fR can be empty in some cases.
+available. Also the \fB\fCcontent\-size\fR can be empty in some cases.
 .IP
 \fIExample\fP
 .PP
@@ -96,7 +96,7 @@ Changes the current working directory of the process on startup.
 \fB\fC<defaultContentType>\fR\fIcontentType\fP\fB\fC</defaultContentType>\fR
 .IP
 Sets the content type header of the reply. The content type may be changed in
-the application using \fB\fCreply.setContentType("something")\fR.
+the application using \fB\fCreply.setContentType("something")\fR\&.
 .IP
 By default "text/html; charset=UTF\-8" is set.
 .IP
@@ -104,7 +104,7 @@ By default "text/html; charset=UTF\-8" is set.
 .PP
 .RS
 .nf
-<defaultContentType>text/html; charset=ISO-8858-1</defaultContentType>
+<defaultContentType>text/html; charset=ISO\-8858\-1</defaultContentType>
 .fi
 .RE
 .PP
@@ -160,7 +160,7 @@ when tntnet starts as root user.
 .PP
 .RS
 .nf
-<group>tntnet-group</group>
+<group>tntnet\-group</group>
 .fi
 .RE
 .PP
@@ -244,7 +244,7 @@ The default value is 16.
 This is the most important setting for tntnet. It specifies, which components
 schould be called on which urls.
 .IP
-For details see the section \fIURL MAPPING\fP.
+For details see the section \fIURL MAPPING\fP\&.
 .PP
 \fB\fC<maxUrlMapCache>\fR\fInumber\fP\fB\fC</maxUrlMapCache>\fR
 .IP
@@ -480,14 +480,14 @@ when tntnet starts as root user.
 .PP
 .RS
 .nf
-<user>www-data</user>
+<user>www\-data</user>
 .fi
 .RE
 .PP
 \fB\fC<virtualhosts> { <virtualhost> <hostname>\fR\fIhostname\-regex\fP\fB\fC</hostname>\fR\fImappings\fP\fB\fC</virtualhost> }</virtualhosts>\fR
 .IP
 Defines mappings for virtual hosts. These mappings are valid only when the
-host header matches the \fIhostname\-regex\fP. See section \fIURL MAPPING\fP for
+host header matches the \fIhostname\-regex\fP\&. See section \fIURL MAPPING\fP for
 details about how to define actual mappings
 .IP
 A \fIvhost\fP entry in the mappings should be empty since it is already specified
@@ -534,13 +534,13 @@ library. Both the component name and the shared library name is needed to
 identify a component.
 .PP
 The component identifier is a string built from the component name, the @
-character and the shared library name. A example is \fB\fCmyclass@myapplication\fR.
+character and the shared library name. A example is \fB\fCmyclass@myapplication\fR\&.
 This tells tntnet: load shared library \fB\fCmyapplication\fR and call the component
 with the name \fB\fCmyclass\fR in that library, which creates the reply to the request.
 .PP
 To tell tntnet, which component to call, url mappings must be configured.
 .PP
-Configuration is done in the xml section \fB\fC<mappings>\fR. Multiple mappings can be
+Configuration is done in the xml section \fB\fC<mappings>\fR\&. Multiple mappings can be
 configured there. A mapping has a condition and a target. Tntnet looks in the
 list of mappings for the first mapping, where the condition is met and uses that
 to call the component. The component may return either a reply \- then the
@@ -579,7 +579,7 @@ the virtual host matches the setting. The value is also a extended regular
 expression. Note, that a dot matches any character in regular expressions,
 which may be irritating here. If you want to specify a mapping for the all
 hosts of the domain \fB\fCtntnet.org\fR, you have to set
-\fB\fC<vhost>tntnet\\.org$</vhost>\fR. Also the dollar sign at the end is important,
+\fB\fC<vhost>tntnet\\.org$</vhost>\fR\&. Also the dollar sign at the end is important,
 since it matches the end of the string. Otherwise the mapping would be also
 valid for a virtual host like \fB\fCtntnet.org.foo.com\fR, which may not be what you
 meant.
@@ -608,22 +608,22 @@ When the condition is met, additional parameters may be passed to the called
 component. There are 2 nodes for this.
 .IP
 The node \fB\fC<pathinfo>\fR can be requested in the component using
-\fB\fCrequest.getPathInfo()\fR. If the node is not set, the url is set as path info.
+\fB\fCrequest.getPathInfo()\fR\&. If the node is not set, the url is set as path info.
 .IP
 The node \fB\fC<args>\fR contains additional parameters, which can be passed to the
 component. The node can have any number of nodes with values. The tags are
 used as a parameter name and the content as the value. The method
-\fB\fCrequest.getArg(\fR\fIname\fP\fB\fC)\fR returns the value of the specified \fIname\fP. When the
+\fB\fCrequest.getArg(\fR\fIname\fP\fB\fC)\fR returns the value of the specified \fIname\fP\&. When the
 node is not set, the method returns a empty string. Optionally a diffrent
 default value can be passed to the method as an additional parameter like
-\fB\fCrequest.getArg(\fR\fIname\fP\fB\fC,\fR\fIdefaultValue\fP\fB\fC)\fR.
+\fB\fCrequest.getArg(\fR\fIname\fP\fB\fC,\fR\fIdefaultValue\fP\fB\fC)\fR\&.
 .IP
 For compatibility reasons with older tntnet \fB\fCrequest.getArg\fR accepts a numeric
 argument. Previously the arguments did not have names but were accessed by
 index. To emulate this, \fB\fCrequest.getArg\fR with a numeric argument translates
 the number into the name "\fB\fCarg\fR\fInumber\fP". So accessing
 \fB\fCrequest.getArg(\fR\fI2\fP\fB\fC)\fR returns the value of the argument with the name
-\fB\fCarg2\fR. Accessing a numeric argument equal or greater than the number of
+\fB\fCarg2\fR\&. Accessing a numeric argument equal or greater than the number of
 arguments (the first is number 0) used to be not allowed. Now a empty string
 is returned.
 .PP
@@ -632,19 +632,19 @@ is returned.
 .RS
 .nf
 <mappings>
-  <!-- map / to index@myapp -->
+  <!\-\- map / to index@myapp \-\->
   <mapping>
     <target>index@myapp</target>
     <url>^/$</url>
     <pathinfo>index.html</pathinfo>
   </mapping>
-  <!-- map /comp.* or /comp to comp@myapp -->
+  <!\-\- map /comp.* or /comp to comp@myapp \-\->
   <mapping>
     <target>action@myapp</target>
-    <url></url>               <!-- any url -->
-    <method>POST</method>     <!-- but only on method POST -->
-    <vhost>localhost</vhost>  <!-- and host header must be localhost -->
-    <ssl>1</ssl>              <!-- and ssl is enabled -->
+    <url></url>               <!\-\- any url \-\->
+    <method>POST</method>     <!\-\- but only on method POST \-\->
+    <vhost>localhost</vhost>  <!\-\- and host header must be localhost \-\->
+    <ssl>1</ssl>              <!\-\- and ssl is enabled \-\->
   </mapping>
   <mapping>
     <target>$1@myapp</target>
@@ -662,8 +662,8 @@ The section \fB\fC<listeners>\fR specifies the ip addresses and ports, where tnt
 waits for incoming requests. Multiple listeners may be defined, when tntnet
 should listen on multiple ip addresses or ports.
 .PP
-Each listener is defined in a node \fB\fC<listener>\fR. A listener must have a subnode
-\fB\fC<ip>\fR and \fB\fC<port>\fR. The node \fB\fC<ip>\fR may contain a ip address or hostname or may
+Each listener is defined in a node \fB\fC<listener>\fR\&. A listener must have a subnode
+\fB\fC<ip>\fR and \fB\fC<port>\fR\&. The node \fB\fC<ip>\fR may contain a ip address or hostname or may
 be left empty. If the node is empty, any interface is used. The \fB\fC<port>\fR must
 contain the numeric port number.
 .PP
@@ -686,7 +686,7 @@ unencrypted http is used here.
   <listener>
     <ip></ip>
     <port>443</port>
-    <!-- a certificate enables ssl -->
+    <!\-\- a certificate enables ssl \-\->
     <certificate>tntnet.pem</certificate>
   </listener>
 </listeners>
@@ -695,8 +695,7 @@ unencrypted http is used here.
 .SH AUTHOR
 .PP
 This manual page was written by Tommi Mäkitalo 
-.MT tommi@tntnet.org
-.ME .
+\[la]tommi@tntnet.org\[ra]\&.
 .SH SEE ALSO
 .PP
 tntnet (1)

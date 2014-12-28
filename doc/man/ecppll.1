@@ -4,7 +4,7 @@
 ecppll \- language\-linker for ecpp
 .SH SYNOPSIS
 .PP
-\fB\fCecppll\fR [\fB\fC-I\fR \fIdir\fP] [\fB\fC-F\fR] [\fB\fC-o\fR \fIoutput\-filename\fP] \fIecpp\-filename\fP [\fB\fCtranslated-data\fR]
+\fB\fCecppll\fR [\fB\fC\-I\fR \fIdir\fP] [\fB\fC\-F\fR] [\fB\fC\-o\fR \fIoutput\-filename\fP] \fIecpp\-filename\fP [\fB\fCtranslated\-data\fR]
 .SH DESCRIPTION
 .PP
 Ecppll is the language\-linker for ecpp. This program combines the data of a
@@ -21,24 +21,23 @@ the environment\-variable LANG is used. If that is neither found, the default
 data from the original component is used.
 .SH OPTIONS
 .TP
-\fB\fC-F\fR
+\fB\fC\-F\fR
 Fail on warning. If a phrase is not found in the language\-data or in
 language\-data is a phrase not used it the ecpp\-file, ecppll warns about it to
 standard output. If this flag is set, ecppll returns a non\-zero return\-code.
 .TP
-\fB\fC-I\fR \fIdir\fP
+\fB\fC\-I\fR \fIdir\fP
 Search include\-files in directory. This option can be passed multiple times.
 All specified directories are searched in turn for include\-files.
 .TP
-\fB\fC-o\fR \fIfilename\fP
+\fB\fC\-o\fR \fIfilename\fP
 Specify output filename
 .SH AUTHOR
 .PP
 This manual page was written by Tommi Mäkitalo 
-.MT tommi@tntnet.org
-.ME .
+\[la]tommi@tntnet.org\[ra]\&.
 .SH SEE ALSO
 .PP
-.BR tntnet (1), 
+.BR tntnet (8), 
 .BR ecpp (7), 
 .BR ecppl (1)

@@ -4,9 +4,9 @@
 tntnet \- web application server for c++
 .SH SYNOPSIS
 .PP
-\fB\fCtntnet\fR [\fB\fC-c\fR \fIfile\fP] [\fB\fC--logall\fR]
+\fB\fCtntnet\fR [\fB\fC\-c\fR \fIfile\fP] [\fB\fC\-\-logall\fR]
 .PP
-\fB\fCtntnet\fR\-C [\fB\fC-q\fR \fIquery\-string\fP] \fIcomponentId\fP ...
+\fB\fCtntnet\fR\-C [\fB\fC\-q\fR \fIquery\-string\fP] \fIcomponentId\fP ...
 .SH DESCRIPTION
 .PP
 This manual page documents briefly the \fB\fCtntnet\fR command.
@@ -16,24 +16,24 @@ This manual page documents briefly the \fB\fCtntnet\fR command.
 .PP
 A summary of options is included below.
 .TP
-\fB\fC-c\fR \fIfile\fP
+\fB\fC\-c\fR \fIfile\fP
 Use file as the configuration file. If the \-c is omitted, the first nonoption
 argument is used as the config file.
 .TP
-\fB\fC--logall\fR
+\fB\fC\-\-logall\fR
 Initialize logging earlier. Normally logging is initialized after starting the
 listeners and changing user so that logfiles are created with the right owner.
 For debugging reasons this option forces to do that earlier.
 .TP
-\fB\fC-C\fR
+\fB\fC\-C\fR
 Call components and print the result to stdout instead of starting tntnet as a webserver
 .TP
-\fB\fC-q\fR \fIquery\-string\fP
+\fB\fC\-q\fR \fIquery\-string\fP
 In \-C mode pass this query string to the component. The option may be
 repeated multiple times to pass name\-value\-pairs easily.
 .SH EXAMPLE
 .PP
-\fB\fCtntnet\fR \fB\fC-C\fR \fB\fC-q\fR \fB\fCarg1=35\fR \fB\fC-q\fR \fB\fCarg2=7\fR \fB\fC-q\fR \fB\fCop=/\fR \fIcalc@calc\fP
+\fB\fCtntnet\fR \fB\fC\-C\fR \fB\fC\-q\fR \fB\fCarg1=35\fR \fB\fC\-q\fR \fB\fCarg2=7\fR \fB\fC\-q\fR \fB\fCop=/\fR \fIcalc@calc\fP
 .IP
 calls the component \fIcalc@calc\fP with query parameters and prints the result to stdout.
 .SH FILES
@@ -48,12 +48,10 @@ command line.
 .SH AUTHOR
 .PP
 tntnet was written by Tommi Mäkitalo 
-.MT tommi@tntnet.org
-.ME .
+\[la]tommi@tntnet.org\[ra]\&.
 .PP
 This manual page was written by Kari Pahula 
-.MT kaol@debian.org
-.ME , for the Debian
+\[la]kaol@debian.org\[ra], for the Debian
 project (but may be used by others).
 .SH SEE ALSO
 .PP
@@ -65,8 +63,7 @@ project (but may be used by others).
 .BR tntnet.xml (7), 
 .BR tntnet-defcomp (1)
 Tntnet homepage
-.UR http://www.tntnet.org
-.UE . More
+\[la]http://www.tntnet.org\[ra]\&. More
 documentation can be found in /usr/share/doc/tntnet\-doc/.
 .PP
 Tntnet July 23, 2006 
