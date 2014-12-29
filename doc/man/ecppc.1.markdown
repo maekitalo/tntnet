@@ -13,7 +13,7 @@ SYNOPSIS
 
 `ecppc` `-bb` *filename* ...
 
-`ecppc` [`OPRION`]
+`ecppc` [`OPTION`]
 
 DESCRIPTION
 -----------
