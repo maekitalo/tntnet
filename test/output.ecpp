@@ -1,0 +1,19 @@
+f<$ '&' $>f<$$ '&' $>
+<%cpp>
+
+reply.sout() << "<html>";
+reply.out() << "<html>";
+
+</%cpp>
+<{
+
+reply.sout() << "<html>";
+reply.out() << "<html>";
+
+}>
+<%cpp>
+
+reply.sout() << "<html>";
+reply.out() << "<html>";
+
+</%cpp>

@@ -1,0 +1,15 @@
+<%args>
+a = "Hello";
+int n = 42;
+</%args>
+<%get>
+ga = "Hello";
+int gn = 43;
+</%get>
+<%post>
+pa = "Hello";
+int pn = 44;
+</%post>
+a=<$ a $> n=<$ n $>
+ga=<$ ga $> gn=<$ gn $>
+pa=<$ pa $> pn=<$ pn $>
