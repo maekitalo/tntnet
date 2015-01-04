@@ -38,15 +38,15 @@
 #include <tnt/scopemanager.h>
 #include <tnt/comploader.h>
 #include <tnt/compident.h>
-#include <tnt/component.h>
 
 namespace tnt
 {
   class Cmd
   {
       Tntnet _application;
-      HttpReply _reply;
       ScopeManager _scopeManager;
+      HttpRequest _request;
+      HttpReply _reply;
       Comploader _comploader;
       std::string _sessionId;
 
@@ -70,13 +70,13 @@ namespace tnt
       } threadContext;
 
     public:
-      explicit Cmd(std::ostream& out)
-        : _reply(out, false)
-        { _reply.setDirectModeNoFlush(); }
+      explicit Cmd(std::ostream& out);
 
       Tntnet& getApplication() { return _application; }
 
-      void call(const Compident& ci, const QueryParams& = QueryParams());
+      HttpRequest& request()  { return _request; }
+      void call(const Compident& ci, const QueryParams& q);
+      void call(const Compident& ci);
   };
 }
 

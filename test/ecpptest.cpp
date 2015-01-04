@@ -196,7 +196,7 @@ class EcppTest : public cxxtools::unit::TestSuite
 {
   public:
     EcppTest()
-    : cxxtools::unit::TestSuite("ecpp-Test")
+    : cxxtools::unit::TestSuite("ecppparser")
     {
       registerMethod("testPlain", *this, &EcppTest::testPlain);
       registerMethod("testCpp", *this, &EcppTest::testCpp);

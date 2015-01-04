@@ -53,7 +53,7 @@ class ComponentTest : public cxxtools::unit::TestSuite
 
       std::string content = s.str();
 
-      CXXTOOLS_UNIT_ASSERT_EQUALS(content, "f&amp;f&\n&lt;html&gt;<html>&lt;html&gt;<html>\n&lt;html&gt;<html>");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(content, "f&amp;f&\n&lt;one&gt;\n<one>\n&lt;html&gt;<html>&lt;html&gt;<html>\n&lt;html&gt;<html>");
     }
 
     void testArg()

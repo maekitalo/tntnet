@@ -1,4 +1,10 @@
+<%doc>
+<$...$> and <?...?...?> translates special html characters to html entities
+<$$...$> and <??...?...?> does not
+</%doc>
 f<$ '&' $>f<$$ '&' $>
+<? true ? "<one>" ?><? false ? "<two>" ?>
+<?? true ? "<one>" ?><?? false ? "<two>" ?><# this is just a stupid comment #>
 <%cpp>
 
 reply.sout() << "<html>";

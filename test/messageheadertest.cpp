@@ -38,7 +38,7 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
 {
   public:
     MessageheaderTest()
-      : cxxtools::unit::TestSuite("messageheader-Test")
+      : cxxtools::unit::TestSuite("messageheader")
     {
       registerMethod("testMessageheader", *this, &MessageheaderTest::testMessageheader);
       registerMethod("testMessageheaderColon", *this, &MessageheaderTest::testMessageheaderColon);
