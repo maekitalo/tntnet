@@ -41,7 +41,7 @@ class ComponentTest : public cxxtools::unit::TestSuite
     {
       registerMethod("testOutput", *this, &ComponentTest::testOutput);
       registerMethod("testArg", *this, &ComponentTest::testArg);
-      registerMethod("testSession", *this, &ComponentTest::testSession);
+      registerMethod("testScope", *this, &ComponentTest::testScope);
     }
 
     void testOutput()
@@ -100,17 +100,17 @@ class ComponentTest : public cxxtools::unit::TestSuite
 
     }
 
-    void testSession()
+    void testScope()
     {
       std::ostringstream s;
       tnt::Cmd cmd(s);
 
-      cmd.call(tnt::Compident("session"));
-      cmd.call(tnt::Compident("session"));
+      cmd.call(tnt::Compident("scope"));
+      cmd.call(tnt::Compident("scope"));
 
       std::string content = s.str();
 
-      CXXTOOLS_UNIT_ASSERT_EQUALS(content, "session=1 application=1 request=1\nsession=2 application=2 request=1\n");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(content, "session=1 securesession=1 application=1 request=1\nsession=2 securesession=1 application=2 request=1\n");
     }
 
 };

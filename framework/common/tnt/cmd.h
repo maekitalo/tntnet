@@ -50,15 +50,6 @@ namespace tnt
       Comploader _comploader;
       std::string _sessionId;
 
-      // SocketIf methods
-      class NullSocketIf : public SocketIf
-      {
-        public:
-          std::string getPeerIp() const   { return std::string(); }
-          std::string getServerIp() const { return std::string(); }
-          bool isSsl() const              { return false; }
-      } socketIf;
-
       // thread context methods
       class MyThreadContext : public ThreadContext
       {

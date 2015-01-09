@@ -1,0 +1,13 @@
+<%session>
+unsigned s = 0;
+</%session>
+<%securesession>
+unsigned ss = 0;
+</%securesession>
+<%application>
+unsigned a = 0;
+</%application>
+<%request>
+unsigned r = 0;
+</%request>
+session=<$ ++s $> securesession=<$ ++ss $> application=<$ ++a $> request=<$ ++r $>

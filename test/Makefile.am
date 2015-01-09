@@ -7,7 +7,7 @@ noinst_PROGRAMS = tntnet-test
 ecppSources = \
 	arg.ecpp \
 	output.ecpp \
-	session.ecpp
+	scope.ecpp
 
 tntnet_test_SOURCES = \
 	$(ecppSources) \
@@ -34,4 +34,3 @@ SUFFIXES=.ecpp .png .cpp
 	$(AM_V_GEN)$(ECPPC) -o $@ $<
 .png.cpp:
 	$(AM_V_GEN)$(ECPPC) -b -m image/png -o $@ $<
-

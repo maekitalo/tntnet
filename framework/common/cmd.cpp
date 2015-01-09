@@ -34,6 +34,26 @@ log_define("tntnet.cmd")
 
 namespace tnt
 {
+  namespace
+  {
+    // SocketIf methods
+    class NullSocketIf : public SocketIf
+    {
+        bool _ssl;
+
+      public:
+        explicit NullSocketIf(bool ssl)
+          : _ssl(ssl)
+          { }
+
+        std::string getPeerIp() const   { return std::string(); }
+        std::string getServerIp() const { return std::string(); }
+        bool isSsl() const              { return _ssl; }
+    };
+
+    NullSocketIf socketIf(false);
+  }
+
   Cmd::Cmd(std::ostream& out)
     : _request(_application, &socketIf),
       _reply(out, false)

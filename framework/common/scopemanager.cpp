@@ -195,12 +195,12 @@ namespace tnt
       c = request.getCookie(currentSecureSessionCookieName);
       if (c.getValue().empty())
       {
-        log_debug("secure session cookie " << currentSessionCookieName
+        log_debug("secure session cookie " << currentSecureSessionCookieName
             << " not found - keep session");
       }
       else if (request.isSsl())
       {
-        log_debug("secure session cookie " << currentSessionCookieName
+        log_debug("secure session cookie " << currentSecureSessionCookieName
             << " found: " << c.getValue());
 
         cxxtools::MutexLock lock(_sessionScopesMutex);
