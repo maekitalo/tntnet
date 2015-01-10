@@ -20,4 +20,4 @@ SUFFIXES=.ecpp .png .cpp
 	$(AM_V_GEN)$(ECPPC) -b -m image/png -o $@ $<
 
 tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=hello|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-project --config=hello|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

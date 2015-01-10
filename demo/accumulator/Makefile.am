@@ -18,4 +18,4 @@ SUFFIXES=.ecpp .cpp
 	$(AM_V_GEN)$(ECPPC) -o $@ $<
 
 tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/tntnet-config --config=accumulator|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-project --config=accumulator|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

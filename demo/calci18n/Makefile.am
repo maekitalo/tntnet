@@ -34,7 +34,7 @@ SUFFIXES=.ecpp .cpp .png
 	$(AM_V_GEN)$(ECPPC) -b -o $@ $<
 
 tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-config --config=calci18n|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-project --config=calci18n|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
 
 calci18n.txt: $(srcdir)/calci18n.ecpp
 	$(AM_V_GEN)$(ECPPL) -o calci18n.txt calci18n.ecpp
