@@ -33,6 +33,7 @@
 #include <cxxtools/log.h>
 #include <cxxtools/net/net.h>
 #include <unistd.h>
+#include "config.h"
 
 #ifdef WITH_GNUTLS
 #  include "tnt/gnutls.h"
@@ -56,7 +57,15 @@ namespace tnt
         try
         {
           log_debug("listen " << ipaddr << ':' << port);
+#ifdef HAVE_CXXTOOLS_REUSEADDR
+          int flags = cxxtools::net::TcpServer::DEFER_ACCEPT;
+          if (TntConfig::it().reuseAddress)
+            flags |= cxxtools::net::TcpServer::REUSEADDR;
+
+          server.listen(ipaddr, port, TntConfig::it().listenBacklog, flags);
+#else
           server.listen(ipaddr, port, TntConfig::it().listenBacklog, cxxtools::net::TcpServer::DEFER_ACCEPT);
+#endif
           return;
         }
         catch (const cxxtools::net::AddressInUse& e)

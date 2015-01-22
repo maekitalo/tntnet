@@ -50,6 +50,12 @@ void f()
   d.readAttributes(true);
 }])], AC_DEFINE(CXXTOOLS_XMLDESERIALISER_ATTR, [], [Defined if cxxtools xmldeserializer can read attributes]))
 
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([
+#include <cxxtools/net/tcpserver.h>
+int flag = cxxtools::net::TcpServer::REUSEADDR;
+])], AC_DEFINE(HAVE_CXXTOOLS_REUSEADDR, [], [Defined if cxxtools supports SO_REUSEADDR flag]))
+
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
   [epoll_option=$withval],

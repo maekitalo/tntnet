@@ -129,10 +129,11 @@ EOF
   <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
   <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->
   <!-- <keepAliveMax>1000</keepAliveMax> -->
+  <!-- <reuseAddress>1</reuseAddress> -->
   <!-- <sessionTimeout>300</sessionTimeout> -->
-  <!-- <listenBacklog>64</listenBacklog> -->
+  <!-- <listenBacklog>512</listenBacklog> -->
   <!-- <listenRetry>5</listenRetry> -->
-  <!-- <enableCompression>no</enableCompression> -->
+  <!-- <enableCompression>yes</enableCompression> -->
   <!-- <mimeDb>/etc/mime.types</mimeDb> -->
   <!-- <minCompressSize>1024</minCompressSize> -->
   <!-- <maxUrlMapCache>8192</maxUrlMapCache> -->

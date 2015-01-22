@@ -389,6 +389,11 @@ The default value is 1000.
 .fi
 .RE
 .PP
+\fB\fC<reuseAddress>\fR\fI0|1\fP\fB\fC</reuseAddress>\fR
+.IP
+The flag specifies whether the socket option SO_REUSEADDR should be set.
+When the entry is omitted the flag is set.
+.PP
 \fB\fC<server>\fR\fIname\fP\fB\fC</server>\fR
 .IP
 Set the server response header. Tntnet sets the http header "Server:" to

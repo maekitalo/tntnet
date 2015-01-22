@@ -454,6 +454,16 @@ namespace tnt
      */
     std::string server;
 
+    /** Sets the SO_REUSEADDR flag on the connection.
+     *
+     *  This flag specifies wheter SO_REUSEADDR is enabled on the listener
+     *  sockets.
+     *  The value may be 0/1 or true/false.
+     *
+     *  default: true
+     */
+    bool reuseAddress;
+
     /** Files from which to read additional options
 
         Through this option you can specify additional files from which

@@ -171,6 +171,7 @@ namespace tnt
     si.getMember("timerSleep", config.timerSleep);
     si.getMember("documentRoot", config.documentRoot);
     si.getMember("server", config.server);
+    si.getMember("reuseAddress", config.reuseAddress);
     si.getMember("includes", config.includes);
 
     config.config = si;
@@ -210,7 +211,8 @@ namespace tnt
       maxUrlMapCache(8192),
       defaultContentType("text/html; charset=UTF-8"),
       timerSleep(10),
-      server("Tntnet/" VERSION)
+      server("Tntnet/" VERSION),
+      reuseAddress(true)
     { }
 
   TntConfig& TntConfig::it()

@@ -307,6 +307,11 @@ This section describes the variables, used by Tntnet (8).
 
     <queueSize>50</queueSize>
 
+`<reuseAddress>`*0|1*`</reuseAddress>`
+
+  The flag specifies whether the socket option SO\_REUSEADDR should be set.
+  When the entry is omitted the flag is set.
+
 `<server>`*name*`</server>`
 
   Set the server response header. Tntnet sets the http header "Server:" to
