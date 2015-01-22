@@ -305,6 +305,9 @@ namespace tnt
   {
     if (_impl->sendStatusLine)
     {
+      if (msg == 0)
+        msg = HttpReturn::httpMessage(ret);
+
       log_debug("HTTP/" << getMajorVersion() << '.' << getMinorVersion()
              << ' ' << ret << ' ' << msg);
       hsocket << "HTTP/" << getMajorVersion() << '.' << getMinorVersion()
@@ -485,7 +488,7 @@ namespace tnt
     _impl->outstream << "<html><body>moved to <a href=\"" << newLocation << "\">" << newLocation << "</a></body></html>";
 
     unsigned httpCode = static_cast<unsigned>(type);
-    throw HttpReturn(httpCode, HttpReturn::httpMessage(httpCode));
+    throw HttpReturn(httpCode);
 
     return httpCode;
   }
@@ -497,7 +500,7 @@ namespace tnt
     _impl->outstream.makeEmpty();
     _impl->outstream << "<html><body><h1>not authorized</h1></body></html>";
 
-    throw HttpReturn(HTTP_UNAUTHORIZED, "not authorized");
+    throw HttpReturn(HTTP_UNAUTHORIZED);
 
     return HTTP_UNAUTHORIZED;
   }

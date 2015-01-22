@@ -134,7 +134,7 @@ namespace tnt
           Sessions are created automatically when a session variable is used and
           no session cookie was received.
       */
-      void setChunkedEncoding(unsigned ret = HTTP_OK, const char* msg = "OK");
+      void setChunkedEncoding(unsigned ret = HTTP_OK, const char* msg = 0);
 
       /// Check whether chunked encoding is enabled
       bool isChunkedEncoding() const;
