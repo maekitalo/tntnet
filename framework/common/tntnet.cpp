@@ -35,9 +35,6 @@
 #include "tnt/sessionscope.h"
 #include "tnt/tntconfig.h"
 #include "tnt/util.h"
-#ifdef WITH_STRESSJOB
-#include "tnt/stressjob.h"
-#endif
 
 #include <cxxtools/net/tcpstream.h>
 #include <cxxtools/log.h>
@@ -142,15 +139,6 @@ namespace tnt
       throwRuntimeError("SslListen is configured but SSL is not compiled into this tntnet");
 
 #endif // USE_SSL
-
-#ifdef WITH_STRESSJOB
-    std::string stressJob = config.getValue("StressJob");
-    if (!stressJob.empty())
-    {
-      log_debug("create stress job for url \"" << stressJob << '"');
-      queue.put(new StressJob(*this, stressJob));
-    }
-#endif
   }
 
   void Tntnet::listen(const std::string& ip, unsigned short int port)
