@@ -139,7 +139,7 @@ namespace tnt
 
   void SslTcpjob::accept()
   {
-    _socket.accept(_listener, cxxtools::net::TcpSocket::DEFER_ACCEPT);
+    _socket.accept(_listener);
   }
 
   void SslTcpjob::handshake()
