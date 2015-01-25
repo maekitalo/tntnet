@@ -3,10 +3,12 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 pkglib_LTLIBRARIES = @PROJECT@.la
 
-noinst_HEADERS =
+noinst_HEADERS = \
+	model/index.ecpp
 
 ecppSources = \
-	index.ecpp \
+	controller/index.ecpp \
+	view/index.ecpp \
 	webmain.ecpp
 
 staticSources = \

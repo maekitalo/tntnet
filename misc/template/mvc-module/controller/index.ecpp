@@ -1,0 +1,10 @@
+<%args>
+</%args>
+<%include>model/index.ecpp</%include>
+<%cpp>
+
+// put your controller code for index page here
+
+return DECLINED;
+
+</%cpp>

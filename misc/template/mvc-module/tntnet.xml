@@ -12,13 +12,18 @@
       <url>^/(.*)</url>
       <pathinfo>resources/$1</pathinfo>
     </mapping>
-    <!-- map / to @PROJECT@@@PROJECT@ -->
+    <!-- map / to webmain@@PROJECT@ -->
+    <mapping>
+      <!-- index page -->
+      <target>controller/index@@PROJECT@</target>
+      <url>^/$</url>
+    </mapping>
     <mapping>
       <!-- index page -->
       <target>webmain@@PROJECT@</target>
       <url>^/$</url>
       <args>
-        <next>index</next>
+        <next>view/index</next>
       </args>
     </mapping>
     <mapping>

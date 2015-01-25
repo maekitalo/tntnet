@@ -1,3 +1,4 @@
+<%include>model/index.ecpp</%include>
 <h1>@PROJECT@</h1>
 
 Welcome to the @PROJECT@ application.

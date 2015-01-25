@@ -4,10 +4,12 @@ AUTOMAKE_OPTIONS = subdir-objects
 bin_PROGRAMS = @PROJECT@
 
 noinst_HEADERS = \
-	configuration.h
+	configuration.h \
+	model/index.ecpp
 
 ecppSources = \
-	index.ecpp \
+	controller/index.ecpp \
+	view/index.ecpp \
 	webmain.ecpp
 
 staticSources = \

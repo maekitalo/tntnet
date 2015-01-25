@@ -31,8 +31,9 @@ int main(int argc, char* argv[])
        .setPathInfo("resources/$1");
 
     // index page
+    app.mapUrl("^/$", "controller/index");
     app.mapUrl("^/$", "webmain")
-       .setArg("next", "index");
+       .setArg("next", "view/index");
 
     // controller
     app.mapUrl("^/(.*)$", "controller/$1");

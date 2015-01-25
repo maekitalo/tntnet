@@ -1,0 +1,12 @@
+<%application scope="global">
+// define the application scope variables here
+
+</%application>
+<%request scope="global">
+// define the request scope variables here
+
+</%request>
+<%session scope="global">
+// define the session scope variables here
+
+</%session>
