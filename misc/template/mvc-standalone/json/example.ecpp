@@ -1,0 +1,14 @@
+<%pre>
+#include <cxxtools/json.h>
+#include <vector>
+</%pre>
+<%cpp>
+
+std::vector<int> v;
+v.push_back(17);
+v.push_back(42);
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(v);
+
+</%cpp>

@@ -1,0 +1,9 @@
+Put your html fragments here.
+
+Html fragments are loaded via ajax to fill a dom container.
+
+Html fragments are called with a .html extension. The basename specifies the
+name of the component.
+
+e.g.
+    the url `/foo.html` calls the component `html/foo.ecpp` in this directory.

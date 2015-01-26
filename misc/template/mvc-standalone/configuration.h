@@ -23,6 +23,9 @@ class Configuration
     unsigned sessionTimeout() const
     { return _sessionTimeout; }
 
+    const std::string& htdocs() const
+    { return _htdocs; }
+
     const std::string& dburl() const
     { return _dburl; }
 
@@ -37,6 +40,7 @@ class Configuration
     std::string    _listenIp;
     unsigned short _listenPort;
     unsigned       _sessionTimeout;
+    std::string    _htdocs;
     std::string    _dburl;
     cxxtools::SerializationInfo _loggingConfiguration;
 };

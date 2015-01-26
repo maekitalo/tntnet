@@ -3,6 +3,7 @@ AM_INIT_AUTOMAKE([foreign])
 
 AC_PROG_CXX
 AC_LANG(C++)
+AX_CXX_COMPILE_STDCXX_11(noext, optional)
 
 AC_CONFIG_HEADERS([config.h])
 AC_CHECK_HEADER([cxxtools/mutex.h], , AC_MSG_ERROR([cxxtools headers not found]))

@@ -9,6 +9,7 @@ noinst_HEADERS = \
 
 ecppSources = \
 	controller/index.ecpp \
+	json/example.ecpp \
 	view/index.ecpp \
 	webmain.ecpp
 
