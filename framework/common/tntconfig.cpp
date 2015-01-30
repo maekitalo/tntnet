@@ -85,18 +85,13 @@ namespace tnt
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener)
   {
     si.getMember("ip", listener.ip);
-
-    if (!si.getMember("port", listener.port))
-      listener.port = 80;
+    si.getMember("port") >>= listener.port;
   }
 
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::SslListener& ssllistener)
   {
     si.getMember("ip", ssllistener.ip);
-
-    if (!si.getMember("port", ssllistener.port))
-      ssllistener.port = 443;
-
+    si.getMember("port") >>= ssllistener.port;
     si.getMember("certificate") >>= ssllistener.certificate;
 
     if (!si.getMember("key", ssllistener.key))
@@ -119,25 +114,37 @@ namespace tnt
     TntConfig::ListenersType& listeners = config.listeners;
     TntConfig::SslListenersType& ssllisteners = config.ssllisteners;
 
-    const cxxtools::SerializationInfo& lit = si.getMember("listeners");
-    for (cxxtools::SerializationInfo::ConstIterator it = lit.begin(); it != lit.end(); ++it)
+    const cxxtools::SerializationInfo* lsi = si.findMember("listeners");
+    if (lsi != 0)
     {
-      if (it->findMember("certificate") != 0)
+      for (cxxtools::SerializationInfo::ConstIterator it = lsi->begin(); it != lsi->end(); ++it)
+      {
+        if (it->findMember("certificate") != 0)
+        {
+          ssllisteners.resize(ssllisteners.size() + 1);
+          *it >>= ssllisteners.back();
+        }
+        else
+        {
+          listeners.resize(listeners.size() + 1);
+          *it >>= listeners.back();
+        }
+      }
+    }
+
+    lsi = si.findMember("listener");
+    if (lsi != 0)
+    {
+      if (lsi->findMember("certificate") != 0)
       {
         ssllisteners.resize(ssllisteners.size() + 1);
-        *it >>= ssllisteners.back();
+        *lsi >>= ssllisteners.back();
       }
       else
       {
         listeners.resize(listeners.size() + 1);
-        *it >>= listeners.back();
+        *lsi >>= listeners.back();
       }
-    }
-
-    if (config.listeners.empty() && config.ssllisteners.empty())
-    {
-      config.listeners.resize(1);
-      config.listeners.back().port = 80;
     }
 
     si.getMember("maxRequestSize", config.maxRequestSize);
