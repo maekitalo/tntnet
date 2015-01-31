@@ -33,7 +33,7 @@ nobase_dist_pkgdata_DATA = \
 	template/mvc-standalone/Makefile.am \
 	template/mvc-standalone/model/index.ecpp \
 	template/mvc-standalone/@PROJECT@.conf \
-	template/mvc-standalone/README \
+	template/mvc-standalone/README.md \
 	template/mvc-standalone/resources/@PROJECT@.css \
 	template/mvc-standalone/view/index.ecpp \
 	template/mvc-standalone/webmain.ecpp
