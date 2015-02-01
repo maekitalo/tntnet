@@ -27,9 +27,6 @@ class Configuration : public tnt::TntConfig
     Configuration(const Configuration&);  // no implementation
     const Configuration& operator=(const Configuration&);  // no implementation
 
-    std::string    _listenIp;
-    unsigned short _listenPort;
-    unsigned       _sessionTimeout;
     std::string    _htdocs;
     std::string    _dburl;
     cxxtools::SerializationInfo _loggingConfiguration;

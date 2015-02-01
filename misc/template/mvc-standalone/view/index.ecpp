@@ -2,3 +2,17 @@
 <h1>@PROJECT@</h1>
 
 <p>Welcome to the @PROJECT@ application.</p>
+
+<p>This is a initial tntnet based project</p>
+
+<p>The next steps to take are:
+
+  <ul>
+    <li>Review <i>@PROJECT@.ecpp</i> - it defines the overall layout of your web application</li>
+    <li>Edit <i>resources/@PROJECT@.css</i></li>
+    <li>Add pages as needed into the <i>view</i> directory and <i>Makefile.am</i></li>
+    <li>Add per page processing of user input of views in <i>controller</i> directory</li>
+    <li>Add static pages like images or js files into <i>resources</i> directory and <i>Makefile.am</i></li>
+    <li>If you want to use json, add handlers to <i>json</i> directory</li>
+  </ul>
+</p>
