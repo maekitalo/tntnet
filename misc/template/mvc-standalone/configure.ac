@@ -1,5 +1,7 @@
 AC_INIT([@PROJECT@], [0.1], [your-email@somewhere])
 AM_INIT_AUTOMAKE([foreign])
+LT_INIT([disable-static])
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_PROG_CXX
 AC_LANG(C++)

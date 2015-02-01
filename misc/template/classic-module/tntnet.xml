@@ -6,7 +6,15 @@
   -->
 <tntnet>
   <mappings>
-    <!-- static resources -->
+    <!-- static resources from file system -->
+    <!--
+    <mapping>
+      <target>static@tntnet</target>
+      <url>^/(.*)</url>
+      <pathinfo>resources/$1</pathinfo>
+    </mapping>
+    -->
+    <!-- static compiled resources -->
     <mapping>
       <target>resources@@PROJECT@</target>
       <url>^/(.*)</url>

@@ -3,25 +3,15 @@
 
 #include <string>
 #include <cxxtools/serializationinfo.h>
+#include <tnt/tntconfig.h>
 
-class Configuration
+class Configuration : public tnt::TntConfig
 {
     friend void operator>>= (const cxxtools::SerializationInfo& si, Configuration& config);
 
   public:
     // return the static instance
     static Configuration& it();
-
-    static void readConfiguration(const std::string& file);
-
-    const std::string& listenIp() const
-    { return _listenIp; }
-
-    unsigned short listenPort() const
-    { return _listenPort; }
-
-    unsigned sessionTimeout() const
-    { return _sessionTimeout; }
 
     const std::string& htdocs() const
     { return _htdocs; }
