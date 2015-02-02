@@ -15,7 +15,8 @@ staticSources = \
 nodist_@CPROJECT@_la_SOURCES = \
 	resources.cpp
 
-@CPROJECT@_la_LDFLAGS = -module -shared -lcxxtools -ltntnet
+@CPROJECT@_la_LDFLAGS = -module -shared
+@CPROJECT@_la_LIBADD = -lcxxtools -ltntnet
 
 nobase_dist_noinst_DATA = $(staticSources)
 
