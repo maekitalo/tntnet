@@ -31,32 +31,38 @@ int main(int argc, char* argv[])
     tnt::Tntnet app;
     app.init(configuration);
 
-    // map static resources
+    // Map static resources
 
-    // read static resources from file system when configured
+    // Read static resources from file system when configured
+    // This is useful for development, so that the application do not
+    // need to be compiled and restarted on every change.
     if (!configuration.htdocs().empty())
     {
       app.mapUrl("^/(.*)", "static@tntnet")
          .setPathInfo(configuration.htdocs() + "/$1");
     }
 
-    // read static resources compiled into the binary
+    // Read static resources compiled into the binary
     app.mapUrl("^/(.*)", "resources")
        .setPathInfo("resources/$1");
 
-    // ajax
-    app.mapUrl("^/(.*).json$", "json/$1");  // json requests
-    app.mapUrl("^/(.*).html$", "html/$1");  // html fragments
+    // ajax - map  /something.ext to component ext/something
+    //        e.g. /request.json to json/request.ecpp
+    //        e.g. /foo.html to html/foo.ecpp
+    //
+    // These are requests, which are not routed through webmain and hence
+    // do not have the html frame.
+    app.mapUrl("^/(.*)\\.(.*)$", "$2/$1");
 
-    // index page
+    // Index page
     app.mapUrl("^/$", "controller/index");
     app.mapUrl("^/$", "webmain")
        .setArg("next", "view/index");
 
-    // controller
+    // Controller
     app.mapUrl("^/(.*)$", "controller/$1");
 
-    // view
+    // View
     app.mapUrl("^/(.*)$", "webmain")
        .setArg("next", "view/$1");
 
