@@ -48,7 +48,7 @@ namespace tnt
     public:
       explicit ApplicationUnlocker(HttpRequest& request, bool release = true)
         : _request(request),
-          locked(request.applicationScopeLocked)
+          _locked(request.applicationScopeLocked)
       {
         if (_locked && release)
           _request.releaseApplicationScopeLock();
