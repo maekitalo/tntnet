@@ -1,6 +1,5 @@
 #include <iostream>
 #include <tnt/tntnet.h>
-#include <tnt/configurator.h>
 #include <cxxtools/arg.h>
 #include <cxxtools/log.h>
 

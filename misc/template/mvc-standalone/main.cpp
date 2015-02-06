@@ -2,7 +2,6 @@
 #include <fstream>
 
 #include <tnt/tntnet.h>
-#include <tnt/configurator.h>
 
 #include <cxxtools/xml/xml.h>
 #include <cxxtools/arg.h>
