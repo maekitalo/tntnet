@@ -21,8 +21,7 @@ You can install through the package manager in your operating system, if those p
 
 To install Tntnet you will first need to install cxxtools.
 
-You can find cxxtools on the tntnet [homepage]
-(http://www.tntnet.org/download.html) and install it with:
+You find **cxxtools**, **tntnet** and **tntdb** on this [homepage](http://www.tntnet.org/download.html), install it with:
 
     $ tar xzf cxxtools-2.x.tar.gz
     $ cd cxxtools-2.x
@@ -31,7 +30,7 @@ You can find cxxtools on the tntnet [homepage]
     $ sudo make install
     $ sudo ldconfig
 
-The same installation procedure is used for tntnet. Install it with:
+The same installation procedure is used for **tntnet**, install it with:
 
     $ tar xzf tntnet-2.x.tar.gz
     $ cd tntnet-2.x
@@ -41,6 +40,8 @@ The same installation procedure is used for tntnet. Install it with:
     $ sudo ldconfig
 
 Now you have a working Tntnet environment.
+
+To install, **tntdb** read the [README](https://github.com/maekitalo/tntdb) on GitHub, it the same procedure with some `./configure` options.
 
 How to create your first web application
 ----------------------------------------
