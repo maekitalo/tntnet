@@ -24,21 +24,21 @@ To install Tntnet you will first need to install cxxtools.
 You can find cxxtools on the tntnet [homepage]
 (http://www.tntnet.org/download.html) and install it with:
 
-    tar xzf cxxtools-2.x.tar.gz
-    cd cxxtools-2.x
-    ./configure
-    make
-    sudo make install
-    sudo ldconfig
+    $ tar xzf cxxtools-2.x.tar.gz
+    $ cd cxxtools-2.x
+    $ ./configure
+    $ make
+    $ sudo make install
+    $ sudo ldconfig
 
 The same installation procedure is used for tntnet. Install it with:
 
-    tar xzf tntnet-2.x.tar.gz
-    cd tntnet-2.x
-    ./configure
-    make
-    sudo make install
-    sudo ldconfig
+    $ tar xzf tntnet-2.x.tar.gz
+    $ cd tntnet-2.x
+    $ ./configure
+    $ make
+    $ sudo make install
+    $ sudo ldconfig
 
 Now you have a working Tntnet environment.
 
@@ -48,7 +48,7 @@ How to create your first web application
 To create a web application we need to create a project. The easiest way is to
 use the helper script `tntnet-project`. We execute on the command line:
 
-    tntnet-project myfirstproject
+    $ tntnet-project myfirstproject
 
 This creates a initial web project, which uses autotools as a build system. It
 is created in a directory named myfirstproject. The most interesting files,
@@ -67,9 +67,9 @@ http://www.niksula.hut.fi/~mkomu/docs/autohowto.html
 
 To build and execute your first application enter the following commands:
 
-    cd myfirstproject
-    make
-    tntnet
+    $ cd myfirstproject
+    $ make
+    $ tntnet
 
 Now you can start your web browser and navigate to
 `http://localhost:8000/myfirstproject`.
@@ -125,13 +125,13 @@ your working directory. Modify your html page "myfirstproject.ecpp" to show an
 image:
 
     <html>
-     <head>
-      <title>ecpp application myfirstproject</title>
-     </head>
-     <body>
-      <h1>myfirstproject</h1>
-      <img src="picture.jpg">
-     </body>
+        <head>
+            <title>ecpp application myfirstproject</title>
+        </head>
+        <body>
+            <h1>myfirstproject</h1>
+            <img src="picture.jpg">
+        </body>
     </html>
 
 Next we compile the modified web page including the picture and link everything
@@ -141,11 +141,11 @@ look for tags like `<$...$>`. The component needs to tell the browser the mime
 type which is "image/jpeg" for your picture. The option `-m` is used to tell
 ecppc the MIME type. The picture will be compiled into the component.
 
-    ecppc myfirstproject.ecpp
-    g++ -c -fPIC myfirstproject.cpp
-    ecppc -b -m image/jpeg picture.jpg
-    g++ -c -fPIC picture.cpp
-    g++ -o myfirstproject.so -shared myfirstproject.o picture.o -lecpp
+    $ ecppc myfirstproject.ecpp
+    $ g++ -c -fPIC myfirstproject.cpp
+    $ ecppc -b -m image/jpeg picture.jpg
+    $ g++ -c -fPIC picture.cpp
+    $ g++ -o myfirstproject.so -shared myfirstproject.o picture.o -lecpp
 
 Or, more simply, you can edit the generated Makefile and change the
 line:
@@ -189,10 +189,20 @@ finds all the components. Until now we have added each single component into
 tntnet.xml. There is a way to generalise this by using regular expressions.
 Just modify `tntnet.xml` like so:
 
-    <tntnet> <mappings> <mapping> <url>^/(.*).html$</url>
-    <target>$1@myfirstproject</target> </mapping> <mapping>
-    <url>^/(.*).jpg$</url> <target>$1@myfirstproject</target> </mapping>
-    </mappings> <listeners> <listener> <port>8000</port>
+    <tntnet> 
+      <mappings>
+        <mapping>
+          <url>^/(.*).html$</url>
+          <target>$1@myfirstproject</target>
+        </mapping>
+        <mapping>
+          <url>^/(.*).jpg$</url>
+          <target>$1@myfirstproject</target>
+        </mapping>
+      </mappings>
+      <listeners>
+        <listener>
+          <port>8000</port>
         </listener>
       <listeners>
     </tntnet>
@@ -220,32 +230,32 @@ means, that the rest of the line is C++.
 We change our myfirstproject.ecpp to look like this:
 
     <html>
-     <head>
-      <title>ecpp application myfirstproject</title>
-     </head>
-     <body>
-      <h1>myfirstproject</h1>
-      <{
-        // we have a c++ section here
-        double arg1 = 1.0;
-        double arg2 = 3.0;
-        double result = arg1 + arg2;
-      }>
-      <p>
-       <$ arg1 $> + <$ arg2 $> =
-    % if (result == 0.0) {
-       nothing
-    % } else {
-      <$ result $>
-    % }
-      </p>
-    </body>
+        <head>
+            <title>ecpp application myfirstproject</title>
+        </head>
+        <body>
+            <h1>myfirstproject</h1>
+            <{
+                // we have a c++ section here
+                double arg1 = 1.0;
+                double arg2 = 3.0;
+                double result = arg1 + arg2;
+            }>
+            <p>
+                <$ arg1 $> + <$ arg2 $> =
+                % if (result == 0.0) {
+                    nothing
+                % } else {
+                    <$ result $>
+                % }
+            </p>
+        </body>
     </html>
 
 Compile and run the application with:
 
-    make
-    tntnet
+    $ make
+    $ tntnet
 
 Maybe we should call it calc.ecpp. Sounds like a better name for a little
 calculator. But to be a real calculator the user should be able to enter the
@@ -261,20 +271,20 @@ enclose a parameter definition.
 Let's start with a simple example:
 
     <%args>
-    namefield;
+        namefield;
     </%args>
     <html>
-      <body>
-        <form>
-          What's your name?
-          <input type="text" name="namefield">
-          <input type="submit">
-        </form>
-        <hr>
+        <body>
+            <form>
+                What's your name?
+                <input type="text" name="namefield">
+                <input type="submit">
+            </form>
+            <hr>
 
-        Hello <$ namefield $>
+            Hello <$ namefield $>
 
-      </body>
+        </body>
     </html>
 
 We put a variablename into an args section. This defines a C++ variable of type
@@ -286,7 +296,7 @@ It is possible to assign a variable a non empty default value by changing the
 definition to:
 
     <%args>
-    namefield = "World!";
+        namefield = "World!";
     </%args>
 
 The first time our application is called we get this famous "Hello
@@ -296,27 +306,27 @@ Now we know all the elements needed to create a slightly more
 functional calculator:
 
     <%args>
-    arg1;
-    arg2;
+        arg1;
+        arg2;
     </%args>
     <{
-      double v1, v2;
-      std::istringstream s1(arg1);
-      s1 >> v1;
-      std::istringstream s2(arg2);
-      s2 >> v2;
+        double v1, v2;
+        std::istringstream s1(arg1);
+        s1 >> v1;
+        std::istringstream s2(arg2);
+        s2 >> v2;
     }>
     <html>
-     <body>
-      <form>
-      <input type="text" name="arg1" value="<$arg1$>">
-      +
-      <input type="text" name="arg2" value="<$arg2$>">
-    % if (s1 && s2) { // if both input streams were successful extracting values
-        = <$ v1 + v2 $>
-    % }
-      </form>
-     </body>
+        <body>
+            <form>
+                <input type="text" name="arg1" value="<$arg1$>">
+                +
+                <input type="text" name="arg2" value="<$arg2$>">
+                % if (s1 && s2) { // if both input streams were successful extracting values
+                    = <$ v1 + v2 $>
+                % }
+            </form>
+        </body>
     </html>
 
 Since it is so common to convert the values as numbers or some other types
@@ -324,18 +334,18 @@ apart from strings tntnet can do that for you. We can just specify the type of
 the arguments with a default values in the `<%args>` section:
 
     <%args>
-    double arg1 = 0.0;
-    double arg2 = 0.0;
+        double arg1 = 0.0;
+        double arg2 = 0.0;
     </%args>
     <html>
-     <body>
-      <form>
-      <input type="text" name="arg1" value="<$arg1$>">
-      +
-      <input type="text" name="arg2" value="<$arg2$>">
-        = <$ v1 + v2 $>
-      </form>
-     </body>
+        <body>
+            <form>
+                <input type="text" name="arg1" value="<$arg1$>">
+                +
+                <input type="text" name="arg2" value="<$arg2$>">
+                = <$ v1 + v2 $>
+            </form>
+        </body>
     </html>
 
 The downside is, that we do not have a good way to determine, if the conversion
@@ -362,14 +372,14 @@ menu component is embedded.
 This is page 1:
 
     <html>
-    <body>
-    <table>
-     <tr>
-      <td><& "menu" &></td>
-      <td><h1>Here is page 1</h1></td>
-     </tr>
-    </table>
-    </body>
+        <body>
+            <table>
+                <tr>
+                    <td><& "menu" &></td>
+                    <td><h1>Here is page 1</h1></td>
+                </tr>
+            </table>
+        </body>
     </html>
 
 It should not be too hard to derive page 2 to 4 from here. Our Makefile looks
@@ -473,35 +483,35 @@ browser, when it sees that tag.
 So here is our accumulate.ecpp:
 
     <%pre>
-    #include "accumulator.h"
+        #include "accumulator.h"
     </%pre>
     <%args>
-    double value = 0.0;
-    bool add;
-    bool reset;
+        double value = 0.0;
+        bool add;
+        bool reset;
     </%args>
     <%session>
-    Accumulator accumulator;
+        Accumulator accumulator;
     </%session>
     <%cpp>
-    if (add)
-      accumulator.add(value);
-    if (reset)
-      accumulator.reset();
+        if (add)
+            accumulator.add(value);
+        if (reset)
+            accumulator.reset();
     </%cpp>
     <html>
-     <head>
-      <title>ecpp application accumulate</title>
-     </head>
-     <body>
-      <h1>accumulate</h1>
-      <form>
-       <input type="text" name="value" value="<$ value $>">
-       <input type="submit" name="add" value="add the value">
-       <input type="submit" name="reset" value="reset the value">
-      </form>
-      The sum so far is <$ accumulator.sum() $>
-     </body>
+        <head>
+            <title>ecpp application accumulate</title>
+        </head>
+        <body>
+            <h1>accumulate</h1>
+            <form>
+                <input type="text" name="value" value="<$ value $>">
+                <input type="submit" name="add" value="add the value">
+                <input type="submit" name="reset" value="reset the value">
+            </form>
+            The sum so far is <$ accumulator.sum() $>
+        </body>
     </html>
 
 This is quite straight forward. Remember to add the accumulator.o to the list of
