@@ -42,8 +42,10 @@
   </logging>
 
   <!-- <htdocs>resources</htdocs> -->
-  <!-- <dburl>postgresql:dbname=@PROJECT@</dburl> -->
   <!-- <dburl>sqlite:@PROJECT@.db</dburl> -->
+  <!-- <dburl>postgresql:dbname=@PROJECT@ user=foo password=bar</dburl> -->
+  <!-- <dburl>mysql:db=@PROJECT@;user=foo;passwd=bar</dburl> -->
+  <!-- <dburl>oracle:@PROJECT@;user=foo;passwd=bar</dburl> -->
   <server>@PROJECT@ server</server>
 
 </tntnet>
