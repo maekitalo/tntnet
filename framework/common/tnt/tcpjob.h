@@ -36,6 +36,8 @@
 #include <tnt/socketif.h>
 #include <tnt/tntconfig.h>
 
+/// @cond internal
+
 namespace tnt
 {
   class Tcpjob : public Job, private SocketIf

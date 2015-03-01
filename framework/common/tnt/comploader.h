@@ -39,12 +39,13 @@
 #include <utility>
 #include <dlfcn.h>
 
+/// @cond internal
+
 namespace tnt
 {
   class Comploader;
   class ComponentFactory;
 
-  /// @cond internal
   class LibraryNotFound : public std::exception
   {
       std::string _libname;
@@ -74,7 +75,6 @@ namespace tnt
         delete ptr;
       }
   };
-  /// @endcond internal
 
   class ComponentLibrary
   {

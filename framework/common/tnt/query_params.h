@@ -51,6 +51,7 @@ namespace tnt
       static void doThrow(const std::string& argname, unsigned argnum, const char* typeto, const std::string& value);
   };
 
+  /// @cond internal
   namespace qhelper
   {
     template <typename Type>
@@ -114,6 +115,7 @@ namespace tnt
     };
 
   }
+  /// @endcond internal
 
   /// Container for GET and POST parameters
   class QueryParams : public cxxtools::QueryParams

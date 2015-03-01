@@ -31,8 +31,11 @@
 #include <iostream>
 #include <vector>
 
+/// @cond internal
+
 namespace tnt
 {
+
 class cstreambuf : public std::streambuf
 {
     typedef std::vector<char*> _chunks_type;

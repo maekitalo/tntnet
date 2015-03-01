@@ -32,6 +32,8 @@
 
 #include <string>
 
+/// @cond internal
+
 namespace tnt
 {
   class SocketIf

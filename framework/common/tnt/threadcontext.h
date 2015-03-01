@@ -34,6 +34,7 @@ namespace tnt
 {
   class Scope;
 
+  /// @cond internal
   class ThreadContext
   {
     protected:

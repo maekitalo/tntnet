@@ -32,6 +32,8 @@
 
 #include <iostream>
 
+/// @cond internal
+
 namespace tnt
 {
   class PrePostNop

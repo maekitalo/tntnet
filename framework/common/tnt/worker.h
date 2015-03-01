@@ -38,6 +38,8 @@
 #include <tnt/scope.h>
 #include <tnt/threadcontext.h>
 
+/// @cond internal
+
 namespace tnt
 {
   class HttpRequest;
