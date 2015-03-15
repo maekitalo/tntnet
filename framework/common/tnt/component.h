@@ -83,64 +83,79 @@ namespace tnt
   type& varname = *varname##_pointer;
 
 #define TNT_SESSION_COMPONENT_VAR(type, varname, construct) \
-  TNT_VAR(request.getSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getSessionScope(), type, varname, getCompident().toString() + "%" #type "%" #varname, construct)
 
 #define TNT_SESSION_PAGE_VAR(type, varname, construct) \
-  TNT_VAR(request.getSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getSessionScope(), type, varname, getCompident().toString() + "%" #type "%" #varname, construct)
 
 #define TNT_SESSION_SHARED_VAR(type, varname, construct) \
-  TNT_VAR(request.getSessionScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getSessionScope(), type, varname, #type "%" #varname, construct)
 
 #define TNT_SESSION_GLOBAL_VAR(type, varname, construct) \
-  TNT_VAR(request.getSessionScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getSessionScope(), type, varname, #type "%" #varname, construct)
+
+#define TNT_SESSION_FILE_VAR(type, varname, file, construct) \
+  TNT_VAR(request.getSessionScope(), type, varname, #file "%" #type "%" #varname, construct)
 
 #define TNT_SECURE_SESSION_COMPONENT_VAR(type, varname, construct) \
-  TNT_VAR(request.getSecureSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getSecureSessionScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_SECURE_SESSION_PAGE_VAR(type, varname, construct) \
-  TNT_VAR(request.getSecureSessionScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getSecureSessionScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_SECURE_SESSION_SHARED_VAR(type, varname, construct) \
-  TNT_VAR(request.getSecureSessionScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getSecureSessionScope(), type, varname, #type "%" #varname, construct)
 
 #define TNT_SECURE_SESSION_GLOBAL_VAR(type, varname, construct) \
-  TNT_VAR(request.getSecureSessionScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getSecureSessionScope(), type, varname, #type "%" #varname, construct)
+
+#define TNT_SECURE_SESSION_FILE_VAR(type, varname, file, construct) \
+  TNT_VAR(request.getSecureSessionScope(), type, varname, #file "%" #type "%" #varname, construct)
 
 #define TNT_APPLICATION_COMPONENT_VAR(type, varname, construct) \
-  TNT_VAR(request.getApplicationScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getApplicationScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_APPLICATION_PAGE_VAR(type, varname, construct) \
-  TNT_VAR(request.getApplicationScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getApplicationScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_APPLICATION_SHARED_VAR(type, varname, construct) \
-  TNT_VAR(request.getApplicationScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getApplicationScope(), type, varname, #type "%" #varname, construct)
 
 #define TNT_APPLICATION_GLOBAL_VAR(type, varname, construct) \
-  TNT_VAR(request.getApplicationScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getApplicationScope(), type, varname, #type "%" #varname, construct)
+
+#define TNT_APPLICATION_FILE_VAR(type, varname, file, construct) \
+  TNT_VAR(request.getApplicationScope(), type, varname, #file "%" #type "%" #varname, construct)
 
 #define TNT_THREAD_COMPONENT_VAR(type, varname, construct) \
-  TNT_VAR(request.getThreadScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getThreadScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_THREAD_PAGE_VAR(type, varname, construct) \
-  TNT_VAR(request.getThreadScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getThreadScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_THREAD_SHARED_VAR(type, varname, construct) \
-  TNT_VAR(request.getThreadScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getThreadScope(), type, varname, #type "%" #varname, construct)
 
 #define TNT_THREAD_GLOBAL_VAR(type, varname, construct) \
-  TNT_VAR(request.getThreadScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getThreadScope(), type, varname, #type "%" #varname, construct)
+
+#define TNT_THREAD_FILE_VAR(type, varname, file, construct) \
+  TNT_VAR(request.getThreadScope(), type, varname, #file "%" #type "%" #varname, construct)
 
 #define TNT_REQUEST_COMPONENT_VAR(type, varname, construct) \
-  TNT_VAR(request.getRequestScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getRequestScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_REQUEST_PAGE_VAR(type, varname, construct) \
-  TNT_VAR(request.getRequestScope(), type, varname, getCompident().toString() + ":" #type #varname, construct)
+  TNT_VAR(request.getRequestScope(), type, varname, getCompident().toString() + ":" #type "%" #varname, construct)
 
 #define TNT_REQUEST_SHARED_VAR(type, varname, construct) \
-  TNT_VAR(request.getRequestScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getRequestScope(), type, varname, #type "%" #varname, construct)
 
 #define TNT_REQUEST_GLOBAL_VAR(type, varname, construct) \
-  TNT_VAR(request.getRequestScope(), type, varname, #type #varname, construct)
+  TNT_VAR(request.getRequestScope(), type, varname, #type "%" #varname, construct)
+
+#define TNT_REQUEST_FILE_VAR(type, varname, file, construct) \
+  TNT_VAR(request.getRequestScope(), type, varname, #file "%" #type "%" #varname, construct)
 
 #define TNT_PARAM(type, varname, construct) \
   TNT_VAR(qparam.getScope(), type, varname, #varname, construct)

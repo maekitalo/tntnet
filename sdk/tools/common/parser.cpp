@@ -1753,8 +1753,7 @@ namespace tnt
               log_debug("onScope(" << scopeContainer << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
               _handler.onScope(scopeContainer,
-                  scope == default_scope ? component_scope : scope,
-                  scopetype, scopevar, scopeinit, scopeIncludes);
+                  scope, scopetype, scopevar, scopeinit, scopeIncludes);
 
               scopetype.clear();
               scopevar.clear();

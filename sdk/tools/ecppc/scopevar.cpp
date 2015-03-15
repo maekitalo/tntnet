@@ -65,6 +65,7 @@ namespace tnt
         std::string key =
             _scope == ecpp::shared_scope             ? "SHARED_"
           : _scope == ecpp::page_scope               ? "PAGE_"
+          : _scope == ecpp::default_scope            ? "FILE_"
           : _scopeContainer != ecpp::param_container ? "COMPONENT_"
           : std::string();
 
@@ -81,14 +82,18 @@ namespace tnt
       out << "  typedef " << t << ' ' << _var << "_type;\n";
       if (_type.find(',') == std::string::npos)
       {
-        out << "  " << macro << '(' << t << ", " << _var
-            << ", (" << _init << ")); "
+        out << "  " << macro << '(' << t << ", " << _var;
+        if (_scope == ecpp::default_scope)
+          out << ", " << _myfile;
+        out << ", (" << _init << ")); "
                "  // <%" << tag << "> " << t << ' ' << _var;
       }
       else
       {
-        out << "  " << macro << '(' << _var << "_type, " << _var
-            << ", (" << _init << ")); "
+        out << "  " << macro << '(' << _var << "_type, " << _var;
+        if (_scope == ecpp::default_scope)
+          out << ", " << _myfile;
+        out << ", (" << _init << ")); "
                "  // <%" << tag << "> " << _type << ' ' << _var;
       }
 
