@@ -48,7 +48,8 @@ namespace tnt
     {
       log_trace("getDependencies");
 
-      out << _classname << ".cpp: " << _inputfile;
+      std::string::size_type p = _inputfile.find_last_of('.');
+      out << _inputfile.substr(0, p) << ".cpp: " << _inputfile;
       for (dependencies_type::const_iterator it = _dependencies.begin();
            it != _dependencies.end(); ++it)
         out << " \\\n  " << *it;

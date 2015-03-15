@@ -358,7 +358,7 @@ namespace tnt
     {
       log_trace("runDependencies");
 
-      tnt::ecppc::Dependencygenerator generator(_componentname, _inputfile);
+      tnt::ecppc::Dependencygenerator generator(_inputfile);
 
       std::ifstream in(_inputfile);
       if (!in)

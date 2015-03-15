@@ -41,15 +41,13 @@ namespace tnt
     {
         typedef std::list<std::string> dependencies_type;
 
-        std::string _classname;
         std::string _inputfile;
 
         dependencies_type _dependencies;
 
       public:
-        Dependencygenerator(const std::string& classname, const std::string& inputfile)
-          : _classname(classname),
-            _inputfile(inputfile)
+        explicit Dependencygenerator(const std::string& inputfile)
+          : _inputfile(inputfile)
           { }
 
         virtual void onInclude(const std::string& file);
