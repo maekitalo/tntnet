@@ -338,6 +338,10 @@ namespace tnt
               html += '<';
               state = state_html;
             }
+            else if (ch == '<')
+            {
+              html += '<';
+            }
             else
             {
               html += '<';
