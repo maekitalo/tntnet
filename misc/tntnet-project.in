@@ -196,7 +196,7 @@ do
             ;;
 
         --*=*)
-            optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'`
+            optarg=`echo "$arg" | @SED@ 's/[-_a-zA-Z0-9]*=//'`
             #echo "longopt; optarg=$optarg"
             ;;
 
@@ -288,12 +288,12 @@ checkSystem $project
 
 mkdir "$project"
 cd "$project"
-cproject=$(echo $project|sed 's/-/_/g')
+cproject=$(echo $project|@SED@ 's/-/_/g')
 
 # create directory structure
 for D in $(cd "$TDIR"; find . -type d|grep -v '^\.$')
 do
-    T=$(echo $D|sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
+    T=$(echo $D|@SED@ "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
     echo "$T"
     mkdir "$T"
 done
@@ -301,9 +301,9 @@ done
 # copy files
 for F in $(cd "$TDIR"; find . -type f|grep -v '^\.$')
 do
-    T=$(echo $F|sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
+    T=$(echo $F|@SED@ "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g")
     echo "$T"
-    sed "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g" < "$TDIR/$F" > "$T"
+    @SED@ "s/@PROJECT@/$project/g; s/@CPROJECT@/$cproject/g" < "$TDIR/$F" > "$T"
 done
 
 if [ -f configure.ac ]
