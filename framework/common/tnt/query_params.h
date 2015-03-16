@@ -147,6 +147,9 @@ namespace tnt
 
       QueryParams& operator= (const QueryParams& src)
       {
+        if (this == &src)
+          return *this;
+
         cxxtools::QueryParams::operator=(src);
         if (_paramScope != src._paramScope)
         {

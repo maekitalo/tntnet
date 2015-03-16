@@ -31,14 +31,17 @@
 #define TNT_POLLER_H
 
 #include <tnt/job.h>
-#include <cxxtools/noncopyable.h>
 
 namespace tnt
 {
   /// @cond internal
-  class PollerIf : private cxxtools::NonCopyable
+  class PollerIf
   {
+      PollerIf(const PollerIf&) { }
+      PollerIf& operator=(const PollerIf&) { return *this; }
+
     public:
+      PollerIf() { }
       virtual ~PollerIf();
       virtual void run() = 0;
       virtual void doStop() = 0;
@@ -47,7 +50,9 @@ namespace tnt
 
   class Poller
   {
-    private:
+      Poller(const Poller&) { }
+      Poller& operator=(const Poller&) { return *this; }
+
       PollerIf* _impl;
 
     public:

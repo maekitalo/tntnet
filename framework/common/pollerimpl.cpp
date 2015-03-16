@@ -46,7 +46,8 @@ namespace tnt
 
   PollerImpl::PollerImpl(Jobqueue& q)
     : _queue(q),
-      _pollFd(-1)
+      _pollFd(-1),
+      _pollTimeout(-1)
   {
     _pollFd = ::epoll_create(256);
     if (_pollFd < 0)

@@ -34,7 +34,7 @@ namespace tnt
 {
   std::streambuf::int_type UrlEscStreamBuf::overflow(std::streambuf::int_type ch)
   {
-    static char hex[] = "0123456789ABCDEF";
+    static const char hex[] = "0123456789ABCDEF";
     if (ch > 32 && ch < 127 && ch != '%' && ch != '+' && ch != '=' && ch != '&')
       _sink->sputc(ch);
     else if (ch == ' ')
