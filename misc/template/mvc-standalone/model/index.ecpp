@@ -1,7 +1,3 @@
-<%application>
-// define the application scope variables here
-
-</%application>
 <%request>
 // define the request scope variables here
 
