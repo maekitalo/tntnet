@@ -5,7 +5,7 @@
   You can find documentation about the parameters in the man page tntnet.xml(7)
   -->
 <tntnet>
-  <!-- listen to a port (empty string means any local interface) -->
+  <!-- listen to a port -->
   <listeners>
     <listener>
       <port>8000</port>

@@ -70,7 +70,7 @@ EOF
 
   cat <<EOF
 
-  <!-- listen to a port (empty string means any local interface) -->
+  <!-- listen to a port -->
   <listeners>
     <listener>
       <port>8000</port>
