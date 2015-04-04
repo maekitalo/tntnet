@@ -90,9 +90,7 @@ namespace tnt
   {
     TntConfig::it() = config;
 
-    const cxxtools::SerializationInfo* psi = config.config.findMember("logging");
-    if (psi)
-      log_init(*psi);
+    log_init(config.logConfiguration);
 
     _minthreads = config.minThreads;
     _maxthreads = config.maxThreads;

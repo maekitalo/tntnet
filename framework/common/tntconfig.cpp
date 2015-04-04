@@ -180,6 +180,7 @@ namespace tnt
     si.getMember("server", config.server);
     si.getMember("reuseAddress", config.reuseAddress);
     si.getMember("includes", config.includes);
+    si.getMember("logging", config.logConfiguration);
 
     config.config = si;
 

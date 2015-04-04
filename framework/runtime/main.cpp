@@ -210,9 +210,7 @@ namespace tnt
 
   void TntnetProcess::initializeLogging()
   {
-    const cxxtools::SerializationInfo* psi = TntConfig::it().config.findMember("logging");
-    if (psi)
-      log_init(*psi);
+    log_init(TntConfig::it().logConfiguration);
   }
 
   void TntnetProcess::onInit()

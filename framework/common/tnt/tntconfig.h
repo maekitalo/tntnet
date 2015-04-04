@@ -34,6 +34,7 @@
 #include <vector>
 #include <map>
 #include <cxxtools/serializationinfo.h>
+#include <cxxtools/log.h>
 
 namespace tnt
 {
@@ -423,8 +424,12 @@ namespace tnt
         TntConfig object and should not be used otherwise.
 
         default: (empty object)
-     */
+      */
     cxxtools::SerializationInfo config;
+
+    /** Logging configuration for cxxtools logging.
+     */
+    cxxtools::LogConfiguration logConfiguration;
 
     /** Sets environment variables.
 

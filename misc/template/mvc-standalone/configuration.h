@@ -2,7 +2,6 @@
 #define CONFIGURATION_H
 
 #include <string>
-#include <cxxtools/serializationinfo.h>
 #include <tnt/tntconfig.h>
 
 class Configuration : public tnt::TntConfig
@@ -19,9 +18,6 @@ class Configuration : public tnt::TntConfig
     const std::string& dburl() const
     { return _dburl; }
 
-    const cxxtools::SerializationInfo& loggingConfiguration() const
-    { return _loggingConfiguration; }
-
   private:
     Configuration();
     Configuration(const Configuration&);  // no implementation
@@ -29,7 +25,6 @@ class Configuration : public tnt::TntConfig
 
     std::string    _htdocs;
     std::string    _dburl;
-    cxxtools::SerializationInfo _loggingConfiguration;
 };
 
 #endif // CONFIGURATION_H
