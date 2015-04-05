@@ -14,5 +14,6 @@
     <li>Add per page processing of user input of views in <i>controller</i> directory</li>
     <li>Add static pages like images or js files into <i>resources</i> directory and <i>Makefile.am</i></li>
     <li>If you want to use json, add handlers to <i>json</i> directory</li>
+    <li>If you need a database connection, read the howto or README.md how to do that</li>
   </ul>
 </p>
