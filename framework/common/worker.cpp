@@ -301,14 +301,17 @@ namespace tnt
     static cxxtools::atomic_t waitCount = 0;
     cxxtools::atomicIncrement(waitCount);
 
-    const std::string& fname = TntConfig::it().accessLog;
-    if (fname.empty())
-      return;
-
     std::ofstream& accessLog = _application._accessLog;
 
     if (!accessLog.is_open())
     {
+      const std::string& fname = TntConfig::it().accessLog;
+      if (fname.empty())
+      {
+        log_debug("accesLog setting is empty");
+        return;
+      }
+
       cxxtools::MutexLock lock(_application._accessLogMutex);
 
       if (!accessLog.is_open())
