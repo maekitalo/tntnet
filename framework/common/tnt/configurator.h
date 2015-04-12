@@ -31,7 +31,6 @@
 #define TNT_CONFIGURATOR_H
 
 #include <tnt/tntnet.h>
-#include <tnt/worker.h>
 #include <tnt/sessionscope.h>
 #include <tnt/httpreply.h>
 #include <tnt/tntconfig.h>

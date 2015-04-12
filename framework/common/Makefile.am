@@ -68,7 +68,6 @@ nobase_include_HEADERS = \
 	tnt/cookie.h \
 	tnt/data.h \
 	tnt/deflatestream.h \
-	tnt/dispatcher.h \
 	tnt/ecpp.h \
 	tnt/encoding.h \
 	tnt/htmlescostream.h \
@@ -79,7 +78,6 @@ nobase_include_HEADERS = \
 	tnt/httpparser.h \
 	tnt/httprequest.h \
 	tnt/httpreply.h \
-	tnt/job.h \
 	tnt/langlib.h \
 	tnt/mapping.h \
 	tnt/maptarget.h \
@@ -91,7 +89,6 @@ nobase_include_HEADERS = \
 	tnt/multipart.h \
 	tnt/object.h \
 	tnt/parser.h \
-	tnt/poller.h \
 	tnt/query_params.h \
 	tnt/savepoint.h \
 	tnt/scope.h \
@@ -106,16 +103,19 @@ nobase_include_HEADERS = \
 	tnt/unzipfile.h \
 	tnt/urlescostream.h \
 	tnt/urlmapper.h \
-	tnt/worker.h \
 	tnt/zdata.h
 
 noinst_HEADERS = \
 	tnt/cstream.h \
+	tnt/dispatcher.h \
+	tnt/job.h \
 	tnt/listener.h \
+	tnt/poller.h \
 	tnt/pollerimpl.h \
 	tnt/ssl.h \
 	tnt/tcpjob.h \
 	tnt/util.h \
+	tnt/worker.h \
 	tntnetimpl.h
 
 libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\"
