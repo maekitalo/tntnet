@@ -28,7 +28,7 @@
 
 
 #include "tnt/tcpjob.h"
-#include "tnt/tntnet.h"
+#include "tntnetimpl.h"
 #include "tnt/ssl.h"
 
 #include <cxxtools/log.h>
@@ -72,7 +72,7 @@ namespace tnt
   {
     Jobqueue::JobPtr p;
 
-    if (Tntnet::shouldStop())
+    if (TntnetImpl::shouldStop())
       p = this;
     else
       p = new Tcpjob(getRequest().getApplication(), _listener, _queue);
@@ -155,7 +155,7 @@ namespace tnt
   {
     Jobqueue::JobPtr p;
 
-    if (Tntnet::shouldStop())
+    if (TntnetImpl::shouldStop())
       p = this;
     else
       p = new SslTcpjob(getRequest().getApplication(), _listener, _queue);
@@ -181,7 +181,7 @@ namespace tnt
 
       regenerateJob();
 
-      if (!Tntnet::shouldStop())
+      if (!TntnetImpl::shouldStop())
         handshake();
     }
 

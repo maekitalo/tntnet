@@ -34,7 +34,7 @@
 #include <cxxtools/thread.h>
 #include <cxxtools/mutex.h>
 #include <tnt/comploader.h>
-#include <tnt/tntnet.h>
+#include <tntnetimpl.h>
 #include <tnt/scope.h>
 #include <tnt/threadcontext.h>
 
@@ -50,7 +50,7 @@ namespace tnt
       typedef std::set<Worker*> workers_type;
 
       static cxxtools::Mutex _mutex;
-      Tntnet& _application;
+      TntnetImpl& _application;
       static Comploader _comploader;
 
       Scope _threadScope;
@@ -69,7 +69,7 @@ namespace tnt
       Scope& getScope();
 
     public:
-      explicit Worker(Tntnet& app);
+      explicit Worker(TntnetImpl& app);
 
       virtual void run();
 

@@ -42,6 +42,7 @@ libtntnet_la_SOURCES = \
 	tcpjob.cpp \
 	tntconfig.cpp \
 	tntnet.cpp \
+	tntnetimpl.cpp \
 	unzip.c \
 	unzipfile.cpp \
 	urlescostream.cpp \
@@ -80,6 +81,7 @@ nobase_include_HEADERS = \
 	tnt/httpreply.h \
 	tnt/job.h \
 	tnt/langlib.h \
+	tnt/mapping.h \
 	tnt/maptarget.h \
 	tnt/mbcomponent.h \
 	tnt/messageattribute.h \
@@ -113,7 +115,8 @@ noinst_HEADERS = \
 	tnt/pollerimpl.h \
 	tnt/ssl.h \
 	tnt/tcpjob.h \
-	tnt/util.h
+	tnt/util.h \
+	tntnetimpl.h
 
 libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\"
 libtntnet_la_LDFLAGS = -version-info @sonumber@ @SHARED_LIB_FLAG@

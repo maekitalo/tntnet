@@ -32,100 +32,14 @@
 
 #include <cxxtools/mutex.h>
 #include <tnt/urlmapper.h>
+#include <tnt/mapping.h>
 #include <tnt/maptarget.h>
-#include <tnt/tntconfig.h>
 #include <vector>
 #include <map>
-#include <cxxtools/regex.h>
 
 namespace tnt
 {
   class HttpRequest;
-
-  class Mapping
-  {
-      std::string _vhost;
-      std::string _url;
-      std::string _method;
-      int _ssl;
-
-      cxxtools::Regex _regexVhost;
-      cxxtools::Regex _regexUrl;
-      cxxtools::Regex _regexMethod;
-
-      Maptarget _target;
-
-    public:
-      typedef Maptarget::args_type args_type;
-
-      Mapping() { }
-
-      Mapping(const std::string& vhost, const std::string& url, const std::string& method, int ssl, const Maptarget& target);
-
-      const std::string& getVHost() const  { return _vhost; }
-      const std::string& getUrl() const    { return _url; }
-      const std::string& getMethod() const { return _method; }
-      int getSsl() const                   { return _ssl; }
-
-      const Maptarget& getTarget() const   { return _target; }
-
-      Mapping& setPathInfo(const std::string& p)
-      {
-        _target.setPathInfo(p);
-        return *this;
-      }
-
-      Mapping& setArgs(const args_type& a)
-      {
-        _target.setArgs(a);
-        return *this;
-      }
-
-      Mapping& setArg(const std::string& name, const std::string& value)
-      {
-        _target.setArg(name, value);
-        return *this;
-      }
-
-      /// Emulate old positional argument list.
-      /// @deprecated
-      Mapping& pushArg(const std::string& value);
-
-      Mapping& setVHost(const std::string& vhost)
-      {
-        _vhost = vhost;
-        _regexVhost = cxxtools::Regex(vhost);
-        return *this;
-      }
-
-      Mapping& setUrl(const std::string& url)
-      {
-        _url = url;
-        _regexUrl = cxxtools::Regex(url);
-        return *this;
-      }
-
-      Mapping& setMethod(const std::string& method)
-      {
-        _method = method;
-        _regexMethod = cxxtools::Regex(method);
-        return *this;
-      }
-
-      Mapping& setSsl(bool sw)
-      {
-        _ssl = (sw ? SSL_YES : SSL_NO);
-        return *this;
-      }
-
-      Mapping& unsetSsl()
-      {
-        _ssl = SSL_ALL;
-        return *this;
-      }
-
-      bool match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const;
-  };
 
   /// @cond internal
   class Dispatcher : public Urlmapper // one per host

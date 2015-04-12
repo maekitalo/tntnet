@@ -30,20 +30,14 @@
 #ifndef TNT_TNTNET_H
 #define TNT_TNTNET_H
 
-#include <tnt/job.h>
-#include <tnt/poller.h>
-#include <tnt/dispatcher.h>
-#include <tnt/maptarget.h>
-#include <tnt/scopemanager.h>
-#include <cxxtools/condition.h>
-#include <cxxtools/mutex.h>
-#include <set>
-#include <fstream>
+#include <tnt/tntconfig.h>
+#include <tnt/mapping.h>
+#include <string>
 
 namespace tnt
 {
-  class ListenerBase;
   struct TntConfig;
+  class TntnetImpl;
 
   /** Main application class for stand-alone tntnet web application
 
@@ -91,45 +85,24 @@ namespace tnt
    */
   class Tntnet
   {
-      friend class Worker;
-
-      typedef std::set<ListenerBase*> listeners_type;
-
-      unsigned _minthreads;
-      unsigned _maxthreads;
-
-      Jobqueue _queue;
-
-      static bool _stop;
-
-      listeners_type _listeners;
-      static listeners_type _allListeners;
-
-      cxxtools::AttachedThread _pollerthread;
-      Poller _poller;
-      Dispatcher _dispatcher;
-
-      ScopeManager _scopemanager;
-      std::string _appname;
-
-      std::ofstream _accessLog;
-      cxxtools::Mutex _accessLogMutex;
-
-      // noncopyable
-      Tntnet(const Tntnet&);
-      Tntnet& operator= (const Tntnet&);
-
-      void timerTask();
-
-      static cxxtools::Condition _timerStopCondition;
-      static cxxtools::Mutex _timeStopMutex;
-
     public:
       /** Create a %Tntnet object with default configuration
 
           For information on the default configuration options, see TntConfig.
        */
       Tntnet();
+
+      /** Copy constructor.
+
+          Both instances will point to the same implementation.
+       */
+      Tntnet(const Tntnet& t);
+
+      /** Assignment.
+
+          Both instances will point to the same implementation.
+       */
+      Tntnet& operator=(const Tntnet& t);
 
       /// Load server configuration from a TntConfig object
       void init(const TntConfig& config);
@@ -177,31 +150,19 @@ namespace tnt
       static void shutdown();
 
       /// Tells whether a shutdown request was initiated
-      static bool shouldStop()                { return _stop; }
-
-      /// @cond internal
-
-      Jobqueue&   getQueue()                  { return _queue; }
-
-      Poller&     getPoller()                 { return _poller; }
-
-      const Dispatcher& getDispatcher() const { return _dispatcher; }
-
-      ScopeManager& getScopemanager()         { return _scopemanager; }
-
-      /// @endcond internal
+      static bool shouldStop();
 
       /// Get the minimum number of worker threads
-      unsigned getMinThreads() const          { return _minthreads; }
+      unsigned getMinThreads() const;
 
       /// Set the minimum number of worker threads
       void setMinThreads(unsigned n);
 
       /// Get the maximum number of worker threads
-      unsigned getMaxThreads() const          { return _maxthreads; }
+      unsigned getMaxThreads() const;
 
       /// Set the maximum number of worker threads
-      void setMaxThreads(unsigned n)          { _maxthreads = n; }
+      void setMaxThreads(unsigned n);
 
       /// @{
       /** @name URL mapping
@@ -219,24 +180,18 @@ namespace tnt
           @param ci The identifier for the component to which the url is mapped.
             The first method simply passes the string to the CompIdent constructor.
        */
-      Mapping& mapUrl(const std::string& url, const std::string& ci)
-        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
+      Mapping& mapUrl(const std::string& url, const std::string& ci);
 
-      Mapping& mapUrl(const std::string& url, const Compident& ci)
-        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
+      Mapping& mapUrl(const std::string& url, const Compident& ci);
 
       /// @deprecated
-      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci)
-        { _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)).setPathInfo(pathinfo); }
+      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci);
 
       /// @deprecated
-      Mapping& mapUrl(const std::string& url, const Maptarget& ci)
-        { return _dispatcher.addUrlMapEntry(std::string(), url, ci); }
+      Mapping& mapUrl(const std::string& url, const Maptarget& ci);
 
       /// @deprecated
-      Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
-        { return _dispatcher.addUrlMapEntry(vhost, url, ci); }
-      /// @}
+      Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci);
 
       /** Set the app name
 
@@ -251,12 +206,10 @@ namespace tnt
           multiple tntnet application servers are run on the same host on
           different ports.
        */
-      void setAppName(const std::string& appname)
-        { _appname = appname; }
+      void setAppName(const std::string& appname);
 
       /// Get the app name &ndash; for details see setAppName()
-      const std::string& getAppName() const
-        { return _appname; }
+      const std::string& getAppName() const;
 
       /** Enable access logging
 
@@ -265,8 +218,10 @@ namespace tnt
 
           @param logfile_path The path to the log file.
        */
-      void setAccessLog(const std::string& logfile_path)
-        { _accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
+      void setAccessLog(const std::string& logfile_path);
+
+    private:
+      TntnetImpl* _impl;
   };
 }
 

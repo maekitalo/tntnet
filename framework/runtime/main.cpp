@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 #include <set>
 

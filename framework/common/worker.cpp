@@ -73,7 +73,7 @@ namespace tnt
   Worker::workers_type Worker::_workers;
   Comploader Worker::_comploader;
 
-  Worker::Worker(Tntnet& app)
+  Worker::Worker(TntnetImpl& app)
     : _application(app),
       _threadId(0),
       _state(stateStarting),
@@ -92,7 +92,7 @@ namespace tnt
     {
       _state = stateWaitingForJob;
       Jobqueue::JobPtr j = queue.get();
-      if (Tntnet::shouldStop())
+      if (TntnetImpl::shouldStop())
       {
         // put job back to queue to wake up next worker if any left
         queue.put(j);
@@ -102,7 +102,7 @@ namespace tnt
       try
       {
         std::iostream& socket = j->getStream();
-        if (Tntnet::shouldStop())
+        if (TntnetImpl::shouldStop())
           break;
 
         bool keepAlive;
