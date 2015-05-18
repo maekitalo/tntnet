@@ -31,6 +31,7 @@
 #define TNT_HTTP_H
 
 static const unsigned DECLINED = 0;
+static const unsigned DEFAULT = 1;
 static const unsigned HTTP_CONTINUE = 100;
 static const unsigned HTTP_SWITCHING_PROTOCOLS = 101;
 static const unsigned HTTP_PROCESSING = 102;

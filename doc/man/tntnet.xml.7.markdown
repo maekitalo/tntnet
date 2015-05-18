@@ -484,13 +484,21 @@ The mapping contains 3 kind of nodes:
 `target`
   The mapping node contains a node `<target>`, which contains the component name,
   which is to be called when the conditions are met.
-  
+
   The target may contain back references to the regular expression in the
   `<url>` condition. Parts of the regular expression may be in brackets. In the
   target $1 is replaced with the first bracketed expression, $2 with the second
   and so on.
-  
-  This node is mandatory.
+
+  This target node is mandatory.
+
+  Optionally there may be another node `<httpreturn>`, which specifies the
+  default http return code of components. The component may return with the
+  special constant DEFAULT, which instructs tntnet to return the default http
+  return code for this mapping. The ecpp compiler generates components, which
+  return exactly that value and the default value is HTTP\_OK. The value of the
+  node may be a numeric http return code or the word DECLINED, which instructs
+  tntnet to continue with the next mapping.
 
 `parameters`
   When the condition is met, additional parameters may be passed to the called

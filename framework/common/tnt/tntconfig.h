@@ -33,6 +33,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <tnt/http.h>
 #include <cxxtools/serializationinfo.h>
 #include <cxxtools/log.h>
 
@@ -105,11 +106,16 @@ namespace tnt
       std::string vhost;
       std::string method;
       std::string pathinfo;
+      unsigned httpreturn;
       int ssl;
 
       typedef std::map<std::string, std::string> ArgsType;
 
       ArgsType args;
+
+      Mapping()
+        : httpreturn(HTTP_OK)
+        { }
     };
 
     /// A listener entry

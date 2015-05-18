@@ -70,6 +70,12 @@ namespace tnt
         return *this;
       }
 
+      Mapping& setHttpReturn(unsigned httpreturn)
+      {
+        _target.setHttpReturn(httpreturn);
+        return *this;
+      }
+
       Mapping& setArgs(const args_type& a)
       {
         _target.setArgs(a);

@@ -442,6 +442,9 @@ namespace tnt
         try
         {
           http_return = comp->topCall(request, reply, request.getQueryParams());
+          if (http_return == DEFAULT)
+            http_return = ci.getHttpReturn();
+
           http_msg = HttpReturn::httpMessage(http_return);
         }
         catch (const HttpReturn& e)

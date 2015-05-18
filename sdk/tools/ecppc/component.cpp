@@ -76,7 +76,7 @@ namespace tnt
       _compbody.getBody(body);
 
       body << "  // <%/cpp>\n"
-           << "  return HTTP_OK;\n";
+           << "  return DEFAULT;\n";
     }
 
     void Component::getArgs(std::ostream& body) const

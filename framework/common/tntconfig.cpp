@@ -64,6 +64,20 @@ namespace tnt
     si.getMember("vhost", mapping.vhost);
     si.getMember("method", mapping.method);
     si.getMember("pathinfo", mapping.pathinfo);
+
+    // accept values "DECLINED" or a numeric http return code for *httpreturn*
+    // *httpreturn* specifies the default return code of components.
+    const cxxtools::SerializationInfo* psi = si.findMember("httpreturn");
+    if (psi)
+    {
+      std::string httpreturn;
+      *psi >>= httpreturn;
+      if (httpreturn == "DECLINED")
+        mapping.httpreturn = DECLINED;
+      else
+        *psi >>= mapping.httpreturn;
+    }
+
     bool ssl;
     if (si.getMember("ssl", ssl))
       mapping.ssl = ssl ? SSL_YES : SSL_NO;

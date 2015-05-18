@@ -29,6 +29,7 @@
       <!-- index page -->
       <target>controller/index@@PROJECT@</target>
       <url>^/$</url>
+      <httpreturn>DECLINED</httpreturn>
     </mapping>
     <mapping>
       <!-- index page -->
@@ -42,6 +43,7 @@
       <!-- controller -->
       <target>controller/$1@@PROJECT@</target>
       <url>^/(.*)$</url>
+      <httpreturn>DECLINED</httpreturn>
     </mapping>
     <mapping>
       <!-- view -->

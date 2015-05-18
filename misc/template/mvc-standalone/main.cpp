@@ -53,15 +53,18 @@ int main(int argc, char* argv[])
     // do not have the html frame.
     app.mapUrl("^/(.*)\\.(.*)$", "$2/$1");
 
-    // Index page
-    app.mapUrl("^/$", "controller/index");
-    app.mapUrl("^/$", "webmain")
-       .setArg("next", "view/index");
-
     // Controller
-    app.mapUrl("^/(.*)$", "controller/$1");
+    //
+    // we set the default http return code to DECLINED, so that tntnet continues
+    // with the view component after the controller
+    app.mapUrl("^/$", "controller/index")  // index page
+       .setHttpReturn(DECLINED);
+    app.mapUrl("^/(.*)$", "controller/$1")
+       .setHttpReturn(DECLINED);
 
     // View
+    app.mapUrl("^/$", "webmain")  // index page
+       .setArg("next", "view/index");
     app.mapUrl("^/(.*)$", "webmain")
        .setArg("next", "view/$1");
 

@@ -182,6 +182,7 @@ namespace tnt
           Maptarget ci;
           ci.libname = formatter(src.libname);
           ci.compname = formatter(src.compname);
+          ci.setHttpReturn(src.getHttpReturn());
 
           if (src.hasPathInfo())
             ci.setPathInfo(formatter(src.getPathInfo()));

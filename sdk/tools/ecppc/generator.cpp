@@ -645,7 +645,7 @@ namespace tnt
                   "  reply.setContentLengthHeader(data.size(url_idx));\n"
                   "  reply.setDirectMode();\n"
                   "  reply.out() << data[url_idx];\n"
-                  "  return HTTP_OK;\n"
+                  "  return DEFAULT;\n"
                   "}\n\n";
         }
 

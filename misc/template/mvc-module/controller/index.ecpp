@@ -5,6 +5,4 @@
 
 // put your controller code for index page here
 
-return DECLINED;
-
 </%cpp>
