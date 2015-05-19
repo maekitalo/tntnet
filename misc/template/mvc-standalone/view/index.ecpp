@@ -8,7 +8,7 @@
 <p>The next steps to take are:
 
   <ul>
-    <li>Review <i>@PROJECT@.ecpp</i> - it defines the overall layout of your web application</li>
+    <li>Review <i>webmain.ecpp</i> - it defines the overall layout of your web application</li>
     <li>Edit <i>resources/@PROJECT@.css</i></li>
     <li>Add pages as needed into the <i>view</i> directory and <i>Makefile.am</i></li>
     <li>Add per page processing of user input of views in <i>controller</i> directory</li>
