@@ -13,6 +13,24 @@
       <pathinfo>resources/$1</pathinfo>
     </mapping>
 
+    <!-- controller-->
+    <mapping>
+      <!-- index page -->
+      <target>controller/index@@PROJECT@</target>
+      <url>^/$</url>
+      <httpreturn>DECLINED</httpreturn>
+    </mapping>
+    <mapping>
+      <target>controller/$1@@PROJECT@</target>
+      <url>^/(.*)$</url>
+      <httpreturn>DECLINED</httpreturn>
+    </mapping>
+    <mapping>
+      <target>controller/$1@@PROJECT@</target>
+      <url>^/(.*)\.(.*)$</url>
+      <httpreturn>DECLINED</httpreturn>
+    </mapping>
+
     <!--
        ajax - map  /something.ext to component ext/something
               e.g. /request.json to json/request.ecpp
@@ -22,14 +40,7 @@
        do not have the html frame.  -->
     <mapping>
       <target>$2/$1@@PROJECT@</target>
-      <url>^/(.*)\\.(.*)$</url>
-    </mapping>
-    <!-- map / to webmain@@PROJECT@ -->
-    <mapping>
-      <!-- index page -->
-      <target>controller/index@@PROJECT@</target>
-      <url>^/$</url>
-      <httpreturn>DECLINED</httpreturn>
+      <url>^/(.*)\.(.*)$</url>
     </mapping>
     <mapping>
       <!-- index page -->
@@ -38,12 +49,6 @@
       <args>
         <next>view/index</next>
       </args>
-    </mapping>
-    <mapping>
-      <!-- controller -->
-      <target>controller/$1@@PROJECT@</target>
-      <url>^/(.*)$</url>
-      <httpreturn>DECLINED</httpreturn>
     </mapping>
     <mapping>
       <!-- view -->

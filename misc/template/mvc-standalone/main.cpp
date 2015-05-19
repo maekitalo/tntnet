@@ -45,6 +45,19 @@ int main(int argc, char* argv[])
     app.mapUrl("^/(.*)", "resources")
        .setPathInfo("resources/$1");
 
+    // Controller
+    //
+    // we set the default http return code to DECLINED, so that tntnet continues
+    // with the view component after the controller
+    app.mapUrl("^/$", "controller/index")  // controller for index page
+       .setHttpReturn(DECLINED);
+
+    app.mapUrl("^/(.*)$", "controller/$1")  // controller for pages routed through webmain
+       .setHttpReturn(DECLINED);
+
+    app.mapUrl("^/(.*)\\.(.*)$", "controller/$1")
+       .setHttpReturn(DECLINED);
+
     // ajax - map  /something.ext to component ext/something
     //        e.g. /request.json to json/request.ecpp
     //        e.g. /foo.html to html/foo.ecpp
@@ -52,15 +65,6 @@ int main(int argc, char* argv[])
     // These are requests, which are not routed through webmain and hence
     // do not have the html frame.
     app.mapUrl("^/(.*)\\.(.*)$", "$2/$1");
-
-    // Controller
-    //
-    // we set the default http return code to DECLINED, so that tntnet continues
-    // with the view component after the controller
-    app.mapUrl("^/$", "controller/index")  // index page
-       .setHttpReturn(DECLINED);
-    app.mapUrl("^/(.*)$", "controller/$1")
-       .setHttpReturn(DECLINED);
 
     // View
     app.mapUrl("^/$", "webmain")  // index page

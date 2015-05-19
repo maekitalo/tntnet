@@ -1,7 +1,3 @@
-<%session scope="shared">
-</%session>
-<%request scope="shared">
-</%request>
 <!DOCTYPE html>
 <html>
   <head>
