@@ -391,6 +391,7 @@ namespace tnt
 
           hsocket << httpheader::contentLength << ' ' << _impl->compressor.zsize() << "\r\n"
                   << httpheader::contentEncoding << " gzip\r\n";
+          log_info("gzip body " << body.size() << " bytes to " << _impl->compressor.zsize() << " bytes");
         }
         else
         {
