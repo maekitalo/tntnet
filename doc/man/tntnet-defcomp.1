@@ -32,8 +32,8 @@ same mime database is used as in the next component \fB\fCmime@tntnet\fR\&.
 .RS
 .nf
 <mapping>
-  <target>static@tntnet</target>
   <url>(.*)</url>
+  <target>static@tntnet</target>
   <pathinfo>/var/www/htdocs/$1</pathinfo>
 </mapping>
 .fi
@@ -46,9 +46,32 @@ The component \fB\fCmime@tntnet\fR sets just the content type header. The value 
 fetched from the argument "contenttype" if set. Otherwise the path info is used
 to detect the correct content type from the file extension using the configured
 mime db.
+.SS empty
+.PP
+The component \fB\fCempty@tntnet\fR generates just an empty result. By default a http
+return code OK (200) is set but can be changed with the argument \fIhttpcode\fP\&.
+Other arguments are interpreted as additional http headers, so that e.g. the
+content type header can be set.
+.PP
+\fIExample\fP
+.PP
+.RS
+.nf
+<mapping>
+  <url>\\.js$</url>
+  <target>empty@tntnet</target>
+  <args>
+    <ContentType>application/javascript</ContentType>
+  </args>
+</mapping>
+.fi
+.RE
+.PP
+This tells tntnet to reply all requests with a url ending \fI\&.js\fP with an empty
+javascript file.
 .SS unzip
 .PP
-The component \fB\fCunzip@tntnet\fR reads static data from a zim file. The file name is
+The component \fB\fCunzip@tntnet\fR reads static data from a zip file. The file name is
 read from the argument "file" and the actual file from the path info.
 .PP
 If the argument "contenttype" is set, the content type http header is set from
@@ -60,8 +83,8 @@ file extension using the configured mime db.
 .RS
 .nf
 <mapping>
-  <target>unzip@tntnet</target>
   <url>/thefile/(.*)</url>
+  <target>unzip@tntnet</target>
   <pathinfo>$1</pathinfo>
   <args>
     <file>/var/www/thefile.zip</file>
@@ -88,8 +111,8 @@ adding a configuration argument "type". The value of the type can be
 .RS
 .nf
 <mapping>
-  <target>redirect@tntnet</target>
   <url>^/$</url>
+  <target>redirect@tntnet</target>
   <redirect>/login.html</redirect>
 </mapping>
 .fi
@@ -103,8 +126,8 @@ is requested.
 .RS
 .nf
 <mapping>
-  <target>redirect@tntnet</target>
   <url>^/$</url>
+  <target>redirect@tntnet</target>
   <redirect>/index.html</redirect>
   <args>
     <type>permanently</type>
@@ -127,8 +150,8 @@ specific text is used.
 .RS
 .nf
 <mapping>
-  <target>error@tntnet</target>
   <method>^POST$</method>
+  <target>error@tntnet</target>
   <args>
     <code>405</code>
   </args>

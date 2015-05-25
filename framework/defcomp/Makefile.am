@@ -11,6 +11,7 @@ tntnet_la_SOURCES = \
 	error.cpp \
 	mime.cpp \
 	mimehandler.cpp \
+	empty.cpp \
 	proxy.cpp \
 	redirect.cpp \
 	setheader.cpp \
