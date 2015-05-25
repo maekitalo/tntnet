@@ -66,6 +66,11 @@ int main(int argc, char* argv[])
     // do not have the html frame.
     app.mapUrl("^/(.*)\\.(.*)$", "$2/$1");
 
+    // Return empty file when requesting a js file so we can just add a
+    // script tag to our page and the script is loaded when found.
+    app.mapUrl("\\.js$", "empty@tntnet")
+       .setArg("ContentType", "application/javascript");
+
     // View
     app.mapUrl("^/$", "webmain")  // index page
        .setArg("next", "view/index");

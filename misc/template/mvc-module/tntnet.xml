@@ -8,26 +8,26 @@
   <mappings>
     <!-- static resources -->
     <mapping>
-      <target>resources@@PROJECT@</target>
       <url>^/(.*)</url>
+      <target>resources@@PROJECT@</target>
       <pathinfo>resources/$1</pathinfo>
     </mapping>
 
     <!-- controller-->
     <mapping>
       <!-- index page -->
-      <target>controller/index@@PROJECT@</target>
       <url>^/$</url>
+      <target>controller/index@@PROJECT@</target>
       <httpreturn>DECLINED</httpreturn>
     </mapping>
     <mapping>
-      <target>controller/$1@@PROJECT@</target>
       <url>^/(.*)$</url>
+      <target>controller/$1@@PROJECT@</target>
       <httpreturn>DECLINED</httpreturn>
     </mapping>
     <mapping>
-      <target>controller/$1@@PROJECT@</target>
       <url>^/(.*)\.(.*)$</url>
+      <target>controller/$1@@PROJECT@</target>
       <httpreturn>DECLINED</httpreturn>
     </mapping>
 
@@ -39,21 +39,31 @@
        These are requests, which are not routed through webmain and hence
        do not have the html frame.  -->
     <mapping>
-      <target>$2/$1@@PROJECT@</target>
       <url>^/(.*)\.(.*)$</url>
+      <target>$2/$1@@PROJECT@</target>
+    </mapping>
+
+    <!-- Return empty file when requesting a js file so we can just add a
+         script tag to our page and the script is loaded when found. -->
+    <mapping>
+      <url>\.js$</url>
+      <target>empty@tntnet</target>
+      <args>
+        <ContentType>application/javascript</ContentType>
+      </args>
     </mapping>
     <mapping>
       <!-- index page -->
-      <target>webmain@@PROJECT@</target>
       <url>^/$</url>
+      <target>webmain@@PROJECT@</target>
       <args>
         <next>view/index</next>
       </args>
     </mapping>
     <mapping>
       <!-- view -->
-      <target>webmain@@PROJECT@</target>
       <url>^/(.*)$</url>
+      <target>webmain@@PROJECT@</target>
       <args>
         <next>view/$1</next>
       </args>

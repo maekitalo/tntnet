@@ -34,7 +34,7 @@
     </loggers>
 
     <!--
-    <file>tntnet.log</file>
+    <file>@PROJECT@.log</file>
     <maxfilesize>10M</maxfilesize>
     <maxbackupindex>2</maxbackupindex>
     -->
