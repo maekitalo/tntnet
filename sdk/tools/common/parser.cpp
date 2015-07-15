@@ -1808,9 +1808,8 @@ namespace tnt
                   scopevar.erase(scopevar.size() - 1);
               log_debug("onScope(" << scopeContainer << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
-              _handler.onScope(scopeContainer, 
-                  scope == default_scope ? component_scope : scope,
-                  scopetype, scopevar, scopeinit, scopeIncludes);
+              _handler.onScope(scopeContainer,
+                  scope, scopetype, scopevar, scopeinit, scopeIncludes);
 
               scopetype.clear();
               scopevar.clear();
@@ -1844,9 +1843,8 @@ namespace tnt
                   scopevar.erase(scopevar.size() - 1);
               log_debug("onScope(" << scopeContainer << ", " << scope << ", "
                   << scopetype << ", " << scopevar << ", " << scopeinit << ')');
-              _handler.onScope(scopeContainer, 
-                  scope == default_scope ? component_scope : scope,
-                  scopetype, scopevar, scopeinit, scopeIncludes);
+              _handler.onScope(scopeContainer,
+                  scope, scopetype, scopevar, scopeinit, scopeIncludes);
 
               scopetype.clear();
               scopevar.clear();
