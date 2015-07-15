@@ -348,7 +348,7 @@ class EcppTest : public cxxtools::unit::TestSuite
       Handler handler;
       tnt::ecpp::Parser parser(handler, std::string());
       parser.parse(ecpp);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(application,component,,blah,)onHtml(</foo>)end()");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(application,default,,blah,)onHtml(</foo>)end()");
     }
 
     void testThreadScope()
@@ -357,7 +357,7 @@ class EcppTest : public cxxtools::unit::TestSuite
       Handler handler;
       tnt::ecpp::Parser parser(handler, std::string());
       parser.parse(ecpp);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(thread,component,,blah,)onHtml(</foo>)end()");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(thread,default,,blah,)onHtml(</foo>)end()");
     }
 
     void testSessionScope()
@@ -366,7 +366,7 @@ class EcppTest : public cxxtools::unit::TestSuite
       Handler handler;
       tnt::ecpp::Parser parser(handler, std::string());
       parser.parse(ecpp);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(session,component,,blah,)onHtml(</foo>)end()");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(session,default,,blah,)onHtml(</foo>)end()");
     }
 
     void testSecureSessionScope()
@@ -375,7 +375,7 @@ class EcppTest : public cxxtools::unit::TestSuite
       Handler handler;
       tnt::ecpp::Parser parser(handler, std::string());
       parser.parse(ecpp);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(secure_session,component,,blah,)onHtml(</foo>)end()");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(secure_session,default,,blah,)onHtml(</foo>)end()");
     }
 
     void testRequestScope()
@@ -384,7 +384,7 @@ class EcppTest : public cxxtools::unit::TestSuite
       Handler handler;
       tnt::ecpp::Parser parser(handler, std::string());
       parser.parse(ecpp);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,component,,blah,)onHtml(</foo>)end()");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,default,,blah,)onHtml(</foo>)end()");
     }
 
     void testScopeVar()
@@ -393,7 +393,7 @@ class EcppTest : public cxxtools::unit::TestSuite
       Handler handler;
       tnt::ecpp::Parser parser(handler, std::string());
       parser.parse(ecpp);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,component,foo,bar,5)onHtml(</foo>)end()");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(handler.result(), "start()onHtml(<foo>)onScope(request,default,foo,bar,5)onHtml(</foo>)end()");
     }
 
     void testScopeShared()
