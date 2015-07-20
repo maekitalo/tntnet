@@ -154,13 +154,13 @@ AS_IF([test "$enable_demos" = "yes"],
     AS_IF([test "$enable_sdk" != "yes"],
         [AC_MSG_ERROR([demos cannot be built without building sdk])])
 
-  AC_CHECK_PROG(ZIP, zip, 1)
-  AS_IF([! test "$ZIP"],
-    AC_MSG_ERROR([zip program not found (needed for calci18n demo)]))
-  ]
+    AC_CHECK_PROG(ZIP, zip, 1)
+    AS_IF([! test "$ZIP"],
+      AC_MSG_ERROR([zip program not found (needed for calci18n demo)]))
 
-  AC_CHECK_HEADER([gd.h], , AC_MSG_ERROR([gd headers not found]))
-  AC_CHECK_HEADER([tntdb.h], , AC_MSG_ERROR([tntdb headers not found]))
+    AC_CHECK_HEADER([gd.h], , AC_MSG_ERROR([gd headers not found]))
+    AC_CHECK_HEADER([tntdb.h], , AC_MSG_ERROR([tntdb headers not found]))
+  ]
 )
 
 #
