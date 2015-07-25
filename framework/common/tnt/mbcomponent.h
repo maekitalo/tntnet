@@ -31,6 +31,7 @@
 #define TNT_MBCOMPONENT_H
 
 #include <tnt/ecpp.h>
+#include <tnt/data.h>
 #include <vector>
 #include <cxxtools/mutex.h>
 
@@ -83,6 +84,7 @@ namespace tnt
 
   private:
       unsigned doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
+      unsigned searchFile(const std::string& url, const tnt::DataChunks& data) const;
   };
 }
 
