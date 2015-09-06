@@ -1,3 +1,299 @@
+2015-07-26 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - do not use libtool in project templates for standalone applications
+
+2015-07-20 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix syntax error in configure.ac
+   some version of autoconf generated a invalid configure script. Indeed it
+   was wrong in configure.ac.
+
+2015-07-15 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add a generated file to .gitignore
+ - fix handling scope when default value was set
+ - fix wrong unit tests
+
+2015-05-25 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add js file per page to mvc template
+ - new standard component empty@tntnet, which sends an empty result
+
+2015-05-19 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - change mvc template: call controller also for dynamic pages, which are not routed through webmain
+ - fix wrong comment in index page of mvc standalone template
+
+2015-05-18 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add a default http return code to components.
+   The default http return code is by default 200 HTTP_OK but may be configured per
+   mapping.  The special value DECLINED instructs tntnet to continue with the next
+   mapping.
+   The ecpp compiler generates now a return code DEFAULT, which instructs tntnet to
+   fall back to that dfeault http return code.
+   The mvc templates use that feature so that it is not more necessary to return
+   DECLINED in controllers but just fall throug the end of the component.
+
+2015-04-12 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove some private headers from installation
+ - impl tnt::Tntnet
+
+2015-04-11 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix setting access log file using the method tnt::Tntnet::setAccessLog
+
+2015-04-05 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add some more documentation to project templates
+ - use cxxtools::LogConfiguration to initialize logging
+
+2015-03-16 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - check for sed in configure - it is used in tntnet-project
+
+2015-03-21 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove irritating comment from tntnet.xml
+ - remove <%application> scope from project templates since it should really be avoided, so we do not suggest it to use
+
+2015-03-16 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - minor changes after running cppcheck
+
+2015-03-15 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix generation of dependencies in ecppc: do not just use basename but full file path of target
+ - change project templates to use new default file scope in models
+ - add new file scope as default scope to ecpp
+ - fix ecpp parser: <<$ is now parsed correctly
+ - do not install internal header files from defcomp and add new defcomp "setheader"
+
+2015-03-01 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove some internal classes from api documentation
+
+2015-02-27 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add examples for tntdb dburl in project template
+
+2015-02-09 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - Update quick-start-guide.markdown
+
+2015-02-06 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove unused include from project templates
+
+2015-02-05 Joan <jouven@gmail.com>
+
+ - Update applicationunlocker.h
+
+2015-02-02 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - generalize mapping in mvc template projects
+ - fix g++ linker errors with tntnet-project
+
+2015-02-01 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - improve project template: add some layout and instructions, how to proceed
+ - improve project templates: add compile flags for C++11 when available and use xml configuration in mvc-standalone
+
+2015-01-31 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix Makefile.am (README in mvc-standalone template is README.md)
+
+2015-01-30 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - make definition of port in listener mandatory instead of taking 80 (or 443 for ssl) as default
+   allow definition of one listener at top level of configuration file
+ - Update Makefile.am
+ - Update Makefile.am
+ - Update Makefile.am
+ - Update Makefile.am
+ - Update Makefile.am
+ - fix linker command
+
+2015-01-26 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - improve mvc-standalone project template
+
+2015-01-25 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - improve mvc templates of tntnet-project
+ - remove useless flag DEFER_ACCEPT passed to accept method of ssl socket
+
+2015-01-24 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove old remaining fragments of stressjob - the stressjob was removed already long ago
+
+2015-01-23 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - new howto for chunked encoding
+
+2015-01-22 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - make socketoption SO_REUSEADDR configurable; default is to set the option
+ - minor change: get http error text automatically
+
+2015-01-10 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add --config flag to tntnet-project to generate a tntnet.xml template and replace tntnet-config with tntnet-project for that in the demo applications
+
+2015-01-09 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - minor cleanup in unit test for component
+
+2015-01-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add some unit tests for component processing and fix cmd interface after finding bugs with those tests
+
+2014-12-29 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - Update ecppc.1.markdown
+ - Update quick-start-guide.markdown
+   Add:
+   - terminal promt for terminal instruction
+   - tab size from 1 to 4, for better reading ecpp (html) code
+ - Update ecppc.1.markdown
+   Typo fixes
+
+2014-12-28 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - Update ecppl.1.markdown
+ - Update ecppl.1.markdown
+   Add:
+   - help and version usage
+ - Update ecppc.1.markdown
+   Add:
+   - help and version option usage
+ - Update quick-start-guide.markdown
+
+2014-11-22 Jonas Platte <mail@jonasplatte.de>
+
+ - Fixed an include path issue introduced when adding -h / --help to ecppc and ecppl
+ - Added -h / --help to tntnet-project, improved error handling
+
+2014-11-13 Jonas Platte <mail@jonasplatte.de>
+
+ - Updated wrong argument and help option handling in ecppc,
+   removed Usage exception class (from ecppc.h), added myself to the AUTHORS file
+
+2014-12-28 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - merged changes from jplatte
+
+2014-11-11 Jonas Platte <mail@jonasplatte.de>
+
+ - Added version and help flags to ecppc, minor readabilty changes
+
+2014-11-09 Jonas Platte <mail@jonasplatte.de>
+
+ - Added -V, -h and --help options to ecppl
+
+2014-12-28 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - Update quick-start-guide.markdown
+   - install instruction before install from tarball, this are similar with the FAQ 1.9.
+
+2014-12-27 Ralf Schülke <ralf.schuelke@gmail.com>
+
+ - Update quick-start-guide.markdown
+   Small typo fix and add a autotools mini howto link.
+
+2014-12-26 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove old documents, logos and tntnet-config
+
+2014-12-25 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - change generation of component name and output file name in ecpp compiler ecppc:
+   remove just .ecpp extension and keep others, so that e.g. tntnet.jpg results
+   in a component name "tntnet.jpg" and output file name "tntnet.jpg.cpp".
+ - add tntnet logo
+
+2014-12-22 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update copyright header
+ - update gitignore
+ - update README file
+ - fix project templates: add static sources in dist package
+ - cleanup demos
+ - minor improvement in project templates (use srcdir instead of top_srcdir to find sources)
+ - fix out of tree build of new chat demo
+
+2014-12-21 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - replace chat and rajax-jquery demos with a better chat demo with long poll
+
+2014-12-14 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fix bug in chunked encoding; output to reply.sout() must be routed through chunked encoder
+
+2014-12-10 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - fixes for compression
+
+2014-12-05 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - install demos again into pkg dir since disabling that prevents automake to create .so-files - very strange
+ - some fixes for chunked output stream in http reply - compression might work now but not yet tested
+
+2014-12-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - use opitimized ostream to collect output data instead of std::ostringstream
+ - update autoconf macro to check for C++-11 (makes C++-11 flag optional)
+ - remove generated file
+
+2014-11-17 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - undeprecate "global" scope and improve some error messages in ecpp parser
+
+2014-11-15 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - do not install demo applications on make install
+ - read values optionally from xml attributes in tntnet.xml when cxxtools supports it (cxxtools version >=2.3)
+
+2014-11-09 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - move definition of TcpJob and SslTcpJob from job.cpp into separate source file
+ - remove useless condition which leads to a compiler warning about uninitialized variable in openssl.cpp
+
+2014-11-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - use autoconf variables instead of directly call mkdir -p and sed in Makeile.am
+
+2014-11-02 Jonas Platte <mail@jonasplatte.de>
+
+ - Added pkg-config support
+ - Updated .gitignore
+ - Added $(AM_V_GEN) for tntnet.xml generation in /etc
+
+2014-11-04 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - remove optional extension in url from default mapping
+
+2014-11-03 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update gitignore
+ - move mapping of resources to top in project templates
+
+2014-11-01 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - update ChangeLog
+ - remove generated file tntnet-project
+ - update gitignore
+ - fix project templates: add mapping to resources, allow - in project name
+
+2014-10-31 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - add static resources to all tntnet-project templates and other small fixes in those
+
+2014-10-28 Tommi Mäkitalo <tommi@tntnet.org>
+
+ - discard previous http reply on execute if not fully read in http client
+
 2014-10-19 Tommi Mäkitalo <tommi@tntnet.org>
 
  - fix handling of ranges in static@tntnet when using sendfile
