@@ -45,6 +45,11 @@ int main(int argc, char* argv[])
     app.mapUrl("^/(.*)", "resources")
        .setPathInfo("resources/$1");
 
+    // Actions
+    //
+    app.mapUrl("^/(.*)\\.action$", "actionmain")
+       .setArg("next", "$1");
+
     // Controller
     //
     // we set the default http return code to DECLINED, so that tntnet continues
@@ -66,16 +71,20 @@ int main(int argc, char* argv[])
     // do not have the html frame.
     app.mapUrl("^/(.*)\\.(.*)$", "$2/$1");
 
-    // Return empty file when requesting a js file so we can just add a
-    // script tag to our page and the script is loaded when found.
+    // Return empty file when requesting a js or css file so we can just add a
+    // tag to the page and the script is loaded when found.
+    // The above mapping will load the page when found. Otherwise this will
+    // return a empty js or css.
     app.mapUrl("\\.js$", "empty@tntnet")
-       .setArg("ContentType", "application/javascript");
+       .setArg("Content-Type", "application/javascript");
+    app.mapUrl("\\.css$", "empty@tntnet")
+       .setArg("Content-Type", "text/css");
 
     // View
     app.mapUrl("^/$", "webmain")  // index page
-       .setArg("next", "view/index");
+       .setArg("next", "index");
     app.mapUrl("^/(.*)$", "webmain")
-       .setArg("next", "view/$1");
+       .setArg("next", "$1");
 
     app.run();
   }

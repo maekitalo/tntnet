@@ -1,0 +1,28 @@
+<%pre>
+
+    // Structure, which contains session specific variables
+    struct Session
+    {
+    };
+
+</%pre>
+<%session>
+
+    // Define a variable of type `Session` in the session scope
+    Session session;
+
+</%session>
+<%cpp>
+
+    // Make configuration easily accessable
+    const Configuration& configuration = Configuration::it();
+
+</%cpp>
+<%request include="noty.h" include="configuration.h">
+
+    // We define a Noty object here.
+    // When a normal mvc request is processed, this noty object is sent as a
+    // json structure to the browser, which displays the notifications.
+    Noty noty;
+
+</%request>

@@ -1,0 +1,24 @@
+/* put your css here */
+
+#header {
+  font-size: 18pt;
+  font-family: sans-serif;
+}
+
+#menu {
+  float: left;
+  border: 1px solid black;
+  width: 140px;
+  min-height: 200px;
+  background-color: #eee;
+}
+
+#menu ul {
+  list-style-type: none;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+#content {
+  margin-left: 150px;
+}
