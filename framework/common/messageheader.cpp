@@ -91,7 +91,7 @@ namespace tnt
   void Messageheader::clear()
   {
 #ifdef DEBUG
-    std::memset(rawdata, '\xfe', sizeof(rawdata));
+    std::memset(_rawdata, '\xfe', sizeof(_rawdata));
 #endif
     _rawdata[0] = _rawdata[1] = '\0';
     _endOffset = 0;

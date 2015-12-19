@@ -1,0 +1,7 @@
+<%include>action.ecpp</%include>
+<%cpp>
+
+// This is a example action, which just opens a notification in the browser.
+actionReply.information("myaction activated");
+
+</%cpp>

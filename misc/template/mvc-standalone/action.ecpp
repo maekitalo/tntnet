@@ -1,0 +1,8 @@
+<%request include="actionreply.h">
+
+    // Define object, which stores the reply of a action
+    // This is serialized into json and sent to the browser.
+
+    ActionReply actionReply;
+
+</%request>

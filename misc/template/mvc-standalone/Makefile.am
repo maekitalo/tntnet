@@ -1,30 +1,74 @@
 ACLOCAL_AMFLAGS = -I m4 --install
 AUTOMAKE_OPTIONS = subdir-objects
 
+models = \
+	model/index.ecpp
+
+views = \
+	view/index.ecpp \
+	view/mypage.ecpp
+
+controllers = \
+	controller/index.ecpp
+
+actions = \
+	action/myaction.ecpp
+
 bin_PROGRAMS = @PROJECT@
 
 noinst_HEADERS = \
+	actionreply.h \
+	action.ecpp \
 	configuration.h \
-	model/index.ecpp
+	noty.h \
+	session.ecpp \
+	$(models)
 
 ecppSources = \
-	controller/index.ecpp \
+	actionmain.ecpp \
 	json/example.ecpp \
-	view/index.ecpp \
-	webmain.ecpp
+	webmain.ecpp \
+	$(views) \
+	$(controllers) \
+	$(actions)
+
+notySources =  \
+	resources/js/noty/packaged/jquery.noty.packaged.min.js \
+	resources/js/noty/packaged/jquery.noty.packaged.js \
+	resources/js/noty/promise.js \
+	resources/js/noty/jquery.noty.js \
+	resources/js/noty/themes/default.js \
+	resources/js/noty/themes/relax.js \
+	resources/js/noty/themes/bootstrap.js \
+	resources/js/noty/layouts/topRight.js \
+	resources/js/noty/layouts/topLeft.js \
+	resources/js/noty/layouts/bottomCenter.js \
+	resources/js/noty/layouts/top.js \
+	resources/js/noty/layouts/bottomRight.js \
+	resources/js/noty/layouts/bottomLeft.js \
+	resources/js/noty/layouts/center.js \
+	resources/js/noty/layouts/inline.js \
+	resources/js/noty/layouts/bottom.js \
+	resources/js/noty/layouts/topCenter.js \
+	resources/js/noty/layouts/centerRight.js \
+	resources/js/noty/layouts/centerLeft.js
 
 staticSources = \
+	$(notySources) \
+	resources/js/jquery-2.1.4.min.js \
+	resources/js/tntnet.js \
+	resources/mypage.js \
 	resources/@PROJECT@.css
 
-@CPROJECT@_SOURCES = \
+@PROJECT@_SOURCES = \
 	main.cpp \
 	configuration.cpp \
 	$(ecppSources)
 
-nodist_@CPROJECT@_SOURCES = \
+nodist_@PROJECT@_SOURCES = \
 	resources.cpp
 
-@CPROJECT@_LDADD = -lcxxtools -ltntnet
+@PROJECT@_LDADD = -lcxxtools -ltntnet
 
 nobase_dist_noinst_DATA = $(staticSources)
 

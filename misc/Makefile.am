@@ -28,6 +28,11 @@ nobase_dist_pkgdata_DATA = \
 	template/mvc-module/tntnet.xml \
 	template/mvc-module/view/index.ecpp \
 	template/mvc-module/webmain.ecpp \
+	template/mvc-standalone/action.ecpp \
+	template/mvc-standalone/actionmain.ecpp \
+	template/mvc-standalone/action/myaction.ecpp \
+	template/mvc-standalone/action/README \
+	template/mvc-standalone/actionreply.h \
 	template/mvc-standalone/configuration.cpp \
 	template/mvc-standalone/configuration.h \
 	template/mvc-standalone/configure.ac \
@@ -40,8 +45,34 @@ nobase_dist_pkgdata_DATA = \
 	template/mvc-standalone/main.cpp \
 	template/mvc-standalone/Makefile.am \
 	template/mvc-standalone/model/index.ecpp \
+	template/mvc-standalone/noty.h \
 	template/mvc-standalone/@PROJECT@.xml \
 	template/mvc-standalone/README.md \
+	template/mvc-standalone/resources/js/jquery-2.1.4.min.js \
+	template/mvc-standalone/resources/js/noty/jquery.noty.js \
+	template/mvc-standalone/resources/js/noty/layouts/bottomCenter.js \
+	template/mvc-standalone/resources/js/noty/layouts/bottom.js \
+	template/mvc-standalone/resources/js/noty/layouts/bottomLeft.js \
+	template/mvc-standalone/resources/js/noty/layouts/bottomRight.js \
+	template/mvc-standalone/resources/js/noty/layouts/center.js \
+	template/mvc-standalone/resources/js/noty/layouts/centerLeft.js \
+	template/mvc-standalone/resources/js/noty/layouts/centerRight.js \
+	template/mvc-standalone/resources/js/noty/layouts/inline.js \
+	template/mvc-standalone/resources/js/noty/layouts/topCenter.js \
+	template/mvc-standalone/resources/js/noty/layouts/top.js \
+	template/mvc-standalone/resources/js/noty/layouts/topLeft.js \
+	template/mvc-standalone/resources/js/noty/layouts/topRight.js \
+	template/mvc-standalone/resources/js/noty/packaged/jquery.noty.packaged.js \
+	template/mvc-standalone/resources/js/noty/packaged/jquery.noty.packaged.min.js \
+	template/mvc-standalone/resources/js/noty/promise.js \
+	template/mvc-standalone/resources/js/noty/themes/bootstrap.js \
+	template/mvc-standalone/resources/js/noty/themes/default.js \
+	template/mvc-standalone/resources/js/noty/themes/relax.js \
+	template/mvc-standalone/resources/js/tntnet.js \
+	template/mvc-standalone/resources/myapp.css \
+	template/mvc-standalone/resources/mypage.js \
 	template/mvc-standalone/resources/@PROJECT@.css \
+	template/mvc-standalone/session.ecpp \
 	template/mvc-standalone/view/index.ecpp \
+	template/mvc-standalone/view/mypage.ecpp \
 	template/mvc-standalone/webmain.ecpp
