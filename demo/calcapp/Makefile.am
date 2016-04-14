@@ -1,4 +1,5 @@
 noinst_PROGRAMS = calc
+noinst_DATA = tntnet.properties
 
 calc_SOURCES = \
 	calc.ecpp \
@@ -10,8 +11,11 @@ EXTRA_DIST = \
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 calc_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools
 
-CLEANFILES = calc.cpp
+CLEANFILES = calc.cpp tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
 	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
+
+tntnet.properties:
+	echo "rootlogger=INFO" > $@
