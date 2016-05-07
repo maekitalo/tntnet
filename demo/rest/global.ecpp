@@ -1,0 +1,16 @@
+<%pre>
+#include <map>
+#include <string>
+
+typedef std::map<std::string, std::string> Data;
+
+</%pre>
+<%application include="map">
+
+// We define a simple in memory key value map as a storage.
+// The scope is `application` so that all requests see the same map.
+// Note that using `application` the data is locked for every request and
+// hence access is serialized.
+Data data;
+
+</%application>

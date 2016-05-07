@@ -1,0 +1,13 @@
+<%include>global.ecpp</%include>
+<%cpp>
+
+std::string key = request.getArg("key");
+
+Data::const_iterator it = data.find(key);
+
+if (it == data.end())
+    return HTTP_NOT_FOUND;
+
+data.erase(it);
+
+</%cpp>

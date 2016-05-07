@@ -1,0 +1,16 @@
+REST demo
+
+Requests
+--------
+
+Get put a value; value in body
+    method PUT url /key
+
+Get the value
+    method GET url /key
+
+Delete the value
+    method DELETE url /key
+
+Get all keys
+    method GET url /

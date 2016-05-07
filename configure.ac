@@ -217,6 +217,7 @@ AC_CONFIG_FILES([
     demo/hello/Makefile
     demo/mvc/Makefile
     demo/newsdb/Makefile
+    demo/rest/Makefile
     demo/savepoint/Makefile
     demo/session/Makefile
     demo/upload/Makefile

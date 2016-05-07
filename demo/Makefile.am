@@ -13,6 +13,7 @@ SUBDIRS = \
     hello \
     mvc \
     newsdb \
+    rest \
     savepoint \
     session \
     upload

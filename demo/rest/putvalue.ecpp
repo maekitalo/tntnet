@@ -1,0 +1,12 @@
+<%include>global.ecpp</%include>
+<%cpp>
+
+std::string key = request.getArg("key");
+
+std::string body = request.getBody();
+
+log_info("key: " << key << " value: " << body);
+
+data[key] = body;
+
+</%cpp>
