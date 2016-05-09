@@ -3,6 +3,7 @@ noinst_DATA = tntnet.properties
 
 rest_SOURCES = \
 	getvalue.ecpp \
+	getkeys.ecpp \
 	putvalue.ecpp \
 	delvalue.ecpp \
 	rest.cpp

@@ -70,6 +70,12 @@ int main(int argc, char* argv[])
 
     // set up mappings
 
+    // Map method GET to "getkeys".
+    // "getkeys" returns all stored keys separated by linefeed.
+    // Note that normally we need a better format since keys may contain
+    // linefeeds also.
+    app.mapUrl("^/$", "getkeys");
+
     // Map method GET to "getvalue" and pass url as argument "key".
     app.mapUrl("^/(.*)$", "getvalue")
        .setMethod("^GET$")

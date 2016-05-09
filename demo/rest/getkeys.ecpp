@@ -1,0 +1,9 @@
+<%include>global.ecpp</%include>
+<%cpp>
+
+reply.setContentType("text/plain");
+
+for (Data::const_iterator it = data.begin(); it != data.end(); ++it)
+    reply.out() << it->first << '\n';
+
+</%cpp>

@@ -1,4 +1,22 @@
 REST demo
+=========
+
+This demo implements a simple rest interface. It has a in memory key value
+store.
+
+A REST interface uses the HTTP method to specify, what to do. With tntnet there
+are mappings, which routes requests based on the HTTP method to specific
+components. So the components itself do not need to interpret the method.
+
+After compliation of the demo there 4 processes:
+
+* rest: This is the server, which implements the server side interface
+
+* putdata: A command line tool, which sends key value pairs to the server.
+
+* getdata: A command line tool, which reads values from the server.
+
+* deldata: A command line tool, which deletes key value pairs from the server.
 
 Requests
 --------
@@ -14,3 +32,33 @@ Delete the value
 
 Get all keys
     method GET url /
+
+Working with the command line tools
+-----------------------------------
+
+The easies way to understand the tools is to show examples. Run the server using
+`./rest` in one terminal. Open another terminal and run the command line tools
+there.
+
+### Store 2 values in the server
+
+    ./putdata key1 value1
+    ./putdata key2 value2
+
+### Read a value from the server
+
+    ./getdata key1
+
+This prints the value _value1_ to the terminal.
+
+### Read the currently stored keys from the server
+
+    ./getdata -a
+
+This prints the keys _key1_ and _key2_ to the terminal.
+
+### Delete one key
+
+    ./deldata key2
+
+This deletes the key _key2_ from the server. Verify it using `./getdata -a`.
