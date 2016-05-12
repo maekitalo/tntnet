@@ -1,0 +1,20 @@
+Urls to map
+-----------
+
+/person
+method POST
+adds a person
+body:
+    {
+        firstname: "firstname",
+        lastname: "lastname",
+        phone: "345566"
+    }
+
+method GET
+/person/<id>
+returns a person
+
+method GET
+/phonebook/<id>
+returns the phonebook of the person with id _id_

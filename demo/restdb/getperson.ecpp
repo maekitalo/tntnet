@@ -1,0 +1,31 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <tntdb/row.h>
+#include <cxxtools/json.h>
+#include "person.h"
+
+</%pre>
+<%cpp>
+
+std::string id = request.getArg("id");
+
+tntdb::Connection conn = tntdb::connectCached(dburl);
+tntdb::Statement stmt = conn.prepare(
+    "select firstname, lastname, phone"
+    " from person"
+    " where id = :id");
+
+tntdb::Row row = stmt.set("id", id).selectRow();
+
+Person person;
+row.get(person.firstname)
+   .get(person.lastname)
+   .get(person.phone);
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(person).beautify(true);
+
+</%cpp>

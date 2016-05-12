@@ -1,0 +1,25 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <tntdb/row.h>
+#include <cxxtools/json.h>
+
+</%pre>
+<%cpp>
+
+std::string id = request.getArg("id");
+
+tntdb::Connection conn = tntdb::connectCached(dburl);
+tntdb::Statement stmt = conn.prepare(
+    "delete"
+    " from person"
+    " where id = :id");
+
+unsigned n = stmt.set("id", id).execute();
+
+reply.setContentType("text/plain");
+reply.out() << n;
+
+</%cpp>

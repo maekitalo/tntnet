@@ -14,6 +14,7 @@ SUBDIRS = \
     mvc \
     newsdb \
     rest \
+    restdb \
     savepoint \
     session \
     upload
