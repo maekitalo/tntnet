@@ -99,6 +99,13 @@ int main(int argc, char* argv[])
            .setMethod("^DELETE$")
            .setArg("id", "$2");
 
+        // map "/object/lastname/firstname/phone" to "object/search" with parameters lastname, firstname and phone
+        app.mapUrl("^/(..*)/(.*)/(.*)/(.*)$", "$1/search")
+           .setMethod("^SEARCH$")
+           .setArg("lastname", "$2")
+           .setArg("firstname", "$3")
+           .setArg("phone", "$4");
+
         // configure listener
         app.listen(ip, port);  // note that a empty ip address tells tntnet to listen on all local interfaces
 
@@ -107,6 +114,6 @@ int main(int argc, char* argv[])
     }
     catch (const std::exception& e)
     {
-      std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
 }

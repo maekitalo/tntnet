@@ -50,6 +50,13 @@ Get a person by name
 * method GET
 * code person/getbyname.ecpp
 
+Search a person
+---------------
+
+* url /person/<lastname>/<firstname>/<phone>
+* method SEARCH
+* code person/search.ecpp
+
 Get a phonebook
 ---------------
 

@@ -1,0 +1,49 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <tntdb/row.h>
+#include <cxxtools/json.h>
+#include <cxxtools/utf8codec.h>
+#include "person.h"
+
+</%pre>
+<%cpp>
+
+cxxtools::String lastname = cxxtools::Utf8Codec::decode(request.getArg("lastname"));
+cxxtools::String firstname = cxxtools::Utf8Codec::decode(request.getArg("firstname"));
+std::string phone = request.getArg("phone");
+
+tntdb::Connection conn = tntdb::connectCached(dburl);
+tntdb::Statement stmt = conn.prepare(
+    "select id, lastname, firstname, phone"
+    "  from person"
+    " where lastname like '%' || :lastname || '%'"
+    "   and firstname like '%' || :firstname || '%'"
+    "   and phone like '%' || :phone || '%'");
+
+stmt.set("lastname", lastname)
+    .set("firstname", firstname)
+    .set("phone", phone);
+
+std::vector<PersonId> persons;
+
+for (tntdb::Statement::const_iterator cur = stmt.begin(); cur != stmt.end(); ++cur)
+{
+    tntdb::Row row = *cur;
+
+    PersonId person;
+
+    row.get(person.id)
+       .get(person.lastname)
+       .get(person.firstname)
+       .get(person.phone);
+
+    persons.push_back(person);
+}
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(persons).beautify(true);
+
+</%cpp>

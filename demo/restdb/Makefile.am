@@ -8,6 +8,7 @@ restdb_SOURCES = \
 	person/get.ecpp \
 	person/getbyname.ecpp \
 	person/insert.ecpp \
+	person/search.ecpp \
 	person/update.ecpp \
 	main.cpp
 

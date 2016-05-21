@@ -3,4 +3,5 @@ person/delete.cpp
 person/getbyname.cpp
 person/get.cpp
 person/insert.cpp
+person/search.cpp
 person/update.cpp

@@ -42,6 +42,13 @@ getPersonByName () {
     curl http://$HOST:$PORT/person/$LASTNAME/$FIRSTNAME
 }
 
+searchPerson () {
+    local FIRSTNAME=$1
+    local LASTNAME=$2
+    local PHONE=$3
+    echo -ne 'SEARCH /person/'$FIRSTNAME'/'$LASTNAME'/'$PHONE' HTTP/1.1\r\nConnection:close\r\n\r\n'|nc $HOST $PORT
+}
+
 HOST=localhost
 PORT=8000
 
@@ -50,14 +57,17 @@ ID=$(addPerson Tommi Mäkitalo 1234)
 
 echo "+++ read a person by id $ID"
 P=$(curl http://$HOST:$PORT/person/$ID)
-echo Person: $P
+echo Person: "$P"
 
 echo "+++ update the phone number to 1235"
 updatePerson $ID Tommi Mäkitalo 12345
 
 echo "+++ read a person by name (name must be url encoded)"
 P=$(getPersonByName Tommi Mäkitalo)
-echo Person: $P
+echo Person: "$P"
+
+echo "+++ search person"
+searchPerson M m 2
 
 echo "+++ delete person $ID"
 deletePerson $ID
