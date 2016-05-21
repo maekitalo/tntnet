@@ -1,0 +1,37 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <cxxtools/json.h>
+#include "person.h"
+
+</%pre>
+<%cpp>
+
+// update resource
+
+std::string id = request.getArg("id");
+
+tntdb::Connection conn = tntdb::connectCached(dburl);
+tntdb::Statement upd = conn.prepare(
+    "update person"
+    "  set firstname = :firstname,"
+    "      lastname  = :lastname,"
+    "      phone  = :phone"
+    " where id = :id");
+
+Person person;
+std::istringstream body(request.getBody());
+body >> cxxtools::Json(person);
+
+unsigned n = upd.set("id", id)
+                .set("firstname", person.firstname)
+                .set("lastname", person.lastname)
+                .set("phone", person.phone)
+                .execute();
+
+reply.setContentType("application/json");
+reply.out() << n;
+
+</%cpp>

@@ -1,0 +1,39 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <tntdb/row.h>
+#include <cxxtools/json.h>
+#include <cxxtools/utf8codec.h>
+#include "person.h"
+
+</%pre>
+<%cpp>
+
+cxxtools::String lastname = cxxtools::Utf8Codec::decode(request.getArg("lastname"));
+cxxtools::String firstname = cxxtools::Utf8Codec::decode(request.getArg("firstname"));
+
+tntdb::Connection conn = tntdb::connectCached(dburl);
+tntdb::Statement stmt = conn.prepare(
+    "select id, phone"
+    "  from person"
+    " where lastname = :lastname"
+    "   and firstname = :firstname");
+
+tntdb::Row row = stmt.set("lastname", lastname)
+                     .set("firstname", firstname)
+                     .selectRow();
+
+PersonId person;
+
+row.get(person.id)
+   .get(person.phone);
+
+person.lastname = lastname;
+person.firstname = firstname;
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(person).beautify(true);
+
+</%cpp>

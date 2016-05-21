@@ -70,21 +70,32 @@ int main(int argc, char* argv[])
 
     // set up mappings
 
-    // map "/object/id" to "getobject" with parameter id
-    app.mapUrl("^/(.*)/(.*)$", "get$1")
+    // map "/object/id" to "object/get" with parameter id
+    app.mapUrl("^/(..*)/([0-9][0-9]*)$", "$1/get")
        .setMethod("^GET$")
        .setArg("id", "$2");
 
-    // map "/object" with method POST to "postobject"
-    app.mapUrl("^/(.*)$", "post$1")
+    // map "/object/lastname/firstname" to "object/getbyname" with parameters lastname and firstname
+    app.mapUrl("^/(..*)/(.*)/(.*)$", "$1/getbyname")
+       .setMethod("^GET$")
+       .setArg("lastname", "$2")
+       .setArg("firstname", "$3");
+
+    // map "/object/" to "object/all"
+    app.mapUrl("^/(..*)/$", "$1/all")
+       .setMethod("^GET$");
+
+    // map "/object" with method POST to "object/insert"
+    app.mapUrl("^/(..*)$", "$1/insert")
        .setMethod("^POST$");
 
-    // map "/object" with method PUT to "putobject"
-    app.mapUrl("^/(.*)$", "put$1")
-       .setMethod("^PUT$");
+    // map "/object/id" with method PUT to "object/update" with parameter id
+    app.mapUrl("^/(..*)/([0-9][0-9]*)$", "$1/update")
+       .setMethod("^PUT$") 
+       .setArg("id", "$2");
 
-    // map "/object" with method DELETE to "delobject"
-    app.mapUrl("^/(.*)/(.*)$", "del$1")
+    // map "/object/id" with method DELETE to "object/delete"
+    app.mapUrl("^/..*)/([0-9][0-9]*)$", "$1/delete")
        .setMethod("^DELETE$")
        .setArg("id", "$2");
 

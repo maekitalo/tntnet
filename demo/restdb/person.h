@@ -7,23 +7,22 @@
 #define PERSON_H
 
 #include <string>
+#include <cxxtools/string.h>
 #include <cxxtools/serializationinfo.h>
 
 struct Person
 {
-    Person() { }
-    Person(
-        const std::string& firstname_,
-        const std::string& lastname_,
-        const std::string& phone_)
-        : firstname(firstname_),
-          lastname(lastname_),
-          phone(phone_)
-          { }
+    // We use cxxtools::String instead of std::string since we want to process
+    // unicode correctly.
 
-    std::string firstname;
-    std::string lastname;
+    cxxtools::String firstname;
+    cxxtools::String lastname;
     std::string phone;
+};
+
+struct PersonId : public Person
+{
+    unsigned id;
 };
 
 inline void operator<<= (cxxtools::SerializationInfo& si, const Person& p)
@@ -38,6 +37,18 @@ inline void operator>>= (const cxxtools::SerializationInfo& si, Person& p)
     si.getMember("firstname") >>= p.firstname;
     si.getMember("lastname") >>= p.lastname;
     si.getMember("phone") >>= p.phone;
+}
+
+inline void operator<<= (cxxtools::SerializationInfo& si, const PersonId& p)
+{
+    si.addMember("id") <<= p.id;
+    si <<= static_cast<const Person&>(p);
+}
+
+inline void operator>>= (const cxxtools::SerializationInfo& si, PersonId& p)
+{
+    si.getMember("id") >>= p.id;
+    si >>= static_cast<Person&>(p);
 }
 
 #endif

@@ -1,0 +1,6 @@
+person/all.cpp
+person/delete.cpp
+person/getbyname.cpp
+person/get.cpp
+person/insert.cpp
+person/update.cpp

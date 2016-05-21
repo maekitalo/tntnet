@@ -1,11 +1,14 @@
+AUTOMAKE_OPTIONS = subdir-objects
 noinst_PROGRAMS = restdb
 noinst_DATA = tntnet.properties
 
 restdb_SOURCES = \
-	delperson.ecpp \
-	getperson.ecpp \
-	postperson.ecpp \
-	putperson.ecpp \
+	person/all.ecpp \
+	person/delete.ecpp \
+	person/get.ecpp \
+	person/getbyname.ecpp \
+	person/insert.ecpp \
+	person/update.ecpp \
 	main.cpp
 
 EXTRA_DIST = \
@@ -18,7 +21,7 @@ CLEANFILES = delperson.cpp getperson.cpp postperson.cpp putperson.cpp tntnet.pro
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
-	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
+	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ -p $<
 
 tntnet.properties:
 	echo "rootlogger=INFO" > $@

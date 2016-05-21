@@ -1,0 +1,37 @@
+
+<%include>global.ecpp</%include>
+<%pre>
+
+#include "person.h"
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <cxxtools/json.h>
+
+#include <vector>
+
+</%pre>
+<%cpp>
+
+tntdb::Connection conn = tntdb::connectCached(dburl);
+tntdb::Statement stmt = conn.prepare(
+    "select id, firstname, lastname, phone"
+    " from person"
+    " order by 1");
+
+std::vector<PersonId> persons;
+for (tntdb::Statement::const_iterator cur = stmt.begin(); cur != stmt.end(); ++cur)
+{
+    tntdb::Row row = *cur;
+    PersonId person;
+    row.get(person.id)
+       .get(person.firstname)
+       .get(person.lastname)
+       .get(person.phone);
+    persons.push_back(person);
+}
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(persons).beautify(true);
+
+</%cpp>
