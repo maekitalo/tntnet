@@ -50,63 +50,63 @@
 
 int main(int argc, char* argv[])
 {
-  try
-  {
-    // read listen ip from command line switch -l with default to empty, which means: all interfaces
-    cxxtools::Arg<std::string> ip(argc, argv, 'l');
+    try
+    {
+        // read listen ip from command line switch -l with default to empty, which means: all interfaces
+        cxxtools::Arg<std::string> ip(argc, argv, 'l');
 
-    // read listen port from command line switch -p with default to 8000
-    cxxtools::Arg<unsigned short> port(argc, argv, 'p', 8000);
+        // read listen port from command line switch -p with default to 8000
+        cxxtools::Arg<unsigned short> port(argc, argv, 'p', 8000);
 
-    // initialize logging - this is optional. If log_init is not called, no
-    // logging is done
-    log_init("tntnet.properties");
+        // initialize logging - this is optional. If log_init is not called, no
+        // logging is done
+        log_init("tntnet.properties");
 
-    // instantiate the tnt::Tntnet application class
-    tnt::Tntnet app;
+        // instantiate the tnt::Tntnet application class
+        tnt::Tntnet app;
 
-    // optionally set the application name
-    app.setAppName("friends");
+        // optionally set the application name
+        app.setAppName("friends");
 
-    // set up mappings
+        // set up mappings
 
-    // map "/object/id" to "object/get" with parameter id
-    app.mapUrl("^/(..*)/([0-9][0-9]*)$", "$1/get")
-       .setMethod("^GET$")
-       .setArg("id", "$2");
+        // map "/object/id" to "object/get" with parameter id
+        app.mapUrl("^/(..*)/([0-9][0-9]*)$", "$1/get")
+           .setMethod("^GET$")
+           .setArg("id", "$2");
 
-    // map "/object/lastname/firstname" to "object/getbyname" with parameters lastname and firstname
-    app.mapUrl("^/(..*)/(.*)/(.*)$", "$1/getbyname")
-       .setMethod("^GET$")
-       .setArg("lastname", "$2")
-       .setArg("firstname", "$3");
+        // map "/object/lastname/firstname" to "object/getbyname" with parameters lastname and firstname
+        app.mapUrl("^/(..*)/(.*)/(.*)$", "$1/getbyname")
+           .setMethod("^GET$")
+           .setArg("lastname", "$2")
+           .setArg("firstname", "$3");
 
-    // map "/object/" to "object/all"
-    app.mapUrl("^/(..*)/$", "$1/all")
-       .setMethod("^GET$");
+        // map "/object/" to "object/all"
+        app.mapUrl("^/(..*)/$", "$1/all")
+           .setMethod("^GET$");
 
-    // map "/object" with method POST to "object/insert"
-    app.mapUrl("^/(..*)$", "$1/insert")
-       .setMethod("^POST$");
+        // map "/object" with method POST to "object/insert"
+        app.mapUrl("^/(..*)$", "$1/insert")
+           .setMethod("^POST$");
 
-    // map "/object/id" with method PUT to "object/update" with parameter id
-    app.mapUrl("^/(..*)/([0-9][0-9]*)$", "$1/update")
-       .setMethod("^PUT$") 
-       .setArg("id", "$2");
+        // map "/object/id" with method PUT to "object/update" with parameter id
+        app.mapUrl("^/(..*)/([0-9][0-9]*)$", "$1/update")
+           .setMethod("^PUT$") 
+           .setArg("id", "$2");
 
-    // map "/object/id" with method DELETE to "object/delete"
-    app.mapUrl("^/..*)/([0-9][0-9]*)$", "$1/delete")
-       .setMethod("^DELETE$")
-       .setArg("id", "$2");
+        // map "/object/id" with method DELETE to "object/delete"
+        app.mapUrl("^/(..*)/([0-9][0-9]*)$", "$1/delete")
+           .setMethod("^DELETE$")
+           .setArg("id", "$2");
 
-    // configure listener
-    app.listen(ip, port);  // note that a empty ip address tells tntnet to listen on all local interfaces
+        // configure listener
+        app.listen(ip, port);  // note that a empty ip address tells tntnet to listen on all local interfaces
 
-    // run the application
-    app.run();
-  }
-  catch (const std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-  }
+        // run the application
+        app.run();
+    }
+    catch (const std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+    }
 }

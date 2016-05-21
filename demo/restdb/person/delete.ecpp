@@ -19,6 +19,8 @@ tntdb::Statement stmt = conn.prepare(
 
 unsigned n = stmt.set("id", id).execute();
 
+log_debug("delete person id " << id << "; returns " << n);
+
 reply.setContentType("text/plain");
 reply.out() << n;
 
