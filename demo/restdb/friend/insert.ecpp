@@ -1,0 +1,28 @@
+<%include>global.ecpp</%include>
+<%pre>
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <cxxtools/json.h>
+#include <cxxtools/hdstream.h>
+#include "friend.h"
+
+</%pre>
+<%cpp>
+
+tntdb::Statement ins = conn.prepare(
+    "insert into friend(personid, friendid)"
+    " values (:personid, :friendid)");
+
+Friend f;
+std::istringstream body(request.getBody());
+body >> cxxtools::Json(f);
+
+ins.set("personid", f.personId)
+   .set("friendid", f.friendId)
+   .execute();
+
+reply.setContentType("application/json");
+reply.out() << conn.lastInsertId("friendId");
+
+</%cpp>

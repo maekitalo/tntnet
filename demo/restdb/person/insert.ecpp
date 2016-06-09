@@ -10,7 +10,6 @@
 </%pre>
 <%cpp>
 
-tntdb::Connection conn = tntdb::connectCached(dburl);
 tntdb::Statement ins = conn.prepare(
     "insert into person(firstname, lastname, phone)"
     " values (:firstname, :lastname, :phone)");
@@ -18,10 +17,6 @@ tntdb::Statement ins = conn.prepare(
 Person person;
 std::istringstream body(request.getBody());
 body >> cxxtools::Json(person);
-
-log_debug("body: " << cxxtools::hexDump(request.getBody()));
-log_debug("lastname " << cxxtools::hexDump(person.lastname));
-log_debug("lastname=<" << person.lastname << '>');
 
 ins.set("firstname", person.firstname)
    .set("lastname", person.lastname)

@@ -13,7 +13,6 @@
 
 std::string id = request.getArg("id");
 
-tntdb::Connection conn = tntdb::connectCached(dburl);
 tntdb::Statement upd = conn.prepare(
     "update person"
     "  set firstname = :firstname,"

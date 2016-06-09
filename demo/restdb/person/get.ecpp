@@ -12,7 +12,6 @@
 
 std::string id = request.getArg("id");
 
-tntdb::Connection conn = tntdb::connectCached(dburl);
 tntdb::Statement stmt = conn.prepare(
     "select firstname, lastname, phone"
     " from person"

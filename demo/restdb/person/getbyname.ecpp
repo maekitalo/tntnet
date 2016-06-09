@@ -14,7 +14,6 @@
 cxxtools::String lastname = cxxtools::Utf8Codec::decode(request.getArg("lastname"));
 cxxtools::String firstname = cxxtools::Utf8Codec::decode(request.getArg("firstname"));
 
-tntdb::Connection conn = tntdb::connectCached(dburl);
 tntdb::Statement stmt = conn.prepare(
     "select id, phone"
     "  from person"

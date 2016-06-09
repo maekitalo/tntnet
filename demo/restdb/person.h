@@ -3,6 +3,10 @@
  *
  */
 
+/*
+ * This file specifies data structures for handling persons.
+ */
+
 #ifndef PERSON_H
 #define PERSON_H
 
@@ -25,11 +29,16 @@ struct PersonId : public Person
     unsigned id;
 };
 
+// We define serialization and deserialiation operators so that it can be
+// converted to and from json or other formats when needed.
+
 inline void operator<<= (cxxtools::SerializationInfo& si, const Person& p)
 {
     si.addMember("firstname") <<= p.firstname;
     si.addMember("lastname") <<= p.lastname;
     si.addMember("phone") <<= p.phone;
+
+    si.setTypeName("Person");
 }
 
 inline void operator>>= (const cxxtools::SerializationInfo& si, Person& p)
@@ -43,6 +52,8 @@ inline void operator<<= (cxxtools::SerializationInfo& si, const PersonId& p)
 {
     si.addMember("id") <<= p.id;
     si <<= static_cast<const Person&>(p);
+
+    si.setTypeName("PersonId");
 }
 
 inline void operator>>= (const cxxtools::SerializationInfo& si, PersonId& p)
