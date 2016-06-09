@@ -6,7 +6,9 @@ create table person (
 );
 
 create table friend (
-    id int person not null references person(id),
-    friend int person not null references person(id),
-    primary key (id, friend)
+    id integer not null primary key autoincrement,
+    personid integer person not null references person(id),
+    friendid integer person not null references person(id)
 );
+
+create unique index friendids_ix on friend(personid, friendid);

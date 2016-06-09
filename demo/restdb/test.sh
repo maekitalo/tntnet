@@ -4,11 +4,38 @@ urlencode () {
     perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' $1
 }
 
+httpRequest () {
+    local METHOD=$1
+    local URL=$2
+    local BODY=$3
+
+    # This function implements a http clinet using nc and awk.
+    # echo -e interprets escape sequences like \r and \n and converts them to proper bytes.
+    # The awk prints everything after the http headers. Note that a http header is ended by \r\n.
+    # Since awk receives each line without linefeed (\n) a single cr (\r) marks
+    # the end of headers.
+
+    {
+        if [ "$BODY" ]
+        then
+            # ${#BODY} do not work here because it returns the length in characters instead of bytes
+            # ä is 1 character but 2 bytes since it is utf-8 encoded
+            local LENGTH=$(echo -n $BODY|wc -c)
+            echo -ne "$METHOD $URL HTTP/1.1\r\nConnection:close\r\nContent-Length: $LENGTH\r\n\r\n$BODY"
+        else
+            echo -ne "$METHOD $URL HTTP/1.1\r\nConnection:close\r\n\r\n"
+        fi
+
+    } | nc $HOST $PORT | awk 'BODY { print } $1 == "\r" { BODY=1 }'
+}
+
 addPerson () {
     local FIRSTNAME=$1
     local LASTNAME=$2
     local PHONE=$3
-    curl http://$HOST:$PORT/person -d '{firstname:"'$FIRSTNAME'",lastname:"'$LASTNAME'",phone:"'$PHONE'"}'
+
+    local BODY=$( printf '{ firstname: "%s", lastname: "%s", phone: "%s" }' $FIRSTNAME $LASTNAME $PHONE )
+    httpRequest POST /person "$BODY"
 }
 
 updatePerson () {
@@ -17,36 +44,31 @@ updatePerson () {
     local LASTNAME=$3
     local PHONE=$4
 
-    BODY='{firstname:"'$FIRSTNAME'",lastname:"'$LASTNAME'",phone:"'$PHONE'"}'
-    # ${#BODY} do not work here because it returns the length in characters instead of bytes
-    # ä is 1 character but 2 bytes since it is utf-8 encoded
-    LENGTH=$(echo -n $BODY|wc -c)
-    echo -ne "PUT /person/$ID HTTP/1.1\r\nConnection:close\r\nContent-Length: $LENGTH\r\n\r\n$BODY"|nc $HOST $PORT >/dev/null
+    local BODY=$( printf '{ firstname: "%s",lastname: "%s",phone: "%s" }' $FIRSTNAME $LASTNAME $PHONE )
+    httpRequest PUT /person/$ID "$BODY"
 }
 
 deletePerson () {
     local ID=$1
-    echo -ne 'DELETE /person/'$ID' HTTP/1.1\r\nConnection:close\r\n\r\n'|nc $HOST $PORT
+    httpRequest DELETE /person/$ID
 }
 
 getPersonById () {
     local ID=$1
-
-    curl http://$HOST:$PORT/person/$ID
+    httpRequest GET /person/$ID
 }
 
 getPersonByName () {
-    local FIRSTNAME=$(urlencode $1)
-    local LASTNAME=$(urlencode $2)
-
-    curl http://$HOST:$PORT/person/$LASTNAME/$FIRSTNAME
+    local FIRSTNAME=$1
+    local LASTNAME=$2
+    httpRequest GET /person/$(urlencode $LASTNAME)/$(urlencode $FIRSTNAME)
 }
 
 searchPerson () {
     local FIRSTNAME=$1
     local LASTNAME=$2
     local PHONE=$3
-    echo -ne 'SEARCH /person/'$FIRSTNAME'/'$LASTNAME'/'$PHONE' HTTP/1.1\r\nConnection:close\r\n\r\n'|nc $HOST $PORT
+    httpRequest SEARCH /person/$(urlencode $FIRSTNAME)/$(urlencode $LASTNAME)/$(urlencode $PHONE)
 }
 
 HOST=localhost
@@ -56,13 +78,13 @@ echo "+++ add a person"
 ID=$(addPerson Tommi Mäkitalo 1234)
 
 echo "+++ read a person by id $ID"
-P=$(curl http://$HOST:$PORT/person/$ID)
+P=$(getPersonById $ID)
 echo Person: "$P"
 
 echo "+++ update the phone number to 1235"
 updatePerson $ID Tommi Mäkitalo 12345
 
-echo "+++ read a person by name (name must be url encoded)"
+echo "+++ read a person by name"
 P=$(getPersonByName Tommi Mäkitalo)
 echo Person: "$P"
 

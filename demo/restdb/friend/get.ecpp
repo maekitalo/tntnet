@@ -1,24 +1,29 @@
-
 <%include>global.ecpp</%include>
 <%pre>
 
-#include "person.h"
-
 #include <tntdb/connect.h>
 #include <tntdb/statement.h>
+#include <tntdb/row.h>
 #include <cxxtools/json.h>
-
-#include <vector>
+#include "friend.h"
+#include "person.h"
 
 </%pre>
 <%cpp>
 
-tntdb::Statement stmt = conn.prepare(
-    "select id, firstname, lastname, phone"
-    " from person"
-    " order by 1");
+std::string id = request.getArg("id");
 
-std::vector<PersonId> persons;
+tntdb::Statement stmt = conn.prepare(
+    "select p.id, p.firstname, p.lastname, p.phone"
+    " from friend f"
+    " join person p"
+    "   on p.id = f.friendid"
+    " where f.personid = :id");
+
+stmt.set("id", id);
+
+std::vector<PersonId> friends;
+
 for (tntdb::Statement::const_iterator cur = stmt.begin(); cur != stmt.end(); ++cur)
 {
     tntdb::Row row = *cur;
@@ -27,10 +32,10 @@ for (tntdb::Statement::const_iterator cur = stmt.begin(); cur != stmt.end(); ++c
        .get(person.firstname)
        .get(person.lastname)
        .get(person.phone);
-    persons.push_back(person);
+    friends.push_back(person);
 }
 
 reply.setContentType("application/json");
-reply.out() << cxxtools::Json(persons).beautify(true);
+reply.out() << cxxtools::Json(friends).beautify(true);
 
 </%cpp>

@@ -12,14 +12,15 @@ std::string id = request.getArg("id");
 
 tntdb::Statement stmt = conn.prepare(
     "delete"
-    " from person"
+    " from friend"
     " where id = :id");
 
 unsigned n = stmt.set("id", id).execute();
 
-log_debug("delete person id " << id << "; returns " << n);
+log_debug("delete friend id " << id << "; returns " << n);
 
 reply.setContentType("text/plain");
 reply.out() << n;
 
 </%cpp>
+

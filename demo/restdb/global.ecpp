@@ -3,3 +3,8 @@
 dburl = "sqlite:friends.db";
 
 </%config>
+<%cpp>
+
+tntdb::Connection conn = tntdb::connectCached(dburl);
+
+</%cpp>
