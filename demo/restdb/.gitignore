@@ -1,3 +1,6 @@
+friend/delete.cpp
+friend/get.cpp
+friend/insert.cpp
 person/all.cpp
 person/delete.cpp
 person/getbyname.cpp
@@ -5,3 +8,5 @@ person/get.cpp
 person/insert.cpp
 person/search.cpp
 person/update.cpp
+tntnet.properties
+*.deps
