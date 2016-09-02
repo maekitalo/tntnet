@@ -44,7 +44,6 @@ EXTRA_DIST = \
     demo/newsdb/newscss.css \
     demo/newsdb/newsdata.sh \
     demo/newsdb/newsdb.sql \
-    demo/newsdb/tntnet.xml \
     doc/jquery-howto.markdown \
     doc/quick-start-guide.markdown \
     doc/static-howto.markdown \
