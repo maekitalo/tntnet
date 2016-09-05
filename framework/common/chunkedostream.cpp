@@ -53,6 +53,8 @@ namespace tnt
       _obuf->sputc('\n');
       setp(_buffer, _buffer + _bufsize);
 
+      _bytesWritten += size;
+
       return _obuf->pubsync();
     }
 

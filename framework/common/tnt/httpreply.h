@@ -119,6 +119,7 @@ namespace tnt
       virtual void setDirectModeNoFlush();
       virtual bool isDirectMode() const;
       std::string::size_type getContentSize() const;
+      unsigned chunkedBytesWritten() const;
       std::ostream& getDirectStream();
 
       /** Enable chunked encoding for the current request

@@ -465,12 +465,13 @@ namespace tnt
           else
           {
             log_info_if(!reply.isChunkedEncoding(), "request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.getContentSize());
-            log_info_if(reply.isChunkedEncoding(), "request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - chunked");
 
             _application.getScopemanager().postCall(request, reply, appname);
 
             _state = stateSendReply;
             reply.sendReply(http_return, http_msg);
+
+            log_info_if(reply.isChunkedEncoding(), "request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.chunkedBytesWritten() << " (chunked)");
           }
 
           logRequest(request, reply, http_return);

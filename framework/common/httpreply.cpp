@@ -266,6 +266,9 @@ namespace tnt
   std::string::size_type HttpReply::getContentSize() const
     { return _impl->outstream.size(); }
 
+  unsigned HttpReply::chunkedBytesWritten() const
+    { return _impl->chunkedOutstream.bytesWritten(); }
+
   std::ostream& HttpReply::getDirectStream()
     { return *_impl->socket; }
 

@@ -39,6 +39,7 @@ namespace tnt
       std::streambuf* _obuf;
       char* _buffer;
       unsigned _bufsize;
+      unsigned _bytesWritten;
 
     public:
       explicit ChunkedWriter(std::streambuf* obuf, unsigned bufsize = 8192)
@@ -57,7 +58,10 @@ namespace tnt
       void finish();
 
       void setSink(std::streambuf* obuf)
-        { _obuf = obuf; }
+        { _obuf = obuf; _bytesWritten = 0; }
+
+      unsigned bytesWritten() const
+        { return _bytesWritten; }
   };
 
   class ChunkedOStream : public std::ostream
@@ -83,6 +87,9 @@ namespace tnt
 
       void setSink(std::streambuf* sink)
         { _streambuf.setSink(sink); }
+
+      unsigned bytesWritten() const
+        { return _streambuf.bytesWritten(); }
   };
 }
 
