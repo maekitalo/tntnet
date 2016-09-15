@@ -157,6 +157,17 @@ namespace tnt
     ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
 
+    /* ANSI X9.62 Prime 256v1 curve */
+    EC_KEY *ecdh = EC_KEY_new_by_curve_name (NID_X9_62_prime256v1);
+    if (! ecdh){
+        log_error("curve prime256v1 not supported");
+    }else {
+        log_debug("SSL_CTX_set_tmp_ecdh");
+        SSL_CTX_set_tmp_ecdh (ctx.getPointer(), ecdh);
+        EC_KEY_free (ecdh);
+    }
+
+
     installCertificates(certificateFile, privateKeyFile);
   }
 
