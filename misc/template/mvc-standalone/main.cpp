@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
   {
     Configuration& configuration = Configuration::it();
 
-    // read option "-c <configfile>" with defautl value "@PROJECT@.xml":
+    // read option "-c <configfile>" with default value "@PROJECT@.xml":
     cxxtools::Arg<const char*> configfilename(argc, argv, 'c', "@PROJECT@.xml");
     std::ifstream configfile(configfilename);
     if (!configfile)
