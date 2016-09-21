@@ -68,7 +68,7 @@ namespace tnt
         { return _keepAliveCounter > 0 ? --_keepAliveCounter : 0; }
       void clear();
       void touch() { time(&_lastAccessTime); }
-      int msecToTimeout(time_t currentTime) const;
+      cxxtools::Milliseconds msecToTimeout(time_t currentTime) const;
   };
 
   class Jobqueue

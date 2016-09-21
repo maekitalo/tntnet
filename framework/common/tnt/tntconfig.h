@@ -35,6 +35,7 @@
 #include <map>
 #include <tnt/http.h>
 #include <cxxtools/serializationinfo.h>
+#include <cxxtools/timespan.h>
 #include <cxxtools/log.h>
 
 namespace tnt
@@ -174,7 +175,7 @@ namespace tnt
 
         default: 600 seconds
      */
-    unsigned maxRequestTime;
+    cxxtools::Seconds maxRequestTime;
 
     /** The unix user id of the user tntnet should switch to when executed as root
 
@@ -253,7 +254,7 @@ namespace tnt
 
         default: 10 milliseconds
      */
-    unsigned long threadStartDelay;
+    cxxtools::Milliseconds threadStartDelay;
 
     /** Limit for the size of the request queue
 
@@ -292,7 +293,7 @@ namespace tnt
 
         default: 10 milliseconds
      */
-    unsigned socketReadTimeout;
+    cxxtools::Milliseconds socketReadTimeout;
 
     /** The timeout (in milliseconds) for writing data to a client
 
@@ -300,9 +301,9 @@ namespace tnt
         never blocks, but if that happens, this timeout ensures that that
         does not lock the whole server.
 
-        default: 10000 milliseconds
+        default: 10 Seconds
      */
-    unsigned socketWriteTimeout;
+    cxxtools::Milliseconds socketWriteTimeout;
 
     /** The timeout (in milliseconds) for keeping a TCP connection alive
 
@@ -310,9 +311,9 @@ namespace tnt
         between server and client stay for multiple requests. This option controls
         how long TCP connections are kept alive.
 
-        default: 15000
+        default: 30 seconds
      */
-    unsigned keepAliveTimeout;
+    cxxtools::Seconds keepAliveTimeout;
 
     /** Maximal amount of requests per TCP connection in keep alive
 
@@ -324,7 +325,7 @@ namespace tnt
 
         default: 300
      */
-    unsigned sessionTimeout;
+    cxxtools::Seconds sessionTimeout;
 
     /** The amount of connection requests to be queued by the system
 
@@ -420,7 +421,7 @@ namespace tnt
 
         default: 10 (seconds)
      */
-    unsigned timerSleep;
+    cxxtools::Seconds timerSleep;
 
     /** Contains the whole configuration as a cxxtools::SerializationInfo
 

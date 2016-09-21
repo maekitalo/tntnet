@@ -39,7 +39,7 @@ namespace tnt
   class Sessionscope : public Scope
   {
       time_t _atime;
-      unsigned _timeout;
+      cxxtools::Seconds _timeout;
 
     public:
       Sessionscope()
@@ -48,8 +48,8 @@ namespace tnt
 
       void touch()                { time(&_atime); }
       time_t getAtime() const     { return _atime; }
-      unsigned getTimeout() const { return _timeout; }
-      void setTimeout(unsigned t) { _timeout = t; }
+      cxxtools::Seconds getTimeout() const { return _timeout; }
+      void setTimeout(cxxtools::Seconds t) { _timeout = t; }
   };
 }
 
