@@ -523,7 +523,7 @@ namespace tnt
       char buffer[64];
       snprintf(buffer, sizeof(buffer),
         "timeout=%lu, max=%u",
-        static_cast<unsigned long>(TntConfig::it().keepAliveTimeout),
+        static_cast<unsigned long>(TntConfig::it().keepAliveTimeout.totalSeconds()),
         static_cast<unsigned>(getKeepAliveCounter()));
       header.setHeader(httpheader::keepAlive, buffer, true);
 

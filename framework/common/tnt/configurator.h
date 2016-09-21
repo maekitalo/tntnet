@@ -71,17 +71,17 @@ namespace tnt
         { TntConfig::it().maxThreads = n; }
 
       /// Returns the time in seconds after which cleanup like checking sessiontimeout is done.
-      unsigned getTimerSleep() const
+      cxxtools::Seconds getTimerSleep() const
         { return TntConfig::it().timerSleep; }
       /// Sets the time in seconds after which cleanup like checking sessiontimeout is done.
-      void setTimerSleep(unsigned sec)
+      void setTimerSleep(cxxtools::Seconds sec)
         { TntConfig::it().timerSleep = sec; }
 
       /// Returns the time in seconds between thread starts.
-      unsigned getThreadStartDelay() const
+      cxxtools::Milliseconds getThreadStartDelay() const
         { return TntConfig::it().threadStartDelay; }
       /// Sets the time in seconds between thread starts.
-      void setThreadStartDelay(unsigned sec)
+      void setThreadStartDelay(cxxtools::Milliseconds sec)
         { TntConfig::it().threadStartDelay = sec; }
 
       /// Returns the maximum number of jobs waiting for processing.
@@ -92,10 +92,10 @@ namespace tnt
         { TntConfig::it().queueSize = n; }
 
       /// Returns the maximum request time, after which tntnet is automatically restarted in daemon mode.
-      unsigned getMaxRequestTime() const
+      cxxtools::Seconds getMaxRequestTime() const
         { return TntConfig::it().maxRequestTime; }
       /// Sets the maximum request time, after which tntnet is automatically restarted in daemon mode.
-      void setMaxRequestTime(unsigned sec)
+      void setMaxRequestTime(cxxtools::Seconds sec)
         { TntConfig::it().maxRequestTime = sec; }
 
       /// Returns true, when http compression is used.
@@ -106,10 +106,10 @@ namespace tnt
         { TntConfig::it().enableCompression = sw; }
 
       /// Returns the time of inactivity in seconds after which a session is destroyed
-      unsigned getSessionTimeout() const
+      cxxtools::Seconds getSessionTimeout() const
         { return TntConfig::it().sessionTimeout; }
       /// Sets the time of inactivity in seconds after which a session is destroyed
-      void setSessionTimeout(unsigned sec)
+      void setSessionTimeout(cxxtools::Seconds sec)
         { TntConfig::it().sessionTimeout = sec; }
 
       /// Returns the listen backlog parameter (see also listen(2)).
@@ -152,18 +152,18 @@ namespace tnt
       /// arrives. After that period the request is passed to the poller,
       /// which waits for activity on the socket. The default value is
       /// 10 ms.
-      unsigned getSocketReadTimeout() const
+      cxxtools::Milliseconds getSocketReadTimeout() const
         { return TntConfig::it().socketReadTimeout; }
       /// Sets the timeout in millisecods after which the request is passed to the poller.
-      void setSocketReadTimeout(unsigned ms)
+      void setSocketReadTimeout(cxxtools::Milliseconds ms)
         { TntConfig::it().socketReadTimeout = ms; }
 
       /// Returns the write timeout in millisecods after which the request is timed out.
       /// The default value is 10000 ms.
-      unsigned getSocketWriteTimeout() const
+      cxxtools::Milliseconds getSocketWriteTimeout() const
         { return TntConfig::it().socketWriteTimeout; }
       /// Sets the write timeout in millisecods after which the request is timed out.
-      void setSocketWriteTimeout(unsigned ms)
+      void setSocketWriteTimeout(cxxtools::Milliseconds ms)
         { TntConfig::it().socketWriteTimeout = ms; }
 
       /// Returns the maximum number of requests handled over a single connection.
@@ -197,10 +197,10 @@ namespace tnt
       /// This specifies, how long a connection is kept for keep alive. A keep
       /// alive request binds (little) resources, so it is good to free it
       /// after some time of inactivity. The default value if 15000 ms.
-      unsigned getKeepAliveTimeout() const
+      cxxtools::Seconds getKeepAliveTimeout() const
         { return TntConfig::it().keepAliveTimeout; }
       /// Sets the keep alive timeout in milliseconds.
-      void setKeepAliveTimeout(unsigned s)
+      void setKeepAliveTimeout(cxxtools::Seconds s)
         { TntConfig::it().keepAliveTimeout = s; }
 
       /// Returns the default content type.

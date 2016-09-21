@@ -335,7 +335,7 @@ namespace tnt
     while (it != _sessionScopes.end())
     {
       Sessionscope* s = it->second;
-      if (static_cast <unsigned> (currentTime - s->getAtime()) > s->getTimeout())
+      if (cxxtools::Seconds(currentTime - s->getAtime()) > s->getTimeout())
       {
         log_info("sessiontimeout for session " << it->first << " reached");
         sessionscopes_type::iterator it2 = it;

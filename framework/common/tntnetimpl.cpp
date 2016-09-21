@@ -237,7 +237,7 @@ namespace tnt
         log_info("max worker-threadcount " << _maxthreads << " reached");
 
       if (TntConfig::it().threadStartDelay > 0)
-        usleep(TntConfig::it().threadStartDelay * 1000);
+        usleep(TntConfig::it().threadStartDelay.totalUSecs());
     }
 
     log_info("stopping TntnetImpl");
@@ -300,7 +300,7 @@ namespace tnt
     {
       {
         cxxtools::MutexLock timeStopLock(_timeStopMutex);
-        if (_stop || _timerStopCondition.wait(timeStopLock, TntConfig::it().timerSleep * 1000))
+        if (_stop || _timerStopCondition.wait(timeStopLock, TntConfig::it().timerSleep))
           break;
       }
 

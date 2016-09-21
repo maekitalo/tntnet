@@ -48,9 +48,9 @@ namespace tnt
     _request.clear();
   }
 
-  int Job::msecToTimeout(time_t currentTime) const
+  cxxtools::Milliseconds Job::msecToTimeout(time_t currentTime) const
   {
-    return (_lastAccessTime - currentTime + 1) * 1000
+    return cxxtools::Seconds(_lastAccessTime - currentTime + 1)
          + TntConfig::it().keepAliveTimeout
          - TntConfig::it().socketReadTimeout;
   }
