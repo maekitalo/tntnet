@@ -60,9 +60,6 @@ int main(int argc, char* argv[])
     app.mapUrl("^/(.*)$", "controller/$1")  // controller for pages routed through webmain
        .setHttpReturn(DECLINED);
 
-    app.mapUrl("^/(.*)\\.(.*)$", "controller/$1")
-       .setHttpReturn(DECLINED);
-
     // ajax - map  /something.ext to component ext/something
     //        e.g. /request.json to json/request.ecpp
     //        e.g. /foo.html to html/foo.ecpp

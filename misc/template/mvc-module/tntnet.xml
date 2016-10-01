@@ -25,11 +25,6 @@
       <target>controller/$1@@PROJECT@</target>
       <httpreturn>DECLINED</httpreturn>
     </mapping>
-    <mapping>
-      <url>^/(.*)\.(.*)$</url>
-      <target>controller/$1@@PROJECT@</target>
-      <httpreturn>DECLINED</httpreturn>
-    </mapping>
 
     <!--
        ajax - map  /something.ext to component ext/something
