@@ -84,7 +84,7 @@ namespace tnt
 
       o << "typedef std::vector<" << ltype << "> " << _name << "_type;\n"
         << _name << "_type " << _name << " = qparam.argst<" << ltype
-        << ">(\"" << _name << "\", \"" << ltype << "\");\n";
+        << ">(\"" << _name << "[]\", \"" << ltype << "\");\n";
     }
 
     void Variable::getParamCode(std::ostream& o, const std::string& qparam) const
