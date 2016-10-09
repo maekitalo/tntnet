@@ -195,6 +195,8 @@ namespace tnt
     si.getMember("reuseAddress", config.reuseAddress);
     si.getMember("includes", config.includes);
     si.getMember("logging", config.logConfiguration);
+    si.getMember("sslCipherList", config.sslCipherList);
+    si.getMember("sslProtocols", config.sslProtocols);
 
     config.config = si;
 

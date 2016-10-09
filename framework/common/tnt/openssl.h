@@ -66,6 +66,7 @@ namespace tnt
   class OpensslServer : public cxxtools::net::TcpServer
   {
       SslCtxPtr _ctx;
+      void setOptions();
       void installCertificates(const char* certificateFile, const char* privateKeyFile);
 
     public:

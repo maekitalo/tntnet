@@ -485,6 +485,24 @@ namespace tnt
      */
     std::vector<std::string> includes;
 
+    /** Restrict the list of SSL ciphers
+        The format of the string is described in https://www.openssl.org/docs/manmaster/apps/ciphers.html
+        default: (none)  
+     */
+    std::string sslCipherList;
+
+    /** Restrict the list of SSL protocols
+        +SSLv3 enable SSLv3
+        -SSLv3 disable SSLv3
+        +TLSv1_0 enable TLSv1
+        -TLSv1_0 disable TLSv1
+        +TLSv1_1 enable TLSv1.1
+        -TLSv1_1 disable TLSv1.1
+        +TLSv1_2 enable TLSv1.2
+        -TLSv1_2 disable TLSv1.2
+     */
+    std::string sslProtocols;
+
     /// Create a %TntConfig object with default configuration
     TntConfig();
 
