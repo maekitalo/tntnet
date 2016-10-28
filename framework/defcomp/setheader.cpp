@@ -59,7 +59,7 @@ namespace tnt
   {
     for (tnt::HttpRequest::args_type::const_iterator it = request.getArgs().begin();
         it != request.getArgs().end(); ++it)
-      reply.setHeader(it->first + ':' , it->second);
+      reply.setHeader(it->first, it->second);
 
     return DECLINED;
   }
