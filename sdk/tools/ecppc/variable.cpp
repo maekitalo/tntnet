@@ -82,9 +82,9 @@ namespace tnt
       if (ltype.empty())
         ltype = "std::string";
 
-      o << "typedef std::vector<" << ltype << "> " << _name << "_type;\n"
-        << _name << "_type " << _name << " = qparam.argst<" << ltype
-        << ">(\"" << _name << "[]\", \"" << ltype << "\");\n";
+      o << "typedef std::vector< " << ltype << " > " << _name << "_type;\n"
+        << _name << "_type " << _name << " = qparam.argst< " << ltype
+        << " >(\"" << _name << "[]\", \"" << ltype << "\");\n";
     }
 
     void Variable::getParamCode(std::ostream& o, const std::string& qparam) const
@@ -101,12 +101,12 @@ namespace tnt
         if (_value.empty())
         {
           // no default-value
-          o << qparam << ".argt<" << _type << ">(\"" << _name << "\", \"" << _type << "\");\n";
+          o << qparam << ".argt< " << _type << " >(\"" << _name << "\", \"" << _type << "\");\n";
         }
         else
         {
           // with default-value
-          o << qparam << ".arg<" << _type << ">(\"" << _name << "\", (" << _value << "));\n";
+          o << qparam << ".arg< " << _type << " >(\"" << _name << "\", (" << _value << "));\n";
         }
       }
       else
