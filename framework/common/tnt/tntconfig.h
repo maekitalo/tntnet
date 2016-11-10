@@ -186,6 +186,21 @@ namespace tnt
      */
     std::string user;
 
+    /** If the "user" string is set correctly as the unix user id of the user tntnet
+        should switch to when executed as root, then if this string is set to "yes"
+        the process would first enlist with any primary and supplementary unix groups
+        this account is registered with locally.
+
+        If this string is unset (empty), or not set to "yes", or tntnet is not executed
+        as root, the user and supplementary group list under which tntnet operates does
+        not change. The switching to additional groups is done through setgroups(), and
+        it happens after setgid() executed by setting the "group" option and before
+        downgrading privileges into the non-root user set by the "user" option.
+
+        default: (empty)
+     */
+    bool allUserGroups;
+
     /** The unix group id of the group tntnet should switch to when executed as root
 
         If this option is unset (empty) or tntnet is not executed as root, the group

@@ -71,6 +71,7 @@
   <!-- <maxRequestSize>65536</maxRequestSize> -->
   <!-- <maxRequestTime>600</maxRequestTime> -->
   <!-- <user>tntnet</user> -->
+  <!-- <allUserGroups>no</allUserGroups> -->
   <!-- <group>tntnet</group> -->
   <!-- <dir>/</dir> -->
   <!-- <chrootdir>/var/safedir</chrootdir> -->
