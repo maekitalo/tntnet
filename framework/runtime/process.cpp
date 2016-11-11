@@ -73,6 +73,57 @@ namespace
       throw cxxtools::SystemError("setgid");
   }
 
+#if (HAVE_GETGROUPLIST != 1)
+// Code below snatched from https://gist.github.com/bhaskarvk/6a15083ab9a7997df0a2
+#include <string.h>
+int
+getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+{
+    const struct group *grp;
+    int i, maxgroups, ngroups, ret;
+
+    ret = 0;
+    ngroups = 0;
+    maxgroups = *grpcnt;
+    /*
+     * When installing primary group, duplicate it;
+     * the first element of groups is the effective gid
+     * and will be overwritten when a setgid file is executed.
+     */
+    groups ? groups[ngroups++] = agroup : ngroups++;
+    if (maxgroups > 1)
+        groups ? groups[ngroups++] = agroup : ngroups++;
+    /*
+     * Scan the group file to find additional groups.
+     */
+    setgrent();
+    while ((grp = getgrent()) != NULL) {
+        if (groups) {
+            for (i = 0; i < ngroups; i++) {
+                if (grp->gr_gid == groups[i])
+                    goto skip;
+            }
+        }
+        for (i = 0; grp->gr_mem[i]; i++) {
+            if (!strcmp(grp->gr_mem[i], uname)) {
+                if (ngroups >= maxgroups) {
+                    ret = -1;
+                    break;
+                }
+                groups ? groups[ngroups++] = grp->gr_gid : ngroups++;
+                break;
+            }
+        }
+skip:
+        ;
+    }
+    endgrent();
+    *grpcnt = ngroups;
+    return (ret);
+}
+#define HAVE_GETGROUPLIST 1
+#endif // no HAVE_GETGROUPLIST
+
   void setUser(const std::string& user, bool allUserGroups)
   {
     struct passwd * pw = getpwnam(user.c_str());
