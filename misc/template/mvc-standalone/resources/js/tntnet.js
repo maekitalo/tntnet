@@ -88,7 +88,7 @@ var tntnet = {
     action:
         function(url, data, successFn, failureFn)
         {
-            $.post(url + ".action", data,
+            return $.post(url + ".action", data,
                 function(data, textStatus, jqXHR)
                 {
                     if (data.success)
