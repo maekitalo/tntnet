@@ -234,11 +234,11 @@ class EcppTest : public cxxtools::unit::TestSuite
     {
       std::string src0 =
         "<html><body><h1>Hello World!<h1>\n";
-      std::string src1 = 
+      std::string src1 =
         "<%cpp>\n"
         "  const char* s[] = \"<h1>\"\n"
         "</%cpp>\n";
-      std::string src2 = 
+      std::string src2 =
         "</body></html>";
       std::istringstream ecpp(src0 + src1 + src2);
       Handler handler;
@@ -251,9 +251,9 @@ class EcppTest : public cxxtools::unit::TestSuite
     {
       std::string src0 =
         "<html><body><h1>Hello World!<h1>\n";
-      std::string src1 = 
+      std::string src1 =
         "<{const char* s[] = \"<h1>\"\n}>";
-      std::string src2 = 
+      std::string src2 =
         "</body></html>";
       std::istringstream ecpp(src0 + src1 + src2);
       Handler handler;

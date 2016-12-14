@@ -197,7 +197,7 @@ namespace tnt
     _ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
 
-    setOptions();  
+    setOptions();
     installCertificates(certificateFile, certificateFile);
   }
 
@@ -209,7 +209,7 @@ namespace tnt
     _ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
 
-    setOptions();  
+    setOptions();
     installCertificates(certificateFile, privateKeyFile);
   }
 

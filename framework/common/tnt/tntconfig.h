@@ -487,7 +487,7 @@ namespace tnt
 
     /** Restrict the list of SSL ciphers
         The format of the string is described in https://www.openssl.org/docs/manmaster/apps/ciphers.html
-        default: (none)  
+        default: (none)
      */
     std::string sslCipherList;
 

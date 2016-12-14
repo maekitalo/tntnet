@@ -320,7 +320,7 @@ namespace tnt
       {
         out << "class _component_ : public tnt::EcppComponent\n"
                "{\n"
-               "    _component_& main()  { return *this; }\n\n" 
+               "    _component_& main()  { return *this; }\n\n"
                "  protected:\n"
                "    ~_component_();\n\n"
                "  public:\n"
@@ -687,7 +687,7 @@ namespace tnt
 
       getPre(code);
 
-      code << "\n" 
+      code << "\n"
               "namespace\n"
               "{\n";
 
