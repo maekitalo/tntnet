@@ -7,15 +7,17 @@ nobase_sysconf_DATA = \
     init.d/tntnet
 
 tntnet/tntnet.xml: tntnet/tntnet.xml.in
+	mkdir -p $(@D)
 	sed -e 's,@libdir\@,@libdir@,g;' \
 	    -e 's,@pkglibdir\@,@pkglibdir@,g;' \
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
 	    -e 's,@localstatedir\@,@localstatedir@,g;' \
-		-e 's,@datadir\@,@datadir@,g;' <tntnet/tntnet.xml.in >tntnet/tntnet.xml
+		-e 's,@datadir\@,@datadir@,g;' <$(<) >$(@)
 
 init.d/tntnet: init.d/tntnet.in
+	mkdir -p $(@D)
 	sed -e 's,@libdir\@,@libdir@,g;' \
 	    -e 's,@pkglibdir\@,@pkglibdir@,g;' \
 	    -e 's,@sysconfdir\@,@sysconfdir@,g;' \
 	    -e 's,@localstatedir\@,@localstatedir@,g;' \
-		-e 's,@datadir\@,@datadir@,g;' <init.d/tntnet.in >init.d/tntnet
+		-e 's,@datadir\@,@datadir@,g;' <$(<) >$(@)
