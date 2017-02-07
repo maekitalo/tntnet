@@ -96,7 +96,6 @@ namespace tnt
         out << ", (" << _init << ")); "
                "  // <%" << tag << "> " << _type << ' ' << _var;
       }
-
       if (!_init.empty())
       {
         out << '(';
@@ -106,7 +105,8 @@ namespace tnt
         out << ')';
       }
 
-      out << '\n';
+      out << "\n"
+             "  _tnt_ignore_unused<" << _var << "_type>(" << _var << ");\n";
     }
   }
 }

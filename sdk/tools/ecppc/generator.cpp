@@ -584,8 +584,12 @@ namespace tnt
           code << "  // </%config>\n"
                   "}\n\n";
         }
-        code << "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
-             << "{\n"
+
+        code << "template <typename T>\n"
+                "inline void _tnt_ignore_unused(const T&) { }\n\n"
+
+                "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
+                "{\n"
                 "  log_trace(\"" << _maincomp.getName() << " \" << qparam.getUrl());\n\n";
 
         if (_raw)
