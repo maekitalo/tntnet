@@ -32,4 +32,4 @@ SUFFIXES=.ecpp .cpp
 	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
 tntnet.properties:
-	echo "rootlogger=INFO" > $@
+	$(AM_V_GEN)echo "rootlogger=INFO" > $@
