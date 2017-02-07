@@ -25,7 +25,7 @@ putdata_LDADD = -lcxxtools -lcxxtools-http
 getdata_LDADD = -lcxxtools -lcxxtools-http
 deldata_LDADD = -lcxxtools -lcxxtools-http
 
-CLEANFILES = rest.cpp tntnet.properties
+CLEANFILES = tntnet.properties
 
 SUFFIXES=.ecpp .cpp
 .ecpp.cpp:
