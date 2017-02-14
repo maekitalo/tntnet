@@ -6,6 +6,8 @@ nobase_sysconf_DATA = \
     tntnet/tntnet.xml \
     init.d/tntnet
 
+DISTCLEANFILES = $(nobase_sysconf_DATA)
+
 tntnet/tntnet.xml: tntnet/tntnet.xml.in
 	mkdir -p $(@D)
 	sed -e 's,@libdir\@,@libdir@,g;' \
