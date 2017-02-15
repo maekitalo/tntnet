@@ -13,6 +13,11 @@ compiler:
  - clang
  - gcc
  - g++
+ 
+addons:
+  apt:
+    packages:
+    - cxxtools
 
 before_script:
  - ./autogen.sh
