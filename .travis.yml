@@ -1,0 +1,23 @@
+# Initially snatched and adapted from libsodium .travis.yml
+
+sudo: false
+
+language: c
+
+os:
+ - linux
+
+compiler:
+ - clang
+ - gcc
+ - g++
+
+before_script:
+ - ./autogen.sh
+
+script:
+ - ./configure --disable-dependency-tracking
+ - make distcheck
+ - make distclean > /dev/null
+ - ./configure --disable-dependency-tracking --enable-minimal
+ - make distcheck
