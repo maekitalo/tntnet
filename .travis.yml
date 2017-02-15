@@ -17,7 +17,7 @@ compiler:
 addons:
   apt:
     packages:
-    - cxxtools
+    - libcxxtools-dev
 
 before_script:
  - ./autogen.sh
