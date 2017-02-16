@@ -95,7 +95,7 @@ namespace tnt
 
       virtual void run();
       void doStop();
-      void addIdleJob(Jobqueue::JobPtr job);
+      void addIdleJob(Jobqueue::JobPtr& job);
   };
   /// @endcond internal
 }

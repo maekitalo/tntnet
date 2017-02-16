@@ -45,7 +45,7 @@ namespace tnt
       virtual ~PollerIf();
       virtual void run() = 0;
       virtual void doStop() = 0;
-      virtual void addIdleJob(Jobqueue::JobPtr job) = 0;
+      virtual void addIdleJob(Jobqueue::JobPtr& job) = 0;
   };
 
   class Poller
@@ -61,8 +61,8 @@ namespace tnt
         { delete _impl; }
 
       void run();
-      void doStop()                         { _impl->doStop(); }
-      void addIdleJob(Jobqueue::JobPtr job) { _impl->addIdleJob(job); }
+      void doStop()                          { _impl->doStop(); }
+      void addIdleJob(Jobqueue::JobPtr& job) { _impl->addIdleJob(job); }
   };
   /// @endcond internal
 }

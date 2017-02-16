@@ -89,10 +89,13 @@ namespace tnt
   void PollerImpl::doStop()
     { _notifyPipe.write('A'); }
 
-  void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
+  void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
   {
-    cxxtools::MutexLock lock(_mutex);
-    _newJobs.push_back(job);
+    {
+      cxxtools::MutexLock lock(_mutex);
+      _newJobs.push_back(job);
+      job = 0;
+    }
     _notifyPipe.write('A');
   }
 
@@ -364,11 +367,12 @@ namespace tnt
     _currentJobs.pop_back();
   }
 
-  void PollerImpl::addIdleJob(Jobqueue::JobPtr job)
+  void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
   {
     {
       cxxtools::MutexLock lock(_mutex);
       _newJobs.push_back(job);
+      job = 0;
     }
 
     _notifyPipe.write('A');
