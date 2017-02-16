@@ -2,17 +2,12 @@
 
 sudo: false
 
-language: c
+language: cpp
 
 cache: ccache
 
 os:
  - linux
-
-compiler:
- - clang
- - gcc
- - g++
  
 addons:
   apt:
