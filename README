@@ -53,3 +53,11 @@ Tntnet listens on port 8000. Start your browser and navigate to:
 
 Documentation is provided in man pages and some documents found in the doc
 directory.
+
+Ssl
+===
+
+Tntnet supports ssl. It must be configured in tntnet.xml or using the api.
+For ssl a certificate is needed. To create a self signed certificate run:
+
+    openssl req -x509 -nodes -days 1095 -subj "/C=DE/L=Your Town/CN=$(hostname -A)/O=Your Organization/OU=Your unit" -newkey rsa:2048 -keyout tntnet.pem -out tntnet.pem
