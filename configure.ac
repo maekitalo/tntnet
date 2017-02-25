@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 2.3rc1, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 3.0rc1, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 LT_INIT([disable-static])
 
