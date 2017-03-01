@@ -6,6 +6,7 @@ Makefile
 /config.guess
 /config.sub
 /configure
+/compile
 /depcomp
 /install-sh
 /ltmain.sh
