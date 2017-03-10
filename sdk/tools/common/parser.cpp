@@ -150,6 +150,7 @@ namespace tnt
         state_callend,
         state_callarg0,
         state_callarg,
+        state_callargsqb,
         state_callarge,
         state_callval_expr,
         state_callval_string,  // 60
@@ -1365,6 +1366,11 @@ namespace tnt
           case state_callarg:
             if (isVariableNameChar(ch))
               arg += ch;
+            else if (ch == '[')
+            {
+              arg += ch;
+              state = state_callargsqb;
+            }
             else if (std::isspace(ch))
               state = state_callarge;
             else if (ch == '=')
@@ -1379,6 +1385,16 @@ namespace tnt
               paramargs.clear();
               defarg.clear();
               state = ch == '>' ? state_html : state_callend;
+            }
+            else
+              throw parse_error(std::string("invalid argumentname (") + ch + ')', state, _curfile, _curline);
+            break;
+
+          case state_callargsqb:
+            if (ch == ']')
+            {
+                arg += ch;
+                state = state_callarge;
             }
             else
               throw parse_error(std::string("invalid argumentname (") + ch + ')', state, _curfile, _curline);
