@@ -2,7 +2,7 @@
  <head>
   <title>Calculator</title>
   <script type="text/javascript" src="jquery.js"></script>
-  <script type="text/javascript" src="calcajax_js"></script>
+  <script type="text/javascript" src="calcajax_js.js"></script>
  </head>
  <body bgcolor=#ffffcc>
   <h1>Tommi's Tnt-Calculator</h1>
