@@ -30,4 +30,4 @@ tntnet-config
 /etc/init.d/tntnet
 /etc/tntnet/tntnet.xml
 /utest/utest
-
+/pkgconfig/tntnet.pc
