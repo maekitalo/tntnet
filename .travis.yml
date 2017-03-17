@@ -8,7 +8,11 @@ cache: ccache
 
 os:
  - linux
- 
+
+# Cause use of newer gcc-4.8+
+services:
+  - docker
+
 addons:
   apt:
     packages:
