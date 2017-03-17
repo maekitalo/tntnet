@@ -80,3 +80,7 @@ EXTRA_DIST = ecpp.vim \
     Releasenotes-2.2.markdown \
     Releasenotes-2.2.1.markdown \
     $(pkgdata_SCRIPTS)
+
+pkgconfigdir = $(libdir)/pkgconfig/
+
+pkgconfig_DATA = pkgconfig/tntnet.pc
