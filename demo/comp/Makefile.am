@@ -14,6 +14,7 @@ extlib_la_LDFLAGS = -module
 extlib_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
+dist_noinst_DATA = README
 CLEANFILES = comp.cpp subcomp.cpp extcomp.cpp \
     tntnet.xml
 

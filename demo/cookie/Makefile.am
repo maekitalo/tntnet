@@ -8,6 +8,7 @@ cookie_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 cookie_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
+dist_noinst_DATA = README
 CLEANFILES = cookie.cpp tntnet.xml
 
 SUFFIXES=.ecpp .cpp

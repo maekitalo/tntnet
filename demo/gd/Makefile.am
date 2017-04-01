@@ -13,6 +13,7 @@ gd_la_LDFLAGS = -module @SHARED_LIB_FLAG@ -lgd
 gd_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
+dist_noinst_DATA = README
 CLEANFILES = gd.cpp tntnet.cpp tntnet.xml
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc

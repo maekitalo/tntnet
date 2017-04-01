@@ -9,6 +9,8 @@ mvc_la_SOURCES = \
 nobase_include_HEADERS = \
 	model/counter.h
 
+dist_noinst_DATA = README
+
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I$(srcdir)/model
 mvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 mvc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la

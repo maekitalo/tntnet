@@ -8,6 +8,7 @@ upload_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 upload_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
+dist_noinst_DATA = README
 CLEANFILES = upload.cpp tntnet.xml
 
 SUFFIXES=.ecpp .cpp

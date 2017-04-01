@@ -25,7 +25,7 @@ chat_LDADD = $(top_builddir)/framework/common/libtntnet.la
 chat_LDFLAGS = -lcxxtools
 
 nobase_dist_noinst_DATA = $(staticSources)
-
+dist_noinst_DATA = README
 CLEANFILES = $(ecppSources:.ecpp=.cpp) $(ecppSources:.ecpp=.deps) resources.cpp
 
 #

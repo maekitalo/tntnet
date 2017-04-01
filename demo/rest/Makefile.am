@@ -1,5 +1,6 @@
 noinst_PROGRAMS = rest putdata getdata deldata
 noinst_DATA = tntnet.properties
+dist_noinst_DATA = README
 
 rest_SOURCES = \
 	getvalue.ecpp \

@@ -18,6 +18,7 @@ calci18n_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 calci18n_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml calci18n.txt calci18n.fi calci18n.de
+dist_noinst_DATA = README
 CLEANFILES = calci18n.cpp tntnet.xml \
 	en.cpp calci18n.txt \
 	fi.cpp calci18n.fi fi/calci18n.tntdata \
