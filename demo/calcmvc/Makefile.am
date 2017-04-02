@@ -8,7 +8,7 @@ calcmvc_la_SOURCES = \
 	controller/accumulator.cpp \
 	controller/calc.cpp
 
-nobase_include_HEADERS = \
+noinst_HEADERS = \
 	model/accumulator.h \
 	model/calc.h
 

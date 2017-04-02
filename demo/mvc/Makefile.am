@@ -6,7 +6,7 @@ mvc_la_SOURCES = \
 	main.ecpp \
 	view/counter.ecpp
 
-nobase_include_HEADERS = \
+noinst_HEADERS = \
 	model/counter.h
 
 dist_noinst_DATA = README
