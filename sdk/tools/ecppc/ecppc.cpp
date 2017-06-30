@@ -44,6 +44,12 @@ log_define("tntnet.ecppc")
 
 namespace tnt
 {
+  static void removePrefix(const std::string& prefix, std::string& fname)
+  {
+    if (fname.compare(0, prefix.size(), prefix) == 0)
+      fname.erase(0, prefix.size());
+  }
+
   namespace ecppc
   {
     Ecppc::Ecppc(int& argc, char* argv[])
@@ -116,6 +122,8 @@ namespace tnt
       if (_multibinary)
       {
         cxxtools::Arg<const char*> ifiles(argc, argv, 'i');
+        cxxtools::Arg<std::string> removeFromPath(argc, argv, 'r');
+
         if (ifiles.isSet())
         {
           std::ifstream in(ifiles.getValue());
@@ -130,6 +138,9 @@ namespace tnt
               if ((p = key.find_last_of('/')) != std::string::npos)
                 key.erase(0, p + 1);
             }
+
+            if (removeFromPath.isSet())
+              removePrefix(removeFromPath, key);
 
             _inputFiles.insert(inputfiles_type::value_type(key, ifile));
           }
@@ -146,6 +157,10 @@ namespace tnt
             if ((p = key.find_last_of('/')) != std::string::npos)
               key.erase(0, p + 1);
           }
+
+          if (removeFromPath.isSet())
+            removePrefix(removeFromPath, key);
+
 
           _inputFiles.insert(inputfiles_type::value_type(key, ifile));
         }
