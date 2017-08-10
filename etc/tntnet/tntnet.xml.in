@@ -54,6 +54,7 @@
 
   <daemon>1</daemon>
   <user>tntnet</user>
+  <allUserGroups>no</allUserGroups>
   <group>tntnet</group>
   <pidfile>@localstatedir@/run/tntnet.pid</pidfile>
   <documentRoot>/var/www</documentRoot>

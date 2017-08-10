@@ -32,6 +32,14 @@ This section describes the variables, used by Tntnet (8).
 
     <accessLog>/var/log/tntnet/access.log</accessLog
 
+`<allUserGroups>`*yes|no*`</allUserGroups>`
+
+  Specifies that if the `<user>` is changed for the server process, then the
+  groups (primary and secondary) which this account is a member of should
+  become the primary GID and supplementary GIDs of this process too.
+
+  The legacy default value is `no` - to avoid surprises during upgrades.
+
 `<bufferSize>`*bytes*`</bufferSize>`
 
   Specifies the number of bytes sent in a single system call. This does not

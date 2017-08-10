@@ -57,6 +57,28 @@ AC_COMPILE_IFELSE(
 int flag = cxxtools::net::TcpServer::REUSEADDR;
 ])], AC_DEFINE(HAVE_CXXTOOLS_REUSEADDR, [], [Defined if cxxtools supports SO_REUSEADDR flag]))
 
+AC_MSG_CHECKING([if system provides getgrouplist() with semantics we expect])
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([
+#include <grp.h>
+#include <pwd.h>
+struct passwd pw;
+gid_t groups;
+int foundgroups = 1;
+int gotgroups = getgrouplist("username", pw.pw_gid, &groups, &foundgroups);
+])], AC_DEFINE(HAVE_GETGROUPLIST, [1], [Defined if system provides getgrouplist() with semantics we expect])
+     AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+
+AC_MSG_CHECKING([if system provides setgroups() with semantics we expect])
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([
+#include <grp.h>
+#include <pwd.h>
+gid_t groups;
+int errcode = setgroups(1, &groups);
+])], AC_DEFINE(HAVE_SETGROUPS, [1], [Defined if system provides setgroups() with semantics we expect])
+     AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
   [epoll_option=$withval],
