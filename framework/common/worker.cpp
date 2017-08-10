@@ -39,6 +39,7 @@
 #include <cxxtools/log.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -65,6 +66,19 @@ namespace
   static const char stateSendReply[]         = "7 send reply";
   static const char stateSendError[]         = "8 send error";
   static const char stateStopping[]          = "9 stopping";
+}
+
+static time_t monoTime(time_t *o_time) {
+#if defined(_POSIX_TIMERS) && defined(_POSIX_MONOTONIC_CLOCK)
+  struct timespec monoTime;
+
+  if(clock_gettime(CLOCK_MONOTONIC, &monoTime) == 0) {
+    if(o_time != NULL)
+      *o_time = monoTime.tv_sec;
+    return monoTime.tv_sec;
+  } else
+#endif
+    return time(o_time);
 }
 
 namespace tnt
@@ -108,7 +122,7 @@ namespace tnt
         bool keepAlive;
         do
         {
-          time(&lastWaitTime);
+          monoTime(&lastWaitTime);
 
           keepAlive = false;
           state = stateParsing;
@@ -206,7 +220,7 @@ namespace tnt
       }
     }
 
-    time(&lastWaitTime);
+    monoTime(&lastWaitTime);
 
     state = stateStopping;
 
@@ -493,7 +507,7 @@ namespace tnt
   void Worker::timer()
   {
     time_t currentTime;
-    time(&currentTime);
+    monoTime(&currentTime);
 
     cxxtools::MutexLock lock(mutex);
     for (workers_type::iterator it = workers.begin();
@@ -521,7 +535,7 @@ namespace tnt
 
   void Worker::touch()
   {
-    time(&lastWaitTime);
+    monoTime(&lastWaitTime);
   }
 
   Scope& Worker::getScope()

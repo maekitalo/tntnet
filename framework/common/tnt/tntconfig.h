@@ -81,6 +81,7 @@ namespace tnt
     unsigned maxRequestSize;
     unsigned maxRequestTime;
     std::string user;
+    bool allUserGroups;
     std::string group;
     std::string dir;
     std::string chrootdir;
@@ -112,6 +113,8 @@ namespace tnt
     EnvironmentType environment;
     std::string documentRoot;
     std::vector<std::string> includes;
+    std::string sslCipherList;
+    std::string sslProtocols;
 
     TntConfig();
 

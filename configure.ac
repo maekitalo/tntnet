@@ -15,6 +15,7 @@ AC_CONFIG_SRCDIR([framework/common/tntnet.cpp])
 
 AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(dlopen, dl, , AC_MSG_ERROR([dlopen not found]))
+AC_SEARCH_LIBS(compress, z)
 
 AC_PROG_CXX
 AC_PROG_LIBTOOL
@@ -39,6 +40,30 @@ AC_CHECK_HEADER([zlib.h], , AC_MSG_ERROR([zlib not found]))
 AC_CHECK_HEADER([cxxtools/net/tcpsocket.h], , AC_MSG_ERROR([cxxtools headers not found]))
 AC_CHECK_FUNCS([fopen64], ,[AM_CFLAGS=-DUSE_FILE32API])
 AC_SUBST(AM_CFLAGS)
+
+AC_MSG_CHECKING([if system provides getgrouplist() with semantics we expect])
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([
+#include <grp.h>
+#include <pwd.h>
+struct passwd pw;
+gid_t groups;
+int foundgroups = 1;
+int gotgroups = getgrouplist("username", pw.pw_gid, &groups, &foundgroups);
+])], AC_DEFINE(HAVE_GETGROUPLIST, [1], [Defined if system provides getgrouplist() with semantics we expect])
+     AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+
+AC_MSG_CHECKING([if system provides setgroups() with semantics we expect])
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([
+#include <sys/types.h>
+#include <unistd.h>
+#include <grp.h>
+#include <pwd.h>
+gid_t groups;
+int errcode = setgroups(1, &groups);
+])], AC_DEFINE(HAVE_SETGROUPS, [1], [Defined if system provides setgroups() with semantics we expect])
+     AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
 
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
@@ -244,6 +269,7 @@ AC_CONFIG_FILES([
     utest/Makefile
     doc/man/Makefile
     etc/Makefile
+    pkgconfig/tntnet.pc
     ])
 
 AC_OUTPUT

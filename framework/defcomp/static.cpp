@@ -34,6 +34,7 @@
 #include <tnt/http.h>
 #include <tnt/httpheader.h>
 #include <tnt/comploader.h>
+#include <unistd.h>
 #include <fstream>
 #include <cxxtools/log.h>
 #include <cxxtools/systemerror.h>
