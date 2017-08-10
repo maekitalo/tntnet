@@ -141,6 +141,9 @@ namespace tnt
     si.getMember("timerSleep", config.timerSleep);
     si.getMember("documentRoot", config.documentRoot);
     si.getMember("includes", config.includes);
+    si.getMember("sslCipherList", config.sslCipherList);
+    si.getMember("sslProtocols", config.sslProtocols);
+
 
     config.config = si;
 

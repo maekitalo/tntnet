@@ -112,6 +112,8 @@ namespace tnt
     EnvironmentType environment;
     std::string documentRoot;
     std::vector<std::string> includes;
+    std::string sslCipherList;
+    std::string sslProtocols;
 
     TntConfig();
 

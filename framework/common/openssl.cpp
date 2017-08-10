@@ -37,6 +37,9 @@
 #include <fcntl.h>
 #include <sys/poll.h>
 #include <pthread.h>
+#include <tnt/tntconfig.h>
+
+using namespace std;
 
 log_define("tntnet.ssl")
 
@@ -156,6 +159,43 @@ namespace tnt
     log_debug("SSL_CTX_new(SSLv23_server_method())");
     ctx = SSL_CTX_new(SSLv23_server_method());
     checkSslError();
+
+    //restrict protocols
+    string sslProtocols=TntConfig::it().sslProtocols;
+    if(sslProtocols.find("+SSLv3") != string::npos){
+        SSL_CTX_clear_options(ctx.getPointer(), SSL_OP_NO_SSLv3);
+    }
+    if(sslProtocols.find("-SSLv3") != string::npos){
+        SSL_CTX_set_options(ctx.getPointer(), SSL_OP_NO_SSLv3);
+    }
+    if(sslProtocols.find("+TLSv1_0") != string::npos){
+        SSL_CTX_clear_options(ctx.getPointer(), SSL_OP_NO_TLSv1);
+    }
+    if(sslProtocols.find("-TLSv1_0")!= string::npos){
+        SSL_CTX_set_options(ctx.getPointer(), SSL_OP_NO_TLSv1);
+    }
+    if(sslProtocols.find("+TLSv1_1") != string::npos){
+        SSL_CTX_clear_options(ctx.getPointer(), SSL_OP_NO_TLSv1_1);
+    }
+    if(sslProtocols.find("-TLSv1_1") != string::npos){
+        SSL_CTX_set_options(ctx.getPointer(), SSL_OP_NO_TLSv1_1);
+    }
+    if(sslProtocols.find("+TLSv1_2") != string::npos){
+        SSL_CTX_clear_options(ctx.getPointer(), SSL_OP_NO_TLSv1_2);
+    }
+    if(sslProtocols.find("-TLSv1_2") != string::npos){
+        SSL_CTX_set_options(ctx.getPointer(), SSL_OP_NO_TLSv1_2);
+    }
+
+
+    //restrict cipher list
+    if(!TntConfig::it().sslCipherList.empty()){
+        int cipher_lst = SSL_CTX_set_cipher_list(ctx.getPointer(),
+                TntConfig::it().sslCipherList.c_str());
+        if(! cipher_lst ) {
+            log_error( "SSL_CTX_set_cipher_list");
+        }
+    }
 
     /* ANSI X9.62 Prime 256v1 curve */
     EC_KEY *ecdh = EC_KEY_new_by_curve_name (NID_X9_62_prime256v1);
