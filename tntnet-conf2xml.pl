@@ -21,6 +21,7 @@ my %keywords = (
     MaxRequestSize => 'maxRequestSize',
     MaxRequestTime => 'maxRequestTime',
     User => 'user',
+    AllUserGroups => 'allUserGroups',
     Group => 'group',
     Dir => 'dir',
     Chroot => 'chrootdir',

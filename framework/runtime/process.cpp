@@ -27,6 +27,7 @@
  */
 
 
+#include "config.h"
 #include "tnt/process.h"
 #include "tnt/tntconfig.h"
 #include <cxxtools/systemerror.h>
@@ -72,17 +73,118 @@ namespace
       throw cxxtools::SystemError("setgid");
   }
 
-  void setUser(const std::string& user)
+#if (HAVE_GETGROUPLIST != 1)
+// Code below snatched from https://gist.github.com/bhaskarvk/6a15083ab9a7997df0a2
+#include <string.h>
+int
+getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+{
+    const struct group *grp;
+    int i, maxgroups, ngroups, ret;
+
+    ret = 0;
+    ngroups = 0;
+    maxgroups = *grpcnt;
+    /*
+     * When installing primary group, duplicate it;
+     * the first element of groups is the effective gid
+     * and will be overwritten when a setgid file is executed.
+     */
+    groups ? groups[ngroups++] = agroup : ngroups++;
+    if (maxgroups > 1)
+        groups ? groups[ngroups++] = agroup : ngroups++;
+    /*
+     * Scan the group file to find additional groups.
+     */
+    setgrent();
+    while ((grp = getgrent()) != NULL) {
+        if (groups) {
+            for (i = 0; i < ngroups; i++) {
+                if (grp->gr_gid == groups[i])
+                    goto skip;
+            }
+        }
+        for (i = 0; grp->gr_mem[i]; i++) {
+            if (!strcmp(grp->gr_mem[i], uname)) {
+                if (ngroups >= maxgroups) {
+                    ret = -1;
+                    break;
+                }
+                groups ? groups[ngroups++] = grp->gr_gid : ngroups++;
+                break;
+            }
+        }
+skip:
+        ;
+    }
+    endgrent();
+    *grpcnt = ngroups;
+    return (ret);
+}
+#define HAVE_GETGROUPLIST 1
+#endif // no HAVE_GETGROUPLIST
+
+  void setUser(const std::string& user, bool allUserGroups)
   {
     struct passwd * pw = getpwnam(user.c_str());
     if (pw == 0)
       throw std::runtime_error("unknown user " + user);
+
+    if (allUserGroups)
+    {
+#if (HAVE_GETGROUPLIST == 1) && (HAVE_SETGROUPS == 1)
+        std::stringstream message;
+        int ngroups = 0;
+        int foundgroups = 0;
+        int foundgroups2 = 0;
+        gid_t tmp_group;
+        ngroups = getgrouplist(user.c_str(), pw->pw_gid, &tmp_group, &foundgroups);
+        if (foundgroups > 0) {
+            gid_t *groups = (gid_t *)malloc(foundgroups * sizeof(gid_t));
+            if (groups != NULL) {
+                foundgroups2 = foundgroups;
+                ngroups = getgrouplist(user.c_str(), pw->pw_gid, groups, &foundgroups);
+                if ( ngroups > 0 && ngroups == foundgroups && foundgroups2 == foundgroups ) {
+                    log_debug("set " << ngroups << " supplementary groups of user " << user << '(' << pw->pw_uid << ')');
+                    setgroups (ngroups, groups);
+                } else {
+                    message << "could not getgrouplist() second time: retrieved " << ngroups << ", found " << foundgroups << ", earlier found " << foundgroups2;
+                    //throw std::runtime_error(message.str());
+                    log_error(message.str());
+                }
+                free(groups);
+            } else {
+                message << "could not malloc for " << foundgroups << " supplementary groups";
+                // throw std::runtime_error( message.str() );
+                log_error(message.str());
+            }
+        } else {
+            message << "could not getgrouplist() first time: retrieved " << ngroups << ", found " << foundgroups;
+            // throw std::runtime_error(message.str());
+            log_error(message.str());
+        }
+#else
+    // throw std::runtime_error("allUserGroups was requested, but support was not compiled in on this platform");
+    log_error("allUserGroups was requested, but support was not compiled in on this platform");
+#endif
+    } else {
+        log_debug("allUserGroups not requested, so not setting supplementary groups of user " << user << '(' << pw->pw_uid << ')');
+    }
 
     log_debug("change user to " << user << '(' << pw->pw_uid << ')');
 
     int ret = ::setuid(pw->pw_uid);
     if (ret != 0)
       throw cxxtools::SystemError("getuid");
+  }
+
+#ifdef __GNUC__
+    // Function with legacy signature is not directly used here now
+    void setUser(const std::string& user)    __attribute__ ((unused)) ;
+#endif
+  void setUser(const std::string& user)
+  {
+    setUser(user, false);
   }
 
   void setDir(const std::string& dir)
@@ -289,7 +391,7 @@ namespace tnt
     if (!tnt::TntConfig::it().user.empty())
     {
       log_debug("set user to \"" << tnt::TntConfig::it().user << '"');
-      ::setUser(tnt::TntConfig::it().user);
+      ::setUser(tnt::TntConfig::it().user, tnt::TntConfig::it().allUserGroups);
     }
 
     if (!tnt::TntConfig::it().dir.empty())

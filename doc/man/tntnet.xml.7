@@ -32,6 +32,14 @@ available. Also the \fB\fCcontent-size\fR can be empty in some cases.
 .fi
 .RE
 .PP
+\fB\fC<allUserGroups>\fR\fIyes|no\fP\fB\fC</allUserGroups>\fR
+.IP
+Specifies that if the \fI<user>\fP is changed for the server process, then the
+groups (primary and secondary) which this account is a member of should
+become the primary GID and supplementary GIDs of this process too.
+.IP
+The legacy default value is \fIno\fP - to avoid surprises during upgrades.
+.PP
 \fB\fC<bufferSize>\fR\fIbytes\fP\fB\fC</bufferSize>\fR
 .IP
 Specifies the number of bytes sent in a single system\-call. This does not

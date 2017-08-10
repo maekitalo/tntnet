@@ -81,6 +81,7 @@ namespace tnt
     unsigned maxRequestSize;
     unsigned maxRequestTime;
     std::string user;
+    bool allUserGroups;
     std::string group;
     std::string dir;
     std::string chrootdir;

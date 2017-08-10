@@ -112,6 +112,7 @@ namespace tnt
     si.getMember("maxRequestSize", config.maxRequestSize);
     si.getMember("maxRequestTime", config.maxRequestTime);
     si.getMember("user", config.user);
+    si.getMember("allUserGroups", config.allUserGroups);
     si.getMember("group", config.group);
     si.getMember("dir", config.dir);
     si.getMember("chrootdir", config.chrootdir);
@@ -163,6 +164,7 @@ namespace tnt
   TntConfig::TntConfig()
     : maxRequestSize(0),
       maxRequestTime(600),
+      allUserGroups(false),
       daemon(false),
       minThreads(5),
       maxThreads(100),
