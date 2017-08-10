@@ -269,6 +269,7 @@ AC_CONFIG_FILES([
     utest/Makefile
     doc/man/Makefile
     etc/Makefile
+    pkgconfig/tntnet.pc
     ])
 
 AC_OUTPUT
