@@ -101,6 +101,7 @@ namespace tnt
               "  -z                compress constant data\n"
               "  -v                verbose\n"
               "  -M                generate dependency for Makefile\n"
+              "  -C, --cmake       generate dependency for cmake\n"
               "  -p                keep path when generating component name from filename\n"
               "  -l log-category   set log category (default: component.compname)\n"
               "  -L                disable generation of #line-directives\n"
@@ -117,6 +118,7 @@ namespace tnt
       _compress = cxxtools::Arg<bool>(argc, argv, 'z');
       _verbose = cxxtools::Arg<bool>(argc, argv, 'v');
       _generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
+      _generateCMakeDependencies = cxxtools::Arg<bool>(argc, argv, 'C') || cxxtools::Arg<bool>(argc, argv, "--cmake");
       _disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
 
       if (_multibinary)
@@ -211,7 +213,7 @@ namespace tnt
             _componentname.erase(_componentname.size() - 5);
           log_debug("componentname(2)=" << _componentname << " ecpp=" << ecpp);
 
-          if (_ofile.empty() && !_generateDependencies)
+          if (_ofile.empty() && !_generateDependencies && !_generateCMakeDependencies)
           {
             _ofile = _inputfile;
             if (ecpp)
@@ -228,11 +230,11 @@ namespace tnt
         }
       }
 
-      if (_ofile.empty() && !_generateDependencies)
+      if (_ofile.empty() && !_generateDependencies && !_generateCMakeDependencies)
         _ofile = _componentname;
 
-      if (_generateDependencies)
-        return runDependencies();
+      if (_generateDependencies || _generateCMakeDependencies)
+        return runDependencies(_generateCMakeDependencies);
       else
         return runGenerator();
     }
@@ -369,7 +371,7 @@ namespace tnt
       return 0;
     }
 
-    int Ecppc::runDependencies()
+    int Ecppc::runDependencies(bool cmake)
     {
       log_trace("runDependencies");
 
@@ -383,11 +385,19 @@ namespace tnt
         runParser(in, generator, false);
 
       if (_ofile.empty())
-        generator.getDependencies(std::cout);
+      {
+        if (cmake)
+            generator.getCMakeDependencies(std::cout);
+        else
+            generator.getDependencies(std::cout);
+      }
       else
       {
         std::ofstream out(_ofile.c_str());
-        generator.getDependencies(out);
+        if (cmake)
+            generator.getCMakeDependencies(out);
+        else
+            generator.getDependencies(out);
       }
 
       return 0;

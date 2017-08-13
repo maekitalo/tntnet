@@ -53,6 +53,7 @@ namespace tnt
         virtual void onInclude(const std::string& file);
 
         void getDependencies(std::ostream& out) const;
+        void getCMakeDependencies(std::ostream& out) const;
     };
   }
 }

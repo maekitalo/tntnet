@@ -9,12 +9,13 @@ ecppc \- compiler for
 .PP
 \fB\fCecppc\fR \fB\fC\-bb\fR \fIfilename\fP ...
 .PP
-\fB\fCecppc\fR [\fB\fCOPRION\fR]
+\fB\fCecppc\fR [\fB\fCOPTION\fR]
 .SH DESCRIPTION
 .PP
 \fB\fCecppc\fR is the compiler for the ecpp\-language. \fB\fCecpp\fR is a template language,
 which lets the user embed C++\-code  into HTML  for  use  in  
 .BR tntnet (8).
+
 \fB\fCecppc\fR generates a C++\-class from a ecpp template. It can also compile binary
 data into a C++\-class, which makes it possible to integrate them in a tntnet
 application.
@@ -66,6 +67,9 @@ This disables normal processing and prints just the ecpp\-dependencies from
 this component. The output can be included into a Makefile. Ecpp\-dependencies
 are introduces by the <%include>\-tag.
 .TP
+\fB\fC\-C, \-\-cmake\fR
+Prints ecpp dependencies in a syntax, which \fB\fCcmake\fR understands.
+.TP
 \fB\fC\-n\fR \fIname\fP
 Set the name of the component. Normally this is derived from the
 source\-file\-name by removing the path and .ecpp\-extension.
@@ -101,8 +105,7 @@ display this information
 display program version
 .SH AUTHOR
 .PP
-This manual page was written by Tommi Mäkitalo 
-\[la]tommi@tntnet.org\[ra]\&.
+This manual page was written by Tommi Mäkitalo \[la]tommi@tntnet.org\[ra]\&.
 .SH SEE ALSO
 .PP
 .BR tntnet (8), 

@@ -55,6 +55,19 @@ namespace tnt
         out << " \\\n  " << *it;
       out << '\n';
     }
+
+    void Dependencygenerator::getCMakeDependencies(std::ostream& out) const
+    {
+      log_trace("getCMakeDependencies");
+
+      std::string::size_type p = _inputfile.find_last_of('.');
+      out << _inputfile.substr(0, p) << ".cpp;" << _inputfile;
+      for (dependencies_type::const_iterator it = _dependencies.begin();
+           it != _dependencies.end(); ++it)
+        out << ';' << *it;
+      out << '\n';
+    }
+
   }
 }
 

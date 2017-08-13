@@ -73,6 +73,9 @@ OPTIONS
   this component. The output can be included into a Makefile. Ecpp-dependencies
   are introduces by the <%include>-tag.
 
+`-C, --cmake`
+  Prints ecpp dependencies in a syntax, which `cmake` understands.
+
 `-n` *name*
   Set the name of the component. Normally this is derived from the
   source-file-name by removing the path and .ecpp-extension.

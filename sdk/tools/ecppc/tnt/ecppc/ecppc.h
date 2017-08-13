@@ -64,11 +64,12 @@ namespace tnt
         bool _compress;
         bool _verbose;
         bool _generateDependencies;
+        bool _generateCMakeDependencies;
         bool _disableLinenumbers;
 
         includes_type _includes;
 
-        int runDependencies();
+        int runDependencies(bool cmake);
         int runGenerator();
         bool runParser(std::istream& in, tnt::ecpp::ParseHandler& handler, bool continueOnError);
 
