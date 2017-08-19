@@ -1,0 +1,5 @@
+debian/tmp/etc/tntnet/			etc/
+debian/tmp/usr/bin/tntnet		usr/bin/
+debian/tmp/usr/share/man/man7/tntnet*	usr/share/man/man7/
+debian/tmp/usr/share/man/man8/		usr/share/man/
+debian/tmp/lib/systemd/system/tntnet*		lib/systemd/system/

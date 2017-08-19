@@ -1,0 +1,10 @@
+Index: tntnet-2.2/doc/man/tntnet.xml.7
+===================================================================
+--- tntnet-2.2.orig/doc/man/tntnet.xml.7	2013-05-20 00:36:30.788428377 +0300
++++ tntnet-2.2/doc/man/tntnet.xml.7	2013-05-20 20:34:22.896950958 +0300
+@@ -1,4 +1,4 @@
+-.TH tntnet.xml 8 "2006\-07\-23" Tntnet "Tntnet users guide"
++.TH tntnet.xml 7 "2006\-07\-23" Tntnet "Tntnet users guide"
+ .SH NAME
+ .PP
+ tntnet.xml \- configuration file for 

@@ -1,0 +1,234 @@
+tntnet (2.2.1-1etn4) unstable; urgency=high
+
+  * Use patch by Gerald for adding SSL cipher list and protocol support
+    (sslCipherList.patch)
+
+ -- Gerald Guillaume <GeraldGuillaume@eaton.com>  Thu, 15 Sep 2016 17:36:47 +0200
+
+tntnet (2.2.1-1etn3) unstable; urgency=high
+
+  * Use patch by Gerald for ECDHE (tntnet_ECDHE_support.patch)
+
+ -- Michal Hrusecky <MichalHrusecky@eaton.com>  Fri, 2 Oct 2015 8:59:42 +0200
+
+tntnet (2.2.1-1etn2) unstable; urgency=high
+
+  * Use monotonic time to measure request duration
+
+ -- Michal Hrusecky <MichalHrusecky@eaton.com>  Tue, 3 Sep 2015 9:31:26 +0200
+
+tntnet (2.2.1-1etn1) unstable; urgency=high
+
+  * Drop init script, use systemd
+
+ -- Michal Hrusecky <MichalHrusecky@eaton.com>  Tue, 9 Jun 2015 9:31:26 +0200
+
+tntnet (2.2.1-1) unstable; urgency=high
+
+  * New upstream release (SONAME 12)
+  * CVE-2013-7299 possibility of passing previous request's headers via
+    malformed HTTP requests fixed (Closes: #735881)
+  * Switch documentRoot to /var/www/html (Closes: #730374)
+  * Bump Standards-Version to 3.9.5 (No changes necessary)
+
+ -- Kari Pahula <kaol@debian.org>  Wed, 22 Jan 2014 19:31:26 +0200
+
+tntnet (2.2-3) unstable; urgency=low
+
+  * Check for zlib in configure. (Closes: #713693)
+
+ -- Kari Pahula <kaol@debian.org>  Fri, 12 Jul 2013 23:08:03 +0300
+
+tntnet (2.2-2) unstable; urgency=low
+
+  * Bump libcxxtools-dev dependency to >= 2.2.
+
+ -- Kari Pahula <kaol@debian.org>  Tue, 21 May 2013 23:52:16 +0300
+
+tntnet (2.2-1) unstable; urgency=low
+
+  * New upstream release (SONAME 11)
+  * Standards-Version 3.9.4 and debhelper compat 9.
+
+ -- Kari Pahula <kaol@debian.org>  Mon, 20 May 2013 21:31:33 +0300
+
+tntnet (2.1-2) unstable; urgency=low
+
+  * Fix FTBFS with g++-4.7 on non-amd64 (Closes: #673739)
+  * Don't use functions directly from gcrypt needlessly if building with
+    gnutls.  (A moot change since we used libssl instead already but hey.)
+    (Closes: #638662)
+  * Add a variable to /etc/default/tntnet to control whether to check that
+    port 80 is available.
+
+ -- Kari Pahula <kaol@debian.org>  Sat, 26 May 2012 13:04:27 +0300
+
+tntnet (2.1-1) unstable; urgency=low
+
+  * New upstream release (SONAME 10)
+    + Buildable with g++-4.7 (Closes: #667394)
+  * Standards-Version: 3.9.3 (no changes necessary).
+  * Use dh-autoreconf.
+  * Run test suite at build time.
+  * Fix the chat demo from tntnet-demos.
+  * Made the init script use log_daemon_msg and friends.
+
+ -- Kari Pahula <kaol@debian.org>  Thu, 03 May 2012 19:28:53 +0300
+
+tntnet (2.0+dfsg1-2) unstable; urgency=low
+
+  * Switch build dep from libgnutls-dev to libssl-dev.  Fixes FTBFS too.
+
+ -- Kari Pahula <kaol@debian.org>  Thu, 25 Aug 2011 01:26:38 +0300
+
+tntnet (2.0+dfsg1-1) unstable; urgency=low
+
+  * New upstream release.  (Closes: #638798, #639082)
+    + Repackaged as +dfsg1 to retain the license in
+      framework/common/{crypt,ioapi,unzip}.h
+  * Parse and use the parallel= DEB_BUILD_OPTION.
+  * Standards-version 3.9.2 (no changes needed).
+  * debian/source/format "quilt (3.0)" and drop quilt as a build
+    dependency.
+
+ -- Kari Pahula <kaol@debian.org>  Wed, 24 Aug 2011 20:09:25 +0300
+
+tntnet (1.6.3-4.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * [debian/patches/ftbfs_gold.diff] Fix FTBFS with
+    --no-copy-dt-needed-entries. Closes: #556495
+  * Stop shipping libtool la files in binary packages. Closes: #610237
+    http://wiki.debian.org/ReleaseGoals/LAFileRemoval
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 16 Apr 2011 09:07:42 +0200
+
+tntnet (1.6.3-4) unstable; urgency=low
+
+  * Call "pkg-config gnutls" to get correct flags. (Closes: #529848)
+  * Added pkg-config, automake, autoconf, libtool as build deps.
+  * Regenerate autotool files at build time.
+  * Standards-Version 3.8.3 (no changes necessary).
+
+ -- Kari Pahula <kaol@debian.org>  Wed, 19 Aug 2009 09:57:52 +0300
+
+tntnet (1.6.3-3) unstable; urgency=low
+
+  * Don't install all the demos in libtntnet-dev, as done in -2 due to
+    a misplaced file glob.
+  * Add a new package tntnet-runtime, that has the runtime plugin
+    /usr/lib/tntnet/tntnet.so.
+  * Removed the runtime plugin's files from libtntnet-dev and libtntnet8.
+
+ -- Kari Pahula <kaol@debian.org>  Sat, 14 Jun 2008 20:25:32 +0300
+
+tntnet (1.6.3-2) unstable; urgency=low
+
+  * Moved ecpp.7 to libtntnet-dev from tntnet.
+  * Moved /usr/lib/tntnet/tntnet.so to libtntnet-dev and
+    /usr/lib/tntnet/tntnet.so.8* to libtntnet8, both from tntnet.
+  * Standards-Version bump to 3.8.0 (no changes necessary)
+
+ -- Kari Pahula <kaol@debian.org>  Sat, 14 Jun 2008 17:30:47 +0300
+
+tntnet (1.6.3-1) unstable; urgency=low
+
+  * New upstream release
+  * SONAME 7 -> 8.
+  * Made libtntnet-dev depend on the shared library package.
+  * Use upstream's Makefile.in files and don't run aclocal and automake
+    during build.
+
+ -- Kari Pahula <kaol@debian.org>  Fri, 06 Jun 2008 09:19:34 +0300
+
+tntnet (1.6.1.2-2) unstable; urgency=low
+
+  * Added missing build dependency, libtool (Closes: #474419)
+
+ -- Kari Pahula <kaol@debian.org>  Mon, 07 Apr 2008 18:57:14 +0300
+
+tntnet (1.6.1.2-1) unstable; urgency=low
+
+  * New upstream release (Closes: #456991)
+  * SONAME 6 -> 7.
+  * Added LIBS=-lpthread to configure's parameters.
+
+ -- Kari Pahula <kaol@debian.org>  Thu, 27 Mar 2008 21:18:40 +0200
+
+tntnet (1.6.0.1-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix FTBFS with gcc-4.3.  Thanks to Kumar Appaiah for the patch.  (Closes:
+    #454837)
+  * Lintian cleanups:
+    - Use utf-8 for debian/copyright.
+    - Add Homepage field to debian/control in place of having it in every
+      package description.
+    - Update to Standards-Version 3.7.3 (no changes needed).
+
+ -- James Vega <jamessan@debian.org>  Mon, 17 Mar 2008 22:06:12 -0400
+
+tntnet (1.6.0.1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Kari Pahula <kaol@debian.org>  Mon, 02 Jul 2007 17:20:17 +0300
+
+tntnet (1.6.0-2) unstable; urgency=low
+
+  * Added missing build-dep zip (Closes: #427531)
+
+ -- Kari Pahula <kaol@debian.org>  Mon, 04 Jun 2007 21:43:40 +0300
+
+tntnet (1.6.0-1) unstable; urgency=low
+
+  * New upstream release (Closes: #417730, #426867)
+  * Updated debian/copyright (was GPL, is LGPL now)
+  * Only start tntnet if port 80 is unbound (Closes: #413186)
+
+ -- Kari Pahula <kaol@debian.org>  Tue, 29 May 2007 20:38:55 +0300
+
+tntnet (1.5.3-2) unstable; urgency=low
+
+  * Moved /usr/sbin/tntnet to /usr/bin/tntnet
+
+ -- Kari Pahula <kaol@debian.org>  Sun,  5 Nov 2006 11:21:34 +0200
+
+tntnet (1.5.3-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Kari Pahula <kaol@debian.org>  Sat, 23 Sep 2006 15:08:55 +0300
+
+tntnet (1.5.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Really added a dependency on libcxxtools-dev for libtntnet-dev
+  * LSBized /etc/init.d/tntnet
+  * Install .js and .png files needed by demos to /usr/share/tntnet/ and
+    configure the default tntnet.conf to seek for /demos/*.{js,png} from
+    there.
+
+ -- Kari Pahula <kaol@debian.org>  Thu, 14 Sep 2006 10:41:13 +0300
+
+tntnet (1.5.1+1.5.2pre3-3) unstable; urgency=low
+
+  * Added a dependency on libcxxtools-dev for libtntnet-dev
+  * Moved /usr/bin/ecpp* to libtntnet-dev package
+  * Removed logrotate script (upstream says that tntnet can rotate its own
+    logs)
+
+ -- Kari Pahula <kaol@debian.org>  Sun, 23 Jul 2006 18:09:06 +0300
+
+tntnet (1.5.1+1.5.2pre3-2) unstable; urgency=low
+
+  * Added missing build-deps libgnutls-dev and libltdl3-dev (Closes: #378042)
+
+ -- Kari Pahula <kaol@debian.org>  Thu, 13 Jul 2006 01:07:28 +0300
+
+tntnet (1.5.1+1.5.2pre3-1) unstable; urgency=low
+
+  * Initial release (Closes: #361010)
+
+ -- Kari Pahula <kaol@debian.org>  Wed, 12 Jul 2006 11:03:28 +0300
+
