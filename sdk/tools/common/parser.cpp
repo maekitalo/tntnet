@@ -126,6 +126,7 @@ namespace tnt
         state_argsvare,
         state_argsval,
         state_argsvalstring,
+        state_argsvalchar,
         state_argscomment0,
         state_argscomment,
         state_argsvalcomment0,
@@ -1008,10 +1009,21 @@ namespace tnt
               value += ch;
               state = state_argsvalstring;
             }
+            else if (ch == '\'')
+            {
+              value += ch;
+              state = state_argsvalchar;
+            }
             else if (ch == '/')
               state = state_argsvalcomment0;
             else
               value += ch;
+            break;
+
+          case state_argsvalchar:
+            if (ch == '\'')
+              state = state_argsval;
+            value += ch;
             break;
 
           case state_argsvalstring:
