@@ -88,43 +88,6 @@ AS_CASE([$sendfile_option],
 AC_CHECK_HEADERS([sys/sendfile.h])
 
 #
-# SSL
-#
-AC_ARG_WITH([ssl],
-  AS_HELP_STRING([--with-ssl=gnutls|openssl|no], [build with SSL support (default is openssl)]),
-  [ssl_option=$withval],
-  [ssl_option=openssl])
-
-AS_CASE([$ssl_option],
-    [gnutls],
-        [PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11], [
-            AC_MSG_RESULT([building with GnuTLS support])
-            AC_DEFINE(WITH_GNUTLS, [], [Define to build with gnutls])
-            with_gnutls=1
-          ],
-          [AC_MSG_ERROR(gnutls >= 2.11 not not found)])
-        ],
-
-    [openssl|yes],
-        [AC_CHECK_HEADER([openssl/ssl.h], [
-            AC_MSG_RESULT([building with OpenSSL support])
-            AC_DEFINE(WITH_OPENSSL, [], [Define to build with openssl])
-            with_openssl=1
-          ],
-          [AC_MSG_ERROR(openssl-headers not not found)])
-        ],
-
-    [no],
-        [AC_MSG_RESULT([building without ssl support])
-        ],
-
-    [AC_MSG_ERROR([unknown ssl-value $ssl_option])]
-)
-
-AM_CONDITIONAL(MAKE_GNUTLS, test x$with_gnutls = x1)
-AM_CONDITIONAL(MAKE_OPENSSL, test x$with_openssl = x1)
-
-#
 # optional components
 #
 AC_ARG_ENABLE([server],

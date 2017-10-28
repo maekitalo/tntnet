@@ -19,14 +19,14 @@
 
 namespace tnt
 {
-  class ListenerBase;
+  class Listener;
   struct TntConfig;
 
   class TntnetImpl : public cxxtools::RefCounted
   {
       friend class Worker;
 
-      typedef std::set<ListenerBase*> listeners_type;
+      typedef std::set<Listener*> listeners_type;
 
       unsigned _minthreads;
       unsigned _maxthreads;

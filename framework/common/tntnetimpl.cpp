@@ -124,40 +124,26 @@ namespace tnt
       listen(app, it->ip, it->port);
     }
 
-#ifdef USE_SSL
-
     for (TntConfig::SslListenersType::const_iterator it = config.ssllisteners.begin(); it != config.ssllisteners.end(); ++it)
     {
       sslListen(app, it->certificate, it->key, it->ip, it->port);
     }
-
-#else
-
-    if (!config.ssllisteners.empty())
-      throwRuntimeError("SslListen is configured but SSL is not compiled into this tntnet");
-
-#endif // USE_SSL
   }
 
   void TntnetImpl::listen(Tntnet& app, const std::string& ip, unsigned short int port)
   {
     log_debug("listen on ip " << ip << " port " << port);
-    ListenerBase* listener = new Listener(app, ip, port, _queue);
+    Listener* listener = new Listener(app, ip, port, _queue);
     _listeners.insert(listener);
     _allListeners.insert(listener);
   }
 
   void TntnetImpl::sslListen(Tntnet& app, const std::string& certificateFile, const std::string& keyFile, const std::string& ip, unsigned short int port)
   {
-#ifdef USE_SSL
     log_debug("listen on ip " << ip << " port " << port << " (ssl)");
-    ListenerBase* listener = new Ssllistener(app, certificateFile.c_str(),
-        keyFile.c_str(), ip, port, _queue);
+    Listener* listener = new Listener(app, ip, port, _queue, certificateFile, keyFile);
     _listeners.insert(listener);
     _allListeners.insert(listener);
-#else
-    log_error("cannot add ssl listener - ssl is not compiled into tntnet");
-#endif // USE_SSL
   }
 
   void TntnetImpl::run()
@@ -185,10 +171,6 @@ namespace tnt
     }
 
     // initialize worker-process
-
-    // set FD_CLOEXEC
-    for (listeners_type::iterator it = _listeners.begin(); it != _listeners.end(); ++it)
-      (*it)->initialize();
 
     // SIGPIPE must be ignored
     ::signal(SIGPIPE, SIG_IGN);
@@ -249,7 +231,7 @@ namespace tnt
 
     log_info("stop listener");
     for (listeners_type::iterator it = _listeners.begin(); it != _listeners.end(); ++it)
-      (*it)->doTerminate();
+      (*it)->terminate();
 
     log_info("stop poller thread");
     _poller.doStop();

@@ -36,52 +36,23 @@
 
 namespace tnt
 {
-  class ListenerBase
-  {
-      std::string _ipaddr;
-      unsigned short int _port;
-
-    public:
-      ListenerBase(const std::string& ipaddr, unsigned short int port)
-        : _ipaddr(ipaddr),
-          _port(port)
-          { }
-      virtual ~ListenerBase() { }
-
-      void terminate();
-      virtual void doTerminate() = 0;
-      virtual void initialize();
-
-      const std::string& getIpaddr() const { return _ipaddr; }
-      unsigned short int getPort() const   { return _port; }
-  };
-
-  class Listener : public ListenerBase
+  class Listener
   {
       cxxtools::net::TcpServer _server;
       Jobqueue& _queue;
 
-    public:
-      Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q);
-
-      virtual void doTerminate();
-      virtual void initialize();
-  };
-
-#ifdef USE_SSL
-  class Ssllistener : public ListenerBase
-  {
-      SslServer _server;
-      Jobqueue& _queue;
+      std::string _certificateFile;
+      std::string _privateKeyFile;
+      int _sslVerifyLevel;
+      std::string _sslCa;
 
     public:
-      Ssllistener(Tntnet& application, const char* certificateFile, const char* keyFile,
-          const std::string& ipaddr, unsigned short int port, Jobqueue& q);
+      Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q,
+        const std::string& certificateFile = std::string(), const std::string& privateKeyFile = std::string(),
+        int sslVerifyLevel = 0, const std::string& sslCa = std::string());
 
-      virtual void doTerminate();
-      virtual void initialize();
+      void terminate();
   };
-#endif // USE_SSL
 
 }
 

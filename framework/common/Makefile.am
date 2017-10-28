@@ -112,7 +112,6 @@ noinst_HEADERS = \
 	tnt/listener.h \
 	tnt/poller.h \
 	tnt/pollerimpl.h \
-	tnt/ssl.h \
 	tnt/tcpjob.h \
 	tnt/util.h \
 	tnt/worker.h \
@@ -121,23 +120,3 @@ noinst_HEADERS = \
 libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\"
 libtntnet_la_LDFLAGS = -version-info @sonumber@ @SHARED_LIB_FLAG@
 libtntnet_la_LIBADD = -lz -lcxxtools
-
-if MAKE_GNUTLS
-libtntnet_la_SOURCES += \
-	gnutls.cpp
-
-noinst_HEADERS += \
-	tnt/gnutls.h
-
-libtntnet_la_LIBADD += $(GNUTLS_LIBS)
-endif
-
-if MAKE_OPENSSL
-libtntnet_la_SOURCES += \
-	openssl.cpp
-
-noinst_HEADERS += \
-	tnt/openssl.h
-
-libtntnet_la_LIBADD += -lssl -lcrypto
-endif

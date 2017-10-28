@@ -32,7 +32,6 @@
 
 #include <tnt/job.h>
 #include <cxxtools/net/tcpstream.h>
-#include <tnt/ssl.h>
 #include <tnt/socketif.h>
 #include <tnt/tntconfig.h>
 
@@ -42,12 +41,16 @@ namespace tnt
 {
   class Tcpjob : public Job, private SocketIf
   {
-      cxxtools::net::iostream _socket;
+      cxxtools::net::TcpStream _socket;
       const cxxtools::net::TcpServer& _listener;
       Jobqueue& _queue;
 
+      std::string _certificateFile;
+      std::string _privateKeyFile;
+      int _sslVerifyLevel;
+      std::string _sslCa;
+
       void accept();
-      void handshake();
       void regenerateJob();
 
       virtual std::string getPeerIp() const;
@@ -55,11 +58,17 @@ namespace tnt
       virtual bool isSsl() const;
 
     public:
-      Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener, Jobqueue& queue)
+      Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener, Jobqueue& queue,
+        const std::string& certificateFile, const std::string& privateKeyFile,
+        int sslVerifyLevel, const std::string& sslCa)
         : Job(app, this),
           _socket(TntConfig::it().socketBufferSize, TntConfig::it().socketReadTimeout),
           _listener(listener),
-          _queue(queue)
+          _queue(queue),
+          _certificateFile(certificateFile),
+          _privateKeyFile(privateKeyFile),
+          _sslVerifyLevel(sslVerifyLevel),
+          _sslCa(sslCa)
         { }
 
       std::iostream& getStream();
@@ -67,36 +76,6 @@ namespace tnt
       void setRead();
       void setWrite();
   };
-
-#ifdef USE_SSL
-  class SslTcpjob : public Job, private SocketIf
-  {
-      ssl_iostream _socket;
-      const SslServer& _listener;
-      Jobqueue& _queue;
-
-      void accept();
-      void handshake();
-      void regenerateJob();
-
-      virtual std::string getPeerIp() const;
-      virtual std::string getServerIp() const;
-      virtual bool isSsl() const;
-
-    public:
-      SslTcpjob(Tntnet& app, const SslServer& listener, Jobqueue& queue)
-        : Job(app, this),
-          _socket(TntConfig::it().socketBufferSize, TntConfig::it().socketReadTimeout),
-          _listener(listener),
-          _queue(queue)
-        { }
-
-      std::iostream& getStream();
-      int getFd() const;
-      void setRead();
-      void setWrite();
-  };
-#endif // USE_SSL
 }
 
 #endif // TNT_TCPJOB_H

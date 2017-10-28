@@ -29,7 +29,6 @@
 
 #include "tnt/tcpjob.h"
 #include "tntnetimpl.h"
-#include "tnt/ssl.h"
 
 #include <cxxtools/log.h>
 
@@ -37,8 +36,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
-#include <config.h>
 
 log_define("tntnet.tcpjob")
 
@@ -75,7 +72,8 @@ namespace tnt
     if (TntnetImpl::shouldStop())
       p = this;
     else
-      p = new Tcpjob(getRequest().getApplication(), _listener, _queue);
+      p = new Tcpjob(getRequest().getApplication(), _listener, _queue,
+                     _certificateFile, _privateKeyFile, _sslVerifyLevel, _sslCa);
 
     _queue.put(p);
   }
@@ -97,6 +95,16 @@ namespace tnt
       }
 
       regenerateJob();
+
+      if (!_certificateFile.empty())
+      {
+        _socket.socket().loadSslCertificateFile(_certificateFile, _privateKeyFile);
+        _socket.socket().setSslVerify(_sslVerifyLevel, _sslCa);
+
+        _socket.sslAccept();
+        touch();
+      }
+
     }
 
     return _socket;
@@ -116,94 +124,6 @@ namespace tnt
   {
     _socket.setTimeout(TntConfig::it().socketWriteTimeout);
   }
-
-#ifdef USE_SSL
-  ////////////////////////////////////////////////////////////////////////
-  // SslTcpjob
-  //
-
-  std::string SslTcpjob::getPeerIp() const
-  {
-    return _socket.getPeerAddr();
-  }
-
-  std::string SslTcpjob::getServerIp() const
-  {
-    return _socket.getSockAddr();
-  }
-
-  bool SslTcpjob::isSsl() const
-  {
-    return true;
-  }
-
-  void SslTcpjob::accept()
-  {
-    _socket.accept(_listener);
-  }
-
-  void SslTcpjob::handshake()
-  {
-    _socket.handshake(_listener);
-
-    fcntl(_socket.getFd(), F_SETFD, FD_CLOEXEC);
-
-    setRead();
-  }
-
-  void SslTcpjob::regenerateJob()
-  {
-    Jobqueue::JobPtr p;
-
-    if (TntnetImpl::shouldStop())
-      p = this;
-    else
-      p = new SslTcpjob(getRequest().getApplication(), _listener, _queue);
-
-    _queue.put(p);
-  }
-
-  std::iostream& SslTcpjob::getStream()
-  {
-    if (!_socket.isConnected())
-    {
-      try
-      {
-        accept();
-        touch();
-      }
-      catch (const std::exception& e)
-      {
-        log_debug("exception occured in accept (ssl): " << e.what());
-        regenerateJob();
-        throw;
-      }
-
-      regenerateJob();
-
-      if (!TntnetImpl::shouldStop())
-        handshake();
-    }
-
-    return _socket;
-  }
-
-  int SslTcpjob::getFd() const
-  {
-    return _socket.getFd();
-  }
-
-  void SslTcpjob::setRead()
-  {
-    _socket.setTimeout(TntConfig::it().socketReadTimeout);
-  }
-
-  void SslTcpjob::setWrite()
-  {
-    _socket.setTimeout(TntConfig::it().socketWriteTimeout);
-  }
-
-#endif // USE_SSL
 
   //////////////////////////////////////////////////////////////////////
   // Jobqueue

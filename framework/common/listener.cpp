@@ -35,14 +35,6 @@
 #include <unistd.h>
 #include "config.h"
 
-#ifdef WITH_GNUTLS
-#  include "tnt/gnutls.h"
-#endif
-
-#ifdef WITH_OPENSSL
-#  include "tnt/openssl.h"
-#endif
-
 log_define("tntnet.listener")
 
 namespace tnt
@@ -50,7 +42,7 @@ namespace tnt
   namespace
   {
     void doListenRetry(cxxtools::net::TcpServer& server,
-      const char* ipaddr, unsigned short int port)
+      const std::string& ipaddr, unsigned short int port)
     {
       for (unsigned n = 1; true; ++n)
       {
@@ -83,59 +75,27 @@ namespace tnt
     }
   }
 
-  void ListenerBase::terminate()
+  Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q,
+    const std::string& certificateFile, const std::string& privateKeyFile,
+    int sslVerifyLevel, const std::string& sslCa)
+    : _queue(q),
+      _certificateFile(certificateFile),
+      _privateKeyFile(privateKeyFile),
+      _sslVerifyLevel(sslVerifyLevel),
+      _sslCa(sslCa)
   {
-    log_info("stop listener " << _ipaddr << ':' << _port);
-    doTerminate();
-  }
-
-  void ListenerBase::initialize()
-    { }
-
-  Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q)
-    : ListenerBase(ipaddr, port),
-      _queue(q)
-  {
-    doListenRetry(_server, ipaddr.c_str(), port);
-    Jobqueue::JobPtr p = new Tcpjob(application, _server, _queue);
+    log_info("listen ip=" << ipaddr << " port=" << port);
+    doListenRetry(_server, ipaddr, port);
+    Jobqueue::JobPtr p = new Tcpjob(application, _server, _queue,
+                                    certificateFile, privateKeyFile,
+                                    sslVerifyLevel, sslCa);
     _queue.put(p);
   }
 
-  void Listener::doTerminate()
-    { _server.terminateAccept(); }
-
-  void Listener::initialize()
-    { log_info("listen ip=" << getIpaddr() << " port=" << getPort()); }
-
-#ifdef WITH_GNUTLS
-#define USE_SSL
-
-#endif
-
-#ifdef WITH_OPENSSL
-#define USE_SSL
-
-#endif
-
-#ifdef USE_SSL
-  Ssllistener::Ssllistener(Tntnet& application, const char* certificateFile,
-      const char* keyFile, const std::string& ipaddr, unsigned short int port,
-      Jobqueue& q)
-    : ListenerBase(ipaddr, port),
-      _server(certificateFile, keyFile),
-      _queue(q)
+  void Listener::terminate()
   {
-    doListenRetry(_server, ipaddr.c_str(), port);
-    Jobqueue::JobPtr p = new SslTcpjob(application, _server, _queue);
-    _queue.put(p);
+    log_info("stop listener");
+    _server.terminateAccept();
   }
 
-  void Ssllistener::doTerminate()
-    { _server.terminateAccept(); }
-
-  void Ssllistener::initialize()
-    { log_info("listen ip=" << getIpaddr() << " port=" << getPort() << " (ssl)"); }
-
-#endif // USE_SSL
 }
-
