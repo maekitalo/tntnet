@@ -126,7 +126,7 @@ namespace tnt
 
     for (TntConfig::SslListenersType::const_iterator it = config.ssllisteners.begin(); it != config.ssllisteners.end(); ++it)
     {
-      sslListen(app, it->certificate, it->key, it->ip, it->port);
+      sslListen(app, it->ip, it->port, it->certificate, it->key, it->sslVerifyLevel, it->sslCa);
     }
   }
 
@@ -138,10 +138,13 @@ namespace tnt
     _allListeners.insert(listener);
   }
 
-  void TntnetImpl::sslListen(Tntnet& app, const std::string& certificateFile, const std::string& keyFile, const std::string& ip, unsigned short int port)
+  void TntnetImpl::sslListen(Tntnet& app,
+                     const std::string& ipaddr, unsigned short int port,
+                     const std::string& certificateFile, const std::string& keyFile,
+                     int sslVerifyLevel, const std::string& sslCa)
   {
-    log_debug("listen on ip " << ip << " port " << port << " (ssl)");
-    Listener* listener = new Listener(app, ip, port, _queue, certificateFile, keyFile);
+    log_debug("listen on ip " << ipaddr << " port " << port << " (ssl)");
+    Listener* listener = new Listener(app, ipaddr, port, _queue, certificateFile, keyFile, sslVerifyLevel, sslCa);
     _listeners.insert(listener);
     _allListeners.insert(listener);
   }

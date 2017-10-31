@@ -65,8 +65,9 @@ namespace tnt
       void listen(Tntnet& app, const std::string& ipaddr, unsigned short int port);
 
       void sslListen(Tntnet& app,
+                     const std::string& ipaddr, unsigned short int port,
                      const std::string& certificateFile, const std::string& keyFile,
-                     const std::string& ipaddr, unsigned short int port);
+                     int sslVerifyLevel, const std::string& sslCa);
 
       void run();
 

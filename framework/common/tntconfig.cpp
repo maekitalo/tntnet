@@ -110,6 +110,11 @@ namespace tnt
 
     if (!si.getMember("key", ssllistener.key))
       ssllistener.key = ssllistener.certificate;
+
+    ssllistener.sslVerifyLevel = 0;
+    if (si.getMember("sslVerifyLevel", ssllistener.sslVerifyLevel)
+        && ssllistener.sslVerifyLevel > 0)
+          si.getMember("sslCa") >>= ssllistener.sslCa;
   }
 
   void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config)

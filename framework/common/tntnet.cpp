@@ -74,9 +74,11 @@ namespace tnt
     _impl->listen(*this, ip, port);
   }
 
-  void Tntnet::sslListen(const std::string& certificateFile, const std::string& keyFile, const std::string& ip, unsigned short int port)
+  void Tntnet::sslListen(const std::string& ipaddr, unsigned short int port,
+                         const std::string& certificateFile, const std::string& keyFile,
+                         int sslVerifyLevel, const std::string& sslCa)
   {
-    _impl->sslListen(*this, certificateFile, keyFile, ip, port);
+    _impl->sslListen(*this, ipaddr, port, certificateFile, keyFile, sslVerifyLevel, sslCa);
   }
 
   void Tntnet::run()

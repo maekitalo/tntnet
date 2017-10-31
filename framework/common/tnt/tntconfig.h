@@ -131,6 +131,8 @@ namespace tnt
     {
       std::string certificate;
       std::string key;
+      int sslVerifyLevel;
+      std::string sslCa;
     };
 
     typedef std::vector<Mapping> MappingsType;

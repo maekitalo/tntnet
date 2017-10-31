@@ -127,8 +127,14 @@ namespace tnt
 
           See listen() for more information.
        */
+      void sslListen(const std::string& ipaddr, unsigned short int port,
+                     const std::string& certificateFile, const std::string& keyFile = std::string(),
+                     int sslVerifyLevel = 0, const std::string& sslCa = std::string());
+
+      /// @deprecated
       void sslListen(const std::string& certificateFile, const std::string& keyFile,
-                     const std::string& ipaddr, unsigned short int port);
+                     const std::string& ipaddr, unsigned short int port)
+      { sslListen(ipaddr, port, certificateFile, keyFile); }
 
       /** Set up a ssl listener for the specified port which listens on all local interfaces
 
