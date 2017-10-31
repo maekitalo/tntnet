@@ -56,7 +56,7 @@ namespace tnt
 
   bool Tcpjob::isSsl() const
   {
-    return false;
+    return !_certificateFile.empty();
   }
 
   void Tcpjob::accept()
