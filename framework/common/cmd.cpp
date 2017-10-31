@@ -28,6 +28,7 @@
 
 
 #include <tnt/cmd.h>
+#include <cxxtools/sslcertificate.h>
 #include <cxxtools/log.h>
 
 log_define("tntnet.cmd")
@@ -49,6 +50,8 @@ namespace tnt
         std::string getPeerIp() const   { return std::string(); }
         std::string getServerIp() const { return std::string(); }
         bool isSsl() const              { return _ssl; }
+        cxxtools::SslCertificate getSslCertificate() const
+          { return cxxtools::SslCertificate(); }
     };
 
     NullSocketIf socketIf(false);

@@ -59,6 +59,11 @@ namespace tnt
     return !_certificateFile.empty();
   }
 
+  cxxtools::SslCertificate Tcpjob::getSslCertificate() const
+  {
+    return _socket.getSslPeerCertificate();
+  }
+
   void Tcpjob::accept()
   {
     _socket.accept(_listener);

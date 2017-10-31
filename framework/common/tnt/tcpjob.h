@@ -56,6 +56,7 @@ namespace tnt
       virtual std::string getPeerIp() const;
       virtual std::string getServerIp() const;
       virtual bool isSsl() const;
+      virtual cxxtools::SslCertificate getSslCertificate() const;
 
     public:
       Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener, Jobqueue& queue,

@@ -43,6 +43,7 @@
 #include <locale>
 #include <map>
 #include <cxxtools/atomicity.h>
+#include <cxxtools/sslcertificate.h>
 #include <string>
 #include <cstring>
 
@@ -202,6 +203,14 @@ namespace tnt
 
       /// Get the IP the request was sent from
       std::string getPeerIp() const   { return _socketIf ? _socketIf->getPeerIp()   : std::string(); }
+
+      cxxtools::SslCertificate getSslCertificate() const
+      {
+        cxxtools::SslCertificate ret;
+        if (_socketIf)
+          ret = _socketIf->getSslCertificate();
+        return ret;
+      }
 
       /// Get the IP the request was sent to
       std::string getServerIp() const { return _socketIf ? _socketIf->getServerIp() : std::string(); }
