@@ -1,3 +1,9 @@
+tntnet (2.2.1-1etn5) unstable; urgency=high
+
+  * Enable debug symbol debian packages
+
+ -- Jim Klimov <EvgenyKlimov@eaton.com>  Thu, 9 Nov 2017 15:09:45 +0200
+
 tntnet (2.2.1-1etn4) unstable; urgency=high
 
   * Use patch by Gerald for adding SSL cipher list and protocol support

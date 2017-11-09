@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Nov 10 13:09:45 UTC 2017 - EvgenyKlimov@eaton.com
+
+- enable debug-symbol debian packages
+
+-------------------------------------------------------------------
 Fri Nov 11 09:45:15 UTC 2016 - michalvyskocil@eaton.com
 
 - add patches

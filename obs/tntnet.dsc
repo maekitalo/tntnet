@@ -1,8 +1,8 @@
 Format: 1.0
 Source: tntnet
-Binary: tntnet, tntnet-doc, tntnet-demos, libtntnet12, libtntnet-dev, tntnet-runtime
+Binary: tntnet, tntnet-doc, tntnet-demos, libtntnet12, libtntnet-dev, tntnet-runtime, tntnet-dbg
 Architecture: any all
-Version: 2.2.1-1etn4
+Version: 2.2.1-1etn5
 Maintainer: Kari Pahula <kaol@debian.org>
 Homepage: http://www.tntnet.org/
 Standards-Version: 3.9.5
@@ -14,4 +14,5 @@ Package-List:
  tntnet-demos deb doc extra
  tntnet-doc deb doc extra
  tntnet-runtime deb httpd extra
+ tntnet-dbg deb debug extra
 DEBTRANSFORM-TAR: tntnet-2.2.1.tar.gz
