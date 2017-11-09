@@ -204,3 +204,10 @@ Conflicts: tntnet (<< 1.6.3-3)
 Replaces: tntnet-dev (<< 1.6.3-3)
 Description: Tntnet runtime system
  This package has the runtime system for tntnet web server.
+
+Package: tntnet-dbg
+Architecture: any
+Section: debug
+Priority: optional
+Depends: tntnet (= ${binary:Version}), ${misc:Depends}
+Description: tntnet debugging symbols

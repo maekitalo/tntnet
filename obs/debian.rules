@@ -20,3 +20,6 @@ ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 binary-post-install/tntnet::
 	cd utest; ./utest || /bin/true
 endif
+
+override_dh_strip:
+	dh_strip --dbg-package=tntnet-dbg
