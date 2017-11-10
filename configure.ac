@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 2.2.1, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT([tntnet], [2.2.1], [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
