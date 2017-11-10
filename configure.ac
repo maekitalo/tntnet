@@ -1,3 +1,4 @@
+# This is upstream tntnet-2.2.1 with tweaks for 42ity project
 AC_INIT([tntnet], [2.2.1], [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 
