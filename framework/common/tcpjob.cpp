@@ -89,6 +89,7 @@ namespace tnt
     {
       try
       {
+        log_debug("accept socket");
         accept();
         touch();
       }
@@ -100,16 +101,20 @@ namespace tnt
       }
 
       regenerateJob();
+    }
 
-      if (!_certificateFile.empty())
+    if (!_socket.isSslConnected() && !_certificateFile.empty())
+    {
+      if (!_sslInitialized)
       {
         _socket.socket().loadSslCertificateFile(_certificateFile, _privateKeyFile);
         _socket.socket().setSslVerify(_sslVerifyLevel, _sslCa);
-
-        _socket.sslAccept();
-        touch();
+        _sslInitialized = true;
       }
 
+      log_debug("accept ssl " << getFd());
+      _socket.sslAccept();
+      touch();
     }
 
     return _socket;
