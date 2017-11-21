@@ -387,62 +387,69 @@ namespace tnt
       log_info("send file \"" << file << "\" size " << st.st_size << " bytes; offset=" << offset << " count=" << count);
 
 #if defined(HAVE_SENDFILE) && defined(HAVE_SYS_SENDFILE_H)
-      int on = 1;
-      int off = 0;
-      try
+      if (request.isSsl())
       {
-        cxxtools::net::iostream& tcpStream = dynamic_cast<cxxtools::net::iostream&>(reply.getDirectStream());
-
-        if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
-            &off, sizeof(off)) < 0)
-          throw cxxtools::SystemError("setsockopt(TCP_NODELAY)");
-
-        if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
-            &on, sizeof(on)) < 0)
-          throw cxxtools::SystemError("setsockopt(TCP_CORK)");
-
-        reply.setDirectMode(httpOkReturn, HttpReturn::httpMessage(httpOkReturn));
-        tcpStream.flush();
-
-        Fdfile in(file.c_str(), O_RDONLY);
-        ssize_t s;
-        while(tcpStream)
+        log_debug("no sendfile on ssl");
+      }
+      else
+      {
+        try
         {
-          do
+          int on = 1;
+          int off = 0;
+
+          cxxtools::net::iostream& tcpStream = dynamic_cast<cxxtools::net::iostream&>(reply.getDirectStream());
+
+          if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
+              &off, sizeof(off)) < 0)
+            throw cxxtools::SystemError("setsockopt(TCP_NODELAY)");
+
+          if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
+              &on, sizeof(on)) < 0)
+            throw cxxtools::SystemError("setsockopt(TCP_CORK)");
+
+          reply.setDirectMode(httpOkReturn, HttpReturn::httpMessage(httpOkReturn));
+          tcpStream.flush();
+
+          Fdfile in(file.c_str(), O_RDONLY);
+          ssize_t s;
+          while(tcpStream)
           {
-            log_debug("sendfile offset " << offset << " size " << count);
-            s = sendfile(tcpStream.getFd(), in.getFd(), &offset, count);
-            log_debug("sendfile returns " << s);
-          } while (s < 0 && errno == EINTR);
+            do
+            {
+              log_debug("sendfile offset " << offset << " size " << count);
+              s = sendfile(tcpStream.getFd(), in.getFd(), &offset, count);
+              log_debug("sendfile returns " << s);
+            } while (s < 0 && errno == EINTR);
 
-          if (s < 0 && errno != EAGAIN)
-            throw cxxtools::SystemError("sendfile");
+            if (s < 0 && errno != EAGAIN)
+              throw cxxtools::SystemError("sendfile");
 
-          if (offset >= count || s == 0)
-            break;
+            if (offset >= count || s == 0)
+              break;
 
-          log_debug("poll");
-          pollout(tcpStream.getFd(), tcpStream.getTimeout());
+            log_debug("poll");
+            pollout(tcpStream.getFd(), tcpStream.getTimeout());
+          }
+
+          if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
+              &off, sizeof(off)) < 0)
+            throw cxxtools::SystemError("setsockopt(TCP_CORK)");
+
+          if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
+              &on, sizeof(on)) < 0)
+            throw cxxtools::SystemError("setsockopt(TCP_NODELAY)");
+
+          return httpOkReturn;
         }
-
-        if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_CORK,
-            &off, sizeof(off)) < 0)
-          throw cxxtools::SystemError("setsockopt(TCP_CORK)");
-
-        if (::setsockopt(tcpStream.getFd(), SOL_TCP, TCP_NODELAY,
-            &on, sizeof(on)) < 0)
-          throw cxxtools::SystemError("setsockopt(TCP_NODELAY)");
-
-        return httpOkReturn;
+        catch (const std::bad_cast& e)
+        {
+          log_debug("stream is no tcpstream - don't use sendfile");
+        }
       }
-      catch (const std::bad_cast& e)
-      {
-        log_debug("stream is no tcpstream - don't use sendfile");
-        reply.setDirectMode();
-      }
-#else
-      reply.setDirectMode();
 #endif
+
+      reply.setDirectMode();
     }
 
     std::ifstream in(file.c_str());
