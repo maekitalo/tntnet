@@ -58,6 +58,7 @@ pipeline {
                     }
         }
         stage ('configure') {
+                    steps {
                         sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; ./configure'
                     }
         }
