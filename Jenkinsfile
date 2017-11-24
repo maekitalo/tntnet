@@ -76,9 +76,9 @@ pipeline {
                                 sh 'echo "Are GitIgnores good after make check? (should have no output below)"; git status -s || true'
                             }
                           } else {
-                              timeout (time: 5, unit: 'MINUTES') {
-                                  sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make check'
-                              }
+                                timeout (time: 5, unit: 'MINUTES') {
+                                    sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make check'
+                                }
                           }
                         }
                     }
@@ -97,10 +97,10 @@ pipeline {
                                 sh 'echo "Are GitIgnores good after make memcheck? (should have no output below)"; git status -s || true'
                               }
                           } else {
-                              timeout (time: 5, unit: 'MINUTES') {
-                                  sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make memcheck && exit 0 ; echo "Re-running failed ($?) memcheck with greater verbosity" >&2 ; make VERBOSE=1 memcheck-verbose'
-                              }
-                              sh 'echo "Are GitIgnores good after make memcheck? (should have no output below)"; git status -s || true'
+                                timeout (time: 5, unit: 'MINUTES') {
+                                    sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make memcheck && exit 0 ; echo "Re-running failed ($?) memcheck with greater verbosity" >&2 ; make VERBOSE=1 memcheck-verbose'
+                                }
+                                sh 'echo "Are GitIgnores good after make memcheck? (should have no output below)"; git status -s || true'
                           }
                       }
                     }
