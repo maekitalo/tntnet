@@ -57,9 +57,12 @@ pipeline {
                         sh './autogen.sh'
                     }
         }
+        stage ('configure') {
+                        sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; ./configure'
+                    }
+        }
         stage ('compile') {
                     steps {
-                        sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; ./configure'
                         sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make -k -j4 || make'
                         sh 'echo "Are GitIgnores good after make? (should have no output below)"; git status -s || true'
                         script {
