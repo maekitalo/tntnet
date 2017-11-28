@@ -64,6 +64,9 @@ pipeline {
         stage ('cppcheck') {
                     when { expression { return ( params.DO_CPPCHECK ) } }
                     steps {
+                        dir("tmp") {
+                            deleteDir()
+                        }
                         sh 'cppcheck --std=c++11 --enable=all --inconclusive --xml --xml-version=2 . 2>cppcheck.xml'
                         archiveArtifacts artifacts: '**/cppcheck.xml'
                         sh 'rm -f cppcheck.xml'
@@ -71,6 +74,9 @@ pipeline {
         }
         stage ('prepare') {
                     steps {
+                        dir("tmp") {
+                            deleteDir()
+                        }
                         sh './autogen.sh'
                     }
         }
