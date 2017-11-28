@@ -24,7 +24,7 @@ Summary:        Tntnet is a web application server for web applications written 
 License:        GPL-2.0
 Group:          Productivity/Networking/Web/Servers
 Url:            http://www.tntnet.org/index.html
-Source0:        tntnet-%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 Source1:        debian.tntnet@.service
 #Patch0:         libz_compress_713693.patch
 #Patch1:         alldemos_path.patch
@@ -36,6 +36,8 @@ Source1:        debian.tntnet@.service
 #Patch7:         tntnet_ECDHE_support.patch
 #Patch8:         sslCipherList.patch
 #Patch9:         0002-tntnet-2.2.1-allUserGroups.patch
+BuildRequires:  automake
+BuildRequires:  autoconf
 BuildRequires:  findutils
 BuildRequires:  gcc-c++
 BuildRequires:  glibc-devel
@@ -44,6 +46,7 @@ BuildRequires:  pkgconfig(cxxtools)
 BuildRequires:  lzo
 BuildRequires:  lzo-devel
 BuildRequires:  pkgconfig(openssl)
+BuildRequires:  libtool
 BuildRequires:  systemd-devel
 BuildRequires:  zip
 BuildRequires:  pkgconfig(zlib)
@@ -121,6 +124,7 @@ cp -r sdk/demos sdk/demos-pure
 #%patch9 -p1
 
 %build
+./autogen.sh
 %configure
 make %{?_smp_mflags}
 
