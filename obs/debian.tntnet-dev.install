@@ -1,1 +1,2 @@
 debian/tmp/usr/share/man/man7/ecpp*	usr/share/man/
+debian/tmp/usr/lib/pkgconfig/*		usr/lib/pkgconfig/
