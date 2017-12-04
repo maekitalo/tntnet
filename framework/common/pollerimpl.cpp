@@ -94,6 +94,7 @@ namespace tnt
   void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
   {
     {
+      log_debug("add idle socket " << job.getFd());
       cxxtools::MutexLock lock(_mutex);
       _newJobs.push_back(job);
       job = 0;
@@ -272,6 +273,7 @@ namespace tnt
     if (!_newJobs.empty())
     {
       // append new jobs to current
+      log_trace("append " << _newJobs.size() << " sockets to poll");
       time_t currentTime;
       time(&currentTime);
       for (jobs_type::iterator it = _newJobs.begin();
