@@ -62,6 +62,8 @@ namespace tnt
 
   void PollerImpl::addFd(int fd)
   {
+    log_trace("addFd(" << fd << ')');
+
     epoll_event e;
     e.events = EPOLLIN;
     e.data.fd = fd;
@@ -105,19 +107,27 @@ namespace tnt
     if (!_newJobs.empty())
     {
       // append new jobs to current
+      log_trace("append " << _newJobs.size() << " sockets to poll");
       time_t currentTime;
       time(&currentTime);
       for (new_jobs_type::iterator it = _newJobs.begin();
            it != _newJobs.end(); ++it)
       {
-        addFd((*it)->getFd());
-        _jobs[(*it)->getFd()] = *it;
+        try
+        {
+          addFd((*it)->getFd());
+          _jobs[(*it)->getFd()] = *it;
 
-        int msec = (*it)->msecToTimeout(currentTime);
-        if (_pollTimeout < 0)
-          _pollTimeout = msec;
-        else if (msec < _pollTimeout)
-          _pollTimeout = msec;
+          int msec = (*it)->msecToTimeout(currentTime);
+          if (_pollTimeout < 0)
+            _pollTimeout = msec;
+          else if (msec < _pollTimeout)
+            _pollTimeout = msec;
+        }
+        catch (const std::exception& e)
+        {
+          log_error("failed to add fd " << (*it)->getFd() << " to poll: " << e.what());
+        }
       }
 
       _newJobs.clear();
@@ -370,6 +380,7 @@ namespace tnt
   void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
   {
     {
+      log_debug("add idle socket " << job.getFd());
       cxxtools::MutexLock lock(_mutex);
       _newJobs.push_back(job);
       job = 0;
