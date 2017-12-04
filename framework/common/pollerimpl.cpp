@@ -94,7 +94,7 @@ namespace tnt
   void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
   {
     {
-      log_debug("add idle socket " << job.getFd());
+      log_debug("add idle socket " << job->getFd());
       cxxtools::MutexLock lock(_mutex);
       _newJobs.push_back(job);
       job = 0;
