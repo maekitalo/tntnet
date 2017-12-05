@@ -93,6 +93,13 @@ namespace tnt
 
   void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
   {
+    if (job->getFd() == -1)
+    {
+      log_debug("ignore idle socket which is not connected any more");
+      cxxtools::MutexLock lock(_mutex);
+      job = 0;
+    }
+    else
     {
       log_debug("add idle socket " << job->getFd());
       cxxtools::MutexLock lock(_mutex);
@@ -381,6 +388,13 @@ namespace tnt
 
   void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
   {
+    if (job->getFd() == -1)
+    {
+      log_debug("ignore idle socket which is not connected any more");
+      cxxtools::MutexLock lock(_mutex);
+      job = 0;
+    }
+    else
     {
       log_debug("add idle socket " << job.getFd());
       cxxtools::MutexLock lock(_mutex);
