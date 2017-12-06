@@ -91,10 +91,6 @@ namespace tnt
        */
       unsigned notAuthorized(const std::string& realm);
 
-      // TODO: Why does this exist?
-      /// alias for notAuthorized
-      unsigned notAuthorised(const std::string& realm) { return notAuthorized(realm); }
-
       void sendReply(unsigned ret, const char* msg = "OK");
       void sendReply(unsigned ret, const std::string& msg)
         { sendReply(ret, msg.c_str()); }
