@@ -91,9 +91,9 @@ namespace tnt
        */
       unsigned notAuthorized(const std::string& realm);
 
-      void sendReply(unsigned ret, const char* msg = "OK");
-      void sendReply(unsigned ret, const std::string& msg)
-        { sendReply(ret, msg.c_str()); }
+      bool sendReply(unsigned ret, const char* msg = "OK");
+      bool sendReply(unsigned ret, const std::string& msg)
+        { return sendReply(ret, msg.c_str()); }
 
       /// Get output stream
       std::ostream& out()    { return *_currentOutstream; }

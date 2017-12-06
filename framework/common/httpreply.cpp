@@ -457,7 +457,7 @@ namespace tnt
     }
   }
 
-  void HttpReply::sendReply(unsigned ret, const char* msg)
+  bool HttpReply::sendReply(unsigned ret, const char* msg)
   {
     log_debug("sendReply");
     if (_currentOutstream == &_impl->chunkedOutstream)
@@ -473,6 +473,7 @@ namespace tnt
     }
 
     _impl->socket->flush();
+    return *_impl->socket;
   }
 
   void HttpReply::setMd5Sum()

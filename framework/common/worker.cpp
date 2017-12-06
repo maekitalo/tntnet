@@ -193,6 +193,7 @@ namespace tnt
       }
       catch (const cxxtools::IOTimeout& e)
       {
+        log_debug("IOTimeout");
         _application.getPoller().addIdleJob(j);
       }
       catch (const cxxtools::net::AcceptTerminated&)
@@ -469,20 +470,20 @@ namespace tnt
             _application.getScopemanager().postCall(request, reply, appname);
 
             _state = stateSendReply;
-            reply.sendReply(http_return, http_msg);
+            if (reply.sendReply(http_return, http_msg))
+            {
+              log_debug("reply sent");
+            }
+            else
+            {
+              reply.setKeepAliveCounter(0);
+              log_warn("sending failed");
+            }
 
             log_info_if(reply.isChunkedEncoding(), "request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.chunkedBytesWritten() << " (chunked)");
           }
 
           logRequest(request, reply, http_return);
-
-          if (reply.out())
-            log_debug("reply sent");
-          else
-          {
-            reply.setKeepAliveCounter(0);
-            log_warn("sending failed");
-          }
 
           return;
         }
