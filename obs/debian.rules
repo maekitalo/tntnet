@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+DEB_BUILD_PARALLEL=yes
+
+include /usr/share/cdbs/1/rules/autoreconf.mk
+include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+DEB_DH_MAKESHLIBS_ARGS := -X/usr/lib/tntnet/
+
+common-install-arch::
+	install -m 644 -D debian/tntnet*.service $(CURDIR)/debian/tmp/lib/systemd/system/tntnet@.service
+	rm -rf $(CURDIR)/debian/etc/init.d
+
+binary-post-install/tntnet-doc::
+	find debian/tntnet-doc/usr/share/doc/tntnet-doc/ \( -name "*.la" -o -name "*.lo" -o -name "*.o" -o -name "Makefile.in" -o -path "*/.libs/*" \) -exec rm "{}" ";"
+	find debian/tntnet-doc/usr/share/doc/tntnet-doc/ -name "Makefile" "!" -path "*/newsdb/Makefile"  -exec rm "{}" ";"
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+binary-post-install/tntnet::
+	cd utest; ./utest || /bin/true
+endif
+
+override_dh_strip:
+	dh_strip --dbg-package=tntnet-dbg

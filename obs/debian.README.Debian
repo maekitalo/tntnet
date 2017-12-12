@@ -1,0 +1,7 @@
+tntnet for Debian
+-----------------
+
+tntnet has been configured as a default to have the demos in
+tntnet-demos available at http://localhost/demos/
+
+ -- Kari Pahula <kaol@debian.org>, Wed, 12 Jul 2006 11:04:15 +0300

@@ -1,0 +1,8 @@
+etc/tntnet/tntnet.xml
+etc/tntnet/tntnet.properties
+etc/init.d/tntnet
+sdk/demos/subcomp/
+configure
+config.sub
+config.guess
+framework/common/config.h.in

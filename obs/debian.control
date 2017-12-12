@@ -1,0 +1,213 @@
+Source: tntnet
+Section: httpd
+Priority: extra
+Maintainer: Kari Pahula <kaol@debian.org>
+Build-Depends: cdbs, debhelper (>= 9), libcxxtools-dev (>= 2.2.1), libltdl-dev, zip, pkg-config, dh-autoreconf, libtool, libssl-dev
+Standards-Version: 3.9.5
+Homepage: http://www.tntnet.org/
+
+Package: tntnet
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, net-tools, tntnet-runtime (= ${binary:Version})
+Provides: httpd, httpd-cgi
+Suggests: tntnet-doc, libtntnet-dev
+Description: modular, multithreaded web application server for C++
+ Tntnet has a template-language called ecpp similar to PHP, JSP or
+ Mason, where you can embed c++ code inside a HTML page to generate
+ active content. The ecpp files are precompiled to C++ classes called
+ components and compiled and linked into a shared library. This process
+ is done at compiletime. The web server Tntnet needs only the compiled
+ component library.
+ .
+ Because the web applications are compiled into native code, they are
+ very fast and compact.
+ .
+ Components can call other components. So you can create building blocks
+ of HTML parts and call them in other pages like subprocesses.
+ .
+ Requests are parsed by tntnet and the request information is easily
+ accessible to the components. It supports GET and POST parameters and
+ MIME multipart requests for file upload.
+ .
+ The template language has also support for internationalized
+ applications. You can easily create web applications for different
+ languages.
+ .
+ Other features are: cookies, HTTP upload, automatic request parameter
+ parsing and conversion, automatic session management, scoped variables
+ (application, request and session), internationalisation and keep-alive.
+ .
+ Logging is done through cxxtools, which provides a unique API for
+ log4cpp, log4cxx or simple logging to files or console.
+ .
+ Tntnet is fully multithreaded and much work has been gone into making
+ it scalable. It uses a dynamic pool of worker threads, which answer
+ requests from HTTP clients.
+
+Package: tntnet-doc
+Architecture: all
+Section: doc
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: tntnet-demos
+Description: documentation for Tntnet
+ Tntnet has a template-language called ecpp similar to PHP, JSP or
+ Mason, where you can embed c++ code inside a HTML page to generate
+ active content. The ecpp files are precompiled to C++ classes called
+ components and compiled and linked into a shared library. This process
+ is done at compiletime. The web server Tntnet needs only the compiled
+ component library.
+ .
+ Because the web applications are compiled into native code, they are
+ very fast and compact.
+ .
+ Components can call other components. So you can create building blocks
+ of HTML parts and call them in other pages like subprocesses.
+ .
+ Requests are parsed by tntnet and the request information is easily
+ accessible to the components. It supports GET and POST parameters and
+ MIME multipart requests for file upload.
+ .
+ The template language has also support for internationalized
+ applications. You can easily create web applications for different
+ languages.
+ .
+ Other features are: cookies, HTTP upload, automatic request parameter
+ parsing and conversion, automatic session management, scoped variables
+ (application, request and session), internationalisation and keep-alive.
+ .
+ Logging is done through cxxtools, which provides a unique API for
+ log4cpp, log4cxx or simple logging to files or console.
+ .
+ Tntnet is fully multithreaded and much work has been gone into making
+ it scalable. It uses a dynamic pool of worker threads, which answer
+ requests from HTTP clients.
+
+Package: tntnet-demos
+Architecture: any
+Section: doc
+Depends: ${shlibs:Depends}, ${misc:Depends}, libjs-jquery
+Recommends: tntnet
+Description: demo web applications for Tntnet
+ Tntnet has a template-language called ecpp similar to PHP, JSP or
+ Mason, where you can embed c++ code inside a HTML page to generate
+ active content. The ecpp files are precompiled to C++ classes called
+ components and compiled and linked into a shared library. This process
+ is done at compiletime. The web server Tntnet needs only the compiled
+ component library.
+ .
+ Because the web applications are compiled into native code, they are
+ very fast and compact.
+ .
+ Components can call other components. So you can create building blocks
+ of HTML parts and call them in other pages like subprocesses.
+ .
+ Requests are parsed by tntnet and the request information is easily
+ accessible to the components. It supports GET and POST parameters and
+ MIME multipart requests for file upload.
+ .
+ The template language has also support for internationalized
+ applications. You can easily create web applications for different
+ languages.
+ .
+ Other features are: cookies, HTTP upload, automatic request parameter
+ parsing and conversion, automatic session management, scoped variables
+ (application, request and session), internationalisation and keep-alive.
+ .
+ Logging is done through cxxtools, which provides a unique API for
+ log4cpp, log4cxx or simple logging to files or console.
+ .
+ Tntnet is fully multithreaded and much work has been gone into making
+ it scalable. It uses a dynamic pool of worker threads, which answer
+ requests from HTTP clients.
+
+Package: libtntnet12
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: tntnet-runtime
+Description: Tntnet libraries
+ Tntnet has a template-language called ecpp similar to PHP, JSP or
+ Mason, where you can embed c++ code inside a HTML page to generate
+ active content. The ecpp files are precompiled to C++ classes called
+ components and compiled and linked into a shared library. This process
+ is done at compiletime. The web server Tntnet needs only the compiled
+ component library.
+ .
+ Because the web applications are compiled into native code, they are
+ very fast and compact.
+ .
+ Components can call other components. So you can create building blocks
+ of HTML parts and call them in other pages like subprocesses.
+ .
+ Requests are parsed by tntnet and the request information is easily
+ accessible to the components. It supports GET and POST parameters and
+ MIME multipart requests for file upload.
+ .
+ The template language has also support for internationalized
+ applications. You can easily create web applications for different
+ languages.
+ .
+ Other features are: cookies, HTTP upload, automatic request parameter
+ parsing and conversion, automatic session management, scoped variables
+ (application, request and session), internationalisation and keep-alive.
+ .
+ Logging is done through cxxtools, which provides a unique API for
+ log4cpp, log4cxx or simple logging to files or console.
+ .
+ Tntnet is fully multithreaded and much work has been gone into making
+ it scalable. It uses a dynamic pool of worker threads, which answer
+ requests from HTTP clients.
+
+Package: libtntnet-dev
+Architecture: any
+Section: libdevel
+Depends: ${shlibs:Depends}, ${misc:Depends}, libcxxtools-dev, libtntnet12 (= ${binary:Version}), zlib1g-dev
+Conflicts: tntnet-dev (<< 1.6.3-3)
+Replaces: tntnet-dev (<< 1.6.3-3)
+Description: Tntnet library development headers
+ Tntnet has a template-language called ecpp similar to PHP, JSP or
+ Mason, where you can embed c++ code inside a HTML page to generate
+ active content. The ecpp files are precompiled to C++ classes called
+ components and compiled and linked into a shared library. This process
+ is done at compiletime. The web server Tntnet needs only the compiled
+ component library.
+ .
+ Because the web applications are compiled into native code, they are
+ very fast and compact.
+ .
+ Components can call other components. So you can create building blocks
+ of HTML parts and call them in other pages like subprocesses.
+ .
+ Requests are parsed by tntnet and the request information is easily
+ accessible to the components. It supports GET and POST parameters and
+ MIME multipart requests for file upload.
+ .
+ The template language has also support for internationalized
+ applications. You can easily create web applications for different
+ languages.
+ .
+ Other features are: cookies, HTTP upload, automatic request parameter
+ parsing and conversion, automatic session management, scoped variables
+ (application, request and session), internationalisation and keep-alive.
+ .
+ Logging is done through cxxtools, which provides a unique API for
+ log4cpp, log4cxx or simple logging to files or console.
+ .
+ Tntnet is fully multithreaded and much work has been gone into making
+ it scalable. It uses a dynamic pool of worker threads, which answer
+ requests from HTTP clients.
+
+Package: tntnet-runtime
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: tntnet (<< 1.6.3-3)
+Replaces: tntnet-dev (<< 1.6.3-3)
+Description: Tntnet runtime system
+ This package has the runtime system for tntnet web server.
+
+Package: tntnet-dbg
+Architecture: any
+Section: debug
+Priority: optional
+Depends: tntnet (= ${binary:Version}), ${misc:Depends}
+Description: tntnet debugging symbols

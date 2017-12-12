@@ -1,0 +1,62 @@
+-------------------------------------------------------------------
+Thu Nov 10 13:09:45 UTC 2017 - EvgenyKlimov@eaton.com
+
+- enable debug-symbol debian packages
+
+-------------------------------------------------------------------
+Fri Nov 11 09:45:15 UTC 2016 - michalvyskocil@eaton.com
+
+- add patches
+  * sslCipherList.patch
+  * 0002-tntnet-2.2.1-allUserGroups.patch
+
+-------------------------------------------------------------------
+Thu Apr 14 06:56:57 UTC 2016 - michalvyskocil@eaton.com
+
+- Sync patches with debian.series
+- Split the tntnet.so to tntnet-runtime package to be compatible
+  with Debian
+
+-------------------------------------------------------------------
+Fri Aug 29 07:13:06 UTC 2014 - mvyskocil@opensuse.org
+
+- Add systemd macros
+- Remove static files
+- Remove spurious lib prefix from devel package
+- Switch to pkg-config based dependencies when possible
+
+-------------------------------------------------------------------
+Tue May 27 07:55:45 CEST 2014 - mhrusecky@suse.cz
+
+- updated to version 2.2.1
+  http://www.tntnet.org/download/cxxtools-2.2.1/Releasenotes-2.2.1.html
+
+-------------------------------------------------------------------
+Sun Nov  3 10:44:17 CET 2013 - mhrusecky@suse.cz
+
+- split out examples package
+
+-------------------------------------------------------------------
+Sun Nov  3 10:31:46 CET 2013 - mhrusecky@suse.cz
+
+- systemd integration 
+
+-------------------------------------------------------------------
+Wed Oct 23 09:38:17 UTC 2013 - mhrusecky@suse.com
+
+- updated to version 2.2
+  http://www.tntnet.org/download/tntnet-2.2/Releasenotes-2.2.markdown
+
+-------------------------------------------------------------------
+Fri Feb 22 10:59:18 CET 2013 - mhrusecky@suse.cz
+
+- updated to version 2.1
+  
+-------------------------------------------------------------------
+Tue Jan 17 11:18:05 CET 2012 - mhrusecky@suse.cz
+
+- initial package version 2.0
+  * used spec file from Kai Schröder <cyberian@arcor.de>
+  * cleaned it up a little bit
+
+
