@@ -41,7 +41,7 @@ can be used:
 
 Alternatively in ecpp the `std::flush` manipulator may be sent:
 
-    <$ std::flush() $>
+    <$ std::flush $>
 
 It makes no difference whether the flush is done on `reply.out()` or
 `reply.sout()`. The former is the "raw" output stream and the latter is the
