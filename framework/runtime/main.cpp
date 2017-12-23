@@ -45,6 +45,8 @@
 #include <set>
 
 #include <glob.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include <sstream>
 
 #include "config.h"
