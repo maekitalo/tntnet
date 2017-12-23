@@ -557,31 +557,99 @@ waits for incoming requests. Multiple listeners may be defined, when tntnet
 should listen on multiple ip addresses or ports.
 
 Each listener is defined in a node `<listener>`. A listener must have a subnode
-`<ip>` and `<port>`. The node `<ip>` may contain a ip address or hostname or may
-be left empty. If the node is empty, any interface is used. The `<port>` must
-contain the numeric port number.
+`<port>`. The node `<ip>` may contain a ip address or hostname or may be left
+empty or even omitted. If the node is empty, any interface is used. The `<port>`
+must contain the numeric port number.
 
 The ip address may be a IPv4 or IPv6 address.
-
-Optionally a tag `<certificate>` may be added. This enables ssl on the interface
-and specifies the ssl host certificate for the interface. Note that tntnet can
-be built without ssl support. In that case the certificate is just ignored and
-unencrypted http is used here.
 
 *Example*
 
     <listeners>
       <listener>
-        <ip></ip>
         <port>80</port>
       </listener>
+    </listeners>
+
+SSL
+---
+Optionally a tag `<certificate>` may be added. This enables ssl on the interface
+and specifies the ssl host certificate for the interface.
+
+The ssl key can be stored in a separate file. A tag `<key>` specifies, where to
+find it. It is really encouraged to do so and to remove group and other
+readability from the key file.
+
+*Example*
+
+    <listeners>
       <listener>
-        <ip></ip>
         <port>443</port>
         <!-- a certificate enables ssl -->
         <certificate>tntnet.pem</certificate>
+        <key>tntnet.key</key>
       </listener>
     </listeners>
+
+Client certificates are supported. The tags `<sslCa>` and `<sslVerifyLevel>` can
+be added to specify the type of check. If `<sslVerifyLevel>` to `1`, a client
+certificate is requested but tntnet accepts, if the client sends no certificate.
+The application can check the certificate using `request.getSslCertificate()`.
+It returns a certificate object, which may be empty.
+
+If `<sslVerifyLevel>` is `2`, a client certificate is mandatory. A connection
+without a certificate is not accepted.
+
+In any case the client certificate is verified against the CA specified by
+`<sslCa>`.
+
+*Example*
+
+    <listeners>
+      <listener>
+        <port>443</port>
+        <certificate>tntnet.pem</certificate>
+        <key>tntnet.key</key>
+        <sslVerifyLevel>2</sslVerifyLevel>
+        <sslCa>myCa.pem</sslCa>
+      </listener>
+    </listeners>
+
+With this setting clients has to send a certificate signed by the CA `myCa.pem`.
+
+LISTENER SETTINGS
+-----------------
+We summarize the settings for the listeners here.
+
+`<ip>`*ip*`</ip>`
+
+    Optional setting for the ip address where tntnet should listen on.
+
+`<port>`*port*`</port>`
+
+    Mandatory setting on which tntnet should listen on.
+
+`<certificate>`*certificate*`</certificate>`
+
+    A certificate file, which contains the ssl server certificate for ssl.
+
+`<key>`*key*`</key>`
+
+    The private key for the server certificate. If the key is not specified,
+    tntnet expects the key in the certificate file.
+
+`<sslVerifyLevel>`*0|1|2*`</sslVerifyLevel>`
+
+    Enables client certificates. When set to 0, no client certificate is needed.
+    When set to 1 a client certificate is requested but optional. It is just
+    passed to the application when available.
+    When set to 2 a client certificate is requested and needed to connect.
+
+`<sslCa>`*CA-file*`</sslCa>`
+
+    The certificate authority the client certificate is checked against. Only
+    client certificates, which can be verified by this authority are accepted.
+    This settins is mandatory when `sslVerifyLevel` is set to 1 or 2.
 
 AUTHOR
 ------

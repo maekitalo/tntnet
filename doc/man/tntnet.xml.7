@@ -676,16 +676,11 @@ waits for incoming requests. Multiple listeners may be defined, when tntnet
 should listen on multiple ip addresses or ports.
 .PP
 Each listener is defined in a node \fB\fC<listener>\fR\&. A listener must have a subnode
-\fB\fC<ip>\fR and \fB\fC<port>\fR\&. The node \fB\fC<ip>\fR may contain a ip address or hostname or may
-be left empty. If the node is empty, any interface is used. The \fB\fC<port>\fR must
-contain the numeric port number.
+\fB\fC<port>\fR\&. The node \fB\fC<ip>\fR may contain a ip address or hostname or may be left
+empty or even omitted. If the node is empty, any interface is used. The \fB\fC<port>\fR
+must contain the numeric port number.
 .PP
 The ip address may be a IPv4 or IPv6 address.
-.PP
-Optionally a tag \fB\fC<certificate>\fR may be added. This enables ssl on the interface
-and specifies the ssl host certificate for the interface. Note that tntnet can
-be built without ssl support. In that case the certificate is just ignored and
-unencrypted http is used here.
 .PP
 \fIExample\fP
 .PP
@@ -693,16 +688,119 @@ unencrypted http is used here.
 .nf
 <listeners>
   <listener>
-    <ip></ip>
     <port>80</port>
   </listener>
+</listeners>
+.fi
+.RE
+.SH SSL
+.PP
+Optionally a tag \fB\fC<certificate>\fR may be added. This enables ssl on the interface
+and specifies the ssl host certificate for the interface.
+.PP
+The ssl key can be stored in a separate file. A tag \fB\fC<key>\fR specifies, where to
+find it. It is really encouraged to do so and to remove group and other
+readability from the key file.
+.PP
+\fIExample\fP
+.PP
+.RS
+.nf
+<listeners>
   <listener>
-    <ip></ip>
     <port>443</port>
     <!\-\- a certificate enables ssl \-\->
     <certificate>tntnet.pem</certificate>
+    <key>tntnet.key</key>
   </listener>
 </listeners>
+.fi
+.RE
+.PP
+Client certificates are supported. The tags \fB\fC<sslCa>\fR and \fB\fC<sslVerifyLevel>\fR can
+be added to specify the type of check. If \fB\fC<sslVerifyLevel>\fR to \fB\fC1\fR, a client
+certificate is requested but tntnet accepts, if the client sends no certificate.
+The application can check the certificate using \fB\fCrequest.getSslCertificate()\fR\&.
+It returns a certificate object, which may be empty.
+.PP
+If \fB\fC<sslVerifyLevel>\fR is \fB\fC2\fR, a client certificate is mandatory. A connection
+without a certificate is not accepted.
+.PP
+In any case the client certificate is verified against the CA specified by
+\fB\fC<sslCa>\fR\&.
+.PP
+\fIExample\fP
+.PP
+.RS
+.nf
+<listeners>
+  <listener>
+    <port>443</port>
+    <certificate>tntnet.pem</certificate>
+    <key>tntnet.key</key>
+    <sslVerifyLevel>2</sslVerifyLevel>
+    <sslCa>myCa.pem</sslCa>
+  </listener>
+</listeners>
+.fi
+.RE
+.PP
+With this setting clients has to send a certificate signed by the CA \fB\fCmyCa.pem\fR\&.
+.SH LISTENER SETTINGS
+.PP
+We summarize the settings for the listeners here.
+.PP
+\fB\fC<ip>\fR\fIip\fP\fB\fC</ip>\fR
+.PP
+.RS
+.nf
+Optional setting for the ip address where tntnet should listen on.
+.fi
+.RE
+.PP
+\fB\fC<port>\fR\fIport\fP\fB\fC</port>\fR
+.PP
+.RS
+.nf
+Mandatory setting on which tntnet should listen on.
+.fi
+.RE
+.PP
+\fB\fC<certificate>\fR\fIcertificate\fP\fB\fC</certificate>\fR
+.PP
+.RS
+.nf
+A certificate file, which contains the ssl server certificate for ssl.
+.fi
+.RE
+.PP
+\fB\fC<key>\fR\fIkey\fP\fB\fC</key>\fR
+.PP
+.RS
+.nf
+The private key for the server certificate. If the key is not specified,
+tntnet expects the key in the certificate file.
+.fi
+.RE
+.PP
+\fB\fC<sslVerifyLevel>\fR\fI0|1|2\fP\fB\fC</sslVerifyLevel>\fR
+.PP
+.RS
+.nf
+Enables client certificates. When set to 0, no client certificate is needed.
+When set to 1 a client certificate is requested but optional. It is just
+passed to the application when available.
+When set to 2 a client certificate is requested and needed to connect.
+.fi
+.RE
+.PP
+\fB\fC<sslCa>\fR\fICA\-file\fP\fB\fC</sslCa>\fR
+.PP
+.RS
+.nf
+The certificate authority the client certificate is checked against. Only
+client certificates, which can be verified by this authority are accepted.
+This settins is mandatory when `sslVerifyLevel` is set to 1 or 2.
 .fi
 .RE
 .SH AUTHOR
