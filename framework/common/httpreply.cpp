@@ -473,7 +473,7 @@ namespace tnt
     }
 
     _impl->socket->flush();
-    return *_impl->socket;
+    return !_impl->socket->fail();
   }
 
   void HttpReply::setMd5Sum()
