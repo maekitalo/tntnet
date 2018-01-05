@@ -1,6 +1,7 @@
 debian/tmp/usr/bin/ecpp*		usr/bin
 debian/tmp/usr/bin/tntnet-config	usr/bin
 debian/tmp/usr/lib/*.so			usr/lib
+debian/tmp/usr/lib*/pkgconfig/*.pc
 debian/tmp/usr/include/			usr
 debian/tmp/usr/share/man/man1/		usr/share/man/
 debian/tmp/usr/share/man/man7/ecpp*	usr/share/man/man7/
