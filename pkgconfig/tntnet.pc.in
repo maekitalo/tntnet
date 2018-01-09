@@ -7,5 +7,5 @@ Name: tntnet
 Description: C++ class library for the web application server
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -ltntnet
-Cflags: -I${includedir}
+Cflags: -I${includedir}/tnt
 Requires.private: cxxtools
