@@ -44,12 +44,16 @@ pipeline {
             name: 'USE_TEST_INSTALL_DESTDIR')
         booleanParam (
             defaultValue: true,
-            description: 'Attempt "cppcheck" analysis before this run?',
+            description: 'Attempt "cppcheck" analysis before this run? (Note: corresponding tools are required in the build environment)',
             name: 'DO_CPPCHECK')
         booleanParam (
             defaultValue: true,
             description: 'Require that there are no files not discovered changed/untracked via .gitignore after builds and tests?',
             name: 'REQUIRE_GOOD_GITIGNORE')
+        string (
+            defaultValue: "10",
+            description: 'When running tests, use this timeout (in minutes; be sure to leave enough for double-job of a distcheck too)',
+            name: 'USE_TEST_TIMEOUT')
         booleanParam (
             defaultValue: true,
             description: 'When using temporary subdirs in build/test workspaces, wipe them after successful builds?',
@@ -61,23 +65,15 @@ pipeline {
 // Note: your Jenkins setup may benefit from similar setup on side of agents:
 //        PATH="/usr/lib64/ccache:/usr/lib/ccache:/usr/bin:/bin:${PATH}"
     stages {
-        stage ('cppcheck') {
-                    when { expression { return ( params.DO_CPPCHECK ) } }
-                    steps {
-                        dir("tmp") {
-                            deleteDir()
-                        }
-                        sh 'cppcheck --std=c++11 --enable=all --inconclusive --xml --xml-version=2 . 2>cppcheck.xml'
-                        archiveArtifacts artifacts: '**/cppcheck.xml'
-                        sh 'rm -f cppcheck.xml'
-                    }
-        }
         stage ('prepare') {
                     steps {
                         dir("tmp") {
+                            sh 'if [ -s Makefile ]; then make -k distclean || true ; fi'
+                            sh 'chmod -R u+w .'
                             deleteDir()
                         }
                         sh './autogen.sh'
+                        stash (name: 'prepped', includes: '**/*', excludes: '**/cppcheck.xml')
                     }
         }
         stage ('configure') {
@@ -100,6 +96,23 @@ pipeline {
         }
         stage ('check') {
             parallel {
+                stage ('cppcheck') {
+                    when { expression { return ( params.DO_CPPCHECK ) } }
+                    steps {
+                        dir("tmp/test-cppcheck") {
+                            deleteDir()
+                            unstash 'prepped'
+                            sh 'cppcheck --std=c++11 --enable=all --inconclusive --xml --xml-version=2 . 2>cppcheck.xml'
+                            archiveArtifacts artifacts: '**/cppcheck.xml'
+                            sh 'rm -f cppcheck.xml'
+                            script {
+                                if ( params.DO_CLEANUP_AFTER_BUILD ) {
+                                    deleteDir()
+                                }
+                            }
+                        }
+                    }
+                }
                 stage ('make check') {
                     when { expression { return ( params.DO_TEST_CHECK ) } }
                     steps {
@@ -110,7 +123,7 @@ pipeline {
                             dir("tmp/test-check") {
                                 deleteDir()
                                 unstash 'built'
-                                timeout (time: 5, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make check'
                                 }
                                 sh 'echo "Are GitIgnores good after make check? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
@@ -121,7 +134,7 @@ pipeline {
                                 }
                             }
                           } else {
-                                timeout (time: 5, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make check'
                                 }
                                 sh 'echo "Are GitIgnores good after make check? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
@@ -139,7 +152,7 @@ pipeline {
                               dir("tmp/test-memcheck") {
                                 deleteDir()
                                 unstash 'built'
-                                timeout (time: 5, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make memcheck && exit 0 ; echo "Re-running failed ($?) memcheck with greater verbosity" >&2 ; make VERBOSE=1 memcheck-verbose'
                                 }
                                 sh 'echo "Are GitIgnores good after make memcheck? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
@@ -150,7 +163,7 @@ pipeline {
                                 }
                               }
                           } else {
-                                timeout (time: 5, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make memcheck && exit 0 ; echo "Re-running failed ($?) memcheck with greater verbosity" >&2 ; make VERBOSE=1 memcheck-verbose'
                                 }
                                 sh 'echo "Are GitIgnores good after make memcheck? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
@@ -168,7 +181,7 @@ pipeline {
                               dir("tmp/test-distcheck") {
                                 deleteDir()
                                 unstash 'built'
-                                timeout (time: 10, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make distcheck'
                                 }
                                 sh 'echo "Are GitIgnores good after make distcheck? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
@@ -179,7 +192,7 @@ pipeline {
                                 }
                               }
                             } else {
-                                timeout (time: 10, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh 'CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make distcheck'
                                 }
                                 sh 'echo "Are GitIgnores good after make distcheck? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
@@ -197,7 +210,7 @@ pipeline {
                               dir("tmp/test-install-check") {
                                 deleteDir()
                                 unstash 'built'
-                                timeout (time: 10, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh """CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make DESTDIR="${params.USE_TEST_INSTALL_DESTDIR}" install"""
                                 }
                                 sh 'echo "Are GitIgnores good after make install? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
@@ -208,7 +221,7 @@ pipeline {
                                 }
                               }
                             } else {
-                                timeout (time: 10, unit: 'MINUTES') {
+                                timeout (time: "${params.USE_TEST_TIMEOUT}".toInteger(), unit: 'MINUTES') {
                                     sh """CCACHE_BASEDIR="`pwd`" ; export CCACHE_BASEDIR; make DESTDIR="${params.USE_TEST_INSTALL_DESTDIR}" install"""
                                 }
                                 sh 'echo "Are GitIgnores good after make install? (should have no output below)"; git status -s || if [ "${params.REQUIRE_GOOD_GITIGNORE}" = false ]; then echo "WARNING GitIgnore tests found newly changed or untracked files" >&2 ; exit 0 ; else echo "FAILED GitIgnore tests" >&2 ; exit 1; fi'
