@@ -51,7 +51,7 @@ pipeline {
             description: 'Require that there are no files not discovered changed/untracked via .gitignore after builds and tests?',
             name: 'REQUIRE_GOOD_GITIGNORE')
         string (
-            defaultValue: "10",
+            defaultValue: "20",
             description: 'When running tests, use this timeout (in minutes; be sure to leave enough for double-job of a distcheck too)',
             name: 'USE_TEST_TIMEOUT')
         booleanParam (
