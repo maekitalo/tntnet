@@ -68,7 +68,7 @@ namespace tnt
         code << ", " << j->first;
       code << ")\n"
               "{\n"
-              "  log_trace(\"" << outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n";
+              "  log_trace(\"" << outerclass->getName() << "::" << getName() << " \" + qparam.getUrl());\n";
 
       if (externData)
         code << "  tnt::DataChunks data(getData(request, rawData));\n";
