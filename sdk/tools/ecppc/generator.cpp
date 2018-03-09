@@ -613,7 +613,7 @@ namespace tnt
         code << "}\n\n"
                 "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
              << "{\n"
-                "  log_trace(\"" << maincomp.getName() << " \" + qparam.getUrl());\n\n";
+                "  log_trace((\"" << maincomp.getName() << " \" + qparam.getUrl()).c_str());\n\n";
 
         if (raw)
           code << "  reply.setKeepAliveHeader();\n\n";
