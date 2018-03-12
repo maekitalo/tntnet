@@ -66,9 +66,9 @@ namespace tnt
       for (cppargs_type::const_iterator j = cppargs.begin();
            j != cppargs.end(); ++j)
         code << ", " << j->first;
-      code << ")\n"
-              "{\n"
-              "  log_trace((\"" << outerclass->getName() << "::" << getName() << " \" + qparam.getUrl()).c_str());\n";
+      code << ")\n{\n";
+      if (!nolog)
+        code << "  log_trace((\"" << outerclass->getName() << "::" << getName() << " \" + qparam.getUrl()).c_str());\n";
 
       if (externData)
         code << "  tnt::DataChunks data(getData(request, rawData));\n";
