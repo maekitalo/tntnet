@@ -60,6 +60,7 @@ namespace tnt
         bool keepPath;
         bool compress;
         bool verbose;
+        bool nolog;
         bool generateDependencies;
         bool disableLinenumbers;
 
