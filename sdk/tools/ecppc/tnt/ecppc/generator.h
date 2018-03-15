@@ -80,6 +80,7 @@ namespace tnt
 
         bool externData;
         bool compress;
+        bool nolog;
 
         time_t c_time;
         const char* gentime;
@@ -124,6 +125,9 @@ namespace tnt
 
         void setCompress(bool sw = true)             { compress = sw; }
         bool isCompress() const                      { return compress; }
+
+        void setNolog(bool sw = true)                { nolog = sw; }
+        bool isNolog() const                         { return nolog; }
 
         void setLastModifiedTime(time_t t)           { c_time = t; }
         time_t getLastModifiedTime() const           { return c_time; }

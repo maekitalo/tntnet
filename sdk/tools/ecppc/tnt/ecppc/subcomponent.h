@@ -41,6 +41,7 @@ namespace tnt
         typedef ecpp::Parser::cppargs_type cppargs_type;
         cppargs_type cppargs;
         const Component* outerclass;
+        bool nolog;
 
       public:
         Subcomponent()
@@ -49,10 +50,11 @@ namespace tnt
           { }
 
         Subcomponent(const std::string& classname_,
-            const Component& outerclass_, const cppargs_type& cppargs_)
+            const Component& outerclass_, const cppargs_type& cppargs_, bool nolog_)
           : Component(outerclass_, classname_),
             cppargs(cppargs_),
-            outerclass(&outerclass_)
+            outerclass(&outerclass_),
+            nolog(nolog_)
           { }
 
         void getHeader(std::ostream& o) const;

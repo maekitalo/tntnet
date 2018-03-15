@@ -250,7 +250,7 @@ namespace tnt
     void Generator::startComp(const std::string& name,
       const cppargs_type& cppargs)
     {
-      subcomps.push_back(Subcomponent(name, maincomp, cppargs));
+      subcomps.push_back(Subcomponent(name, maincomp, cppargs,nolog));
       Subcomponent& s = subcomps.back();
       currentComp = &s;
       maincomp.addSubcomp(name);
@@ -409,8 +409,10 @@ namespace tnt
       if (compress)
         out << "#include <tnt/zdata.h>\n";
 
-      out << "#include <cxxtools/log.h>\n"
-             "#include <stdexcept>\n\n";
+      if(!nolog)
+        out << "#include <cxxtools/log.h>\n";
+  
+      out << "#include <stdexcept>\n\n";
     }
 
     void Generator::getFactoryDeclaration(std::ostream& code) const
@@ -611,9 +613,10 @@ namespace tnt
           code << "  rawData.release();\n";
 
         code << "}\n\n"
-                "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n"
-             << "{\n"
-                "  log_trace(\"" << maincomp.getName() << " \" << qparam.getUrl());\n\n";
+                "unsigned _component_::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)\n {\n";
+        
+        if (!nolog)
+         code << "  log_trace((\"" << maincomp.getName() << " \" + qparam.getUrl()).c_str());\n\n";
 
         if (raw)
           code << "  reply.setKeepAliveHeader();\n\n";
@@ -651,13 +654,15 @@ namespace tnt
         else
         {
           // multi-image-component
-          code << "  const char* url = request.getPathInfo().c_str();\n\n"
-                  "  log_debug(\"search for \\\"\" << url << '\"');\n\n"
-                  "  urls_iterator it = std::lower_bound(urls_begin, urls_end, url, charpLess);\n"
+          code << "  const char* url = request.getPathInfo().c_str();\n\n";
+          if (!nolog)
+           code << "  log_debug(\"search for \\\"\" << url << '\"');\n\n";
+          code << "  urls_iterator it = std::lower_bound(urls_begin, urls_end, url, charpLess);\n"
                   "  if (it == urls_end || strcmp(url, *it) != 0)\n"
-                  "  {\n"
-                  "    log_info(\"binary file \\\"\" << url << \"\\\" not found\");\n"
-                  "    return DECLINED;\n"
+                  "  {\n";
+          if(!nolog)
+            code << "    log_info(\"binary file \\\"\" << url << \"\\\" not found\");\n";
+          code << "    return DECLINED;\n"
                   "  }\n"
                   "  unsigned url_idx = it - urls_begin;\n\n"
 
@@ -711,7 +716,7 @@ namespace tnt
       getHeaderIncludes(code);
       getCppIncludes(code);
 
-      if (multiImages.empty() && !isRawMode())
+      if (multiImages.empty() && !isRawMode() && !nolog)
         code << "log_define(\"" << maincomp.getLogCategory() << "\")\n\n";
 
       getPre(code);

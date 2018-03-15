@@ -68,6 +68,7 @@ namespace tnt
       keepPath = cxxtools::Arg<bool>(argc, argv, 'p');
       compress = cxxtools::Arg<bool>(argc, argv, 'z');
       verbose = cxxtools::Arg<bool>(argc, argv, 'v');
+      nolog = cxxtools::Arg<bool>(argc, argv, "--nolog",false);
       generateDependencies = cxxtools::Arg<bool>(argc, argv, 'M');
       disableLinenumbers = cxxtools::Arg<bool>(argc, argv, 'L');
       logCategory = cxxtools::Arg<std::string>(argc, argv, 'l');
@@ -176,6 +177,7 @@ namespace tnt
       tnt::ecppc::Generator generator(requestname);
 
       // initialize
+      generator.setNolog(nolog);
       generator.enableLinenumbers(!disableLinenumbers);
       Bodypart::enableLinenumbers(!disableLinenumbers);
 
@@ -375,7 +377,8 @@ namespace tnt
            "  -M               generate dependency for Makefile\n"
            "  -p               keep path when generating component name from filename\n"
            "  -l log-category  set log category (default: component.compname)\n"
-           "  -L               disable generation of #line-directives\n";
+           "  -L               disable generation of #line-directives\n"
+           "  --nolog          disable use of cxxtools for logs\n";
       msg = o.str();
     }
   }
