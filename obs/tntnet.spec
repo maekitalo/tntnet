@@ -88,6 +88,7 @@ Group:          Development/Libraries/C and C++
 Requires:       glibc-devel
 Requires:       pkgconfig(gnutls)
 Requires:       pkgconfig(cxxtools)
+Requires:       tntnet = %{version}
 Requires:       libtntnet%{major} = %{version}
 Requires:       lzo
 Requires:       lzo-devel
@@ -140,6 +141,8 @@ rm -f %{buildroot}/%{_libdir}/*.*a
 
 %postun -n libtntnet%{major} -p /sbin/ldconfig
 
+# NOTE/TODO : This setup places "ecppc" into tntnet rather
+# than *-devel package where it might be a better fit
 %files
 %defattr (-, root, root)
 %doc AUTHORS ChangeLog COPYING README
