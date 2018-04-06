@@ -50,6 +50,7 @@ BuildRequires:  libtool
 BuildRequires:  systemd-devel
 BuildRequires:  zip
 BuildRequires:  pkgconfig(zlib)
+Requires:       tntnet-runtime = %{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %{systemd_requires}
 
@@ -101,7 +102,7 @@ Tntnet is a web application server for web applications written in C++.
 Development files
 
 %package runtime
-Summary:        Tntdb is a c++-class-library for easy database-access
+Summary:        Tntnet is a c++ servlet container
 Group:          System/Libraries
 Requires:       glibc-devel
 
@@ -143,7 +144,7 @@ rm -f %{buildroot}/%{_libdir}/*.*a
 %files
 %defattr (-, root, root)
 %doc AUTHORS ChangeLog COPYING README
-%{_bindir}/*
+%{_bindir}/tntnet
 %{_libexecdir}/systemd
 %dir %{_sysconfdir}/tntnet
 %{_datadir}/tntnet
@@ -165,6 +166,8 @@ rm -f %{buildroot}/%{_libdir}/*.*a
 
 %files devel
 %defattr (-, root, root)
+%{_bindir}/ecpp*
+%{_bindir}/tntnet-config
 %dir %{_includedir}/tnt/
 %{_includedir}/tnt/*.h
 %{_libdir}/*.so
