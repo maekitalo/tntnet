@@ -50,6 +50,7 @@ BuildRequires:  libtool
 BuildRequires:  systemd-devel
 BuildRequires:  zip
 BuildRequires:  pkgconfig(zlib)
+Requires:       tntnet-runtime = %{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %{systemd_requires}
 
@@ -88,7 +89,6 @@ Group:          Development/Libraries/C and C++
 Requires:       glibc-devel
 Requires:       pkgconfig(gnutls)
 Requires:       pkgconfig(cxxtools)
-Requires:       tntnet = %{version}
 Requires:       libtntnet%{major} = %{version}
 Requires:       lzo
 Requires:       lzo-devel
@@ -141,12 +141,10 @@ rm -f %{buildroot}/%{_libdir}/*.*a
 
 %postun -n libtntnet%{major} -p /sbin/ldconfig
 
-# NOTE/TODO : This setup places "ecppc" into tntnet rather
-# than *-devel package where it might be a better fit
 %files
 %defattr (-, root, root)
 %doc AUTHORS ChangeLog COPYING README
-%{_bindir}/*
+%{_bindir}/tntnet
 %{_libexecdir}/systemd
 %dir %{_sysconfdir}/tntnet
 %{_datadir}/tntnet
@@ -168,6 +166,8 @@ rm -f %{buildroot}/%{_libdir}/*.*a
 
 %files devel
 %defattr (-, root, root)
+%{_bindir}/ecpp*
+%{_bindir}/tntnet-config
 %dir %{_includedir}/tnt/
 %{_includedir}/tnt/*.h
 %{_libdir}/*.so
