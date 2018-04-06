@@ -102,7 +102,7 @@ Tntnet is a web application server for web applications written in C++.
 Development files
 
 %package runtime
-Summary:        Tntdb is a c++-class-library for easy database-access
+Summary:        Tntnet is a c++ servlet container
 Group:          System/Libraries
 Requires:       glibc-devel
 
