@@ -22,7 +22,6 @@ libtntnet_la_SOURCES = \
 	httpparser.cpp \
 	httprequest.cpp \
 	httpreply.cpp \
-	ioapi.c \
 	job.cpp \
 	langlib.cpp \
 	listener.cpp \
@@ -43,16 +42,13 @@ libtntnet_la_SOURCES = \
 	tntconfig.cpp \
 	tntnet.cpp \
 	tntnetimpl.cpp \
-	unzip.c \
 	unzipfile.cpp \
 	urlescostream.cpp \
 	urlmapper.cpp \
 	util.cpp \
 	worker.cpp \
 	zdata.cpp \
-	crypt.h \
-	ioapi.h \
-	unzip.h
+	crypt.h
 
 nobase_include_HEADERS = \
 	tnt/applicationunlocker.h \
@@ -115,8 +111,19 @@ noinst_HEADERS = \
 	tnt/tcpjob.h \
 	tnt/util.h \
 	tnt/worker.h \
-	tntnetimpl.h
+	tntnetimpl.h \
+	ioapi.h \
+	unzip.h
 
 libtntnet_la_CXXFLAGS = -DPKGLIBDIR=\"@libdir@/@PACKAGE@\"
 libtntnet_la_LDFLAGS = -version-info @sonumber@ @SHARED_LIB_FLAG@
 libtntnet_la_LIBADD = -lz -lcxxtools
+
+if HAVE_MINIZIP
+libtntnet_la_CXXFLAGS += $(MINIZIP_CFLAGS)
+libtntnet_la_LDFLAGS += $(MINIZIP_LIBS)
+else
+libtntnet_la_SOURCES += \
+	ioapi.c \
+	unzip.c
+endif

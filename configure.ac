@@ -18,7 +18,9 @@ AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(dlopen, dl, , AC_MSG_ERROR([dlopen not found]))
 
 AC_PROG_CXX
+AC_PROG_LIBTOOL
 AC_PROG_SED
+PKG_PROG_PKG_CONFIG
 
 AC_LANG(C++)
 AX_CXX_COMPILE_STDCXX_11(noext, optional)
@@ -57,6 +59,8 @@ AC_COMPILE_IFELSE(
 int flag = cxxtools::net::TcpServer::REUSEADDR;
 ])], AC_DEFINE(HAVE_CXXTOOLS_REUSEADDR, [], [Defined if cxxtools supports SO_REUSEADDR flag]))
 
+PKG_CHECK_MODULES([minizip], [minizip],
+  [HAVE_MINIZIP=true], [HAVE_MINIZIP=false])
 AC_ARG_WITH([epoll],
   AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
   [epoll_option=$withval],
@@ -84,6 +88,9 @@ AS_CASE([$sendfile_option],
   [probe],  AC_CHECK_FUNCS([sendfile]),
   AC_MSG_ERROR([unknown sendfile-value $sendfile_option])
 )
+AC_SUBST([MINIZIP_CFLAGS])
+AC_SUBST([MINIZIP_LIBS])
+AM_CONDITIONAL([HAVE_MINIZIP], [test $HAVE_MINIZIP = true])
 
 AC_CHECK_HEADERS([sys/sendfile.h])
 
