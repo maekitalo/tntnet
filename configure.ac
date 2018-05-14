@@ -61,25 +61,12 @@ int flag = cxxtools::net::TcpServer::REUSEADDR;
 
 PKG_CHECK_MODULES([minizip], [minizip],
   [HAVE_MINIZIP=true], [HAVE_MINIZIP=false])
-AC_ARG_WITH([epoll],
-  AS_HELP_STRING([--with-epoll=yes|no|probe], [use epoll]),
-  [epoll_option=$withval],
-  [epoll_option=probe])
-
-AS_CASE([$epoll_option],
-  [yes],   AC_DEFINE(WITH_EPOLL, [], [Define if epoll is supported]),
-  [no],    [],
-  [probe], AC_TRY_RUN([
-            #include <sys/epoll.h>
-            int main() { return epoll_create(10) <= 0; }
-            ],
-            [AC_DEFINE(WITH_EPOLL, [], [Define if epoll is supported])]),
-  AC_MSG_ERROR([unknown epoll-value $epoll_option])
-)
 AC_SUBST([MINIZIP_CFLAGS])
 AC_SUBST([MINIZIP_LIBS])
 AM_CONDITIONAL([HAVE_MINIZIP], [test $HAVE_MINIZIP = true])
 
+AC_CHECK_FUNCS([epoll_create])
+AC_CHECK_FUNCS([epoll_create1])
 AC_CHECK_FUNCS([sendfile])
 AC_CHECK_HEADERS([sys/sendfile.h])
 

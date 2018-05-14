@@ -49,7 +49,11 @@ namespace tnt
       _pollFd(-1),
       _pollTimeout(-1)
   {
-    _pollFd = ::epoll_create(256);
+#ifdef HAVE_EPOLL_CREATE1
+    _pollFd = ::epoll_create1(EPOLL_CLOEXEC);
+#else
+    _pollFd = ::epoll_create(1);
+#endif
     if (_pollFd < 0)
       throw cxxtools::SystemError("epoll_create");
 
@@ -396,7 +400,7 @@ namespace tnt
     }
     else
     {
-      log_debug("add idle socket " << job.getFd());
+      log_debug("add idle socket " << job->getFd());
       cxxtools::MutexLock lock(_mutex);
       _newJobs.push_back(job);
       job = 0;
@@ -405,5 +409,5 @@ namespace tnt
     _notifyPipe.write('A');
   }
 
-#endif // #else HAVE_EPOLL
+#endif // #else WITH_EPOLL
 }

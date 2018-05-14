@@ -36,12 +36,17 @@
 #include <cxxtools/mutex.h>
 #include <cxxtools/posix/pipe.h>
 
-#ifdef WITH_EPOLL
+#if defined(HAVE_EPOLL_CREATE) || defined(HAVE_EPOLL_CREATE1)
+
+#  define WITH_EPOLL
 #  include <map>
+
 #else
+
 #  include <deque>
 #  include <vector>
 #  include <sys/poll.h>
+
 #endif
 
 namespace tnt
