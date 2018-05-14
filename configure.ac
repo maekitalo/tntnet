@@ -76,22 +76,11 @@ AS_CASE([$epoll_option],
             [AC_DEFINE(WITH_EPOLL, [], [Define if epoll is supported])]),
   AC_MSG_ERROR([unknown epoll-value $epoll_option])
 )
-
-AC_ARG_WITH([sendfile],
-  AS_HELP_STRING([--with-sendfile=yes|no|probe], [use sendfile]),
-  [sendfile_option=$withval],
-  [sendfile_option=probe])
-
-AS_CASE([$sendfile_option],
-  [yes],    AC_DEFINE(WITH_SENDFILE, [], [Define if sendfile is supported]),
-  [no],     [],
-  [probe],  AC_CHECK_FUNCS([sendfile]),
-  AC_MSG_ERROR([unknown sendfile-value $sendfile_option])
-)
 AC_SUBST([MINIZIP_CFLAGS])
 AC_SUBST([MINIZIP_LIBS])
 AM_CONDITIONAL([HAVE_MINIZIP], [test $HAVE_MINIZIP = true])
 
+AC_CHECK_FUNCS([sendfile])
 AC_CHECK_HEADERS([sys/sendfile.h])
 
 #
