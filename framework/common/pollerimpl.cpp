@@ -51,11 +51,19 @@ namespace tnt
   {
 #ifdef HAVE_EPOLL_CREATE1
     _pollFd = ::epoll_create1(EPOLL_CLOEXEC);
+    if (_pollFd < 0)
+      throw cxxtools::SystemError("epoll_create1");
 #else
     _pollFd = ::epoll_create(1);
-#endif
     if (_pollFd < 0)
       throw cxxtools::SystemError("epoll_create");
+
+    int flags = ::fcntl(_pollFd, F_GETFD);
+    flags |= FD_CLOEXEC ;
+    int ret = ::fcntl(_pollFd, F_SETFD, flags);
+    if(-1 == ret)
+        throw cxxtools::SystemError("fcntl(FD_CLOEXEC)");
+#endif
 
     fcntl(_notifyPipe.getReadFd(), F_SETFL, O_NONBLOCK);
     addFd(_notifyPipe.getReadFd());
