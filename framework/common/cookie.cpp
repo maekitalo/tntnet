@@ -93,11 +93,12 @@ namespace tnt
     return 0;
   }
 
-  void Cookie::setMaxAge(unsigned v)
+  Cookie& Cookie::setMaxAge(unsigned v)
   {
     std::ostringstream s;
     s << v;
     setAttr(maxAge, s.str());
+    return *this;
   }
 
   void Cookies::clearCookie(const std::string& name)

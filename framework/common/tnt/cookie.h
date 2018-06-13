@@ -94,8 +94,8 @@ namespace tnt
 
       operator const std::string& () const { return _value; }
 
-      void setAttr(const std::string& name, const std::string& value)
-        { _attrs[name] = value; }
+      Cookie& setAttr(const std::string& name, const std::string& value)
+        { _attrs[name] = value; return *this; }
       bool hasAttr(const std::string& name) const
         { return _attrs.find(name) != _attrs.end(); }
 
@@ -107,13 +107,13 @@ namespace tnt
       std::string getExpires() const            { return getAttr(expires); }
       bool        isSecure() const              { return _secureFlag; }
 
-      void setMaxAge(unsigned seconds);
-      void setComment(const std::string& value) { setAttr(comment, value); }
-      void setDomain(const std::string& value)  { setAttr(domain, value); }
-      void setPath(const std::string& value)    { setAttr(path, value); }
-      void setVersion(const std::string& value) { setAttr(version, value); }
-      void setExpires(const std::string& value) { setAttr(expires, value); }
-      void setSecure(bool f = true)             { _secureFlag = f; }
+      Cookie& setMaxAge(unsigned seconds);
+      Cookie& setComment(const std::string& value) { return setAttr(comment, value); }
+      Cookie& setDomain(const std::string& value)  { return setAttr(domain, value); }
+      Cookie& setPath(const std::string& value)    { return setAttr(path, value); }
+      Cookie& setVersion(const std::string& value) { return setAttr(version, value); }
+      Cookie& setExpires(const std::string& value) { return setAttr(expires, value); }
+      Cookie& setSecure(bool f = true)             { _secureFlag = f; return *this; }
 
       bool hasMaxAge() const                    { return hasAttr(maxAge); }
       bool hasComment() const                   { return hasAttr(comment); }
