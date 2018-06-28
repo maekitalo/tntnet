@@ -59,7 +59,7 @@ AC_COMPILE_IFELSE(
 int flag = cxxtools::net::TcpServer::REUSEADDR;
 ])], AC_DEFINE(HAVE_CXXTOOLS_REUSEADDR, [], [Defined if cxxtools supports SO_REUSEADDR flag]))
 
-PKG_CHECK_MODULES([minizip], [minizip],
+PKG_CHECK_MODULES([MINIZIP], [minizip],
   [HAVE_MINIZIP=true], [HAVE_MINIZIP=false])
 AC_SUBST([MINIZIP_CFLAGS])
 AC_SUBST([MINIZIP_LIBS])
