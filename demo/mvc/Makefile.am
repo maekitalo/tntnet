@@ -9,7 +9,7 @@ mvc_la_SOURCES = \
 noinst_HEADERS = \
 	model/counter.h
 
-dist_noinst_DATA = README
+dist_noinst_DATA = tntnet.xml README
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I$(srcdir)/model
 mvc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
