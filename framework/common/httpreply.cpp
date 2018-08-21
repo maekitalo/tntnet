@@ -67,15 +67,6 @@ namespace tnt
         {
         }
 
-        void init()
-        {
-          static const char f[] =
-               "\x1f\x8b\x08\x00"
-               "\x00\x00\x00\x00"
-               "\x04\x03";
-          _zbody.write(f, sizeof(f) - 1);
-        }
-
         void compress(const char* d, unsigned s)
         {
           _deflator.write(d, s);
@@ -86,18 +77,6 @@ namespace tnt
         void finalize()
         {
           _deflator.end();
-
-          uint32_t u = _crc;
-          _zbody.put(static_cast<char>(u & 0xFF));
-          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
-          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
-          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
-
-          u = _size;
-          _zbody.put(static_cast<char>(u & 0xFF));
-          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
-          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
-          _zbody.put(static_cast<char>((u >>= 8) & 0xFF));
         }
 
         std::string::size_type uncompressedSize()
@@ -284,7 +263,6 @@ namespace tnt
   bool HttpReply::tryCompress(std::string& body)
   {
     Compressor compressor;
-    compressor.init();
     compressor.compress(body.data(), body.size());
     compressor.finalize();
 
@@ -383,7 +361,6 @@ namespace tnt
             && _impl->acceptEncoding.accept("gzip")
             && !hasHeader(httpheader::contentLength))
         {
-          _impl->compressor.init();
           for (unsigned n = 0; n < body.chunkcount(); ++n)
             _impl->compressor.compress(body.chunk(n), body.chunksize(n));
           _impl->compressor.finalize();

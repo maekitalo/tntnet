@@ -53,7 +53,7 @@ namespace tnt
     }
   }
 
-  DeflateStreamBuf::DeflateStreamBuf(std::streambuf* sink, int level, unsigned bufsize)
+  DeflateStreamBuf::DeflateStreamBuf(std::streambuf* sink, int level, int windowBits, unsigned bufsize)
     : _obuffer(bufsize),
       _sink(sink)
   {
@@ -70,7 +70,7 @@ namespace tnt
 
     int strategy = Z_DEFAULT_STRATEGY;
     log_debug("deflateInit2(" << static_cast<const void*>(&_stream) << ')');
-    checkError(::deflateInit2(&_stream, level, Z_DEFLATED, -MAX_WBITS, 8, strategy), _stream);
+    checkError(::deflateInit2(&_stream, level, Z_DEFLATED, windowBits, 8, strategy), _stream);
 
     setp(&_obuffer[0], &_obuffer[0] + _obuffer.size());
   }

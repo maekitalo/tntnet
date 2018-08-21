@@ -57,7 +57,7 @@ namespace tnt
       std::streambuf* _sink;
 
     public:
-      explicit DeflateStreamBuf(std::streambuf* sink_, int level = Z_DEFAULT_COMPRESSION, unsigned bufsize = 8192);
+      explicit DeflateStreamBuf(std::streambuf* sink_, int level, int windowBits, unsigned bufsize);
       ~DeflateStreamBuf();
 
       /// see std::streambuf
@@ -79,13 +79,13 @@ namespace tnt
       DeflateStreamBuf _streambuf;
 
     public:
-      explicit DeflateStream(std::streambuf* sink, int level = Z_DEFAULT_COMPRESSION)
+      explicit DeflateStream(std::streambuf* sink, int level = Z_DEFAULT_COMPRESSION, int windowBits = 16 + MAX_WBITS)
         : std::ostream(0),
-          _streambuf(sink, level)
+          _streambuf(sink, level, windowBits, 8192)
           { init(&_streambuf); }
-      explicit DeflateStream(std::ostream& sink, int level = Z_DEFAULT_COMPRESSION)
+      explicit DeflateStream(std::ostream& sink, int level = Z_DEFAULT_COMPRESSION, int windowBits = 16 + MAX_WBITS)
         : std::ostream(0),
-          _streambuf(sink.rdbuf(), level)
+          _streambuf(sink.rdbuf(), level, windowBits, 8192)
           { init(&_streambuf); }
 
       void end();
