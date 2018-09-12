@@ -80,7 +80,11 @@ namespace
 
     log_debug("change user to " << user << '(' << pw->pw_uid << ')');
 
-    int ret = ::setuid(pw->pw_uid);
+    int ret = ::setgroups(0, NULL);
+    if (ret != 0)
+      throw cxxtools::SystemError("setgroups");
+
+    ret = ::setuid(pw->pw_uid);
     if (ret != 0)
       throw cxxtools::SystemError("getuid");
   }
