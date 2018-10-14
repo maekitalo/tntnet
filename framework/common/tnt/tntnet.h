@@ -98,6 +98,10 @@ namespace tnt
        */
       Tntnet(const Tntnet& t);
 
+      /** Initialize a tntnet server object with a configuration object.
+       */
+      explicit Tntnet(const TntConfig& config);
+
       /** Assignment.
 
           Both instances will point to the same implementation.

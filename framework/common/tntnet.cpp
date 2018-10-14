@@ -48,6 +48,13 @@ namespace tnt
       _impl->addRef();
   }
 
+  Tntnet::Tntnet(const TntConfig& config)
+    : _impl(new TntnetImpl())
+  {
+    _impl->addRef();
+    init(config);
+  }
+
   Tntnet& Tntnet::operator= (const Tntnet& t)
   {
     if (_impl == t._impl)
