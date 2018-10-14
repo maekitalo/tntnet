@@ -75,4 +75,56 @@ nobase_dist_pkgdata_DATA = \
 	template/mvc-standalone/session.ecpp \
 	template/mvc-standalone/view/index.ecpp \
 	template/mvc-standalone/view/mypage.ecpp \
-	template/mvc-standalone/webmain.ecpp
+	template/mvc-standalone/webmain.ecpp \
+    template/webapp-standalone/resources/app/actions.js \
+    template/webapp-standalone/resources/app/json.js \
+    template/webapp-standalone/resources/app/main.js \
+    template/webapp-standalone/resources/app/dbaccess.js \
+    template/webapp-standalone/resources/app/dbinsert.js \
+    template/webapp-standalone/resources/css/noty/themes/nest.css \
+    template/webapp-standalone/resources/css/noty/themes/relax.css \
+    template/webapp-standalone/resources/css/noty/themes/mint.css \
+    template/webapp-standalone/resources/css/noty/themes/semanticui.css \
+    template/webapp-standalone/resources/css/noty/themes/light.css \
+    template/webapp-standalone/resources/css/noty/themes/metroui.css \
+    template/webapp-standalone/resources/css/noty/themes/sunset.css \
+    template/webapp-standalone/resources/css/noty/themes/bootstrap-v4.css \
+    template/webapp-standalone/resources/css/noty/themes/bootstrap-v3.css \
+    template/webapp-standalone/resources/css/@PROJECT@.css \
+    template/webapp-standalone/resources/css/statusbar.css \
+    template/webapp-standalone/resources/css/noty.css.map \
+    template/webapp-standalone/resources/css/noty.css \
+    template/webapp-standalone/resources/css/dropdown.css \
+    template/webapp-standalone/resources/html/json.html \
+    template/webapp-standalone/resources/html/dbaccess.html \
+    template/webapp-standalone/resources/html/dbinsert.html \
+    template/webapp-standalone/resources/html/actions.html \
+    template/webapp-standalone/resources/js/require.js \
+    template/webapp-standalone/resources/js/main.js \
+    template/webapp-standalone/resources/js/jquery-3.3.1.min.js \
+    template/webapp-standalone/resources/js/noty.min.js \
+    template/webapp-standalone/resources/js/tntnet.js \
+    template/webapp-standalone/resources/js/noty.js \
+    template/webapp-standalone/webmain.ecpp \
+    template/webapp-standalone/json/getnumbers.ecpp \
+    template/webapp-standalone/json/example.ecpp \
+    template/webapp-standalone/json/dbaccess.ecpp \
+    template/webapp-standalone/json/README \
+    template/webapp-standalone/include/actionreply.h \
+    template/webapp-standalone/include/@PROJECT@/config.h \
+    template/webapp-standalone/include/noty.h \
+    template/webapp-standalone/@PROJECT@.xml \
+    template/webapp-standalone/src/main.cpp \
+    template/webapp-standalone/src/@PROJECT@/config.cpp \
+    template/webapp-standalone/Makefile.am \
+    template/webapp-standalone/action.ecpp \
+    template/webapp-standalone/m4/ax_cxx_compile_stdcxx_11.m4 \
+    template/webapp-standalone/m4/ax_check_compile_flag.m4 \
+    template/webapp-standalone/action/README \
+    template/webapp-standalone/action/myaction.cpp \
+    template/webapp-standalone/action/insertdata.ecpp \
+    template/webapp-standalone/action/myaction.ecpp \
+    template/webapp-standalone/configure.ac \
+    template/webapp-standalone/log.properties \
+    template/webapp-standalone/test.sql \
+    template/webapp-standalone/actionmain.ecpp

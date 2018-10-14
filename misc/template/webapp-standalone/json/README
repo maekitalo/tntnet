@@ -1,0 +1,7 @@
+Put your json requests here.
+
+Json requests are called with a .json extension. The basename specifies the
+name of the component.
+
+e.g.
+    the url `/foo.json` calls the component `json/foo.ecpp` in this directory.

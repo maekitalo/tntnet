@@ -1,0 +1,36 @@
+<%pre>
+
+#include "actionreply.h"
+#include <cxxtools/json.h>
+#include <tnt/httperror.h>
+
+</%pre>
+<%include>action.ecpp</%include>
+<%cpp>
+
+// A action is a http request, which do not expect any output other than
+// success or failure or notifications.
+
+try
+{
+    // call the actual action component
+    unsigned ret = callComp("action/" + request.getArg("next"), request, reply, qparam);
+
+    log_debug("action <" << request.getArg("next") << "> http return code " << ret);
+    if (ret > HTTP_OK)
+        return ret;
+}
+catch (const tnt::HttpError& e)
+{
+    throw;
+}
+catch (const std::exception& e)
+{
+    log_warn(e.what());
+    actionReply.setFailed(e.what());
+}
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(actionReply);
+
+</%cpp>

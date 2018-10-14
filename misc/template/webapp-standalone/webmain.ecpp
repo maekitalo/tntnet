@@ -1,0 +1,39 @@
+<%pre>
+// put your includes here
+// #include "foo.h"
+</%pre>
+<%cpp>
+// put your C++ code here
+</%cpp>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>tntnet application @PROJECT@</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="@PROJECT@ application">
+        <link rel="stylesheet" href="css/@PROJECT@.css" type="text/css">
+        <link rel="stylesheet" href="css/dropdown.css" type="text/css">
+        <link rel="stylesheet" href="css/statusbar.css" type="text/css">
+        <link rel="stylesheet" href="css/noty.css" type="text/css">
+        <link rel="stylesheet" href="css/noty/themes/mint.css" type="text/css">
+        <script data-main="js/main" src="js/require.js"></script>
+    </head>
+    <body>
+        <ul id="mainmenu" class="dropdown">
+            <li><a href="actions">Actions demo</a></li>
+            <li><a href="json">Json request demo</a></li>
+            <li><span>More here</span>
+                <ul>
+                    <li><a href="dbaccess">Access database</a></li>
+                    <li><a href="dbinsert">Add data to database</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <div id="content"></div>
+
+        <div class="statusbar">
+            <div>status</div>
+        </div>
+    </body>
+</html>

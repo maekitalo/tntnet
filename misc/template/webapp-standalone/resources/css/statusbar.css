@@ -1,0 +1,15 @@
+.statusbar {
+    background-color: #ccc;
+    padding: 2px 16px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.statusbar div {
+    float: left;
+    display: inline;
+    border-style: groove;
+    border-color: #eee;
+    padding: 1px 8px;
+}

@@ -1,0 +1,37 @@
+<%args>
+bool beautify;
+</%args>
+<%pre>
+#include <cxxtools/json.h>
+#include <cxxtools/datetime.h>
+#include <vector>
+
+namespace
+{
+
+struct Result
+{
+    std::vector<int> values;
+    cxxtools::DateTime dt;
+};
+
+void operator<<= (cxxtools::SerializationInfo& si, const Result& result)
+{
+    si.addMember("values") <<= result.values;
+    si.addMember("dt") <<= result.dt;
+}
+
+}
+
+</%pre>
+<%cpp>
+
+Result result;
+result.values.push_back(17);
+result.values.push_back(42);
+result.dt = cxxtools::DateTime::localtime();
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(result).beautify(beautify);
+
+</%cpp>

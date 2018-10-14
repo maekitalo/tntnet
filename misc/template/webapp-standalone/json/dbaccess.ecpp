@@ -1,0 +1,51 @@
+<%args>
+int number;
+bool beautify;
+</%args>
+<%pre>
+#include <@PROJECT@/config.h>
+
+#include <cxxtools/json.h>
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <tntdb/value.h>
+
+namespace
+{
+
+struct Result
+{
+    int number;
+    std::string name;
+};
+
+void operator<<= (cxxtools::SerializationInfo& si, const Result& result)
+{
+    si.addMember("number") <<= result.number;
+    si.addMember("name") <<= result.name;
+}
+
+}
+
+</%pre>
+<%cpp>
+
+tntdb::Connection conn = tntdb::connectCached(@PROJECT@::Config::it().dburl());
+
+tntdb::Statement sel = conn.prepare(R"SQL(
+    select name
+      from test
+     where number = :number
+     order by number
+)SQL");
+
+Result result;
+result.number = number;
+sel.set("number", number)
+   .selectValue()
+   .get(result.name);
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(result).beautify(beautify);
+
+</%cpp>

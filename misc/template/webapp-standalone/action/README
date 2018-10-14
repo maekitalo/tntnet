@@ -1,0 +1,23 @@
+Put your actions here.
+
+Actions are json requests, which do not expect an reply other than success or error.
+
+They have the file extension `.ecpp`. Typically they start with a Tag `<%cpp>`
+and end with the closing tag `</%cpp>`. On error they throw an exception or
+return a proper http error code.
+
+From your java script code they are accessed using the js method
+`tntnet.action`. The url is the path to the action code without `action` and the
+extension.
+
+Example:
+
+    tntnet.action(
+        'process/activate',        // calls the action `action/process/activate.ecpp`
+        { processId: 47 },         // a parameter
+        function(data, textStatus, jqXHR) {  // optionally a function, which is called on success
+            information("Process activated");
+        },
+        function(data, textStatus, jqXHR) {  // optionally a function, which is called on failure
+            error("Failed to activate process: " + data);
+        });

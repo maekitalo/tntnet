@@ -1,0 +1,28 @@
+<%include>action.ecpp</%include>
+<%args>
+int number;
+name;
+</%args>
+<%pre>
+#include <@PROJECT@/config.h>
+
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+
+</%pre>
+<%cpp>
+
+tntdb::Connection conn = tntdb::connectCached(@PROJECT@::Config::it().dburl());
+
+tntdb::Statement ins = conn.prepare(R"SQL(
+    insert into test(name, number)
+     values (:name, :number)
+)SQL");
+
+ins.set("number", number)
+   .set("name", name)
+   .execute();
+
+actionReply.information("one row inserted");
+
+</%cpp>

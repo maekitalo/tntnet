@@ -1,0 +1,35 @@
+<%args>
+bool beautify;
+</%args>
+<%pre>
+#include <@PROJECT@/config.h>
+
+#include <cxxtools/json.h>
+#include <tntdb/connect.h>
+#include <tntdb/statement.h>
+#include <tntdb/value.h>
+
+#include <vector>
+
+</%pre>
+<%cpp>
+
+tntdb::Connection conn = tntdb::connectCached(@PROJECT@::Config::it().dburl());
+
+tntdb::Statement sel = conn.prepare(R"SQL(
+    select number
+      from test
+)SQL");
+
+std::vector<int> result;
+for (auto row: sel)
+{
+    int value;
+    row.get(value);
+    result.push_back(value);
+}
+
+reply.setContentType("application/json");
+reply.out() << cxxtools::Json(result).beautify(beautify);
+
+</%cpp>

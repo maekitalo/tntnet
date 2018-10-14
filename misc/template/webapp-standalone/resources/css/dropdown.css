@@ -1,0 +1,35 @@
+ul.dropdown,
+ul.dropdown ul {
+    list-style-type: none;
+    overflow: hidden;
+    background-color: #555;
+    margin: 0;
+    padding: 0;
+}
+
+ul.dropdown > li {
+    float: left;
+}
+
+ul.dropdown > li a,
+ul.dropdown > li span {
+    display: inline-block;
+    color: white;
+    padding: 6px 16px;
+    text-decoration: none;
+}
+
+ul.dropdown li:hover {
+    background-color: blue;
+}
+
+ul.dropdown > li > ul {
+    display: none;
+    position: absolute;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+ul.dropdown > li:hover > ul  {
+    display: block;
+}
