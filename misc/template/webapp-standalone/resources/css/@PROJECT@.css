@@ -4,34 +4,6 @@ body {
     margin: 0;
 }
 
-ul.menu {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    width: 140px;
-    background-color: #f1f1f1;
-    height: 100%;
-    position: fixed;
-    overflow: auto;
-}
-
-.menu li a {
-    display: block;
-    color: #000;
-    padding: 4px 12px;
-    text-decoration: none;
-}
-
-.menu li a:hover {
-    background-color: #555;
-    color: white;
-}
-
-.menu .active {
-    background-color: #4caf50;
-    color: white;
-}
-
 #content {
     padding: 8px;
 }
