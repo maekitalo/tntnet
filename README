@@ -61,3 +61,5 @@ Tntnet supports ssl. It must be configured in tntnet.xml or using the api.
 For ssl a certificate is needed. To create a self signed certificate run:
 
     openssl req -x509 -nodes -days 1095 -utf8 -subj "/C=DE/L=Your Town/CN=$(hostname -f)/O=Your Organization/OU=Your unit" -newkey rsa:2048 -keyout tntnet.pem -out tntnet.pem
+
+Client side certificates can be used to restrict access to tntnet.
