@@ -39,5 +39,5 @@
 
   </logging>
 
-  <server>Foo</server>
+  <server>@PROJECT@</server>
 </tntnet>
