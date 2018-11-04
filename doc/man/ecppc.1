@@ -1,114 +1,135 @@
 .TH ecppc 1 "2006\-07\-23" Tntnet "Tntnet users guide"
 .SH NAME
 .PP
-ecppc \- compiler for 
-.BR ecpp (7)
+ecppc \- compiler for ecpp(7)
+
 .SH SYNOPSIS
 .PP
 \fB\fCecppc\fR [\fB\fC\-bhszvtM\fR] [\fB\fC\-s\-\fR] [\fB\fC\-o\fR \fIfilename\fP]  [\fB\fC\-n\fR \fIname\fP] [\fB\fC\-m\fR \fImimetype\fP] [\fB\fC\-\-mimetypes\fR \fIfilename\fP] [\fB\fC\-I\fR \fIdir\fP] [\fB\fC\-l\fR \fIlog\-category\fP] \fIfilename\fP
+
 .PP
 \fB\fCecppc\fR \fB\fC\-bb\fR \fIfilename\fP ...
+
 .PP
 \fB\fCecppc\fR [\fB\fCOPTION\fR]
+
 .SH DESCRIPTION
 .PP
 \fB\fCecppc\fR is the compiler for the ecpp\-language. \fB\fCecpp\fR is a template language,
-which lets the user embed C++\-code  into HTML  for  use  in  
-.BR tntnet (8).
-
+which lets the user embed C++\-code  into HTML  for  use  in  tntnet(8).
 \fB\fCecppc\fR generates a C++\-class from a ecpp template. It can also compile binary
 data into a C++\-class, which makes it possible to integrate them in a tntnet
 application.
+
 .SH OPTIONS
-.TP
+.PP
 \fB\fC\-b\fR
-This enables binary\-mode. Ecppc does not look for ecpp\-tags, but creates a
-class, which just copies the data
-.TP
+  This enables binary\-mode. Ecppc does not look for ecpp\-tags, but creates a
+  class, which just copies the data
+
+.PP
 \fB\fC\-bb\fR
-This enables multi\-binary\-mode. Every binary\-file has some overhead, when
-packed into a tntnet\-application. This overhead can be quite significant, when
-binary\-files are small, like small icons in a web application. To reduce this
-overhead, multiple binaries can be packed into a single class, which removes
-the per\-binary overhead completely.
-.IP
+  This enables multi\-binary\-mode. Every binary\-file has some overhead, when
+  packed into a tntnet\-application. This overhead can be quite significant, when
+  binary\-files are small, like small icons in a web application. To reduce this
+  overhead, multiple binaries can be packed into a single class, which removes
+  the per\-binary overhead completely.
+
+.PP
 When the component is called, it uses the path\-info\-parameter
-(request.getPathInfo()) from the request, to decide, which binary to send. If
-no filename matches the path\-info, processing is declined. The binaries need
-not be of same mime\-type, since the mime\-type is looked automatically from the
-mime\-database by file\- extension of the source\-file.
-.TP
+  (request.getPathInfo()) from the request, to decide, which binary to send. If
+  no filename matches the path\-info, processing is declined. The binaries need
+  not be of same mime\-type, since the mime\-type is looked automatically from the
+  mime\-database by file\- extension of the source\-file.
+
+.PP
 \fB\fC\-i\fR \fIfilename\fP
-In multi binary mode (option \fB\fC\-bb\fR) filenames can be read from the file
-specified with this option. This can be useful when the command line gets too
-long or just for convenience.
-.TP
+  In multi binary mode (option \fB\fC\-bb\fR) filenames can be read from the file
+  specified with this option. This can be useful when the command line gets too
+  long or just for convenience.
+
+.PP
 \fB\fC\-I\fR \fIdir\fP
-Search include\-files in directory. This option can be passed multiple times.
-All specified directories are searched in turn for include\-files.
-.TP
+  Search include\-files in directory. This option can be passed multiple times.
+  All specified directories are searched in turn for include\-files.
+
+.PP
 \fB\fC\-l\fR \fIlog\-category\fP
-Set log category. Default is \fIcomponent.componentname\fP\&.
-.TP
+  Set log category. Default is \fIcomponent.componentname\fP\&.
+
+.PP
 \fB\fC\-L\fR
-Disable generation of #line\-directives
-.TP
+  Disable generation of #line\-directives
+
+.PP
 \fB\fC\-m\fR \fImimetype\fP
-Set mimetype of output. This is the mimetype, sent by the component to the
-browser in the Content\-Type\- header. Without this parameter the mimetype is
-looked up from the mime\-database of your system using the file\-extension of
-the source\-file.
-.TP
+  Set mimetype of output. This is the mimetype, sent by the component to the
+  browser in the Content\-Type\- header. Without this parameter the mimetype is
+  looked up from the mime\-database of your system using the file\-extension of
+  the source\-file.
+
+.PP
 \fB\fC\-\-mimetypes\fR \fIfile\fP
-Read mimetypes from file (default: /etc/mime.types).
-.TP
+  Read mimetypes from file (default: /etc/mime.types).
+
+.PP
 \fB\fC\-M\fR
-This disables normal processing and prints just the ecpp\-dependencies from
-this component. The output can be included into a Makefile. Ecpp\-dependencies
-are introduces by the <%include>\-tag.
-.TP
+  This disables normal processing and prints just the ecpp\-dependencies from
+  this component. The output can be included into a Makefile. Ecpp\-dependencies
+  are introduces by the <%include>\-tag.
+
+.PP
 \fB\fC\-C, \-\-cmake\fR
-Prints ecpp dependencies in a syntax, which \fB\fCcmake\fR understands.
-.TP
+  Prints ecpp dependencies in a syntax, which \fB\fCcmake\fR understands.
+
+.PP
 \fB\fC\-n\fR \fIname\fP
-Set the name of the component. Normally this is derived from the
-source\-file\-name by removing the path and .ecpp\-extension.
-.TP
+  Set the name of the component. Normally this is derived from the
+  source\-file\-name by removing the path and .ecpp\-extension.
+
+.PP
 \fB\fC\-o\fR \fIfilename\fP
-Write the generated file to the specified file instead of deriving the
-filename from the source\-file\-name.  The outputfilename is normally the
-source\-file where the extension is replaced by .cpp.
-.TP
+  Write the generated file to the specified file instead of deriving the
+  filename from the source\-file\-name.  The outputfilename is normally the
+  source\-file where the extension is replaced by .cpp.
+
+.PP
 \fB\fC\-p\fR
-Keep path name when deriving name of component from input file name.
-.TP
+  Keep path name when deriving name of component from input file name.
+
+.PP
 \fB\fC\-s\fR
-Generate singleton. Normally ecppc decides automatically, if the template is
-suitable for a singleton.  This option force ecppc to generate a singleton.
-.TP
+  Generate singleton. Normally ecppc decides automatically, if the template is
+  suitable for a singleton.  This option force ecppc to generate a singleton.
+
+.PP
 \fB\fC\-s\-\fR
-Do not generate a singleton.
-.TP
+  Do not generate a singleton.
+
+.PP
 \fB\fC\-v\fR
-Enable verbose mode. This prints additional information about the processing
-on the standard\-output.
-.TP
+  Enable verbose mode. This prints additional information about the processing
+  on the standard\-output.
+
+.PP
 \fB\fC\-z\fR
-Compress the data in the component. Compressed data is automatically
-decopressed on first use. This reduces the code\-size, but slightly slows down
-the first call of the component.
-.TP
+  Compress the data in the component. Compressed data is automatically
+  decopressed on first use. This reduces the code\-size, but slightly slows down
+  the first call of the component.
+
+.PP
 \fB\fC\-h, \-\-help\fR
-display this information
-.TP
+  display this information
+
+.PP
 \fB\fC\-V, \-\-version\fR
-display program version
+  display program version
+
 .SH AUTHOR
 .PP
-This manual page was written by Tommi Mäkitalo \[la]tommi@tntnet.org\[ra]\&.
+This manual page was written by Tommi Mäkitalo 
+\[la]tommi@tntnet.org\[ra]\&.
+
 .SH SEE ALSO
 .PP
-.BR tntnet (8), 
-.BR ecpp (7), 
-.BR ecppl (1), 
-.BR ecppll (1)
+tntnet(8), ecpp(7), ecppl(1), ecppll(1)

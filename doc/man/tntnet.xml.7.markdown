@@ -160,7 +160,7 @@ This section describes the variables, used by Tntnet (8).
 
   See separate section *Listeners*
 
-`<logging>`*listener definition*`</logging>`
+`<logging>`*logger definition*`</logging>`
 
   Configures logging. See separate section *logging*
 
@@ -650,6 +650,142 @@ We summarize the settings for the listeners here.
     The certificate authority the client certificate is checked against. Only
     client certificates, which can be verified by this authority are accepted.
     This settins is mandatory when `sslVerifyLevel` is set to 1 or 2.
+
+LOGGING
+-------
+Logging is configured in the `<logging>` section.
+
+Every log output has a category and a level. Categories are hierarchical.
+
+The configuration tells which category is output at which level and where the
+output is written to.
+
+The main log levels are in decreasing severity _FATAL_, _ERROR_, _WARN_, _INFO_,
+_DEBUG_, _FINER_, _FINEST_. The severity _FINE_ is the same as _DEBUG_. A
+special level is _TRACE_.
+
+The settings are:
+
+`<rootlogger>`*level*`</rootlogger>`
+
+    Sets the main level used, when nothing else is specified. The default is
+    _FATAL_.
+
+`<loggers>`*loggers*`</loggers>
+
+    Specifies the log levels for a category. See separate section about
+    *loggers* for details.
+
+`<file>`*filename*`</file>
+
+    Log output is written to file. Default is *stderr*.
+
+`<maxfilesize>`*size*`</maxfilesize>
+
+    Specifies maximum _size_ of file. The size is a number in bytes or it can be
+    prepended by a unit of 'k', 'm' or 'g', which specified kilo, mega or
+    gigabytes. The unit is not case sensitive.
+
+    After reaching the size, a log message is written into the current file and
+    renamed by appending a '.0' to it. A new file is then created.
+
+`<maxbackupindex>`*number*`</maxbackupindex>
+
+    If the *maxfilesize* was reached and there is already a file with a *.0*
+    extension it is renamed to .1. This happens up to the specified number. So
+    if *maxfilesize* is e.g. 4 the log files are rolled up to .4, so that 5
+    files are kept.
+
+`<logport>`*portnumber*`</logport>`
+
+    When a *portnumber* is specified and no *file* is specified (*file* has
+    higher priority), log messages are sent to the specified udp port.
+
+`<loghost>`*host*`</loghost>`
+
+    When *logport* and *loghost are set, the messages are sent to the host.
+
+`<broadcast>`*boolean*`</broadcast>`
+
+    When the host address is a network address, the *broadcast* flag must be
+    set. Then the messages are sent as broadcast udp messages to the network.
+
+    A boolean value is false when it is empty or starts with '0', 'f', 'F', 'n'
+    or 'N'.
+
+`<stdout>`*boolean*`</stdout>`
+
+    When no file or loghost is set output and this flag is set, the output is
+    written to *stdout*. The default is *stderr*.
+
+    A boolean value is false when it is empty or starts with '0', 'f', 'F', 'n'
+    or 'N'.
+
+### loggers
+
+In the section `<loggers>` a list of `<logger>` is specified. A logger has this
+settings:
+
+`<category>`*category*`</category>`
+
+    Specifies the category
+
+`<level>`*level*`</level>`
+
+    Specifies the level for this category.
+    
+    The level can be one of the log levels _FATAL_, _ERROR_, _WARN_, _INFO_,
+    _DEBUG_, _FINE_, _FINER_ or _FINEST_. The all messages with a level of this
+    or higher are output. So e.g. setting _DEBUG_ outputs all messages from
+    _FATAL_ to _DEBUG_.
+
+    It is enough to specify the first character (except _FINE_, _FINER_ and
+    _FINEST_).
+
+    Setting _TRACE_ (or _T_) is like _DEBUG_ plus all _TRACE_ messages. _TRACE_
+    is special since it outputs a message when a the code is reached and a exit
+    message when the scope of the code is exited. Typically the _TRACE_ messages
+    are put at the start of functions so that the log shows when a function is
+    called and when it is exited.
+
+    Multiple log levels can be separated by '|'. In that case only those levels
+    are output. E.g. _WARN|DEBUG_ prints just warning and debug messages. When
+    just one level should be printed, it can be prepended by '|', so e.g.
+    _|ERROR_ prints just error messages.
+
+    Prepending a 'T' to the log level adds always traces. E.g. *TINFO* prints
+    info messages and above and traces. _TFINEST_ prints just everything.
+
+Note that all components has a automatic log category of _component.*name*_ set.
+
+### logger examples
+
+    <loggers>
+        <logger>
+            <category>tntnet</category>
+            <level>DEBUG</level>
+        </logger>
+    </loggers>
+
+Prints much debug information when tntnet runs.
+
+    <loggers>
+        <logger>
+            <category>tntnet.dispatcher</category>
+            <level>DEBUG</level>
+        </logger>
+        <logger>
+            <category>component</category>
+            <level>TRACE</level>
+        </logger>
+    </loggers>
+
+Prints debug messages about the processing of url mappings and traces about
+called (ecpp-)components.
+
+Other useful categories are *tntnet.messageheader*, which outputs debug messages
+for each header sent from the client or *tntnet.httpreply*, where we can see the
+reply headers.
 
 AUTHOR
 ------

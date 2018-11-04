@@ -2,67 +2,79 @@
 .SH NAME
 .PP
 tntnet \- web application server for c++
+
 .SH SYNOPSIS
 .PP
 \fB\fCtntnet\fR [\fB\fC\-c\fR \fIfile\fP] [\fB\fC\-\-logall\fR]
+
 .PP
 \fB\fCtntnet\fR\-C [\fB\fC\-q\fR \fIquery\-string\fP] \fIcomponentId\fP ...
+
 .SH DESCRIPTION
 .PP
 This manual page documents briefly the \fB\fCtntnet\fR command.
+
 .PP
 \fB\fCtntnet\fR is a web server that can generate dynamic content via precompiled C++ modules.
+
 .SH OPTIONS
 .PP
 A summary of options is included below.
-.TP
+
+.PP
 \fB\fC\-c\fR \fIfile\fP
-Use file as the configuration file. If the \-c is omitted, the first nonoption
-argument is used as the config file.
-.TP
+  Use file as the configuration file. If the \-c is omitted, the first nonoption
+  argument is used as the config file.
+
+.PP
 \fB\fC\-\-logall\fR
-Initialize logging earlier. Normally logging is initialized after starting the
-listeners and changing user so that logfiles are created with the right owner.
-For debugging reasons this option forces to do that earlier.
-.TP
+  Initialize logging earlier. Normally logging is initialized after starting the
+  listeners and changing user so that logfiles are created with the right owner.
+  For debugging reasons this option forces to do that earlier.
+
+.PP
 \fB\fC\-C\fR
-Call components and print the result to stdout instead of starting tntnet as a webserver
-.TP
+  Call components and print the result to stdout instead of starting tntnet as a webserver
+
+.PP
 \fB\fC\-q\fR \fIquery\-string\fP
-In \-C mode pass this query string to the component. The option may be
-repeated multiple times to pass name\-value\-pairs easily.
+  In \-C mode pass this query string to the component. The option may be
+  repeated multiple times to pass name\-value\-pairs easily.
+
 .SH EXAMPLE
 .PP
 \fB\fCtntnet\fR \fB\fC\-C\fR \fB\fC\-q\fR \fB\fCarg1=35\fR \fB\fC\-q\fR \fB\fCarg2=7\fR \fB\fC\-q\fR \fB\fCop=/\fR \fIcalc@calc\fP
-.IP
+
+.PP
 calls the component \fIcalc@calc\fP with query parameters and prints the result to stdout.
+
 .SH FILES
-.TP
+.PP
 \fI/etc/tntnet/tntnet.xml\fP
-The default configuration file.
+  The default configuration file.
+
 .SH ENVIRONMENT
-.TP
-\fB\fCTNTNET_CONF\fR
-This is checked for the configuration file name if it is not specified on the
-command line.
+.PP
+\fB\fCTNTNET\_CONF\fR
+  This is checked for the configuration file name if it is not specified on the
+  command line.
+
 .SH AUTHOR
 .PP
-tntnet was written by Tommi Mäkitalo \[la]tommi@tntnet.org\[ra]\&.
+tntnet was written by Tommi Mäkitalo 
+\[la]tommi@tntnet.org\[ra]\&.
+
 .PP
-This manual page was written by Kari Pahula \[la]kaol@debian.org\[ra], for the Debian
+This manual page was written by Kari Pahula 
+\[la]kaol@debian.org\[ra], for the Debian
 project (but may be used by others).
+
 .SH SEE ALSO
 .PP
-.BR tntnet-project (1), 
-.BR ecpp (7), 
-.BR ecppc (1), 
-.BR ecppl (1), 
-.BR ecppll (1), 
-.BR tntnet.xml (7), 
-.BR tntnet-defcomp (1)
-
-Tntnet homepage \[la]http://www.tntnet.org\[ra]\&. More
+tntnet\-project(1), ecpp(7), ecppc(1), ecppl(1), ecppll(1), tntnet.xml(7), tntnet\-defcomp(1)
+Tntnet homepage
+\[la]http://www.tntnet.org\[ra]\&. More
 documentation can be found in /usr/share/doc/tntnet\-doc/.
+
 .PP
-Tntnet July 23, 2006 
-.BR tntnet (8)
+Tntnet July 23, 2006 tntnet(8)

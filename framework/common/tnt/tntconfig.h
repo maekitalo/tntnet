@@ -67,9 +67,6 @@ namespace tnt
 
       Example:
       @code
-        // Instantiate an application object
-        tnt::Tntnet app;
-
         // Create a configuration object
         tnt::TntConfig config;
 
@@ -80,10 +77,16 @@ namespace tnt
         std::ifstream tntnetXml("tntnet.xml");
 
         // Deserialize the content of tntnetXml and save it to config
-        tntnetXml >> cxxtools::Xml(config);
+        tntnetXml >> cxxtools::xml::Xml(config);
+
+        // Instantiate an application object
+        tnt::Tntnet app;
 
         // Pass the configuration to the application object
         app.init(config);
+
+        // or intantiate with configuration
+        tnt::Tntnet app(config);
       @endcode
 
       Note:
