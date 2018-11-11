@@ -1,19 +1,17 @@
-pkglib_LTLIBRARIES = cookie.la
+bin_PROGRAMS = cookie
 
-cookie_la_SOURCES = \
-	cookie.ecpp
+cookie_SOURCES = \
+	cookie.ecpp \
+	main.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-cookie_la_LDFLAGS = -module @SHARED_LIB_FLAG@
-cookie_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+cookie_LDADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
 dist_noinst_DATA = README
-CLEANFILES = cookie.cpp tntnet.xml
+CLEANFILES = cookie.cpp
 
-SUFFIXES=.ecpp .cpp
-.ecpp.cpp:
-	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
+ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
-tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-project --config=cookie|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+.ecpp.cpp: $(ECPPC)
+	$(AM_V_GEN)$(ECPPC) -o $@ $<

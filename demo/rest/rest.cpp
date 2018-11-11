@@ -26,25 +26,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- This demo shows how to create a standalone application server just with
- libtntnet.
-
- Normally applications are compiled into shared libraries and loaded at
- runtime. Configuration, especially the mapping from url to component, is done
- with tntnet.xml.
-
- As an alternative you may write your own small main function and compile the
- components into a program. There is no configuration file tntnet.xml read any
- more but you have to code your mappings into the program. The advantage is,
- that there is no configuration file needed. Since the mappings are often a
- fundamental part of your application, it is better to hard code it into the
- application.
-
- */
 #include <iostream>
 #include <tnt/tntnet.h>
-#include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 #include <cxxtools/arg.h>
 
@@ -52,14 +35,15 @@ int main(int argc, char* argv[])
 {
   try
   {
-    // read listen ip from command line switch -l with default to empty, which means: all interfaces
+    // read listen ip from command line switch -l with default to empty, which
+    // means: all interfaces
     cxxtools::Arg<std::string> ip(argc, argv, 'l');
 
     // read listen port from command line switch -p with default to 8000
     cxxtools::Arg<unsigned short> port(argc, argv, 'p', 8000);
 
-    // initialize logging - this is optional. If log_init is not called, no
-    // logging is done
+    // initialize logging - this is optional. If log_init is not called,
+    // logging is not enabled
     log_init("tntnet.properties");
 
     // instantiate the tnt::Tntnet application class
@@ -97,4 +81,3 @@ int main(int argc, char* argv[])
     std::cerr << e.what() << std::endl;
   }
 }
-

@@ -1,14 +1,14 @@
-pkglib_LTLIBRARIES = accumulator.la
+bin_PROGRAMS = accumulator
 
-accumulator_la_SOURCES = \
-	accumulator.ecpp
+accumulator_SOURCES = \
+	accumulator.ecpp \
+	main.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-accumulator_la_LDFLAGS = -module @SHARED_LIB_FLAG@
-accumulator_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+accumulator_LDADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
-CLEANFILES = accumulator.cpp tntnet.xml
+CLEANFILES = accumulator.cpp
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
@@ -16,6 +16,3 @@ SUFFIXES=.ecpp .cpp
 
 .ecpp.cpp: $(ECPPC)
 	$(AM_V_GEN)$(ECPPC) -o $@ $<
-
-tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-project --config=accumulator|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

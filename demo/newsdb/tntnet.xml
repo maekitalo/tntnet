@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tntnet>
+<!--
+  This is the main configuration file for tntnet.
 
+  You can find documentation about the parameters in the man page tntnet.xml(7)
+  -->
+<tntnet>
+  <dburl>sqlite:newsdb.db</dburl>
+
+  <!-- listen to a port -->
   <listeners>
     <listener>
       <port>8000</port>
     </listener>
+  <!-- a certificate enables ssl -->
+  <!--
+    <listener>
+      <port>8443</port>
+      <certificate>tntnet.pem</certificate>
+    </listener>
+    -->
   </listeners>
 
   <logging>
@@ -16,7 +30,7 @@
         <level>INFO</level>
       </logger>
       <logger>
-        <category>component.calcmvc</category>
+        <category>component.newsdb</category>
         <level>INFO</level>
       </logger>
     </loggers>

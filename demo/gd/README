@@ -20,7 +20,7 @@ To build the application you need to install tntnet and gd. For common linux
 distributions you need the development package of gd, which contains the
 headers and link libraries. The package is named gd-devel in fedora at least.
 
-Running `make` build the application and running `tntnet` starts the server.
+Running `make` build the application and running `gd` starts the server.
 You can access the application using a browser using the url
 http://localhost:8000/ or the hostname of the server if you want to access the
 application remotely.

@@ -7,14 +7,14 @@
 name;            // define query-parameter
                  // this defines a variable of type std::string with
                  // the name "name"
-clearcookie;
+bool clearcookie;
 </%args>
 <%cpp>
 
   if (name.empty())
     name = request.getCookie("name");
 
-  if (!clearcookie.empty())
+  if (clearcookie)
   {
     reply.clearCookie("name");   // delete cookie from client
   }
@@ -29,7 +29,7 @@ clearcookie;
   <title>Hello World-application for tntnet</title>
  </head>
 
- <body bgcolor="#FFFFFF">
+ <body>
 
   <h1>Hello <$ name.empty() ? "World" : name $></h1>
 
@@ -44,4 +44,3 @@ clearcookie;
 
  </body>
 </html>
-

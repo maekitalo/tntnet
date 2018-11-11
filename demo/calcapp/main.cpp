@@ -58,8 +58,8 @@ int main(int argc, char* argv[])
     // read listen port from command line switch -p with default to 8000
     cxxtools::Arg<unsigned short> port(argc, argv, 'p', 8000);
 
-    // initialize logging - this is optional. If log_init is not called, no
-    // logging is done
+    // initialize logging - this is optional. If log_init is not called,
+    // logging is disabled
     log_init("tntnet.properties");
 
     // instantiate the tnt::Tntnet application class

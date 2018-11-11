@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Tommi Maekitalo
+ * Copyright (C) 2018 Tommi Maekitalo
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,37 +27,31 @@
  */
 
 #include <iostream>
-#include <cxxtools/log.h>
-#include <cxxtools/arg.h>
-#include <cxxtools/http/client.h>
-#include <cxxtools/http/request.h>
-#include <cxxtools/http/reply.h>
+#include <tnt/tntnet.h>
+#include <tnt/tntconfig.h>
+#include <cxxtools/xml/xml.h>
+#include <fstream>
 
 int main(int argc, char* argv[])
 {
     try
     {
-        log_init();
+        std::ifstream in("tntnet.xml");
 
-        cxxtools::Arg<std::string> ip(argc, argv, 'l');
-        cxxtools::Arg<unsigned short> port(argc, argv, 'p', 8000);
+        tnt::TntConfig config;
+        in >> cxxtools::xml::Xml(config);
 
-        cxxtools::http::Client client(ip, port);
+        tnt::Tntnet app(config);
+        app.mapUrl("^/$", "redirect@tntnet")
+           .setPathInfo("/calc");
 
-        if (argc <= 1)
-        {
-            std::cerr << "missing parameter; usage: " << argv[0] << " key" << std::endl;
-            return -1;
-        }
+        app.mapUrl("^/(.*)$", "controller/$1")
+           .setMethod("^POST$");
 
-        std::string key = argv[1];
+        app.mapUrl("^/(.*)$", "calcmvc")
+           .setPathInfo("view/$1");
 
-        cxxtools::http::Request request('/' + key);
-        request.method("DELETE");
-        client.execute(request);
-        const cxxtools::http::Reply& reply = client.readBody();
-
-        std::cout << "http return code " << reply.httpReturnCode() << std::endl;
+        app.run();
     }
     catch (const std::exception& e)
     {

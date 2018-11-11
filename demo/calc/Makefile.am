@@ -1,15 +1,15 @@
-pkglib_LTLIBRARIES = calc.la
+bin_PROGRAMS = calc
 
-calc_la_SOURCES = \
-	calc.ecpp
+calc_SOURCES = \
+	calc.ecpp \
+	main.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-calc_la_LDFLAGS = -module @SHARED_LIB_FLAG@
-calc_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+calc_LDADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
 dist_noinst_DATA = README
-CLEANFILES = calc.cpp tntnet.xml
+CLEANFILES = calc.cpp
 
 ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
@@ -17,6 +17,3 @@ SUFFIXES=.ecpp .cpp
 
 .ecpp.cpp: $(ECPPC)
 	$(AM_V_GEN)$(ECPPC) -o $@ $<
-
-tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-project --config=calc|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@

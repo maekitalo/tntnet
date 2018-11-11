@@ -1,19 +1,20 @@
-pkglib_LTLIBRARIES = upload.la
+bin_PROGRAMS = upload
 
-upload_la_SOURCES = \
+upload_SOURCES = \
+	main.cpp \
 	upload.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-upload_la_LDFLAGS = -module @SHARED_LIB_FLAG@
-upload_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
+upload_LDFLAGS = -lcxxtools
+upload_LDADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
 dist_noinst_DATA = README
-CLEANFILES = upload.cpp tntnet.xml
+CLEANFILES = upload.cpp
+
+ECPPC=$(top_builddir)/sdk/tools/ecppc/ecppc
 
 SUFFIXES=.ecpp .cpp
-.ecpp.cpp:
-	$(AM_V_GEN)$(top_builddir)/sdk/tools/ecppc/ecppc -o $@ $<
 
-tntnet.xml:
-	$(AM_V_GEN)$(SHELL) $(top_builddir)/misc/tntnet-project --config=upload|$(AWK) '/<\/tntnet>/{print "  <compPath>\n    <entry>.libs</entry>\n  </compPath>"} {print}' >$@
+.ecpp.cpp: $(ECPPC)
+	$(AM_V_GEN)$(ECPPC) -o $@ $<

@@ -5,30 +5,6 @@
   You can find documentation about the parameters in the man page tntnet.xml(7)
   -->
 <tntnet>
-  <mappings>
-    <!-- redirect / to /counter -->
-    <mapping>
-      <target>redirect@tntnet</target>
-      <url>^/$</url>
-      <pathinfo>/counter</pathinfo>
-    </mapping>
-
-    <!-- map /comp controller/comp@mvc -->
-    <mapping>
-      <target>controller/$1@mvc</target>
-      <url>^/(.*)$</url>
-    </mapping>
-
-    <!-- map /comp to the main component -->
-    <mapping>
-      <target>main@mvc</target>
-      <url>^/(.*)$</url>
-      <args>
-        <next>view/$1</next>
-      </args>
-    </mapping>
-  </mappings>
-
   <!-- listen to a port -->
   <listeners>
     <listener>
@@ -52,20 +28,8 @@
         <level>INFO</level>
       </logger>
       <logger>
-        <category>tntnet.dispatcher</category>
-        <level>DEBUG</level>
-      </logger>
-      <logger>
-        <category>component.mvc</category>
+        <category>component.calcajax</category>
         <level>INFO</level>
-      </logger>
-      <logger>
-        <category>component.view.counter</category>
-        <level>DEBUG</level>
-      </logger>
-      <logger>
-        <category>controller.counter</category>
-        <level>DEBUG</level>
       </logger>
     </loggers>
 
@@ -95,15 +59,16 @@
     <entry>path2</entry>
   </compPath>
    -->
-  <!-- <bufferSize>16384</bufferSize> -->
+  <!-- <socketBufferSize>16384</socketBufferSize> -->
   <!-- <socketReadTimeout>10</socketReadTimeout> -->
   <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
   <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->
   <!-- <keepAliveMax>1000</keepAliveMax> -->
+  <!-- <reuseAddress>1</reuseAddress> -->
   <!-- <sessionTimeout>300</sessionTimeout> -->
-  <!-- <listenBacklog>64</listenBacklog> -->
+  <!-- <listenBacklog>512</listenBacklog> -->
   <!-- <listenRetry>5</listenRetry> -->
-  <!-- <enableCompression>no</enableCompression> -->
+  <!-- <enableCompression>yes</enableCompression> -->
   <!-- <mimeDb>/etc/mime.types</mimeDb> -->
   <!-- <minCompressSize>1024</minCompressSize> -->
   <!-- <maxUrlMapCache>8192</maxUrlMapCache> -->
@@ -111,6 +76,7 @@
   <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
   <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
   <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
+  <!-- <server>Tntnet</server> -->
 
   <compPath>
     <entry>.libs</entry>

@@ -10,7 +10,7 @@
 dburl = "sqlite:newsdb.db";
 
 </%config>
-<%request scope="shared">
+<%request>
 
 // fetch a connection from the tntdb connection cache
 tntdb::Connection conn(tntdb::connectCached(dburl));

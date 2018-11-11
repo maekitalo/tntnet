@@ -1,9 +1,0 @@
-<!DOCTYPE html>
-<html>
-  <head>
-   <title>model view controller demo application</title>
-  </head>
-  <body>
-<& (request.getArg("next")) qparam >
-  </body>
-</html>
