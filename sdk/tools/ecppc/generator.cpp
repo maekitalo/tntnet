@@ -94,7 +94,6 @@ namespace tnt
         _haveCloseComp(false),
         _closeComp(componentName),
         _currentComp(&_maincomp),
-        _externData(false),
         _compress(false),
         _c_time(0),
         _linenumbersEnabled(true)
@@ -287,9 +286,6 @@ namespace tnt
 
     void Generator::onIncludeEnd(const std::string& /* file */)
       { _currentComp->addHtml("  // </%include>\n"); }
-
-    void Generator::startI18n()
-      { _externData = true; }
 
     void Generator::getIntro(std::ostream& out, const std::string& filename) const
     {
@@ -538,14 +534,6 @@ namespace tnt
         for (variable_declarations::const_iterator it = _configs.begin(); it != _configs.end(); ++it)
           it->getConfigDecl(code);
         code << "// </%config>\n\n"
-                "#define SET_LANG(lang) \\\n"
-                "     do \\\n"
-                "     { \\\n"
-                "       request.setLang(lang); \\\n"
-                "       reply.setLocale(request.getLocale()); \\\n";
-        if (_externData)
-          code << "       data.setData(getData(request, rawData)); \\\n";
-        code << "     } while (false)\n\n"
              << "_component_::_component_(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)\n"
                 "  : EcppComponent(ci, um, cl)";
 
@@ -606,10 +594,7 @@ namespace tnt
 
         if (!_data.empty())
         {
-          if (_externData)
-            code << "  tnt::DataChunks data(getData(request, rawData));\n";
-          else
-            code << "  tnt::DataChunks data(rawData);\n";
+          code << "  tnt::DataChunks data(rawData);\n";
         }
 
         if (_multiImages.empty())
@@ -654,7 +639,7 @@ namespace tnt
         }
 
         if (_haveCloseComp)
-          _closeComp.getDefinition(code, _externData, _linenumbersEnabled);
+          _closeComp.getDefinition(code, _linenumbersEnabled);
 
         if (!_attr.empty())
         {
@@ -669,7 +654,7 @@ namespace tnt
         }
 
         for (subcomps_type::const_iterator it = _subcomps.begin(); it != _subcomps.end(); ++it)
-          it->getDefinition(code, _externData, _linenumbersEnabled);
+          it->getDefinition(code, _linenumbersEnabled);
       }
     }
 

@@ -3,6 +3,4 @@ dist_man_MANS = \
 	ecppc.1 \
 	ecpp.7 \
 	tntnet-defcomp.1 \
-	tntnet.xml.7 \
-	ecppl.1 \
-	ecppll.1
+	tntnet.xml.7

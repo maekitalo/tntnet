@@ -73,7 +73,6 @@ namespace tnt
 
         tnt::DatachunksCreator _data;
 
-        bool _externData;
         bool _compress;
 
         time_t _c_time;
@@ -161,7 +160,6 @@ namespace tnt
                              const std::vector<std::string>& includes);
         virtual void onInclude(const std::string& file);
         virtual void onIncludeEnd(const std::string& file);
-        virtual void startI18n();
 
         void getCpp(std::ostream& out, const std::string& filename) const;
     };

@@ -33,16 +33,12 @@ namespace tnt
 {
   namespace ecppc
   {
-    void Closecomponent::getDefinition(std::ostream& code, bool externData, bool linenumbersEnabled) const
+    void Closecomponent::getDefinition(std::ostream& code, bool linenumbersEnabled) const
     {
       code << "unsigned _component_::endTag (tnt::HttpRequest& request, tnt::HttpReply& reply,\n"
            "  tnt::QueryParams& qparam)\n"
-           "{\n";
-
-      if (externData)
-        code << "  tnt::DataChunks data(getData(request, rawData));\n";
-      else
-        code << "  tnt::DataChunks data(rawData);\n";
+           "{\n"
+           "  tnt::DataChunks data(rawData);\n";
 
       Component::getBody(code, linenumbersEnabled);
       code << "}\n\n";

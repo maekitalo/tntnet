@@ -44,7 +44,7 @@ namespace tnt
           { }
         virtual ~Closecomponent() { }
 
-        void getDefinition(std::ostream& o, bool externData, bool linenumbersEnabled) const;
+        void getDefinition(std::ostream& o, bool linenumbersEnabled) const;
     };
   }
 }

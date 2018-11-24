@@ -32,7 +32,6 @@
 
 #include <cxxtools/query_params.h>
 #include <tnt/scope.h>
-#include <locale>
 #include <stdexcept>
 #include <sstream>
 #include <vector>
@@ -121,19 +120,16 @@ namespace tnt
   class QueryParams : public cxxtools::QueryParams
   {
       Scope* _paramScope;
-      std::locale _locale;
 
     public:
       /// Create an empty %QueryParams object
       QueryParams()
-        : _paramScope(0),
-          _locale(std::locale::classic())
+        : _paramScope(0)
         { }
 
       QueryParams(const QueryParams& src)
         : cxxtools::QueryParams(src),
-          _paramScope(src._paramScope),
-          _locale(src._locale)
+          _paramScope(src._paramScope)
         {
           if (_paramScope)
             _paramScope->addRef();
@@ -141,8 +137,7 @@ namespace tnt
 
       explicit QueryParams(const std::string& url)
         : cxxtools::QueryParams(url),
-          _paramScope(0),
-          _locale(std::locale::classic())
+          _paramScope(0)
         { }
 
       QueryParams& operator= (const QueryParams& src)
@@ -159,7 +154,6 @@ namespace tnt
           if (_paramScope)
             _paramScope->addRef();
         }
-        _locale = src._locale;
         return *this;
       }
 
@@ -175,12 +169,6 @@ namespace tnt
           _paramScope = new Scope();
         return *_paramScope;
       }
-
-      /// Get the locale used for parsing floating-point numbers
-      const std::locale& locale() const   { return _locale; }
-
-      /// Set the locale used for parsing floating-point numbers
-      void locale(const std::locale& loc) { _locale = loc; }
 
       template <typename Type>
       Type arg(const std::string& name, const Type& def = Type()) const
@@ -252,7 +240,6 @@ namespace tnt
     {
       std::string v = q.param(name, n);
       std::istringstream s(v);
-      s.imbue(q.locale());
       Type ret;
       s >> ret;
       if (!s)
@@ -265,7 +252,6 @@ namespace tnt
     {
       std::string v = q.param(name, n);
       std::istringstream s(v);
-      s.imbue(q.locale());
       Type ret;
       s >> ret;
       if (!s)
@@ -309,7 +295,6 @@ namespace tnt
     void QAdd<Type>::add(QueryParams& q, const std::string& name, const Type& value)
     {
       std::ostringstream s;
-      s.imbue(q.locale());
       s << value;
       static_cast<cxxtools::QueryParams&>(q).add(name, s.str());
     }

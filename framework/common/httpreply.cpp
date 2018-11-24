@@ -337,7 +337,6 @@ namespace tnt
   void HttpReply::send(unsigned ret, const char* msg, bool ready) const
   {
     std::ostream hsocket(_impl->socket->rdbuf());
-    hsocket.imbue(std::locale::classic());
 
     // send header
     sendHttpStatus(hsocket, ret, msg);

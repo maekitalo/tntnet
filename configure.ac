@@ -130,16 +130,6 @@ AC_ARG_ENABLE([unittest],
 
 AM_CONDITIONAL(MAKE_UNITTEST, test "$enable_unittest" = "enable_unittest")
 
-AC_ARG_ENABLE([locale],
-  AS_HELP_STRING([--disable-locale], [disable support for locales]),
-  [enable_locale=$enableval],
-  [enable_locale=enable_locale])
-
-if test "$enable_locale" != "no"
-then
-  AC_DEFINE(ENABLE_LOCALE, [], [Defined if locale is used])
-fi
-
 AC_CONFIG_FILES([misc/tntnet-project], [chmod +x misc/tntnet-project])
 
 AC_CONFIG_FILES([
@@ -169,8 +159,6 @@ AC_CONFIG_FILES([
     pkgconfig/tntnet_sdk.pc
     sdk/tools/common/Makefile
     sdk/tools/ecppc/Makefile
-    sdk/tools/ecppl/Makefile
-    sdk/tools/ecppll/Makefile
     test/Makefile
     ])
 

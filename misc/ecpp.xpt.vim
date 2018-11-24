@@ -90,11 +90,6 @@ XPT doc " <%doc>...</%doc>
 `cursor^
 </%doc>
 
-XPT i18n " <%i18n>...</%i18n>
-<%i18n>
-`cursor^
-</%i18n>
-
 XPT inc " <%include>...</%include>
 <%include>
 `cursor^

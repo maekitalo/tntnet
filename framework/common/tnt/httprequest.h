@@ -40,7 +40,6 @@
 #include <tnt/query_params.h>
 #include <tnt/scope.h>
 #include <tnt/threadcontext.h>
-#include <locale>
 #include <map>
 #include <cxxtools/atomicity.h>
 #include <cxxtools/sslcertificate.h>
@@ -85,8 +84,6 @@ namespace tnt
       Multipart _mp;
       cxxtools::atomic_t _serial;
       static cxxtools::atomic_t _nextSerial;
-      mutable bool _localeInit;
-      mutable std::string _lang;
 
       mutable Encoding _encoding;
       mutable bool _encodingRead;
@@ -224,17 +221,6 @@ namespace tnt
       const Multipart& getMultipart() const { return _mp; }
 
       cxxtools::atomic_t getSerial() const  { return _serial; }
-
-      const std::locale& getLocale() const;
-      const std::string& getLang() const
-      {
-        if (!_localeInit)
-          getLocale();
-        return _lang;
-      }
-
-      void setLocale(const std::locale& loc);
-      void setLang(const std::string& lang);
 
       const Cookies& getCookies() const;
 

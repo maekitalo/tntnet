@@ -160,19 +160,6 @@ namespace tnt
     return *it->second;
   }
 
-  const char* EcppComponent::getData(const HttpRequest& request, const char* def) const
-  {
-    std::string lang = request.getLang();
-    if (!lang.empty())
-    {
-      const char* data = _loader.getLangData(_myident, lang);
-      if (data)
-        return data;
-    }
-
-    return def;
-  }
-
   ///////////////////////////////////////////////////////////////////////
   // ecppSubComponent
   //

@@ -39,7 +39,6 @@ class QParamTest : public cxxtools::unit::TestSuite
     {
       registerMethod("qparam", *this, &QParamTest::testQParam);
       registerMethod("intarg", *this, &QParamTest::testIntarg);
-      registerMethod("locale", *this, &QParamTest::testLocale);
       registerMethod("defaultValue", *this, &QParamTest::testDefaultValue);
       registerMethod("addValue", *this, &QParamTest::testAddValue);
       registerMethod("multipleValues", *this, &QParamTest::testMultipleValues);
@@ -61,16 +60,6 @@ class QParamTest : public cxxtools::unit::TestSuite
       int bb = q.arg<int>("bb");
       CXXTOOLS_UNIT_ASSERT_EQUALS(aa, 5);
       CXXTOOLS_UNIT_ASSERT_EQUALS(bb, 7);
-    }
-
-    void testLocale()
-    {
-      tnt::QueryParams q("aa=5,5&bb=7,25");
-      q.locale(std::locale("de_DE"));
-      double aa = q.arg<double>("aa");
-      double bb = q.arg<double>("bb");
-      CXXTOOLS_UNIT_ASSERT_EQUALS(aa, 5.5);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(bb, 7.25);
     }
 
     void testDefaultValue()

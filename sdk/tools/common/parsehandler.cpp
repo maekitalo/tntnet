@@ -120,10 +120,5 @@ namespace tnt
     void ParseHandler::onIncludeEnd(const std::string& /* file */)
       { }
 
-    void ParseHandler::startI18n()
-      { }
-
-    void ParseHandler::endI18n()
-      { }
   }
 }

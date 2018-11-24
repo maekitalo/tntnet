@@ -57,7 +57,7 @@ namespace tnt
           { }
 
         void getHeader(std::ostream& o) const;
-        void getDefinition(std::ostream& o, bool externData, bool linenumbersEnabled) const;
+        void getDefinition(std::ostream& o, bool linenumbersEnabled) const;
         virtual void getScopevars(std::ostream& o, bool linenumbersEnabled) const;
     };
   }

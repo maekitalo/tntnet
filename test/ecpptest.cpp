@@ -71,8 +71,6 @@ namespace
       virtual void tokenSplit(bool start);
       virtual void onInclude(const std::string& file);
       virtual void onIncludeEnd(const std::string& file);
-      virtual void startI18n();
-      virtual void endI18n();
 
     public:
       void clear()
@@ -185,11 +183,6 @@ namespace
   void Handler::onIncludeEnd(const std::string& /* file */)
     { _result << "onIncludeEnd()"; }
 
-  void Handler::startI18n()
-    { _result << "startI18n()"; }
-
-  void Handler::endI18n()
-    { _result << "endI18n()"; }
 }
 
 class EcppTest : public cxxtools::unit::TestSuite

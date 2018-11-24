@@ -164,9 +164,6 @@ namespace tnt
       void setAcceptEncoding(const Encoding& enc);
 
       bool keepAlive() const;
-
-      void setLocale(const std::locale& loc)
-        { out().imbue(loc); sout().imbue(loc); }
   };
 }
 

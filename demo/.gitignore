@@ -10,16 +10,6 @@
 /calcapp/tntnet.properties
 /calc/calc.cpp
 /calc/calc
-/calci18n/calci18n.cpp
-/calci18n/calci18n.de
-/calci18n/calci18n.fi
-/calci18n/calci18n.txt
-/calci18n/de/
-/calci18n/de.cpp
-/calci18n/en.cpp
-/calci18n/fi/
-/calci18n/fi.cpp
-/calci18n/tntnet.xml
 /calcmvc/calcmvc
 /calcmvc/calcController.cpp
 /calcmvc/calcModel.cpp

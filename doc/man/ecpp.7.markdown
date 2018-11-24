@@ -252,11 +252,6 @@ TAGS
   Works like a `<%args>` block but receives only GET parameters.
 
 
-`<%i18n>...</%i18n>`
-  Encloses a block of text data, which is to be translated. See ecppl(1) and
-  ecppll(1) for details.
-
-
 `<%include>filename</%include>`
   The specified file is read and compiled.
 

@@ -48,9 +48,6 @@ namespace tnt
 
   namespace ecpp
   {
-    static const char split_start = '{';
-    static const char split_end = '}';
-
     void Parser::doInclude(const std::string& file)
     {
       log_debug("include \"" << file << '"');
@@ -209,7 +206,6 @@ namespace tnt
       bool inComp = false;
       bool inClose = false;
       bool htmlExpr = false;
-      bool splitBar = false;
       std::vector<std::string> scopeIncludes;
 
       _handler.start();
@@ -239,16 +235,6 @@ namespace tnt
               if (state == state_html || !html.empty())
                 html += ch;
               state = state_nl;
-            }
-            else if (splitBar && (ch == split_start|| ch == split_end))
-            {
-              if (!html.empty() || ch == split_end)
-              {
-                log_debug("onHtml(\"" << html << "\")");
-                _handler.onHtml(html);
-                html.clear();
-              }
-              _handler.tokenSplit(ch == split_start);
             }
             else if (ch == '\\')
               state = state_htmlesc;
@@ -451,12 +437,6 @@ namespace tnt
                 state = state_html0;
                 inClose = true;
               }
-              else if (tag == "i18n")
-              {
-                splitBar = true;
-                _handler.startI18n();
-                state = state_html0;
-              }
               else if (tag == "doc")
                 state = state_doc;
               else
@@ -552,12 +532,6 @@ namespace tnt
                 state = state_html0;
                 inClose = true;
               }
-              else if (tag == "i18n")
-              {
-                splitBar = true;
-                _handler.startI18n();
-                state = state_html0;
-              }
               else
                 state = state_cpp;
             }
@@ -583,12 +557,6 @@ namespace tnt
                 _handler.startClose();
                 state = state_html0;
                 inClose = true;
-              }
-              else if (tag == "i18n")
-              {
-                splitBar = true;
-                _handler.startI18n();
-                state = state_html0;
               }
               else
                 state = state_cpp;
@@ -888,17 +856,6 @@ namespace tnt
             }
             else if (ch == '\\')
               state = state_htmlesc;
-            else if (splitBar && (ch == split_start|| ch == split_end))
-            {
-              if (!html.empty())
-              {
-                log_debug("onHtml(\"" << html << "\")");
-                _handler.onHtml(html);
-                html.clear();
-              }
-              _handler.tokenSplit(ch == split_start);
-              state = state_html;
-            }
             else
             {
               html += ch;
@@ -1561,12 +1518,6 @@ namespace tnt
               {
                 _handler.endClose();
                 inClose = false;
-                state = state_html0;
-              }
-              else if (splitBar && tag == "i18n")
-              {
-                splitBar = false;
-                _handler.endI18n();
                 state = state_html0;
               }
               else

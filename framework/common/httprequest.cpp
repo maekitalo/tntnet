@@ -55,7 +55,6 @@ namespace tnt
 
   HttpRequest::HttpRequest(Tntnet& application, const SocketIf* socketIf)
     : _socketIf(socketIf),
-      _localeInit(false),
       _encodingRead(false),
       _requestScope(0),
       _applicationScope(0),
@@ -71,7 +70,6 @@ namespace tnt
 
   HttpRequest::HttpRequest(Tntnet& application, const std::string& url, const SocketIf* socketIf)
     : _socketIf(socketIf),
-      _localeInit(false),
       _requestScope(0),
       _applicationScope(0),
       _sessionScope(0),
@@ -97,7 +95,6 @@ namespace tnt
       _ct(r._ct),
       _mp(r._mp),
       _serial(r._serial),
-      _localeInit(r._localeInit),
       _requestScope(r._requestScope),
       _applicationScope(r._applicationScope),
       _sessionScope(r._sessionScope),
@@ -143,7 +140,6 @@ namespace tnt
     _mp = r._mp;
     _socketIf = r._socketIf;
     _serial = r._serial;
-    _localeInit = r._localeInit;
     _requestScope = r._requestScope;
     _applicationScope = r._applicationScope;
     _sessionScope = r._sessionScope;
@@ -181,7 +177,6 @@ namespace tnt
     _qparam.clear();
     _ct = Contenttype();
     _mp = Multipart();
-    _localeInit = false;
     if (_requestScope)
     {
       if (_requestScope->release() == 0)
@@ -287,106 +282,6 @@ namespace tnt
     _qparam.add(_postparam);
 
     _serial = cxxtools::atomicIncrement(_nextSerial);
-  }
-
-  namespace
-  {
-#ifdef ENABLE_LOCALE
-    typedef std::map<std::string, std::locale> locale_map_type;
-    static const std::locale* stdlocalePtr = 0;
-    static const std::locale* stdlocale = 0;
-    static locale_map_type locale_map;
-    static cxxtools::Mutex locale_monitor;
-
-    const std::locale& getCacheLocale(const std::string& lang)
-    {
-      if (stdlocale == 0)
-      {
-        cxxtools::MutexLock lock(locale_monitor);
-        if (stdlocale == 0)
-        {
-          try
-          {
-            stdlocalePtr = new std::locale("");
-            stdlocale = stdlocalePtr;
-          }
-          catch (const std::exception& e)
-          {
-            log_warn("error initializing standard-locale - using locale \"C\"");
-            stdlocale = &std::locale::classic();
-          }
-        }
-      }
-
-      if (lang.empty() || lang == stdlocale->name())
-        return *stdlocale;
-
-      try
-      {
-        cxxtools::MutexLock lock(locale_monitor);
-        locale_map_type::const_iterator it = locale_map.find(lang);
-        if (it == locale_map.end())
-        {
-          std::locale loc = std::locale(lang.c_str());
-          return locale_map.insert(locale_map_type::value_type(lang, loc)).first->second;
-        }
-        else
-          return it->second;
-      }
-      catch (const std::exception& e)
-      {
-        log_warn("unknown locale " << lang << ": " << e.what());
-        locale_map.insert(locale_map_type::value_type(lang, *stdlocale));
-        return *stdlocale;
-      }
-    }
-
-    void clearLocaleCache()
-    {
-      cxxtools::MutexLock lock(locale_monitor);
-      locale_map.clear();
-      delete stdlocalePtr;
-      stdlocalePtr = 0;
-      stdlocale = 0;
-    }
-#endif
-  }
-
-  const std::locale& HttpRequest::getLocale() const
-  {
-#ifdef ENABLE_LOCALE
-    if (!_localeInit)
-    {
-      static const std::string LANG = "LANG";
-      _lang = _qparam[LANG];
-      const_cast<QueryParams&>(_qparam).locale(getCacheLocale(_qparam[LANG]));
-      if (_lang.empty())
-        _lang = _qparam.locale().name();
-      _localeInit = true;
-    }
-
-    return _qparam.locale();
-#else
-    return std::locale::classic();
-#endif
-  }
-
-  void HttpRequest::setLocale(const std::locale& loc)
-  {
-#ifdef ENABLE_LOCALE
-    _localeInit = true;
-    _qparam.locale(loc);
-    _lang = loc.name();
-#endif
-  }
-
-  void HttpRequest::setLang(const std::string& lang)
-  {
-#ifdef ENABLE_LOCALE
-    _lang = lang;
-    _qparam.locale(getCacheLocale(lang));
-    _localeInit = true;
-#endif
   }
 
   const Cookies& HttpRequest::getCookies() const

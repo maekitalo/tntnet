@@ -11,8 +11,6 @@ if MAKE_SDK
 SDKDIRS = \
     sdk/tools/common \
     sdk/tools/ecppc \
-    sdk/tools/ecppl \
-    sdk/tools/ecppll \
     misc
 endif
 

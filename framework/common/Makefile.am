@@ -23,7 +23,6 @@ libtntnet_la_SOURCES = \
 	httprequest.cpp \
 	httpreply.cpp \
 	job.cpp \
-	langlib.cpp \
 	listener.cpp \
 	mbcomponent.cpp \
 	messageattribute.cpp \
@@ -74,7 +73,6 @@ nobase_include_HEADERS = \
 	tnt/httpparser.h \
 	tnt/httprequest.h \
 	tnt/httpreply.h \
-	tnt/langlib.h \
 	tnt/mapping.h \
 	tnt/maptarget.h \
 	tnt/mbcomponent.h \

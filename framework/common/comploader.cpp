@@ -119,30 +119,6 @@ namespace tnt
     return factory->create(ci, rootmapper, cl);
   }
 
-  LangLib::PtrType ComponentLibrary::getLangLib(const std::string& lang)
-  {
-    cxxtools::ReadLock rlock(mutex);
-    langlibsType::const_iterator it = _langlibs.find(lang);
-    if (it != _langlibs.end())
-      return it->second;
-
-    rlock.unlock();
-    cxxtools::WriteLock wlock(mutex);
-
-    LangLib::PtrType l;
-    try
-    {
-      std::string n = (_path.empty() ? _libname : (_path + '/' + _libname));
-      l = new LangLib(n, lang);
-    }
-    catch (const unzipError& e)
-    {
-      log_warn("unzipError: " << e.what());
-    }
-    _langlibs[lang] = l;
-    return l;
-  }
-
   ////////////////////////////////////////////////////////////////////////
   // Comploader
   //
@@ -188,17 +164,6 @@ namespace tnt
     ComponentLibrary& lib = fetchLib(ci.libname);
     Component* comp = lib.create(ci.compname, *this, rootmapper);
     return comp;
-  }
-
-  const char* Comploader::getLangData(const Compident& ci, const std::string& lang)
-  {
-    log_debug("getLangData(" << ci << ", \"" << lang << "\")");
-    ComponentLibrary& lib = fetchLib(ci.libname);
-    LangLib::PtrType langLib = lib.getLangLib(lang);
-    if (langLib)
-      return langLib->getData(ci.compname);
-    else
-      return 0;
   }
 
   namespace
