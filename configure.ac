@@ -105,6 +105,22 @@ AS_IF([test "$enable_demos" = "yes"],
   ]
 )
 
+AC_ARG_WITH([md2man],
+  AS_HELP_STRING([--with-md2man], [use go-md2man tool to generate man pages from markdown])
+  [with_md2man=$withval])
+
+AS_IF(
+  [test "$with_md2man"],
+  AC_CHECK_PROG(MD2MAN, [go-md2man], [go-md2man])
+  AS_IF(
+    [test -z "$MD2MAN"],
+    AC_MSG_ERROR([go-md2man not found])
+  )
+
+)
+
+AM_CONDITIONAL(GENERATE_MAN, test ! -z "$with_md2man")
+
 #
 # others
 #
