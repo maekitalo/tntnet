@@ -33,21 +33,21 @@ type of request is `tnt::HttpRequest`.
 http headers here, set cookies and - most important - generate output. The most
 important methods here are `reply.out()` and `reply.sout()`. Both return a
 `std::ostream`, which receives the output of the component. `reply.sout()` has a
-filter installed, which translates some characters, whith special meanings in
+filter installed, which translates some characters, with special meanings in
 html to the corresponding html entities. The characters are `<`, `>`, `&`, `"`
 and `'`. This is useful for printing values from variables to the html code.
 
 `qparam` holds the query parameters parsed from GET- or POST-parameters or
-received from other components. The type of qparam is `tnt::query_params`.
+received from other components. The type of `qparam` is `tnt::QueryParams`.
 Normally you use a `<%args>` block to specify the parameters, but there are
 special cases, where it is useful to access these directly.
 
-### component adressing
+### component addressing
 
-Each component has a unique name. The name is composed from the classname, the
+Each component has a unique name. The name is composed from the class name, the
 character '@' and the name of the shared library, it is located. Components can
-have internal subcomponents.  The name of the internal subcomponent is appended
-to the classname separated by a dot (.).
+have internal sub components.  The name of the internal sub component is
+appended to the class name separated by a dot (.).
 
 ### special rule for line feeds after a `</%something>`-tag
 
@@ -57,7 +57,7 @@ white space in output, which is often undesirable.
 
 ### errorhandling
 
-Errorhandling is done by exception. Tntnet catches all exceptions thrown by
+Error handling is done by exception. Tntnet catches all exceptions thrown by
 components and handles them properly. Exceptions must be derived from
 std::exception. Exceptions derived from `tnt::HttpError`, are handled
 separately. They carry a http return code, which is sent to the client. Other
@@ -67,38 +67,38 @@ exceptions derived from std::exception, result in a http error code 500
 TAGS
 ----
 `<$ expr $>`
-  Print expressions expr to the outputstream. The characters `<`, `>`, `&`, `"`
+  Print expressions `expr` to the output stream. The characters `<`, `>`, `&`, `"`
   and `'`, which have special meanings in html, are translated to the
   corresponding html entities.
 
 
 `<$$ expr $>`
-  Print expressions expr without translating characters with special meaning in
+  Print expressions `expr` without translating characters with special meaning in
   html to html entities to the output stream.
 
 
 `<? cond ? expr ?>`
-  Conditional output. Print expression expr to the outputstream, if cond
+  Conditional output. Print expression `expr` to the output stream, if `cond`
   evaluates to true. Characters with special meaning in html are translated to
   the corresponding html entities.
 
 
 `<?? cond ? expr ?>`
-  Conditional output. Print expression expr to the outputstream, if cond
+  Conditional output. Print expression `expr` to the output stream, if `cond`
   evaluates to true. Characters with special meaning in html are not translated
   to the corresponding html entities.
 
 
 `<& component [ arguments ] >`
   Call the specified component. The output of the component is printed into the
-  outputstream. If the component name does not start with a letter, the
+  output stream. If the component name does not start with a letter, the
   ecpp compiler treats it as a expression, which returns the name of the
   component. You must surround the expression in brackets, if it contains
   spaces.
 
   The arguments part specify the parameters, the component will receive.
   Arguments are name value pairs separated by '='. They are put in the
-  qparam parameter of the component and are normally declared in the
+  `qparam` parameter of the component and are normally declared in the
   `<%args>` block. Values can be specified in 3 forms:
 
   As a plain word without spaces
@@ -107,10 +107,10 @@ TAGS
 
   As a expression enclosed in brackets
 
-  A single plain word in the argumentlist is treated as a variable of type
-  cxxtools::query\_params and a copy is passed to the component. Other
+  A single plain word in the argument list is treated as a variable of type
+  `cxxtools::QueryParams` and a copy is passed to the component. Other
   parameters are added to this copy. If you want to pass all parameters of the
-  current component put the variable qparam as a plain word in the argument
+  current component put the variable `qparam` as a plain word in the argument
   list.
 
 
@@ -137,7 +137,7 @@ TAGS
 
 
 `<%args>...</%args>`
-  Defines GET or POST parameters recieved by the component.
+  Defines GET or POST parameters received by the component.
 
   Each argument has a name and optionally a default value. The default value is
   delimited by '=' from the name. A single argument definition followed by a
@@ -145,12 +145,11 @@ TAGS
   std::string is defined, which receives the value.
 
   A argument name can be prefixed by a type definition. The ecpp compiler
-  generates code, which tries to convert the value with the
-  input stream operator. This means, that each type, which can be read from a
-  input stream (std::istream) can be used. If the argument can't be converted,
-  a exception is thrown.
+  generates code, which tries to convert the value with the `cxxtools`
+  deserialization operator. If the argument can't be converted, the default
+  value is set.
 
-  Argumentnames can be postfixed by empty square brackets. This defines a
+  Argument names can be postfixed by empty square brackets. This defines a
   std::vector with the specified type or std::string, if no type is specified.
   This way multiple values with the same name can be received. If a type is
   specified, each value is converted to the target type.
@@ -210,12 +209,12 @@ TAGS
 
 
 `<%config>...</%config>`
-  Often webapplications need some configuration like database names or
-  login information to the database. These configuratioin variables can be read
-  from the tntnet.xml. Variablenames ended with a semicolon are defined as
+  Often web applications need some configuration like database names or
+  login information to the database. These configuration variables can be read
+  from the tntnet.xml. Variable names ended with a semicolon are defined as
   static std::string variables and filled from tntnet.xml. A variable can be
   prepended by a type. The value from tntnet.xml is then converted with a
-  std::istream.
+  `std::istream`.
 
   You can also specify a default value by appending a '=' and the value to the
   variable.
@@ -238,7 +237,7 @@ TAGS
 
 
 `<%def name>...</%def>`
-  Defines a internal subcomponent with the name name, which can be called like
+  Defines a internal sub component with the name name, which can be called like
   other components.
 
 
@@ -266,7 +265,7 @@ TAGS
 
 
 `<%out> expr </%out>`
-  Same as `<$$ ... $>`. Prints the contained C++ expression expr.
+  Same as `<$$ ... $>`. Prints the contained C++ expression `expr`.
 
 
 `<%post>...</%post>`
@@ -294,7 +293,7 @@ TAGS
 
 `<%securesession [ scope="component|page|shared|global" ] >...</%securesession>`
   Secure session is just like session but a secure cookie is used to identify
-  the session. Secure cookies are transfered only over a ssl connection from
+  the session. Secure cookies are transferred only over a ssl connection from
   the browser and hence the variables are only kept in a ssl secured
   application.
 
@@ -303,7 +302,7 @@ TAGS
 
 
 `<%sout> expr </%sout>`
-  Same as `<$ ... $>`. Prints the contained C++ expression expr. The characters
+  Same as `<$ ... $>`. Prints the contained C++ expression `expr`. The characters
   `<`, `>`, `&`, `"` and `'`, which have special meanings in html, are translated to the
   corresponding html entities.
 
@@ -349,8 +348,8 @@ And 3 scopes:
 
 `page`
   The variable is shared between the components in a single ecpp file. You can
-  specify multiple internal subcomponents in a `<%def>` block. Variables, defined
-  in page scope are shared between these subcomponents.
+  specify multiple internal sub components in a `<%def>` block. Variables,
+  defined in page scope are shared between these sub components.
 
 `global` or `shared`
   Variables are shared between all components. If you define the same variable
@@ -389,9 +388,9 @@ session:
     MyClass sessionState;
     </%session>
 
-Specify a persistent databaseconnection, which is initialized, when first needed
-and hold for the lifetime of the current thread. This variable may be used in
-other components:
+Specify a persistent database connection, which is initialized, when first
+needed and hold for the lifetime of the current thread. This variable may be
+used in other components:
 
     <%thread scope="shared">
     tntdb::Connection conn(dburl);

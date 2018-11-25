@@ -76,48 +76,23 @@ namespace tnt
 
     }
 
-    void Variable::getParamCodeVector(std::ostream& o, const std::string& /* qparam */) const
+    void Variable::getParamCode(std::ostream& o, const std::string& qparam) const
     {
       std::string ltype = _type;
       if (ltype.empty())
         ltype = "std::string";
 
-      o << "typedef std::vector< " << ltype << " > " << _name << "_type;\n"
-        << _name << "_type " << _name << " = qparam.argst< " << ltype
-        << " >(\"" << _name << "[]\", \"" << ltype << "\");\n";
-    }
-
-    void Variable::getParamCode(std::ostream& o, const std::string& qparam) const
-    {
       if (_isVector)
-        getParamCodeVector(o, qparam);
-      else if (!_type.empty())
       {
-        // we have a type
-
-        // print out type and name
-        o << _type << ' ' << _name << " = ";
-
-        if (_value.empty())
-        {
-          // no default-value
-          o << qparam << ".argt< " << _type << " >(\"" << _name << "\", \"" << _type << "\");\n";
-        }
-        else
-        {
-          // with default-value
-          o << qparam << ".arg< " << _type << " >(\"" << _name << "\", (" << _value << "));\n";
-        }
+        o << "std::vector< " << ltype << " > " << _name << " = qparam.getvector< " << ltype << " >(\"" << _name << "\");\n";
+      }
+      else if (_value.empty())
+      {
+        o << ltype << ' ' << _name << " = qparam.get< " << ltype << " >(\"" << _name << "\");\n";
       }
       else
       {
-        // type defaults to std::string
-        o << "std::string " << _name
-          << " = " << qparam << ".param(\"" << _name << '"';
-        if (!_value.empty())
-          o << ", (" << _value << ')';
-
-        o << ");\n";
+        o << ltype << ' ' << _name << " = qparam.get< " << ltype << " >(\"" << _name << "\", (" << _value << "));\n";
       }
     }
 

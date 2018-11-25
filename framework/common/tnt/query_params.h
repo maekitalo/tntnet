@@ -31,58 +31,61 @@
 #define TNT_QUERY_PARAMS_H
 
 #include <cxxtools/query_params.h>
+#include <cxxtools/serializationinfo.h>
+#include <cxxtools/serializationerror.h>
 #include <tnt/scope.h>
 #include <stdexcept>
-#include <sstream>
 #include <vector>
+#include <sstream>
 
 namespace tnt
 {
   class QueryParams;
 
-  class ConversionError : public std::runtime_error
-  {
-    public:
-      explicit ConversionError(const std::string& msg)
-        : std::runtime_error(msg)
-        { }
-
-      static void doThrow(const std::string& argname, unsigned argnum, const char* typeto, const std::string& value);
-  };
-
   /// @cond internal
   namespace qhelper
   {
+    ////////////////////////////////////////////////////////////////////////
+    // generic helper functions
+    //
     template <typename Type>
     class QArg
     {
       public:
-        static Type arg(const QueryParams& q, const std::string& name, unsigned n, const Type& def);
-        static Type argt(const QueryParams& q, const std::string& name, unsigned n, const char* typeName);
+        static Type get(const QueryParams& q, const std::string& name, const Type& def = Type());
+        static std::vector<Type> getvector(const QueryParams& q, const std::string& name);
     };
 
+    ////////////////////////////////////////////////////////////////////////
+    // specialization for std::string
+    //
     template <>
     class QArg<std::string>
     {
       public:
-        static std::string arg(const QueryParams& q, const std::string& name, unsigned n, const std::string& def);
-        static std::string argt(const QueryParams& q, const std::string& name, unsigned n, const char* typeName);
+        static std::string get(const QueryParams& q, const std::string& name, const std::string& def = std::string());
+        static std::vector<std::string> getvector(const QueryParams& q, const std::string& name);
     };
 
+    ////////////////////////////////////////////////////////////////////////
+    // specialization for char
+    //
     template <>
     class QArg<char>
     {
       public:
-        static char arg(const QueryParams& q, const std::string& name, unsigned n, char);
-        static char argt(const QueryParams& q, const std::string& name, unsigned n, const char* typeName);
+        static char get(const QueryParams& q, const std::string& name, char def = '\0');
+        static std::vector<char> getvector(const QueryParams& q, const std::string& name);
     };
 
+    ////////////////////////////////////////////////////////////////////////
+    // specialization for bool
+    //
     template <>
     class QArg<bool>
     {
       public:
-        static bool arg(const QueryParams& q, const std::string& name, unsigned n, bool);
-        static bool argt(const QueryParams& q, const std::string& name, unsigned n, const char* typeName);
+        static bool get(const QueryParams& q, const std::string& name);
     };
 
     template <typename Type>
@@ -119,17 +122,23 @@ namespace tnt
   /// Container for GET and POST parameters
   class QueryParams : public cxxtools::QueryParams
   {
+      template <typename T> friend class qhelper::QAdd;
+
       Scope* _paramScope;
+      mutable cxxtools::SerializationInfo _si;
+      mutable bool _siInit;
 
     public:
       /// Create an empty %QueryParams object
       QueryParams()
-        : _paramScope(0)
+        : _paramScope(0),
+          _siInit(false)
         { }
 
       QueryParams(const QueryParams& src)
         : cxxtools::QueryParams(src),
-          _paramScope(src._paramScope)
+          _paramScope(src._paramScope),
+          _siInit(false)
         {
           if (_paramScope)
             _paramScope->addRef();
@@ -137,7 +146,8 @@ namespace tnt
 
       explicit QueryParams(const std::string& url)
         : cxxtools::QueryParams(url),
-          _paramScope(0)
+          _paramScope(0),
+          _siInit(false)
         { }
 
       QueryParams& operator= (const QueryParams& src)
@@ -154,6 +164,9 @@ namespace tnt
           if (_paramScope)
             _paramScope->addRef();
         }
+
+        _siInit = false;
+
         return *this;
       }
 
@@ -163,6 +176,33 @@ namespace tnt
           delete _paramScope;
       }
 
+      void clear()
+      {
+        cxxtools::QueryParams::clear();
+        _si.clear();
+        _siInit = false;
+      }
+
+      cxxtools::SerializationInfo& si()
+      {
+        if (!_siInit)
+        {
+          _si <<= *this;
+          _siInit = true;
+        }
+        return _si;
+      }
+
+      const cxxtools::SerializationInfo& si() const
+      {
+        if (!_siInit)
+        {
+          _si <<= *this;
+          _siInit = true;
+        }
+        return _si;
+      }
+
       Scope& getScope()
       {
         if (!_paramScope)
@@ -170,51 +210,44 @@ namespace tnt
         return *_paramScope;
       }
 
+      /// Get parameter with name `name` if available. Returns `def` if not found.
+      /// For string type the value is returned.
+      /// Boolean returns `true` if it is found, `false` otherwise.
+      /// Other types are converted using the cxxtools serialization framework.
       template <typename Type>
-      Type arg(const std::string& name, const Type& def = Type()) const
-        { return qhelper::QArg<Type>::arg(*this, name, 0, def); }
+      Type get(const std::string& name, const Type& def) const
+        { return qhelper::QArg<Type>::get(*this, name, def); }
+
+      /// Get parameter with name `name` if available. Returns default value if not found.
+      /// For string type the value is returned.
+      /// Boolean returns `true` if it is found, `false` otherwise.
+      /// Other types are converted using the cxxtools serialization framework.
+      template <typename Type>
+      Type get(const std::string& name) const
+        { return qhelper::QArg<Type>::get(*this, name); }
+
+      /// alias for `get`
+      /// @deprecated
+      template <typename Type>
+      Type arg(const std::string& name, const Type& def) const
+        { return qhelper::QArg<Type>::get(*this, name, def); }
+
+      /// alias for `get`
+      /// @deprecated
+      template <typename Type>
+      Type arg(const std::string& name) const
+        { return qhelper::QArg<Type>::get(*this, name); }
 
       template <typename Type>
-      Type argt(const std::string& name, const char* typeName = 0) const
-        { return qhelper::QArg<Type>::argt(*this, name, 0, typeName); }
+      std::vector<Type> getvector(const std::string& name) const
+        { return qhelper::QArg<Type>::getvector(*this, name); }
 
+      /// alias for `getvector`
+      /// @deprecated
       template <typename Type>
-      Type argn(const std::string& name, size_type n, const Type& def = Type()) const
-        { return qhelper::QArg<Type>::arg(*this, name, n, def); }
+      std::vector<Type> args(const std::string& name) const
+        { return qhelper::QArg<Type>::getvector(*this, name); }
 
-      template <typename Type>
-      Type argnt(const std::string& name, size_type n, const char* typeName = 0) const
-        { return qhelper::QArg<Type>::argt(*this, name, n, typeName); }
-
-      template <typename Type>
-      Type argt(const std::string& name, size_type n, const char* typeName = 0) const
-        { return qhelper::QArg<Type>::argt(*this, name, n, typeName); }
-
-      template <typename Type>
-      Type arg(size_type n, const Type& def = Type()) const
-        { return qhelper::QArg<Type>::arg(*this, std::string(), n, def); }
-
-      template <typename Type>
-      Type argt(size_type n, const char* typeName = 0) const
-        { return qhelper::QArg<Type>::argt(*this, std::string(), n, typeName); }
-
-      template <typename Type>
-      typename std::vector<Type> args(const std::string& name, const Type& def = Type()) const
-      {
-        typename std::vector<Type> ret(paramcount(name));
-        for (typename std::vector<Type>::size_type n = 0; n < ret.size(); ++n)
-          ret[n] = qhelper::QArg<Type>::arg(*this, name, n, def);
-        return ret;
-      }
-
-      template <typename Type>
-      typename std::vector<Type> argst(const std::string& name, const char* typeName) const
-      {
-        typename std::vector<Type> ret(paramcount(name));
-        for (typename std::vector<Type>::size_type n = 0; n < ret.size(); ++n)
-          ret[n] = qhelper::QArg<Type>::argt(*this, name, n, typeName);
-        return ret;
-      }
 
       template <typename Type>
       QueryParams& add(const std::string& name, const Type& value)
@@ -235,61 +268,80 @@ namespace tnt
 
   namespace qhelper
   {
+    ////////////////////////////////////////////////////////////////////////
+    // generic helper functions
+    //
     template <typename Type>
-    Type QArg<Type>::arg(const QueryParams& q, const std::string& name, unsigned n, const Type& def)
+    Type QArg<Type>::get(const QueryParams& q, const std::string& name, const Type& def)
     {
-      std::string v = q.param(name, n);
-      std::istringstream s(v);
-      Type ret;
-      s >> ret;
-      if (!s)
+      try
+      {
+        Type ret;
+        q.si().getMember(name) >>= ret;
+        return ret;
+      }
+      catch (const cxxtools::SerializationMemberNotFound&)
+      {
         return def;
-      return ret;
+      }
     }
 
     template <typename Type>
-    Type QArg<Type>::argt(const QueryParams& q, const std::string& name, unsigned n, const char* typeName)
+    std::vector<Type> QArg<Type>::getvector(const QueryParams& q, const std::string& name)
     {
-      std::string v = q.param(name, n);
-      std::istringstream s(v);
-      Type ret;
-      s >> ret;
-      if (!s)
-        ConversionError::doThrow(name, n, typeName, v);
+      std::vector<Type> ret;
+      try
+      {
+        q.si().getMember(name) >>= ret;
+      }
+      catch (const cxxtools::SerializationMemberNotFound&)
+      {
+      }
       return ret;
     }
 
-    inline std::string QArg<std::string>::arg(const QueryParams& q, const std::string& name, unsigned n, const std::string& def)
-      { return q.param(name, n, def); }
 
-    inline std::string QArg<std::string>::argt(const QueryParams& q, const std::string& name, unsigned n, const char*)
-      { return q.param(name, n); }
-
-    inline char QArg<char>::arg(const QueryParams& q, const std::string& name, unsigned n, char def)
+    ////////////////////////////////////////////////////////////////////////
+    // specialization for std::string
+    //
+    inline std::string QArg<std::string>::get(const QueryParams& q, const std::string& name, const std::string& def)
     {
-      std::string v = q.param(name, n);
-      return v.empty() ? def : v[0];
+      return q.param(name, def);
     }
 
-    inline char QArg<char>::argt(const QueryParams& q, const std::string& name, unsigned n, const char* typeName)
+    inline std::vector<std::string> QArg<std::string>::getvector(const QueryParams& q, const std::string& name)
     {
-      std::string v = q.param(name, n);
-      if (v.empty())
-        ConversionError::doThrow(name, n, typeName, v);
-      return v[0];
+      return std::vector<std::string>(q.begin(name + "[]"), q.end());
     }
 
-    inline bool QArg<bool>::argt(const QueryParams& q, const std::string& name, unsigned n, const char* /* typeName */)
+
+    ////////////////////////////////////////////////////////////////////////
+    // specialization for char
+    //
+    inline char QArg<char>::get(const QueryParams& q, const std::string& name, char def)
     {
-      std::string v = q.param(name, n);
-      return !v.empty();
+      std::string p = q.param(name);
+      return p.empty() ? def : p[0];
     }
 
-    inline bool QArg<bool>::arg(const QueryParams& q, const std::string& name, unsigned n, bool)
+    inline std::vector<char> QArg<char>::getvector(const QueryParams& q, const std::string& name)
     {
-      std::string v = q.param(name, n);
-      return !v.empty();
+      std::vector<char> ret;
+      for (QueryParams::const_iterator it = q.begin(name + "[]"); it != q.end(); ++it)
+        ret.push_back(it->empty() ? '\0' : (*it)[0]);
+      return ret;
     }
+
+
+    ////////////////////////////////////////////////////////////////////////
+    // specialization for bool
+    //
+    inline bool QArg<bool>::get(const QueryParams& q, const std::string& name)
+    {
+      return !q.param(name).empty();
+    }
+
+    ////////////////////////////////////////////////////////////////////////
 
     template <typename Type>
     void QAdd<Type>::add(QueryParams& q, const std::string& name, const Type& value)
@@ -297,16 +349,30 @@ namespace tnt
       std::ostringstream s;
       s << value;
       static_cast<cxxtools::QueryParams&>(q).add(name, s.str());
+      q._si.clear();
+      q._siInit = false;
     }
 
     inline void QAdd<std::string>::add(QueryParams& q, const std::string& name, const std::string& value)
-      { static_cast<cxxtools::QueryParams&>(q).add(name, value); }
+    {
+      static_cast<cxxtools::QueryParams&>(q).add(name, value);
+      q._si.clear();
+      q._siInit = false;
+    }
 
     inline void QAdd<char>::add(QueryParams& q, const std::string& name, char value)
-      { static_cast<cxxtools::QueryParams&>(q).add(name, std::string(1, value)); }
+    {
+      static_cast<cxxtools::QueryParams&>(q).add(name, std::string(1, value));
+      q._si.clear();
+      q._siInit = false;
+    }
 
     inline void QAdd<bool>::add(QueryParams& q, const std::string& name, bool value)
-      { static_cast<cxxtools::QueryParams&>(q).add(name, value ? std::string(1, '1') : std::string()); }
+    {
+      static_cast<cxxtools::QueryParams&>(q).add(name, value ? std::string(1, '1') : std::string());
+      q._si.clear();
+      q._siInit = false;
+    }
   }
 }
 

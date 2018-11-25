@@ -23,10 +23,10 @@ namespace controller
   {
     TNT_SESSION_SHARED_VAR(model::Accumulator, accumulator, ());
 
-    if (qparam.arg<bool>("increment"))
+    if (qparam.get<bool>("increment"))
       accumulator.increment();
 
-    if (qparam.arg<bool>("decrement"))
+    if (qparam.get<bool>("decrement"))
       accumulator.decrement();
 
     return DECLINED;

@@ -29,22 +29,22 @@ type of request is \fB\fCtnt::HttpRequest\fR\&.
 http headers here, set cookies and \- most important \- generate output. The most
 important methods here are \fB\fCreply.out()\fR and \fB\fCreply.sout()\fR\&. Both return a
 \fB\fCstd::ostream\fR, which receives the output of the component. \fB\fCreply.sout()\fR has a
-filter installed, which translates some characters, whith special meanings in
+filter installed, which translates some characters, with special meanings in
 html to the corresponding html entities. The characters are \fB\fC<\fR, \fB\fC>\fR, \fB\fC\&\fR, \fB\fC"\fR
 and \fB\fC\&'\fR\&. This is useful for printing values from variables to the html code.
 
 .PP
 \fB\fCqparam\fR holds the query parameters parsed from GET\- or POST\-parameters or
-received from other components. The type of qparam is \fB\fCtnt::query\_params\fR\&.
+received from other components. The type of \fB\fCqparam\fR is \fB\fCtnt::QueryParams\fR\&.
 Normally you use a \fB\fC<%args>\fR block to specify the parameters, but there are
 special cases, where it is useful to access these directly.
 
-.SS component adressing
+.SS component addressing
 .PP
-Each component has a unique name. The name is composed from the classname, the
+Each component has a unique name. The name is composed from the class name, the
 character '@' and the name of the shared library, it is located. Components can
-have internal subcomponents.  The name of the internal subcomponent is appended
-to the classname separated by a dot (.).
+have internal sub components.  The name of the internal sub component is
+appended to the class name separated by a dot (.).
 
 .SS special rule for line feeds after a \fB\fC</%something>\fR\-tag
 .PP
@@ -54,7 +54,7 @@ white space in output, which is often undesirable.
 
 .SS errorhandling
 .PP
-Errorhandling is done by exception. Tntnet catches all exceptions thrown by
+Error handling is done by exception. Tntnet catches all exceptions thrown by
 components and handles them properly. Exceptions must be derived from
 std::exception. Exceptions derived from \fB\fCtnt::HttpError\fR, are handled
 separately. They carry a http return code, which is sent to the client. Other
@@ -64,31 +64,31 @@ exceptions derived from std::exception, result in a http error code 500
 .SH TAGS
 .PP
 \fB\fC<$ expr $>\fR
-  Print expressions expr to the outputstream. The characters \fB\fC<\fR, \fB\fC>\fR, \fB\fC\&\fR, \fB\fC"\fR
+  Print expressions \fB\fCexpr\fR to the output stream. The characters \fB\fC<\fR, \fB\fC>\fR, \fB\fC\&\fR, \fB\fC"\fR
   and \fB\fC\&'\fR, which have special meanings in html, are translated to the
   corresponding html entities.
 
 .PP
 \fB\fC<$$ expr $>\fR
-  Print expressions expr without translating characters with special meaning in
+  Print expressions \fB\fCexpr\fR without translating characters with special meaning in
   html to html entities to the output stream.
 
 .PP
 \fB\fC<? cond ? expr ?>\fR
-  Conditional output. Print expression expr to the outputstream, if cond
+  Conditional output. Print expression \fB\fCexpr\fR to the output stream, if \fB\fCcond\fR
   evaluates to true. Characters with special meaning in html are translated to
   the corresponding html entities.
 
 .PP
 \fB\fC<?? cond ? expr ?>\fR
-  Conditional output. Print expression expr to the outputstream, if cond
+  Conditional output. Print expression \fB\fCexpr\fR to the output stream, if \fB\fCcond\fR
   evaluates to true. Characters with special meaning in html are not translated
   to the corresponding html entities.
 
 .PP
 \fB\fC<\& component [ arguments ] >\fR
   Call the specified component. The output of the component is printed into the
-  outputstream. If the component name does not start with a letter, the
+  output stream. If the component name does not start with a letter, the
   ecpp compiler treats it as a expression, which returns the name of the
   component. You must surround the expression in brackets, if it contains
   spaces.
@@ -96,7 +96,7 @@ exceptions derived from std::exception, result in a http error code 500
 .PP
 The arguments part specify the parameters, the component will receive.
   Arguments are name value pairs separated by '='. They are put in the
-  qparam parameter of the component and are normally declared in the
+  \fB\fCqparam\fR parameter of the component and are normally declared in the
   \fB\fC<%args>\fR block. Values can be specified in 3 forms:
 
 .PP
@@ -109,10 +109,10 @@ As a string enclosed in quotation marks
 As a expression enclosed in brackets
 
 .PP
-A single plain word in the argumentlist is treated as a variable of type
-  cxxtools::query\_params and a copy is passed to the component. Other
+A single plain word in the argument list is treated as a variable of type
+  \fB\fCcxxtools::QueryParams\fR and a copy is passed to the component. Other
   parameters are added to this copy. If you want to pass all parameters of the
-  current component put the variable qparam as a plain word in the argument
+  current component put the variable \fB\fCqparam\fR as a plain word in the argument
   list.
 
 .PP
@@ -141,7 +141,7 @@ Application scope is automatically locked.
 
 .PP
 \fB\fC<%args>...</%args>\fR
-  Defines GET or POST parameters recieved by the component.
+  Defines GET or POST parameters received by the component.
 
 .PP
 Each argument has a name and optionally a default value. The default value is
@@ -151,13 +151,12 @@ Each argument has a name and optionally a default value. The default value is
 
 .PP
 A argument name can be prefixed by a type definition. The ecpp compiler
-  generates code, which tries to convert the value with the
-  input stream operator. This means, that each type, which can be read from a
-  input stream (std::istream) can be used. If the argument can't be converted,
-  a exception is thrown.
+  generates code, which tries to convert the value with the \fB\fCcxxtools\fR
+  deserialization operator. If the argument can't be converted, the default
+  value is set.
 
 .PP
-Argumentnames can be postfixed by empty square brackets. This defines a
+Argument names can be postfixed by empty square brackets. This defines a
   std::vector with the specified type or std::string, if no type is specified.
   This way multiple values with the same name can be received. If a type is
   specified, each value is converted to the target type.
@@ -245,12 +244,12 @@ This tag is deprecated and should not be used any more.
 
 .PP
 \fB\fC<%config>...</%config>\fR
-  Often webapplications need some configuration like database names or
-  login information to the database. These configuratioin variables can be read
-  from the tntnet.xml. Variablenames ended with a semicolon are defined as
+  Often web applications need some configuration like database names or
+  login information to the database. These configuration variables can be read
+  from the tntnet.xml. Variable names ended with a semicolon are defined as
   static std::string variables and filled from tntnet.xml. A variable can be
   prepended by a type. The value from tntnet.xml is then converted with a
-  std::istream.
+  \fB\fCstd::istream\fR\&.
 
 .PP
 You can also specify a default value by appending a '=' and the value to the
@@ -283,7 +282,7 @@ A linefeed after the closing tag is ignored.
 
 .PP
 \fB\fC<%def name>...</%def>\fR
-  Defines a internal subcomponent with the name name, which can be called like
+  Defines a internal sub component with the name name, which can be called like
   other components.
 
 .PP
@@ -312,7 +311,7 @@ A linefeed after the closing tag is ignored.
 
 .PP
 \fB\fC<%out> expr </%out>\fR
-  Same as \fB\fC<$$ ... $>\fR\&. Prints the contained C++ expression expr.
+  Same as \fB\fC<$$ ... $>\fR\&. Prints the contained C++ expression \fB\fCexpr\fR\&.
 
 .PP
 \fB\fC<%post>...</%post>\fR
@@ -342,7 +341,7 @@ Sessions are automatically locked.
 .PP
 \fB\fC<%securesession [ scope="component|page|shared|global" ] >...</%securesession>\fR
   Secure session is just like session but a secure cookie is used to identify
-  the session. Secure cookies are transfered only over a ssl connection from
+  the session. Secure cookies are transferred only over a ssl connection from
   the browser and hence the variables are only kept in a ssl secured
   application.
 
@@ -352,7 +351,7 @@ If a variable defined here is used in a non ssl page, the variable values are
 
 .PP
 \fB\fC<%sout> expr </%sout>\fR
-  Same as \fB\fC<$ ... $>\fR\&. Prints the contained C++ expression expr. The characters
+  Same as \fB\fC<$ ... $>\fR\&. Prints the contained C++ expression \fB\fCexpr\fR\&. The characters
   \fB\fC<\fR, \fB\fC>\fR, \fB\fC\&\fR, \fB\fC"\fR and \fB\fC\&'\fR, which have special meanings in html, are translated to the
   corresponding html entities.
 
@@ -407,8 +406,8 @@ And 3 scopes:
 .PP
 \fB\fCpage\fR
   The variable is shared between the components in a single ecpp file. You can
-  specify multiple internal subcomponents in a \fB\fC<%def>\fR block. Variables, defined
-  in page scope are shared between these subcomponents.
+  specify multiple internal sub components in a \fB\fC<%def>\fR block. Variables,
+  defined in page scope are shared between these sub components.
 
 .PP
 \fB\fCglobal\fR or \fB\fCshared\fR
@@ -466,9 +465,9 @@ MyClass sessionState;
 .RE
 
 .PP
-Specify a persistent databaseconnection, which is initialized, when first needed
-and hold for the lifetime of the current thread. This variable may be used in
-other components:
+Specify a persistent database connection, which is initialized, when first
+needed and hold for the lifetime of the current thread. This variable may be
+used in other components:
 
 .PP
 .RS

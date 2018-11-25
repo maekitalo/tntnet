@@ -44,8 +44,6 @@ namespace tnt
         std::string _value;
         bool _isVector;
 
-        void getParamCodeVector(std::ostream& o, const std::string& qparam) const;
-
       public:
         Variable()  { }
         Variable(const std::string& arg, const std::string& value);

@@ -29,7 +29,24 @@
 
 #include <cxxtools/unit/testsuite.h>
 #include <cxxtools/unit/registertest.h>
+#include <cxxtools/serializationinfo.h>
 #include <tnt/query_params.h>
+
+namespace
+{
+  struct Sub
+  {
+    long i;
+    std::vector<std::string> a;
+  };
+
+  void operator >>= (const cxxtools::SerializationInfo& si, Sub& sub)
+  {
+    si.getMember("i") >>= sub.i;
+    si.getMember("a") >>= sub.a;
+  }
+
+}
 
 class QParamTest : public cxxtools::unit::TestSuite
 {
@@ -41,7 +58,7 @@ class QParamTest : public cxxtools::unit::TestSuite
       registerMethod("intarg", *this, &QParamTest::testIntarg);
       registerMethod("defaultValue", *this, &QParamTest::testDefaultValue);
       registerMethod("addValue", *this, &QParamTest::testAddValue);
-      registerMethod("multipleValues", *this, &QParamTest::testMultipleValues);
+      registerMethod("object", *this, &QParamTest::testObject);
     }
 
     void testQParam()
@@ -88,18 +105,24 @@ class QParamTest : public cxxtools::unit::TestSuite
       CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("d"), false);
     }
 
-    void testMultipleValues()
+    void testObject()
     {
-      tnt::QueryParams q("a=17&a=4&b=Hi&a=28");
-      CXXTOOLS_UNIT_ASSERT_EQUALS(q.paramcount("a"), 3);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(q.paramcount("b"), 1);
+      // generated with getQuery.js
+      tnt::QueryParams q("simple=Hi&numbers%5B%5D=1&numbers%5B%5D=4&numbers%5B%5D=5&sub%5Bi%5D=42&sub%5Ba%5D%5B%5D=Hi&sub%5Ba%5D%5B%5D=there");
 
-      std::vector<int> a = q.args<int>("a");
+      std::string simple = q.get<std::string>("simple");
+      std::vector<int> numbers = q.getvector<int>("numbers");
+      Sub sub = q.get<Sub>("sub");
 
-      CXXTOOLS_UNIT_ASSERT_EQUALS(a.size(), 3);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(a[0], 17);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(a[1], 4);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(a[2], 28);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(simple, "Hi");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(numbers.size(), 3);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(numbers[0], 1);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(numbers[1], 4);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(numbers[2], 5);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(sub.i, 42);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(sub.a.size(), 2);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(sub.a[0], "Hi");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(sub.a[1], "there");
     }
 };
 

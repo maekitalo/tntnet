@@ -23,9 +23,9 @@ namespace controller
   {
     TNT_REQUEST_SHARED_VAR(model::Calc, calc, ());
 
-    calc.arg1(qparam.arg<double>("arg1"));
-    calc.arg2(qparam.arg<double>("arg2"));
-    calc.op(qparam.arg<char>("op"));
+    calc.arg1(qparam.get<double>("arg1"));
+    calc.arg2(qparam.get<double>("arg2"));
+    calc.op(qparam.get<char>("op"));
 
     calc.resultOk(true);
     switch (calc.op())

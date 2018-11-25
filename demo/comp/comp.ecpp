@@ -161,10 +161,10 @@ int param4[];
   "param4".
   The values of param3 are:
   <{ std::copy(param3.begin(), param3.end(),
-       std::ostream_iterator<param3_type::value_type>(reply.out(), ", ")); }>.
+       std::ostream_iterator<std::string>(reply.out(), ", ")); }>.
   The values of param4 are:
   <{ std::copy(param4.begin(), param4.end(),
-       std::ostream_iterator<param4_type::value_type>(reply.out(), ", ")); }>.
+       std::ostream_iterator<int>(reply.out(), ", ")); }>.
 </%def>
 
 <%def localcomp_p(int i)>
