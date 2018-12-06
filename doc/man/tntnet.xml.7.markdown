@@ -671,16 +671,16 @@ The settings are:
     Sets the main level used, when nothing else is specified. The default is
     _FATAL_.
 
-`<loggers>`*loggers*`</loggers>
+`<loggers>`*loggers*`</loggers>`
 
     Specifies the log levels for a category. See separate section about
     *loggers* for details.
 
-`<file>`*filename*`</file>
+`<file>`*filename*`</file>`
 
     Log output is written to file. Default is *stderr*.
 
-`<maxfilesize>`*size*`</maxfilesize>
+`<maxfilesize>`*size*`</maxfilesize>`
 
     Specifies maximum _size_ of file. The size is a number in bytes or it can be
     prepended by a unit of 'k', 'm' or 'g', which specified kilo, mega or
@@ -689,7 +689,7 @@ The settings are:
     After reaching the size, a log message is written into the current file and
     renamed by appending a '.0' to it. A new file is then created.
 
-`<maxbackupindex>`*number*`</maxbackupindex>
+`<maxbackupindex>`*number*`</maxbackupindex>`
 
     If the *maxfilesize* was reached and there is already a file with a *.0*
     extension it is renamed to .1. This happens up to the specified number. So
