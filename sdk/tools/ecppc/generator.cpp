@@ -139,7 +139,7 @@ namespace tnt
       _data.push_back(html);
 
       std::ostringstream m;
-      m << "  reply.out() << data[" << (_data.count() - 1) << "]; // ";
+      m << "  reply.out() << _tntChunks[" << (_data.count() - 1) << "]; // ";
 
       std::transform(html.begin(), html.end(),
         std::ostream_iterator<const char*>(m),
@@ -148,7 +148,7 @@ namespace tnt
       m << '\n';
       _currentComp->addHtml(m.str());
 
-      log_debug("onHtml(\"" << html << "\") end, data.size()=" << _data.count());
+      log_debug("onHtml(\"" << html << "\") end, _tntChunks.size()=" << _data.count());
     }
 
     void Generator::onExpression(const std::string& expr)
@@ -329,7 +329,7 @@ namespace tnt
                "{\n"
                "    _component_& main()  { return *this; }\n\n" ;
         if (_compress)
-          out << "    tnt::DataChunks data;\n\n";
+          out << "    tnt::DataChunks _tntChunks;\n\n";
         out << "  protected:\n"
                "    ~_component_();\n\n"
                "  public:\n"
@@ -478,7 +478,7 @@ namespace tnt
                   "  : MbComponent(ci, um, cl)\n"
                   "{\n"
                   "  ::rawData.addRef();\n"
-                  "  data.setData(::rawData);\n"
+                  "  _tntChunks.setData(::rawData);\n"
                   "  init(::rawData, ::urls, ::mimetypes, ::ctimes);\n"
                   "}\n\n"
                   "_component_::~_component_()\n"
@@ -506,7 +506,7 @@ namespace tnt
                   "  : MbComponent(ci, um, cl)\n"
                   "{\n"
                   "  ::rawData.addRef();\n"
-                  "  data.setData(::rawData);\n"
+                  "  _tntChunks.setData(::rawData);\n"
                   "  init(::rawData, ::mimetype, ::c_time);\n"
                   "}\n\n"
                   "_component_::~_component_()\n"
@@ -594,7 +594,7 @@ namespace tnt
 
         if (!_data.empty())
         {
-          code << "  tnt::DataChunks data(rawData);\n";
+          code << "  tnt::DataChunks _tntChunks(rawData);\n";
         }
 
         if (_multiImages.empty())
@@ -603,7 +603,7 @@ namespace tnt
             code << "  reply.setHeader(tnt::httpheader::lastModified, \""
                  << tnt::HttpMessage::htdate(_c_time) << "\");\n";
           if (_raw)
-            code << "  reply.setContentLengthHeader(data.size(0));\n"
+            code << "  reply.setContentLengthHeader(_tntChunks.size(0));\n"
                     "  reply.setDirectMode();\n";
 
           code << '\n';
@@ -631,9 +631,9 @@ namespace tnt
                   "    return HTTP_NOT_MODIFIED;\n\n"
 
                   "  reply.setHeader(tnt::httpheader::lastModified, url_c_time[url_idx]);\n"
-                  "  reply.setContentLengthHeader(data.size(url_idx));\n"
+                  "  reply.setContentLengthHeader(_tntChunks.size(url_idx));\n"
                   "  reply.setDirectMode();\n"
-                  "  reply.out() << data[url_idx];\n"
+                  "  reply.out() << _tntChunks[url_idx];\n"
                   "  return DEFAULT;\n"
                   "}\n\n";
         }
