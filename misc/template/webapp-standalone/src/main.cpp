@@ -15,10 +15,7 @@ int main(int argc, char* argv[])
         @PROJECT@::Config config;
         cfgfile >> cxxtools::xml::Xml(config);
 
-        log_init(config.logConfiguration);
-
-        tnt::Tntnet app;
-        app.init(config);
+        tnt::Tntnet app(config);
 
         if (!config.htdocs().empty())
         {

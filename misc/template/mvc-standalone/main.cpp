@@ -25,10 +25,7 @@ int main(int argc, char* argv[])
 
     configfile >> cxxtools::xml::Xml(configuration);
 
-    log_init(configuration.logConfiguration);
-
-    tnt::Tntnet app;
-    app.init(configuration);
+    tnt::Tntnet app(configuration);
 
     // Map static resources
 
