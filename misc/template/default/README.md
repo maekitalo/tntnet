@@ -16,6 +16,12 @@ To build run `./configure && make`. To rebuild after changing code run just
 
 To add new source files to the project add them to `Makefile.am`.
 
+Adding files
+------------
+When you create ecpp files, don't forget to add them to `Makefile.am`.
+
+Static files belong to to the _resources_ directory and also to `Makefile.am`.
+
 Deployment
 ----------
 

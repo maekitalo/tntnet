@@ -5,146 +5,16 @@ EMAIL=your-email@somewhere
 usage()
 {
     cat <<EOF
-Usage: $0 [OPTION] <projectname>
+Usage: $0 [-l <template>] <projectname>
+       $0 -l
 
 Options:
-  -t <type>, --type=<type>        specify application type
-  -m <model>, --model=<model>     specify application model
-
-Types:
-  classic    create a simple application with one page (default)
-  mvc        create a application with the mvc pattern
-
-Models:
-  standalone    create a standalone web application (default)
-  module        create a module to be loaded into the tntnet application server
+  -t <template>, --template=<template>   specify template
+  -l, --list                             list templates
 
 EOF
 
     exit $1
-}
-
-tntnet_xml()
-{
-    cat <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  This is the main configuration file for tntnet.
-
-  You can find documentation about the parameters in the man page tntnet.xml(7)
-  -->
-<tntnet>
-EOF
-  if test -z "$1"
-  then
-    cat <<EOF
-  <mappings>
-    <!-- map /webapp/comp.* or /webapp/comp to comp@webapp -->
-    <mapping>
-      <target>\$2@\$1</target>
-      <url>^/(.+)/([^.]+)(\..+)?</url>
-    </mapping>
-    <!-- map /comp to comp@comp -->
-    <mapping>
-      <target>\$1@\$1</target>
-      <url>^/(.*)</url>
-    </mapping>
-  </mappings>
-EOF
-  else
-    cat <<EOF
-  <mappings>
-    <!-- map / to $1@$1 -->
-    <mapping>
-      <target>$1@$1</target>
-      <url>^/$</url>
-    </mapping>
-    <!-- map /comp to comp@$1 -->
-    <mapping>
-      <target>\$1@$1</target>
-      <url>^/(.*)</url>
-    </mapping>
-  </mappings>
-EOF
-  fi
-
-  cat <<EOF
-
-  <!-- listen to a port -->
-  <listeners>
-    <listener>
-      <port>8000</port>
-    </listener>
-  <!-- a certificate enables ssl -->
-  <!--
-    <listener>
-      <port>8443</port>
-      <certificate>tntnet.pem</certificate>
-    </listener>
-    -->
-  </listeners>
-
-  <logging>
-    <rootlogger>INFO</rootlogger>
-
-    <loggers>
-      <logger>
-        <category>tntnet</category>
-        <level>INFO</level>
-      </logger>
-      <logger>
-        <category>component.$1</category>
-        <level>INFO</level>
-      </logger>
-    </loggers>
-
-    <!--
-    <file>tntnet.log</file>
-    <maxfilesize>10M</maxfilesize>
-    <maxbackupindex>2</maxbackupindex>
-    -->
-
-  </logging>
-
-  <!-- <maxRequestSize>65536</maxRequestSize> -->
-  <!-- <maxRequestTime>600</maxRequestTime> -->
-  <!-- <user>tntnet</user> -->
-  <!-- <group>tntnet</group> -->
-  <!-- <dir>/</dir> -->
-  <!-- <chrootdir>/var/safedir</chrootdir> -->
-  <!-- <pidfile>/var/run/tntnet.pid</pidfile> -->
-  <!-- <daemon>0</daemon> -->
-  <!-- <minThreads>5</minThreads> -->
-  <!-- <maxThreads>100</maxThreads> -->
-  <!-- <threadStartDelay>10</threadStartDelay> -->
-  <!-- <queueSize>1000</queueSize> -->
-  <!--
-  <compPath>
-    <entry>path1</entry>
-    <entry>path2</entry>
-  </compPath>
-   -->
-  <!-- <socketBufferSize>16384</socketBufferSize> -->
-  <!-- <socketReadTimeout>10</socketReadTimeout> -->
-  <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
-  <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->
-  <!-- <keepAliveMax>1000</keepAliveMax> -->
-  <!-- <reuseAddress>1</reuseAddress> -->
-  <!-- <sessionTimeout>300</sessionTimeout> -->
-  <!-- <listenBacklog>512</listenBacklog> -->
-  <!-- <listenRetry>5</listenRetry> -->
-  <!-- <enableCompression>yes</enableCompression> -->
-  <!-- <mimeDb>/etc/mime.types</mimeDb> -->
-  <!-- <minCompressSize>1024</minCompressSize> -->
-  <!-- <maxUrlMapCache>8192</maxUrlMapCache> -->
-  <!-- <defaultContentType>text/html; charset=UTF-8</defaultContentType> -->
-  <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
-  <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
-  <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
-  <!-- <server>Tntnet</server> -->
-
-</tntnet>
-EOF
 }
 
 error()
@@ -152,6 +22,12 @@ error()
     echo "error: $1"
     echo "use \`$0 --help\` for usage information"
     exit 1
+}
+
+list()
+{
+    ls $TEMPLATEDIR
+    [ -d $USERTEMPLATEDIR ] && ls $USERTEMPLATEDIR
 }
 
 checkProc()
@@ -178,8 +54,6 @@ checkSystem()
 prefix=@prefix@
 TEMPLATEDIR=@datarootdir@/tntnet/template
 USERTEMPLATEDIR=~/.tntnet/template
-DEFAULT_TYPE=classic
-DEFAULT_MODEL=standalone
 
 ########################################################################
 # main
@@ -197,32 +71,21 @@ do
 
         --*=*)
             optarg=`echo "$arg" | @SED@ 's/[-_a-zA-Z0-9]*=//'`
-            #echo "longopt; optarg=$optarg"
             ;;
 
         -*)
             optarg=$1
-            #echo "short; optarg=$optarg"
             shift
             ;;
     esac
 
     case "$arg" in
-        --config|--config=*)
-            CONFIG=1
-            project=$optarg
-            ;;
-
-        --template=*)
+        --template=*|-t)
             TEMPLATE=$optarg
             ;;
 
-        --type=*|-t)
-            TYPE=$optarg
-            ;;
-
-        --model=*|-m)
-            MODEL=$optarg
+        --list|-l)
+            LIST=1
             ;;
 
         -*)
@@ -239,30 +102,20 @@ do
     esac
 done
 
+if [ "$LIST" ]
+then
+    list
+    exit 0
+fi
+
 if [ -z "$project" ]
     then
     error "no project name specified"
 fi
 
-if [ "$CONFIG" ]
-    then
-    tntnet_xml $project
-    exit 0
-fi
-
-if [ -z "$TYPE" ]
-    then
-    TYPE="$DEFAULT_TYPE"
-fi
-
-if [ -z "$MODEL" ]
-    then
-    MODEL="$DEFAULT_MODEL"
-fi
-
 if [ -z "$TEMPLATE" ]
-    then
-    TEMPLATE="$TYPE-$MODEL"
+then
+    TEMPLATE="default"
 fi
 
 if [ -e "$USERTEMPLATEDIR/$TEMPLATE" ]

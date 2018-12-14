@@ -1,8 +1,0 @@
-<%request>
-// define the request scope variables here
-
-</%request>
-<%session>
-// define the session scope variables here
-
-</%session>

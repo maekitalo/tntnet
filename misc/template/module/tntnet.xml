@@ -68,37 +68,9 @@
 
   </logging>
 
-  <!-- <maxRequestSize>65536</maxRequestSize> -->
-  <!-- <maxRequestTime>600</maxRequestTime> -->
-  <!-- <user>tntnet</user> -->
-  <!-- <group>tntnet</group> -->
-  <!-- <dir>/</dir> -->
-  <!-- <chrootdir>/var/safedir</chrootdir> -->
-  <!-- <pidfile>/var/run/tntnet.pid</pidfile> -->
-  <!-- <daemon>0</daemon> -->
-  <!-- <minThreads>5</minThreads> -->
-  <!-- <maxThreads>100</maxThreads> -->
-  <!-- <threadStartDelay>10</threadStartDelay> -->
-  <!-- <queueSize>1000</queueSize> -->
   <compPath>
     <entry>.libs</entry>
   </compPath>
-  <!-- <socketBufferSize>16384</socketBufferSize> -->
-  <!-- <socketReadTimeout>10</socketReadTimeout> -->
-  <!-- <socketWriteTimeout>10000</socketWriteTimeout> -->
-  <!-- <keepAliveTimeout>15000</keepAliveTimeout> -->
-  <!-- <keepAliveMax>1000</keepAliveMax> -->
-  <!-- <sessionTimeout>300</sessionTimeout> -->
-  <!-- <listenBacklog>64</listenBacklog> -->
-  <!-- <listenRetry>5</listenRetry> -->
-  <!-- <enableCompression>no</enableCompression> -->
-  <!-- <mimeDb>/etc/mime.types</mimeDb> -->
-  <!-- <minCompressSize>1024</minCompressSize> -->
-  <!-- <maxUrlMapCache>8192</maxUrlMapCache> -->
-  <!-- <defaultContentType>text/html; charset=UTF-8</defaultContentType> -->
-  <!-- <accessLog>/var/log/tntnet/access.log</accessLog> -->
-  <!-- <errorLog>/var/log/tntnet/error.log</errorLog> -->
-  <!-- <maxBackgroundTasks>5</maxBackgroundTasks> -->
-  <!-- <server>Tntnet</server> -->
 
+  <server>@PROJECT@</server>
 </tntnet>

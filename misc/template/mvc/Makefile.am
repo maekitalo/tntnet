@@ -55,7 +55,7 @@ notySources =  \
 
 staticSources = \
 	$(notySources) \
-	resources/js/jquery-2.1.4.min.js \
+	resources/js/jquery-3.3.1.min.js \
 	resources/js/tntnet.js \
 	resources/mypage.js \
 	resources/@PROJECT@.css

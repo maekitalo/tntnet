@@ -13,7 +13,7 @@ std::string maincomp = request.getArg("next");
     <meta name="description" content="@PROJECT@ application">
     <link rel="stylesheet" href="/@PROJECT@.css" type="text/css">
     <link rel="stylesheet" href="<$ maincomp $>.css" type="text/css">
-    <script src="/js/jquery-2.1.4.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/noty/packaged/jquery.noty.packaged.min.js"></script>
     <script src="/js/tntnet.js"></script>
     <script src="/@PROJECT@.js"></script>
