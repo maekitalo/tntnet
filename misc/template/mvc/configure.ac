@@ -1,5 +1,6 @@
 AC_INIT([@PROJECT@], [0.1], [your-email@somewhere])
 AM_INIT_AUTOMAKE([foreign])
+LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_PROG_CXX
