@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is the main configuration file for tntnet.
+
+  You can find documentation about the parameters in the man page tntnet.xml(7)
+  -->
+<tntnet>
+  <!-- listen to a port -->
+  <listeners>
+    <listener>
+      <port>8000</port>
+    </listener>
+  <!-- a certificate enables ssl -->
+  <!--
+    <listener>
+      <port>8443</port>
+      <certificate>tntnet.pem</certificate>
+    </listener>
+    -->
+  </listeners>
+
+  <logging>
+    <rootlogger>INFO</rootlogger>
+
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+      <logger>
+        <category>component.calc</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+
+    <!--
+    <file>tntnet.log</file>
+    <maxfilesize>10M</maxfilesize>
+    -->
+
+  </logging>
+</tntnet>

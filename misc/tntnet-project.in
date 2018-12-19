@@ -11,10 +11,98 @@ Usage: $0 [-l <template>] <projectname>
 Options:
   -t <template>, --template=<template>   specify template
   -l, --list                             list templates
+  -c <project>, --config=<project>       output sample tntnet.xml
 
 EOF
 
     exit $1
+}
+
+tntnet_xml()
+{
+    cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is the main configuration file for tntnet.
+
+  You can find documentation about the parameters in the man page tntnet.xml(7)
+  -->
+<tntnet>
+EOF
+  if test -z "$1"
+  then
+    cat <<EOF
+  <mappings>
+    <!-- map /webapp/comp.* or /webapp/comp to comp@webapp -->
+    <mapping>
+      <target>\$2@\$1</target>
+      <url>^/(.+)/([^.]+)(\..+)?</url>
+    </mapping>
+    <!-- map /comp to comp@comp -->
+    <mapping>
+      <target>\$1@\$1</target>
+      <url>^/(.*)</url>
+    </mapping>
+  </mappings>
+EOF
+  else
+    cat <<EOF
+  <mappings>
+    <!-- map / to $1@$1 -->
+    <mapping>
+      <target>$1@$1</target>
+      <url>^/$</url>
+    </mapping>
+    <!-- map /comp to comp@$1 -->
+    <mapping>
+      <target>\$1@$1</target>
+      <url>^/(.*)</url>
+    </mapping>
+  </mappings>
+EOF
+  fi
+
+  cat <<EOF
+
+  <!-- listen to a port -->
+  <listeners>
+    <listener>
+      <port>8000</port>
+    </listener>
+  <!--
+    <listener>
+      <port>8443</port>
+      <certificate>tntnet.pem</certificate>
+    </listener>
+    -->
+  </listeners>
+
+  <logging>
+    <rootlogger>INFO</rootlogger>
+
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+      <logger>
+        <category>component.$1</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+
+    <!--
+    <file>tntnet.log</file>
+    <maxfilesize>10M</maxfilesize>
+    <maxbackupindex>2</maxbackupindex>
+    -->
+
+  </logging>
+
+  <server>$1</server>
+
+</tntnet>
+EOF
 }
 
 error()
@@ -80,6 +168,11 @@ do
     esac
 
     case "$arg" in
+        --config=*|-c)
+            CONFIG=1
+            project=$optarg
+            ;;
+
         --template=*|-t)
             TEMPLATE=$optarg
             ;;
@@ -111,6 +204,12 @@ fi
 if [ -z "$project" ]
     then
     error "no project name specified"
+fi
+
+if [ "$CONFIG" ]
+    then
+    tntnet_xml $project
+    exit 0
 fi
 
 if [ -z "$TEMPLATE" ]
