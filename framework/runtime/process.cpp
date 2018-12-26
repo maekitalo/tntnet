@@ -38,6 +38,8 @@
 #include <fstream>
 #include <errno.h>
 #include <signal.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 log_define("tntnet.process")
 
