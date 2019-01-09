@@ -86,6 +86,7 @@ namespace tnt
     {
       public:
         static bool get(const QueryParams& q, const std::string& name);
+        static bool get(const QueryParams& q, const std::string& name, bool def);
     };
 
     template <typename Type>
@@ -339,6 +340,20 @@ namespace tnt
     inline bool QArg<bool>::get(const QueryParams& q, const std::string& name)
     {
       return !q.param(name).empty();
+    }
+
+    inline bool QArg<bool>::get(const QueryParams& q, const std::string& name, bool def)
+    {
+      try
+      {
+        bool ret;
+        q.si().getMember(name) >>= ret;
+        return ret;
+      }
+      catch (const cxxtools::SerializationMemberNotFound&)
+      {
+        return def;
+      }
     }
 
     ////////////////////////////////////////////////////////////////////////
