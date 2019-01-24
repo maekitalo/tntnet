@@ -275,29 +275,37 @@ namespace tnt
     template <typename Type>
     Type QArg<Type>::get(const QueryParams& q, const std::string& name, const Type& def)
     {
+      const cxxtools::SerializationInfo* pi;
       try
       {
-        Type ret;
-        q.si().getMember(name) >>= ret;
-        return ret;
+        pi = &q.si().getMember(name);
       }
       catch (const cxxtools::SerializationMemberNotFound&)
       {
         return def;
       }
+
+      Type ret;
+      *pi >>= ret;
+      return ret;
     }
 
     template <typename Type>
     std::vector<Type> QArg<Type>::getvector(const QueryParams& q, const std::string& name)
     {
       std::vector<Type> ret;
+
+      const cxxtools::SerializationInfo* pi;
       try
       {
-        q.si().getMember(name) >>= ret;
+        pi = &q.si().getMember(name);
       }
       catch (const cxxtools::SerializationMemberNotFound&)
       {
+        return ret;
       }
+
+      *pi >>= ret;
       return ret;
     }
 
