@@ -9,7 +9,7 @@ calcajax_SOURCES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 calcajax_LDFLAGS =
-calcajax_LDADD = $(top_builddir)/framework/common/libtntnet.la
+calcajax_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools
 
 noinst_DATA = tntnet.xml
 CLEANFILES = calcajax.cpp calcajax_js.cpp docalc.cpp

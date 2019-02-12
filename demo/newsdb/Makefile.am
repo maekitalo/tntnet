@@ -8,7 +8,7 @@ newsdb_SOURCES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 newsdb_LDFLAGS = -ltntdb
-newsdb_LDADD = $(top_builddir)/framework/common/libtntnet.la
+newsdb_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools
 
 noinst_DATA = tntnet.xml
 dist_noinst_DATA = global.ecpp newsdb.sql README

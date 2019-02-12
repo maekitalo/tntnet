@@ -15,7 +15,7 @@ noinst_HEADERS = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common -I.
 calcmvc_LDFLAGS = -module @SHARED_LIB_FLAG@
-calcmvc_LDADD = $(top_builddir)/framework/common/libtntnet.la
+calcmvc_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools
 
 dist_noinst_DATA = tntnet.xml
 CLEANFILES = calcmvc.cpp view/accumulator.cpp view/calc.cpp

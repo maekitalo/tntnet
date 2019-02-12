@@ -6,7 +6,7 @@ hello_SOURCES = \
 	tntnet.png
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-hello_LDADD = $(top_builddir)/framework/common/libtntnet.la
+hello_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools
 
 noinst_DATA = tntnet.xml
 dist_noinst_DATA = README

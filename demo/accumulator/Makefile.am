@@ -5,7 +5,7 @@ accumulator_SOURCES = \
 	main.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
-accumulator_LDADD = $(top_builddir)/framework/common/libtntnet.la
+accumulator_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools
 
 noinst_DATA = tntnet.xml
 CLEANFILES = accumulator.cpp

@@ -6,7 +6,7 @@ upload_SOURCES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
 upload_LDFLAGS = -lcxxtools
-upload_LDADD = $(top_builddir)/framework/common/libtntnet.la
+upload_LDADD = $(top_builddir)/framework/common/libtntnet.la -lcxxtools
 
 noinst_DATA = tntnet.xml
 dist_noinst_DATA = README
