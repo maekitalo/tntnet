@@ -42,7 +42,7 @@ namespace tnt
   class NullDestroyPolicy
   {
     public:
-      static void destroy(objectType* ptr) { }
+      static void destroy(objectType*) { }
   };
 
   class Scope : public cxxtools::AtomicRefCounted
