@@ -221,6 +221,13 @@ namespace tnt
     std::strcpy(_method, m);
   }
 
+  void HttpRequest::setArgs(const args_type& a, bool addToQparam)
+  {
+    _args = a;
+    for (args_type::const_iterator it = a.begin(); it != a.end(); ++it)
+      _qparam.add(it->first, it->second);
+  }
+
   std::string HttpRequest::getArgDef(args_type::size_type n, const std::string& def) const
   {
     std::ostringstream k;

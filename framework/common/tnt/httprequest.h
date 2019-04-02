@@ -167,7 +167,7 @@ namespace tnt
       void setPathInfo(const std::string& p)    { _pathinfo = p; }
       const std::string& getPathInfo() const    { return _pathinfo; }
 
-      void setArgs(const args_type& a)          { _args = a; }
+      void setArgs(const args_type& a, bool addToQparam = true);
       const args_type& getArgs() const          { return _args; }
       args_type& getArgs()                      { return _args; }
 
