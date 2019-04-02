@@ -84,15 +84,15 @@ namespace tnt
 
       if (_isVector)
       {
-        o << "std::vector< " << ltype << " > " << _name << " = qparam.getvector< " << ltype << " >(\"" << _name << "\");\n";
+        o << "std::vector< " << ltype << " > " << _name << " = " << qparam << ".getvector< " << ltype << " >(\"" << _name << "\");\n";
       }
       else if (_value.empty())
       {
-        o << ltype << ' ' << _name << " = qparam.get< " << ltype << " >(\"" << _name << "\");\n";
+        o << ltype << ' ' << _name << " = " << qparam << ".get< " << ltype << " >(\"" << _name << "\");\n";
       }
       else
       {
-        o << ltype << ' ' << _name << " = qparam.get< " << ltype << " >(\"" << _name << "\", (" << _value << "));\n";
+        o << ltype << ' ' << _name << " = " << qparam << ".get< " << ltype << " >(\"" << _name << "\", (" << _value << "));\n";
       }
     }
 
