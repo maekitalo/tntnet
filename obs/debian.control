@@ -2,7 +2,7 @@ Source: tntnet
 Section: httpd
 Priority: extra
 Maintainer: Kari Pahula <kaol@debian.org>
-Build-Depends: cdbs, debhelper (>= 9), libcxxtools-dev (>= 2.2.1), libltdl-dev, zip, pkg-config, dh-autoreconf, libtool, libssl-dev
+Build-Depends: cdbs, debhelper (>= 9), libcxxtools-dev (>= 2.2.1), libltdl-dev, zip, zlib1g-dev, pkg-config, dh-autoreconf, libtool, libssl-dev
 Standards-Version: 3.9.5
 Homepage: http://www.tntnet.org/
 
