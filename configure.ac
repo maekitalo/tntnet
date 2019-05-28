@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 3.0rc3, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 3.0, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 LT_INIT([disable-static])
 
@@ -100,7 +100,6 @@ AS_IF([test "$enable_demos" = "yes"],
     AS_IF([test "$enable_sdk" != "yes"],
         [AC_MSG_ERROR([demos cannot be built without building sdk])])
 
-    AC_CHECK_HEADER([gd.h], , AC_MSG_ERROR([gd headers not found]))
     AC_CHECK_HEADER([tntdb.h], , AC_MSG_ERROR([tntdb headers not found]))
   ]
 )
