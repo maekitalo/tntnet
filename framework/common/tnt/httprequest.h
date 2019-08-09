@@ -40,9 +40,11 @@
 #include <tnt/query_params.h>
 #include <tnt/scope.h>
 #include <tnt/threadcontext.h>
-#include <map>
-#include <cxxtools/atomicity.h>
+
 #include <cxxtools/sslcertificate.h>
+
+#include <map>
+#include <atomic>
 #include <string>
 #include <cstring>
 
@@ -82,8 +84,8 @@ namespace tnt
 
       mutable Contenttype _ct;
       Multipart _mp;
-      cxxtools::atomic_t _serial;
-      static cxxtools::atomic_t _nextSerial;
+      unsigned _serial;
+      static std::atomic<unsigned> _nextSerial;
 
       mutable Encoding _encoding;
       mutable bool _encodingRead;
@@ -220,7 +222,7 @@ namespace tnt
       bool isMultipart() const              { return getContentType().isMultipart(); }
       const Multipart& getMultipart() const { return _mp; }
 
-      cxxtools::atomic_t getSerial() const  { return _serial; }
+      unsigned getSerial() const  { return _serial; }
 
       const Cookies& getCookies() const;
 

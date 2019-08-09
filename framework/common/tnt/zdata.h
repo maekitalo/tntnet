@@ -30,7 +30,7 @@
 #ifndef TNT_ZDATA_H
 #define TNT_ZDATA_H
 
-#include <cxxtools/atomicity.h>
+#include <atomic>
 
 /// @cond internal
 namespace tnt
@@ -41,7 +41,7 @@ namespace tnt
       const unsigned _zdataLen;
       const unsigned _dataLen;
 
-      cxxtools::atomic_t _refs;
+      std::atomic<unsigned> _refs;
       char* _data;
 
     public:

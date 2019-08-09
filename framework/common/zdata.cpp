@@ -39,7 +39,7 @@ namespace tnt
 {
   void Zdata::addRef()
   {
-    if (cxxtools::atomicIncrement(_refs) == 1)
+    if (++_refs == 1)
     {
       // allocate uncompressed data
       _data = new char[_dataLen];
@@ -61,7 +61,7 @@ namespace tnt
 
   void Zdata::release()
   {
-    if (cxxtools::atomicDecrement(_refs) == 0)
+    if (--_refs == 0)
     {
       log_debug("release " << _dataLen << " uncompressed bytes");
       delete[] _data;

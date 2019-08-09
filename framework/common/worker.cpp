@@ -45,10 +45,11 @@
 #include <sys/poll.h>
 #include <cxxtools/dlloader.h>
 #include <cxxtools/ioerror.h>
-#include <cxxtools/atomicity.h>
 #include <cxxtools/net/tcpserver.h>
 #include <pthread.h>
 #include <string.h>
+
+#include <atomic>
 #include "config.h"
 
 log_define("tntnet.worker")
@@ -299,8 +300,8 @@ namespace tnt
 
   void Worker::logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn)
   {
-    static cxxtools::atomic_t waitCount = 0;
-    cxxtools::atomicIncrement(waitCount);
+    static std::atomic<unsigned> waitCount(0);
+    ++waitCount;
 
     std::ofstream& accessLog = _application._accessLog;
 
@@ -373,7 +374,7 @@ namespace tnt
       accessLog << '-';
     accessLog << " \"" << request.getHeader(httpheader::referer, "-") << "\" \""
               << request.getHeader(httpheader::userAgent, "-") << "\"\n";
-    if (cxxtools::atomicDecrement(waitCount) == 0)
+    if (--waitCount == 0)
       accessLog.flush();
   }
 

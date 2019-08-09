@@ -51,7 +51,7 @@ namespace tnt
   ////////////////////////////////////////////////////////////////////////
   // HttpRequest
   //
-  cxxtools::atomic_t HttpRequest::_nextSerial = 0;
+  std::atomic<unsigned> HttpRequest::_nextSerial(0);
 
   HttpRequest::HttpRequest(Tntnet& application, const SocketIf* socketIf)
     : _socketIf(socketIf),
@@ -288,7 +288,7 @@ namespace tnt
     _qparam.add(_getparam);
     _qparam.add(_postparam);
 
-    _serial = cxxtools::atomicIncrement(_nextSerial);
+    _serial = ++_nextSerial;
   }
 
   const Cookies& HttpRequest::getCookies() const
