@@ -243,11 +243,11 @@ We change our myfirstproject.ecpp to look like this:
             }>
             <p>
                 <$ arg1 $> + <$ arg2 $> =
-                % if (result == 0.0) {
+    %             if (result == 0.0) {
                     nothing
-                % } else {
+    %             } else {
                     <$ result $>
-                % }
+    %             }
             </p>
         </body>
     </html>
@@ -322,9 +322,9 @@ functional calculator:
                 <input type="text" name="arg1" value="<$arg1$>">
                 +
                 <input type="text" name="arg2" value="<$arg2$>">
-                % if (s1 && s2) { // if both input streams were successful extracting values
+    %             if (s1 && s2) { // if both input streams were successful extracting values
                     = <$ v1 + v2 $>
-                % }
+    %             }
             </form>
         </body>
     </html>
