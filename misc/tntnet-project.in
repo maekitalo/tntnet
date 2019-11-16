@@ -157,6 +157,11 @@ do
             exit 0
             ;;
 
+        --list|-l)
+            list
+            exit 0
+            ;;
+
         --*=*)
             optarg=`echo "$arg" | @SED@ 's/[-_a-zA-Z0-9]*=//'`
             ;;
@@ -177,10 +182,6 @@ do
             TEMPLATE=$optarg
             ;;
 
-        --list|-l)
-            LIST=1
-            ;;
-
         -*)
             error "unkown option \`$arg\`"
             ;;
@@ -195,19 +196,13 @@ do
     esac
 done
 
-if [ "$LIST" ]
-then
-    list
-    exit 0
-fi
-
 if [ -z "$project" ]
-    then
+then
     error "no project name specified"
 fi
 
 if [ "$CONFIG" ]
-    then
+then
     tntnet_xml $project
     exit 0
 fi
