@@ -17,6 +17,8 @@ To build run `./configure && make`. To rebuild after changing code run just
 
 To add new source files to the project add them to `Makefile.am`.
 
+Adding files
+------------
 Static files are put into the `resources` directory and added to the
 `staticSources` variable in `Makefile.am`.
 
