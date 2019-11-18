@@ -18,6 +18,7 @@ nobase_dist_pkgdata_DATA = \
 	template/default/configure.ac \
 	template/default/@PROJECT@.ecpp \
 	template/default/@PROJECT@.xml \
+	template/webapp/README.md \
 	template/webapp/resources/app/actions.js \
 	template/webapp/resources/app/json.js \
 	template/webapp/resources/app/main.js \
@@ -51,7 +52,6 @@ nobase_dist_pkgdata_DATA = \
 	template/webapp/json/getnumbers.ecpp \
 	template/webapp/json/example.ecpp \
 	template/webapp/json/dbaccess.ecpp \
-	template/webapp/json/README \
 	template/webapp/include/actionreply.h \
 	template/webapp/include/@PROJECT@/config.h \
 	template/webapp/include/noty.h \
