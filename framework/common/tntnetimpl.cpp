@@ -37,6 +37,7 @@
 #include "tnt/util.h"
 
 #include <cxxtools/net/tcpstream.h>
+#include <cxxtools/systemerror.h>
 #include <cxxtools/log.h>
 
 #include <unistd.h>
@@ -176,7 +177,11 @@ namespace tnt
     // initialize worker-process
 
     // SIGPIPE must be ignored
-    ::signal(SIGPIPE, SIG_IGN);
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = 0;
+    if (sigaction(SIGPIPE, &sa, 0) == -1)
+        cxxtools::throwSystemError("sigaction");
 
     // create worker-threads
     log_info("create " << _minthreads << " worker threads");
