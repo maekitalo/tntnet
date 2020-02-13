@@ -14,6 +14,7 @@ tntnet_test_SOURCES = \
 	componenttest.cpp \
 	cstreamtest.cpp \
 	ecpptest.cpp \
+	encodingtest.cpp \
 	messageheadertest.cpp \
 	qparamtest.cpp \
 	strutest.cpp \

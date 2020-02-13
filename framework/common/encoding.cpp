@@ -29,15 +29,33 @@
 
 #include "tnt/encoding.h"
 #include "tnt/util.h"
+#include <cxxtools/log.h>
 #include <cctype>
+
+log_define("tnt.encoding")
 
 namespace tnt
 {
   namespace
   {
-    void throwInvalidHeader(const char* header)
+    enum State {
+      state_0,
+      state_encoding,
+      state_encoding_sp,
+      state_quality,
+      state_qualityq,
+      state_qualityeq,
+      state_qualitypoint,
+      state_qualitytenths,
+      state_qualityhundredths,
+      state_qualitythousandths,
+      state_quality_sp
+    };
+
+    void throwInvalidHeader(const char* header, const char* p, State state)
     {
-      throwRuntimeError(std::string("invalid encoding-string \"") + header + '"');
+      log_warn("invalid encoding string <" << header << "> at position " << (p - header) << " in state " << static_cast<int>(state) << " ok <" << std::string(header, p - header) << '>');
+      throwRuntimeError(std::string("invalid accept-encoding string \"") + header + '"');
     }
   }
 
@@ -48,20 +66,13 @@ namespace tnt
     if (header == 0)
       return;
 
-    enum {
-      state_0,
-      state_encoding,
-      state_quality,
-      state_qualityq,
-      state_qualityeq,
-      state_qualitypoint,
-      state_qualitytenth,
-      state_qualityign
-    } state = state_0;
+    log_debug("encoding header <" << header << '>');
+    State state = state_0;
 
     std::string encoding;
     unsigned quality = 0;
-    for (const char* p = header; *p; ++p)
+    const char* p;
+    for (p = header; *p; ++p)
     {
       char ch = *p;
       switch (state)
@@ -70,7 +81,7 @@ namespace tnt
           if (!std::isspace(ch))
           {
             encoding.clear();
-            encoding.reserve(16);
+            encoding.reserve(8);
             encoding += ch;
             state = state_encoding;
           }
@@ -81,63 +92,142 @@ namespace tnt
             state = state_qualityq;
           else if (ch == ',')
           {
-            _encodingMap.insert(encodingMapType::value_type(encoding, 1));
+            log_debug("encoding <" << encoding << "> quality 1000");
+            _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
             state = state_0;
           }
+          else if (std::isspace(ch))
+              state = state_encoding_sp;
           else
             encoding += ch;
+          break;
+
+        case state_encoding_sp:
+          if (ch == ';')
+            state = state_qualityq;
+          else if (ch == ',')
+          {
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
+            state = state_0;
+          }
+          else if (std::isspace(ch))
+            ;
+          else
+            throwInvalidHeader(header, p, state);
           break;
 
         case state_qualityq:
           if (ch == 'q')
             state = state_qualityeq;
           else if (!std::isspace(ch))
-            throwInvalidHeader(header);
+            throwInvalidHeader(header, p, state);
           break;
 
         case state_qualityeq:
           if (ch == '=')
             state = state_quality;
           else if (!std::isspace(ch))
-            throwInvalidHeader(header);
+            throwInvalidHeader(header, p, state);
           break;
 
         case state_quality:
-          if (std::isdigit(ch))
+          if (ch == '0')
           {
-            quality = (ch - '0') * 10;
+            quality = 0;
             state = state_qualitypoint;
           }
-          else
-            throwInvalidHeader(header);
+          else if (ch == '1')
+          {
+            quality = 1000;
+            state = state_qualitypoint;
+          }
+          else if (!std::isspace(ch))
+            throwInvalidHeader(header, p, state);
           break;
 
         case state_qualitypoint:
           if (ch == '.')
-            state = state_qualitytenth;
-          else if (ch == ';')
+            state = state_qualitytenths;
+          else if (ch == ',')
           {
+            log_debug("encoding <" << encoding << "> quality " << quality);
             _encodingMap.insert(encodingMapType::value_type(encoding, quality));
             state = state_0;
+          }
+          else if (std::isspace(ch))
+          {
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            state = state_quality_sp;
           }
           else
-            throwInvalidHeader(header);
+            throwInvalidHeader(header, p, state);
           break;
 
-        case state_qualitytenth:
+        case state_quality_sp:
+          if (ch == ',')
+            state = state_0;
+          else if (!std::isspace(ch))
+            throwInvalidHeader(header, p, state);
+          break;
+
+        case state_qualitytenths:
           if (std::isdigit(ch))
           {
-            quality += ch - '0';
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_qualityign;
+            quality += (ch - '0') * 100;
+            state = state_qualityhundredths;
           }
-          else if (ch == ';')
-            state = state_0;
+          else if (std::isspace(ch))
+          {
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            state = state_quality_sp;
+          }
           break;
 
-        case state_qualityign:
-          if (ch == ';')
+        case state_qualityhundredths:
+          if (std::isdigit(ch))
+          {
+            quality += (ch - '0') * 10;
+            state = state_qualitythousandths;
+          }
+          else if (ch == ',')
+          {
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
             state = state_0;
+          }
+          else if (std::isspace(ch))
+          {
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            state = state_quality_sp;
+          }
+          break;
+
+        case state_qualitythousandths:
+          if (std::isdigit(ch))
+          {
+            quality += (ch - '0');
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            state = state_quality_sp;
+          }
+          else if (ch == ',')
+          {
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            state = state_0;
+          }
+          else if (std::isspace(ch))
+          {
+            log_debug("encoding <" << encoding << "> quality " << quality);
+            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+            state = state_quality_sp;
+          }
+          else
+            throwInvalidHeader(header, p, state);
           break;
       }
     }
@@ -145,16 +235,26 @@ namespace tnt
     switch (state)
     {
       case state_encoding:
-        _encodingMap.insert(encodingMapType::value_type(encoding, 1));
+      case state_encoding_sp:
+        log_debug("encoding <" << encoding << "> quality 1000");
+        _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
         break;
 
       case state_quality:
       case state_qualitypoint:
-      case state_qualitytenth:
+      case state_qualitytenths:
+      case state_qualityhundredths:
+      case state_qualitythousandths:
+        log_debug("encoding <" << encoding << "> quality " << quality);
         _encodingMap.insert(encodingMapType::value_type(encoding, quality));
         break;
 
-      default:
+      case state_qualityq:
+      case state_qualityeq:
+        throwInvalidHeader(header, p, state);
+
+      case state_0:
+      case state_quality_sp:
         break;
     }
   }
@@ -172,8 +272,8 @@ namespace tnt
     if (it != _encodingMap.end())
       return it->second;
 
-    // return 10 (accept), if encoding is identity, 0 otherwise
-    return encoding == "identity" ? 10 : 0;
+    // return 1000 (accept), if encoding is identity, 0 otherwise
+    return encoding == "identity" ? 1001 : 0;
   }
 }
 
