@@ -32,7 +32,7 @@
 #include <cxxtools/log.h>
 #include <cctype>
 
-log_define("tnt.encoding")
+log_define("tntnet.encoding")
 
 namespace tnt
 {
