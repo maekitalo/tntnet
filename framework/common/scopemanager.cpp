@@ -177,7 +177,6 @@ namespace tnt
       {
         log_debug("session not found - create new");
         sessionScope = new Sessionscope();
-        sessionScope->addRef();
         _sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
       }
       else
@@ -212,7 +211,6 @@ namespace tnt
         {
           log_debug("session not found - create new");
           sessionScope = new Sessionscope();
-          sessionScope->addRef();
           _sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
         }
         else
