@@ -41,11 +41,6 @@ namespace tnt
       cxxtools::net::TcpServer _server;
       Jobqueue& _queue;
 
-      std::string _certificateFile;
-      std::string _privateKeyFile;
-      int _sslVerifyLevel;
-      std::string _sslCa;
-
     public:
       Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q,
         const std::string& certificateFile = std::string(), const std::string& privateKeyFile = std::string(),

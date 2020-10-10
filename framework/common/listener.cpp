@@ -78,16 +78,16 @@ namespace tnt
   Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q,
     const std::string& certificateFile, const std::string& privateKeyFile,
     int sslVerifyLevel, const std::string& sslCa)
-    : _queue(q),
-      _certificateFile(certificateFile),
-      _privateKeyFile(privateKeyFile),
-      _sslVerifyLevel(sslVerifyLevel),
-      _sslCa(sslCa)
+    : _queue(q)
   {
     log_info("listen ip=" << ipaddr << " port=" << port);
     doListenRetry(_server, ipaddr, port);
+
+    if (!certificateFile.empty())
+        _server.loadSslCertificateFile(certificateFile, privateKeyFile);
+
     Jobqueue::JobPtr p = new Tcpjob(application, _server, _queue,
-                                    certificateFile, privateKeyFile,
+                                    !certificateFile.empty(),
                                     sslVerifyLevel, sslCa);
     _queue.put(p);
   }

@@ -46,8 +46,7 @@ namespace tnt
       Jobqueue& _queue;
 
       bool _sslInitialized;
-      std::string _certificateFile;
-      std::string _privateKeyFile;
+      bool _ssl;
       int _sslVerifyLevel;
       std::string _sslCa;
 
@@ -61,15 +60,13 @@ namespace tnt
 
     public:
       Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener, Jobqueue& queue,
-        const std::string& certificateFile, const std::string& privateKeyFile,
-        int sslVerifyLevel, const std::string& sslCa)
+        bool ssl, int sslVerifyLevel, const std::string& sslCa)
         : Job(app, this),
           _socket(TntConfig::it().socketBufferSize, TntConfig::it().socketReadTimeout),
           _listener(listener),
           _queue(queue),
           _sslInitialized(false),
-          _certificateFile(certificateFile),
-          _privateKeyFile(privateKeyFile),
+          _ssl(ssl),
           _sslVerifyLevel(sslVerifyLevel),
           _sslCa(sslCa)
         { }
