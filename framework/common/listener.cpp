@@ -84,11 +84,13 @@ namespace tnt
     doListenRetry(_server, ipaddr, port);
 
     if (!certificateFile.empty())
+    {
         _server.loadSslCertificateFile(certificateFile, privateKeyFile);
+        _server.setSslVerify(sslVerifyLevel, sslCa);
+    }
 
     Jobqueue::JobPtr p = new Tcpjob(application, _server, _queue,
-                                    !certificateFile.empty(),
-                                    sslVerifyLevel, sslCa);
+                                    !certificateFile.empty());
     _queue.put(p);
   }
 

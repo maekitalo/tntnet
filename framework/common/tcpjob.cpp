@@ -77,8 +77,7 @@ namespace tnt
     if (TntnetImpl::shouldStop())
       p = this;
     else
-      p = new Tcpjob(getRequest().getApplication(), _listener, _queue,
-                     _ssl, _sslVerifyLevel, _sslCa);
+      p = new Tcpjob(getRequest().getApplication(), _listener, _queue, _ssl);
 
     _queue.put(p);
   }
@@ -105,12 +104,6 @@ namespace tnt
 
     if (!_socket.isSslConnected() && _ssl)
     {
-      if (!_sslInitialized)
-      {
-        _socket.socket().setSslVerify(_sslVerifyLevel, _sslCa);
-        _sslInitialized = true;
-      }
-
       log_debug("accept ssl " << getFd());
       _socket.sslAccept();
       touch();
