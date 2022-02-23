@@ -122,30 +122,26 @@ namespace tnt
     // initialize listeners
     for (TntConfig::ListenersType::const_iterator it = config.listeners.begin(); it != config.listeners.end(); ++it)
     {
-      listen(app, it->ip, it->port);
-    }
+      cxxtools::SslCtx sslCtx;
+      if (!it->certificate.empty())
+      {
+          if (it->secure)
+              sslCtx = cxxtools::SslCtx::secure();
+          sslCtx.loadCertificateFile(it->certificate, it->key)
+                .setVerify(it->sslVerifyLevel, it->sslCa);
+          if (!it->ciphers.empty())
+              sslCtx.setCiphers(it->ciphers);
+          sslCtx.setProtocolVersion(it->minProtocolVersion, it->maxProtocolVersion);
+      }
 
-    for (TntConfig::SslListenersType::const_iterator it = config.ssllisteners.begin(); it != config.ssllisteners.end(); ++it)
-    {
-      sslListen(app, it->ip, it->port, it->certificate, it->key, it->sslVerifyLevel, it->sslCa);
+      listen(app, it->ip, it->port, sslCtx);
     }
   }
 
-  void TntnetImpl::listen(Tntnet& app, const std::string& ip, unsigned short int port)
+  void TntnetImpl::listen(Tntnet& app, const std::string& ip, unsigned short int port, const cxxtools::SslCtx& sslCtx)
   {
-    log_debug("listen on ip " << ip << " port " << port);
-    Listener* listener = new Listener(app, ip, port, _queue);
-    _listeners.insert(listener);
-    _allListeners.insert(listener);
-  }
-
-  void TntnetImpl::sslListen(Tntnet& app,
-                     const std::string& ipaddr, unsigned short int port,
-                     const std::string& certificateFile, const std::string& keyFile,
-                     int sslVerifyLevel, const std::string& sslCa)
-  {
-    log_debug("listen on ip " << ipaddr << " port " << port << " (ssl)");
-    Listener* listener = new Listener(app, ipaddr, port, _queue, certificateFile, keyFile, sslVerifyLevel, sslCa);
+    log_debug("listen on ip " << ip << " port " << port << (sslCtx.enabled() ? " ssl" : ""));
+    Listener* listener = new Listener(app, ip, port, _queue, sslCtx);
     _listeners.insert(listener);
     _allListeners.insert(listener);
   }

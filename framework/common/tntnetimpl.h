@@ -14,6 +14,7 @@
 #include <cxxtools/condition.h>
 #include <cxxtools/mutex.h>
 #include <cxxtools/refcounted.h>
+#include <cxxtools/sslctx.h>
 #include <set>
 #include <fstream>
 
@@ -62,12 +63,7 @@ namespace tnt
 
       void init(Tntnet& app, const TntConfig& config);
 
-      void listen(Tntnet& app, const std::string& ipaddr, unsigned short int port);
-
-      void sslListen(Tntnet& app,
-                     const std::string& ipaddr, unsigned short int port,
-                     const std::string& certificateFile, const std::string& keyFile,
-                     int sslVerifyLevel, const std::string& sslCa);
+      void listen(Tntnet& app, const std::string& ipaddr, unsigned short int port, const cxxtools::SslCtx& sslCtx = cxxtools::SslCtx());
 
       void run();
 

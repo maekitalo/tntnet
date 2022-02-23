@@ -34,6 +34,7 @@
 #include <cxxtools/net/tcpstream.h>
 #include <tnt/socketif.h>
 #include <tnt/tntconfig.h>
+#include <cxxtools/sslctx.h>
 
 /// @cond internal
 
@@ -45,7 +46,7 @@ namespace tnt
       const cxxtools::net::TcpServer& _listener;
       Jobqueue& _queue;
 
-      bool _ssl;
+      cxxtools::SslCtx _sslCtx;
 
       void accept();
       void regenerateJob();
@@ -56,13 +57,12 @@ namespace tnt
       virtual cxxtools::SslCertificate getSslCertificate() const;
 
     public:
-      Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener, Jobqueue& queue,
-        bool ssl)
+      Tcpjob(Tntnet& app, const cxxtools::net::TcpServer& listener, Jobqueue& queue, const cxxtools::SslCtx& sslCtx)
         : Job(app, this),
           _socket(TntConfig::it().socketBufferSize, TntConfig::it().socketReadTimeout),
           _listener(listener),
           _queue(queue),
-          _ssl(ssl)
+          _sslCtx(sslCtx)
         { }
 
       std::iostream& getStream();

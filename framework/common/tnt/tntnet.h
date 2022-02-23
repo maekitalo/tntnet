@@ -32,6 +32,7 @@
 
 #include <tnt/tntconfig.h>
 #include <tnt/mapping.h>
+#include <cxxtools/sslctx.h>
 #include <string>
 
 namespace tnt
@@ -50,7 +51,7 @@ namespace tnt
       This is the minimal set of things you have to include in your code to create a
       standalone tntnet web application:
       @li The instantiation of a Tntnet object
-      @li A call to listen and/or sslListen
+      @li A call to listen
       @li One or more calls to mapUrl or vMapUrl
       @li A call to run()
 
@@ -118,35 +119,14 @@ namespace tnt
 
           This method solely does the setup, the actual listening starts in run().
        */
-      void listen(const std::string& ipaddr, unsigned short int port);
+      void listen(const std::string& ipaddr, unsigned short int port, const cxxtools::SslCtx& sslCtx = cxxtools::SslCtx());
 
       /** Set up a listener for the specified port which listens on all local interfaces
 
           As the above method, this doesn't start the actual listening.
        */
-      void listen(unsigned short int port)
-        { listen(std::string(), port); }
-
-      /** Set up a ssl listener for the specified ip address and port
-
-          See listen() for more information.
-       */
-      void sslListen(const std::string& ipaddr, unsigned short int port,
-                     const std::string& certificateFile, const std::string& keyFile = std::string(),
-                     int sslVerifyLevel = 0, const std::string& sslCa = std::string());
-
-      /// @deprecated
-      void sslListen(const std::string& certificateFile, const std::string& keyFile,
-                     const std::string& ipaddr, unsigned short int port)
-      { sslListen(ipaddr, port, certificateFile, keyFile); }
-
-      /** Set up a ssl listener for the specified port which listens on all local interfaces
-
-          See listen() for more information.
-       */
-      void sslListen(const std::string& certificateFile, const std::string& keyFile,
-                     unsigned short int port)
-        { sslListen(certificateFile, keyFile, std::string(), port); }
+      void listen(unsigned short int port, const cxxtools::SslCtx& sslCtx = cxxtools::SslCtx())
+        { listen(std::string(), port, sslCtx); }
 
       /** Start all needed threads and the application loop
 

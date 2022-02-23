@@ -56,7 +56,7 @@ namespace tnt
 
   bool Tcpjob::isSsl() const
   {
-    return _ssl;
+    return _sslCtx.enabled();
   }
 
   cxxtools::SslCertificate Tcpjob::getSslCertificate() const
@@ -77,7 +77,7 @@ namespace tnt
     if (TntnetImpl::shouldStop())
       p = this;
     else
-      p = new Tcpjob(getRequest().getApplication(), _listener, _queue, _ssl);
+      p = new Tcpjob(getRequest().getApplication(), _listener, _queue, _sslCtx);
 
     _queue.put(p);
   }
@@ -102,10 +102,10 @@ namespace tnt
       regenerateJob();
     }
 
-    if (!_socket.isSslConnected() && _ssl)
+    if (!_socket.isSslConnected() && _sslCtx.enabled())
     {
       log_debug("accept ssl " << getFd());
-      _socket.sslAccept();
+      _socket.sslAccept(_sslCtx);
       touch();
     }
 

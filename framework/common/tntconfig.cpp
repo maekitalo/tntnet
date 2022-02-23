@@ -35,30 +35,29 @@ log_define("tntnet.tntconfig")
 
 namespace tnt
 {
-  namespace
-  {
+namespace
+{
     struct VirtualHost
     {
-      std::string hostname;
-      TntConfig::MappingsType mappings;
+        std::string hostname;
+        TntConfig::MappingsType mappings;
     };
 
     void operator>>= (const cxxtools::SerializationInfo& si, VirtualHost& virtualHost)
     {
-      si.getMember("hostname") >>= virtualHost.hostname;
-      si.getMember("mappings") >>= virtualHost.mappings;
-      for (TntConfig::MappingsType::iterator it = virtualHost.mappings.begin(); it != virtualHost.mappings.end(); ++it)
-      {
-        if (!it->vhost.empty())
-          log_warn("vhost entry not empty in mapping \"" << it->url << "\" in virtual host \"" << virtualHost.hostname);
-        it->vhost = virtualHost.hostname;
-      }
+        si.getMember("hostname") >>= virtualHost.hostname;
+        si.getMember("mappings") >>= virtualHost.mappings;
+        for (TntConfig::MappingsType::iterator it = virtualHost.mappings.begin(); it != virtualHost.mappings.end(); ++it)
+        {
+            if (!it->vhost.empty())
+                log_warn("vhost entry not empty in mapping \"" << it->url << "\" in virtual host \"" << virtualHost.hostname);
+            it->vhost = virtualHost.hostname;
+        }
     }
+}
 
-  }
-
-  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping)
-  {
+void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& mapping)
+{
     si.getMember("target") >>= mapping.target;
     si.getMember("url", mapping.url);
     si.getMember("vhost", mapping.vhost);
@@ -70,102 +69,92 @@ namespace tnt
     const cxxtools::SerializationInfo* psi = si.findMember("httpreturn");
     if (psi)
     {
-      std::string httpreturn;
-      *psi >>= httpreturn;
-      if (httpreturn == "DECLINED")
-        mapping.httpreturn = DECLINED;
-      else
-        *psi >>= mapping.httpreturn;
+        std::string httpreturn;
+        *psi >>= httpreturn;
+        if (httpreturn == "DECLINED")
+            mapping.httpreturn = DECLINED;
+        else
+            *psi >>= mapping.httpreturn;
     }
 
     bool ssl;
     if (si.getMember("ssl", ssl))
-      mapping.ssl = ssl ? SSL_YES : SSL_NO;
+        mapping.ssl = ssl ? SSL_YES : SSL_NO;
     else
-      mapping.ssl = SSL_ALL;
+        mapping.ssl = SSL_ALL;
 
     const cxxtools::SerializationInfo* args = si.findMember("args");
     if (args)
     {
-      for (cxxtools::SerializationInfo::ConstIterator it = args->begin(); it != args->end(); ++it)
-      {
-        std::string value;
-        it->getValue(value);
-        mapping.args[it->name()] = value;
-      }
+        for (cxxtools::SerializationInfo::ConstIterator it = args->begin(); it != args->end(); ++it)
+        {
+            std::string value;
+            it->getValue(value);
+            mapping.args[it->name()] = value;
+        }
     }
-  }
+}
 
-  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener)
-  {
+static void setProtocolVersion(cxxtools::SslCtx::PROTOCOL_VERSION& value, const std::string& str)
+{
+    if (str == "SSLv2")
+        value = cxxtools::SslCtx::PROTOCOL_VERSION::SSLv2;
+    else if (str == "SSLv3")
+        value = cxxtools::SslCtx::PROTOCOL_VERSION::SSLv3;
+    else if (str == "TLSv1")
+        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv1;
+    else if (str == "TLSv11")
+        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv11;
+    else if (str == "TLSv12")
+        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv12;
+    else if (str == "TLSv13")
+        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv13;
+    else if (!str.empty())
+        throw std::runtime_error("invalid protocol version setting <" + str + '>');
+}
+
+void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener)
+{
     si.getMember("ip", listener.ip);
     si.getMember("port") >>= listener.port;
-  }
 
-  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::SslListener& ssllistener)
-  {
-    si.getMember("ip", ssllistener.ip);
-    si.getMember("port") >>= ssllistener.port;
-    si.getMember("certificate") >>= ssllistener.certificate;
+    if (si.getMember("certificate", listener.certificate))
+    {
+        if (!si.getMember("key", listener.key))
+            listener.key = listener.certificate;
 
-    if (!si.getMember("key", ssllistener.key))
-      ssllistener.key = ssllistener.certificate;
+        listener.sslVerifyLevel = 0;
+        if (si.getMember("sslVerifyLevel", listener.sslVerifyLevel)
+            && listener.sslVerifyLevel > 0)
+                si.getMember("sslCa") >>= listener.sslCa;
+        si.getMember("secure", listener.secure);
+        if (!listener.secure)
+        {
+            si.getMember("ciphers", listener.ciphers);
 
-    ssllistener.sslVerifyLevel = 0;
-    if (si.getMember("sslVerifyLevel", ssllistener.sslVerifyLevel)
-        && ssllistener.sslVerifyLevel > 0)
-          si.getMember("sslCa") >>= ssllistener.sslCa;
-  }
+            std::string minProtocolVersion, maxProtocolVersion;
+            si.getMember("minProtocolVersion", minProtocolVersion);
+            si.getMember("maxProtocolVersion", maxProtocolVersion);
+            setProtocolVersion(listener.minProtocolVersion, minProtocolVersion);
+            setProtocolVersion(listener.maxProtocolVersion, maxProtocolVersion);
+        }
+    }
+}
 
-  void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config)
-  {
+void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config)
+{
     std::vector<VirtualHost> virtualHosts;
     if (si.getMember("virtualhosts", virtualHosts))
     {
-      for (std::vector<VirtualHost>::const_iterator it = virtualHosts.begin(); it != virtualHosts.end(); ++it)
-        config.mappings.insert(config.mappings.end(), it->mappings.begin(), it->mappings.end());
+        for (std::vector<VirtualHost>::const_iterator it = virtualHosts.begin(); it != virtualHosts.end(); ++it)
+            config.mappings.insert(config.mappings.end(), it->mappings.begin(), it->mappings.end());
     }
 
     TntConfig::MappingsType mappings;
     if (si.getMember("mappings", mappings))
-      config.mappings.insert(config.mappings.end(), mappings.begin(), mappings.end());
+        config.mappings.insert(config.mappings.end(), mappings.begin(), mappings.end());
 
-    TntConfig::ListenersType& listeners = config.listeners;
-    TntConfig::SslListenersType& ssllisteners = config.ssllisteners;
-
-    const cxxtools::SerializationInfo* lsi = si.findMember("listeners");
-    if (lsi != 0)
-    {
-      for (cxxtools::SerializationInfo::ConstIterator it = lsi->begin(); it != lsi->end(); ++it)
-      {
-        if (it->findMember("certificate") != 0)
-        {
-          ssllisteners.resize(ssllisteners.size() + 1);
-          *it >>= ssllisteners.back();
-        }
-        else
-        {
-          listeners.resize(listeners.size() + 1);
-          *it >>= listeners.back();
-        }
-      }
-    }
-
-    lsi = si.findMember("listener");
-    if (lsi != 0)
-    {
-      if (lsi->findMember("certificate") != 0)
-      {
-        ssllisteners.resize(ssllisteners.size() + 1);
-        *lsi >>= ssllisteners.back();
-      }
-      else
-      {
-        listeners.resize(listeners.size() + 1);
-        *lsi >>= listeners.back();
-      }
-    }
-
+    si.getMember("listeners") >>= config.listeners;
     si.getMember("maxRequestSize", config.maxRequestSize);
     si.getMember("maxRequestTime", config.maxRequestTime);
     si.getMember("user", config.user);
@@ -200,54 +189,52 @@ namespace tnt
     si.getMember("reuseAddress", config.reuseAddress);
     si.getMember("includes", config.includes);
     si.getMember("logging", config.logConfiguration);
-    si.getMember("sslCipherList", config.sslCipherList);
-    si.getMember("sslProtocols", config.sslProtocols);
 
     config.config = si;
 
     const cxxtools::SerializationInfo* p = si.findMember("environment");
     if (p)
     {
-      for (cxxtools::SerializationInfo::ConstIterator it = p->begin(); it != p->end(); ++it)
-      {
-        std::string value;
-        it->getValue(value);
-        config.environment[it->name()] = value;
-      }
+        for (cxxtools::SerializationInfo::ConstIterator it = p->begin(); it != p->end(); ++it)
+        {
+            std::string value;
+            it->getValue(value);
+            config.environment[it->name()] = value;
+        }
     }
 
-  }
+}
 
-  TntConfig::TntConfig()
+TntConfig::TntConfig()
     : maxRequestSize(0),
-      maxRequestTime(600),
-      daemon(false),
-      minThreads(5),
-      maxThreads(100),
-      threadStartDelay(10),
-      queueSize(1000),
-      socketBufferSize(16384),
-      socketReadTimeout(10),
-      socketWriteTimeout(cxxtools::Seconds(10)),
-      keepAliveTimeout(cxxtools::Seconds(30)),
-      keepAliveMax(1000),
-      sessionTimeout(300),
-      listenBacklog(512),
-      listenRetry(5),
-      enableCompression(true),
-      minCompressSize(1024),
-      mimeDb("/etc/mime.types"),
-      maxUrlMapCache(8192),
-      defaultContentType("text/html; charset=UTF-8"),
-      timerSleep(10),
-      server("Tntnet/" VERSION),
-      reuseAddress(true)
+        maxRequestTime(600),
+        daemon(false),
+        minThreads(5),
+        maxThreads(100),
+        threadStartDelay(10),
+        queueSize(1000),
+        socketBufferSize(16384),
+        socketReadTimeout(10),
+        socketWriteTimeout(cxxtools::Seconds(10)),
+        keepAliveTimeout(cxxtools::Seconds(30)),
+        keepAliveMax(1000),
+        sessionTimeout(300),
+        listenBacklog(512),
+        listenRetry(5),
+        enableCompression(true),
+        minCompressSize(1024),
+        mimeDb("/etc/mime.types"),
+        maxUrlMapCache(8192),
+        defaultContentType("text/html; charset=UTF-8"),
+        timerSleep(10),
+        server("Tntnet/" VERSION),
+        reuseAddress(true)
     { }
 
-  TntConfig& TntConfig::it()
-  {
+TntConfig& TntConfig::it()
+{
     static TntConfig theConfig;
     return theConfig;
-  }
+}
 }
 

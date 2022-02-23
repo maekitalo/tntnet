@@ -33,18 +33,19 @@
 #include <config.h>
 #include "tnt/tcpjob.h"
 #include <cxxtools/net/tcpserver.h>
+#include <cxxtools/sslctx.h>
 
 namespace tnt
 {
   class Listener
   {
       cxxtools::net::TcpServer _server;
+      cxxtools::SslCtx _sslCtx;
       Jobqueue& _queue;
 
     public:
       Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q,
-        const std::string& certificateFile = std::string(), const std::string& privateKeyFile = std::string(),
-        int sslVerifyLevel = 0, const std::string& sslCa = std::string());
+        const cxxtools::SslCtx& sslCtx = cxxtools::SslCtx());
 
       void terminate();
   };
