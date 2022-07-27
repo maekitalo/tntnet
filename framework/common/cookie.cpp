@@ -78,6 +78,8 @@ namespace tnt
   const std::string Cookie::secure  = "Secure";
   const std::string Cookie::version = "Version";
   const std::string Cookie::expires = "Expires";
+  const std::string Cookie::sameSite = "SameSite";
+  const std::string Cookie::httpOnly = "HttpOnly";
 
   unsigned Cookie::getMaxAge() const
   {
@@ -168,28 +170,19 @@ namespace tnt
   {
     if (attr)
     {
-      if (name == Cookie::secure)
-      {
-        log_debug("attribute: secure");
-        current_cookie._secureFlag = true;
-      }
-      else
-      {
-        log_debug("attribute: " << name << '=' << value);
-        current_attrs->insert(
-          Cookie::attrs_type::value_type(name, value));
-      }
+      log_debug("attribute: " << name << '=' << value);
+      current_attrs->insert(
+        Cookie::attrs_type::value_type(name, value));
     }
     else
     {
       if (!current_cookie_name.empty())
         store_cookie();
 
-      log_debug("Cookie: " << name << '=' << value);
+      log_debug("Cookie : " << name << '=' << value);
 
       current_cookie_name = name;
       current_cookie._value = value;
-      current_cookie._secureFlag = false;
       name.clear();
       current_attrs = &current_cookie._attrs;
       current_cookie._attrs = common_attrs;
@@ -479,14 +472,16 @@ namespace tnt
     UrlEscOstream u(out);
     u << getValue();
 
-    // print secure-attribute
-    if (_secureFlag)
-      out << "; " << Cookie::secure;
-
     // print attributes
+    log_debug("print " << _attrs.size() << " attributes");
     for (Cookie::attrs_type::const_iterator a = _attrs.begin();
          a != _attrs.end(); ++a)
-      out << "; " << a->first << '=' << a->second;
+    {
+      log_debug("attr " << a->first << " = " << a->second);
+      out << "; " << a->first;
+      if (!a->second.empty())
+          out << '=' << a->second;
+    }
     if (_attrs.find(Cookie::version) == _attrs.end())
       out << ";Version=1";
   }

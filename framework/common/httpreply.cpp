@@ -124,6 +124,7 @@ namespace tnt
     bool sendStatusLine;
     bool headRequest;
     bool clearSession;
+    bool renewSessionId;
 
     Impl(std::ostream& s, bool sendStatusLine);
 
@@ -167,6 +168,7 @@ namespace tnt
     impl->sendStatusLine = sendStatusLine;
     impl->headRequest = false;
     impl->clearSession = false;
+    impl->renewSessionId = false;
     impl->acceptEncoding.clear();
     impl->safeOutstream.setSink(impl->outstream.rdbuf());
     impl->chunkedOutstream.setSink(impl->outstream.rdbuf());
@@ -209,7 +211,8 @@ namespace tnt
       keepAliveCounter(0),
       sendStatusLine(sendStatusLine_),
       headRequest(false),
-      clearSession(false)
+      clearSession(false),
+      renewSessionId(false)
     { }
 
   HttpReply::HttpReply(std::ostream& s, bool sendStatusLine)
@@ -228,8 +231,14 @@ namespace tnt
   void HttpReply::clearSession()
     { _impl->clearSession = true; }
 
+  void HttpReply::renewSessionId()
+    { _impl->renewSessionId = true; }
+
   bool HttpReply::isClearSession() const
     { return _impl->clearSession; }
+
+  bool HttpReply::isRenewSessionId() const
+    { return _impl->renewSessionId; }
 
   void HttpReply::resetContent()
     { _impl->outstream.makeEmpty(); }

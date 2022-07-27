@@ -68,9 +68,11 @@ namespace tnt
 
       /// Configure the session to be cleared after the current request
       void clearSession();
+      void renewSessionId();
 
       /// Check if the session is configured to be cleared after the current request
       bool isClearSession() const;
+      bool isRenewSessionId() const;
 
       enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_TEMPORARY_REDIRECT };
       /// @{

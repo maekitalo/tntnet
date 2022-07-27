@@ -40,6 +40,16 @@ log_define("tntnet.scopemanager")
 
 namespace tnt
 {
+  namespace
+  {
+    static std::string createSessionId(const tnt::HttpRequest& request)
+    {
+      cxxtools::Md5stream c;
+      c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
+      return c.getHexDigest();
+    }
+  }
+
   ScopeManager::ScopeManager()
   {
   }
@@ -273,16 +283,21 @@ namespace tnt
       {
         // request has session scope
         sessionId = request.getCookie(currentSessionCookieName);
-        if (sessionId.empty())
+        if (sessionId.empty() || reply.isRenewSessionId())
         {
-          // client has no sessionId
+          // client has no sessionId or application requests new id
 
-          cxxtools::Md5stream c;
-          c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
-          sessionId = c.getHexDigest();
-          log_info("create new session " << sessionId);
-          reply.setCookie(currentSessionCookieName, sessionId);
-          putSessionScope(sessionId, &request.getSessionScope());
+          std::string newSessionId = createSessionId(request);
+          log_info("create new session " << newSessionId);
+          tnt::Cookie cookie(newSessionId);
+          cookie.setAttr(tnt::Cookie::sameSite, "strict")
+                .setAttr(tnt::Cookie::httpOnly);
+          reply.setCookie(currentSessionCookieName, cookie);
+          putSessionScope(newSessionId, &request.getSessionScope());
+          if (reply.isRenewSessionId())
+            removeSessionScope(sessionId);
+
+          sessionId = newSessionId;
         }
         else if (!hasSessionScope(sessionId))
         {
@@ -297,18 +312,20 @@ namespace tnt
       {
         // request has secure session scope
         std::string sessionId = request.getCookie(currentSecureSessionCookieName);
-        if (sessionId.empty())
+        if (sessionId.empty() || reply.isRenewSessionId())
         {
           // client has no sessionId
 
-          cxxtools::Md5stream c;
-          c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
-          sessionId = c.getHexDigest();
+          sessionId = createSessionId(request);
           log_info("create new secure session " << sessionId);
           tnt::Cookie cookie(sessionId);
-          cookie.setSecure();
+          cookie.setSecure()
+                .setAttr(tnt::Cookie::sameSite, "strict")
+                .setAttr(tnt::Cookie::httpOnly);
           reply.setCookie(currentSecureSessionCookieName, cookie);
           putSessionScope(sessionId, &request.getSecureSessionScope());
+          if (reply.isRenewSessionId())
+            removeSessionScope(sessionId);
         }
         else if (!hasSessionScope(sessionId))
         {

@@ -2,6 +2,7 @@ pkglib_LTLIBRARIES = session.la
 
 session_la_SOURCES = \
 	session.ecpp \
+	renewsession.ecpp \
 	appsession.ecpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/framework/common
@@ -9,7 +10,7 @@ session_la_LDFLAGS = -module @SHARED_LIB_FLAG@
 session_la_LIBADD = $(top_builddir)/framework/common/libtntnet.la
 
 noinst_DATA = tntnet.xml
-CLEANFILES = session.cpp appsession.cpp \
+CLEANFILES = session.cpp appsession.cpp renewsession.cpp \
 	tntnet.xml
 
 SUFFIXES=.ecpp .cpp

@@ -1,0 +1,4 @@
+<%cpp>
+reply.renewSessionId();
+</%cpp>
+<& session >

@@ -112,6 +112,7 @@ Threadcounter (page): <$ ++tp $><br>
 
 <a href="session">reload this</a> -
 <a href="appsession">applicationsession only</a>
+<a href="renewsession">renew session id</a>
 
 <%def subcomp>
 

@@ -54,31 +54,29 @@ namespace tnt
       static const std::string secure;
       static const std::string version;
       static const std::string expires;
+      static const std::string sameSite;
+      static const std::string httpOnly;
 
     private:
       typedef std::map<std::string, std::string, StringLessIgnoreCase<std::string> > attrs_type;
 
       std::string _value;
       attrs_type _attrs;
-      bool _secureFlag;
 
       void write(std::ostream& out, const std::string& name) const;
 
     public:
       Cookie()
-        : _secureFlag(false)
         { }
 
       Cookie(const std::string& v, unsigned maxAge = 0)
-        : _value(v),
-          _secureFlag(false)
+        : _value(v)
       {
         if (maxAge)
           setMaxAge(maxAge);
       }
       Cookie(const char* v, unsigned maxAge = 0)
-        : _value(v),
-          _secureFlag(false)
+        : _value(v)
       {
         if (maxAge)
           setMaxAge(maxAge);
@@ -94,7 +92,7 @@ namespace tnt
 
       operator const std::string& () const { return _value; }
 
-      Cookie& setAttr(const std::string& name, const std::string& value)
+      Cookie& setAttr(const std::string& name, const std::string& value = std::string())
         { _attrs[name] = value; return *this; }
       bool hasAttr(const std::string& name) const
         { return _attrs.find(name) != _attrs.end(); }
@@ -105,7 +103,6 @@ namespace tnt
       std::string getPath() const               { return getAttr(path); }
       std::string getVersion() const            { return getAttr(version); }
       std::string getExpires() const            { return getAttr(expires); }
-      bool        isSecure() const              { return _secureFlag; }
 
       Cookie& setMaxAge(unsigned seconds);
       Cookie& setComment(const std::string& value) { return setAttr(comment, value); }
@@ -113,7 +110,8 @@ namespace tnt
       Cookie& setPath(const std::string& value)    { return setAttr(path, value); }
       Cookie& setVersion(const std::string& value) { return setAttr(version, value); }
       Cookie& setExpires(const std::string& value) { return setAttr(expires, value); }
-      Cookie& setSecure(bool f = true)             { _secureFlag = f; return *this; }
+      Cookie& setSecure(bool f = true)             { return setAttr(secure); }
+      Cookie& setHttpOnly(bool f = true)           { return setAttr(httpOnly); }
 
       bool hasMaxAge() const                    { return hasAttr(maxAge); }
       bool hasComment() const                   { return hasAttr(comment); }
