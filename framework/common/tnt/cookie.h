@@ -105,13 +105,13 @@ namespace tnt
       std::string getExpires() const            { return getAttr(expires); }
 
       Cookie& setMaxAge(unsigned seconds);
-      Cookie& setComment(const std::string& value) { return setAttr(comment, value); }
-      Cookie& setDomain(const std::string& value)  { return setAttr(domain, value); }
-      Cookie& setPath(const std::string& value)    { return setAttr(path, value); }
-      Cookie& setVersion(const std::string& value) { return setAttr(version, value); }
-      Cookie& setExpires(const std::string& value) { return setAttr(expires, value); }
-      Cookie& setSecure(bool f = true)             { return setAttr(secure); }
-      Cookie& setHttpOnly(bool f = true)           { return setAttr(httpOnly); }
+      Cookie& setComment(const std::string& value)  { return setAttr(comment, value); }
+      Cookie& setDomain(const std::string& value)   { return setAttr(domain, value); }
+      Cookie& setPath(const std::string& value)     { return setAttr(path, value); }
+      Cookie& setVersion(const std::string& value)  { return setAttr(version, value); }
+      Cookie& setExpires(const std::string& value)  { return setAttr(expires, value); }
+      Cookie& setSecure()                           { return setAttr(secure); }
+      Cookie& setHttpOnly()                         { return setAttr(httpOnly); }
 
       bool hasMaxAge() const                    { return hasAttr(maxAge); }
       bool hasComment() const                   { return hasAttr(comment); }
