@@ -1,4 +1,4 @@
-AC_INIT(tntnet, 3.1, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT([tntnet],[3.1],[Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 LT_INIT([disable-static])
 
@@ -18,7 +18,7 @@ AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(dlopen, dl, , AC_MSG_ERROR([dlopen not found]))
 
 AC_PROG_CXX
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_SED
 PKG_PROG_PKG_CONFIG
 
