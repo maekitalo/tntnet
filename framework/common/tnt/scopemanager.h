@@ -32,47 +32,37 @@
 
 #include <string>
 #include <map>
-#include <string>
-#include <cxxtools/mutex.h>
+#include <mutex>
+#include <memory>
 
 namespace tnt
 {
-  class Scope;
-  class Sessionscope;
-  class HttpRequest;
-  class HttpReply;
+class Scope;
+class Sessionscope;
+class HttpRequest;
+class HttpReply;
 
-  /// @cond internal
-  class ScopeManager
-  {
-    public:
-      typedef std::map<std::string, Scope*> scopes_type;
-      typedef std::map<std::string, Sessionscope*> sessionscopes_type;
+/// @cond internal
+class ScopeManager
+{
+    std::map<std::string, std::shared_ptr<Scope>> _applicationScopes;
+    std::map<std::string, std::shared_ptr<Sessionscope>> _sessionScopes;
+    std::mutex _applicationScopesMutex;
+    std::mutex _sessionScopesMutex;
 
-    private:
-      scopes_type _applicationScopes;
-      sessionscopes_type _sessionScopes;
-      cxxtools::Mutex _applicationScopesMutex;
-      cxxtools::Mutex _sessionScopesMutex;
+    std::shared_ptr<Scope> getApplicationScope(const std::string& appname);
+    std::shared_ptr<Sessionscope> getSessionScope(const std::string& sessioncookie, bool create);
 
-      Scope* getApplicationScope(const std::string& appname);
-      Sessionscope* getSessionScope(const std::string& sessioncookie);
-      bool hasSessionScope(const std::string& sessioncookie);
-      void putSessionScope(const std::string& sessioncookie, Sessionscope* s);
-      void removeApplicationScope(const std::string& appname);
-      void removeSessionScope(const std::string& sessioncookie);
+public:
+    ScopeManager() = default;
+    ~ScopeManager() = default;
 
-    public:
-      ScopeManager();
-      ~ScopeManager();
-
-      void preCall(HttpRequest& request, const std::string& app);
-      void setSessionId(HttpRequest& request, const std::string& sessionId);
-      std::string postCall(HttpRequest& request, HttpReply& reply, const std::string& app);
-      void checkSessionTimeout();
-  };
-  /// @endcond internal
+    void preCall(HttpRequest& request, const std::string& app);
+    void setSessionId(HttpRequest& request, const std::string& sessionId);
+    std::string postCall(HttpRequest& request, HttpReply& reply, const std::string& app);
+    void checkSessionTimeout();
+};
+/// @endcond internal
 }
 
 #endif // TNT_SCOPEMANAGER_H
-

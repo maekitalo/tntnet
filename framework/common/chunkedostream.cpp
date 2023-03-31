@@ -31,61 +31,61 @@
 
 namespace tnt
 {
-  int ChunkedWriter::sync()
-  {
+int ChunkedWriter::sync()
+{
     static const char hex[] = "0123456789ABCDEF";
     unsigned size = pptr() - pbase();
     if (size > 0)
     {
-      unsigned b = 0;
-      while ((static_cast<unsigned>(0xf << b)) < size)
-        b += 4;
-      while (b > 0)
-      {
-        _obuf->sputc(hex[(size >> b) & 0xf]);
-        b -= 4;
-      }
-      _obuf->sputc(hex[size & 0xf]);
-      _obuf->sputc('\r');
-      _obuf->sputc('\n');
-      _obuf->sputn(pbase(), size);
-      _obuf->sputc('\r');
-      _obuf->sputc('\n');
-      setp(_buffer, _buffer + _bufsize);
+        unsigned b = 0;
+        while ((static_cast<unsigned>(0xf << b)) < size)
+          b += 4;
+        while (b > 0)
+        {
+            _obuf->sputc(hex[(size >> b) & 0xf]);
+            b -= 4;
+        }
+        _obuf->sputc(hex[size & 0xf]);
+        _obuf->sputc('\r');
+        _obuf->sputc('\n');
+        _obuf->sputn(pbase(), size);
+        _obuf->sputc('\r');
+        _obuf->sputc('\n');
+        setp(_buffer, _buffer + _bufsize);
 
-      _bytesWritten += size;
+        _bytesWritten += size;
 
-      return _obuf->pubsync();
+        return _obuf->pubsync();
     }
 
     return 0;
-  }
+}
 
-  ChunkedWriter::int_type ChunkedWriter::overflow(int_type ch)
-  {
+ChunkedWriter::int_type ChunkedWriter::overflow(int_type ch)
+{
     if (_buffer == 0)
     {
-      _buffer = new char[_bufsize];
-      setp(_buffer, _buffer + _bufsize);
+        _buffer = new char[_bufsize];
+        setp(_buffer, _buffer + _bufsize);
     }
     else
     {
-      sync();
+        sync();
     }
 
     if (ch != traits_type::eof())
       sputc(ch);
 
     return ch;
-  }
+}
 
-  ChunkedWriter::int_type ChunkedWriter::underflow()
-    { return traits_type::eof(); }
+ChunkedWriter::int_type ChunkedWriter::underflow()
+  { return traits_type::eof(); }
 
-  void ChunkedWriter::finish()
-  {
+void ChunkedWriter::finish()
+{
     sync();
     _obuf->sputn("0\r\n", 3);
-  }
+}
 }
 

@@ -30,50 +30,61 @@
 #ifndef TNT_DISPATCHER_H
 #define TNT_DISPATCHER_H
 
-#include <cxxtools/mutex.h>
 #include <tnt/urlmapper.h>
 #include <tnt/mapping.h>
 #include <tnt/maptarget.h>
 #include <vector>
 #include <map>
+#include <mutex>
 
 namespace tnt
 {
-  class HttpRequest;
+class HttpRequest;
 
-  /// @cond internal
-  class Dispatcher : public Urlmapper // one per host
-  {
-      friend class PosType;
+/// @cond internal
+class Dispatcher : public Urlmapper // one per host
+{
+    friend class PosType;
 
-      typedef std::vector<Mapping> urlmap_type;
+    typedef std::vector<Mapping> urlmap_type;
 
-      urlmap_type _urlmap; // map url to soname/compname
-      mutable cxxtools::ReadWriteMutex _mutex;
+    urlmap_type _urlmap; // map url to soname/compname
 
-      class UrlMapCacheKey
-      {
-          std::string _vhost;
-          std::string _url;
-          std::string _method;
-          bool _ssl;
-          urlmap_type::size_type _pos;
+#if __cplusplus >= 201703L
+        typedef std::shared_mutex MutexType;
+        typedef std::shared_lock<std::shared_mutex> ReadLockType;
+        typedef std::unique_lock<std::shared_mutex> WriteLockType;
+#else
+        typedef std::mutex MutexType;
+        typedef std::unique_lock<std::mutex> ReadLockType;
+        typedef std::unique_lock<std::mutex> WriteLockType;
+#endif
 
-        public:
-          UrlMapCacheKey() { }
-          UrlMapCacheKey(const HttpRequest& request, urlmap_type::size_type pos);
+    mutable MutexType _mutex;
 
-          bool operator< (const UrlMapCacheKey& other) const;
+    class UrlMapCacheKey
+    {
+        std::string _vhost;
+        std::string _url;
+        std::string _method;
+        bool _ssl;
+        urlmap_type::size_type _pos;
 
-          const std::string& getHost() const    { return _vhost; }
-          const std::string& getUrl() const     { return _url; }
-          const std::string& getMethod() const  { return _method; }
-          bool getSsl() const                   { return _ssl; }
-          urlmap_type::size_type getPos() const { return _pos; }
-      };
+    public:
+        UrlMapCacheKey() { }
+        UrlMapCacheKey(const HttpRequest& request, urlmap_type::size_type pos);
 
-      struct UrlMapCacheValue
-      {
+        bool operator< (const UrlMapCacheKey& other) const;
+
+        const std::string& getHost() const    { return _vhost; }
+        const std::string& getUrl() const     { return _url; }
+        const std::string& getMethod() const  { return _method; }
+        bool getSsl() const                   { return _ssl; }
+        urlmap_type::size_type getPos() const { return _pos; }
+    };
+
+    struct UrlMapCacheValue
+    {
         Maptarget ci;
         urlmap_type::size_type pos;
 
@@ -82,44 +93,44 @@ namespace tnt
           : ci(ci_),
             pos(pos_)
           { }
-      };
+    };
 
-      typedef std::map<UrlMapCacheKey, UrlMapCacheValue> urlMapCacheType;
+    typedef std::map<UrlMapCacheKey, UrlMapCacheValue> urlMapCacheType;
 
-      mutable cxxtools::ReadWriteMutex _urlMapCacheMutex;
-      mutable urlMapCacheType _urlMapCache;
+    mutable MutexType _urlMapCacheMutex;
+    mutable urlMapCacheType _urlMapCache;
 
-      Maptarget mapCompNext(const HttpRequest& request, urlmap_type::size_type& pos) const;
+    Maptarget mapCompNext(const HttpRequest& request, urlmap_type::size_type& pos) const;
+
+public:
+    virtual ~Dispatcher()  { }
+
+    Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const std::string& method, int ssl, const Maptarget& ci);
+
+    Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const Maptarget& ci)
+      { return addUrlMapEntry(vhost, url, std::string(), SSL_ALL, ci); }
+
+    class PosType
+    {
+        const Dispatcher& _dis;
+        ReadLockType _lock;
+        urlmap_type::size_type _pos;
+        const HttpRequest& _request;
+        bool _first;
 
     public:
-      virtual ~Dispatcher()  { }
+        PosType(const Dispatcher& d, const HttpRequest& r)
+          : _dis(d),
+            _lock(d._mutex),
+            _pos(0),
+            _request(r),
+            _first(true)
+          { }
 
-      Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const std::string& method, int ssl, const Maptarget& ci);
-
-      Mapping& addUrlMapEntry(const std::string& vhost, const std::string& url, const Maptarget& ci)
-        { return addUrlMapEntry(vhost, url, std::string(), SSL_ALL, ci); }
-
-      class PosType
-      {
-          const Dispatcher& _dis;
-          cxxtools::ReadLock _lock;
-          urlmap_type::size_type _pos;
-          const HttpRequest& _request;
-          bool _first;
-
-        public:
-          PosType(const Dispatcher& d, const HttpRequest& r)
-            : _dis(d),
-              _lock(d._mutex),
-              _pos(0),
-              _request(r),
-              _first(true)
-            { }
-
-          Maptarget getNext();
-      };
-  };
-  /// @endcond internal
+        Maptarget getNext();
+    };
+};
+/// @endcond internal
 }
 
 #endif // TNT_DISPATCHER_H

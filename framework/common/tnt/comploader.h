@@ -30,8 +30,8 @@
 #ifndef TNT_COMPLOADER_H
 #define TNT_COMPLOADER_H
 
-#include <cxxtools/smartptr.h>
 #include <tnt/urlmapper.h>
+#include <memory>
 #include <map>
 #include <list>
 #include <string>
@@ -42,101 +42,94 @@
 
 namespace tnt
 {
-  class Comploader;
-  class ComponentFactory;
+class Comploader;
+class ComponentFactory;
 
-  class LibraryNotFound : public std::exception
-  {
-      std::string _libname;
-      std::string _msg;
+class LibraryNotFound : public std::exception
+{
+    std::string _libname;
+    std::string _msg;
 
-    public:
-      explicit LibraryNotFound(const std::string& libname)
-        : _libname(libname),
-          _msg("Library not found: " + libname)
-        { }
-      ~LibraryNotFound() throw() { }
+public:
+    explicit LibraryNotFound(const std::string& libname)
+      : _libname(libname),
+        _msg("Library not found: " + libname)
+      { }
+    ~LibraryNotFound() throw() { }
 
-      const char* what() const throw()
-        { return _msg.c_str(); }
+    const char* what() const throw()
+      { return _msg.c_str(); }
 
-      const std::string& getLibname() const
-        { return _libname; }
-  };
+    const std::string& getLibname() const
+      { return _libname; }
+};
 
-  template <typename objectType>
-  class Dlcloser
-  {
-    protected:
-      void destroy(objectType* ptr)
-      {
-        ::dlclose(*ptr);
-        delete ptr;
-      }
-  };
+class ComponentLibrary
+{
+    friend class Comploader;
 
-  class ComponentLibrary
-  {
-      friend class Comploader;
+    typedef void* HandleType;
 
-      typedef void* HandleType;
-      typedef cxxtools::SmartPtr<HandleType, cxxtools::ExternalRefCounted, Dlcloser> HandlePointer;
+    typedef std::map<std::string, ComponentFactory*> factoryMapType;
 
-      typedef std::map<std::string, ComponentFactory*> factoryMapType;
+    factoryMapType _factoryMap;
+    std::string _libname;
+    std::string _path;
+    HandleType _handle;
 
-      HandlePointer _handlePtr;
-      factoryMapType _factoryMap;
-      std::string _libname;
-      std::string _path;
+    static void* dlopen(const std::string& name, bool local);
 
-      void* dlopen(const std::string& name, bool local);
-      void init(const std::string& name, bool local);
+    ComponentLibrary(const ComponentLibrary&) = delete;
+    ComponentLibrary& operator=(const ComponentLibrary&) = delete;
 
-    public:
-      ComponentLibrary()
+public:
+    ComponentLibrary()
+      : _handle(nullptr)
         { }
 
-      ComponentLibrary(const std::string& path, const std::string& name, bool local)
-        : _libname(name),
-          _path(path)
-        { init(path + '/' + name, local); }
+    ComponentLibrary(const std::string& path, const std::string& name, bool local)
+      : _libname(name),
+        _path(path),
+        _handle(dlopen(path + '/' + name, local))
+        { }
 
-      ComponentLibrary(const std::string& name, bool local)
-        : _libname(name)
-        { init(name, local); }
+    ComponentLibrary(const std::string& name, bool local)
+      : _libname(name),
+        _handle(dlopen(name, local))
+        { }
 
-      operator const void* () const { return _handlePtr.getPointer(); }
+    ~ComponentLibrary();
 
-      Component* create(const std::string& compname, Comploader& cl, const Urlmapper& rootmapper);
+    Component* create(const std::string& compname, Comploader& cl, const Urlmapper& rootmapper);
 
-      const std::string& getName() const { return _libname; }
+    const std::string& getName() const { return _libname; }
 
-      void registerFactory(const std::string& compname, ComponentFactory* factory)
-        { _factoryMap.insert(factoryMapType::value_type(compname, factory)); }
-  };
+    void registerFactory(const std::string& compname, ComponentFactory* factory)
+      { _factoryMap.emplace(compname, factory); }
+};
 
-  class Comploader
-  {
-      typedef std::map<std::string, ComponentLibrary> librarymap_type;
-      typedef std::map<Compident, Component*> componentmap_type;
+class Comploader
+{
+    typedef std::map<std::string, std::unique_ptr<ComponentLibrary>> librarymap_type;
+    typedef std::map<Compident, Component*> componentmap_type;
 
-      // loaded libraries
-      static librarymap_type& getLibrarymap();
+    // loaded libraries
+    static librarymap_type& getLibrarymap();
 
-      // map soname/compname to compinstance
-      componentmap_type componentmap;
-      static ComponentLibrary::factoryMapType* currentFactoryMap;
+    // map soname/compname to compinstance
+    componentmap_type componentmap;
+    static ComponentLibrary::factoryMapType* currentFactoryMap;
 
-    public:
-      Component& fetchComp(const Compident& compident, const Urlmapper& rootmapper = Urlmapper());
-      Component* createComp(const Compident& compident, const Urlmapper& rootmapper);
-      const char* getLangData(const Compident& compident, const std::string& lang);
+public:
+    Component& fetchComp(const Compident& compident, const Urlmapper& rootmapper = Urlmapper());
+    Component* createComp(const Compident& compident, const Urlmapper& rootmapper);
+    const char* getLangData(const Compident& compident, const std::string& lang);
 
-      // lookup library; load if needed
-      ComponentLibrary& fetchLib(const std::string& libname);
+    // lookup library; load if needed
+    ComponentLibrary& fetchLib(const std::string& libname);
 
-      static void registerFactory(const std::string& compname, ComponentFactory* factory);
-  };
+    static void registerFactory(const std::string& compname, ComponentFactory* factory);
+};
 }
 
 #endif // TNT_COMPLOADER_H

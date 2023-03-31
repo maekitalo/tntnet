@@ -30,82 +30,77 @@
 #ifndef TNT_JOB_H
 #define TNT_JOB_H
 
-#include <deque>
 #include <tnt/httprequest.h>
 #include <tnt/httpparser.h>
-#include <cxxtools/mutex.h>
-#include <cxxtools/condition.h>
-#include <cxxtools/refcounted.h>
-#include <cxxtools/smartptr.h>
+
+#include <memory>
+#include <deque>
+#include <mutex>
+#include <condition_variable>
 
 /// @cond internal
 
 namespace tnt
 {
-  class Tntnet;
+class Tntnet;
 
-  class Job : public cxxtools::RefCounted
-  {
-      unsigned _keepAliveCounter;
+class Job
+{
+    unsigned _keepAliveCounter;
 
-      HttpRequest _request;
-      HttpRequest::Parser _parser;
-      time_t _lastAccessTime;
+    HttpRequest _request;
+    HttpRequest::Parser _parser;
+    time_t _lastAccessTime;
 
-    public:
-      explicit Job(Tntnet& app, const SocketIf* socketIf = 0);
-      virtual ~Job();
+public:
+    explicit Job(Tntnet& app, const SocketIf* socketIf = 0);
+    virtual ~Job();
 
-      virtual std::iostream& getStream() = 0;
-      virtual int getFd() const = 0;
-      virtual void setRead() = 0;
-      virtual void setWrite() = 0;
+    virtual std::iostream& getStream() = 0;
+    virtual int getFd() const = 0;
+    virtual void setRead() = 0;
+    virtual void setWrite() = 0;
 
-      HttpRequest& getRequest()        { return _request; }
-      HttpRequest::Parser& getParser() { return _parser; }
+    HttpRequest& getRequest()        { return _request; }
+    HttpRequest::Parser& getParser() { return _parser; }
 
-      unsigned decrementKeepAliveCounter()
-        { return _keepAliveCounter > 0 ? --_keepAliveCounter : 0; }
-      void clear();
-      void touch() { time(&_lastAccessTime); }
-      cxxtools::Milliseconds msecToTimeout(time_t currentTime) const;
-  };
+    unsigned decrementKeepAliveCounter()
+      { return _keepAliveCounter > 0 ? --_keepAliveCounter : 0; }
+    void clear();
+    void touch() { time(&_lastAccessTime); }
+    cxxtools::Milliseconds msecToTimeout(time_t currentTime) const;
+};
 
-  class Jobqueue
-  {
-    public:
-      typedef cxxtools::SmartPtr<Job> JobPtr;
+class Jobqueue
+{
+    std::deque<std::unique_ptr<Job>> _jobs;
+    std::mutex _mutex;
+    std::condition_variable _notEmpty;
+    std::condition_variable _notFull;
+    unsigned _waitThreads;
+    unsigned _capacity;
 
-      cxxtools::Condition noWaitThreads;
+public:
+    std::condition_variable noWaitThreads;
 
-    private:
-      std::deque<JobPtr> _jobs;
-      cxxtools::Mutex _mutex;
-      cxxtools::Condition _notEmpty;
-      cxxtools::Condition _notFull;
-      unsigned _waitThreads;
-      unsigned _capacity;
+    explicit Jobqueue(unsigned capacity = 1000)
+      : _waitThreads(0),
+        _capacity(capacity)
+      { }
 
-    public:
-      explicit Jobqueue(unsigned capacity = 1000)
-        : _waitThreads(0),
-          _capacity(capacity)
-        { }
+    void put(std::unique_ptr<Job> j, bool force = false);
+    std::unique_ptr<Job> get();
 
-      void put(JobPtr& j, bool force = false);
-      JobPtr get();
-
-      void setCapacity(unsigned c)
-        { _capacity = c; }
-      unsigned getCapacity() const
-        { return _capacity; }
-      unsigned getWaitThreadCount() const
-        { return _waitThreads; }
-      bool empty() const
-        { return _jobs.empty(); }
-  };
+    void setCapacity(unsigned c)
+      { _capacity = c; }
+    unsigned getCapacity() const
+      { return _capacity; }
+    unsigned getWaitThreadCount() const
+      { return _waitThreads; }
+    bool empty() const
+      { return _jobs.empty(); }
+};
 
 }
 
 #endif // TNT_JOB_H
-

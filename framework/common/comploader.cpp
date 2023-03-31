@@ -30,77 +30,76 @@
 #include <tnt/comploader.h>
 #include <tnt/componentfactory.h>
 #include <tnt/httperror.h>
-#include <tnt/util.h>
 #include <tnt/tntconfig.h>
 #include <cxxtools/log.h>
 #include <cxxtools/dlloader.h>
 #include <stdlib.h>
 
+log_define("tntnet.comploader")
+
 namespace
 {
-  cxxtools::ReadWriteMutex mutex;
+    std::mutex mutex;
 }
 
 namespace tnt
 {
-  ////////////////////////////////////////////////////////////////////////
-  // ComponentLibrary
-  //
-  log_define("tntnet.comploader")
+////////////////////////////////////////////////////////////////////////
+// ComponentLibrary
+//
 
-  void* ComponentLibrary::dlopen(const std::string& name, bool local)
-  {
+ComponentLibrary::~ComponentLibrary()
+{
+    if (_handle)
+        ::dlclose(_handle);
+}
+
+void* ComponentLibrary::dlopen(const std::string& name, bool local)
+{
     log_debug("dlopen <" << name << ">, " << local);
 
     int flags = local ? RTLD_NOW|RTLD_LOCAL: RTLD_NOW|RTLD_GLOBAL;
     std::string n = name;
     if (!n.empty() && n[0] == '!')
     {
-      flags = RTLD_NOW|RTLD_GLOBAL;
-      n.erase(0, 1);
-      log_debug("dlopen => <" << n << '>');
+        flags = RTLD_NOW|RTLD_GLOBAL;
+        n.erase(0, 1);
+        log_debug("dlopen => <" << n << '>');
     }
 
     void* ret = ::dlopen((n + ".so").c_str(), flags);
     if (ret != 0)
     {
-      log_info("library \"" << n << ".so\"");
-      return ret;
+        log_info("library \"" << n << ".so\"");
+        return ret;
     }
 
     ret = ::dlopen((n + ".a").c_str(), flags);
     if (ret != 0)
     {
-      log_info("library \"" << n << ".a\"");
-      return ret;
+        log_info("library \"" << n << ".a\"");
+        return ret;
     }
 
     ret = ::dlopen((n + ".dll").c_str(), flags);
     if (ret != 0)
     {
-      log_info("library \"" << n << ".dll\"");
-      return ret;
+        log_info("library \"" << n << ".dll\"");
+        return ret;
     }
 
     ret = ::dlopen(n.c_str(), flags);
     if (ret == 0)
-      log_warn("failed to load library \"" << n << '"');
+        log_warn("failed to load library \"" << n << '"');
     else
-      log_info("library \"" << n << "\"");
+        log_info("library \"" << n << "\"");
 
     return ret;
-  }
+}
 
-  void ComponentLibrary::init(const std::string& name, bool local)
-  {
-    void* handle = dlopen(name, local);
-    if (handle)
-      _handlePtr = new HandleType(handle);
-  }
-
-  Component* ComponentLibrary::create(const std::string& component_name,
-                                      Comploader& cl, const Urlmapper& rootmapper)
-  {
+Component* ComponentLibrary::create(const std::string& component_name,
+                                    Comploader& cl, const Urlmapper& rootmapper)
+{
     log_debug("create \"" << component_name << '"');
 
     ComponentFactory* factory;
@@ -108,7 +107,7 @@ namespace tnt
     // look for factory in my map
     factoryMapType::const_iterator i = _factoryMap.find(component_name);
     if (i == _factoryMap.end())
-      throw NotFoundException(component_name);
+        throw NotFoundException(component_name);
 
     factory = i->second;
 
@@ -117,64 +116,61 @@ namespace tnt
     log_debug("call creator for \"" << ci << '"');
 
     return factory->create(ci, rootmapper, cl);
-  }
+}
 
-  ////////////////////////////////////////////////////////////////////////
-  // Comploader
-  //
-  Comploader::librarymap_type& Comploader::getLibrarymap()
-  {
+////////////////////////////////////////////////////////////////////////
+// Comploader
+//
+Comploader::librarymap_type& Comploader::getLibrarymap()
+{
     static librarymap_type librarymap;
     return librarymap;
-  }
+}
 
-  ComponentLibrary::factoryMapType* Comploader::currentFactoryMap = 0;
+ComponentLibrary::factoryMapType* Comploader::currentFactoryMap = 0;
 
-  Component& Comploader::fetchComp(const Compident& ci, const Urlmapper& rootmapper)
-  {
+Component& Comploader::fetchComp(const Compident& ci, const Urlmapper& rootmapper)
+{
     log_debug("fetchComp \"" << ci << '"');
 
-    cxxtools::ReadLock rlock(mutex);
-    cxxtools::WriteLock wlock(mutex, false);
+    std::lock_guard<std::mutex> lock(mutex);
 
     // lookup Component
     componentmap_type::iterator it = componentmap.find(ci);
     if (it == componentmap.end())
     {
-      rlock.unlock();
-      wlock.lock();
-      it = componentmap.find(ci);
-      if (it == componentmap.end())
-      {
-        ComponentLibrary& lib = fetchLib(ci.libname);
-        Component* comp = lib.create(ci.compname, *this, rootmapper);
+        it = componentmap.find(ci);
+        if (it == componentmap.end())
+        {
+            ComponentLibrary& lib = fetchLib(ci.libname);
+            Component* comp = lib.create(ci.compname, *this, rootmapper);
 
-        componentmap[ci] = comp;
-        return *comp;
-      }
+            componentmap[ci] = comp;
+            return *comp;
+        }
     }
 
     return *(it->second);
-  }
+}
 
-  Component* Comploader::createComp(const Compident& ci, const Urlmapper& rootmapper)
-  {
+Component* Comploader::createComp(const Compident& ci, const Urlmapper& rootmapper)
+{
     log_debug("createComp \"" << ci << '"');
 
     ComponentLibrary& lib = fetchLib(ci.libname);
     Component* comp = lib.create(ci.compname, *this, rootmapper);
     return comp;
-  }
+}
 
-  namespace
-  {
+namespace
+{
     template <typename T>
     class ValueResetter
     {
         T& _value;
         T _null;
 
-      public:
+    public:
         explicit ValueResetter(T& value, T null = T())
           : _value(value),
             _null(null)
@@ -183,90 +179,90 @@ namespace tnt
         ~ValueResetter()
           { _value = _null; }
     };
-  }
+}
 
-  ComponentLibrary& Comploader::fetchLib(const std::string& libname)
-  {
+ComponentLibrary& Comploader::fetchLib(const std::string& libname)
+{
     log_debug("fetchLib \"" << libname << '"');
 
     std::string n = libname;
     bool local = false;
     if (!n.empty() && n[0] == '!')
     {
-      local = true;
-      n.erase(0, 1);
+        local = true;
+        n.erase(0, 1);
     }
 
     librarymap_type& librarymap = getLibrarymap();
     librarymap_type::iterator it = librarymap.find(n);
     if (it == librarymap.end())
     {
-      ComponentLibrary::factoryMapType factoryMap;
-      currentFactoryMap = &factoryMap;
-      ValueResetter<ComponentLibrary::factoryMapType*> valueResetter(currentFactoryMap, 0);
+        ComponentLibrary::factoryMapType factoryMap;
+        currentFactoryMap = &factoryMap;
+        ValueResetter<ComponentLibrary::factoryMapType*> valueResetter(currentFactoryMap, 0);
 
-      // load library
-      log_info("load library \"" << n << '"');
-      ComponentLibrary lib;
+        // load library
+        log_info("load library \"" << n << '"');
+        std::unique_ptr<ComponentLibrary> lib;
 
-      for (TntConfig::CompPathType::const_iterator p = TntConfig::it().compPath.begin();
-           !lib && p != TntConfig::it().compPath.end(); ++p)
-      {
-        log_debug("load library \"" << n << "\" from " << *p << " dir");
-        lib = ComponentLibrary(*p, n, local);
-      }
+        for (TntConfig::CompPathType::const_iterator p = TntConfig::it().compPath.begin();
+             !lib && p != TntConfig::it().compPath.end(); ++p)
+        {
+            log_debug("load library \"" << n << "\" from " << *p << " dir");
+            lib.reset(new ComponentLibrary(*p, n, local));
+        }
 
-      if (!lib)
-      {
-        log_debug("load library \"" << n << "\" from current dir");
-        lib = ComponentLibrary(".", n, local);
-      }
+        if (!lib)
+        {
+            log_debug("load library \"" << n << "\" from current dir");
+            lib.reset(new ComponentLibrary(".", n, local));
+        }
 
 #ifdef PKGLIBDIR
-      if (!lib)
-      {
-        log_debug("load library \"" << n << "\" from package lib dir <" << PKGLIBDIR << '>');
-        lib = ComponentLibrary(PKGLIBDIR, n, local);
-      }
+        if (!lib)
+        {
+            log_debug("load library \"" << n << "\" from package lib dir <" << PKGLIBDIR << '>');
+            lib.reset(new ComponentLibrary(PKGLIBDIR, n, local));
+        }
 #endif
 
-      if (!lib)
-      {
-        log_debug("library \"" << n << "\" in current dir not found - search lib-path");
-        lib = ComponentLibrary(n, local);
-      }
+        if (!lib)
+        {
+            log_debug("library \"" << n << "\" in current dir not found - search lib-path");
+            lib.reset(new ComponentLibrary(n, local));
+        }
 
-      if (!lib)
-        throw LibraryNotFound(n);
+        if (!lib)
+            throw LibraryNotFound(n);
 
-      lib._factoryMap = factoryMap;
-      log_debug("insert new library " << n);
-      it = librarymap.insert(librarymap_type::value_type(n, lib)).first;
+        lib->_factoryMap = factoryMap;
+        log_debug("insert new library " << n);
+        it = librarymap.emplace(n, std::move(lib)).first;
     }
     else
-      log_debug("library " << n << " found");
+        log_debug("library " << n << " found");
 
-    return it->second;
-  }
+    return *it->second;
+}
 
-  void Comploader::registerFactory(const std::string& component_name, ComponentFactory* factory)
-  {
+void Comploader::registerFactory(const std::string& component_name, ComponentFactory* factory)
+{
     log_debug("Comploader::registerFactory(" << component_name << ", " << factory << ')');
 
     if (currentFactoryMap)
-      currentFactoryMap->insert(ComponentLibrary::factoryMapType::value_type(component_name, factory));
+        currentFactoryMap->insert(ComponentLibrary::factoryMapType::value_type(component_name, factory));
     else
     {
-      librarymap_type& librarymap = getLibrarymap();
-      log_debug("register component without library-name");
-      librarymap_type::iterator it = librarymap.find(std::string());
-      if (it == librarymap.end())
-      {
-        // empty library not in map - create a new empty library-object
-        it = librarymap.insert(librarymap_type::value_type(std::string(), ComponentLibrary())).first;
-      }
-      it->second.registerFactory(component_name, factory);
+        librarymap_type& librarymap = getLibrarymap();
+        log_debug("register component without library-name");
+        librarymap_type::iterator it = librarymap.find(std::string());
+        if (it == librarymap.end())
+        {
+            // empty library not in map - create a new empty library-object
+            it = librarymap.emplace(std::string(), std::unique_ptr<ComponentLibrary>(new ComponentLibrary())).first;
+        }
+        it->second->registerFactory(component_name, factory);
     }
-  }
 }
 
+}

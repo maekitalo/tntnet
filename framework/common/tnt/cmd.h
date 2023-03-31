@@ -41,35 +41,34 @@
 
 namespace tnt
 {
-  class Cmd
-  {
-      Tntnet _application;
-      ScopeManager _scopeManager;
-      HttpRequest _request;
-      HttpReply _reply;
-      Comploader _comploader;
-      std::string _sessionId;
+class Cmd
+{
+    Tntnet _application;
+    ScopeManager _scopeManager;
+    HttpRequest _request;
+    HttpReply _reply;
+    Comploader _comploader;
+    std::string _sessionId;
 
-      // thread context methods
-      class MyThreadContext : public ThreadContext
-      {
-          Scope _threadScope;
-
-        public:
-          void touch() { }
-          Scope& getScope() { return _threadScope; }
-      } threadContext;
+    // thread context methods
+    class MyThreadContext : public ThreadContext
+    {
+        Scope _threadScope;
 
     public:
-      explicit Cmd(std::ostream& out);
+        void touch() { }
+        Scope& getScope() { return _threadScope; }
+    } threadContext;
 
-      Tntnet& getApplication() { return _application; }
+public:
+    explicit Cmd(std::ostream& out);
 
-      HttpRequest& request()  { return _request; }
-      void call(const Compident& ci, const QueryParams& q);
-      void call(const Compident& ci);
-  };
+    Tntnet& getApplication() { return _application; }
+
+    HttpRequest& request()  { return _request; }
+    void call(const Compident& ci, const QueryParams& q);
+    void call(const Compident& ci);
+};
 }
 
 #endif // TNT_CMD_H
-

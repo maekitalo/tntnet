@@ -32,58 +32,59 @@
 
 #include <tnt/ecpp.h>
 #include <vector>
-#include <cxxtools/mutex.h>
+#include <mutex>
 
 namespace tnt
 {
 
-  class MbComponent : public EcppComponent
-  {
-      const char* _rawData;
-      const char** _urls;
-      const char** _mimetypes;
-      const char** _ctimes;
-      std::vector<std::string> _compressedData;
-      cxxtools::ReadWriteMutex _mutex;
+class MbComponent : public EcppComponent
+{
+    const char* _rawData;
+    const char** _urls;
+    const char** _mimetypes;
+    const char** _ctimes;
+    std::vector<std::string> _compressedData;
 
-    protected:
-      void init(const char* rawData, const char** urls, const char** mimetypes, const char** ctimes);
-      void init(const char* rawData, const char* &mimetype, const char* &ctime)
-        { init(rawData, 0, &mimetype, &ctime); }
+    std::mutex _mutex;
 
-    public:
-      MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl)
-        : EcppComponent(ci, um, cl),
-          _rawData(0),
-          _urls(0),
-          _mimetypes(0),
-          _ctimes(0)
-        { }
+protected:
+    void init(const char* rawData, const char** urls, const char** mimetypes, const char** ctimes);
+    void init(const char* rawData, const char* &mimetype, const char* &ctime)
+      { init(rawData, 0, &mimetype, &ctime); }
 
-      MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl, const char* rawData,
-                  const char** urls, const char** mimetypes, const char** ctimes)
-        : EcppComponent(ci, um, cl),
-          _rawData(0),
-          _urls(0),
-          _mimetypes(0),
-          _ctimes(0)
-        { init(rawData, urls, mimetypes, ctimes); }
+public:
+    MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl)
+      : EcppComponent(ci, um, cl),
+        _rawData(0),
+        _urls(0),
+        _mimetypes(0),
+        _ctimes(0)
+      { }
 
-      MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
-                  const char* rawData, const char* &mimetype, const char* &ctime)
-        : EcppComponent(ci, um, cl),
-          _rawData(0),
-          _urls(0),
-          _mimetypes(0),
-          _ctimes(0)
-        { init(rawData, mimetype, ctime); }
+    MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl, const char* rawData,
+                const char** urls, const char** mimetypes, const char** ctimes)
+      : EcppComponent(ci, um, cl),
+        _rawData(0),
+        _urls(0),
+        _mimetypes(0),
+        _ctimes(0)
+      { init(rawData, urls, mimetypes, ctimes); }
 
-      unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
-      unsigned topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+    MbComponent(const Compident& ci, const Urlmapper& um, Comploader& cl,
+                const char* rawData, const char* &mimetype, const char* &ctime)
+      : EcppComponent(ci, um, cl),
+        _rawData(0),
+        _urls(0),
+        _mimetypes(0),
+        _ctimes(0)
+      { init(rawData, mimetype, ctime); }
 
-  private:
-      unsigned doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
-  };
+    unsigned operator() (HttpRequest& request, HttpReply& reply, tnt::QueryParams& qparam);
+    unsigned topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+
+private:
+    unsigned doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam, bool top);
+};
 }
 
 #endif // TNT_MBCOMPONENT_H

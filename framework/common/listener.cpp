@@ -39,59 +39,57 @@ log_define("tntnet.listener")
 
 namespace tnt
 {
-  namespace
-  {
+namespace
+{
     void doListenRetry(cxxtools::net::TcpServer& server,
       const std::string& ipaddr, unsigned short int port)
     {
-      for (unsigned n = 1; true; ++n)
-      {
-        try
+        for (unsigned n = 1; true; ++n)
         {
-          log_debug("listen " << ipaddr << ':' << port);
+            try
+            {
+                log_debug("listen " << ipaddr << ':' << port);
 #ifdef HAVE_CXXTOOLS_REUSEADDR
-          int flags = cxxtools::net::TcpServer::DEFER_ACCEPT;
-          if (TntConfig::it().reuseAddress)
-            flags |= cxxtools::net::TcpServer::REUSEADDR;
+                int flags = cxxtools::net::TcpServer::DEFER_ACCEPT;
+                if (TntConfig::it().reuseAddress)
+                  flags |= cxxtools::net::TcpServer::REUSEADDR;
 
-          server.listen(ipaddr, port, TntConfig::it().listenBacklog, flags);
+                server.listen(ipaddr, port, TntConfig::it().listenBacklog, flags);
 #else
-          server.listen(ipaddr, port, TntConfig::it().listenBacklog, cxxtools::net::TcpServer::DEFER_ACCEPT);
+                server.listen(ipaddr, port, TntConfig::it().listenBacklog, cxxtools::net::TcpServer::DEFER_ACCEPT);
 #endif
-          return;
+                return;
+            }
+            catch (const cxxtools::net::AddressInUse& e)
+            {
+                log_debug("cxxtools::net::AddressInUse");
+                if (n > TntConfig::it().listenRetry)
+                {
+                    log_debug("rethrow exception");
+                    throw;
+                }
+                log_warn("address " << ipaddr << ':' << port << " in use - retry; n = " << n);
+                ::sleep(1);
+            }
         }
-        catch (const cxxtools::net::AddressInUse& e)
-        {
-          log_debug("cxxtools::net::AddressInUse");
-          if (n > TntConfig::it().listenRetry)
-          {
-            log_debug("rethrow exception");
-            throw;
-          }
-          log_warn("address " << ipaddr << ':' << port << " in use - retry; n = " << n);
-          ::sleep(1);
-        }
-      }
     }
-  }
+}
 
-  Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q,
-      const cxxtools::SslCtx& sslCtx)
-    : _sslCtx(sslCtx),
-      _queue(q)
-  {
+Listener::Listener(Tntnet& application, const std::string& ipaddr, unsigned short int port, Jobqueue& q,
+    const cxxtools::SslCtx& sslCtx)
+  : _sslCtx(sslCtx),
+    _queue(q)
+{
     log_info("listen ip=" << ipaddr << " port=" << port);
     doListenRetry(_server, ipaddr, port);
 
-    Jobqueue::JobPtr p = new Tcpjob(application, _server, _queue,
-                                    _sslCtx);
-    _queue.put(p);
-  }
+    _queue.put(std::unique_ptr<Job>(new Tcpjob(application, _server, _queue, _sslCtx)));
+}
 
-  void Listener::terminate()
-  {
+void Listener::terminate()
+{
     log_info("stop listener");
     _server.terminateAccept();
-  }
+}
 
 }

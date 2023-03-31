@@ -11,100 +11,108 @@
 #include <tnt/dispatcher.h>
 #include <tnt/maptarget.h>
 #include <tnt/scopemanager.h>
-#include <cxxtools/condition.h>
-#include <cxxtools/mutex.h>
-#include <cxxtools/refcounted.h>
 #include <cxxtools/sslctx.h>
 #include <set>
 #include <fstream>
+#include <mutex>
+#include <condition_variable>
+#include <thread>
 
 namespace tnt
 {
-  class Listener;
-  struct TntConfig;
+class Listener;
+class Worker;
+struct TntConfig;
 
-  class TntnetImpl : public cxxtools::RefCounted
-  {
-      friend class Worker;
+class TntnetImpl
+{
+    friend class Worker;
 
-      typedef std::set<Listener*> listeners_type;
+    unsigned _minthreads;
+    unsigned _maxthreads;
 
-      unsigned _minthreads;
-      unsigned _maxthreads;
+    Jobqueue _queue;
 
-      Jobqueue _queue;
+    static bool _stop;
 
-      static bool _stop;
+    std::vector<std::unique_ptr<Listener>> _listeners;
+    std::vector<std::unique_ptr<Worker>> _worker;
+    mutable std::mutex _workerMutex;
 
-      listeners_type _listeners;
-      static listeners_type _allListeners;
+    unsigned countWorker() const
+    {
+        std::lock_guard<std::mutex> lock(_workerMutex);
+        return _worker.size();
+    }
 
-      cxxtools::AttachedThread _pollerthread;
-      Poller _poller;
-      Dispatcher _dispatcher;
+    std::unique_ptr<std::thread> _pollerthread;
+    Poller _poller;
+    Dispatcher _dispatcher;
 
-      ScopeManager _scopemanager;
-      std::string _appname;
+    ScopeManager _scopemanager;
+    std::string _appname;
 
-      std::ofstream _accessLog;
-      cxxtools::Mutex _accessLogMutex;
+    std::ofstream _accessLog;
+    std::mutex _accessLogMutex;
 
-      void timerTask();
+    void workerFinished(const Worker* w);
 
-      static cxxtools::Condition _timerStopCondition;
-      static cxxtools::Mutex _timeStopMutex;
+    void timerTask();
 
-      // non copyable and assignable
-      TntnetImpl(const TntnetImpl&);
-      TntnetImpl& operator= (const TntnetImpl&);
+    static std::condition_variable _timerStopCondition;
+    static std::mutex _timeStopMutex;
 
-    public:
-      TntnetImpl();
+    TntnetImpl(const TntnetImpl&) = delete;
+    TntnetImpl& operator= (const TntnetImpl&) = delete;
 
-      void init(Tntnet& app, const TntConfig& config);
+public:
+    TntnetImpl();
+    ~TntnetImpl();
 
-      void listen(Tntnet& app, const std::string& ipaddr, unsigned short int port, const cxxtools::SslCtx& sslCtx = cxxtools::SslCtx());
+    void init(Tntnet& app, const TntConfig& config);
 
-      void run();
+    void listen(Tntnet& app, const std::string& ipaddr, unsigned short int port, const cxxtools::SslCtx& sslCtx = cxxtools::SslCtx());
 
-      static void shutdown();
-      static bool shouldStop()                { return _stop; }
+    void run();
 
-      Jobqueue&   getQueue()                  { return _queue; }
-      Poller&     getPoller()                 { return _poller; }
-      const Dispatcher& getDispatcher() const { return _dispatcher; }
-      ScopeManager& getScopemanager()         { return _scopemanager; }
+    static void shutdown();
+    static bool shouldStop()                { return _stop; }
 
-      unsigned getMinThreads() const          { return _minthreads; }
-      void setMinThreads(unsigned n);
+    Jobqueue&   getQueue()                  { return _queue; }
+    Poller&     getPoller()                 { return _poller; }
+    const Dispatcher& getDispatcher() const { return _dispatcher; }
+    ScopeManager& getScopemanager()         { return _scopemanager; }
 
-      unsigned getMaxThreads() const          { return _maxthreads; }
-      void setMaxThreads(unsigned n)          { _maxthreads = n; }
+    unsigned getMinThreads() const          { return _minthreads; }
+    void setMinThreads(unsigned n);
 
-      Mapping& mapUrl(const std::string& url, const std::string& ci)
-        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
+    unsigned getMaxThreads() const          { return _maxthreads; }
+    void setMaxThreads(unsigned n)          { _maxthreads = n; }
 
-      Mapping& mapUrl(const std::string& url, const Compident& ci)
-        { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
+    Mapping& mapUrl(const std::string& url, const std::string& ci)
+      { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
 
-      void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci)
-        { _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)).setPathInfo(pathinfo); }
+    Mapping& mapUrl(const std::string& url, const Compident& ci)
+      { return _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)); }
 
-      Mapping& mapUrl(const std::string& url, const Maptarget& ci)
-        { return _dispatcher.addUrlMapEntry(std::string(), url, ci); }
+    void mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci)
+      { _dispatcher.addUrlMapEntry(std::string(), url, Maptarget(ci)).setPathInfo(pathinfo); }
 
-      Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
-        { return _dispatcher.addUrlMapEntry(vhost, url, ci); }
+    Mapping& mapUrl(const std::string& url, const Maptarget& ci)
+      { return _dispatcher.addUrlMapEntry(std::string(), url, ci); }
 
-      void setAppName(const std::string& appname)
-        { _appname = appname; }
+    Mapping& vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
+      { return _dispatcher.addUrlMapEntry(vhost, url, ci); }
 
-      const std::string& getAppName() const
-        { return _appname; }
+    void setAppName(const std::string& appname)
+      { _appname = appname; }
 
-      void setAccessLog(const std::string& logfile_path)
-        { _accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
-  };
+    const std::string& getAppName() const
+      { return _appname; }
+
+    void setAccessLog(const std::string& logfile_path)
+      { _accessLog.open(logfile_path.c_str(), std::ios::out | std::ios::app); }
+};
 }
 
 #endif // TNTNETIMPL_H

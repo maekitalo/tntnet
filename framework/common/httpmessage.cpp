@@ -29,46 +29,46 @@
 
 #include <tnt/httpmessage.h>
 #include <cxxtools/log.h>
-#include <cxxtools/mutex.h>
 #include <list>
 #include <sstream>
 #include <stdio.h>
 #include <cstring>
+#include <mutex>
 
 namespace tnt
 {
-  ////////////////////////////////////////////////////////////////////////
-  // HttpMessage
-  //
-  void HttpMessage::clear()
-  {
+////////////////////////////////////////////////////////////////////////
+// HttpMessage
+//
+void HttpMessage::clear()
+{
     header.clear();
     _majorVersion = 1;
     _minorVersion = 0;
-  }
+}
 
-  const char* HttpMessage::getHeader(const char* key, const char* def) const
-  {
+const char* HttpMessage::getHeader(const char* key, const char* def) const
+{
     header_type::const_iterator i = header.find(key);
     return i == header.end() ? def : i->second;
-  }
+}
 
-  std::string HttpMessage::dumpHeader() const
-  {
+std::string HttpMessage::dumpHeader() const
+{
     std::ostringstream h;
     dumpHeader(h);
     return h.str();
-  }
+}
 
-  void HttpMessage::dumpHeader(std::ostream& out) const
-  {
+void HttpMessage::dumpHeader(std::ostream& out) const
+{
     for (header_type::const_iterator it = header.begin();
          it != header.end(); ++it)
-      out << it->first << ' ' << it->second << '\n';
-  }
+        out << it->first << ' ' << it->second << '\n';
+}
 
-  std::string HttpMessage::htdate(time_t t)
-  {
+std::string HttpMessage::htdate(time_t t)
+{
     struct ::tm tm;
     gmtime_r(&t, &tm);
 
@@ -76,47 +76,47 @@ namespace tnt
     htdate(date, t);
 
     return date;
-  }
+}
 
-  void HttpMessage::htdate(char* date, time_t t)
-  {
+void HttpMessage::htdate(char* date, time_t t)
+{
     struct ::tm tm;
     gmtime_r(&t, &tm);
     htdate(date, &tm);
-  }
+}
 
-  std::string HttpMessage::htdate(const struct ::tm* tm)
-  {
+std::string HttpMessage::htdate(const struct ::tm* tm)
+{
     char date[30];
     htdate(date, tm);
     return date;
-  }
+}
 
-  void HttpMessage::htdate(char* date, const struct ::tm* tm)
-  {
+void HttpMessage::htdate(char* date, const struct ::tm* tm)
+{
     static const char* wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     static const char* monthn[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     sprintf(date, "%s, %02d %s %d %02d:%02d:%02d GMT",
-      wday[tm->tm_wday], tm->tm_mday, monthn[tm->tm_mon], tm->tm_year + 1900,
-      tm->tm_hour, tm->tm_min, tm->tm_sec);
-  }
+        wday[tm->tm_wday], tm->tm_mday, monthn[tm->tm_mon], tm->tm_year + 1900,
+        tm->tm_hour, tm->tm_min, tm->tm_sec);
+}
 
-  std::string HttpMessage::htdateCurrent()
-  {
+std::string HttpMessage::htdateCurrent()
+{
     char current[30];
     htdateCurrent(current);
     return current;
-  }
+}
 
-  void HttpMessage::htdateCurrent(char* current)
-  {
+void HttpMessage::htdateCurrent(char* current)
+{
     static struct ::tm lastTm;
     static time_t lastDay = 0;
     static time_t lastTime = 0;
     static char lastHtdate[30];
-    static cxxtools::Mutex mutex;
+    static std::mutex mutex;
 
     /*
      * we cache the last split tm-struct here, because it is pretty expensive
@@ -126,40 +126,40 @@ namespace tnt
     time_t t;
     time(&t);
 
-    cxxtools::MutexLock lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
 
     if (lastTime != t)
     {
-      time_t day = t / (24*60*60);
-      if (day != lastDay)
-      {
-        // Day differs, we calculate new date.
-        gmtime_r(&t, &lastTm);
-        lastDay = day;
-      }
+        time_t day = t / (24*60*60);
+        if (day != lastDay)
+        {
+            // Day differs, we calculate new date.
+            gmtime_r(&t, &lastTm);
+            lastDay = day;
+        }
 
-      lastTm.tm_sec = t % 60;
-      t /= 60;
-      lastTm.tm_min = t % 60;
-      t /= 60;
-      lastTm.tm_hour = t % 24;
-      htdate(lastHtdate, &lastTm);
-      lastTime = t;
+        lastTm.tm_sec = t % 60;
+        t /= 60;
+        lastTm.tm_min = t % 60;
+        t /= 60;
+        lastTm.tm_hour = t % 24;
+        htdate(lastHtdate, &lastTm);
+        lastTime = t;
     }
 
     // we do a copy of lastHtdate first to make sure we have the lock
     std::strcpy(current, lastHtdate);
-  }
+}
 
-  namespace
-  {
+namespace
+{
     class Pstr
     {
-      private:
+    private:
         const char* _start;
         const char* _end;
 
-      public:
+    public:
         typedef size_t size_type;
 
         Pstr(const char* s, const char* e)
@@ -177,53 +177,53 @@ namespace tnt
 
         bool operator== (const Pstr& s) const
         {
-          return size() == s.size()
-            && std::equal(_start, _end, s._start);
+            return size() == s.size()
+              && std::equal(_start, _end, s._start);
         }
 
         bool operator== (const char* str) const
         {
-          size_type i;
-          for (i = 0; i < size() && str[i] != '\0'; ++i)
-            if (_start[i] != str[i])
-              return false;
-          return i == size() && str[i] == '\0';
+            size_type i;
+            for (i = 0; i < size() && str[i] != '\0'; ++i)
+                if (_start[i] != str[i])
+                    return false;
+            return i == size() && str[i] == '\0';
         }
     };
-  }
+}
 
-  bool HttpMessage::checkUrl(const std::string& url)
-  {
+bool HttpMessage::checkUrl(const std::string& url)
+{
     unsigned level = 0;
     const char* p = url.data();
     const char* e = p + url.size();
     Pstr str(p, p);
     for (; p != e; ++p)
     {
-      if (*p == '/')
-      {
-        str.setEnd(p);
-        if (!str.empty())
+        if (*p == '/')
         {
-          if (str == ".")
-            ;
-          else if (str == "..")
-          {
-            if (level == 0)
-              return false;
-            --level;
-          }
-          else
-            ++level;
+            str.setEnd(p);
+            if (!str.empty())
+            {
+                if (str == ".")
+                    ;
+                else if (str == "..")
+                {
+                    if (level == 0)
+                        return false;
+                    --level;
+                }
+                else
+                    ++level;
+            }
+            str.setStart(p + 1);
         }
-        str.setStart(p + 1);
-      }
     }
 
     if (level == 0 && (str.setEnd(p), str == ".."))
-      return false;
+        return false;
 
     return true;
-  }
+}
 }
 

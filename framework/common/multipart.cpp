@@ -29,7 +29,6 @@
 
 #include <tnt/multipart.h>
 #include <tnt/httpheader.h>
-#include <tnt/util.h>
 #include <sstream>
 #include <stdexcept>
 #include <streambuf>
@@ -37,133 +36,133 @@
 
 namespace
 {
-  template <typename iterator>
-  class iterator_streambuf : public std::streambuf
-  {
+    template <typename iterator>
+    class iterator_streambuf : public std::streambuf
+    {
     public:
-      typedef unsigned long streamsize;
+        typedef unsigned long streamsize;
 
     private:
-      iterator& _begin;
-      iterator _end;
-      char_type _buffer[2];
+        iterator& _begin;
+        iterator _end;
+        char_type _buffer[2];
 
     protected:
-      std::streambuf::int_type overflow(std::streambuf::int_type /* ch */)
-        { return traits_type::eof(); }
+        std::streambuf::int_type overflow(std::streambuf::int_type /* ch */)
+          { return traits_type::eof(); }
 
-      int sync()
-      {
-        if (gptr() == _buffer + 1)
-          ++_begin;
-        setg(0, 0, 0);
-        return 0;
-      }
+        int sync()
+        {
+            if (gptr() == _buffer + 1)
+              ++_begin;
+            setg(0, 0, 0);
+            return 0;
+        }
 
-      std::streambuf::int_type underflow()
-      {
-        if (_begin == _end)
-          return traits_type::eof();
+        std::streambuf::int_type underflow()
+        {
+            if (_begin == _end)
+              return traits_type::eof();
 
-        if (gptr() == _buffer + 1)
-          ++_begin;
+            if (gptr() == _buffer + 1)
+              ++_begin;
 
-        _buffer[0] = *_begin;
-        setg(_buffer, _buffer, _buffer + 1);
-        return _buffer[0];
-      }
+            _buffer[0] = *_begin;
+            setg(_buffer, _buffer, _buffer + 1);
+            return _buffer[0];
+        }
 
     public:
-      iterator_streambuf(iterator& b, iterator e)
-        : _begin(b),
-          _end(e)
-        { }
-  };
+        iterator_streambuf(iterator& b, iterator e)
+          : _begin(b),
+            _end(e)
+          { }
+    };
 }
 
 namespace tnt
 {
-  Partheader::return_type Partheader::onField(const char* name,
-    const char* value)
-  {
+Partheader::return_type Partheader::onField(const char* name,
+  const char* value)
+{
     if (tnt::StringCompareIgnoreCase<const char*>(name, "Content-Disposition:") == 0)
     {
-      std::istringstream in(value);
-      in >> _cd;
-      if (!in)
-        return FAIL;
+        std::istringstream in(value);
+        in >> _cd;
+        if (!in)
+            return FAIL;
     }
 
     return Messageheader::onField(name, value);
-  }
+}
 
-  Part::Part(const_iterator b, const_iterator e)
-  {
+Part::Part(const_iterator b, const_iterator e)
+{
     iterator_streambuf<const_iterator> buf(b, e);
     std::istream in(&buf);
     in >> _header;
     if (!in)
-      throwRuntimeError("error in parsing message-header");
+        throw std::runtime_error("error in parsing message-header");
     in.sync();
 
     _bodyBegin = b;
     _bodyEnd = e;
-  }
+}
 
-  std::string Part::getHeader(const std::string& key) const
-  {
+std::string Part::getHeader(const std::string& key) const
+{
     Messageheader::const_iterator it = _header.find(key);
     if (it != _header.end())
-      return it->second;
+        return it->second;
     return std::string();
-  }
+}
 
-  std::string Partheader::getMimetype() const
-  {
+std::string Partheader::getMimetype() const
+{
     const_iterator it = find(httpheader::contentType);
     return it == end() ? std::string() : it->second;
-  }
+}
 
-  void Multipart::set(const std::string& boundary, const std::string& b)
-  {
+void Multipart::set(const std::string& boundary, const std::string& b)
+{
     _body = b;
 
     std::string::size_type bpos = _body.find(boundary);
     while (bpos != std::string::npos)
     {
-      bpos += boundary.size();
-      if (_body[bpos] == '\r')
-        ++bpos;
-      if (_body[bpos] == '\n')
-        ++bpos;
+        bpos += boundary.size();
+        if (_body[bpos] == '\r')
+          ++bpos;
+        if (_body[bpos] == '\n')
+          ++bpos;
 
-      std::string::size_type bend = _body.find(boundary, bpos);
-      if (bend == std::string::npos)
-        return;
+        std::string::size_type bend = _body.find(boundary, bpos);
+        if (bend == std::string::npos)
+          return;
 
-      std::string::size_type nbegin = bend;
+        std::string::size_type nbegin = bend;
 
-      if (_body[bend-1] == '-')
-        --bend;
-      if (_body[bend-1] == '-')
-        --bend;
-      if (_body[bend-1] == '\n')
-        --bend;
-      if (_body[bend-1] == '\r')
-        --bend;
+        if (_body[bend-1] == '-')
+          --bend;
+        if (_body[bend-1] == '-')
+          --bend;
+        if (_body[bend-1] == '\n')
+          --bend;
+        if (_body[bend-1] == '\r')
+          --bend;
 
-      _parts.push_back(part_type(_body.begin() + bpos, _body.begin() + bend));
-      bpos = nbegin;
+        _parts.push_back(part_type(_body.begin() + bpos, _body.begin() + bend));
+        bpos = nbegin;
     }
-  }
+}
 
-  Multipart::const_iterator Multipart::find(const std::string& part_name,
+Multipart::const_iterator Multipart::find(const std::string& part_name,
         Multipart::const_iterator start) const
-  {
+{
     for (const_iterator it = start; it != end(); ++it)
-      if (it->getName() == part_name)
-        return it;
+        if (it->getName() == part_name)
+          return it;
 
     return end();
-  }
+}
 }

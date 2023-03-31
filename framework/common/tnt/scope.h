@@ -30,98 +30,46 @@
 #ifndef TNT_SCOPE_H
 #define TNT_SCOPE_H
 
+#include <tnt/object.h>
 #include <map>
 #include <string>
-#include <tnt/object.h>
-#include <cxxtools/mutex.h>
-#include <cxxtools/refcounted.h>
+#include <mutex>
+#include <memory>
 
 namespace tnt
 {
-  template <typename objectType>
-  class NullDestroyPolicy
-  {
-    public:
-      static void destroy(objectType*) { }
-  };
+class Scope
+{
+    std::map<std::string, std::unique_ptr<Object>> _data;
+    mutable std::mutex _mutex;
 
-  class Scope : public cxxtools::AtomicRefCounted
-  {
-    public:
-      typedef Object::pointer_type pointer_type;
+    Scope(const Scope&) = delete;
+    Scope& operator=(const Scope&) = delete;
 
-    private:
-      typedef std::map<std::string, pointer_type> container_type;
+public:
+    Scope() = default;
+    virtual ~Scope() { }
 
-      container_type _data;
-      mutable cxxtools::Mutex _mutex;
+    void lock()   { _mutex.lock(); }
+    void unlock() { _mutex.unlock(); }
 
-      void privatePut(const std::string& key, pointer_type o);
-
-      // non-copyable
-      Scope(const Scope&);
-      Scope& operator=(const Scope&);
-
-    public:
-      Scope();
-      virtual ~Scope();
-
-      void lock()   { _mutex.lock(); }
-      void unlock() { _mutex.unlock(); }
-
-      bool has(const std::string& key) const
-        { return _data.find(key) != _data.end(); }
-
-      template <typename T> T*
-      get(const std::string& key)
-      {
-        container_type::iterator it = _data.find(key);
+    template <typename T> T*
+    get(const std::string& key)
+    {
+        auto it = _data.find(key);
         return it == _data.end() ? 0 : it->second->cast<T>();
-      }
+    }
 
-      /// Put new Object in scope. If key already exists,
-      /// it is replaced and old Object released.
-      template <typename T, template <class> class destroyPolicy>
-      void put(const std::string& key, T* o)
-      {
-        try
-        {
-          tnt::PointerObject<T, destroyPolicy>* ptr = new tnt::PointerObject<T, destroyPolicy>(o);
-          privatePut(key, ptr);
-        }
-        catch (const std::bad_alloc&)
-        {
-          destroyPolicy<T>::destroy(o);
-          throw;
-        }
-      }
+    /// Put new Object in scope. If key already exists,
+    /// it is replaced and old Object released.
+    template <typename T>
+    T* put(const std::string& key, std::unique_ptr<T>&& p)
+    {
+        return _data.emplace(key, std::move(p)).first->second.get();
+    }
 
-      template <typename T>
-      void put(const std::string& key, T* o)
-      { put<T, cxxtools::DeletePolicy>(key, o); }
-
-      template <typename T>
-      void put(const std::string& key, T* o, bool transferOwnership)
-      {
-        if (transferOwnership)
-          put<T, cxxtools::DeletePolicy>(key, o);
-        else
-          put<T, NullDestroyPolicy>(key, o);
-      }
-
-      void erase(const std::string& key) { _data.erase(key); }
-      bool empty() const                 { return _data.empty(); }
-      void clear()                       { _data.clear(); }
-
-      typedef container_type::const_iterator const_iterator;
-      typedef container_type::iterator iterator;
-      typedef container_type::value_type value_type;
-      const_iterator begin() const   { return _data.begin(); }
-      const_iterator end()  const    { return _data.end(); }
-      iterator begin()               { return _data.begin(); }
-      iterator end()                 { return _data.end(); }
-  };
+    bool empty() const                 { return _data.empty(); }
+};
 }
 
 #endif // TNT_SCOPE_H
-

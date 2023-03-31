@@ -33,7 +33,6 @@ libtntnet_la_SOURCES = \
 	poller.cpp \
 	pollerimpl.cpp \
 	savepoint.cpp \
-	scope.cpp \
 	scopemanager.cpp \
 	stringlessignorecase.cpp \
 	tcpjob.cpp \
@@ -43,7 +42,6 @@ libtntnet_la_SOURCES = \
 	unzipfile.cpp \
 	urlescostream.cpp \
 	urlmapper.cpp \
-	util.cpp \
 	worker.cpp \
 	zdata.cpp \
 	crypt.h
@@ -106,7 +104,6 @@ noinst_HEADERS = \
 	tnt/poller.h \
 	tnt/pollerimpl.h \
 	tnt/tcpjob.h \
-	tnt/util.h \
 	tnt/worker.h \
 	tntnetimpl.h \
 	ioapi.h \

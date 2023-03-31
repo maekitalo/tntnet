@@ -32,18 +32,18 @@
 
 namespace tnt
 {
-  class Scope;
+class Scope;
 
-  /// @cond internal
-  class ThreadContext
-  {
-    protected:
-      virtual ~ThreadContext() { }
+/// @cond internal
+class ThreadContext
+{
+protected:
+    virtual ~ThreadContext() { }
 
-    public:
-      virtual void touch() = 0; // wake watchdog timer
-      virtual Scope& getScope() = 0;
-  };
+public:
+    virtual void touch() = 0; // wake watchdog timer
+    virtual Scope& getScope() = 0;
+};
 }
 
 #endif // TNT_THREADCONTEXT_H

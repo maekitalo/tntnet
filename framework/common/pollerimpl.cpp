@@ -44,19 +44,19 @@ namespace tnt
 {
 #ifdef WITH_EPOLL
 
-  PollerImpl::PollerImpl(Jobqueue& q)
-    : _queue(q),
-      _pollFd(-1),
-      _pollTimeout(-1)
-  {
+PollerImpl::PollerImpl(Jobqueue& q)
+  : _queue(q),
+    _pollFd(-1),
+    _pollTimeout(-1)
+{
 #ifdef HAVE_EPOLL_CREATE1
     _pollFd = ::epoll_create1(EPOLL_CLOEXEC);
     if (_pollFd < 0)
-      throw cxxtools::SystemError("epoll_create1");
+        throw cxxtools::SystemError("epoll_create1");
 #else
     _pollFd = ::epoll_create(1);
     if (_pollFd < 0)
-      throw cxxtools::SystemError("epoll_create");
+        throw cxxtools::SystemError("epoll_create");
 
     int flags = ::fcntl(_pollFd, F_GETFD);
     flags |= FD_CLOEXEC ;
@@ -67,13 +67,13 @@ namespace tnt
 
     fcntl(_notifyPipe.getReadFd(), F_SETFL, O_NONBLOCK);
     addFd(_notifyPipe.getReadFd());
-  }
+}
 
-  PollerImpl::~PollerImpl()
-    { close(_pollFd); }
+PollerImpl::~PollerImpl()
+  { close(_pollFd); }
 
-  void PollerImpl::addFd(int fd)
-  {
+void PollerImpl::addFd(int fd)
+{
     log_trace("addFd(" << fd << ')');
 
     epoll_event e;
@@ -81,341 +81,341 @@ namespace tnt
     e.data.fd = fd;
     int ret = ::epoll_ctl(_pollFd, EPOLL_CTL_ADD, fd, &e);
     if (ret < 0)
-      throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_ADD)");
-  }
+        throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_ADD)");
+}
 
-  bool PollerImpl::removeFd(int fd)
-  {
+bool PollerImpl::removeFd(int fd)
+{
     epoll_event e;
     e.data.fd = fd;
     int ret = ::epoll_ctl(_pollFd, EPOLL_CTL_DEL, fd, &e);
     if (ret < 0)
     {
-      if (errno == EBADF || errno == ENOENT)
-        return false;
-      else
-        throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_DEL)");
+        if (errno == EBADF || errno == ENOENT)
+            return false;
+        else
+            throw cxxtools::SystemError("epoll_ctl(EPOLL_CTL_DEL)");
     }
 
     return true;
-  }
+}
 
-  void PollerImpl::doStop()
-    { _notifyPipe.write('A'); }
+void PollerImpl::doStop()
+  { _notifyPipe.write('A'); }
 
-  void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
-  {
+void PollerImpl::addIdleJob(std::unique_ptr<Job>&& job)
+{
     if (job->getFd() == -1)
     {
-      log_debug("ignore idle socket which is not connected any more");
-      cxxtools::MutexLock lock(_mutex);
-      job = 0;
+        log_debug("ignore idle socket which is not connected any more");
+        std::lock_guard<std::mutex> lock(_mutex);
+        job = 0;
     }
     else
     {
-      log_debug("add idle socket " << job->getFd());
-      cxxtools::MutexLock lock(_mutex);
-      _newJobs.push_back(job);
-      job = 0;
+        log_debug("add idle socket " << job->getFd());
+        std::lock_guard<std::mutex> lock(_mutex);
+        _newJobs.emplace_back(std::move(job));
+        job = 0;
     }
     _notifyPipe.write('A');
-  }
+}
 
-  void PollerImpl::appendNewJobs()
-  {
-    cxxtools::MutexLock lock(_mutex);
+void PollerImpl::appendNewJobs()
+{
+    std::lock_guard<std::mutex> lock(_mutex);
     if (!_newJobs.empty())
     {
-      // append new jobs to current
-      log_trace("append " << _newJobs.size() << " sockets to poll");
-      time_t currentTime;
-      time(&currentTime);
-      for (new_jobs_type::iterator it = _newJobs.begin();
-           it != _newJobs.end(); ++it)
-      {
-        try
+        // append new jobs to current
+        log_trace("append " << _newJobs.size() << " sockets to poll");
+        time_t currentTime;
+        time(&currentTime);
+        for (new_jobs_type::iterator it = _newJobs.begin();
+             it != _newJobs.end(); ++it)
         {
-          addFd((*it)->getFd());
-          _jobs[(*it)->getFd()] = *it;
+            try
+            {
+                int msec = (*it)->msecToTimeout(currentTime);
+                if (_pollTimeout < 0)
+                    _pollTimeout = msec;
+                else if (msec < _pollTimeout)
+                    _pollTimeout = msec;
 
-          int msec = (*it)->msecToTimeout(currentTime);
-          if (_pollTimeout < 0)
-            _pollTimeout = msec;
-          else if (msec < _pollTimeout)
-            _pollTimeout = msec;
+                addFd((*it)->getFd());
+                _jobs[(*it)->getFd()] = std::move(*it);
+            }
+            catch (const std::exception& e)
+            {
+                log_error("failed to add fd " << (*it)->getFd() << " to poll: " << e.what());
+            }
         }
-        catch (const std::exception& e)
-        {
-          log_error("failed to add fd " << (*it)->getFd() << " to poll: " << e.what());
-        }
-      }
 
-      _newJobs.clear();
+        _newJobs.clear();
     }
-  }
+}
 
-  void PollerImpl::run()
-  {
+void PollerImpl::run()
+{
     epoll_event events[16];
 
     time_t pollTime;
     time(&pollTime);
     while (!Tntnet::shouldStop())
     {
-      usleep(100);
+        usleep(100);
 
-      appendNewJobs();
+        appendNewJobs();
 
-      if (_jobs.empty())
-        _pollTimeout = -1;
+        if (_jobs.empty())
+            _pollTimeout = -1;
 
-      int ret = ::epoll_wait(_pollFd, events, 16, _pollTimeout);
+        int ret = ::epoll_wait(_pollFd, events, 16, _pollTimeout);
 
-      if (ret < 0)
-      {
-        if (errno != EINTR)
-          throw cxxtools::SystemError("epoll_wait");
-      }
-      else if (ret == 0)
-      {
-        // timeout reached - check for timed out requests and get next timeout
-
-        _pollTimeout = -1;
-        time_t currentTime;
-        time(&currentTime);
-        for (jobs_type::iterator it = _jobs.begin(); it != _jobs.end(); )
+        if (ret < 0)
         {
-          int msec = it->second->msecToTimeout(currentTime);
-          if (msec <= 0)
-          {
-            log_debug("timeout for fd " << it->second->getFd() << " reached");
-            jobs_type::iterator it2 = it++;
-            _jobs.erase(it2);
-          }
-          else
-          {
-            if (_pollTimeout < 0 || msec < _pollTimeout)
-              _pollTimeout = msec;
-            ++it;
-          }
+            if (errno != EINTR)
+                throw cxxtools::SystemError("epoll_wait");
         }
-      }
-      else
-      {
-        time_t currentTime;
-        time(&currentTime);
-        _pollTimeout -= (currentTime - pollTime) * 1000;
-        if (_pollTimeout <= 0)
-          _pollTimeout = 100;
-
-        pollTime = currentTime;
-
-        // no timeout - process events
-
-        bool rebuildPollFd = false;
-
-        for (int i = 0; i < ret; ++i)
+        else if (ret == 0)
         {
-          if (events[i].data.fd == _notifyPipe.getReadFd())
-          {
-            if (Tntnet::shouldStop())
+            // timeout reached - check for timed out requests and get next timeout
+
+            _pollTimeout = -1;
+            time_t currentTime;
+            time(&currentTime);
+            for (jobs_type::iterator it = _jobs.begin(); it != _jobs.end(); )
             {
-              log_info("stop poller");
-              break;
+                int msec = it->second->msecToTimeout(currentTime);
+                if (msec <= 0)
+                {
+                    log_debug("timeout for fd " << it->second->getFd() << " reached");
+                    jobs_type::iterator it2 = it++;
+                    _jobs.erase(it2);
+                }
+                else
+                {
+                    if (_pollTimeout < 0 || msec < _pollTimeout)
+                        _pollTimeout = msec;
+                    ++it;
+                }
+            }
+        }
+        else
+        {
+            time_t currentTime;
+            time(&currentTime);
+            _pollTimeout -= (currentTime - pollTime) * 1000;
+            if (_pollTimeout <= 0)
+                _pollTimeout = 100;
+
+            pollTime = currentTime;
+
+            // no timeout - process events
+
+            bool rebuildPollFd = false;
+
+            for (int i = 0; i < ret; ++i)
+            {
+                if (events[i].data.fd == _notifyPipe.getReadFd())
+                {
+                    if (Tntnet::shouldStop())
+                    {
+                        log_info("stop poller");
+                        break;
+                    }
+
+                    char buffer[64];
+                    _notifyPipe.read(buffer, sizeof(buffer));
+                }
+                else
+                {
+                    jobs_type::iterator it = _jobs.find(events[i].data.fd);
+                    if (it == _jobs.end())
+                    {
+                        log_fatal("internal error: job for fd " << events[i].data.fd << " not found in jobs-list");
+                        ::close(events[i].data.fd);
+                        rebuildPollFd = true;
+                    }
+                    else
+                    {
+                        std::unique_ptr<Job> j = std::move(it->second);
+                        int ev = events[i].events;
+                        _jobs.erase(it);
+
+                        if (!removeFd(events[i].data.fd))
+                            rebuildPollFd = true;
+
+                        if (ev & EPOLLIN)
+                            _queue.put(std::move(j));
+                    }
+                }
             }
 
-            char buffer[64];
-            _notifyPipe.read(buffer, sizeof(buffer));
-          }
-          else
-          {
-            jobs_type::iterator it = _jobs.find(events[i].data.fd);
-            if (it == _jobs.end())
+            if (rebuildPollFd)
             {
-              log_fatal("internal error: job for fd " << events[i].data.fd << " not found in jobs-list");
-              ::close(events[i].data.fd);
-              rebuildPollFd = true;
+                // rebuild poll-structure
+                log_warn("need to rebuild poll structure");
+                close(_pollFd);
+                _pollFd = ::epoll_create(256);
+                if (_pollFd < 0)
+                    throw cxxtools::SystemError("epoll_create");
+
+                int ret = fcntl(_notifyPipe.getReadFd(), F_SETFL, O_NONBLOCK);
+                if (ret < 0)
+                    throw cxxtools::SystemError("fcntl");
+
+                addFd(_notifyPipe.getReadFd());
+                for (jobs_type::iterator it = _jobs.begin(); it != _jobs.end(); ++it)
+                    addFd(it->first);
             }
-            else
-            {
-              Jobqueue::JobPtr j = it->second;
-              int ev = events[i].events;
-              _jobs.erase(it);
-
-              if (!removeFd(events[i].data.fd))
-                rebuildPollFd = true;
-
-              if (ev & EPOLLIN)
-                _queue.put(j);
-            }
-          }
         }
-
-        if (rebuildPollFd)
-        {
-          // rebuild poll-structure
-          log_warn("need to rebuild poll structure");
-          close(_pollFd);
-          _pollFd = ::epoll_create(256);
-          if (_pollFd < 0)
-            throw cxxtools::SystemError("epoll_create");
-
-          int ret = fcntl(_notifyPipe.getReadFd(), F_SETFL, O_NONBLOCK);
-          if (ret < 0)
-            throw cxxtools::SystemError("fcntl");
-
-          addFd(_notifyPipe.getReadFd());
-          for (jobs_type::iterator it = _jobs.begin(); it != _jobs.end(); ++it)
-            addFd(it->first);
-        }
-      }
     }
-  }
+}
 
 #else
 
-  PollerImpl::PollerImpl(Jobqueue& q)
-    : _queue(q),
-      _pollTimeout(-1)
-  {
+PollerImpl::PollerImpl(Jobqueue& q)
+  : _queue(q),
+    _pollTimeout(-1)
+{
     fcntl(_notifyPipe.getReadFd(), F_SETFL, O_NONBLOCK);
 
     _pollfds.push_back(pollfd());
     _pollfds.back().fd = _notifyPipe.getReadFd();
     _pollfds.back().events = POLLIN;
     _pollfds.back().revents = 0;
-  }
+}
 
-  void PollerImpl::appendNewJobs()
-  {
-    cxxtools::MutexLock lock(_mutex);
+void PollerImpl::appendNewJobs()
+{
+    std::lock_guard<std::mutex> lock(_mutex);
     if (!_newJobs.empty())
     {
-      // append new jobs to current
-      log_trace("append " << _newJobs.size() << " sockets to poll");
-      time_t currentTime;
-      time(&currentTime);
-      for (jobs_type::iterator it = _newJobs.begin();
-           it != _newJobs.end(); ++it)
-      {
-        append(*it);
-        int msec = (*it)->msecToTimeout(currentTime);
-        if (_pollTimeout < 0 || msec < _pollTimeout)
-          _pollTimeout = msec;
-      }
+        // append new jobs to current
+        log_trace("append " << _newJobs.size() << " sockets to poll");
+        time_t currentTime;
+        time(&currentTime);
+        for (jobs_type::iterator it = _newJobs.begin();
+             it != _newJobs.end(); ++it)
+        {
+            append(*it);
+            int msec = (*it)->msecToTimeout(currentTime);
+            if (_pollTimeout < 0 || msec < _pollTimeout)
+                _pollTimeout = msec;
+        }
 
-      _newJobs.clear();
+        _newJobs.clear();
     }
-  }
+}
 
-  void PollerImpl::append(Jobqueue::JobPtr& job)
-  {
+void PollerImpl::append(std::unique_ptr<Job>& job)
+{
     _currentJobs.push_back(job);
 
     _pollfds.push_back(pollfd());
     _pollfds.back().fd = job->getFd();
     _pollfds.back().events = POLLIN;
-  }
+}
 
-  void PollerImpl::run()
-  {
+void PollerImpl::run()
+{
     while (!Tntnet::shouldStop())
     {
-      usleep(100);
-      appendNewJobs();
+        usleep(100);
+        appendNewJobs();
 
-      try
-      {
-        ::poll(&_pollfds[0], _pollfds.size(), _pollTimeout);
-        _pollTimeout = -1;
-
-        if (_pollfds[0].revents != 0)
+        try
         {
-          if (Tntnet::shouldStop())
-          {
-            log_info("stop poller");
-            break;
-          }
+            ::poll(&_pollfds[0], _pollfds.size(), _pollTimeout);
+            _pollTimeout = -1;
 
-          char buffer[64];
-          _notifyPipe.read(buffer, sizeof(buffer));
-          _pollfds[0].revents = 0;
+            if (_pollfds[0].revents != 0)
+            {
+                if (Tntnet::shouldStop())
+                {
+                    log_info("stop poller");
+                    break;
+                }
+
+                char buffer[64];
+                _notifyPipe.read(buffer, sizeof(buffer));
+                _pollfds[0].revents = 0;
+            }
+
+            if (_currentJobs.size() > 0)
+                dispatch();
         }
-
-        if (_currentJobs.size() > 0)
-          dispatch();
-      }
-      catch (const std::exception& e)
-      {
-        log_error("error in poll-loop: " << e.what());
-      }
+        catch (const std::exception& e)
+        {
+            log_error("error in poll-loop: " << e.what());
+        }
     }
-  }
+}
 
-  void PollerImpl::doStop()
-    { _notifyPipe.write('A'); }
+void PollerImpl::doStop()
+  { _notifyPipe.write('A'); }
 
-  void PollerImpl::dispatch()
-  {
+void PollerImpl::dispatch()
+{
     time_t currentTime;
     time(&currentTime);
     for (unsigned i = 0; i < _currentJobs.size(); )
     {
-      if (_pollfds[i + 1].revents & POLLIN)
-      {
-        // put job into work-queue
-        _queue.put(_currentJobs[i]);
-        remove(i);
-      }
-      else if (_pollfds[i + 1].revents != 0)
-        remove(i);
-      else
-      {
-        // check timeout
-        int msec = _currentJobs[i]->msecToTimeout(currentTime);
-        if (msec <= 0)
-          remove(i);
-        else if (_pollTimeout < 0 || msec < _pollTimeout)
-          _pollTimeout = msec;
+        if (_pollfds[i + 1].revents & POLLIN)
+        {
+            // put job into work-queue
+            _queue.put(_currentJobs[i]);
+            remove(i);
+        }
+        else if (_pollfds[i + 1].revents != 0)
+            remove(i);
+        else
+        {
+            // check timeout
+            int msec = _currentJobs[i]->msecToTimeout(currentTime);
+            if (msec <= 0)
+                remove(i);
+            else if (_pollTimeout < 0 || msec < _pollTimeout)
+                _pollTimeout = msec;
 
-        ++i;
-      }
+            ++i;
+        }
     }
-  }
+}
 
-  void PollerImpl::remove(jobs_type::size_type n)
-  {
+void PollerImpl::remove(jobs_type::size_type n)
+{
     // replace job with last job in poller-list
     jobs_type::size_type last = _currentJobs.size() - 1;
 
     if (n != last)
     {
-      _pollfds[n + 1] = _pollfds[last + 1];
-      _currentJobs[n] = _currentJobs[last];
+        _pollfds[n + 1] = _pollfds[last + 1];
+        _currentJobs[n] = _currentJobs[last];
     }
 
     _pollfds.pop_back();
     _currentJobs.pop_back();
-  }
+}
 
-  void PollerImpl::addIdleJob(Jobqueue::JobPtr& job)
-  {
+void PollerImpl::addIdleJob(std::unique_ptr<Job>& job)
+{
     if (job->getFd() == -1)
     {
-      log_debug("ignore idle socket which is not connected any more");
-      cxxtools::MutexLock lock(_mutex);
-      job = 0;
+        log_debug("ignore idle socket which is not connected any more");
+        std::lock_guard<std::mutex> lock(_mutex);
+        job = 0;
     }
     else
     {
-      log_debug("add idle socket " << job->getFd());
-      cxxtools::MutexLock lock(_mutex);
-      _newJobs.push_back(job);
-      job = 0;
+        log_debug("add idle socket " << job->getFd());
+        std::lock_guard<std::mutex> lock(_mutex);
+        _newJobs.push_back(job);
+        job = 0;
     }
 
     _notifyPipe.write('A');
-  }
+}
 
 #endif // #else WITH_EPOLL
 }

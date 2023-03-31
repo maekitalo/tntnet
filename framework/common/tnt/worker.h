@@ -30,59 +30,56 @@
 #ifndef TNT_WORKER_H
 #define TNT_WORKER_H
 
-#include <string>
-#include <cxxtools/thread.h>
-#include <cxxtools/mutex.h>
 #include <tnt/comploader.h>
-#include <tntnetimpl.h>
 #include <tnt/scope.h>
 #include <tnt/threadcontext.h>
+
+#include <pthread.h>
+#include <thread>
+#include <string>
+#include <mutex>
 
 /// @cond internal
 
 namespace tnt
 {
-  class HttpRequest;
-  class HttpReply;
+class HttpRequest;
+class HttpReply;
+class TntnetImpl;
 
-  class Worker : public cxxtools::DetachedThread, private ThreadContext
-  {
-      typedef std::set<Worker*> workers_type;
+class Worker : private ThreadContext
+{
+    friend class TntnetImpl;
 
-      static cxxtools::Mutex _mutex;
-      TntnetImpl& _application;
-      static Comploader _comploader;
+    TntnetImpl& _application;
+    static Comploader _comploader;
 
-      Scope _threadScope;
-      pthread_t _threadId;
-      const char* _state;
-      time_t _lastWaitTime;
+    Scope _threadScope;
+    pthread_t _threadId;
+    std::thread _thread;
+    const char* _state;
+    time_t _lastWaitTime;
 
-      static workers_type _workers;
+    bool processRequest(HttpRequest& request, std::iostream& socket, unsigned keepAliveCount);
+    void logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn);
+    void healthCheck(time_t currentTime);
 
-      bool processRequest(HttpRequest& request, std::iostream& socket, unsigned keepAliveCount);
-      void logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn);
-      void healthCheck(time_t currentTime);
+    // thread context methods
+    void touch();       // wake watchdog timer
+    Scope& getScope();
 
-      // thread context methods
-      void touch();       // wake watchdog timer
-      Scope& getScope();
+    explicit Worker(TntnetImpl& app);
 
-    public:
-      explicit Worker(TntnetImpl& app);
+    void dispatch(HttpRequest& request, HttpReply& reply);
 
-      virtual void run();
+    void run();
 
-      void dispatch(HttpRequest& request, HttpReply& reply);
+public:
+    static std::unique_ptr<Worker> create(TntnetImpl& app);
 
-      static void timer();
-
-      static workers_type::size_type getCountThreads();
-
-      static Comploader& getComponentLoader()
-        { return _comploader; }
-  };
+    static Comploader& getComponentLoader()
+      { return _comploader; }
+};
 }
 
 #endif // TNT_WORKER_H
-
