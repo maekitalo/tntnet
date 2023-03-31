@@ -27,8 +27,7 @@
  */
 
 
-#include "tnt/encoding.h"
-#include "tnt/util.h"
+#include <tnt/encoding.h>
 #include <cxxtools/log.h>
 #include <cctype>
 
@@ -36,8 +35,8 @@ log_define("tntnet.encoding")
 
 namespace tnt
 {
-  namespace
-  {
+namespace
+{
     enum State {
       state_0,
       state_encoding,
@@ -54,13 +53,13 @@ namespace tnt
 
     void throwInvalidHeader(const char* header, const char* p, State state)
     {
-      log_warn("invalid encoding string <" << header << "> at position " << (p - header) << " in state " << static_cast<int>(state) << " ok <" << std::string(header, p - header) << '>');
-      throwRuntimeError(std::string("invalid accept-encoding string \"") + header + '"');
+        log_warn("invalid encoding string <" << header << "> at position " << (p - header) << " in state " << static_cast<int>(state) << " ok <" << std::string(header, p - header) << '>');
+        throw std::runtime_error(std::string("invalid accept-encoding string \"") + header + '"');
     }
-  }
+}
 
-  void Encoding::parse(const char* header)
-  {
+void Encoding::parse(const char* header)
+{
     _encodingMap.clear();
 
     if (header == 0)
@@ -74,193 +73,193 @@ namespace tnt
     const char* p;
     for (p = header; *p; ++p)
     {
-      char ch = *p;
-      switch (state)
-      {
-        case state_0:
-          if (!std::isspace(ch))
-          {
-            encoding.clear();
-            encoding.reserve(8);
-            encoding += ch;
-            state = state_encoding;
-          }
-          break;
+        char ch = *p;
+        switch (state)
+        {
+            case state_0:
+              if (!std::isspace(ch))
+              {
+                  encoding.clear();
+                  encoding.reserve(8);
+                  encoding += ch;
+                  state = state_encoding;
+              }
+              break;
 
-        case state_encoding:
-          if (ch == ';')
-            state = state_qualityq;
-          else if (ch == ',')
-          {
-            log_debug("encoding <" << encoding << "> quality 1000");
-            _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
-            state = state_0;
-          }
-          else if (std::isspace(ch))
-              state = state_encoding_sp;
-          else
-            encoding += ch;
-          break;
+            case state_encoding:
+              if (ch == ';')
+                state = state_qualityq;
+              else if (ch == ',')
+              {
+                  log_debug("encoding <" << encoding << "> quality 1000");
+                  _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
+                  state = state_0;
+              }
+              else if (std::isspace(ch))
+                  state = state_encoding_sp;
+              else
+                encoding += ch;
+              break;
 
-        case state_encoding_sp:
-          if (ch == ';')
-            state = state_qualityq;
-          else if (ch == ',')
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
-            state = state_0;
-          }
-          else if (std::isspace(ch))
-            ;
-          else
-            throwInvalidHeader(header, p, state);
-          break;
+            case state_encoding_sp:
+              if (ch == ';')
+                state = state_qualityq;
+              else if (ch == ',')
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
+                  state = state_0;
+              }
+              else if (std::isspace(ch))
+                ;
+              else
+                throwInvalidHeader(header, p, state);
+              break;
 
-        case state_qualityq:
-          if (ch == 'q')
-            state = state_qualityeq;
-          else if (!std::isspace(ch))
-            throwInvalidHeader(header, p, state);
-          break;
+            case state_qualityq:
+              if (ch == 'q')
+                state = state_qualityeq;
+              else if (!std::isspace(ch))
+                throwInvalidHeader(header, p, state);
+              break;
 
-        case state_qualityeq:
-          if (ch == '=')
-            state = state_quality;
-          else if (!std::isspace(ch))
-            throwInvalidHeader(header, p, state);
-          break;
+            case state_qualityeq:
+              if (ch == '=')
+                state = state_quality;
+              else if (!std::isspace(ch))
+                throwInvalidHeader(header, p, state);
+              break;
 
-        case state_quality:
-          if (ch == '0')
-          {
-            quality = 0;
-            state = state_qualitypoint;
-          }
-          else if (ch == '1')
-          {
-            quality = 1000;
-            state = state_qualitypoint;
-          }
-          else if (!std::isspace(ch))
-            throwInvalidHeader(header, p, state);
-          break;
+            case state_quality:
+              if (ch == '0')
+              {
+                  quality = 0;
+                  state = state_qualitypoint;
+              }
+              else if (ch == '1')
+              {
+                  quality = 1000;
+                  state = state_qualitypoint;
+              }
+              else if (!std::isspace(ch))
+                throwInvalidHeader(header, p, state);
+              break;
 
-        case state_qualitypoint:
-          if (ch == '.')
-            state = state_qualitytenths;
-          else if (ch == ',')
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_0;
-          }
-          else if (std::isspace(ch))
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_quality_sp;
-          }
-          else
-            throwInvalidHeader(header, p, state);
-          break;
+            case state_qualitypoint:
+              if (ch == '.')
+                state = state_qualitytenths;
+              else if (ch == ',')
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_0;
+              }
+              else if (std::isspace(ch))
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_quality_sp;
+              }
+              else
+                throwInvalidHeader(header, p, state);
+              break;
 
-        case state_quality_sp:
-          if (ch == ',')
-            state = state_0;
-          else if (!std::isspace(ch))
-            throwInvalidHeader(header, p, state);
-          break;
+            case state_quality_sp:
+              if (ch == ',')
+                state = state_0;
+              else if (!std::isspace(ch))
+                throwInvalidHeader(header, p, state);
+              break;
 
-        case state_qualitytenths:
-          if (std::isdigit(ch))
-          {
-            quality += (ch - '0') * 100;
-            state = state_qualityhundredths;
-          }
-          else if (std::isspace(ch))
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_quality_sp;
-          }
-          break;
+            case state_qualitytenths:
+              if (std::isdigit(ch))
+              {
+                  quality += (ch - '0') * 100;
+                  state = state_qualityhundredths;
+              }
+              else if (std::isspace(ch))
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_quality_sp;
+              }
+              break;
 
-        case state_qualityhundredths:
-          if (std::isdigit(ch))
-          {
-            quality += (ch - '0') * 10;
-            state = state_qualitythousandths;
-          }
-          else if (ch == ',')
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_0;
-          }
-          else if (std::isspace(ch))
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_quality_sp;
-          }
-          break;
+            case state_qualityhundredths:
+              if (std::isdigit(ch))
+              {
+                  quality += (ch - '0') * 10;
+                  state = state_qualitythousandths;
+              }
+              else if (ch == ',')
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_0;
+              }
+              else if (std::isspace(ch))
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_quality_sp;
+              }
+              break;
 
-        case state_qualitythousandths:
-          if (std::isdigit(ch))
-          {
-            quality += (ch - '0');
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_quality_sp;
-          }
-          else if (ch == ',')
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_0;
-          }
-          else if (std::isspace(ch))
-          {
-            log_debug("encoding <" << encoding << "> quality " << quality);
-            _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-            state = state_quality_sp;
-          }
-          else
-            throwInvalidHeader(header, p, state);
-          break;
-      }
+            case state_qualitythousandths:
+              if (std::isdigit(ch))
+              {
+                  quality += (ch - '0');
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_quality_sp;
+              }
+              else if (ch == ',')
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_0;
+              }
+              else if (std::isspace(ch))
+              {
+                  log_debug("encoding <" << encoding << "> quality " << quality);
+                  _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+                  state = state_quality_sp;
+              }
+              else
+                throwInvalidHeader(header, p, state);
+              break;
+        }
     }
 
     switch (state)
     {
-      case state_encoding:
-      case state_encoding_sp:
-        log_debug("encoding <" << encoding << "> quality 1000");
-        _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
-        break;
+        case state_encoding:
+        case state_encoding_sp:
+          log_debug("encoding <" << encoding << "> quality 1000");
+          _encodingMap.insert(encodingMapType::value_type(encoding, 1000));
+          break;
 
-      case state_quality:
-      case state_qualitypoint:
-      case state_qualitytenths:
-      case state_qualityhundredths:
-      case state_qualitythousandths:
-        log_debug("encoding <" << encoding << "> quality " << quality);
-        _encodingMap.insert(encodingMapType::value_type(encoding, quality));
-        break;
+        case state_quality:
+        case state_qualitypoint:
+        case state_qualitytenths:
+        case state_qualityhundredths:
+        case state_qualitythousandths:
+          log_debug("encoding <" << encoding << "> quality " << quality);
+          _encodingMap.insert(encodingMapType::value_type(encoding, quality));
+          break;
 
-      case state_qualityq:
-      case state_qualityeq:
-        throwInvalidHeader(header, p, state);
+        case state_qualityq:
+        case state_qualityeq:
+          throwInvalidHeader(header, p, state);
 
-      case state_0:
-      case state_quality_sp:
-        break;
+        case state_0:
+        case state_quality_sp:
+          break;
     }
-  }
+}
 
-  unsigned Encoding::accept(const std::string& encoding) const
-  {
+unsigned Encoding::accept(const std::string& encoding) const
+{
     // check, if encoding is specified
 
     encodingMapType::const_iterator it = _encodingMap.find(encoding);
@@ -274,6 +273,5 @@ namespace tnt
 
     // return 1000 (accept), if encoding is identity, 0 otherwise
     return encoding == "identity" ? 1001 : 0;
-  }
 }
-
+}

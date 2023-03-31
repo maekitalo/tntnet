@@ -35,22 +35,22 @@
 
 namespace tnt
 {
-  class Encoding
-  {
-      typedef std::map<std::string, unsigned> encodingMapType;
-      encodingMapType _encodingMap;
+class Encoding
+{
+    typedef std::map<std::string, unsigned> encodingMapType;
+    encodingMapType _encodingMap;
 
-    public:
-      Encoding() { }
-      explicit Encoding(const char* header)
-        { parse(header); }
+public:
+    Encoding() { }
+    explicit Encoding(const char* header)
+      { parse(header); }
 
-      void parse(const char* header);
-      void clear() { _encodingMap.clear(); }
+    void parse(const char* header);
+    void clear() { _encodingMap.clear(); }
 
-      /// Get the quality value in the range 0..10
-      unsigned accept(const std::string& encoding) const;
-  };
+    /// Get the quality value in the range 0..10
+    unsigned accept(const std::string& encoding) const;
+};
 }
 
 #endif // TNT_ENCODING_H

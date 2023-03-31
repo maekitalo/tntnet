@@ -27,19 +27,19 @@
  */
 
 
-#include "tntnetimpl.h"
-#include "tnt/worker.h"
-#include "tnt/listener.h"
-#include "tnt/http.h"
-#include "tnt/httpreply.h"
-#include "tnt/sessionscope.h"
-#include "tnt/tntconfig.h"
-#include "tnt/util.h"
+#include <tntnetimpl.h>
+#include <tnt/worker.h>
+#include <tnt/listener.h>
+#include <tnt/http.h>
+#include <tnt/httpreply.h>
+#include <tnt/sessionscope.h>
+#include <tnt/tntconfig.h>
 
 #include <cxxtools/net/tcpstream.h>
 #include <cxxtools/systemerror.h>
 #include <cxxtools/log.h>
 
+#include <condition_variable>
 #include <unistd.h>
 #include <signal.h>
 
@@ -49,46 +49,46 @@ log_define("tntnet.tntnet.impl")
 
 namespace tnt
 {
-  namespace
-  {
+namespace
+{
     void configureDispatcher(Dispatcher& dis)
     {
-      const TntConfig::MappingsType& mappings = TntConfig::it().mappings;
-      for (TntConfig::MappingsType::const_iterator it = mappings.begin(); it != mappings.end(); ++it)
-      {
-        Maptarget ci(it->target);
-        if (!it->pathinfo.empty())
-          ci.setPathInfo(it->pathinfo);
-        ci.setHttpReturn(it->httpreturn);
-        ci.setArgs(it->args);
-        dis.addUrlMapEntry(it->vhost, it->url, it->method, it->ssl, ci);
-      }
+        const TntConfig::MappingsType& mappings = TntConfig::it().mappings;
+        for (TntConfig::MappingsType::const_iterator it = mappings.begin(); it != mappings.end(); ++it)
+        {
+            Maptarget ci(it->target);
+            if (!it->pathinfo.empty())
+                ci.setPathInfo(it->pathinfo);
+            ci.setHttpReturn(it->httpreturn);
+            ci.setArgs(it->args);
+            dis.addUrlMapEntry(it->vhost, it->url, it->method, it->ssl, ci);
+        }
     }
 
     typedef std::set<TntnetImpl*> TntnetInstancesType;
-    cxxtools::Mutex allTntnetInstancesMutex;
+    std::mutex allTntnetInstancesMutex;
     TntnetInstancesType allRunningTntnetInstances;
 
-  }
+}
 
-  ////////////////////////////////////////////////////////////////////////
-  // Tntnet
-  //
-  TntnetImpl::TntnetImpl()
-    : _minthreads(TntConfig::it().minThreads),
-      _maxthreads(TntConfig::it().maxThreads),
-      _pollerthread(cxxtools::callable(_poller, &Poller::run)),
-      _poller(_queue)
-  { }
+////////////////////////////////////////////////////////////////////////
+// Tntnet
+//
+TntnetImpl::TntnetImpl()
+  : _minthreads(TntConfig::it().minThreads),
+    _maxthreads(TntConfig::it().maxThreads),
+    _poller(_queue)
+{ }
 
-  bool TntnetImpl::_stop = false;
-  cxxtools::Mutex TntnetImpl::_timeStopMutex;
-  cxxtools::Condition TntnetImpl::_timerStopCondition;
+TntnetImpl::~TntnetImpl()
+{ }
 
-  TntnetImpl::listeners_type TntnetImpl::_allListeners;
+bool TntnetImpl::_stop = false;
+std::mutex TntnetImpl::_timeStopMutex;
+std::condition_variable TntnetImpl::_timerStopCondition;
 
-  void TntnetImpl::init(Tntnet& app, const TntConfig& config)
-  {
+void TntnetImpl::init(Tntnet& app, const TntConfig& config)
+{
     TntConfig::it() = config;
 
     log_init(config.logConfiguration);
@@ -100,20 +100,20 @@ namespace tnt
 
     for (TntConfig::EnvironmentType::const_iterator it = config.environment.begin(); it != config.environment.end(); ++it)
     {
-      std::string name = it->first;
-      std::string value = it->second;
+        std::string name = it->first;
+        std::string value = it->second;
 #ifdef HAVE_SETENV
-      log_debug("setenv " << name << "=\"" << value << '"');
-      ::setenv(name.c_str(), value.c_str(), 1);
+        log_debug("setenv " << name << "=\"" << value << '"');
+        ::setenv(name.c_str(), value.c_str(), 1);
 #else
-      char* env = new char[name.size() + value.size() + 2];
-      name.copy(env, name.size());
-      env[name.size()] = '=';
-      value.copy(env + name.size() + 1, value.size());
-      env[name.size() + value.size() + 1] = '\0';
+        char* env = new char[name.size() + value.size() + 2];
+        name.copy(env, name.size());
+        env[name.size()] = '=';
+        value.copy(env + name.size() + 1, value.size());
+        env[name.size() + value.size() + 1] = '\0';
 
-      log_debug("putenv(" << env << ')');
-      ::putenv(env);
+        log_debug("putenv(" << env << ')');
+        ::putenv(env);
 #endif
     }
 
@@ -122,52 +122,50 @@ namespace tnt
     // initialize listeners
     for (TntConfig::ListenersType::const_iterator it = config.listeners.begin(); it != config.listeners.end(); ++it)
     {
-      cxxtools::SslCtx sslCtx;
-      if (!it->certificate.empty())
-      {
-          if (it->secure)
-              sslCtx = cxxtools::SslCtx::secure();
-          sslCtx.loadCertificateFile(it->certificate, it->key)
-                .setVerify(it->sslVerifyLevel, it->sslCa);
-          if (!it->ciphers.empty())
-              sslCtx.setCiphers(it->ciphers);
-          sslCtx.setProtocolVersion(it->minProtocolVersion, it->maxProtocolVersion);
-      }
+        cxxtools::SslCtx sslCtx;
+        if (!it->certificate.empty())
+        {
+            if (it->secure)
+                sslCtx = cxxtools::SslCtx::secure();
+            sslCtx.loadCertificateFile(it->certificate, it->key)
+                  .setVerify(it->sslVerifyLevel, it->sslCa);
+            if (!it->ciphers.empty())
+                sslCtx.setCiphers(it->ciphers);
+            sslCtx.setProtocolVersion(it->minProtocolVersion, it->maxProtocolVersion);
+        }
 
-      listen(app, it->ip, it->port, sslCtx);
+        listen(app, it->ip, it->port, sslCtx);
     }
-  }
+}
 
-  void TntnetImpl::listen(Tntnet& app, const std::string& ip, unsigned short int port, const cxxtools::SslCtx& sslCtx)
-  {
+void TntnetImpl::listen(Tntnet& app, const std::string& ip, unsigned short int port, const cxxtools::SslCtx& sslCtx)
+{
     log_debug("listen on ip " << ip << " port " << port << (sslCtx.enabled() ? " ssl" : ""));
-    Listener* listener = new Listener(app, ip, port, _queue, sslCtx);
-    _listeners.insert(listener);
-    _allListeners.insert(listener);
-  }
+    _listeners.emplace_back(new Listener(app, ip, port, _queue, sslCtx));
+}
 
-  void TntnetImpl::run()
-  {
+void TntnetImpl::run()
+{
     log_debug("worker-process");
 
     _stop = false;
 
     if (_listeners.empty())
-      throwRuntimeError("no listeners defined");
+        throw std::runtime_error("no listeners defined");
 
     log_debug(_listeners.size() << " listeners");
 
     if (_listeners.size() >= _minthreads)
     {
-      log_warn("at least one more worker than listeners needed - set MinThreads to "
-        << _listeners.size() + 1);
-      _minthreads = _listeners.size() + 1;
+        log_warn("at least one more worker than listeners needed - set MinThreads to "
+          << _listeners.size() + 1);
+        _minthreads = _listeners.size() + 1;
     }
 
     if (_maxthreads < _minthreads)
     {
-      log_warn("MaxThreads < MinThreads - set MaxThreads = MinThreads = " << _minthreads);
-      _maxthreads = _minthreads;
+        log_warn("MaxThreads < MinThreads - set MaxThreads = MinThreads = " << _minthreads);
+        _maxthreads = _minthreads;
     }
 
     // initialize worker-process
@@ -181,127 +179,153 @@ namespace tnt
 
     // create worker-threads
     log_info("create " << _minthreads << " worker threads");
-    for (unsigned i = 0; i < _minthreads; ++i)
     {
-      log_debug("create worker " << i);
-      Worker* s = new Worker(*this);
-      s->create();
+        std::lock_guard<std::mutex> lock(_workerMutex);
+        for (unsigned i = 0; i < _minthreads; ++i)
+        {
+            log_debug("create worker " << i);
+            _worker.emplace_back(Worker::create(*this));
+        }
     }
 
     // create poller-thread
     log_debug("start poller thread");
-    _pollerthread.start();
+    _pollerthread.reset(new std::thread(&Poller::run, &_poller));
 
     log_debug("start timer thread");
-    cxxtools::AttachedThread timerThread(cxxtools::callable(*this, &TntnetImpl::timerTask));
-    timerThread.start();
+    std::thread timerThread(&TntnetImpl::timerTask, this);
 
     {
-      cxxtools::MutexLock lock(allTntnetInstancesMutex);
-      allRunningTntnetInstances.insert(this);
+        std::lock_guard<std::mutex> lock(allTntnetInstancesMutex);
+        allRunningTntnetInstances.insert(this);
     }
 
     // mainloop
-    cxxtools::Mutex mutex;
+    std::mutex mutex;
     while (!_stop)
     {
-      {
-        cxxtools::MutexLock lock(mutex);
-        _queue.noWaitThreads.wait(lock);
-      }
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            _queue.noWaitThreads.wait(lock);
+        }
 
-      if (_stop)
-        break;
+        if (_stop)
+            break;
 
-      if (Worker::getCountThreads() < _maxthreads)
-      {
-        log_info("create workerthread");
-        Worker* s = new Worker(*this);
-        s->create();
-      }
-      else
-        log_info("max worker-threadcount " << _maxthreads << " reached");
+        {
+            std::lock_guard<std::mutex> lock(_workerMutex);
+            if (_worker.size() < _maxthreads)
+            {
+                log_info("create workerthread");
+                _worker.emplace_back(Worker::create(*this));
+            }
+            else
+                log_info("max worker-threadcount " << _maxthreads << " reached");
+        }
 
-      if (TntConfig::it().threadStartDelay > 0)
-        usleep(TntConfig::it().threadStartDelay.totalUSecs());
+        if (TntConfig::it().threadStartDelay > 0)
+            usleep(TntConfig::it().threadStartDelay.totalUSecs());
     }
 
     log_info("stopping TntnetImpl");
 
     {
-      cxxtools::MutexLock lock(allTntnetInstancesMutex);
-      allRunningTntnetInstances.erase(this);
+        std::lock_guard<std::mutex> lock(allTntnetInstancesMutex);
+        allRunningTntnetInstances.erase(this);
     }
 
     log_info("stop listener");
-    for (listeners_type::iterator it = _listeners.begin(); it != _listeners.end(); ++it)
-      (*it)->terminate();
+    for (auto it = _listeners.begin(); it != _listeners.end(); ++it)
+        (*it)->terminate();
 
     log_info("stop poller thread");
     _poller.doStop();
-    _pollerthread.join();
+    _pollerthread->join();
 
     log_info("stop timer thread");
     timerThread.join();
 
-    if (Worker::getCountThreads() > 0)
+    if (countWorker() > 0)
     {
-      log_info("wait for " << Worker::getCountThreads() << " worker threads to stop");
-      while (Worker::getCountThreads() > 0)
-      {
-        log_debug("wait for worker threads to stop; " << Worker::getCountThreads() << " left");
-        usleep(100);
-      }
+        log_info("wait for " << countWorker() << " worker threads to stop");
+        unsigned c;
+        while ((c = countWorker()) > 0)
+        {
+            log_debug("wait for worker threads to stop; " << c << " left");
+            usleep(100);
+        }
     }
 
     log_debug("destroy listener");
-    for (listeners_type::iterator it = _listeners.begin(); it != _listeners.end(); ++it)
-      delete *it;
     _listeners.clear();
 
     HttpReply::postRunCleanup();
     HttpRequest::postRunCleanup();
 
     log_info("all threads stopped");
-  }
+}
 
-  void TntnetImpl::setMinThreads(unsigned n)
-  {
+void TntnetImpl::setMinThreads(unsigned n)
+{
     if (_listeners.size() >= n)
     {
-      log_warn("at least one more worker than listeners needed - set MinThreads to "
-        << _listeners.size() + 1);
-      _minthreads = _listeners.size() + 1;
+        log_warn("at least one more worker than listeners needed - set MinThreads to "
+          << _listeners.size() + 1);
+        _minthreads = _listeners.size() + 1;
     }
     else
-      _minthreads = n;
+        _minthreads = n;
 
-  }
+}
 
-  void TntnetImpl::timerTask()
-  {
+void TntnetImpl::workerFinished(const Worker* w)
+{
+    std::lock_guard<std::mutex> lock(_workerMutex);
+
+    log_debug("end worker thread " << w->_threadId << " - " << _worker.size()
+      << " threads left - " << getQueue().getWaitThreadCount()
+      << " waiting threads");
+
+    for (auto it = _worker.begin(); it != _worker.end(); ++it)
+    {
+        if (it->get() == w)
+        {
+            _worker.erase(it);
+            break;
+        }
+    }
+}
+
+void TntnetImpl::timerTask()
+{
     log_debug("timer thread");
 
     while (true)
     {
-      {
-        cxxtools::MutexLock timeStopLock(_timeStopMutex);
-        if (_stop || _timerStopCondition.wait(timeStopLock, TntConfig::it().timerSleep))
-          break;
-      }
+        {
+            std::unique_lock<std::mutex> timeStopLock(_timeStopMutex);
+            if (_stop || _timerStopCondition.wait_for(timeStopLock, std::chrono::milliseconds(TntConfig::it().timerSleep)) != std::cv_status::timeout)
+                break;
+        }
 
-      getScopemanager().checkSessionTimeout();
-      Worker::timer();
+        getScopemanager().checkSessionTimeout();
+
+        time_t currentTime;
+        time(&currentTime);
+
+        std::lock_guard<std::mutex> lock(_workerMutex);
+        for (auto& w: _worker)
+            w->healthCheck(currentTime);
     }
 
-    _queue.noWaitThreads.signal();
+    _queue.noWaitThreads.notify_all();
     _minthreads = _maxthreads = 0;
-  }
+}
 
-  void TntnetImpl::shutdown()
-  {
+void TntnetImpl::shutdown()
+{
     _stop = true;
-    _timerStopCondition.broadcast();
-  }
+    _timerStopCondition.notify_all();
+}
 }
 

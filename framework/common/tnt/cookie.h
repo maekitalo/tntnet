@@ -37,125 +37,124 @@
 
 namespace tnt
 {
-  class Cookies;
-  class CookieParser;
+class Cookies;
+class CookieParser;
 
-  class Cookie
-  {
-      friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
-      friend class CookieParser;
-      friend class HttpReply;
+class Cookie
+{
+    friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
+    friend class CookieParser;
+    friend class HttpReply;
 
-    public:
-      static const std::string maxAge;
-      static const std::string comment;
-      static const std::string domain;
-      static const std::string path;
-      static const std::string secure;
-      static const std::string version;
-      static const std::string expires;
-      static const std::string sameSite;
-      static const std::string httpOnly;
+public:
+    static const std::string maxAge;
+    static const std::string comment;
+    static const std::string domain;
+    static const std::string path;
+    static const std::string secure;
+    static const std::string version;
+    static const std::string expires;
+    static const std::string sameSite;
+    static const std::string httpOnly;
 
-    private:
-      typedef std::map<std::string, std::string, StringLessIgnoreCase<std::string> > attrs_type;
+private:
+    typedef std::map<std::string, std::string, StringLessIgnoreCase<std::string> > attrs_type;
 
-      std::string _value;
-      attrs_type _attrs;
+    std::string _value;
+    attrs_type _attrs;
 
-      void write(std::ostream& out, const std::string& name) const;
+    void write(std::ostream& out, const std::string& name) const;
 
-    public:
-      Cookie()
-        { }
+public:
+    Cookie()
+      { }
 
-      Cookie(const std::string& v, unsigned maxAge = 0)
-        : _value(v)
-      {
+    Cookie(const std::string& v, unsigned maxAge = 0)
+      : _value(v)
+    {
         if (maxAge)
           setMaxAge(maxAge);
-      }
-      Cookie(const char* v, unsigned maxAge = 0)
-        : _value(v)
-      {
+    }
+    Cookie(const char* v, unsigned maxAge = 0)
+      : _value(v)
+    {
         if (maxAge)
           setMaxAge(maxAge);
-      }
+    }
 
-      const std::string& getValue() const { return _value; }
+    const std::string& getValue() const { return _value; }
 
-      std::string getAttr(const std::string& name) const
-      {
+    std::string getAttr(const std::string& name) const
+    {
         attrs_type::const_iterator it = _attrs.find(name);
         return it == _attrs.end() ? std::string() : it->second;
-      }
+    }
 
-      operator const std::string& () const { return _value; }
+    operator const std::string& () const { return _value; }
 
-      Cookie& setAttr(const std::string& name, const std::string& value = std::string())
-        { _attrs[name] = value; return *this; }
-      bool hasAttr(const std::string& name) const
-        { return _attrs.find(name) != _attrs.end(); }
+    Cookie& setAttr(const std::string& name, const std::string& value = std::string())
+      { _attrs[name] = value; return *this; }
+    bool hasAttr(const std::string& name) const
+      { return _attrs.find(name) != _attrs.end(); }
 
-      unsigned    getMaxAge() const;
-      std::string getComment() const            { return getAttr(comment); }
-      std::string getDomain() const             { return getAttr(domain); }
-      std::string getPath() const               { return getAttr(path); }
-      std::string getVersion() const            { return getAttr(version); }
-      std::string getExpires() const            { return getAttr(expires); }
+    unsigned    getMaxAge() const;
+    std::string getComment() const            { return getAttr(comment); }
+    std::string getDomain() const             { return getAttr(domain); }
+    std::string getPath() const               { return getAttr(path); }
+    std::string getVersion() const            { return getAttr(version); }
+    std::string getExpires() const            { return getAttr(expires); }
 
-      Cookie& setMaxAge(unsigned seconds);
-      Cookie& setComment(const std::string& value)  { return setAttr(comment, value); }
-      Cookie& setDomain(const std::string& value)   { return setAttr(domain, value); }
-      Cookie& setPath(const std::string& value)     { return setAttr(path, value); }
-      Cookie& setVersion(const std::string& value)  { return setAttr(version, value); }
-      Cookie& setExpires(const std::string& value)  { return setAttr(expires, value); }
-      Cookie& setSecure()                           { return setAttr(secure); }
-      Cookie& setHttpOnly()                         { return setAttr(httpOnly); }
+    Cookie& setMaxAge(unsigned seconds);
+    Cookie& setComment(const std::string& value)  { return setAttr(comment, value); }
+    Cookie& setDomain(const std::string& value)   { return setAttr(domain, value); }
+    Cookie& setPath(const std::string& value)     { return setAttr(path, value); }
+    Cookie& setVersion(const std::string& value)  { return setAttr(version, value); }
+    Cookie& setExpires(const std::string& value)  { return setAttr(expires, value); }
+    Cookie& setSecure()                           { return setAttr(secure); }
+    Cookie& setHttpOnly()                         { return setAttr(httpOnly); }
 
-      bool hasMaxAge() const                    { return hasAttr(maxAge); }
-      bool hasComment() const                   { return hasAttr(comment); }
-      bool hasDomain() const                    { return hasAttr(domain); }
-      bool hasPath() const                      { return hasAttr(path); }
-      bool hasVersion() const                   { return hasAttr(version); }
-      bool hasExpires() const                   { return hasAttr(expires); }
+    bool hasMaxAge() const                    { return hasAttr(maxAge); }
+    bool hasComment() const                   { return hasAttr(comment); }
+    bool hasDomain() const                    { return hasAttr(domain); }
+    bool hasPath() const                      { return hasAttr(path); }
+    bool hasVersion() const                   { return hasAttr(version); }
+    bool hasExpires() const                   { return hasAttr(expires); }
 
-  };
+};
 
-  class Cookies
-  {
-      friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
-      friend class HttpReply;
+class Cookies
+{
+    friend std::ostream& operator<< (std::ostream& out, const Cookies& c);
+    friend class HttpReply;
 
-      typedef std::map<std::string, Cookie, StringLessIgnoreCase<std::string> > cookies_type;
-      cookies_type _data;
+    typedef std::map<std::string, Cookie, StringLessIgnoreCase<std::string> > cookies_type;
+    cookies_type _data;
 
-      static const Cookie _emptyCookie;
+    static const Cookie _emptyCookie;
 
-    public:
-      void set(const std::string& header);
-      void clear() { _data.clear(); }
+public:
+    void set(const std::string& header);
+    void clear() { _data.clear(); }
 
-      const Cookie& getCookie(const std::string& name) const
-      {
+    const Cookie& getCookie(const std::string& name) const
+    {
         cookies_type::const_iterator it = _data.find(name);
         return it == _data.end() ? _emptyCookie : it->second;
-      }
+    }
 
-      void setCookie(const std::string& name, const Cookie& value)
-        { _data[name] = value; }
+    void setCookie(const std::string& name, const Cookie& value)
+      { _data[name] = value; }
 
-      void clearCookie(const std::string& name);
-      void clearCookie(const std::string& name, const Cookie& c);
+    void clearCookie(const std::string& name);
+    void clearCookie(const std::string& name, const Cookie& c);
 
-      bool hasCookie(const std::string& name) const
-        { return _data.find(name) != _data.end(); }
-      bool hasCookies() const
-        { return !_data.empty(); }
-  };
+    bool hasCookie(const std::string& name) const
+      { return _data.find(name) != _data.end(); }
+    bool hasCookies() const
+      { return !_data.empty(); }
+};
 
-  std::ostream& operator<< (std::ostream& out, const Cookies& c);
+std::ostream& operator<< (std::ostream& out, const Cookies& c);
 }
 
 #endif // TNT_COOKIE_H
-

@@ -34,37 +34,37 @@
 
 namespace tnt
 {
-  /// @cond internal
-  class PollerIf
-  {
-      PollerIf(const PollerIf&) { }
-      PollerIf& operator=(const PollerIf&) { return *this; }
+/// @cond internal
+class PollerIf
+{
+    PollerIf(const PollerIf&) { }
+    PollerIf& operator=(const PollerIf&) { return *this; }
 
-    public:
-      PollerIf() { }
-      virtual ~PollerIf();
-      virtual void run() = 0;
-      virtual void doStop() = 0;
-      virtual void addIdleJob(Jobqueue::JobPtr& job) = 0;
-  };
+public:
+    PollerIf() { }
+    virtual ~PollerIf();
+    virtual void run() = 0;
+    virtual void doStop() = 0;
+    virtual void addIdleJob(std::unique_ptr<Job>&& job) = 0;
+};
 
-  class Poller
-  {
-      Poller(const Poller&) { }
-      Poller& operator=(const Poller&) { return *this; }
+class Poller
+{
+    Poller(const Poller&) { }
+    Poller& operator=(const Poller&) { return *this; }
 
-      PollerIf* _impl;
+    PollerIf* _impl;
 
-    public:
-      explicit Poller(Jobqueue& q);
-      ~Poller()
-        { delete _impl; }
+public:
+    explicit Poller(Jobqueue& q);
+    ~Poller()
+      { delete _impl; }
 
-      void run();
-      void doStop()                          { _impl->doStop(); }
-      void addIdleJob(Jobqueue::JobPtr& job) { _impl->addIdleJob(job); }
-  };
-  /// @endcond internal
+    void run();
+    void doStop()                          { _impl->doStop(); }
+    void addIdleJob(std::unique_ptr<Job>&& job) { _impl->addIdleJob(std::move(job)); }
+};
+/// @endcond internal
 }
 
 #endif // TNT_POLLER_H

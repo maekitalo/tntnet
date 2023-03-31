@@ -41,190 +41,191 @@ log_define("tntnet.dispatcher")
 
 namespace tnt
 {
-  namespace
-  {
+namespace
+{
     std::ostream& operator<< (std::ostream& out, const Mapping& r)
     {
-      out << r.getVHost() << ':'
-          << r.getUrl();
+        out << r.getVHost() << ':'
+            << r.getUrl();
 
-      if (r.getSsl() != SSL_ALL || !r.getMethod().empty())
-        out << ':' << r.getMethod();
+        if (r.getSsl() != SSL_ALL || !r.getMethod().empty())
+            out << ':' << r.getMethod();
 
-      if (r.getSsl() == SSL_NO)
-        out << ":NOSSL";
-      else if (r.getSsl() == SSL_YES)
-        out << ":SSL";
+        if (r.getSsl() == SSL_NO)
+            out << ":NOSSL";
+        else if (r.getSsl() == SSL_YES)
+            out << ":SSL";
 
-      return out;
+        return out;
     }
-  }
+}
 
-  Mapping::Mapping(const std::string& vhost, const std::string& url,
-      const std::string& method, int ssl, const Maptarget& target)
-    : _vhost(vhost),
-      _url(url),
-      _method(method),
-      _ssl(ssl),
-      _regexVhost(vhost),
-      _regexUrl(url),
-      _regexMethod(method),
-      _target(target)
-  { }
+Mapping::Mapping(const std::string& vhost, const std::string& url,
+    const std::string& method, int ssl, const Maptarget& target)
+  : _vhost(vhost),
+    _url(url),
+    _method(method),
+    _ssl(ssl),
+    _regexVhost(vhost),
+    _regexUrl(url),
+    _regexMethod(method),
+    _target(target)
+{ }
 
-  Mapping& Mapping::pushArg(const std::string& value)
-  {
+Mapping& Mapping::pushArg(const std::string& value)
+{
     std::ostringstream k;
     k << "arg" << _target.getArgs().size();
     return setArg(k.str(), value);
-  }
+}
 
-  bool Mapping::match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const
-  {
+bool Mapping::match(const HttpRequest& request, cxxtools::RegexSMatch& smatch) const
+{
     return (_vhost.empty()  || _regexVhost.match(request.getHost()))
         && (_url.empty()    || _regexUrl.match(request.getUrl(), smatch))
         && (_method.empty() || _regexMethod.match(request.getMethod()))
         && (_ssl == SSL_ALL
             || (_ssl == SSL_YES && request.isSsl())
             || (_ssl == SSL_NO && !request.isSsl()));
-  }
+}
 
-  Dispatcher::UrlMapCacheKey::UrlMapCacheKey(const HttpRequest& request, urlmap_type::size_type pos)
-    : _vhost(request.getHost()),
-      _url(request.getUrl()),
-      _method(request.getMethod()),
-      _ssl(request.isSsl()),
-      _pos(pos)
-  {
-  }
+Dispatcher::UrlMapCacheKey::UrlMapCacheKey(const HttpRequest& request, urlmap_type::size_type pos)
+  : _vhost(request.getHost()),
+    _url(request.getUrl()),
+    _method(request.getMethod()),
+    _ssl(request.isSsl()),
+    _pos(pos)
+{
+}
 
-  bool Dispatcher::UrlMapCacheKey::operator< (const UrlMapCacheKey& other) const
-  {
+bool Dispatcher::UrlMapCacheKey::operator< (const UrlMapCacheKey& other) const
+{
     int c;
 
     c = _vhost.compare(other._vhost);
     if (c != 0)
-      return c < 0;
+        return c < 0;
 
     c = _url.compare(other._url);
     if (c != 0)
-      return c < 0;
+        return c < 0;
 
     c = _method.compare(other._method);
     if (c != 0)
-      return c < 0;
+        return c < 0;
 
     if (_ssl != other._ssl)
-      return _ssl < other._ssl;
+        return _ssl < other._ssl;
 
     return _pos < other._pos;
-  }
+}
 
-  Mapping& Dispatcher::addUrlMapEntry(const std::string& vhost,
-    const std::string& url, const std::string& method, int ssl, const Maptarget& ci)
-  {
-    cxxtools::WriteLock lock(_mutex);
+Mapping& Dispatcher::addUrlMapEntry(const std::string& vhost,
+  const std::string& url, const std::string& method, int ssl, const Maptarget& ci)
+{
+    WriteLockType lock(_mutex);
 
     log_debug("map vhost <" << vhost << "> url <" << url << "> method <" << method << "> ssl <" << ssl << "> to <" << ci << '>');
     _urlmap.push_back(Mapping(vhost, url, method, ssl, ci));
     return _urlmap.back();
-  }
+}
 
-  namespace {
+namespace
+{
     class regmatch_formatter : public std::unary_function<const std::string&, std::string>
     {
-      public:
+    public:
         cxxtools::RegexSMatch what;
         std::string operator() (const std::string& s) const
         { return what.format(s); }
     };
-  }
+}
 
-  Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
-    Dispatcher::urlmap_type::size_type& pos) const
-  {
+Maptarget Dispatcher::mapCompNext(const HttpRequest& request,
+  Dispatcher::urlmap_type::size_type& pos) const
+{
     std::string vhost = request.getHost();
     std::string compUrl = request.getUrl();
 
     if (pos < _urlmap.size())
     {
-      // check cache
-      cxxtools::ReadLock lock(_urlMapCacheMutex, false);
+        // check cache
+        ReadLockType lock(_urlMapCacheMutex, std::defer_lock);
 
-      urlMapCacheType::key_type cacheKey(request, pos);
-      log_debug("host=\"" << cacheKey.getHost() << "\" url=\"" << cacheKey.getUrl() << "\" method=\"" << cacheKey.getMethod() << "\" ssl=" << cacheKey.getSsl() << " pos=" << cacheKey.getPos());
+        urlMapCacheType::key_type cacheKey(request, pos);
+        log_debug("host=\"" << cacheKey.getHost() << "\" url=\"" << cacheKey.getUrl() << "\" method=\"" << cacheKey.getMethod() << "\" ssl=" << cacheKey.getSsl() << " pos=" << cacheKey.getPos());
 
-      if (TntConfig::it().maxUrlMapCache > 0)
-      {
-        lock.lock();
-        urlMapCacheType::const_iterator um = _urlMapCache.find(cacheKey);
-        if (um != _urlMapCache.end())
+        if (TntConfig::it().maxUrlMapCache > 0)
         {
-          pos = um->second.pos;
-          log_debug("match <" << _urlmap[pos] << "> => " << um->second.ci << " (cached)");
-          return um->second.ci;
-        }
-
-        log_debug("entry not found in cache");
-      }
-      else
-        log_debug("cache disabled");
-
-      // no cache hit
-      regmatch_formatter formatter;
-
-      for (; pos < _urlmap.size(); ++pos)
-      {
-        if (_urlmap[pos].match(request, formatter.what))
-        {
-          const Maptarget& src = _urlmap[pos].getTarget();
-
-          Maptarget ci;
-          ci.libname = formatter(src.libname);
-          ci.compname = formatter(src.compname);
-          ci.setHttpReturn(src.getHttpReturn());
-
-          if (src.hasPathInfo())
-            ci.setPathInfo(formatter(src.getPathInfo()));
-
-          for (Maptarget::args_type::const_iterator it = src.getArgs().begin(); it != src.getArgs().end(); ++it)
-            ci._args[it->first] = formatter(it->second);
-
-          if (TntConfig::it().maxUrlMapCache > 0)
-          {
-            lock.unlock();
-            cxxtools::WriteLock wlock(_urlMapCacheMutex);
-
-            // clear cache after maxUrlMapCache distinct requests
-            if (_urlMapCache.size() > TntConfig::it().maxUrlMapCache)
+            lock.lock();
+            urlMapCacheType::const_iterator um = _urlMapCache.find(cacheKey);
+            if (um != _urlMapCache.end())
             {
-              log_warn("clear url-map-cache");
-              _urlMapCache.clear();
+                pos = um->second.pos;
+                log_debug("match <" << _urlmap[pos] << "> => " << um->second.ci << " (cached)");
+                return um->second.ci;
             }
 
-            _urlMapCache.insert(urlMapCacheType::value_type(cacheKey, UrlMapCacheValue(ci, pos)));
-          }
-
-          log_debug("match <" << _urlmap[pos] << "> => " << ci);
-          return ci;
+            log_debug("entry not found in cache");
         }
         else
+            log_debug("cache disabled");
+
+        // no cache hit
+        regmatch_formatter formatter;
+
+        for (; pos < _urlmap.size(); ++pos)
         {
-          log_debug("no match <" << _urlmap[pos] << '>');
+            if (_urlmap[pos].match(request, formatter.what))
+            {
+                const Maptarget& src = _urlmap[pos].getTarget();
+
+                Maptarget ci;
+                ci.libname = formatter(src.libname);
+                ci.compname = formatter(src.compname);
+                ci.setHttpReturn(src.getHttpReturn());
+
+                if (src.hasPathInfo())
+                    ci.setPathInfo(formatter(src.getPathInfo()));
+
+                for (Maptarget::args_type::const_iterator it = src.getArgs().begin(); it != src.getArgs().end(); ++it)
+                    ci._args[it->first] = formatter(it->second);
+
+                if (TntConfig::it().maxUrlMapCache > 0)
+                {
+                    lock.unlock();
+                    WriteLockType wlock(_urlMapCacheMutex);
+
+                    // clear cache after maxUrlMapCache distinct requests
+                    if (_urlMapCache.size() > TntConfig::it().maxUrlMapCache)
+                    {
+                        log_warn("clear url-map-cache");
+                        _urlMapCache.clear();
+                    }
+
+                    _urlMapCache.insert(urlMapCacheType::value_type(cacheKey, UrlMapCacheValue(ci, pos)));
+                }
+
+                log_debug("match <" << _urlmap[pos] << "> => " << ci);
+                return ci;
+            }
+            else
+            {
+                log_debug("no match <" << _urlmap[pos] << '>');
+            }
         }
-      }
     }
 
     throw NotFoundException(compUrl, vhost);
-  }
+}
 
-  Maptarget Dispatcher::PosType::getNext()
-  {
+Maptarget Dispatcher::PosType::getNext()
+{
     if (_first)
-      _first = false;
+        _first = false;
     else
-      ++_pos;
+        ++_pos;
 
     return _dis.mapCompNext(_request, _pos);
-  }
+}
 }

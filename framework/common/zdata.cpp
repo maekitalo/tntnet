@@ -28,7 +28,6 @@
 
 
 #include <tnt/zdata.h>
-#include <tnt/util.h>
 #include <zlib.h>
 #include <stdexcept>
 #include <cxxtools/log.h>
@@ -37,35 +36,35 @@ log_define("tntnet.data")
 
 namespace tnt
 {
-  void Zdata::addRef()
-  {
+void Zdata::addRef()
+{
     if (++_refs == 1)
     {
-      // allocate uncompressed data
-      _data = new char[_dataLen];
+        // allocate uncompressed data
+        _data = new char[_dataLen];
 
-      // uncompress Zdata => data
-      log_debug("uncompress " << _zdataLen << " to " << _dataLen << " bytes");
-      uLong dest_len = _dataLen;
-      int z_ret = uncompress((Bytef*)_data, &dest_len, (const Bytef*)_zptr, _zdataLen);
-      if (z_ret != Z_OK)
-      {
-        throwRuntimeError(std::string("error uncompressing data: ") +
-          (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
-           z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
-           z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
-      }
-      log_debug("uncompress ready");
+        // uncompress Zdata => data
+        log_debug("uncompress " << _zdataLen << " to " << _dataLen << " bytes");
+        uLong dest_len = _dataLen;
+        int z_ret = uncompress((Bytef*)_data, &dest_len, (const Bytef*)_zptr, _zdataLen);
+        if (z_ret != Z_OK)
+        {
+            throw std::runtime_error(std::string("error uncompressing data: ") +
+              (z_ret == Z_MEM_ERROR ? "Z_MEM_ERROR" :
+               z_ret == Z_BUF_ERROR ? "Z_BUF_ERROR" :
+               z_ret == Z_DATA_ERROR ? "Z_DATA_ERROR" : "unknown error"));
+        }
+        log_debug("uncompress ready");
     }
-  }
+}
 
-  void Zdata::release()
-  {
+void Zdata::release()
+{
     if (--_refs == 0)
     {
-      log_debug("release " << _dataLen << " uncompressed bytes");
-      delete[] _data;
-      _data = 0;
+        log_debug("release " << _dataLen << " uncompressed bytes");
+        delete[] _data;
+        _data = 0;
     }
-  }
+}
 }

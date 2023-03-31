@@ -41,144 +41,141 @@ log_define("tntnet.tcpjob")
 
 namespace tnt
 {
-  ////////////////////////////////////////////////////////////////////////
-  // Tcpjob
-  //
-  std::string Tcpjob::getPeerIp() const
-  {
+////////////////////////////////////////////////////////////////////////
+// Tcpjob
+//
+std::string Tcpjob::getPeerIp() const
+{
     return _socket.getPeerAddr();
-  }
+}
 
-  std::string Tcpjob::getServerIp() const
-  {
+std::string Tcpjob::getServerIp() const
+{
     return _socket.getSockAddr();
-  }
+}
 
-  bool Tcpjob::isSsl() const
-  {
+bool Tcpjob::isSsl() const
+{
     return _sslCtx.enabled();
-  }
+}
 
-  cxxtools::SslCertificate Tcpjob::getSslCertificate() const
-  {
+cxxtools::SslCertificate Tcpjob::getSslCertificate() const
+{
     return _socket.getSslPeerCertificate();
-  }
+}
 
-  void Tcpjob::accept()
-  {
+void Tcpjob::accept()
+{
     _socket.accept(_listener);
     log_debug("connection accepted from " << getPeerIp());
-  }
+}
 
-  void Tcpjob::regenerateJob()
+void Tcpjob::regenerateJob()
+{
+  if (TntnetImpl::shouldStop())
   {
-    Jobqueue::JobPtr p;
-
-    if (TntnetImpl::shouldStop())
-      p = this;
-    else
-      p = new Tcpjob(getRequest().getApplication(), _listener, _queue, _sslCtx);
-
-    _queue.put(p);
+      _queue.put(nullptr);
   }
-
-  std::iostream& Tcpjob::getStream()
+  else
   {
+      _queue.put(std::unique_ptr<Job>(new Tcpjob(getRequest().getApplication(), _listener, _queue, _sslCtx)));
+  }
+}
+
+std::iostream& Tcpjob::getStream()
+{
     if (!_socket.isConnected())
     {
-      try
-      {
-        log_debug("accept socket");
-        accept();
-        touch();
-      }
-      catch (const std::exception& e)
-      {
-        regenerateJob();
-        log_debug("exception occured in accept: " << e.what());
-        throw;
-      }
+        try
+        {
+            log_debug("accept socket");
+            accept();
+            touch();
+        }
+        catch (const std::exception& e)
+        {
+            regenerateJob();
+            log_debug("exception occured in accept: " << e.what());
+            throw;
+        }
 
-      regenerateJob();
+        regenerateJob();
     }
 
     if (!_socket.isSslConnected() && _sslCtx.enabled())
     {
-      log_debug("accept ssl " << getFd());
-      _socket.sslAccept(_sslCtx);
-      touch();
+        log_debug("accept ssl " << getFd());
+        _socket.sslAccept(_sslCtx);
+        touch();
     }
 
     return _socket;
-  }
+}
 
-  int Tcpjob::getFd() const
-  {
+int Tcpjob::getFd() const
+{
     return _socket.getFd();
-  }
+}
 
-  void Tcpjob::setRead()
-  {
+void Tcpjob::setRead()
+{
     _socket.setTimeout(TntConfig::it().socketReadTimeout);
-  }
+}
 
-  void Tcpjob::setWrite()
-  {
+void Tcpjob::setWrite()
+{
     _socket.setTimeout(TntConfig::it().socketWriteTimeout);
-  }
+}
 
-  //////////////////////////////////////////////////////////////////////
-  // Jobqueue
-  //
-  void Jobqueue::put(JobPtr& j, bool force)
-  {
+//////////////////////////////////////////////////////////////////////
+// Jobqueue
+//
+void Jobqueue::put(std::unique_ptr<Job> j, bool force)
+{
     j->touch();
 
-    cxxtools::MutexLock lock(_mutex);
+    std::unique_lock<std::mutex> lock(_mutex);
 
     if (!force && _capacity > 0)
     {
-      while (_jobs.size() >= _capacity)
-      {
-        log_warn("Jobqueue full");
-        _notFull.wait(lock);
-      }
+        while (_jobs.size() >= _capacity)
+        {
+            log_warn("Jobqueue full");
+            _notFull.wait(lock);
+        }
     }
 
-    _jobs.push_back(j);
-    // We have to drop ownership before releasing the lock of the queue.
-    // Therefore we set the smart pointer to 0.
-    j = 0;
+    _jobs.emplace_back(std::move(j));
 
     if (_waitThreads == 0)
-      noWaitThreads.signal();
+        noWaitThreads.notify_one();
 
-    _notEmpty.signal();
-  }
+    _notEmpty.notify_one();
+}
 
-  Jobqueue::JobPtr Jobqueue::get()
-  {
-    cxxtools::MutexLock lock(_mutex);
+std::unique_ptr<Job> Jobqueue::get()
+{
+    std::unique_lock<std::mutex> lock(_mutex);
 
     // wait, until a job is available
     ++_waitThreads;
 
     while (_jobs.empty())
-      _notEmpty.wait(lock);
+        _notEmpty.wait(lock);
 
     --_waitThreads;
 
     // take next job (queue is locked)
-    JobPtr j = _jobs.front();
+    auto j = std::move(_jobs.front());
     _jobs.pop_front();
 
     // if there are threads waiting, wake another
     if (!_jobs.empty() && _waitThreads > 0)
-      _notEmpty.signal();
+        _notEmpty.notify_one();
 
-    _notFull.signal();
+    _notFull.notify_one();
 
     return j;
-  }
+}
 }
 

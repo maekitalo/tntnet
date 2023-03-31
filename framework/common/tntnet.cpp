@@ -32,130 +32,108 @@
 
 namespace tnt
 {
-  ////////////////////////////////////////////////////////////////////////
-  // Tntnet
-  //
-  Tntnet::Tntnet()
-    : _impl(new TntnetImpl())
-  {
-    _impl->addRef();
-  }
+////////////////////////////////////////////////////////////////////////
+// Tntnet
+//
+Tntnet::Tntnet()
+  : _impl(new TntnetImpl())
+{
+}
 
-  Tntnet::Tntnet(const Tntnet& t)
-    : _impl(t._impl)
-  {
-    if (_impl)
-      _impl->addRef();
-  }
-
-  Tntnet::Tntnet(const TntConfig& config)
-    : _impl(new TntnetImpl())
-  {
-    _impl->addRef();
+Tntnet::Tntnet(const TntConfig& config)
+  : _impl(new TntnetImpl())
+{
     init(config);
-  }
+}
 
-  Tntnet& Tntnet::operator= (const Tntnet& t)
-  {
-    if (_impl == t._impl)
-      return *this;
+Tntnet::~Tntnet()
+{ }
 
-    if (_impl && _impl->release() == 0)
-      delete _impl;
-
-    _impl = t._impl;
-
-    if (_impl)
-      _impl->addRef();
-
-    return *this;
-  }
-
-  void Tntnet::init(const TntConfig& config)
-  {
+void Tntnet::init(const TntConfig& config)
+{
     _impl->init(*this, config);
-  }
+}
 
-  void Tntnet::listen(const std::string& ip, unsigned short int port, const cxxtools::SslCtx& sslCtx)
-  {
+void Tntnet::listen(const std::string& ip, unsigned short int port, const cxxtools::SslCtx& sslCtx)
+{
     _impl->listen(*this, ip, port, sslCtx);
-  }
+}
 
-  void Tntnet::run()
-  {
+void Tntnet::run()
+{
     _impl->run();
-  }
+}
 
-  unsigned Tntnet::getMinThreads() const
-  {
+unsigned Tntnet::getMinThreads() const
+{
     return _impl->getMinThreads();
-  }
+}
 
-  void Tntnet::setMinThreads(unsigned n)
-  {
+void Tntnet::setMinThreads(unsigned n)
+{
     _impl->setMinThreads(n);
-  }
+}
 
-  unsigned Tntnet::getMaxThreads() const
-  {
+unsigned Tntnet::getMaxThreads() const
+{
     return _impl->getMaxThreads();
-  }
+}
 
-  void Tntnet::setMaxThreads(unsigned n)
-  {
+void Tntnet::setMaxThreads(unsigned n)
+{
     _impl->setMaxThreads(n);
-  }
+}
 
-  void Tntnet::shutdown()
-  {
+void Tntnet::shutdown()
+{
     TntnetImpl::shutdown();
-  }
+}
 
-  bool Tntnet::shouldStop()
-  {
+bool Tntnet::shouldStop()
+{
     return TntnetImpl::shouldStop();
-  }
+}
 
-  Mapping& Tntnet::mapUrl(const std::string& url, const std::string& ci)
-  {
+Mapping& Tntnet::mapUrl(const std::string& url, const std::string& ci)
+{
     return _impl->mapUrl(url, Maptarget(ci));
-  }
+}
 
-  Mapping& Tntnet::mapUrl(const std::string& url, const Compident& ci)
-  {
+Mapping& Tntnet::mapUrl(const std::string& url, const Compident& ci)
+{
     return _impl->mapUrl(url, Maptarget(ci));
-  }
+}
 
-  void Tntnet::mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci)
-  {
+void Tntnet::mapUrl(const std::string& url, const std::string& pathinfo, const std::string& ci)
+{
     _impl->mapUrl(url, Maptarget(ci)).setPathInfo(pathinfo);
-  }
+}
 
-  Mapping& Tntnet::mapUrl(const std::string& url, const Maptarget& ci)
-  {
+Mapping& Tntnet::mapUrl(const std::string& url, const Maptarget& ci)
+{
     return _impl->mapUrl(url, ci);
-  }
+}
 
-  Mapping& Tntnet::vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
-  {
+Mapping& Tntnet::vMapUrl(const std::string& vhost, const std::string& url, const Maptarget& ci)
+{
     return _impl->vMapUrl(vhost, url, ci);
-  }
+}
 
-  void Tntnet::setAppName(const std::string& appname)
-  {
+void Tntnet::setAppName(const std::string& appname)
+{
     _impl->setAppName(appname);
-  }
+}
 
-  /// Get the app name &ndash; for details see setAppName()
-  const std::string& Tntnet::getAppName() const
-  {
+/// Get the app name &ndash; for details see setAppName()
+const std::string& Tntnet::getAppName() const
+{
     return _impl->getAppName();
-  }
+}
 
-  void Tntnet::setAccessLog(const std::string& logfile_path)
-  {
+void Tntnet::setAccessLog(const std::string& logfile_path)
+{
     _impl->setAccessLog(logfile_path);
-  }
+}
 
 }
 

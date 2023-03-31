@@ -41,15 +41,15 @@
 
 namespace tnt
 {
-  class Urlmapper;
-  class Comploader;
-  class EcppSubComponent;
+class Urlmapper;
+class Comploader;
+class EcppSubComponent;
 
-  //////////////////////////////////////////////////////////////////////
-  // Subcompident
-  //
-  struct Subcompident : public tnt::Compident
-  {
+//////////////////////////////////////////////////////////////////////
+// Subcompident
+//
+struct Subcompident : public tnt::Compident
+{
     std::string subname;
 
     Subcompident(const tnt::Compident& ci, const std::string& sub)
@@ -63,169 +63,168 @@ namespace tnt
 
     explicit Subcompident(const std::string& ident);
     std::string toString() const;
-  };
+};
 
-  //////////////////////////////////////////////////////////////////////
-  // EcppComponent
-  //
-  class EcppComponent : public Component
-  {
-      friend class EcppSubComponent;
+//////////////////////////////////////////////////////////////////////
+// EcppComponent
+//
+class EcppComponent : public Component
+{
+    friend class EcppSubComponent;
 
-      typedef std::map<std::string, EcppSubComponent*> subcomps_type;
-      typedef std::set<Compident> compnotfound_type;
+    typedef std::map<std::string, EcppSubComponent*> subcomps_type;
+    typedef std::set<Compident> compnotfound_type;
 
-      Compident _myident;
-      const Urlmapper& _rootmapper;
-      Comploader& _loader;
-      subcomps_type _subcomps;
+    Compident _myident;
+    const Urlmapper& _rootmapper;
+    Comploader& _loader;
+    subcomps_type _subcomps;
 
-      virtual subcomps_type& getSubcomps()             { return _subcomps; }
-      virtual const subcomps_type& getSubcomps() const { return _subcomps; }
+    virtual subcomps_type& getSubcomps()             { return _subcomps; }
+    virtual const subcomps_type& getSubcomps() const { return _subcomps; }
 
-    protected:
-      virtual ~EcppComponent();
+protected:
+    virtual ~EcppComponent();
 
-      void registerSubComp(const std::string& name, EcppSubComponent* comp);
+    void registerSubComp(const std::string& name, EcppSubComponent* comp);
 
-      Component& fetchComp(const std::string& url) const;
-      Component& fetchComp(const Compident& ci) const;
-      Component& fetchComp(const Subcompident& ci) const;
-      Component* createComp(const Compident& ci) const;
-      Component* createComp(const std::string& url) const
-        { return createComp(Compident(url)); }
+    Component& fetchComp(const std::string& url) const;
+    Component& fetchComp(const Compident& ci) const;
+    Component& fetchComp(const Subcompident& ci) const;
+    Component* createComp(const Compident& ci) const;
+    Component* createComp(const std::string& url) const
+      { return createComp(Compident(url)); }
 
-      /// helper-methods for calling components
-      template <typename compident_type,
-                typename parameter1_type,
-                typename parameter2_type>
-        unsigned callComp(const compident_type& ci, HttpRequest& request,
-                          parameter1_type& p1, parameter2_type& p2)
-          { return fetchComp(ci).call(request, p1, p2); }
+    /// helper-methods for calling components
+    template <typename compident_type,
+              typename parameter1_type,
+              typename parameter2_type>
+      unsigned callComp(const compident_type& ci, HttpRequest& request,
+                        parameter1_type& p1, parameter2_type& p2)
+        { return fetchComp(ci).call(request, p1, p2); }
 
-      template <typename compident_type,
-                typename parameter_type>
-        unsigned callComp(const compident_type& ci, HttpRequest& request,
-                          parameter_type& p1)
-          { return fetchComp(ci).call(request, p1); }
+    template <typename compident_type,
+              typename parameter_type>
+      unsigned callComp(const compident_type& ci, HttpRequest& request,
+                        parameter_type& p1)
+        { return fetchComp(ci).call(request, p1); }
 
-      template <typename compident_type>
-        unsigned callComp(const compident_type& ci, HttpRequest& request)
-          { return fetchComp(ci).call(request); }
+    template <typename compident_type>
+      unsigned callComp(const compident_type& ci, HttpRequest& request)
+        { return fetchComp(ci).call(request); }
 
-      /// helper-methods for fetching contents of components
-      template <typename compident_type,
-                typename parameter1_type>
-        std::string scallComp(const compident_type& ci, HttpRequest& request,
-                              parameter1_type& p1)
-          { return fetchComp(ci).scall(request, p1); }
+    /// helper-methods for fetching contents of components
+    template <typename compident_type,
+              typename parameter1_type>
+      std::string scallComp(const compident_type& ci, HttpRequest& request,
+                            parameter1_type& p1)
+        { return fetchComp(ci).scall(request, p1); }
 
-      template <typename compident_type>
-        std::string scallComp(const compident_type& ci, HttpRequest& request)
-          { return fetchComp(ci).scall(request); }
+    template <typename compident_type>
+      std::string scallComp(const compident_type& ci, HttpRequest& request)
+        { return fetchComp(ci).scall(request); }
 
-    public:
-      EcppComponent(const Compident& ci, const Urlmapper& um, Comploader& cl);
+public:
+    EcppComponent(const Compident& ci, const Urlmapper& um, Comploader& cl);
 
-      const Compident& getCompident() const { return _myident; }
+    const Compident& getCompident() const { return _myident; }
 
-      EcppSubComponent& fetchSubComp(const std::string& sub) const;
+    EcppSubComponent& fetchSubComp(const std::string& sub) const;
 
-      /// helper-methods for calling subcomponents
-      template <typename parameter1_type,
-                typename parameter2_type>
-        unsigned callSubComp(const std::string& sub, HttpRequest& request,
-                             parameter1_type& p1, parameter2_type& p2) const;
+    /// helper-methods for calling subcomponents
+    template <typename parameter1_type,
+              typename parameter2_type>
+      unsigned callSubComp(const std::string& sub, HttpRequest& request,
+                           parameter1_type& p1, parameter2_type& p2) const;
 
-      template <typename parameter1_type>
-        unsigned callSubComp(const std::string& sub, HttpRequest& request,
-                             parameter1_type& p1) const;
+    template <typename parameter1_type>
+      unsigned callSubComp(const std::string& sub, HttpRequest& request,
+                           parameter1_type& p1) const;
 
-      /// helper-methods for fetching contents of subcomponents
-      template <typename parameter1_type>
-        std::string scallSubComp(const std::string& sub, HttpRequest& request,
-                                 parameter1_type& p1) const;
-  };
+    /// helper-methods for fetching contents of subcomponents
+    template <typename parameter1_type>
+      std::string scallSubComp(const std::string& sub, HttpRequest& request,
+                               parameter1_type& p1) const;
+};
 
-  //////////////////////////////////////////////////////////////////////
-  // EcppSubComponent
-  //
-  class EcppSubComponent : public EcppComponent
-  {
-      EcppComponent& _main;
-      std::string _subcompname;
+//////////////////////////////////////////////////////////////////////
+// EcppSubComponent
+//
+class EcppSubComponent : public EcppComponent
+{
+    EcppComponent& _main;
+    std::string _subcompname;
 
-      virtual subcomps_type& getSubcomps()
-        { return _main.getSubcomps(); }
-      virtual const subcomps_type& getSubcomps() const
-        { return _main.getSubcomps(); }
+    virtual subcomps_type& getSubcomps()
+      { return _main.getSubcomps(); }
+    virtual const subcomps_type& getSubcomps() const
+      { return _main.getSubcomps(); }
 
-    public:
-      EcppSubComponent(EcppComponent& p, const std::string& name)
-        : EcppComponent(p._myident, p._rootmapper, p._loader),
-          _main(p),
-          _subcompname(name)
-        {
-          p.registerSubComp(name, this);
-        }
+  public:
+    EcppSubComponent(EcppComponent& p, const std::string& name)
+      : EcppComponent(p._myident, p._rootmapper, p._loader),
+        _main(p),
+        _subcompname(name)
+      {
+        p.registerSubComp(name, this);
+      }
 
-      virtual void drop();
-      Subcompident getCompident() const
-        { return Subcompident(_main.getCompident(), _subcompname); }
+    virtual void drop();
+    Subcompident getCompident() const
+      { return Subcompident(_main.getCompident(), _subcompname); }
 
-      EcppComponent& getMainComponent() const { return _main; }
-  };
+    EcppComponent& getMainComponent() const { return _main; }
+};
 
-  //////////////////////////////////////////////////////////////////////
-  // inline methods
-  //
-  inline Component& EcppComponent::fetchComp(const Subcompident& ci) const
-  {
+//////////////////////////////////////////////////////////////////////
+// inline methods
+//
+inline Component& EcppComponent::fetchComp(const Subcompident& ci) const
+{
     return dynamic_cast<EcppComponent&>(
                         fetchComp( static_cast<const Compident&>(ci) )
                         )
                  .fetchSubComp(ci.subname);
-  }
+}
 
-  template <typename parameter1_type,
-            typename parameter2_type>
-    unsigned EcppComponent::callSubComp(
-        const std::string& sub,
-        HttpRequest& request,
-        parameter1_type& p1,
-        parameter2_type& p2) const
-    { return fetchSubComp(sub).call(request, p1, p2); }
+template <typename parameter1_type,
+          typename parameter2_type>
+  unsigned EcppComponent::callSubComp(
+      const std::string& sub,
+      HttpRequest& request,
+      parameter1_type& p1,
+      parameter2_type& p2) const
+  { return fetchSubComp(sub).call(request, p1, p2); }
 
-  template <typename parameter1_type>
-    unsigned EcppComponent::callSubComp(
-        const std::string& sub,
-        HttpRequest& request,
-        parameter1_type& p1) const
-    { return fetchSubComp(sub).call(request, p1); }
+template <typename parameter1_type>
+  unsigned EcppComponent::callSubComp(
+      const std::string& sub,
+      HttpRequest& request,
+      parameter1_type& p1) const
+  { return fetchSubComp(sub).call(request, p1); }
 
-  /// helper-methods for fetching contents of subcomponents
-  template <typename parameter1_type>
-    std::string EcppComponent::scallSubComp(
-        const std::string& sub,
-        HttpRequest& request,
-        parameter1_type& p1) const
-    { return fetchSubComp(sub).scall(request, p1); }
+/// helper-methods for fetching contents of subcomponents
+template <typename parameter1_type>
+  std::string EcppComponent::scallSubComp(
+      const std::string& sub,
+      HttpRequest& request,
+      parameter1_type& p1) const
+  { return fetchSubComp(sub).scall(request, p1); }
 
-  template <typename ComponentType>
-  class EcppComponentFactoryImpl : public ComponentFactory
-  {
-    public:
-      explicit EcppComponentFactoryImpl(const std::string& componentName)
-        : ComponentFactory(componentName)
-        { }
+template <typename ComponentType>
+class EcppComponentFactoryImpl : public ComponentFactory
+{
+public:
+    explicit EcppComponentFactoryImpl(const std::string& componentName)
+      : ComponentFactory(componentName)
+      { }
 
-      virtual Component* doCreate(const tnt::Compident& ci,
-        const tnt::Urlmapper& um, tnt::Comploader& cl)
-      {
-        return new ComponentType(ci, um, cl);
-      }
-  };
+    virtual Component* doCreate(const tnt::Compident& ci,
+      const tnt::Urlmapper& um, tnt::Comploader& cl)
+    {
+      return new ComponentType(ci, um, cl);
+    }
+};
 }
 
 #endif // TNT_ECPP_H
-

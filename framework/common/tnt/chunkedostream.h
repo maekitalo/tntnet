@@ -34,63 +34,63 @@
 
 namespace tnt
 {
-  class ChunkedWriter : public std::streambuf
-  {
-      std::streambuf* _obuf;
-      char* _buffer;
-      unsigned _bufsize;
-      unsigned _bytesWritten;
+class ChunkedWriter : public std::streambuf
+{
+    std::streambuf* _obuf;
+    char* _buffer;
+    unsigned _bufsize;
+    unsigned _bytesWritten;
 
-    public:
-      explicit ChunkedWriter(std::streambuf* obuf, unsigned bufsize = 8192)
-        : _obuf(obuf),
-          _buffer(0),
-          _bufsize(bufsize)
-        { }
+public:
+    explicit ChunkedWriter(std::streambuf* obuf, unsigned bufsize = 8192)
+      : _obuf(obuf),
+        _buffer(0),
+        _bufsize(bufsize)
+      { }
 
-      ~ChunkedWriter()
-        { delete _buffer; }
+    ~ChunkedWriter()
+      { delete _buffer; }
 
-      virtual int sync();
-      virtual int_type overflow(int_type ch);
-      virtual int_type underflow();
+    virtual int sync();
+    virtual int_type overflow(int_type ch);
+    virtual int_type underflow();
 
-      void finish();
+    void finish();
 
-      void setSink(std::streambuf* obuf)
-        { _obuf = obuf; _bytesWritten = 0; }
+    void setSink(std::streambuf* obuf)
+      { _obuf = obuf; _bytesWritten = 0; }
 
-      unsigned bytesWritten() const
-        { return _bytesWritten; }
-  };
+    unsigned bytesWritten() const
+      { return _bytesWritten; }
+};
 
-  class ChunkedOStream : public std::ostream
-  {
-      ChunkedWriter _streambuf;
+class ChunkedOStream : public std::ostream
+{
+    ChunkedWriter _streambuf;
 
-    public:
-      explicit ChunkedOStream(std::ostream& sink)
-        : std::ostream(0),
-          _streambuf(sink.rdbuf())
-        { std::ostream::init(&_streambuf); }
+public:
+    explicit ChunkedOStream(std::ostream& sink)
+      : std::ostream(0),
+        _streambuf(sink.rdbuf())
+      { std::ostream::init(&_streambuf); }
 
-      explicit ChunkedOStream(std::streambuf* obuf)
-        : std::ostream(0),
-          _streambuf(obuf)
-        { std::ostream::init(&_streambuf); }
+    explicit ChunkedOStream(std::streambuf* obuf)
+      : std::ostream(0),
+        _streambuf(obuf)
+      { std::ostream::init(&_streambuf); }
 
-      void finish()
-        { _streambuf.finish(); }
+    void finish()
+      { _streambuf.finish(); }
 
-      void setSink(std::ostream& sink)
-        { _streambuf.setSink(sink.rdbuf()); }
+    void setSink(std::ostream& sink)
+      { _streambuf.setSink(sink.rdbuf()); }
 
-      void setSink(std::streambuf* sink)
-        { _streambuf.setSink(sink); }
+    void setSink(std::streambuf* sink)
+      { _streambuf.setSink(sink); }
 
-      unsigned bytesWritten() const
-        { return _streambuf.bytesWritten(); }
-  };
+    unsigned bytesWritten() const
+      { return _streambuf.bytesWritten(); }
+};
 }
 
 #endif // TNT_CHUNKEDOSTREAM_H

@@ -39,15 +39,15 @@ log_define("tntnet.mbcomponent")
 
 namespace tnt
 {
-  namespace
-  {
+namespace
+{
     inline bool charpLess(const char* a, const char* b)
       { return std::strcmp(a, b) < 0; }
-  }
+}
 
-  void MbComponent::init(const char* rawData, const char** urls,
-                         const char** mimetypes, const char** ctimes)
-  {
+void MbComponent::init(const char* rawData, const char** urls,
+                       const char** mimetypes, const char** ctimes)
+{
     _rawData   = rawData;
     _urls      = urls;
     _mimetypes = mimetypes;
@@ -55,16 +55,16 @@ namespace tnt
 
     tnt::DataChunks data(rawData);
     _compressedData.resize(data.size());
-  }
+}
 
-  unsigned MbComponent::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
-    { return doCall(request, reply, qparam, false); }
+unsigned MbComponent::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
+  { return doCall(request, reply, qparam, false); }
 
-  unsigned MbComponent::topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
-    { return doCall(request, reply, qparam, true); }
+unsigned MbComponent::topCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
+  { return doCall(request, reply, qparam, true); }
 
-  unsigned MbComponent::doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&, bool top)
-  {
+unsigned MbComponent::doCall(tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams&, bool top)
+{
     log_trace("MbComponent " << getCompident());
 
     tnt::DataChunks data(_rawData);
@@ -72,94 +72,89 @@ namespace tnt
     unsigned url_idx = 0;
     if (_urls)
     {
-      const char* url = request.getPathInfo().c_str();
+        const char* url = request.getPathInfo().c_str();
 
-      log_debug("search for \"" << url << '"');
+        log_debug("search for \"" << url << '"');
 
-      const char** urls_end = _urls + data.size();
-      const char** it = std::lower_bound(_urls, urls_end, url, charpLess);
-      if (it == urls_end || std::strcmp(url, *it) != 0)
-      {
-        log_debug("file \"" << url << "\" not found");
-        return DECLINED;
-      }
+        const char** urls_end = _urls + data.size();
+        const char** it = std::lower_bound(_urls, urls_end, url, charpLess);
+        if (it == urls_end || std::strcmp(url, *it) != 0)
+        {
+            log_debug("file \"" << url << "\" not found");
+            return DECLINED;
+        }
 
-      url_idx = it - _urls;
+        url_idx = it - _urls;
 
-      log_debug("file \"" << url << "\" found; idx=" << url_idx);
+        log_debug("file \"" << url << "\" found; idx=" << url_idx);
     }
 
     if (top)
     {
-      reply.setKeepAliveHeader();
-      reply.setContentType(_mimetypes[url_idx]);
+        reply.setKeepAliveHeader();
+        reply.setContentType(_mimetypes[url_idx]);
 
-      if (!reply.hasHeader(httpheader::cacheControl))
-      {
-        std::string maxAgeStr = request.getArg("maxAge");
-        unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
-        reply.setMaxAgeHeader(maxAge);
-      }
-
-      std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);
-      if (s == _ctimes[url_idx])
-        return HTTP_NOT_MODIFIED;
-
-      reply.setHeader(tnt::httpheader::lastModified, _ctimes[url_idx]);
-
-      if (request.getEncoding().accept("gzip"))
-      {
-        cxxtools::ReadLock lock(_mutex);
-        if (_compressedData[url_idx].empty())
+        if (!reply.hasHeader(httpheader::cacheControl))
         {
-          lock.unlock();
-          cxxtools::WriteLock wlock(_mutex);
-
-          if (_compressedData[url_idx].empty())
-          {
-            // check for compression
-            std::string body(data[url_idx].getData(), data[url_idx].getLength());
-            log_debug("compress");
-            if (reply.tryCompress(body))
-            {
-              log_info("compressed from " << data[url_idx].getLength() << " to " << body.size());
-              _compressedData[url_idx] = body;
-            }
-            else
-            {
-              log_info("not compressed " << data[url_idx].getLength());
-              _compressedData[url_idx] = "-";
-            }
-          }
+            std::string maxAgeStr = request.getArg("maxAge");
+            unsigned maxAge = maxAgeStr.empty() ? 14400 : cxxtools::convert<unsigned>(maxAgeStr);
+            reply.setMaxAgeHeader(maxAge);
         }
 
-        if (_compressedData[url_idx] != "-")
+        std::string s = request.getHeader(tnt::httpheader::ifModifiedSince);
+        if (s == _ctimes[url_idx])
+          return HTTP_NOT_MODIFIED;
+
+        reply.setHeader(tnt::httpheader::lastModified, _ctimes[url_idx]);
+
+        if (request.getEncoding().accept("gzip"))
         {
-          log_debug("compressed data found; content size " << data[url_idx].getLength() << " to " << _compressedData[url_idx].size());
-          reply.setContentLengthHeader(_compressedData[url_idx].size());
-          reply.setHeader(httpheader::contentEncoding, "gzip");
-          if (!request.isMethodHEAD())
-          {
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            if (_compressedData[url_idx].empty())
+            {
+                // check for compression
+                std::string body(data[url_idx].getData(), data[url_idx].getLength());
+                log_debug("compress");
+                if (reply.tryCompress(body))
+                {
+                    log_info("compressed from " << data[url_idx].getLength() << " to " << body.size());
+                    _compressedData[url_idx] = body;
+                }
+                else
+                {
+                    log_info("not compressed " << data[url_idx].getLength());
+                    _compressedData[url_idx] = "-";
+                }
+            }
+
+            if (_compressedData[url_idx] != "-")
+            {
+                log_debug("compressed data found; content size " << data[url_idx].getLength() << " to " << _compressedData[url_idx].size());
+                reply.setContentLengthHeader(_compressedData[url_idx].size());
+                reply.setHeader(httpheader::contentEncoding, "gzip");
+                if (!request.isMethodHEAD())
+                {
+                    reply.setDirectMode();
+                    reply.out() << _compressedData[url_idx];
+                }
+                return HTTP_OK;
+            }
+        }
+
+        reply.setContentLengthHeader(data.size(url_idx));
+
+        if (!request.isMethodHEAD())
+        {
+            log_debug("send data");
             reply.setDirectMode();
-            reply.out() << _compressedData[url_idx];
-          }
-          return HTTP_OK;
         }
-      }
-
-      reply.setContentLengthHeader(data.size(url_idx));
-
-      if (!request.isMethodHEAD())
-      {
-        log_debug("send data");
-        reply.setDirectMode();
-      }
     }
 
     if (!request.isMethodHEAD())
       reply.out() << data[url_idx];
 
     return HTTP_OK;
-  }
+}
 }
 

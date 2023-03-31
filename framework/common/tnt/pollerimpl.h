@@ -33,8 +33,8 @@
 #include <config.h>
 #include "tnt/job.h"
 #include "tnt/poller.h"
-#include <cxxtools/mutex.h>
 #include <cxxtools/posix/pipe.h>
+#include <mutex>
 
 #if defined(HAVE_EPOLL_CREATE) || defined(HAVE_EPOLL_CREATE1)
 
@@ -51,58 +51,58 @@
 
 namespace tnt
 {
-  /// @cond internal
-  class PollerImpl : public PollerIf
-  {
-    private:
-      Jobqueue& _queue;
+/// @cond internal
+class PollerImpl : public PollerIf
+{
+private:
+    Jobqueue& _queue;
 
-      cxxtools::posix::Pipe _notifyPipe;
-      cxxtools::Mutex _mutex;
+    cxxtools::posix::Pipe _notifyPipe;
+    std::mutex _mutex;
 
 #ifdef WITH_EPOLL
 
-      int _pollFd;
+    int _pollFd;
 
-      typedef std::map<int, Jobqueue::JobPtr> jobs_type;
-      typedef std::vector<Jobqueue::JobPtr> new_jobs_type;
-      jobs_type _jobs;
-      new_jobs_type _newJobs;
-      int _pollTimeout;
+    typedef std::map<int, std::unique_ptr<Job>> jobs_type;
+    typedef std::vector<std::unique_ptr<Job>> new_jobs_type;
+    jobs_type _jobs;
+    new_jobs_type _newJobs;
+    int _pollTimeout;
 
-      void addFd(int fd);
-      bool removeFd(int fd);
-      void appendNewJobs();
+    void addFd(int fd);
+    bool removeFd(int fd);
+    void appendNewJobs();
 
 #else
 
-      typedef std::deque<Jobqueue::JobPtr> jobs_type;
-      typedef std::vector<pollfd> pollfds_type;
+    typedef std::deque<std::unique_ptr<Job>> jobs_type;
+    typedef std::vector<pollfd> pollfds_type;
 
-      jobs_type _currentJobs;
-      pollfds_type _pollfds;
-      jobs_type _newJobs;
+    jobs_type _currentJobs;
+    pollfds_type _pollfds;
+    jobs_type _newJobs;
 
-      int _pollTimeout;
+    int _pollTimeout;
 
-      void appendNewJobs();
-      void append(Jobqueue::JobPtr& job);
-      void dispatch();
-      void remove(jobs_type::size_type n);
+    void appendNewJobs();
+    void append(std::unique_ptr<Job>&& job);
+    void dispatch();
+    void remove(jobs_type::size_type n);
 
 #endif // #else WITH_EPOLL
 
-    public:
-      PollerImpl(Jobqueue& q);
+public:
+    PollerImpl(Jobqueue& q);
 #ifdef WITH_EPOLL
-      ~PollerImpl();
+    ~PollerImpl();
 #endif
 
-      virtual void run();
-      void doStop();
-      void addIdleJob(Jobqueue::JobPtr& job);
-  };
-  /// @endcond internal
+    virtual void run();
+    void doStop();
+    void addIdleJob(std::unique_ptr<Job>&& job);
+};
+/// @endcond internal
 }
 
-#endif // TNT_POLLER_H
+#endif

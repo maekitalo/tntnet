@@ -50,250 +50,254 @@
 
 namespace tnt
 {
-  class Sessionscope;
-  class Tntnet;
+class Sessionscope;
+class Tntnet;
 
-  /// HTTP request message
-  class HttpRequest : public HttpMessage
-  {
-      friend class SessionUnlocker;
-      friend class ApplicationUnlocker;
+/// HTTP request message
+class HttpRequest : public HttpMessage
+{
+    friend class SessionUnlocker;
+    friend class ApplicationUnlocker;
 
-    public:
-      // forward declaration of subclass defined in httpparser.h
-      class Parser;
+public:
+    // forward declaration of subclass defined in httpparser.h
+    class Parser;
 
-      typedef std::map<std::string, std::string> args_type;
+    typedef std::map<std::string, std::string> args_type;
 
-    private:
-      std::string _body;
-      unsigned _methodLen;
-      char _method[8];
-      std::string _url;
-      std::string _queryString;
+private:
+    std::string _body;
+    unsigned _methodLen;
+    char _method[8];
+    std::string _url;
+    std::string _queryString;
 
-      size_t _contentSize;
+    size_t _contentSize;
 
-      std::string _pathinfo;
-      args_type _args;
-      tnt::QueryParams _getparam;
-      tnt::QueryParams _postparam;
-      tnt::QueryParams _qparam;
+    std::string _pathinfo;
+    args_type _args;
+    tnt::QueryParams _getparam;
+    tnt::QueryParams _postparam;
+    tnt::QueryParams _qparam;
 
-      const SocketIf* _socketIf;
+    const SocketIf* _socketIf;
 
-      mutable Contenttype _ct;
-      Multipart _mp;
-      unsigned _serial;
-      static std::atomic<unsigned> _nextSerial;
+    mutable Contenttype _ct;
+    Multipart _mp;
+    unsigned _serial;
+    static std::atomic<unsigned> _nextSerial;
 
-      mutable Encoding _encoding;
-      mutable bool _encodingRead;
+    mutable Encoding _encoding;
+    mutable bool _encodingRead;
 
-      mutable std::string _username;
-      mutable std::string _password;
+    mutable std::string _username;
+    mutable std::string _password;
 
-      Scope* _requestScope;
-      Scope* _applicationScope;
-      Sessionscope* _sessionScope;
-      Sessionscope* _secureSessionScope;
-      ThreadContext* _threadContext;
+    std::unique_ptr<Scope> _requestScope;
+    std::shared_ptr<Scope> _applicationScope;
+    std::shared_ptr<Sessionscope> _sessionScope;
+    std::shared_ptr<Sessionscope> _secureSessionScope;
+    ThreadContext* _threadContext;
 
-      bool _applicationScopeLocked;
-      bool _sessionScopeLocked;
-      bool _secureSessionScopeLocked;
+    bool _applicationScopeLocked;
+    bool _sessionScopeLocked;
+    bool _secureSessionScopeLocked;
 
-      mutable std::string _peerAddrStr;
-      mutable std::string _serverAddrStr;
+    mutable std::string _peerAddrStr;
+    mutable std::string _serverAddrStr;
 
-      Tntnet& _application;
+    Tntnet& _application;
 
-      void ensureApplicationScopeLock();
-      void ensureSessionScopeLock();
+    void ensureApplicationScopeLock();
+    void ensureSessionScopeLock();
 
-      void releaseApplicationScopeLock();
-      void releaseSessionScopeLock();
+    void releaseApplicationScopeLock();
+    void releaseSessionScopeLock();
 
-      void releaseLocks() { releaseApplicationScopeLock(); }
+    void releaseLocks() { releaseApplicationScopeLock(); }
 
-      const Contenttype& getContentTypePriv() const;
+    const Contenttype& getContentTypePriv() const;
 
-    public:
-      explicit HttpRequest(Tntnet& application, const SocketIf* socketIf = 0);
-      HttpRequest(Tntnet& application, const std::string& url, const SocketIf* socketIf = 0);
-      HttpRequest(const HttpRequest& r);
-      ~HttpRequest();
+    HttpRequest(const HttpRequest& r) = delete;
+    HttpRequest& operator= (const HttpRequest& r) = delete;
 
-      HttpRequest& operator= (const HttpRequest& r);
+public:
+    explicit HttpRequest(Tntnet& application, const SocketIf* socketIf = 0);
+    HttpRequest(Tntnet& application, const std::string& url, const SocketIf* socketIf = 0);
+    HttpRequest(HttpRequest&& r);
+    ~HttpRequest();
 
-      void clear();
+    HttpRequest& operator= (HttpRequest&& r);
 
-      /// Get the body of the message
-      const std::string& getBody() const        { return _body; }
+    void clear();
 
-      /// Set the body of the message
-      void setBody(const std::string& body)     { _body = body; }
+    /// Get the body of the message
+    const std::string& getBody() const        { return _body; }
 
-      /// @{
-      /// Get the http method of a request (usually GET or POST)
-      std::string getMethod() const             { return _method; }
-      const char* getMethod_cstr() const        { return _method; }
-      /// @}
+    /// Set the body of the message
+    void setBody(const std::string& body)     { _body = body; }
 
-      /// Check whether http method used is GET
-      bool isMethodGET() const                  { return std::strcmp(_method, "GET") == 0; }
+    /// @{
+    /// Get the http method of a request (usually GET or POST)
+    std::string getMethod() const             { return _method; }
+    const char* getMethod_cstr() const        { return _method; }
+    /// @}
 
-      /// Check whether http method used is POST
-      bool isMethodPOST() const                 { return std::strcmp(_method, "POST") == 0; }
+    /// Check whether http method used is GET
+    bool isMethodGET() const                  { return std::strcmp(_method, "GET") == 0; }
 
-      /// Check whether http method used is HEAD
-      bool isMethodHEAD() const                 { return std::strcmp(_method, "HEAD") == 0; }
+    /// Check whether http method used is POST
+    bool isMethodPOST() const                 { return std::strcmp(_method, "POST") == 0; }
 
-      /// Set the http method of this request
-      void setMethod(const char* _method);
+    /// Check whether http method used is HEAD
+    bool isMethodHEAD() const                 { return std::strcmp(_method, "HEAD") == 0; }
 
-      /// Get url with GET parameters
-      std::string getQuery() const
-        { return _queryString.empty() ? _url : _url + '?' + _queryString; }
+    /// Set the http method of this request
+    void setMethod(const char* _method);
 
-      /// Get the request url without GET parameters
-      const std::string& getUrl() const         { return _url; }
+    /// Get url with GET parameters
+    std::string getQuery() const
+      { return _queryString.empty() ? _url : _url + '?' + _queryString; }
 
-      /// Get the query string (GET parameters string)
-      const std::string& getQueryString() const { return _queryString; }
+    /// Get the request url without GET parameters
+    const std::string& getUrl() const         { return _url; }
 
-      /// Set the query string
-      void setQueryString(const std::string& queryString)
-        { _queryString = queryString; }
+    /// Get the query string (GET parameters string)
+    const std::string& getQueryString() const { return _queryString; }
 
-      void setPathInfo(const std::string& p)    { _pathinfo = p; }
-      const std::string& getPathInfo() const    { return _pathinfo; }
+    /// Set the query string
+    void setQueryString(const std::string& queryString)
+      { _queryString = queryString; }
 
-      void setArgs(const args_type& a, bool addToQparam = true);
-      const args_type& getArgs() const          { return _args; }
-      args_type& getArgs()                      { return _args; }
+    void setPathInfo(const std::string& p)    { _pathinfo = p; }
+    const std::string& getPathInfo() const    { return _pathinfo; }
 
-      /// @{
-      /// @deprecated
-      std::string getArgDef(args_type::size_type n, const std::string& def = std::string()) const;
-      std::string getArg(args_type::size_type n) const { return getArgDef(n); }
-      args_type::size_type getArgsCount() const { return _args.size(); }
-      /// @}
+    void setArgs(const args_type& a, bool addToQparam = true);
+    const args_type& getArgs() const          { return _args; }
+    args_type& getArgs()                      { return _args; }
 
-      std::string getArg(const std::string& name, const std::string& def = std::string()) const;
+    /// @{
+    /// @deprecated
+    std::string getArgDef(args_type::size_type n, const std::string& def = std::string()) const;
+    std::string getArg(args_type::size_type n) const { return getArgDef(n); }
+    args_type::size_type getArgsCount() const { return _args.size(); }
+    /// @}
 
-      void parse(std::istream& in);
-      void doPostParse();
+    std::string getArg(const std::string& name, const std::string& def = std::string()) const;
 
-      /// @{
-      /// Get query parameters (GET and POST)
-      tnt::QueryParams& getQueryParams()             { return _qparam; }
-      const tnt::QueryParams& getQueryParams() const { return _qparam; }
-      /// @}
+    void parse(std::istream& in);
+    void doPostParse();
 
-      /// Get GET parameters
-      const tnt::QueryParams& getGetParams() const   { return _getparam; }
+    /// @{
+    /// Get query parameters (GET and POST)
+    tnt::QueryParams& getQueryParams()             { return _qparam; }
+    const tnt::QueryParams& getQueryParams() const { return _qparam; }
+    /// @}
 
-      /// Get POST parameters
-      const tnt::QueryParams& getPostParams() const  { return _postparam; }
+    /// Get GET parameters
+    const tnt::QueryParams& getGetParams() const   { return _getparam; }
 
-      /// Set query parameters (GET and POST)
-      void setQueryParams(const tnt::QueryParams& q) { _qparam = q; }
+    /// Get POST parameters
+    const tnt::QueryParams& getPostParams() const  { return _postparam; }
 
-      /// Get the IP the request was sent from
-      std::string getPeerIp() const   { return _socketIf ? _socketIf->getPeerIp()   : std::string(); }
+    /// Set query parameters (GET and POST)
+    void setQueryParams(const tnt::QueryParams& q) { _qparam = q; }
 
-      cxxtools::SslCertificate getSslCertificate() const
-      {
+    /// Get the IP the request was sent from
+    std::string getPeerIp() const   { return _socketIf ? _socketIf->getPeerIp()   : std::string(); }
+
+    cxxtools::SslCertificate getSslCertificate() const
+    {
         cxxtools::SslCertificate ret;
         if (_socketIf)
-          ret = _socketIf->getSslCertificate();
+            ret = _socketIf->getSslCertificate();
         return ret;
-      }
+    }
 
-      /// Get the IP the request was sent to
-      std::string getServerIp() const { return _socketIf ? _socketIf->getServerIp() : std::string(); }
+    /// Get the IP the request was sent to
+    std::string getServerIp() const { return _socketIf ? _socketIf->getServerIp() : std::string(); }
 
-      /// Check whether the request was sent over an SSL (https) connection
-      bool isSsl() const              { return _socketIf && _socketIf->isSsl(); }
+    /// Check whether the request was sent over an SSL (https) connection
+    bool isSsl() const              { return _socketIf && _socketIf->isSsl(); }
 
-      const Contenttype& getContentType() const
-        { return _ct.getType().empty() && hasHeader(httpheader::contentType) ? getContentTypePriv() : _ct; }
-      bool isMultipart() const              { return getContentType().isMultipart(); }
-      const Multipart& getMultipart() const { return _mp; }
+    const Contenttype& getContentType() const
+      { return _ct.getType().empty() && hasHeader(httpheader::contentType) ? getContentTypePriv() : _ct; }
+    bool isMultipart() const              { return getContentType().isMultipart(); }
+    const Multipart& getMultipart() const { return _mp; }
 
-      unsigned getSerial() const  { return _serial; }
+    unsigned getSerial() const  { return _serial; }
 
-      const Cookies& getCookies() const;
+    const Cookies& getCookies() const;
 
-      bool hasCookie(const std::string& name) const
-        { return getCookies().hasCookie(name); }
-      bool hasCookies() const
-        { return getCookies().hasCookies(); }
-      Cookie getCookie(const std::string& name) const
-        { return getCookies().getCookie(name); }
+    bool hasCookie(const std::string& name) const
+      { return getCookies().hasCookie(name); }
+    bool hasCookies() const
+      { return getCookies().hasCookies(); }
+    Cookie getCookie(const std::string& name) const
+      { return getCookies().getCookie(name); }
 
-      const Encoding& getEncoding() const;
+    const Encoding& getEncoding() const;
 
-      /// Get the user agent (webbrowser) HTTP header
-      const char* getUserAgent() const
-        { return getHeader(httpheader::userAgent); }
+    /// Get the user agent (webbrowser) HTTP header
+    const char* getUserAgent() const
+      { return getHeader(httpheader::userAgent); }
 
-      /// Get the host (operating system) HTTP header
-      const char* getHost() const
-        { return getHeader(httpheader::host); }
+    /// Get the host (operating system) HTTP header
+    const char* getHost() const
+      { return getHeader(httpheader::host); }
 
-			/// Get the HTTP-Auth username
-      const std::string& getUsername() const;
+          /// Get the HTTP-Auth username
+    const std::string& getUsername() const;
 
-      /// Get the HTTP-Auth password
-      const std::string& getPassword() const;
+    /// Get the HTTP-Auth password
+    const std::string& getPassword() const;
 
-      /// Check equality of the HTTP-Auth password and the parameter
-      bool verifyPassword(const std::string& password) const;
+    /// Check equality of the HTTP-Auth password and the parameter
+    bool verifyPassword(const std::string& password) const;
 
-      bool keepAlive() const;
+    bool keepAlive() const;
 
-      /// Check whether the client accepts gzip compression
-      bool acceptGzipEncoding() const { return getEncoding().accept("gzip"); }
+    /// Check whether the client accepts gzip compression
+    bool acceptGzipEncoding() const { return getEncoding().accept("gzip"); }
 
-      void setApplicationScope(Scope* s);
-      void setApplicationScope(Scope& s) { setApplicationScope(&s); }
+    void setApplicationScope(std::shared_ptr<Scope> s)
+        { _applicationScope = s; }
+    void setSessionScope(std::shared_ptr<Sessionscope> s)
+        { _sessionScope = s; }
+    void setSecureSessionScope(std::shared_ptr<Sessionscope> s)
+        { _secureSessionScope = s; }
 
-      void setSessionScope(Sessionscope* s);
-      void setSessionScope(Sessionscope& s) { setSessionScope(&s); }
-      void setSecureSessionScope(Sessionscope* s);
-      void setSecureSessionScope(Sessionscope& s) { setSecureSessionScope(&s); }
+    void setThreadContext(ThreadContext* ctx) { _threadContext = ctx; }
 
-      void setThreadContext(ThreadContext* ctx) { _threadContext = ctx; }
+    Scope& getRequestScope();
+    Scope& getApplicationScope();
+    Scope& getThreadScope();
+    std::shared_ptr<Sessionscope> getSessionScopePtr();
+    std::shared_ptr<Sessionscope> getSecureSessionScopePtr();
+    Sessionscope& getSessionScope()         { return *getSessionScopePtr(); }
+    Sessionscope& getSecureSessionScope()   { return *getSecureSessionScopePtr(); }
+    bool hasSessionScope() const;
+    bool hasSecureSessionScope() const;
 
-      Scope& getRequestScope();
-      Scope& getApplicationScope();
-      Scope& getThreadScope();
-      Sessionscope& getSessionScope();
-      Sessionscope& getSecureSessionScope();
-      bool hasSessionScope() const;
-      bool hasSecureSessionScope() const;
+    /// Get the value of the content-size HTTP header
+    size_t getContentSize() const
+      { return _contentSize; }
 
-      /// Get the value of the content-size HTTP header
-      size_t getContentSize() const
-        { return _contentSize; }
+    /// Get the virtual-host HTTP header
+    std::string getVirtualHost() const
+      { return getHeader(httpheader::host); }
 
-      /// Get the virtual-host HTTP header
-      std::string getVirtualHost() const
-        { return getHeader(httpheader::host); }
+    Tntnet& getApplication()
+      { return _application; }
 
-      Tntnet& getApplication()
-        { return _application; }
+    /// Rewind watchdog timer
+    void touch() { _threadContext->touch(); }
 
-      /// Rewind watchdog timer
-      void touch() { _threadContext->touch(); }
+    static void postRunCleanup();
+};
 
-      static void postRunCleanup();
-  };
-
-  inline std::istream& operator>> (std::istream& in, HttpRequest& msg)
-    { msg.parse(in); return in; }
+inline std::istream& operator>> (std::istream& in, HttpRequest& msg)
+  { msg.parse(in); return in; }
 }
 
 #endif // TNT_HTTPREQUEST_H

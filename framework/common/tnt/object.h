@@ -31,52 +31,35 @@
 #define TNT_OBJECT_H
 
 #include <cxxtools/refcounted.h>
-#include <cxxtools/smartptr.h>
+#include <memory>
 
 namespace tnt
 {
-  class Object : public cxxtools::RefCounted
-  {
-    public:
-      virtual ~Object() { }
+class Object
+{
+public:
+    virtual ~Object() { }
 
-      typedef cxxtools::SmartPtr<Object> pointer_type;
+    template <typename T>
+    T* cast();
+};
 
-      template <typename data_type>
-      data_type* cast();
-  };
+template <typename T>
+class ObjectT : public Object
+{
+    T _obj;
 
-  template <typename data_type, template <class> class destroyPolicy = cxxtools::DeletePolicy>
-  class PointerObject : public Object, public destroyPolicy<data_type>
-  {
-      data_type* _ptr;
-
-    public:
-      explicit PointerObject(data_type* ptr = 0)
-        : _ptr(ptr)
+public:
+    template <class... Args> explicit ObjectT(Args&&... args)
+        : _obj(args...)
         { }
-      ~PointerObject()
-        { destroyPolicy<data_type>::destroy(_ptr); }
-      void set(data_type* ptr)
-        { destroyPolicy<data_type>::destroy(_ptr); _ptr = ptr; }
-      data_type* get() { return _ptr; }
-  };
+    T* get()    { return &_obj; }
+};
 
-  template <typename data_type>
-  Object::pointer_type createPointerObject(const data_type& d)
-  {
-    // assign the PointerObject to a smart pointer prior calling the ctor of
-    // the created object to prevent memory leaky in case the ctor throws an
-    // exception
-    PointerObject<data_type>* _ptr = new PointerObject<data_type>();
-    Object::pointer_type ret = _ptr;
-    _ptr->set(new data_type(d));
-    return ret;
-  }
+template <typename T>
+T* Object::cast()
+    { return static_cast<ObjectT<T>*>(this)->get(); }
 
-  template <typename data_type>
-  data_type* Object::cast()
-    { return static_cast<PointerObject<data_type>*>(this)->get(); }
 }
 
 #endif // TNT_OBJECT_H

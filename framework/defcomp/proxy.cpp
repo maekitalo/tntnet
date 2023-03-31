@@ -47,55 +47,55 @@ log_define("tntnet.proxy")
 
 namespace tnt
 {
-  class Urlmapper;
-  class Comploader;
+class Urlmapper;
+class Comploader;
 
-  ////////////////////////////////////////////////////////////////////////
-  // component declaration
-  //
-  class Proxy : public tnt::EcppComponent
-  {
+////////////////////////////////////////////////////////////////////////
+// component declaration
+//
+class Proxy : public tnt::EcppComponent
+{
     friend class ProxyFactory;
 
-    public:
-      Proxy(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)
-        : EcppComponent(ci, um, cl)
-        { }
+public:
+    Proxy(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)
+      : EcppComponent(ci, um, cl)
+      { }
 
-      virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
-  };
+    virtual unsigned operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam);
+};
 
-  ////////////////////////////////////////////////////////////////////////
-  // factory
-  //
-  class ProxyFactory : public tnt::ComponentFactory
-  {
-    public:
-      ProxyFactory(const std::string& componentName)
-        : tnt::ComponentFactory(componentName)
-        { }
+////////////////////////////////////////////////////////////////////////
+// factory
+//
+class ProxyFactory : public tnt::ComponentFactory
+{
+public:
+    ProxyFactory(const std::string& componentName)
+      : tnt::ComponentFactory(componentName)
+      { }
 
-      virtual tnt::Component* doCreate(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);
-  };
+    virtual tnt::Component* doCreate(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl);
+};
 
-  tnt::Component* ProxyFactory::doCreate(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)
-    { return new Proxy(ci, um, cl); }
+tnt::Component* ProxyFactory::doCreate(const tnt::Compident& ci, const tnt::Urlmapper& um, tnt::Comploader& cl)
+  { return new Proxy(ci, um, cl); }
 
-  static ProxyFactory proxyFactory("proxy");
+static ProxyFactory proxyFactory("proxy");
 
-  ////////////////////////////////////////////////////////////////////////
-  // component definition
-  //
-  unsigned Proxy::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
-  {
+////////////////////////////////////////////////////////////////////////
+// component definition
+//
+unsigned Proxy::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tnt::QueryParams& qparam)
+{
     std::string uriStr = request.getArg("uri");
     if (uriStr.empty())
         uriStr = request.getArg(0);  // for compatibility
 
     if (uriStr.empty())
     {
-      log_error("proxy uri missing in configuration");
-      throw std::runtime_error("proxy uri missing in configuration");
+        log_error("proxy uri missing in configuration");
+        throw std::runtime_error("proxy uri missing in configuration");
     }
 
     TNT_THREAD_COMPONENT_VAR(std::string, currentProxyHost, ());
@@ -111,28 +111,28 @@ namespace tnt
     if (urlEndsWithSlash
       && pathInfoStartsWithSlash)
     {
-      // Avoid double slash, if getPathInfo starts with '/' (which is normally the case).
-      url.erase (url.size()-1, 1);
+        // Avoid double slash, if getPathInfo starts with '/' (which is normally the case).
+        url.erase (url.size()-1, 1);
     }
     else if (!urlEndsWithSlash
       && !pathInfoStartsWithSlash)
     {
-      url += '/';
+        url += '/';
     }
 
     url += request.getPathInfo();
     if (!request.getQueryString().empty())
     {
-      url += '?';
-      url += request.getQueryString();
+        url += '?';
+        url += request.getQueryString();
     }
 
     if (currentProxyHost != uri.host() || currentProxyPort != uri.port())
     {
-      log_debug("connect to " << uri.host() << ':' << uri.port());
-      client.connect(uri.host(), uri.port());
-      currentProxyHost = uri.host();
-      currentProxyPort = uri.port();
+        log_debug("connect to " << uri.host() << ':' << uri.port());
+        client.connect(uri.host(), uri.port());
+        currentProxyHost = uri.host();
+        currentProxyPort = uri.port();
     }
     else
       log_debug("already connected to " << uri.host() << ':' << uri.port());
@@ -175,13 +175,13 @@ namespace tnt
     cxxtools::split(',', request.getArg("forwardHeaders"), std::back_inserter(forwardHeaders));
     for (unsigned n = 0; n < forwardHeaders.size(); ++n)
     {
-      log_debug("forward header \"" << forwardHeaders[n] << '"');
-      value = request.getHeader((forwardHeaders[n] + ':').c_str(), 0);
-      if (value)
-      {
-        log_debug("value \"" << value << '"');
-        clientRequest.header().setHeader(forwardHeaders[n].c_str(), value);
-      }
+        log_debug("forward header \"" << forwardHeaders[n] << '"');
+        value = request.getHeader((forwardHeaders[n] + ':').c_str(), 0);
+        if (value)
+        {
+            log_debug("value \"" << value << '"');
+            clientRequest.header().setHeader(forwardHeaders[n].c_str(), value);
+        }
     }
 
     // execute client request
@@ -196,11 +196,11 @@ namespace tnt
     for (cxxtools::http::MessageHeader::const_iterator it = client.header().begin();
         it != client.header().end(); ++it)
     {
-      if (strcasecmp(it->first, "Set-Cookie") == 0)
-      {
-        log_info("cookie: " << it->first << " value: " << it->second);
-        reply.setHeader(tnt::httpheader::setCookie, it->second, false);
-      }
+        if (strcasecmp(it->first, "Set-Cookie") == 0)
+        {
+            log_info("cookie: " << it->first << " value: " << it->second);
+            reply.setHeader(tnt::httpheader::setCookie, it->second, false);
+        }
     }
 
     value = client.header().getHeader ("p3p");
@@ -242,6 +242,6 @@ namespace tnt
     reply.out() << body;
 
     return httpReturnCode;
-  }
+}
 }
 

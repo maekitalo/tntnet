@@ -40,124 +40,61 @@ log_define("tntnet.scopemanager")
 
 namespace tnt
 {
-  namespace
-  {
+namespace
+{
     static std::string createSessionId(const tnt::HttpRequest& request)
     {
-      cxxtools::Md5stream c;
-      c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
-      return c.getHexDigest();
+        cxxtools::Md5stream c;
+        c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
+        return c.getHexDigest();
     }
-  }
+}
 
-  ScopeManager::ScopeManager()
-  {
-  }
+std::shared_ptr<Scope> ScopeManager::getApplicationScope(const std::string& appname)
+{
+    std::unique_lock<std::mutex> lock(_applicationScopesMutex);
 
-  ScopeManager::~ScopeManager()
-  {
-    for (sessionscopes_type::iterator it = _sessionScopes.begin(); it != _sessionScopes.end(); ++it)
-    {
-      if (it->second->release() == 0)
-        delete it->second;
-    }
-
-    for (scopes_type::iterator it = _applicationScopes.begin(); it != _applicationScopes.end(); ++it)
-    {
-      if (it->second->release() == 0)
-        delete it->second;
-    }
-  }
-
-  Scope* ScopeManager::getApplicationScope(const std::string& appname)
-  {
-    cxxtools::MutexLock lock(_applicationScopesMutex);
-
-    scopes_type::iterator it = _applicationScopes.find(appname);
+    auto it = _applicationScopes.find(appname);
     if (it == _applicationScopes.end())
     {
-      log_debug("applicationscope <" + appname + "> not found - create new");
-      Scope* s = new Scope();
-      it = _applicationScopes.insert(scopes_type::value_type(appname, s)).first;
-      return s;
+        log_debug("applicationscope <" + appname + "> not found - create new");
+        return _applicationScopes.emplace(appname, std::make_shared<Scope>()).first->second;
     }
     else
       log_debug("applicationscope <" + appname + "> found");
 
     return it->second;
-  }
+}
 
-  Sessionscope* ScopeManager::getSessionScope(const std::string& sessioncookie)
-  {
+std::shared_ptr<Sessionscope> ScopeManager::getSessionScope(const std::string& sessioncookie, bool create)
+{
     log_debug("getSessionScope(\"" << sessioncookie << "\")");
 
-    cxxtools::MutexLock lock(_sessionScopesMutex);
-    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
+    std::unique_lock<std::mutex> lock(_sessionScopesMutex);
+    auto it = _sessionScopes.find(sessioncookie);
     if (it == _sessionScopes.end())
     {
-      log_debug("session " << sessioncookie << " not found");
-      return 0;
+        if (create)
+        {
+            log_debug("session " << sessioncookie << " not found - create new");
+            return _sessionScopes.emplace(sessioncookie, std::make_shared<Sessionscope>()).first->second;
+        }
+        else
+        {
+            log_debug("session " << sessioncookie << " not found");
+            return nullptr;
+        }
     }
     else
     {
-      log_debug("session " << sessioncookie << " found");
-      it->second->touch();
-      return it->second;
+        log_debug("session " << sessioncookie << " found");
+        it->second->touch();
+        return it->second;
     }
-  }
+}
 
-  bool ScopeManager::hasSessionScope(const std::string& sessioncookie)
-  {
-    cxxtools::MutexLock lock(_sessionScopesMutex);
-    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
-    return it != _sessionScopes.end();
-  }
-
-  void ScopeManager::putSessionScope(const std::string& sessioncookie, Sessionscope* s)
-  {
-    s->addRef();
-
-    cxxtools::MutexLock lock(_sessionScopesMutex);
-    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
-    if (it != _sessionScopes.end())
-    {
-      if (it->second->release() == 0)
-        delete it->second;
-      it->second = s;
-    }
-    else
-      _sessionScopes[sessioncookie] = s;
-  }
-
-
-  void ScopeManager::removeApplicationScope(const std::string& appname)
-  {
-    log_debug("remove application scope <" << appname << '>');
-
-    cxxtools::MutexLock lock(_applicationScopesMutex);
-    scopes_type::iterator it = _applicationScopes.find(appname);
-    if (it != _applicationScopes.end())
-    {
-      if (it->second->release() == 0)
-        delete it->second;
-      _applicationScopes.erase(it);
-    }
-  }
-
-  void ScopeManager::removeSessionScope(const std::string& sessioncookie)
-  {
-    cxxtools::MutexLock lock(_sessionScopesMutex);
-    sessionscopes_type::iterator it = _sessionScopes.find(sessioncookie);
-    if (it != _sessionScopes.end())
-    {
-      if (it->second->release() == 0)
-        delete it->second;
-      _sessionScopes.erase(it);
-    }
-  }
-
-  void ScopeManager::preCall(HttpRequest& request, const std::string& app)
-  {
+void ScopeManager::preCall(HttpRequest& request, const std::string& app)
+{
     // check session-cookie
     std::string currentSessionCookieName = app.empty() ? std::string("tntnet") : "tntnet." + app;
     std::string currentSecureSessionCookieName = app.empty() ? std::string("stntnet") : "stntnet." + app;
@@ -165,103 +102,66 @@ namespace tnt
     Cookie c = request.getCookie(currentSessionCookieName);
     if (c.getValue().empty())
     {
-      /*
-      cxxtools::MutexLock lock(sessionScopesMutex);
-      log_debug(sessionScopes.size() << " sessions available");
-      for (sessionscopes_type::iterator it = sessionScopes.begin(); it != sessionScopes.end(); ++it)
-        log_debug("available session " << it->first << " value " << it->second);
-        */
+        /*
+        std::unique_lock<std::mutex> lock(sessionScopesMutex);
+        log_debug(sessionScopes.size() << " sessions available");
+        for (sessionscopes_type::iterator it = sessionScopes.begin(); it != sessionScopes.end(); ++it)
+          log_debug("available session " << it->first << " value " << it->second);
+          */
 
-      log_debug("session cookie " << currentSessionCookieName << " not found - keep session");
+        log_debug("session cookie " << currentSessionCookieName << " not found - keep session");
     }
     else
     {
-      log_debug("session cookie " << currentSessionCookieName << " found: " << c.getValue());
-
-      cxxtools::MutexLock lock(_sessionScopesMutex);
-
-      Sessionscope* sessionScope;
-
-      sessionscopes_type::iterator it = _sessionScopes.find(c.getValue());
-      if (it == _sessionScopes.end())
-      {
-        log_debug("session not found - create new");
-        sessionScope = new Sessionscope();
-        _sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
-      }
-      else
-      {
-        log_debug("session found");
-        sessionScope = it->second;
-        sessionScope->touch();
-      }
-
-      request.setSessionScope(sessionScope);
+        log_debug("session cookie " << currentSessionCookieName << " found: " << c.getValue());
+        request.setSessionScope(getSessionScope(c.getValue(), true));
     }
 
     if (request.isSsl())
     {
-      c = request.getCookie(currentSecureSessionCookieName);
-      if (c.getValue().empty())
-      {
-        log_debug("secure session cookie " << currentSecureSessionCookieName
-            << " not found - keep session");
-      }
-      else if (request.isSsl())
-      {
-        log_debug("secure session cookie " << currentSecureSessionCookieName
-            << " found: " << c.getValue());
-
-        cxxtools::MutexLock lock(_sessionScopesMutex);
-
-        Sessionscope* sessionScope;
-
-        sessionscopes_type::iterator it = _sessionScopes.find(c.getValue());
-        if (it == _sessionScopes.end())
+        c = request.getCookie(currentSecureSessionCookieName);
+        if (c.getValue().empty())
         {
-          log_debug("session not found - create new");
-          sessionScope = new Sessionscope();
-          _sessionScopes.insert(sessionscopes_type::value_type(c.getValue(), sessionScope));
+            log_debug("secure session cookie " << currentSecureSessionCookieName
+                << " not found - keep session");
         }
-        else
+        else if (request.isSsl())
         {
-          log_debug("session found");
-          sessionScope = it->second;
-          sessionScope->touch();
-        }
+            log_debug("secure session cookie " << currentSecureSessionCookieName
+                << " found: " << c.getValue());
 
-        request.setSecureSessionScope(sessionScope);
-      }
+            request.setSecureSessionScope(getSessionScope(c.getValue(), true));
+        }
     }
     else
     {
-      log_debug("secure session cookie " << currentSessionCookieName
-          << " not checked in non ssl request");
+        log_debug("secure session cookie " << currentSessionCookieName
+            << " not checked in non ssl request");
     }
 
     // set application-scope
     request.setApplicationScope(getApplicationScope(app));
-  }
+}
 
-  void ScopeManager::setSessionId(HttpRequest& request, const std::string& sessionId)
-  {
+void ScopeManager::setSessionId(HttpRequest& request, const std::string& sessionId)
+{
     if (sessionId.empty())
     {
-      request.setSessionScope(0);
+        request.setSessionScope(0);
     }
     else
     {
-      Sessionscope* sessionScope = getSessionScope(sessionId);
-      if (sessionScope != 0)
-      {
-        log_debug("session found");
-        request.setSessionScope(sessionScope);
-      }
+        auto sessionScope = getSessionScope(sessionId, false);
+        if (sessionScope)
+        {
+            log_debug("session found");
+            request.setSessionScope(sessionScope);
+        }
     }
-  }
+}
 
-  std::string ScopeManager::postCall(HttpRequest& request, HttpReply& reply, const std::string& app)
-  {
+std::string ScopeManager::postCall(HttpRequest& request, HttpReply& reply, const std::string& app)
+{
     std::string currentSessionCookieName = app.empty() ? std::string("tntnet") : "tntnet." + app;
     std::string currentSecureSessionCookieName = app.empty() ? std::string("stntnet") : "stntnet." + app;
 
@@ -269,101 +169,115 @@ namespace tnt
 
     if (reply.isClearSession())
     {
-      sessionId = request.getCookie(currentSessionCookieName);
-      if (!sessionId.empty())
-        removeSessionScope(sessionId);
+        std::unique_lock<std::mutex> lock(_sessionScopesMutex);
 
-      std::string secureSessionId = request.getCookie(currentSecureSessionCookieName);
-      if (!secureSessionId.empty())
-        removeSessionScope(secureSessionId);
+        sessionId = request.getCookie(currentSessionCookieName);
+        if (!sessionId.empty())
+            _sessionScopes.erase(sessionId);
+
+        std::string secureSessionId = request.getCookie(currentSecureSessionCookieName);
+        if (!secureSessionId.empty())
+            _sessionScopes.erase(secureSessionId);
     }
     else
     {
-      if (request.hasSessionScope())
-      {
-        // request has session scope
-        sessionId = request.getCookie(currentSessionCookieName);
-        if (sessionId.empty() || reply.isRenewSessionId())
+        if (request.hasSessionScope())
         {
-          // client has no sessionId or application requests new id
+            // request has session scope
+            sessionId = request.getCookie(currentSessionCookieName);
+            if (sessionId.empty() || reply.isRenewSessionId())
+            {
+                // client has no sessionId or application requests new id
 
-          std::string newSessionId = createSessionId(request);
-          log_info("create new session " << newSessionId);
-          tnt::Cookie cookie(newSessionId);
-          cookie.setAttr(tnt::Cookie::sameSite, "strict")
-                .setAttr(tnt::Cookie::httpOnly);
-          reply.setCookie(currentSessionCookieName, cookie);
-          putSessionScope(newSessionId, &request.getSessionScope());
-          if (reply.isRenewSessionId())
-            removeSessionScope(sessionId);
+                std::string newSessionId = createSessionId(request);
+                log_info("create new session " << newSessionId);
+                tnt::Cookie cookie(newSessionId);
+                cookie.setAttr(tnt::Cookie::sameSite, "strict")
+                      .setAttr(tnt::Cookie::httpOnly);
+                reply.setCookie(currentSessionCookieName, cookie);
 
-          sessionId = newSessionId;
+                std::unique_lock<std::mutex> lock(_sessionScopesMutex);
+                _sessionScopes.emplace(newSessionId, request.getSessionScopePtr());
+
+                if (reply.isRenewSessionId())
+                    _sessionScopes.erase(sessionId);
+
+                sessionId = newSessionId;
+            }
+            else
+            {
+                std::unique_lock<std::mutex> lock(_sessionScopesMutex);
+                if (_sessionScopes.count(sessionId) == 0)
+                {
+                    // client has a sessionId but no associated session
+                    // this may happen, when tntnet is restarted while the browser has a session
+
+                    _sessionScopes.emplace(sessionId, request.getSessionScopePtr());
+                }
+            }
         }
-        else if (!hasSessionScope(sessionId))
+
+        if (request.isSsl() && request.hasSecureSessionScope())
         {
-          // client has a sessionId but no associated session
-          // this may happen, when tntnet is restarted while the browser has a session
+            // request has secure session scope
+            std::string sessionId = request.getCookie(currentSecureSessionCookieName);
+            if (sessionId.empty() || reply.isRenewSessionId())
+            {
+                // client has no sessionId
 
-          putSessionScope(sessionId, &request.getSessionScope());
+                auto newSessionId = createSessionId(request);
+                log_info("create new secure session " << newSessionId);
+                tnt::Cookie cookie(newSessionId);
+                cookie.setSecure()
+                      .setAttr(tnt::Cookie::sameSite, "strict")
+                      .setAttr(tnt::Cookie::httpOnly);
+                reply.setCookie(currentSecureSessionCookieName, cookie);
+
+                std::unique_lock<std::mutex> lock(_sessionScopesMutex);
+
+                _sessionScopes.emplace(newSessionId, request.getSessionScopePtr());
+                if (reply.isRenewSessionId())
+                    _sessionScopes.erase(sessionId);
+            }
+            else
+            {
+                std::unique_lock<std::mutex> lock(_sessionScopesMutex);
+                if (_sessionScopes.count(sessionId) == 0)
+                {
+                    // client has a sessionId but no associated session
+                    // this may happen, when tntnet is restarted while the browser has a session
+
+                    _sessionScopes.emplace(sessionId, request.getSecureSessionScopePtr());
+                }
+            }
         }
-      }
-
-      if (request.isSsl() && request.hasSecureSessionScope())
-      {
-        // request has secure session scope
-        std::string sessionId = request.getCookie(currentSecureSessionCookieName);
-        if (sessionId.empty() || reply.isRenewSessionId())
-        {
-          // client has no sessionId
-
-          sessionId = createSessionId(request);
-          log_info("create new secure session " << sessionId);
-          tnt::Cookie cookie(sessionId);
-          cookie.setSecure()
-                .setAttr(tnt::Cookie::sameSite, "strict")
-                .setAttr(tnt::Cookie::httpOnly);
-          reply.setCookie(currentSecureSessionCookieName, cookie);
-          putSessionScope(sessionId, &request.getSecureSessionScope());
-          if (reply.isRenewSessionId())
-            removeSessionScope(sessionId);
-        }
-        else if (!hasSessionScope(sessionId))
-        {
-          // client has a sessionId but no associated session
-          // this may happen, when tntnet is restarted while the browser has a session
-
-          putSessionScope(sessionId, &request.getSecureSessionScope());
-        }
-      }
     }
 
     return sessionId;
-  }
+}
 
-  void ScopeManager::checkSessionTimeout()
-  {
+void ScopeManager::checkSessionTimeout()
+{
     time_t currentTime;
     time(&currentTime);
-    cxxtools::MutexLock lock(_sessionScopesMutex);
-    sessionscopes_type::iterator it = _sessionScopes.begin();
+    std::unique_lock<std::mutex> lock(_sessionScopesMutex);
+    auto it = _sessionScopes.begin();
     unsigned count = 0;
     while (it != _sessionScopes.end())
     {
-      Sessionscope* s = it->second;
-      if (cxxtools::Seconds(currentTime - s->getAtime()) > s->getTimeout())
-      {
-        log_info("sessiontimeout for session " << it->first << " reached");
-        sessionscopes_type::iterator it2 = it;
-        ++it;
-        if (s->release() == 0)
-          delete s;
-        _sessionScopes.erase(it2);
-        ++count;
-      }
-      else
-        ++it;
+        auto s = it->second;
+        if (cxxtools::Seconds(currentTime - s->getAtime()) > s->getTimeout())
+        {
+            log_info("sessiontimeout for session " << it->first << " reached");
+            auto it2 = it;
+            ++it;
+            _sessionScopes.erase(it2);
+            ++count;
+        }
+        else
+          ++it;
     }
 
-  }
+}
 }
 

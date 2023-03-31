@@ -36,137 +36,137 @@
 
 namespace tnt
 {
-  class Savepoint;
-  class Encoding;
+class Savepoint;
+class Encoding;
 
-  /// HTTP reply message
-  class HttpReply : public HttpMessage
-  {
-    private:
-      struct Impl;
-      Impl* _impl;
-      std::ostream* _currentOutstream;
-      std::ostream* _safeOutstream;
-      std::ostream* _urlOutstream;
+/// HTTP reply message
+class HttpReply : public HttpMessage
+{
+private:
+    struct Impl;
+    Impl* _impl;
+    std::ostream* _currentOutstream;
+    std::ostream* _safeOutstream;
+    std::ostream* _urlOutstream;
 
-      void sendHttpStatus(std::ostream& hsocket, unsigned ret, const char* msg) const;
-      void sendHttpHeaders(std::ostream& hsocket) const;
-      void send(unsigned ret, const char* msg, bool ready) const;
+    void sendHttpStatus(std::ostream& hsocket, unsigned ret, const char* msg) const;
+    void sendHttpHeaders(std::ostream& hsocket) const;
+    void send(unsigned ret, const char* msg, bool ready) const;
 
-    public:
-      explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
-      ~HttpReply();
+public:
+    explicit HttpReply(std::ostream& s, bool sendStatusLine = true);
+    ~HttpReply();
 
-      static bool tryCompress(std::string& body);
-      static void postRunCleanup();
+    static bool tryCompress(std::string& body);
+    static void postRunCleanup();
 
-      void setContentType(const char* t)        { setHeader(httpheader::contentType, t); }
-      void setContentType(const std::string& t) { setHeader(httpheader::contentType, t); }
-      const char* getContentType() const        { return getHeader(httpheader::contentType); }
+    void setContentType(const char* t)        { setHeader(httpheader::contentType, t); }
+    void setContentType(const std::string& t) { setHeader(httpheader::contentType, t); }
+    const char* getContentType() const        { return getHeader(httpheader::contentType); }
 
-      void setHeadRequest(bool sw = true);
+    void setHeadRequest(bool sw = true);
 
-      /// Configure the session to be cleared after the current request
-      void clearSession();
-      void renewSessionId();
+    /// Configure the session to be cleared after the current request
+    void clearSession();
+    void renewSessionId();
 
-      /// Check if the session is configured to be cleared after the current request
-      bool isClearSession() const;
-      bool isRenewSessionId() const;
+    /// Check if the session is configured to be cleared after the current request
+    bool isClearSession() const;
+    bool isRenewSessionId() const;
 
-      enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_TEMPORARY_REDIRECT };
-      /// @{
-      /** Redirect the user to another URL
+    enum Redirect { permanently = HTTP_MOVED_PERMANENTLY, temporarily = HTTP_TEMPORARY_REDIRECT };
+    /// @{
+    /** Redirect the user to another URL
 
-          This function never returns as it throws an exception to actually send the redirect header.
-       */
-      unsigned redirect(const std::string& newLocation, Redirect type = temporarily);
-      unsigned redirectTemporary(const std::string& newLocation)
-        { return redirect(newLocation, temporarily); }
-      unsigned redirectPermantently(const std::string& newLocation)
-        { return redirect(newLocation, permanently); }
-      /// @}
+        This function never returns as it throws an exception to actually send the redirect header.
+     */
+    unsigned redirect(const std::string& newLocation, Redirect type = temporarily);
+    unsigned redirectTemporary(const std::string& newLocation)
+      { return redirect(newLocation, temporarily); }
+    unsigned redirectPermantently(const std::string& newLocation)
+      { return redirect(newLocation, permanently); }
+    /// @}
 
-      /** Request authorization from the client
+    /** Request authorization from the client
 
-          This will result in a dialog being shown in the user's web browser.
-       */
-      unsigned notAuthorized(const std::string& realm);
+        This will result in a dialog being shown in the user's web browser.
+     */
+    unsigned notAuthorized(const std::string& realm);
 
-      bool sendReply(unsigned ret, const char* msg = "OK");
-      bool sendReply(unsigned ret, const std::string& msg)
-        { return sendReply(ret, msg.c_str()); }
+    bool sendReply(unsigned ret, const char* msg = "OK");
+    bool sendReply(unsigned ret, const std::string& msg)
+      { return sendReply(ret, msg.c_str()); }
 
-      /// Get output stream
-      std::ostream& out()    { return *_currentOutstream; }
+    /// Get output stream
+    std::ostream& out()    { return *_currentOutstream; }
 
-      /// Get safe output stream (unsafe html characters written into this stream are escaped)
-      std::ostream& sout()   { return *_safeOutstream; }
+    /// Get safe output stream (unsafe html characters written into this stream are escaped)
+    std::ostream& sout()   { return *_safeOutstream; }
 
-      /// Get url output stream (everything written into this stream is url-encoded)
-      std::ostream& uout()   { return *_urlOutstream; }
+    /// Get url output stream (everything written into this stream is url-encoded)
+    std::ostream& uout()   { return *_urlOutstream; }
 
-      void resetContent();
-      void rollbackContent(unsigned size);
+    void resetContent();
+    void rollbackContent(unsigned size);
 
-      void setContentLengthHeader(size_t size);
-      void setKeepAliveHeader();
-      void setMaxAgeHeader(unsigned seconds);
+    void setContentLengthHeader(size_t size);
+    void setKeepAliveHeader();
+    void setMaxAgeHeader(unsigned seconds);
 
-      virtual void setDirectMode(unsigned ret = HTTP_OK, const char* msg = "OK");
-      virtual void setDirectModeNoFlush();
-      virtual bool isDirectMode() const;
-      std::string::size_type getContentSize() const;
-      unsigned chunkedBytesWritten() const;
-      std::ostream& getDirectStream();
+    virtual void setDirectMode(unsigned ret = HTTP_OK, const char* msg = "OK");
+    virtual void setDirectModeNoFlush();
+    virtual bool isDirectMode() const;
+    std::string::size_type getContentSize() const;
+    unsigned chunkedBytesWritten() const;
+    std::ostream& getDirectStream();
 
-      /** Enable chunked encoding for the current request
+    /** Enable chunked encoding for the current request
 
-          When enabling chunked encoding, the content is sent immediately in
-          chunks instead of collecting content into a string before sending.
-          After enabling chunked encoding, it must be ensured that no exceptions
-          are thrown. Also, headers are sent immediately after enabling chunked
-          encoding and hence setting headers must happen before calling this method.
+        When enabling chunked encoding, the content is sent immediately in
+        chunks instead of collecting content into a string before sending.
+        After enabling chunked encoding, it must be ensured that no exceptions
+        are thrown. Also, headers are sent immediately after enabling chunked
+        encoding and hence setting headers must happen before calling this method.
 
-          Furthermore, session cookies cannot be sent with chunked encoding enabled,
-          hence when a new session is created, chunked encoding must not be used.
-          Sessions are created automatically when a session variable is used and
-          no session cookie was received.
-      */
-      void setChunkedEncoding(unsigned ret = HTTP_OK, const char* msg = 0);
+        Furthermore, session cookies cannot be sent with chunked encoding enabled,
+        hence when a new session is created, chunked encoding must not be used.
+        Sessions are created automatically when a session variable is used and
+        no session cookie was received.
+    */
+    void setChunkedEncoding(unsigned ret = HTTP_OK, const char* msg = 0);
 
-      /// Check whether chunked encoding is enabled
-      bool isChunkedEncoding() const;
+    /// Check whether chunked encoding is enabled
+    bool isChunkedEncoding() const;
 
-      // TODO: Documentation revision
-      /** Sets the content-md5 header.
+    // TODO: Documentation revision
+    /** Sets the content-md5 header.
 
-          The current content is used to calculate the md5 header. Hence no
-          output must be created after calling that method. Normally there is
-          no good reason to call that method at all.
-      */
-      void setMd5Sum();
+        The current content is used to calculate the md5 header. Hence no
+        output must be created after calling that method. Normally there is
+        no good reason to call that method at all.
+    */
+    void setMd5Sum();
 
-      void setCookie(const std::string& name, const Cookie& value);
-      void setCookie(const std::string& name, const std::string& value, unsigned seconds)
-        { setCookie(name, Cookie(value, seconds)); }
-      void setCookies(const Cookies& c)
-        { httpcookies = c; }
-      void clearCookie(const std::string& name);
-      void clearCookie(const std::string& name, const Cookie& c)
-        { httpcookies.clearCookie(name, c); }
-      bool hasCookies() const
-        { return httpcookies.hasCookies(); }
-      const Cookies& getCookies() const
-        { return httpcookies; }
+    void setCookie(const std::string& name, const Cookie& value);
+    void setCookie(const std::string& name, const std::string& value, unsigned seconds)
+      { setCookie(name, Cookie(value, seconds)); }
+    void setCookies(const Cookies& c)
+      { httpcookies = c; }
+    void clearCookie(const std::string& name);
+    void clearCookie(const std::string& name, const Cookie& c)
+      { httpcookies.clearCookie(name, c); }
+    bool hasCookies() const
+      { return httpcookies.hasCookies(); }
+    const Cookies& getCookies() const
+      { return httpcookies; }
 
-      void setKeepAliveCounter(unsigned c);
-      unsigned getKeepAliveCounter() const;
+    void setKeepAliveCounter(unsigned c);
+    unsigned getKeepAliveCounter() const;
 
-      void setAcceptEncoding(const Encoding& enc);
+    void setAcceptEncoding(const Encoding& enc);
 
-      bool keepAlive() const;
-  };
+    bool keepAlive() const;
+};
 }
 
 #endif // TNT_HTTPREPLY_H

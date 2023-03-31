@@ -28,7 +28,6 @@
 
 
 #include <tnt/contenttype.h>
-#include <tnt/util.h>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -40,8 +39,8 @@ log_define("tntnet.contenttype")
 
 namespace tnt
 {
-  Contenttype::Contenttype(const std::string& ct)
-  {
+Contenttype::Contenttype(const std::string& ct)
+{
     log_debug("Contenttype <= " << ct);
 
     std::istringstream in(ct);
@@ -49,28 +48,28 @@ namespace tnt
     in >> *this;
     if (!in)
     {
-      std::ostringstream msg;
-      msg << "error 1 parsing content-type-header at "
-          << in.tellg()
-          << ": "
-          << ct;
-      throwRuntimeError(msg.str());
+        std::ostringstream msg;
+        msg << "error 1 parsing content-type-header at "
+            << in.tellg()
+            << ": "
+            << ct;
+        throw std::runtime_error(msg.str());
     }
 
     if (in.get() != std::ios::traits_type::eof())
     {
-      std::ostringstream msg;
-      msg << "error 2 parsing content-type-header at "
-          << in.tellg()
-          << ": "
-          << ct;
-      throwRuntimeError(msg.str());
+        std::ostringstream msg;
+        msg << "error 2 parsing content-type-header at "
+            << in.tellg()
+            << ": "
+            << ct;
+        throw std::runtime_error(msg.str());
     }
-  }
+}
 
-  Contenttype::return_type Contenttype::onType(
-    const std::string& t, const std::string& s)
-  {
+Contenttype::return_type Contenttype::onType(
+  const std::string& t, const std::string& s)
+{
     log_debug("Contenttype::onType " << t << ", " << s);
     if (s.empty())
       return FAIL;
@@ -82,11 +81,11 @@ namespace tnt
     std::transform(_subtype.begin(), _subtype.end(), _subtype.begin(), ::tolower);
 
     return OK;
-  }
+}
 
-  Contenttype::return_type Contenttype::onParameter(
-    const std::string& attribute, const std::string& value)
-  {
+Contenttype::return_type Contenttype::onParameter(
+  const std::string& attribute, const std::string& value)
+{
     log_debug("Contenttype::onParameter " << attribute << ", " << value);
     std::string att = attribute;
     std::transform(att.begin(), att.end(), att.begin(),
@@ -96,5 +95,5 @@ namespace tnt
     if (attribute == "boundary")
       _boundary = value;
     return OK;
-  }
+}
 }
