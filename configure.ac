@@ -1,10 +1,10 @@
-AC_INIT(tntnet, 3.1, [Tommi Maekitalo <tommi@tntnet.org>])
+AC_INIT(tntnet, 4.0, [Tommi Maekitalo <tommi@tntnet.org>])
 AC_CANONICAL_TARGET
 LT_INIT([disable-static])
 
 AM_INIT_AUTOMAKE
 
-abi_current=13
+abi_current=14
 abi_revision=0
 abi_age=0
 sonumber=${abi_current}:${abi_revision}:${abi_age}
