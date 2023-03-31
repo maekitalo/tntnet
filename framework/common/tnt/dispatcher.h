@@ -36,6 +36,9 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#if __cplusplus >= 201703L
+#include <shared_mutex>
+#endif
 
 namespace tnt
 {
