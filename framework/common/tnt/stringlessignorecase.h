@@ -31,7 +31,6 @@
 #define TNT_STRINGLESSIGNORECASE_H
 
 #include <string>
-#include <functional>
 #include <cctype>
 
 namespace tnt
@@ -67,7 +66,7 @@ namespace tnt
     { return StringCompareIgnoreCase<std::string>(s1, s2); }
 
   template <typename stringType = std::string>
-  class StringLessIgnoreCase : public std::binary_function<stringType, stringType, bool>
+  class StringLessIgnoreCase
   {
     public:
       bool operator()(const stringType& s1, const stringType& s2) const
