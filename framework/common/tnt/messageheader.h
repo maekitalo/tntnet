@@ -52,9 +52,9 @@ namespace tnt
     public:
       class Parser;
 
-      typedef std::pair<const char*, const char*> value_type;
+      using value_type = std::pair<const char*, const char*>;
 
-      class const_iterator : public std::iterator<std::forward_iterator_tag, value_type>
+      class const_iterator
       {
           friend class Messageheader;
 
@@ -75,6 +75,10 @@ namespace tnt
           }
 
         public:
+          using iterator_category = std::forward_iterator_tag;
+          using pointer = std::string*;
+          using reference = std::string&;
+
           const_iterator()
             : _currentVal(static_cast<const char*>(0), static_cast<const char*>(0))
             { }
