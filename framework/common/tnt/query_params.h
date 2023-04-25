@@ -286,9 +286,11 @@ inline std::string QArg<std::string>::get(const QueryParams& q, const std::strin
 
 inline std::vector<std::string> QArg<std::string>::getvector(const QueryParams& q, const std::string& name)
 {
-    return std::vector<std::string>(q.begin(name + "[]"), q.end());
+    std::vector<std::string> v;
+    for (auto it = q.begin(name + "[]"); it != q.end(); ++it)
+        v.emplace_back(*it);
+    return v;
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 // specialization for char
