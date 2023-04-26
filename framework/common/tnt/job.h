@@ -89,6 +89,7 @@ public:
       { }
 
     void put(std::unique_ptr<Job> j, bool force = false);
+    void putEmpty();
     std::unique_ptr<Job> get();
 
     void setCapacity(unsigned c)

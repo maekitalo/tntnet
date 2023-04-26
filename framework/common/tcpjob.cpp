@@ -74,7 +74,7 @@ void Tcpjob::regenerateJob()
 {
   if (TntnetImpl::shouldStop())
   {
-      _queue.put(nullptr);
+      _queue.putEmpty();
   }
   else
   {
@@ -153,6 +153,14 @@ void Jobqueue::put(std::unique_ptr<Job> j, bool force)
     _notEmpty.notify_one();
 }
 
+void Jobqueue::putEmpty()
+{
+    std::unique_lock<std::mutex> lock(_mutex);
+    _jobs.clear();
+    _jobs.emplace_back(nullptr);
+    _notEmpty.notify_one();
+}
+
 std::unique_ptr<Job> Jobqueue::get()
 {
     std::unique_lock<std::mutex> lock(_mutex);
@@ -167,11 +175,19 @@ std::unique_ptr<Job> Jobqueue::get()
 
     // take next job (queue is locked)
     auto j = std::move(_jobs.front());
-    _jobs.pop_front();
 
-    // if there are threads waiting, wake another
-    if (!_jobs.empty() && _waitThreads > 0)
+    if (j == nullptr)
+    {
         _notEmpty.notify_one();
+    }
+    else
+    {
+        _jobs.pop_front();
+
+        // if there are threads waiting, wake another
+        if (!_jobs.empty() && _waitThreads > 0)
+            _notEmpty.notify_one();
+    }
 
     _notFull.notify_one();
 

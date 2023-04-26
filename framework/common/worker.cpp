@@ -100,12 +100,8 @@ void Worker::run()
     {
         _state = stateWaitingForJob;
         auto j = queue.get();
-        if (TntnetImpl::shouldStop())
-        {
-            // put job back to queue to wake up next worker if any left
-            queue.put(std::move(j));
+        if (j == nullptr)
             break;
-        }
 
         try
         {
@@ -140,7 +136,7 @@ void Worker::run()
                         logRequest(j->getRequest(), errorReply, 400);
                     }
                     else if (socket.fail())
-                      log_debug("socket failed");
+                        log_debug("socket failed");
                     else
                     {
                         j->getRequest().doPostParse();
