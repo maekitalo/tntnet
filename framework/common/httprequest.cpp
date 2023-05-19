@@ -317,17 +317,23 @@ void HttpRequest::ensureApplicationScopeLock()
 
 void HttpRequest::ensureSessionScopeLock()
 {
+    log_debug("ensureSessionScopeLock " << static_cast<void*>(_sessionScope.get()) << " locked=" << _sessionScopeLocked << " secure locked=" << _secureSessionScopeLocked);
+
     if (_sessionScope && !_sessionScopeLocked)
     {
+        log_debug("lock session scope");
         _sessionScope->lock();
         _sessionScopeLocked = true;
     }
 
     if (_secureSessionScope && !_secureSessionScopeLocked)
     {
+        log_debug("lock secure session scope");
         _secureSessionScope->lock();
         _secureSessionScopeLocked = true;
     }
+
+    log_debug("session scope locked=" << _sessionScopeLocked << " secure locked=" << _secureSessionScopeLocked);
 }
 
 void HttpRequest::releaseApplicationScopeLock()
@@ -343,16 +349,20 @@ void HttpRequest::releaseApplicationScopeLock()
 
 void HttpRequest::releaseSessionScopeLock()
 {
+    log_debug("releaseSessionScopeLock " << static_cast<void*>(_sessionScope.get()) << " locked=" << _sessionScopeLocked << " secure locked=" << _secureSessionScopeLocked);
+
     if (_secureSessionScope && _secureSessionScopeLocked)
     {
         _secureSessionScopeLocked = false;
         _secureSessionScope->unlock();
+        log_debug("secure session scope unlocked");
     }
 
     if (_sessionScope && _sessionScopeLocked)
     {
         _sessionScopeLocked = false;
         _sessionScope->unlock();
+        log_debug("session scope unlocked");
     }
 }
 
@@ -379,7 +389,11 @@ Scope& HttpRequest::getApplicationScope()
 std::shared_ptr<Sessionscope> HttpRequest::getSessionScopePtr()
 {
     if (!_sessionScope)
+    {
         _sessionScope = std::make_shared<Sessionscope>();
+        log_debug("new session scope " << static_cast<void*>(_sessionScope.get()));
+    }
+
     ensureSessionScopeLock();
     return _sessionScope;
 }
@@ -387,7 +401,10 @@ std::shared_ptr<Sessionscope> HttpRequest::getSessionScopePtr()
 std::shared_ptr<Sessionscope> HttpRequest::getSecureSessionScopePtr()
 {
     if (!_secureSessionScope)
-      _secureSessionScope = std::make_shared<Sessionscope>();
+    {
+        _secureSessionScope = std::make_shared<Sessionscope>();
+        log_debug("new secure session scope " << static_cast<void*>(_secureSessionScope.get()));
+    }
     ensureSessionScopeLock();
     return _secureSessionScope;
 }
