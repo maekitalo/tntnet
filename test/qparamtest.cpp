@@ -99,7 +99,7 @@ class QParamTest : public cxxtools::unit::TestSuite
       q.add("b", "Hi there");
       q.add("c", true);
       q.add("d", false);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<unsigned>("a"), 17);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<unsigned>("a"), 17u);
       CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<std::string>("b"), "Hi there");
       CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("c"), true);
       CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("d"), false);
@@ -115,12 +115,12 @@ class QParamTest : public cxxtools::unit::TestSuite
       Sub sub = q.get<Sub>("sub");
 
       CXXTOOLS_UNIT_ASSERT_EQUALS(simple, "Hi");
-      CXXTOOLS_UNIT_ASSERT_EQUALS(numbers.size(), 3);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(numbers.size(), 3u);
       CXXTOOLS_UNIT_ASSERT_EQUALS(numbers[0], 1);
       CXXTOOLS_UNIT_ASSERT_EQUALS(numbers[1], 4);
       CXXTOOLS_UNIT_ASSERT_EQUALS(numbers[2], 5);
       CXXTOOLS_UNIT_ASSERT_EQUALS(sub.i, 42);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(sub.a.size(), 2);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(sub.a.size(), 2u);
       CXXTOOLS_UNIT_ASSERT_EQUALS(sub.a[0], "Hi");
       CXXTOOLS_UNIT_ASSERT_EQUALS(sub.a[1], "there");
     }

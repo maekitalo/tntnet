@@ -68,12 +68,12 @@ class cstreamTest : public cxxtools::unit::TestSuite
         s.rollback(3);
 
         CXXTOOLS_UNIT_ASSERT_EQUALS("Hi ", str(s));
-        CXXTOOLS_UNIT_ASSERT_EQUALS(s.chunkcount(), 1);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(s.chunkcount(), 1u);
 
         s << "there";
 
         CXXTOOLS_UNIT_ASSERT_EQUALS("Hi there", str(s));
-        CXXTOOLS_UNIT_ASSERT_EQUALS(s.chunkcount(), 2);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(s.chunkcount(), 2u);
 
         s.rollback(0);
 
