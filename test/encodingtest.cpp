@@ -18,38 +18,38 @@ class EncodingTest : public cxxtools::unit::TestSuite
     void def()
     {
         tnt::Encoding enc;
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 1001);
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 0);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 1001u);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 0u);
     }
 
     void whitespace()
     {
         tnt::Encoding enc(" blah ; q = 0.764 , * ; q \t = 0.67 ");
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("blah"), 764);
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 670);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("blah"), 764u);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 670u);
     }
 
     void wildcard()
     {
         tnt::Encoding enc("*;q=0.7");
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 700);
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 700);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 700u);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 700u);
     }
 
     void parse()
     {
         tnt::Encoding enc("deflate, gzip;q=1.0, *;q=0.5");
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("deflate"), 1000);
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 1000);
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("blah"), 500);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("deflate"), 1000u);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 1000u);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("blah"), 500u);
     }
 
     void parseIdentity()
     {
         tnt::Encoding enc("identity;q=1, *;q=0");
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 1000);
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("deflate"), 0);
-        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 0);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("identity"), 1000u);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("deflate"), 0u);
+        CXXTOOLS_UNIT_ASSERT_EQUALS(enc.accept("gzip"), 0u);
     }
 
 };
