@@ -31,7 +31,6 @@
 #include <tnt/httperror.h>
 #include <tnt/httprequest.h>
 #include <tnt/tntconfig.h>
-#include <functional>
 #include <iterator>
 #include <algorithm>
 #include <sstream>
@@ -132,7 +131,7 @@ Mapping& Dispatcher::addUrlMapEntry(const std::string& vhost,
 
 namespace
 {
-    class regmatch_formatter : public std::unary_function<const std::string&, std::string>
+    class regmatch_formatter
     {
     public:
         cxxtools::RegexSMatch what;
