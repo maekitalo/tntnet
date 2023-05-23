@@ -30,14 +30,13 @@
 #ifndef TNT_STRINGESCAPER_H
 #define TNT_STRINGESCAPER_H
 
-#include <functional>
 #include <string.h>
 #include <string>
 #include <cctype>
 
 namespace tnt
 {
-  class stringescaper : public std::unary_function<const char*, char>
+  class stringescaper
   {
       bool _escQuote;
       mutable char _data[5];
