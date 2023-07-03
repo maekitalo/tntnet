@@ -127,7 +127,7 @@ namespace tnt
         struct Listener
         {
             Listener()
-                : sslVerifyLevel(0),
+                : sslVerifyLevel(cxxtools::SslCtx::VERIFY_LEVEL::NONE),
                   minProtocolVersion(cxxtools::SslCtx::PROTOCOL_VERSION::SSLv2),
                   maxProtocolVersion(cxxtools::SslCtx::PROTOCOL_VERSION::TLSv13),
                   secure(false)
@@ -138,7 +138,7 @@ namespace tnt
 
             std::string certificate;
             std::string key;
-            int sslVerifyLevel;
+            cxxtools::SslCtx::VERIFY_LEVEL sslVerifyLevel;
             std::string sslCa;
             std::string ciphers;
             cxxtools::SslCtx::PROTOCOL_VERSION minProtocolVersion;

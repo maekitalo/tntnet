@@ -592,12 +592,12 @@ readability from the key file.
     </listeners>
 
 Client certificates are supported. The tags `<sslCa>` and `<sslVerifyLevel>` can
-be added to specify the type of check. If `<sslVerifyLevel>` to `1`, a client
+be added to specify the type of check. If `<sslVerifyLevel>` to `OPTIONAL`, a client
 certificate is requested but tntnet accepts, if the client sends no certificate.
 The application can check the certificate using `request.getSslCertificate()`.
 It returns a certificate object, which may be empty.
 
-If `<sslVerifyLevel>` is `2`, a client certificate is mandatory. A connection
+If `<sslVerifyLevel>` is `REQUIRE`, a client certificate is mandatory. A connection
 without a certificate is not accepted.
 
 In any case the client certificate is verified against the CA specified by
@@ -610,7 +610,7 @@ In any case the client certificate is verified against the CA specified by
         <port>443</port>
         <certificate>tntnet.pem</certificate>
         <key>tntnet.key</key>
-        <sslVerifyLevel>2</sslVerifyLevel>
+        <sslVerifyLevel>REQUIRE</sslVerifyLevel>
         <sslCa>myCa.pem</sslCa>
       </listener>
     </listeners>
@@ -638,18 +638,18 @@ We summarize the settings for the listeners here.
     The private key for the server certificate. If the key is not specified,
     tntnet expects the key in the certificate file.
 
-`<sslVerifyLevel>`*0|1|2*`</sslVerifyLevel>`
+`<sslVerifyLevel>`*NONE|OPTIONAL|REQUIRE*`</sslVerifyLevel>`
 
-    Enables client certificates. When set to 0, no client certificate is needed.
-    When set to 1 a client certificate is requested but optional. It is just
+    Enables client certificates. When set to NONE, no client certificate is needed.
+    When set to OPTIONAL a client certificate is requested but optional. It is just
     passed to the application when available.
-    When set to 2 a client certificate is requested and needed to connect.
+    When set to REQUIRE a client certificate is requested and needed to connect.
 
 `<sslCa>`*CA-file*`</sslCa>`
 
     The certificate authority the client certificate is checked against. Only
     client certificates, which can be verified by this authority are accepted.
-    This settins is mandatory when `sslVerifyLevel` is set to 1 or 2.
+    This settins is mandatory when `sslVerifyLevel` is set to OPTIONAL or REQUIRE.
 
 LOGGING
 -------
