@@ -1040,16 +1040,16 @@ tntnet expects the key in the certificate file.
 .RE
 
 .PP
-\fB\fC<sslVerifyLevel>\fR\fI0|1|2\fP\fB\fC</sslVerifyLevel>\fR
+\fB\fC<sslVerifyLevel>\fR\fINONE|OPTIONAL|REQUIRE\fP\fB\fC</sslVerifyLevel>\fR
 
 .PP
 .RS
 
 .nf
-Enables client certificates. When set to 0, no client certificate is needed.
-When set to 1 a client certificate is requested but optional. It is just
+Enables client certificates. When set to NONE, no client certificate is needed.
+When set to OPTIONAL a client certificate is requested but optional. It is just
 passed to the application when available.
-When set to 2 a client certificate is requested and needed to connect.
+When set to REQUIRE a client certificate is requested and needed to connect.
 
 .fi
 .RE
@@ -1063,7 +1063,7 @@ When set to 2 a client certificate is requested and needed to connect.
 .nf
 The certificate authority the client certificate is checked against. Only
 client certificates, which can be verified by this authority are accepted.
-This settins is mandatory when `sslVerifyLevel` is set to 1 or 2.
+This settins is mandatory when `sslVerifyLevel` is set to OPTIONAL or REQUIRE.
 
 .fi
 .RE

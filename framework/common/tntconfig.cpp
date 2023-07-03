@@ -95,24 +95,6 @@ void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Mapping& map
     }
 }
 
-static void setProtocolVersion(cxxtools::SslCtx::PROTOCOL_VERSION& value, const std::string& str)
-{
-    if (str == "SSLv2")
-        value = cxxtools::SslCtx::PROTOCOL_VERSION::SSLv2;
-    else if (str == "SSLv3")
-        value = cxxtools::SslCtx::PROTOCOL_VERSION::SSLv3;
-    else if (str == "TLSv1")
-        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv1;
-    else if (str == "TLSv11")
-        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv11;
-    else if (str == "TLSv12")
-        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv12;
-    else if (str == "TLSv13")
-        value = cxxtools::SslCtx::PROTOCOL_VERSION::TLSv13;
-    else if (!str.empty())
-        throw std::runtime_error("invalid protocol version setting <" + str + '>');
-}
-
 void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& listener)
 {
     si.getMember("ip", listener.ip);
@@ -123,20 +105,17 @@ void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& li
         if (!si.getMember("key", listener.key))
             listener.key = listener.certificate;
 
-        listener.sslVerifyLevel = 0;
+        listener.sslVerifyLevel = cxxtools::SslCtx::VERIFY_LEVEL::NONE;
         if (si.getMember("sslVerifyLevel", listener.sslVerifyLevel)
-            && listener.sslVerifyLevel > 0)
+            && listener.sslVerifyLevel > cxxtools::SslCtx::VERIFY_LEVEL::NONE)
                 si.getMember("sslCa") >>= listener.sslCa;
         si.getMember("secure", listener.secure);
         if (!listener.secure)
         {
             si.getMember("ciphers", listener.ciphers);
 
-            std::string minProtocolVersion, maxProtocolVersion;
-            si.getMember("minProtocolVersion", minProtocolVersion);
-            si.getMember("maxProtocolVersion", maxProtocolVersion);
-            setProtocolVersion(listener.minProtocolVersion, minProtocolVersion);
-            setProtocolVersion(listener.maxProtocolVersion, maxProtocolVersion);
+            si.getMember("minProtocolVersion", listener.minProtocolVersion);
+            si.getMember("maxProtocolVersion", listener.maxProtocolVersion);
         }
     }
 }
