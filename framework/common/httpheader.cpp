@@ -67,6 +67,7 @@ namespace tnt
     const char* contentDisposition = "Content-Disposition:";
     const char* age = "Age:";
     const char* transferEncoding = "Transfer-Encoding:";
+    const char* contentSecurityPolicy = "Content-Security-Policy:";
+    const char* xFrameOptions = "X-Frame-Options:";
   }
 }
-

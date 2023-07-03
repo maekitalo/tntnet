@@ -70,8 +70,9 @@ namespace tnt
     extern const char* contentDisposition;
     extern const char* age;
     extern const char* transferEncoding;
+    extern const char* contentSecurityPolicy;
+    extern const char* xFrameOptions;
   }
 }
 
 #endif // TNT_HTTPHEADER_H
-
