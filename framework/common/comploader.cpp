@@ -206,33 +206,33 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
         std::unique_ptr<ComponentLibrary> lib;
 
         for (TntConfig::CompPathType::const_iterator p = TntConfig::it().compPath.begin();
-             !lib && p != TntConfig::it().compPath.end(); ++p)
+             (!lib || !lib->loaded()) && p != TntConfig::it().compPath.end(); ++p)
         {
             log_debug("load library \"" << n << "\" from " << *p << " dir");
             lib.reset(new ComponentLibrary(*p, n, local));
         }
 
-        if (!lib)
+        if (!lib || !lib->loaded())
         {
             log_debug("load library \"" << n << "\" from current dir");
             lib.reset(new ComponentLibrary(".", n, local));
         }
 
 #ifdef PKGLIBDIR
-        if (!lib)
+        if (!lib || !lib->loaded())
         {
             log_debug("load library \"" << n << "\" from package lib dir <" << PKGLIBDIR << '>');
             lib.reset(new ComponentLibrary(PKGLIBDIR, n, local));
         }
 #endif
 
-        if (!lib)
+        if (!lib || !lib->loaded())
         {
             log_debug("library \"" << n << "\" in current dir not found - search lib-path");
             lib.reset(new ComponentLibrary(n, local));
         }
 
-        if (!lib)
+        if (!lib || !lib->loaded())
             throw LibraryNotFound(n);
 
         lib->_factoryMap = factoryMap;

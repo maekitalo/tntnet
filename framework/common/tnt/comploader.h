@@ -100,6 +100,8 @@ public:
 
     ~ComponentLibrary();
 
+    bool loaded() const { return _handle != nullptr; }
+
     Component* create(const std::string& compname, Comploader& cl, const Urlmapper& rootmapper);
 
     const std::string& getName() const { return _libname; }
