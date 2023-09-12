@@ -54,6 +54,26 @@ ComponentLibrary::~ComponentLibrary()
         ::dlclose(_handle);
 }
 
+std::unique_ptr<ComponentLibrary> ComponentLibrary::load(const std::string& path, const std::string& name, bool local)
+{
+    auto handle = dlopen(path + '/' + name, local);
+
+    if (handle)
+        return std::unique_ptr<ComponentLibrary>(new ComponentLibrary(handle, path, name));
+
+    return std::unique_ptr<ComponentLibrary>();
+}
+
+std::unique_ptr<ComponentLibrary> ComponentLibrary::load(const std::string& name, bool local)
+{
+    auto handle = dlopen(name, local);
+
+    if (handle)
+        return std::unique_ptr<ComponentLibrary>(new ComponentLibrary(handle, std::string(), name));
+
+    return std::unique_ptr<ComponentLibrary>();
+}
+
 void* ComponentLibrary::dlopen(const std::string& name, bool local)
 {
     log_debug("dlopen <" << name << ">, " << local);
@@ -206,33 +226,33 @@ ComponentLibrary& Comploader::fetchLib(const std::string& libname)
         std::unique_ptr<ComponentLibrary> lib;
 
         for (TntConfig::CompPathType::const_iterator p = TntConfig::it().compPath.begin();
-             (!lib || !lib->loaded()) && p != TntConfig::it().compPath.end(); ++p)
+             !lib && p != TntConfig::it().compPath.end(); ++p)
         {
             log_debug("load library \"" << n << "\" from " << *p << " dir");
-            lib.reset(new ComponentLibrary(*p, n, local));
+            lib = ComponentLibrary::load(*p, n, local);
         }
 
-        if (!lib || !lib->loaded())
+        if (!lib)
         {
             log_debug("load library \"" << n << "\" from current dir");
-            lib.reset(new ComponentLibrary(".", n, local));
+            lib = ComponentLibrary::load(".", n, local);
         }
 
 #ifdef PKGLIBDIR
-        if (!lib || !lib->loaded())
+        if (!lib)
         {
             log_debug("load library \"" << n << "\" from package lib dir <" << PKGLIBDIR << '>');
-            lib.reset(new ComponentLibrary(PKGLIBDIR, n, local));
+            lib = ComponentLibrary::load(PKGLIBDIR, n, local);
         }
 #endif
 
-        if (!lib || !lib->loaded())
+        if (!lib)
         {
             log_debug("library \"" << n << "\" in current dir not found - search lib-path");
-            lib.reset(new ComponentLibrary(n, local));
+            lib = ComponentLibrary::load(n, local);
         }
 
-        if (!lib || !lib->loaded())
+        if (!lib)
             throw LibraryNotFound(n);
 
         lib->_factoryMap = factoryMap;

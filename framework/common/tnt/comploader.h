@@ -82,25 +82,22 @@ class ComponentLibrary
     ComponentLibrary(const ComponentLibrary&) = delete;
     ComponentLibrary& operator=(const ComponentLibrary&) = delete;
 
+    ComponentLibrary(HandleType handle, const std::string& path, const std::string& name)
+        : _libname(name),
+          _path(path),
+          _handle(handle)
+          { }
+
 public:
     ComponentLibrary()
       : _handle(nullptr)
         { }
 
-    ComponentLibrary(const std::string& path, const std::string& name, bool local)
-      : _libname(name),
-        _path(path),
-        _handle(dlopen(path + '/' + name, local))
-        { }
-
-    ComponentLibrary(const std::string& name, bool local)
-      : _libname(name),
-        _handle(dlopen(name, local))
-        { }
-
     ~ComponentLibrary();
 
-    bool loaded() const { return _handle != nullptr; }
+    static std::unique_ptr<ComponentLibrary> load(const std::string& path, const std::string& name, bool local);
+
+    static std::unique_ptr<ComponentLibrary> load(const std::string& name, bool local);
 
     Component* create(const std::string& compname, Comploader& cl, const Urlmapper& rootmapper);
 
