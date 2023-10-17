@@ -8,7 +8,7 @@ AC_LANG(C++)
 AX_CXX_COMPILE_STDCXX_11(noext, optional)
 
 AC_CONFIG_HEADERS([config.h])
-AC_CHECK_HEADER([cxxtools/mutex.h], , AC_MSG_ERROR([cxxtools headers not found]))
+AC_CHECK_HEADER([cxxtools/arg.h], , AC_MSG_ERROR([cxxtools headers not found]))
 AC_CHECK_HEADER([tnt/httpreply.h], , AC_MSG_ERROR([tntnet headers not found]))
 AC_CHECK_HEADER([tntdb/connection.h], , AC_MSG_ERROR([tntdb headers not found]))
 AC_CHECK_PROGS(ECPPC, [ecppc])
