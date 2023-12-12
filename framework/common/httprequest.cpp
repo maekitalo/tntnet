@@ -298,6 +298,48 @@ bool HttpRequest::keepAlive() const
                     httpheader::connectionKeepAlive) == 0;
 }
 
+void HttpRequest::setSessionScope(std::shared_ptr<Sessionscope> s)
+{
+    if (_sessionScope && _sessionScopeLocked)
+    {
+        log_debug("unlock session scope " << static_cast<void*>(_sessionScope.get()));
+        _sessionScope->unlock();
+    }
+
+    _sessionScope = s;
+
+    if (_sessionScope && _sessionScopeLocked)
+    {
+        log_debug("lock session scope " << static_cast<void*>(_sessionScope.get()));
+        _sessionScope->lock();
+    }
+    else
+    {
+        _sessionScopeLocked = false;
+    }
+}
+
+void HttpRequest::setSecureSessionScope(std::shared_ptr<Sessionscope> s)
+{
+    if (_secureSessionScope && _secureSessionScopeLocked)
+    {
+        log_debug("unlock secure session scope " << static_cast<void*>(_secureSessionScope.get()));
+        _secureSessionScope->unlock();
+    }
+
+    _secureSessionScope = s;
+
+    if (_secureSessionScope && _secureSessionScopeLocked)
+    {
+        log_debug("lock secure session scope " << static_cast<void*>(_secureSessionScope.get()));
+        _secureSessionScope->lock();
+    }
+    else
+    {
+        _secureSessionScopeLocked = false;
+    }
+}
+
 const Contenttype& HttpRequest::getContentTypePriv() const
 {
     std::istringstream in(getHeader(httpheader::contentType));

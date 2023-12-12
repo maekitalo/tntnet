@@ -262,10 +262,8 @@ public:
 
     void setApplicationScope(std::shared_ptr<Scope> s)
         { _applicationScope = s; }
-    void setSessionScope(std::shared_ptr<Sessionscope> s)
-        { _sessionScope = s; }
-    void setSecureSessionScope(std::shared_ptr<Sessionscope> s)
-        { _secureSessionScope = s; }
+    void setSessionScope(std::shared_ptr<Sessionscope> s);
+    void setSecureSessionScope(std::shared_ptr<Sessionscope> s);
 
     void setThreadContext(ThreadContext* ctx) { _threadContext = ctx; }
 
