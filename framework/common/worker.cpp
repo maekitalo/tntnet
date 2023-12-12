@@ -390,6 +390,7 @@ void Worker::dispatch(HttpRequest& request, HttpReply& reply)
     request.setThreadContext(this);
 
     Dispatcher::PosType pos(_application.getDispatcher(), request);
+    std::string preCallCalledAppname;
     while (true)
     {
         _state = stateDispatch;
@@ -415,7 +416,7 @@ void Worker::dispatch(HttpRequest& request, HttpReply& reply)
                     {
                         // if the component is not found in the binary, fetchComp throws
                         // NotFoundException and comp remains 0.
-                        // so we can ignore the exceptioni and just continue
+                        // so we can ignore the exception and just continue
                     }
                 }
 
@@ -433,7 +434,11 @@ void Worker::dispatch(HttpRequest& request, HttpReply& reply)
 
             std::string appname = _application.getAppName().empty() ? ci.libname : _application.getAppName();
 
-            _application.getScopemanager().preCall(request, appname);
+            if (preCallCalledAppname.empty() || preCallCalledAppname != appname)
+            {
+                _application.getScopemanager().preCall(request, appname);
+                preCallCalledAppname = appname;
+            }
 
             _state = stateProcessingRequest;
             unsigned http_return;
