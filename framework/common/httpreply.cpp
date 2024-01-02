@@ -116,6 +116,7 @@ struct HttpReply::Impl
     UrlEscOstream urlOutstream;
     ChunkedOStream chunkedOutstream;
     Compressor compressor;
+    std::ios_base::fmtflags defaultFmtFlags;
 
     Encoding acceptEncoding;
 
@@ -127,6 +128,7 @@ struct HttpReply::Impl
     bool renewSessionId;
 
     Impl(std::ostream& s, bool sendStatusLine);
+    void reset();
 
     struct Pool
     {
@@ -147,8 +149,8 @@ struct HttpReply::Impl
     static Pool pool;
 
 private:
-    Impl(const Impl&);
-    Impl& operator=(const Impl&);
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
 };
 
 HttpReply::Impl::Pool HttpReply::Impl::pool;
@@ -181,12 +183,7 @@ void HttpReply::Impl::Pool::releaseInstance(Impl* inst)
     std::lock_guard<std::mutex> lock(poolMutex);
     if (pool.size() < 64)
     {
-        inst->outstream.clear();
-        inst->outstream.makeEmpty();
-        inst->safeOutstream.clear();
-        inst->urlOutstream.clear();
-        inst->chunkedOutstream.clear();
-        inst->compressor.clear();
+        inst->reset();
         pool.push_back(inst);
     }
     else
@@ -208,12 +205,27 @@ HttpReply::Impl::Impl(std::ostream& s, bool sendStatusLine_)
     safeOutstream(outstream),
     urlOutstream(outstream),
     chunkedOutstream(s),
+    defaultFmtFlags(safeOutstream.flags()),
     keepAliveCounter(0),
     sendStatusLine(sendStatusLine_),
     headRequest(false),
     clearSession(false),
     renewSessionId(false)
   { }
+
+void HttpReply::Impl::reset()
+{
+    outstream.clear();
+    outstream.makeEmpty();
+    safeOutstream.clear();
+    urlOutstream.clear();
+    chunkedOutstream.clear();
+    compressor.clear();
+
+    safeOutstream.flags(defaultFmtFlags);
+    urlOutstream.flags(defaultFmtFlags);
+    chunkedOutstream.flags(defaultFmtFlags);
+}
 
 HttpReply::HttpReply(std::ostream& s, bool sendStatusLine)
   : _impl(Impl::pool.getInstance(s, sendStatusLine)),
