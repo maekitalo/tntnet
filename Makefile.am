@@ -33,6 +33,7 @@ SUBDIRS = \
     $(TESTDIRS)
 
 EXTRA_DIST = \
+    README.md \
     COPYING \
     demo/newsdb/Makefile \
     demo/newsdb/README \
