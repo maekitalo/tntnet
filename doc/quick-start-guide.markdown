@@ -62,7 +62,7 @@ which are created are:
  * resources/myfirstproject.css - a static file of our web application
 
 For quick information about autotools using, read this mini howto:
-http://www.niksula.hut.fi/~mkomu/docs/autohowto.html
+[www.niksula.hut.fi/~mkomu/docs/autohowto.html] (http://www.niksula.hut.fi/~mkomu/docs/autohowto.html)
 
 
 To build and execute your first application enter the following commands:
