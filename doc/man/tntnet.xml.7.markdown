@@ -651,6 +651,23 @@ We summarize the settings for the listeners here.
     client certificates, which can be verified by this authority are accepted.
     This settins is mandatory when `sslVerifyLevel` is set to OPTIONAL or REQUIRE.
 
+`<secure>`*1|0*`</secure>`
+
+    When set the ssl configuration is initialized with currently known secure
+    settings.
+
+`<ciphers>`*list*`</ciphers>`
+
+    Set the list of accepted ciphers.
+
+`<minProtocolVersion>`*SSLv2|SSLv3|TLSv1|TLSv11|TLSv12|TLSv13*`</minProtocolVersion>`
+
+    Set the minimum accepted ssl/tls protocol version.
+
+`<maxProtocolVersion>`*SSLv2|SSLv3|TLSv1|TLSv11|TLSv12|TLSv13*`</maxProtocolVersion>`
+
+    Set the maximum accepted ssl/tls protocol version.
+
 LOGGING
 -------
 Logging is configured in the `<logging>` section.

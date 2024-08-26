@@ -1,7 +1,8 @@
-.TH tntnet.xml 7 "2006\-07\-23" Tntnet "Tntnet users guide"
+.nh
+.TH tntnet.xml 7 "2006-07-23" Tntnet "Tntnet users guide"
 .SH NAME
 .PP
-tntnet.xml \- configuration file for tntnet(8)
+tntnet.xml - configuration file for tntnet(8)
 
 .SH DESCRIPTION
 .PP
@@ -22,13 +23,13 @@ Writes a log entry for each request in a common format. This format is
   compatible with most log file analyze systems for http servers.
 
 .PP
-The log file has the fields: \fB\fCpeer ip\fR \- \fB\fCusername\fR [\fB\fCtime\fR] "\fB\fChttp method\fR
+The log file has the fields: \fB\fCpeer ip\fR - \fB\fCusername\fR [\fB\fCtime\fR] "\fB\fChttp method\fR
   \fB\fCquery string\fR HTTP/\fB\fCmajor version\fR\&.\fB\fCminor version\fR" \fB\fChttp return code\fR
   \fB\fCcontent size\fR "\fB\fCreferer\fR" "\fB\fCuser agent\fR"
 
 .PP
-The \fB\fCusername\fR, \fB\fCreferer\fR and \fB\fCuser agent\fR may be '\-' when the value is not
-  available. Also the \fB\fCcontent\-size\fR can be empty in some cases.
+The \fB\fCusername\fR, \fB\fCreferer\fR and \fB\fCuser agent\fR may be '-' when the value is not
+  available. Also the \fB\fCcontent-size\fR can be empty in some cases.
 
 .PP
 \fIExample\fP
@@ -131,7 +132,7 @@ Sets the content type header of the reply. The content type may be changed in
   the application using \fB\fCreply.setContentType("something")\fR\&.
 
 .PP
-By default "text/html; charset=UTF\-8" is set.
+By default "text/html; charset=UTF-8" is set.
 
 .PP
 \fIExample\fP
@@ -140,7 +141,7 @@ By default "text/html; charset=UTF\-8" is set.
 .RS
 
 .nf
-<defaultContentType>text/html; charset=ISO\-8858\-1</defaultContentType>
+<defaultContentType>text/html; charset=ISO-8858-1</defaultContentType>
 
 .fi
 .RE
@@ -151,7 +152,7 @@ By default "text/html; charset=UTF\-8" is set.
 .PP
 Specifies, if Tntnet should use gzip compression at http level. By default
   Tntnet use compression. A http client like a web browser can send a header
-  "Accept\-Encoding", to tell Tntnet, that it would accept compressed data.
+  "Accept-Encoding", to tell Tntnet, that it would accept compressed data.
   Tntnet then can decide, if it use compression. When the body is complete,
   Tntnet tries to compress the body. If the data can be compressed by more than
   10%, Tntnet sends this compressed data. With this flag, this feature can be
@@ -200,7 +201,7 @@ Redirects stderr to the specified file when tntnet runs as a daemon. If
 .RE
 
 .PP
-\fB\fC<group>\fR\fIunix\-group\-id\fP\fB\fC</group>\fR
+\fB\fC<group>\fR\fIunix-group-id\fP\fB\fC</group>\fR
 
 .PP
 Changes the group under which tntnet runs.
@@ -216,7 +217,7 @@ The user is changes using the system call setgid(2), which is only allowed,
 .RS
 
 .nf
-<group>tntnet\-group</group>
+<group>tntnet-group</group>
 
 .fi
 .RE
@@ -225,10 +226,10 @@ The user is changes using the system call setgid(2), which is only allowed,
 \fB\fC<keepAliveTimeout>\fR\fImilliseconds\fP\fB\fC</keepAliveTimeout>\fR
 
 .PP
-Sets the timeout for keep\-alive requests.
+Sets the timeout for keep-alive requests.
 
 .PP
-Tntnet tries to do keep\-alive\-requests wherever possible. This has the effect,
+Tntnet tries to do keep-alive-requests wherever possible. This has the effect,
   that tntnet can receive multiple requests within a single tcp connection. The
   connection times out after KeepAliveTimeout milliseconds. The timeout defaults
   to 15000ms.
@@ -543,7 +544,7 @@ The default value is 1000.
 \fB\fC<reuseAddress>\fR\fI0|1\fP\fB\fC</reuseAddress>\fR
 
 .PP
-The flag specifies whether the socket option SO\_REUSEADDR should be set.
+The flag specifies whether the socket option SO_REUSEADDR should be set.
   When the entry is omitted the flag is set.
 
 .PP
@@ -671,17 +672,17 @@ The user is changes using the system call setuid(2), which is only allowed,
 .RS
 
 .nf
-<user>www\-data</user>
+<user>www-data</user>
 
 .fi
 .RE
 
 .PP
-\fB\fC<virtualhosts> { <virtualhost> <hostname>\fR\fIhostname\-regex\fP\fB\fC</hostname>\fR\fImappings\fP\fB\fC</virtualhost> }</virtualhosts>\fR
+\fB\fC<virtualhosts> { <virtualhost> <hostname>\fR\fIhostname-regex\fP\fB\fC</hostname>\fR\fImappings\fP\fB\fC</virtualhost> }</virtualhosts>\fR
 
 .PP
 Defines mappings for virtual hosts. These mappings are valid only when the
-  host header matches the \fIhostname\-regex\fP\&. See section \fIURL MAPPING\fP for
+  host header matches the \fIhostname-regex\fP\&. See section \fIURL MAPPING\fP for
   details about how to define actual mappings
 
 .PP
@@ -746,7 +747,7 @@ To tell tntnet, which component to call, url mappings must be configured.
 Configuration is done in the xml section \fB\fC<mappings>\fR\&. Multiple mappings can be
 configured there. A mapping has a condition and a target. Tntnet looks in the
 list of mappings for the first mapping, where the condition is met and uses that
-to call the component. The component may return either a reply \- then the
+to call the component. The component may return either a reply - then the
 request is done or a special value \fB\fCDECLINED\fR, which tells tntnet to continue in
 the list and look for the next mapping, where the condition is met.
 
@@ -822,7 +823,7 @@ Optionally there may be another node \fB\fC<httpreturn>\fR, which specifies the
   default http return code of components. The component may return with the
   special constant DEFAULT, which instructs tntnet to return the default http
   return code for this mapping. The ecpp compiler generates components, which
-  return exactly that value and the default value is HTTP\_OK. The value of the
+  return exactly that value and the default value is HTTP_OK. The value of the
   node may be a numeric http return code or the word DECLINED, which instructs
   tntnet to continue with the next mapping.
 
@@ -862,19 +863,19 @@ For compatibility reasons with older tntnet \fB\fCrequest.getArg\fR accepts a nu
 
 .nf
 <mappings>
-  <!\-\- map / to index@myapp \-\->
+  <!-- map / to index@myapp -->
   <mapping>
     <target>index@myapp</target>
     <url>^/$</url>
     <pathinfo>index.html</pathinfo>
   </mapping>
-  <!\-\- map /comp.* or /comp to comp@myapp \-\->
+  <!-- map /comp.* or /comp to comp@myapp -->
   <mapping>
     <target>action@myapp</target>
-    <url></url>               <!\-\- any url \-\->
-    <method>POST</method>     <!\-\- but only on method POST \-\->
-    <vhost>localhost</vhost>  <!\-\- and host header must be localhost \-\->
-    <ssl>1</ssl>              <!\-\- and ssl is enabled \-\->
+    <url></url>               <!-- any url -->
+    <method>POST</method>     <!-- but only on method POST -->
+    <vhost>localhost</vhost>  <!-- and host header must be localhost -->
+    <ssl>1</ssl>              <!-- and ssl is enabled -->
   </mapping>
   <mapping>
     <target>$1@myapp</target>
@@ -939,7 +940,7 @@ readability from the key file.
 <listeners>
   <listener>
     <port>443</port>
-    <!\-\- a certificate enables ssl \-\->
+    <!-- a certificate enables ssl -->
     <certificate>tntnet.pem</certificate>
     <key>tntnet.key</key>
   </listener>
@@ -950,13 +951,13 @@ readability from the key file.
 
 .PP
 Client certificates are supported. The tags \fB\fC<sslCa>\fR and \fB\fC<sslVerifyLevel>\fR can
-be added to specify the type of check. If \fB\fC<sslVerifyLevel>\fR to \fB\fC1\fR, a client
+be added to specify the type of check. If \fB\fC<sslVerifyLevel>\fR to \fB\fCOPTIONAL\fR, a client
 certificate is requested but tntnet accepts, if the client sends no certificate.
 The application can check the certificate using \fB\fCrequest.getSslCertificate()\fR\&.
 It returns a certificate object, which may be empty.
 
 .PP
-If \fB\fC<sslVerifyLevel>\fR is \fB\fC2\fR, a client certificate is mandatory. A connection
+If \fB\fC<sslVerifyLevel>\fR is \fB\fCREQUIRE\fR, a client certificate is mandatory. A connection
 without a certificate is not accepted.
 
 .PP
@@ -975,7 +976,7 @@ In any case the client certificate is verified against the CA specified by
     <port>443</port>
     <certificate>tntnet.pem</certificate>
     <key>tntnet.key</key>
-    <sslVerifyLevel>2</sslVerifyLevel>
+    <sslVerifyLevel>REQUIRE</sslVerifyLevel>
     <sslCa>myCa.pem</sslCa>
   </listener>
 </listeners>
@@ -1055,7 +1056,7 @@ When set to REQUIRE a client certificate is requested and needed to connect.
 .RE
 
 .PP
-\fB\fC<sslCa>\fR\fICA\-file\fP\fB\fC</sslCa>\fR
+\fB\fC<sslCa>\fR\fICA-file\fP\fB\fC</sslCa>\fR
 
 .PP
 .RS
@@ -1064,6 +1065,55 @@ When set to REQUIRE a client certificate is requested and needed to connect.
 The certificate authority the client certificate is checked against. Only
 client certificates, which can be verified by this authority are accepted.
 This settins is mandatory when `sslVerifyLevel` is set to OPTIONAL or REQUIRE.
+
+.fi
+.RE
+
+.PP
+\fB\fC<secure>\fR\fI1|0\fP\fB\fC</secure>\fR
+
+.PP
+.RS
+
+.nf
+When set the ssl configuration is initialized with currently known secure
+settings.
+
+.fi
+.RE
+
+.PP
+\fB\fC<ciphers>\fR\fIlist\fP\fB\fC</ciphers>\fR
+
+.PP
+.RS
+
+.nf
+Set the list of accepted ciphers.
+
+.fi
+.RE
+
+.PP
+\fB\fC<minProtocolVersion>\fR\fISSLv2|SSLv3|TLSv1|TLSv11|TLSv12|TLSv13\fP\fB\fC</minProtocolVersion>\fR
+
+.PP
+.RS
+
+.nf
+Set the minimum accepted ssl/tls protocol version.
+
+.fi
+.RE
+
+.PP
+\fB\fC<maxProtocolVersion>\fR\fISSLv2|SSLv3|TLSv1|TLSv11|TLSv12|TLSv13\fP\fB\fC</maxProtocolVersion>\fR
+
+.PP
+.RS
+
+.nf
+Set the maximum accepted ssl/tls protocol version.
 
 .fi
 .RE
@@ -1095,7 +1145,7 @@ The settings are:
 
 .nf
 Sets the main level used, when nothing else is specified. The default is
-\_FATAL\_.
+_FATAL_.
 
 .fi
 .RE
@@ -1132,7 +1182,7 @@ Log output is written to file. Default is *stderr*.
 .RS
 
 .nf
-Specifies maximum \_size\_ of file. The size is a number in bytes or it can be
+Specifies maximum _size_ of file. The size is a number in bytes or it can be
 prepended by a unit of 'k', 'm' or 'g', which specified kilo, mega or
 gigabytes. The unit is not case sensitive.
 
@@ -1240,27 +1290,27 @@ Specifies the category
 .nf
 Specifies the level for this category.
 
-The level can be one of the log levels \_FATAL\_, \_ERROR\_, \_WARN\_, \_INFO\_,
-\_DEBUG\_, \_FINE\_, \_FINER\_ or \_FINEST\_. The all messages with a level of this
-or higher are output. So e.g. setting \_DEBUG\_ outputs all messages from
-\_FATAL\_ to \_DEBUG\_.
+The level can be one of the log levels _FATAL_, _ERROR_, _WARN_, _INFO_,
+_DEBUG_, _FINE_, _FINER_ or _FINEST_. The all messages with a level of this
+or higher are output. So e.g. setting _DEBUG_ outputs all messages from
+_FATAL_ to _DEBUG_.
 
-It is enough to specify the first character (except \_FINE\_, \_FINER\_ and
-\_FINEST\_).
+It is enough to specify the first character (except _FINE_, _FINER_ and
+_FINEST_).
 
-Setting \_TRACE\_ (or \_T\_) is like \_DEBUG\_ plus all \_TRACE\_ messages. \_TRACE\_
+Setting _TRACE_ (or _T_) is like _DEBUG_ plus all _TRACE_ messages. _TRACE_
 is special since it outputs a message when a the code is reached and a exit
-message when the scope of the code is exited. Typically the \_TRACE\_ messages
+message when the scope of the code is exited. Typically the _TRACE_ messages
 are put at the start of functions so that the log shows when a function is
 called and when it is exited.
 
 Multiple log levels can be separated by '|'. In that case only those levels
-are output. E.g. \_WARN|DEBUG\_ prints just warning and debug messages. When
+are output. E.g. _WARN|DEBUG_ prints just warning and debug messages. When
 just one level should be printed, it can be prepended by '|', so e.g.
-\_|ERROR\_ prints just error messages.
+_|ERROR_ prints just error messages.
 
 Prepending a 'T' to the log level adds always traces. E.g. *TINFO* prints
-info messages and above and traces. \_TFINEST\_ prints just everything.
+info messages and above and traces. _TFINEST_ prints just everything.
 
 .fi
 .RE
@@ -1306,7 +1356,7 @@ Prints much debug information when tntnet runs.
 
 .PP
 Prints debug messages about the processing of url mappings and traces about
-called (ecpp\-)components.
+called (ecpp-)components.
 
 .PP
 Other useful categories are \fItntnet.messageheader\fP, which outputs debug messages
@@ -1315,8 +1365,8 @@ reply headers.
 
 .SH AUTHOR
 .PP
-This manual page was written by Tommi Mäkitalo 
-\[la]tommi@tntnet.org\[ra]\&.
+This manual page was written by Tommi Mäkitalo tommi@tntnet.org
+\[la]mailto:tommi@tntnet.org\[ra]\&.
 
 .SH SEE ALSO
 .PP
