@@ -36,6 +36,7 @@
 #include <tnt/http.h>
 #include <tnt/poller.h>
 #include <tnt/tntconfig.h>
+#include <tnt/htmlescostream.h>
 
 #include "tntnetimpl.h"
 
@@ -266,7 +267,13 @@ bool Worker::processRequest(HttpRequest& request, std::iostream& socket,
         }
         catch (const std::exception& e)
         {
-            throw HttpError(HTTP_INTERNAL_SERVER_ERROR, e.what());
+            std::ostringstream b;
+            HtmlEscOstream sb(b);
+
+            b << "<html><body><h1>Error</h1><p>";
+            sb << e.what();
+            b << "</p></body></html>";
+            throw HttpError(HTTP_INTERNAL_SERVER_ERROR, "internal server error", b.str());
         }
         catch (...)
         {
