@@ -63,9 +63,9 @@ public:
     /// Put new Object in scope. If key already exists,
     /// it is replaced and old Object released.
     template <typename T>
-    T* put(const std::string& key, std::unique_ptr<T>&& p)
+    void put(const std::string& key, std::unique_ptr<T>&& p)
     {
-        return _data.emplace(key, std::move(p)).first->second.get();
+        _data.emplace(key, std::move(p));
     }
 
     bool empty() const                 { return _data.empty(); }
