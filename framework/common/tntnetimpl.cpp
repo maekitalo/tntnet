@@ -132,6 +132,8 @@ void TntnetImpl::init(Tntnet& app, const TntConfig& config)
             if (!it->ciphers.empty())
                 sslCtx.setCiphers(it->ciphers);
             sslCtx.setProtocolVersion(it->minProtocolVersion, it->maxProtocolVersion);
+            if (it->cipherServerPreference)
+                sslCtx.setCipherServerPreference(true);
         }
 
         listen(app, it->ip, it->port, sslCtx);

@@ -117,6 +117,8 @@ void operator>>= (const cxxtools::SerializationInfo& si, TntConfig::Listener& li
             si.getMember("minProtocolVersion", listener.minProtocolVersion);
             si.getMember("maxProtocolVersion", listener.maxProtocolVersion);
         }
+
+        si.getMember("cipherServerPreference", listener.cipherServerPreference);
     }
 }
 

@@ -130,7 +130,8 @@ namespace tnt
                 : sslVerifyLevel(cxxtools::SslCtx::VERIFY_LEVEL::NONE),
                   minProtocolVersion(cxxtools::SslCtx::PROTOCOL_VERSION::SSLv2),
                   maxProtocolVersion(cxxtools::SslCtx::PROTOCOL_VERSION::TLSv13),
-                  secure(false)
+                  secure(false),
+                  cipherServerPreference(false)
             { }
 
             std::string ip;
@@ -145,6 +146,7 @@ namespace tnt
             cxxtools::SslCtx::PROTOCOL_VERSION maxProtocolVersion;
             bool secure;                // when this is set, cipers and protocols are ignored
                                         // and given reasonable values for secure communication
+            bool cipherServerPreference;
         };
 
         typedef std::vector<Mapping> MappingsType;

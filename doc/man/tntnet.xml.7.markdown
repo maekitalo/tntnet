@@ -668,6 +668,10 @@ We summarize the settings for the listeners here.
 
     Set the maximum accepted ssl/tls protocol version.
 
+`<cipherServerPreference>`*1|0*`</cipherServerPreference>`
+
+    Sets the openssl option SSL_OP_CIPHER_SERVER_PREFERENCE.
+
 LOGGING
 -------
 Logging is configured in the `<logging>` section.
