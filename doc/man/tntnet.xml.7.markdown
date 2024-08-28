@@ -332,6 +332,12 @@ This section describes the variables, used by Tntnet (8).
 
     <sessionTimeout>600</sessionTimeout>
 
+`<secureSession>`*bool*`</secureSession>`
+
+  When this flag is set, the session cookie is always sent with the secure
+  flag. Default is setting the flag only when session variables are defined
+  in a `<%securesession>` section.
+
 `<socketReadTimeout>`*milliseconds*`</socketReadTimeout>`
 
   A worker thread waits for some milliseconds on incoming data. If there is no
