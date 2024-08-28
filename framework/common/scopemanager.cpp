@@ -48,6 +48,20 @@ namespace
         c << request.getSerial() << '-' << ::pthread_self() << '-' << rand();
         return c.getHexDigest();
     }
+
+    static std::string sessionCookieName(const std::string& app, bool secure)
+    {
+        std::string name;
+        if (secure)
+            name = 's';
+
+        if (app.empty())
+            name += "tntnet";
+        else
+            name += app;
+
+        return name;
+    }
 }
 
 std::shared_ptr<Scope> ScopeManager::getApplicationScope(const std::string& appname)
@@ -96,8 +110,8 @@ std::shared_ptr<Sessionscope> ScopeManager::getSessionScope(const std::string& s
 void ScopeManager::preCall(HttpRequest& request, const std::string& app)
 {
     // check session-cookie
-    std::string currentSessionCookieName = app.empty() ? std::string("tntnet") : "tntnet." + app;
-    std::string currentSecureSessionCookieName = app.empty() ? std::string("stntnet") : "stntnet." + app;
+    std::string currentSessionCookieName = sessionCookieName(app, false);
+    std::string currentSecureSessionCookieName = sessionCookieName(app, true);
 
     Cookie c = request.getCookie(currentSessionCookieName);
     if (c.getValue().empty())
@@ -162,8 +176,10 @@ void ScopeManager::setSessionId(HttpRequest& request, const std::string& session
 
 std::string ScopeManager::postCall(HttpRequest& request, HttpReply& reply, const std::string& app)
 {
-    std::string currentSessionCookieName = app.empty() ? std::string("tntnet") : "tntnet." + app;
-    std::string currentSecureSessionCookieName = app.empty() ? std::string("stntnet") : "stntnet." + app;
+    const auto& cfg = TntConfig::it();
+
+    std::string currentSessionCookieName = sessionCookieName(app, false);
+    std::string currentSecureSessionCookieName = sessionCookieName(app, true);
 
     std::string sessionId;
 
@@ -194,6 +210,8 @@ std::string ScopeManager::postCall(HttpRequest& request, HttpReply& reply, const
                 tnt::Cookie cookie(newSessionId);
                 cookie.setAttr(tnt::Cookie::sameSite, "strict")
                       .setAttr(tnt::Cookie::httpOnly);
+                if (cfg.secureSession)
+                    cookie.setSecure();
                 reply.setCookie(currentSessionCookieName, cookie);
 
                 std::unique_lock<std::mutex> lock(_sessionScopesMutex);

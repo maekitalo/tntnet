@@ -166,6 +166,8 @@ namespace tnt
          */
         ListenersType listeners;
 
+        bool secureSession;
+
         /** The maximal size of a request
 
             If a larger request is sent, it is ignored. This limit prevents

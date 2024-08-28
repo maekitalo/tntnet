@@ -136,6 +136,7 @@ void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config)
         config.mappings.insert(config.mappings.end(), mappings.begin(), mappings.end());
 
     si.getMember("listeners") >>= config.listeners;
+    si.getMember("secureSession", config.secureSession);
     si.getMember("maxRequestSize", config.maxRequestSize);
     si.getMember("maxRequestTime", config.maxRequestTime);
     si.getMember("user", config.user);
@@ -187,7 +188,8 @@ void operator>>= (const cxxtools::SerializationInfo& si, TntConfig& config)
 }
 
 TntConfig::TntConfig()
-    : maxRequestSize(0),
+    : secureSession(false),
+        maxRequestSize(0),
         maxRequestTime(600),
         daemon(false),
         minThreads(5),
