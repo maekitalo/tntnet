@@ -45,6 +45,7 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
       registerMethod("testMessageheaderRemove", *this, &MessageheaderTest::testMessageheaderRemove);
       registerMethod("testMessageheaderParser", *this, &MessageheaderTest::testMessageheaderParser);
       registerMethod("testMessageheaderParserSize", *this, &MessageheaderTest::testMessageheaderParserSize);
+      registerMethod("testMessageheaderParseAndAdd", *this, &MessageheaderTest::testMessageheaderParseAndAdd);
     }
 
     void testMessageheader()
@@ -119,6 +120,23 @@ class MessageheaderTest : public cxxtools::unit::TestSuite
       for (unsigned c = 0; c < tnt::Messageheader::MAXHEADERSIZE - 1; ++c)
           parser.parse('A');
       CXXTOOLS_UNIT_ASSERT_THROW(parser.parse('B'), tnt::HttpError);
+    }
+
+    void testMessageheaderParseAndAdd()
+    {
+      tnt::Messageheader mh;
+      tnt::Messageheader::Parser parser(mh);
+      std::istringstream in("blah:tntnet\r\nfoo : bar\nXYZ:Abc\r\n\r\n");
+      parser.parse(in);
+      mh.setHeader("test", "42", 0);
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("foo:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("xyz:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("blah:"));
+      CXXTOOLS_UNIT_ASSERT(mh.hasHeader("test:"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("BLAH:", "TNTNET"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("FOO:", "BAR"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("XYZ:", "ABC"));
+      CXXTOOLS_UNIT_ASSERT(mh.compareHeader("TESt:", "42"));
     }
 };
 

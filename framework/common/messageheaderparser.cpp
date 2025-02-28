@@ -201,6 +201,7 @@ namespace tnt
       }
 
       *_headerdataPtr = '\0';
+      _header._endOffset = _headerdataPtr - _header._rawdata;
       return true;
     }
     else if (std::isspace(ch))
@@ -242,6 +243,7 @@ namespace tnt
       }
 
       *_headerdataPtr = '\0';
+      _header._endOffset = _headerdataPtr - _header._rawdata;
       return true;
     }
     else
