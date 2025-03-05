@@ -38,6 +38,7 @@
 #include <thread>
 #include <string>
 #include <mutex>
+#include <atomic>
 
 /// @cond internal
 
@@ -57,8 +58,8 @@ class Worker : private ThreadContext
     Scope _threadScope;
     pthread_t _threadId;
     std::thread _thread;
-    const char* _state;
-    time_t _lastWaitTime;
+    std::atomic<const char*> _state;
+    std::atomic<time_t> _lastWaitTime;
 
     bool processRequest(HttpRequest& request, std::iostream& socket, unsigned keepAliveCount);
     void logRequest(const HttpRequest& request, const HttpReply& reply, unsigned httpReturn);

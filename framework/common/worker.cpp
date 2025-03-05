@@ -113,7 +113,7 @@ void Worker::run()
             bool keepAlive;
             do
             {
-                time(&_lastWaitTime);
+                _lastWaitTime = time(NULL);
 
                 keepAlive = false;
                 _state = stateParsing;
@@ -123,7 +123,7 @@ void Worker::run()
                     _state = statePostParsing;
 
                     if (socket.eof())
-                      log_debug("eof");
+                        log_debug("eof");
                     else if (j->getParser().failed())
                     {
                         _state = stateSendError;
@@ -212,7 +212,7 @@ void Worker::run()
         }
     }
 
-    time(&_lastWaitTime);
+    _lastWaitTime = time(NULL);
 
     _state = stateStopping;
 
@@ -512,11 +512,12 @@ void Worker::dispatch(HttpRequest& request, HttpReply& reply)
 
 void Worker::healthCheck(time_t currentTime)
 {
+    time_t lastWaitTime = _lastWaitTime;
     if (_state == stateProcessingRequest
-        && _lastWaitTime != 0
+        && lastWaitTime != 0
         && TntConfig::it().maxRequestTime > 0)
     {
-        if (static_cast<unsigned>(currentTime - _lastWaitTime) > TntConfig::it().maxRequestTime)
+        if (static_cast<unsigned>(currentTime - lastWaitTime) > TntConfig::it().maxRequestTime)
         {
             log_fatal("requesttime " << TntConfig::it().maxRequestTime << " seconds in thread "
               << _threadId << " exceeded - exit process");
@@ -527,7 +528,7 @@ void Worker::healthCheck(time_t currentTime)
 }
 
 void Worker::touch()
-  { time(&_lastWaitTime); }
+    { _lastWaitTime = time(NULL); }
 
 Scope& Worker::getScope()
   { return _threadScope; }
