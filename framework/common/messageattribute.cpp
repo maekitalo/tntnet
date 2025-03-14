@@ -81,7 +81,6 @@ namespace tnt
           if (istokenchar(ch))
           {
             type.clear();
-            type.reserve(16);
             type += ch;
             state = state_type0;
           }
@@ -199,7 +198,6 @@ namespace tnt
           else if (istokenchar(ch))
           {
             value.clear();
-            value.reserve(16);
             value += ch;
             state = state_value;
           }

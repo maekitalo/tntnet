@@ -149,7 +149,6 @@ namespace tnt
     else if (ch == '/')
     {
       _message._url.clear();
-      _message._url.reserve(32);
       _message._url += ch;
       SET_STATE(state_url);
     }
@@ -214,7 +213,6 @@ namespace tnt
     if (ch == '/')
     {
       _message._url.clear();
-      _message._url.reserve(32);
       _message._url += ch;
       SET_STATE(state_url);
     }

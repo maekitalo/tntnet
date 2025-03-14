@@ -251,7 +251,6 @@ void CookieParser::parse(const std::string& header)
                   else
                   {
                       value.clear();
-                      value.reserve(32);
                       state = state_value0;
                   }
               }
@@ -265,7 +264,6 @@ void CookieParser::parse(const std::string& header)
               if (ch == '=')
               {
                   value.clear();
-                  value.reserve(32);
                   state = state_value0;
               }
               else if (!std::isspace(ch))

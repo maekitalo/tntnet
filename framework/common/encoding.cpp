@@ -80,7 +80,6 @@ void Encoding::parse(const char* header)
               if (!std::isspace(ch))
               {
                   encoding.clear();
-                  encoding.reserve(8);
                   encoding += ch;
                   state = state_encoding;
               }
