@@ -103,24 +103,15 @@ unsigned Proxy::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tn
     TNT_THREAD_COMPONENT_VAR(cxxtools::http::Client, client, ());
 
     cxxtools::net::Uri uri(uriStr);
+    std::string pathInfo = request.getPathInfo();
+    if (!pathInfo.empty() && pathInfo[0] == '/')
+        pathInfo.erase(0, 1);
 
     std::string url = uri.path();
-    bool urlEndsWithSlash = !url.empty() && url[url.size()-1] == '/';
-    bool pathInfoStartsWithSlash = !request.getPathInfo().empty() && request.getPathInfo()[0] == '/';
-
-    if (urlEndsWithSlash
-      && pathInfoStartsWithSlash)
-    {
-        // Avoid double slash, if getPathInfo starts with '/' (which is normally the case).
-        url.erase (url.size()-1, 1);
-    }
-    else if (!urlEndsWithSlash
-      && !pathInfoStartsWithSlash)
-    {
+    if (!url.empty())
         url += '/';
-    }
+    url += pathInfo;
 
-    url += request.getPathInfo();
     if (!request.getQueryString().empty())
     {
         url += '?';
@@ -137,7 +128,7 @@ unsigned Proxy::operator() (tnt::HttpRequest& request, tnt::HttpReply& reply, tn
     else
       log_debug("already connected to " << uri.host() << ':' << uri.port());
 
-    log_info("get file " << url << " qparam=" << qparam.getUrl() << " from " << uri.host() << ':' << uri.port() << " body size=" << request.getBody().size());
+    log_info("get file <" << url << "> qparam=" << qparam.getUrl() << " from " << uri.host() << ':' << uri.port() << " body size=" << request.getBody().size());
 
     // set up client request
     cxxtools::http::Request clientRequest(url);
