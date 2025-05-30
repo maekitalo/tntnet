@@ -276,10 +276,9 @@ void PollerImpl::run()
 
 PollerImpl::PollerImpl(Jobqueue& q)
   : _queue(q),
-    _pollTimeout(-1)
+    _pollTimeout(-1),
+    _notifyPipe(cxxtools::posix::Pipe::Async, false);
 {
-    fcntl(_notifyPipe.getReadFd(), F_SETFL, O_NONBLOCK);
-
     _pollfds.push_back(pollfd());
     _pollfds.back().fd = _notifyPipe.getReadFd();
     _pollfds.back().events = POLLIN;

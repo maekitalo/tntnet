@@ -59,6 +59,12 @@ AC_COMPILE_IFELSE(
 int flag = cxxtools::net::TcpServer::REUSEADDR;
 ])], AC_DEFINE(HAVE_CXXTOOLS_REUSEADDR, [], [Defined if cxxtools supports SO_REUSEADDR flag]))
 
+AC_COMPILE_IFELSE(
+    [AC_LANG_SOURCE([
+#include <cxxtools/pipe.h>
+cxxtools::Pipe p(0, true);
+])], AC_DEFINE(HAVE_CXXTOOLS_PIPE_INHERIT_FLAG, [], [Defined if cxxtools pipe supports inherit flag]))
+
 PKG_CHECK_MODULES([MINIZIP], [minizip],
   [HAVE_MINIZIP=true], [HAVE_MINIZIP=false])
 AC_SUBST([MINIZIP_CFLAGS])
