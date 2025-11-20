@@ -476,9 +476,10 @@ void Worker::dispatch(HttpRequest& request, HttpReply& reply)
                 }
                 else
                 {
-                    log_info_if(!reply.isChunkedEncoding(), "request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.getContentSize());
+                    std::string sessionId = _application.getScopemanager().postCall(request, reply, appname);
 
-                    _application.getScopemanager().postCall(request, reply, appname);
+                    log_info_if(!sessionId.empty(), "session " << sessionId);
+                    log_info_if(!reply.isChunkedEncoding(), "request " << request.getMethod_cstr() << ' ' << request.getQuery() << " ready, returncode " << http_return << ' ' << http_msg << " - ContentSize: " << reply.getContentSize());
 
                     _state = stateSendReply;
                     if (reply.sendReply(http_return, http_msg))
