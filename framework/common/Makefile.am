@@ -32,6 +32,7 @@ libtntnet_la_SOURCES = \
 	multipart.cpp \
 	poller.cpp \
 	pollerimpl.cpp \
+	query_params.cpp \
 	savepoint.cpp \
 	scopemanager.cpp \
 	stringlessignorecase.cpp \

@@ -68,7 +68,7 @@ namespace tnt
               "  log_trace(\"" << _outerclass->getName() << "::" << getName() << " \" << qparam.getUrl());\n"
               "  tnt::DataChunks _tntChunks(rawData);\n";
 
-      Component::getBody(code, linenumbersEnabled);
+      Component::getBody(code, "qparam", linenumbersEnabled);
       code << "}\n\n";
     }
 

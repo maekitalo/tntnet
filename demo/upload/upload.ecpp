@@ -2,6 +2,9 @@
 #include <cxxtools/hdstream.h>
 #include <cxxtools/md5stream.h>
 </%pre>
+<%args>
+tnt::Part upload;   // uploaded file
+</%args>
 <html>
  <body>
 
@@ -15,25 +18,17 @@
 
 <{
 
-  // request.getMultipart() gives us access to all parts of
-  // the multipart-encoded request
-  const tnt::Multipart& mp = request.getMultipart();
-
   // we look for a part named like our name-attribute of the upload-field
-  tnt::Multipart::const_iterator it = mp.find("upload");
-
-  if (it != mp.end())
+  if (!upload.isEmpty())
   {
-    // we got a const-iterator to the uploaded data
-
     cxxtools::Md5stream md5stream;
-    std::copy(it->getBodyBegin(),
-              it->getBodyEnd(),
+    std::copy(upload.getBodyBegin(),
+              upload.getBodyEnd(),
               std::ostreambuf_iterator<char>(md5stream));
 }>
 
     <p>
-    <$ it->getSize() $> bytes received<br>
+    <$ upload.getSize() $> bytes received<br>
     md5sum: <$ md5stream.getHexDigest() $><br>
     data:<br>
 
@@ -47,16 +42,16 @@
   cxxtools::Hdostream hd(reply.sout());
 
   // hexdump first 1k of uploaded file
-  if (it->getSize() > 1024)
+  if (upload.getSize() > 1024)
   {
-    std::copy(it->getBodyBegin(),
-              it->getBodyBegin() + 1024,
+    std::copy(upload.getBodyBegin(),
+              upload.getBodyBegin() + 1024,
               std::ostreambuf_iterator<char>(hd));
   }
   else
   {
-    std::copy(it->getBodyBegin(),
-              it->getBodyEnd(),
+    std::copy(upload.getBodyBegin(),
+              upload.getBodyEnd(),
               std::ostreambuf_iterator<char>(hd));
   }
 

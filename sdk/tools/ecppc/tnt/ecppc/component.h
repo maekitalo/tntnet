@@ -98,8 +98,8 @@ namespace tnt
         void addScopevar(const Scopevar& s)
           { _scopevars.push_back(s); }
 
-        void getBody(std::ostream& o, bool linenumbersEnabled) const;
-        void getArgs(std::ostream& o) const;
+        void getBody(std::ostream& o, const std::string& q, bool linenumbersEnabled) const;
+        void getArgs(std::ostream& o, const std::string& q) const;
         void getGet(std::ostream& o) const;
         void getPost(std::ostream& o) const;
         virtual void getScopevars(std::ostream& o, bool linenumbersEnabled) const;

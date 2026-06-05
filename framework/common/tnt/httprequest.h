@@ -52,6 +52,7 @@ namespace tnt
 {
 class Sessionscope;
 class Tntnet;
+class Part;
 
 /// HTTP request message
 class HttpRequest : public HttpMessage
@@ -193,6 +194,13 @@ public:
     tnt::QueryParams& getQueryParams()             { return _qparam; }
     const tnt::QueryParams& getQueryParams() const { return _qparam; }
     /// @}
+
+    template <typename Type> Type get(const std::string& name) const
+        { return _qparam.get<Type>(*this, name); }
+    template <typename Type> Type get(const std::string& name, const Type& def) const
+        { return _qparam.get<Type>(*this, name, def); }
+    template <typename Type> std::vector<Type> getvector(const std::string& name) const
+        { return _qparam.getvector<Type>(*this, name); }
 
     /// Get GET parameters
     const tnt::QueryParams& getGetParams() const   { return _getparam; }

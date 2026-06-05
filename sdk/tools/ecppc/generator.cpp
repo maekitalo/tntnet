@@ -607,7 +607,7 @@ namespace tnt
                     "  reply.setDirectMode();\n";
 
           code << '\n';
-          _maincomp.getBody(code, _linenumbersEnabled);
+          _maincomp.getBody(code, "request", _linenumbersEnabled);
           code << "}\n\n";
         }
         else

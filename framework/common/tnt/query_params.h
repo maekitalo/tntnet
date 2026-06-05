@@ -41,6 +41,8 @@
 namespace tnt
 {
 class QueryParams;
+class Part;
+class HttpRequest;
 
 /// @cond internal
 namespace qhelper
@@ -53,7 +55,11 @@ namespace qhelper
     {
     public:
         static Type get(const QueryParams& q, const std::string& name, const Type& def = Type());
+        static Type get(const HttpRequest&, const QueryParams& q, const std::string& name, const Type& def = Type())
+            { return get(q, name, def); }
         static std::vector<Type> getvector(const QueryParams& q, const std::string& name);
+        static std::vector<Type> getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
+            { return getvector(q, name); }
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -64,7 +70,11 @@ namespace qhelper
     {
     public:
         static std::string get(const QueryParams& q, const std::string& name, const std::string& def = std::string());
+        static std::string get(const HttpRequest&, const QueryParams& q, const std::string& name, const std::string& def = std::string())
+            { return get(q, name, def); }
         static std::vector<std::string> getvector(const QueryParams& q, const std::string& name);
+        static std::vector<std::string> getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
+            { return getvector(q, name); }
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -75,7 +85,11 @@ namespace qhelper
     {
     public:
         static char get(const QueryParams& q, const std::string& name, char def = '\0');
+        static char get(const HttpRequest&, const QueryParams& q, const std::string& name, const char& def = '\0')
+            { return get(q, name, def); }
         static std::vector<char> getvector(const QueryParams& q, const std::string& name);
+        static std::vector<char> getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
+            { return getvector(q, name); }
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -86,8 +100,25 @@ namespace qhelper
     {
     public:
         static bool get(const QueryParams& q, const std::string& name);
+        static bool get(const HttpRequest&, const QueryParams& q, const std::string& name)
+            { return get(q, name); }
         static bool get(const QueryParams& q, const std::string& name, bool def);
+        static bool get(const HttpRequest&, const QueryParams& q, const std::string& name, bool def)
+            { return get(q, name, def); }
     };
+
+    ////////////////////////////////////////////////////////////////////////
+    // specialization for tnt::Part
+    //
+    template <>
+    class QArg<Part>
+    {
+    public:
+        static tnt::Part get(const HttpRequest& r, const QueryParams& q, const std::string& name);
+        static std::vector<Part> getvector(const HttpRequest& r, const QueryParams& q, const std::string& name);
+    };
+
+    ////////////////////////////////////////////////////////////////////////
 
     template <typename Type>
     class QAdd
@@ -184,6 +215,9 @@ public:
     template <typename Type>
     Type get(const std::string& name, const Type& def) const
       { return qhelper::QArg<Type>::get(*this, name, def); }
+    template <typename Type>
+    Type get(const HttpRequest& r, const std::string& name, const Type& def) const
+      { return qhelper::QArg<Type>::get(r, *this, name, def); }
 
     /// Get parameter with name `name` if available. Returns default value if not found.
     /// For string type the value is returned.
@@ -192,6 +226,9 @@ public:
     template <typename Type>
     Type get(const std::string& name) const
       { return qhelper::QArg<Type>::get(*this, name); }
+    template <typename Type>
+    Type get(const HttpRequest& r, const std::string& name) const
+      { return qhelper::QArg<Type>::get(r, *this, name); }
 
     /// alias for `get`
     /// @deprecated
@@ -208,6 +245,9 @@ public:
     template <typename Type>
     std::vector<Type> getvector(const std::string& name) const
       { return qhelper::QArg<Type>::getvector(*this, name); }
+    template <typename Type>
+    std::vector<Type> getvector(const HttpRequest& r, const std::string& name) const
+      { return qhelper::QArg<Type>::getvector(r, *this, name); }
 
     /// alias for `getvector`
     /// @deprecated

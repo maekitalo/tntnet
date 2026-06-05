@@ -40,7 +40,7 @@ namespace tnt
            "{\n"
            "  tnt::DataChunks data(rawData);\n";
 
-      Component::getBody(code, linenumbersEnabled);
+      Component::getBody(code, "qparam", linenumbersEnabled);
       code << "}\n\n";
     }
   }

@@ -46,12 +46,12 @@ namespace tnt
       return ret;
     }
 
-    void Component::getBody(std::ostream& body, bool linenumbersEnabled) const
+    void Component::getBody(std::ostream& body, const std::string& q, bool linenumbersEnabled) const
     {
       if (!_args.empty())
       {
         body << "  // <%args>\n";
-        getArgs(body);
+        getArgs(body, q);
         body << "  // </%args>\n\n";
       }
 
@@ -79,10 +79,10 @@ namespace tnt
            << "  return DEFAULT;\n";
     }
 
-    void Component::getArgs(std::ostream& body) const
+    void Component::getArgs(std::ostream& body, const std::string& q) const
     {
       for (variables_type::const_iterator it = _args.begin(); it != _args.end(); ++it)
-        it->getParamCode(body, "qparam");
+        it->getParamCode(body, q);
     }
 
     void Component::getGet(std::ostream& body) const
