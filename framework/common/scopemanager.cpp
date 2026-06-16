@@ -280,7 +280,6 @@ void ScopeManager::checkSessionTimeout()
     time(&currentTime);
     std::unique_lock<std::mutex> lock(_sessionScopesMutex);
     auto it = _sessionScopes.begin();
-    unsigned count = 0;
     while (it != _sessionScopes.end())
     {
         auto s = it->second;
@@ -290,7 +289,6 @@ void ScopeManager::checkSessionTimeout()
             auto it2 = it;
             ++it;
             _sessionScopes.erase(it2);
-            ++count;
         }
         else
           ++it;
