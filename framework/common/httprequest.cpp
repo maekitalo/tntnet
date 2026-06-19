@@ -36,6 +36,8 @@
 
 #include <cxxtools/log.h>
 #include <cxxtools/base64stream.h>
+#include <cxxtools/serializationinfo.h>
+#include <cxxtools/json.h>
 
 #include <sstream>
 #include <mutex>
@@ -227,6 +229,19 @@ void HttpRequest::doPostParse()
                   && _ct.getSubtype() == "x-www-form-urlencoded")
             {
                 _postparam.parse_url(getBody());
+            }
+            else if (_ct.getType() == "application"
+                  && _ct.getSubtype() == "json")
+            {
+                std::istringstream body(getBody());
+                cxxtools::SerializationInfo si;
+                body >> cxxtools::Json(si);
+                for (const auto& ssi: si)
+                {
+                    std::string value;
+                    ssi >>= value;
+                    _postparam.add(ssi.name(), value);
+                }
             }
         }
     }
