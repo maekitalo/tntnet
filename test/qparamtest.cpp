@@ -46,6 +46,9 @@ namespace
     si.getMember("a") >>= sub.a;
   }
 
+  // ugly but we need just a reference to a http request, which is actually never used
+  tnt::HttpRequest* httpRequestPtr = nullptr;
+  const tnt::HttpRequest& nullRequest = *httpRequestPtr;
 }
 
 class QParamTest : public cxxtools::unit::TestSuite
@@ -64,8 +67,8 @@ class QParamTest : public cxxtools::unit::TestSuite
     void testQParam()
     {
       tnt::QueryParams q("aa=5&bb=7");
-      std::string aa = q.arg<std::string>("aa");
-      std::string bb = q.arg<std::string>("bb");
+      std::string aa = q.get<std::string>(nullRequest, "aa");
+      std::string bb = q.get<std::string>(nullRequest, "bb");
       CXXTOOLS_UNIT_ASSERT_EQUALS(aa, "5");
       CXXTOOLS_UNIT_ASSERT_EQUALS(bb, "7");
     }
@@ -73,8 +76,8 @@ class QParamTest : public cxxtools::unit::TestSuite
     void testIntarg()
     {
       tnt::QueryParams q("aa=5&bb=7");
-      int aa = q.arg<int>("aa");
-      int bb = q.arg<int>("bb");
+      int aa = q.get<int>(nullRequest, "aa");
+      int bb = q.get<int>(nullRequest, "bb");
       CXXTOOLS_UNIT_ASSERT_EQUALS(aa, 5);
       CXXTOOLS_UNIT_ASSERT_EQUALS(bb, 7);
     }
@@ -82,10 +85,10 @@ class QParamTest : public cxxtools::unit::TestSuite
     void testDefaultValue()
     {
       tnt::QueryParams q;
-      std::string aa = q.arg<std::string>("aa", "Hi");
-      std::string bb = q.arg<std::string>("bb", "there");
-      std::string cc = q.arg<std::string>("cc", "Hi there");
-      double dd = q.arg<double>("dd", 42);
+      std::string aa = q.get<std::string>(nullRequest, "aa", "Hi");
+      std::string bb = q.get<std::string>(nullRequest, "bb", "there");
+      std::string cc = q.get<std::string>(nullRequest, "cc", "Hi there");
+      double dd = q.get<double>(nullRequest, "dd", 42);
       CXXTOOLS_UNIT_ASSERT_EQUALS(aa, "Hi");
       CXXTOOLS_UNIT_ASSERT_EQUALS(bb, "there");
       CXXTOOLS_UNIT_ASSERT_EQUALS(cc, "Hi there");
@@ -99,10 +102,10 @@ class QParamTest : public cxxtools::unit::TestSuite
       q.add("b", "Hi there");
       q.add("c", true);
       q.add("d", false);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<unsigned>("a"), 17u);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<std::string>("b"), "Hi there");
-      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("c"), true);
-      CXXTOOLS_UNIT_ASSERT_EQUALS(q.arg<bool>("d"), false);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.get<unsigned>(nullRequest, "a"), 17u);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.get<std::string>(nullRequest, "b"), "Hi there");
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.get<bool>(nullRequest, "c"), true);
+      CXXTOOLS_UNIT_ASSERT_EQUALS(q.get<bool>(nullRequest, "d"), false);
     }
 
     void testObject()
@@ -110,9 +113,9 @@ class QParamTest : public cxxtools::unit::TestSuite
       // generated with getQuery.js
       tnt::QueryParams q("simple=Hi&numbers%5B%5D=1&numbers%5B%5D=4&numbers%5B%5D=5&sub%5Bi%5D=42&sub%5Ba%5D%5B%5D=Hi&sub%5Ba%5D%5B%5D=there");
 
-      std::string simple = q.get<std::string>("simple");
-      std::vector<int> numbers = q.getvector<int>("numbers");
-      Sub sub = q.get<Sub>("sub");
+      std::string simple = q.get<std::string>(nullRequest, "simple");
+      std::vector<int> numbers = q.getvector<int>(nullRequest, "numbers");
+      Sub sub = q.get<Sub>(nullRequest, "sub");
 
       CXXTOOLS_UNIT_ASSERT_EQUALS(simple, "Hi");
       CXXTOOLS_UNIT_ASSERT_EQUALS(numbers.size(), 3u);

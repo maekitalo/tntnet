@@ -52,7 +52,6 @@ namespace tnt
 {
 class Sessionscope;
 class Tntnet;
-class Part;
 
 /// HTTP request message
 class HttpRequest : public HttpMessage
@@ -195,18 +194,25 @@ public:
     const tnt::QueryParams& getQueryParams() const { return _qparam; }
     /// @}
 
-    template <typename Type> Type get(const std::string& name) const
-        { return _qparam.get<Type>(*this, name); }
-    template <typename Type> Type get(const std::string& name, const Type& def) const
-        { return _qparam.get<Type>(*this, name, def); }
-    template <typename Type> std::vector<Type> getvector(const std::string& name) const
-        { return _qparam.getvector<Type>(*this, name); }
-
     /// Get GET parameters
     const tnt::QueryParams& getGetParams() const   { return _getparam; }
 
     /// Get POST parameters
     const tnt::QueryParams& getPostParams() const  { return _postparam; }
+
+    template <typename Type> Type get(const tnt::QueryParams& qp, const std::string& name) const
+        { return qp.get<Type>(*this, name); }
+    template <typename Type> Type get(const tnt::QueryParams& qp, const std::string& name, const Type& def) const
+        { return qp.get<Type>(*this, name, def); }
+    template <typename Type> std::vector<Type> getvector(const tnt::QueryParams& qp, const std::string& name) const
+        { return qp.getvector<Type>(*this, name); }
+
+    template <typename Type> Type get(const std::string& name) const
+        { return get<Type>(_qparam, name); }
+    template <typename Type> Type get(const std::string& name, const Type& def) const
+        { return get<Type>(_qparam, name, def); }
+    template <typename Type> std::vector<Type> getvector(const std::string& name) const
+        { return getvector<Type>(_qparam, name); }
 
     /// Set query parameters (GET and POST)
     void setQueryParams(const tnt::QueryParams& q) { _qparam = q; }

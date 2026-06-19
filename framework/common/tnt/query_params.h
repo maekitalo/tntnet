@@ -54,12 +54,8 @@ namespace qhelper
     class QArg
     {
     public:
-        static Type get(const QueryParams& q, const std::string& name, const Type& def = Type());
-        static Type get(const HttpRequest&, const QueryParams& q, const std::string& name, const Type& def = Type())
-            { return get(q, name, def); }
-        static std::vector<Type> getvector(const QueryParams& q, const std::string& name);
-        static std::vector<Type> getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
-            { return getvector(q, name); }
+        static Type get(const HttpRequest&, const QueryParams& q, const std::string& name, const Type& def = Type());
+        static std::vector<Type> getvector(const HttpRequest&, const QueryParams& q, const std::string& name);
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -69,12 +65,8 @@ namespace qhelper
     class QArg<std::string>
     {
     public:
-        static std::string get(const QueryParams& q, const std::string& name, const std::string& def = std::string());
-        static std::string get(const HttpRequest&, const QueryParams& q, const std::string& name, const std::string& def = std::string())
-            { return get(q, name, def); }
-        static std::vector<std::string> getvector(const QueryParams& q, const std::string& name);
-        static std::vector<std::string> getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
-            { return getvector(q, name); }
+        static std::string get(const HttpRequest&, const QueryParams& q, const std::string& name, const std::string& def = std::string());
+        static std::vector<std::string> getvector(const HttpRequest&, const QueryParams& q, const std::string& name);
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -84,12 +76,8 @@ namespace qhelper
     class QArg<char>
     {
     public:
-        static char get(const QueryParams& q, const std::string& name, char def = '\0');
-        static char get(const HttpRequest&, const QueryParams& q, const std::string& name, const char& def = '\0')
-            { return get(q, name, def); }
-        static std::vector<char> getvector(const QueryParams& q, const std::string& name);
-        static std::vector<char> getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
-            { return getvector(q, name); }
+        static char get(const HttpRequest&, const QueryParams& q, const std::string& name, char def = '\0');
+        static std::vector<char> getvector(const HttpRequest&, const QueryParams& q, const std::string& name);
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -99,12 +87,8 @@ namespace qhelper
     class QArg<bool>
     {
     public:
-        static bool get(const QueryParams& q, const std::string& name);
-        static bool get(const HttpRequest&, const QueryParams& q, const std::string& name)
-            { return get(q, name); }
-        static bool get(const QueryParams& q, const std::string& name, bool def);
-        static bool get(const HttpRequest&, const QueryParams& q, const std::string& name, bool def)
-            { return get(q, name, def); }
+        static bool get(const HttpRequest&, const QueryParams& q, const std::string& name);
+        static bool get(const HttpRequest&, const QueryParams& q, const std::string& name, bool def);
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -213,9 +197,6 @@ public:
     /// Boolean returns `true` if it is found, `false` otherwise.
     /// Other types are converted using the cxxtools serialization framework.
     template <typename Type>
-    Type get(const std::string& name, const Type& def) const
-      { return qhelper::QArg<Type>::get(*this, name, def); }
-    template <typename Type>
     Type get(const HttpRequest& r, const std::string& name, const Type& def) const
       { return qhelper::QArg<Type>::get(r, *this, name, def); }
 
@@ -224,37 +205,12 @@ public:
     /// Boolean returns `true` if it is found, `false` otherwise.
     /// Other types are converted using the cxxtools serialization framework.
     template <typename Type>
-    Type get(const std::string& name) const
-      { return qhelper::QArg<Type>::get(*this, name); }
-    template <typename Type>
     Type get(const HttpRequest& r, const std::string& name) const
       { return qhelper::QArg<Type>::get(r, *this, name); }
 
-    /// alias for `get`
-    /// @deprecated
-    template <typename Type>
-    Type arg(const std::string& name, const Type& def) const
-      { return qhelper::QArg<Type>::get(*this, name, def); }
-
-    /// alias for `get`
-    /// @deprecated
-    template <typename Type>
-    Type arg(const std::string& name) const
-      { return qhelper::QArg<Type>::get(*this, name); }
-
-    template <typename Type>
-    std::vector<Type> getvector(const std::string& name) const
-      { return qhelper::QArg<Type>::getvector(*this, name); }
     template <typename Type>
     std::vector<Type> getvector(const HttpRequest& r, const std::string& name) const
       { return qhelper::QArg<Type>::getvector(r, *this, name); }
-
-    /// alias for `getvector`
-    /// @deprecated
-    template <typename Type>
-    std::vector<Type> args(const std::string& name) const
-      { return qhelper::QArg<Type>::getvector(*this, name); }
-
 
     template <typename Type>
     QueryParams& add(const std::string& name, const Type& value)
@@ -279,7 +235,7 @@ namespace qhelper
 // generic helper functions
 //
 template <typename Type>
-Type QArg<Type>::get(const QueryParams& q, const std::string& name, const Type& def)
+Type QArg<Type>::get(const HttpRequest&, const QueryParams& q, const std::string& name, const Type& def)
 {
     const cxxtools::SerializationInfo* pi;
     try
@@ -297,7 +253,7 @@ Type QArg<Type>::get(const QueryParams& q, const std::string& name, const Type& 
 }
 
 template <typename Type>
-std::vector<Type> QArg<Type>::getvector(const QueryParams& q, const std::string& name)
+std::vector<Type> QArg<Type>::getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
 {
     std::vector<Type> ret;
 
@@ -319,12 +275,12 @@ std::vector<Type> QArg<Type>::getvector(const QueryParams& q, const std::string&
 ////////////////////////////////////////////////////////////////////////
 // specialization for std::string
 //
-inline std::string QArg<std::string>::get(const QueryParams& q, const std::string& name, const std::string& def)
+inline std::string QArg<std::string>::get(const HttpRequest&, const QueryParams& q, const std::string& name, const std::string& def)
 {
     return q.param(name, def);
 }
 
-inline std::vector<std::string> QArg<std::string>::getvector(const QueryParams& q, const std::string& name)
+inline std::vector<std::string> QArg<std::string>::getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
 {
     return std::vector<std::string>(q.begin(name + "[]"), q.end());
 }
@@ -333,13 +289,13 @@ inline std::vector<std::string> QArg<std::string>::getvector(const QueryParams& 
 ////////////////////////////////////////////////////////////////////////
 // specialization for char
 //
-inline char QArg<char>::get(const QueryParams& q, const std::string& name, char def)
+inline char QArg<char>::get(const HttpRequest&, const QueryParams& q, const std::string& name, char def)
 {
     std::string p = q.param(name);
     return p.empty() ? def : p[0];
 }
 
-inline std::vector<char> QArg<char>::getvector(const QueryParams& q, const std::string& name)
+inline std::vector<char> QArg<char>::getvector(const HttpRequest&, const QueryParams& q, const std::string& name)
 {
     std::vector<char> ret;
     for (QueryParams::const_iterator it = q.begin(name + "[]"); it != q.end(); ++it)
@@ -351,12 +307,12 @@ inline std::vector<char> QArg<char>::getvector(const QueryParams& q, const std::
 ////////////////////////////////////////////////////////////////////////
 // specialization for bool
 //
-inline bool QArg<bool>::get(const QueryParams& q, const std::string& name)
+inline bool QArg<bool>::get(const HttpRequest&, const QueryParams& q, const std::string& name)
 {
     return !q.param(name).empty();
 }
 
-inline bool QArg<bool>::get(const QueryParams& q, const std::string& name, bool def)
+inline bool QArg<bool>::get(const HttpRequest&, const QueryParams& q, const std::string& name, bool def)
 {
     try
     {

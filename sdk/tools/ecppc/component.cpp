@@ -82,7 +82,7 @@ namespace tnt
     void Component::getArgs(std::ostream& body, const std::string& q) const
     {
       for (variables_type::const_iterator it = _args.begin(); it != _args.end(); ++it)
-        it->getParamCode(body, q);
+        it->getParamCode(body, "qparam");
     }
 
     void Component::getGet(std::ostream& body) const

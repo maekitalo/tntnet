@@ -48,7 +48,7 @@ namespace tnt
         Variable()  { }
         Variable(const std::string& arg, const std::string& value);
 
-        void getParamCode(std::ostream& o, const std::string& qparam) const;
+        void getParamCode(std::ostream& o, const std::string& getpost) const;
         void getConfigInit(std::ostream& o) const;
         void getConfigDecl(std::ostream& o) const;
         void getConfigHDecl(std::ostream& o) const;
